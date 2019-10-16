@@ -1678,7 +1678,7 @@ def down_card(InterfaceId, InstanceId):
 
 ### 1.CreateTemplate
 
-​	**Action：**CreateTemplate
+​	**Action：** CreateTemplate
 
 ​	**描述：** 定制模板
 
@@ -1724,7 +1724,7 @@ def down_card(InterfaceId, InstanceId):
 
 ### 2.DeleteTemplate
 
-​	**Action：**DeleteTemplate
+​	**Action：** DeleteTemplate
 
 ​	**描述：** 删除模板
 
@@ -1770,7 +1770,7 @@ def down_card(InterfaceId, InstanceId):
 
 ### 3.SyncTemplate
 
-​	**Action：**SyncTemplate
+​	**Action：** SyncTemplate
 
 ​	**描述：** 同步模板
 
@@ -1818,7 +1818,7 @@ def down_card(InterfaceId, InstanceId):
 
 ### 1.DescribeVdc
 
-​	**Action：**DescribeVdc
+​	**Action：** DescribeVdc
 
 ​	**描述：** 查询虚拟数据中心(以下简称VDC)详细信息
 
