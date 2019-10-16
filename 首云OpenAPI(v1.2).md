@@ -216,13 +216,13 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
 
 ### 2.DeleteInstance
 
-​	**Action：**DeleteInstance
+​	**Action：** DeleteInstance
 
-​	**描述：**删除一台或者多台云服务器
+​	**描述：** 删除一台或者多台云服务器
 
 ​	**请求地址:** api.capitalonline.net/ccs
 
-​	**请求方法：POST**
+​	**请求方法：POST** 
 
 ​	**请求参数:**
 
