@@ -664,7 +664,7 @@ def reset_os(vm_id, os_id):
     print result
 ```
 
-###11.DescribeInstances
+### 11.DescribeInstances
 
 ​	**Action：DescribeInstances**
 
@@ -957,11 +957,11 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
-###15.DescribeInstanceMonitor
+### 15.DescribeInstanceMonitor
 
 ​	**Action：DescribeInstanceMonitor**
 
-​	**描述：**获取主机实例各个指标监控数据
+​	**描述：** 获取主机实例各个指标监控数据
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1034,7 +1034,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：CreateSecurityGroup**
 
-​	**描述：**创建网络安全组
+​	**描述：** 创建网络安全组
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1078,7 +1078,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：DeleteSecurityGroup**
 
-​	**描述：**删除网络安全组
+​	**描述：** 删除网络安全组
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1120,7 +1120,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：ForceDeleteSecurityGroup**
 
-​	**描述：**强制删除网络安全组
+​	**描述：** 强制删除网络安全组
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1162,7 +1162,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：DescribeSecurityGroupAttribute**
 
-​	**描述：**查看网络安全组属性
+​	**描述：** 查看网络安全组属性
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1253,7 +1253,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：ModifySecurityGroupAttribute**
 
-​	**描述：**修改网络安全组属性
+​	**描述：** 修改网络安全组属性
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1297,7 +1297,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：DescribeSecurityGroups**
 
-​	**描述：**网络安全组列表
+​	**描述：** 网络安全组列表
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1376,7 +1376,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：AddSecurityGroupRule**
 
-​	**描述：**添加网络安全组规则
+​	**描述：** 添加网络安全组规则
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1427,7 +1427,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：RemoveSecurityGroupRule**
 
-​	**描述：**删除网络安全组规则
+​	**描述：** 删除网络安全组规则
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1470,7 +1470,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：ModifySecurityGroupRule**
 
-​	**描述：**修改网络安全组规则描述
+​	**描述：** 修改网络安全组规则描述
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1514,7 +1514,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：JoinSecurityGroup**
 
-​	**描述：**主机实例加入安全组
+​	**描述：** 主机实例加入安全组
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1560,7 +1560,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：LeaveSecurityGroup**
 
-​	**描述：**实例解绑网络安全组
+​	**描述：** 实例解绑网络安全组
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1608,7 +1608,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：**CreateTemplate
 
-​	**描述：**定制模板
+​	**描述：** 定制模板
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -1654,7 +1654,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：**DeleteTemplate
 
-​	**描述：**删除模板
+​	**描述：** 删除模板
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -1700,7 +1700,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：**SyncTemplate
 
-​	**描述：**同步模板
+​	**描述：** 同步模板
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -1748,7 +1748,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**Action：**DescribeVdc
 
-​	**描述：**查询虚拟数据中心(以下简称VDC)详细信息
+​	**描述：** 查询虚拟数据中心(以下简称VDC)详细信息
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -1863,11 +1863,11 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 
 
 
-###2.CreateVdc
+### 2.CreateVdc
 
 ​	**Action:CreateVdc**
 
-​	**描述：**创建一个Vdc
+​	**描述：** 创建一个Vdc
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -1947,7 +1947,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 
 
 
-###3.DeleteVdc
+### 3.DeleteVdc
 
 ​	**Action：DeleteVdc**
 
@@ -1988,11 +1988,11 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 }
 ```
 
-###4.CreatePublicNetwork
+### 4.CreatePublicNetwork
 
 ​	**Action:CreatePublicNetwork**
 
-​	**描述：**给一个Vdc增加公网带宽和Ip
+​	**描述：** 给一个Vdc增加公网带宽和Ip
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2045,11 +2045,11 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 
 ```
 
-###5.CreatePrivateNetwork
+### 5.CreatePrivateNetwork
 
 ​	**Action:CreatePrivateNetwork**
 
-​	**描述：**给一个Vdc创建一个私网
+​	**描述：** 给一个Vdc创建一个私网
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2103,11 +2103,11 @@ def create_private(vdc_id):
     result = json.loads(res.content)
 ```
 
-###6.ModifyPublicNetwork
+### 6.ModifyPublicNetwork
 
 ​	**Action:ModifyPublicNetwork**
 
-​	**描述：**变更Vdc的公网带宽大小或者类型
+​	**描述：** 变更Vdc的公网带宽大小或者类型
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2166,11 +2166,11 @@ def modify_public_qos(publicId, qos):
     return task_id
 ```
 
-###7.AddPublicIp
+### 7.AddPublicIp
 
 ​	**Action:AddPublicIp**
 
-​	**描述：**为已经购买的公网增加一个公网Ip段
+​	**描述：** 为已经购买的公网增加一个公网Ip段
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2211,11 +2211,11 @@ def modify_public_qos(publicId, qos):
 
 ```
 
-###8.DeletePublicIp
+### 8.DeletePublicIp
 
 ​	**Action:DeletePublicIp**
 
-​	**描述：**删除Vdc公网下的一个Ip段
+​	**描述：** 删除Vdc公网下的一个Ip段
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2259,7 +2259,7 @@ def modify_public_qos(publicId, qos):
 
 ​	**Action:DeletePublicNetwork**
 
-​	**描述：**删除Vdc下已经创建的公网Ip及带宽
+​	**描述：** 删除Vdc下已经创建的公网Ip及带宽
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2293,11 +2293,11 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
-###10.DeletePrivateNetwork
+### 10.DeletePrivateNetwork
 
 ​	**Action:DeletePrivateNetwork**
 
-​	**描述：**删除Vdc下已经创建的私网
+​	**描述：** 删除Vdc下已经创建的私网
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2331,11 +2331,11 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
-###11.RenewPublicNetwork
+### 11.RenewPublicNetwork
 
 ​	**Action:RenewPublicNetwork**
 
-​	**描述：**修改公网的自动续约为开或者关
+​	**描述：** 修改公网的自动续约为开或者关
 
 ​	**请求地址:** cdsapi.capitalonline.net/network
 
@@ -2374,11 +2374,11 @@ def modify_public_qos(publicId, qos):
 
 ## 其他公共接口
 
-###1.DescribeAvailableResource
+### 1.DescribeAvailableResource
 
 ​	**Action：DescribeAvailableResource**
 
-​	**描述：**查询节点下网络类型计费方式和云服务器类型
+​	**描述：** 查询节点下网络类型计费方式和云服务器类型
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -2561,7 +2561,7 @@ def get_region_goods(site_code):
 
 ​	**Action：DescribeTask**
 
-​	**描述：**查询任务状态
+​	**描述：** 查询任务状态
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
