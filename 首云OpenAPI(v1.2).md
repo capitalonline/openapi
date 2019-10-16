@@ -277,7 +277,7 @@ def delete_instance(vm_ids):
     return True
 ```
 
-###3. StopInstance
+### 3. StopInstance
 
 ​	**Action:StopInstance**
 
@@ -321,7 +321,7 @@ def delete_instance(vm_ids):
 
 ​	**Action：RebootInstance**
 
-​	**描述：**云服务器开机
+​	**描述：** 云服务器开机
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
