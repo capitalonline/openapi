@@ -110,15 +110,15 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
 ### 1.CreateInstance
 
-	**Action：** CreateInstance
+​	**Action：** CreateInstance
 
-	**描述** 创建一台或多台按量付费或者包年包月云服务器。
+​	**描述** 创建一台或多台按量付费或者包年包月云服务器。
 
-**请求地址:** cdsapi.capitalonline.net/ccs
+​	**请求地址:** cdsapi.capitalonline.net/ccs
 
-**请求方法：POST** 
+​	**请求方法：POST** 
 
-**请求参数:** 
+​	**请求参数:** 
 
 | 名称               | 类型     | 是否必选 | 示例                                                         | 描述                                                         |
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -139,14 +139,14 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PublicIp           | string   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 | PrivateIp          | string   | 否       | [{“PrivateID”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “ip”: [“10.0.0.2”, “10.0.0.3”, “10.0.0.4”]}] | 私网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配私网ip |
 
-** 返回参数: **
+**返回参数: **
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-** 错误码: **
+**错误码: **
 
 | httpcode | 错误码                                | 错误信息                                                     | 描述                                       |
 | -------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------ |
@@ -357,7 +357,7 @@ def delete_instance(vm_ids):
 }
 ```
 
-###5.ModifyInstanceChargeType
+### 5.ModifyInstanceChargeType
 
 ​	**Action：ModifyInstanceChargeType**
 
@@ -523,7 +523,7 @@ def add_disk(vm_id):
 
 ​	**Action：ResizeDisk**
 
-​	**描述：**扩容一块已经购买的硬盘
+​	**描述：** 扩容一块已经购买的硬盘
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -610,7 +610,7 @@ def add_disk(vm_id):
 
 ​	**Action：ResetImage**
 
-​	**描述：**云服务器重装系统
+​	**描述：** 云服务器重装系统
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -668,7 +668,7 @@ def reset_os(vm_id, os_id):
 
 ​	**Action：DescribeInstances**
 
-​	**描述：**查询云服务器信息
+​	**描述：** 查询云服务器信息
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -786,11 +786,11 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
 
 
 
-###12.ConnectNetworkInterface
+### 12.ConnectNetworkInterface
 
 ​	**Action：ConnectNetworkInterface**
 
-​	**描述：**连接网卡
+​	**描述：** 连接网卡
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -855,7 +855,7 @@ def up_card(InterfaceId, InstanceId):
 
 ​	**Action：DisconnectNetworkInterface**
 
-​	**描述：**断开网卡
+​	**描述：** 断开网卡
 
 ​	**请求方法：POST**
 
@@ -916,11 +916,11 @@ def down_card(InterfaceId, InstanceId):
 
 
 
-###14. ModifyIpAddress
+### 14. ModifyIpAddress
 
 ​	**Action：ModifyIpAddress**
 
-​	**描述：**为网卡绑定Ip地址或解绑Ip地址或修改Ip地址
+​	**描述：** 为网卡绑定Ip地址或解绑Ip地址或修改Ip地址
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
