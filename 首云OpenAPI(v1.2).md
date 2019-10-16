@@ -281,7 +281,7 @@ def delete_instance(vm_ids):
 
 ​	**Action:StopInstance**
 
-​	**描述:**云服务器关机
+​	**描述:** 云服务器关机
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -361,7 +361,7 @@ def delete_instance(vm_ids):
 
 ​	**Action：ModifyInstanceChargeType**
 
-​	**描述：**云服务器变更计费方式
+​	**描述：** 云服务器变更计费方式
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -404,7 +404,7 @@ def delete_instance(vm_ids):
 
 ​	**Action：ModifyInstanceSpec**
 
-​	**描述：**云服务器配置升级，更新cpu/内存
+​	**描述：** 云服务器配置升级，更新cpu/内存
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -460,11 +460,11 @@ def update_vm(vm_id):
     print result
 ```
 
-###7.CreateDisk
+### 7.CreateDisk
 
 ​	**Action：CreateDisk**
 
-​	**描述：**云服务器增加一块或者多块硬盘
+​	**描述：** 云服务器增加一块或者多块硬盘
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
