@@ -110,15 +110,15 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
 ### 1.CreateInstance
 
-​** Action：**CreateInstance
+** Action：** CreateInstance
 
-​** 描述：**创建一台或多台按量付费或者包年包月云服务器。
+** 描述：** 创建一台或多台按量付费或者包年包月云服务器。
 
-​** 请求地址: ** cdsapi.capitalonline.net/ccs
+** 请求地址: ** cdsapi.capitalonline.net/ccs
 
-​** 请求方法：POST **
+** 请求方法：POST ** 
 
-​** 请求参数: **
+** 请求参数: ** 
 
 | 名称               | 类型     | 是否必选 | 示例                                                         | 描述                                                         |
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
