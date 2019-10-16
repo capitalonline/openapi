@@ -565,11 +565,11 @@ def add_disk(vm_id):
 }
 ```
 
-###9.DeleteDisk
+### 9.DeleteDisk
 
 ​	**Action：DeleteDisk**
 
-​	**描述：**云服务器删除一块硬盘
+​	**描述：** 云服务器删除一块硬盘
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -2412,7 +2412,7 @@ def modify_public_qos(publicId, qos):
     "Data":{
         "WanGoods":[
             {
-                ""BillingMethod"":[
+                "BillingMethod":[
                     {
                         "MaxQos":500,
                         "Key":"Bandwidth"
