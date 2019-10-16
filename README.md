@@ -1,4 +1,4 @@
-首云Open API目录导航
+首云Open API目录
 =================
 
    * [首云公开API文档](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%A6%96%E4%BA%91%E5%85%AC%E5%BC%80api%E6%96%87%E6%A1%A3)
