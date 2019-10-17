@@ -2193,12 +2193,6 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 }
 ```
 
-​	**代码调用示例:**
-
-```python
-
-```
-
 ### 5.CreatePrivateNetwork
 
 ​	**Action:CreatePrivateNetwork**
