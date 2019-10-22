@@ -2945,7 +2945,7 @@ http://cdsapi.capitalonline.net/ccs/?SignatureVersion=1.0&Timestamp=2019-09-22T0
 
 
 
-###2.获取虚拟数据中心公网信息
+### 2.获取虚拟数据中心公网信息
 
 ​	**请求代码**
 
@@ -2999,7 +2999,7 @@ def descrive_public_qos(vdc_id):
 
 **注意:**返回格式为列表，一个虚拟数据中心下可同时存在过个公网
 
-###3.获取机器信息
+### 3.获取机器信息
 
 ​	**请求代码**
 
@@ -3119,10 +3119,10 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
 
 ```json
 {
-  'Message': 'Success.', 
-  'Code': 'Success', 
-  'Data': {}, 
-  'TaskId': '7424648'
+  "Message": "Success.", 
+  "Code": "Success", 
+  "Data": {}, 
+  "TaskId": "7424648"
 }
 ```
 
@@ -3163,10 +3163,10 @@ def modify_public_qos(publicId, qos):
 
 ```json
 {
-  'Code': 'Success', 
-  'Message': 'Success.', 
-  'Data': {}, 
-  'TaskId': '7424648'
+  "Message": "Success.", 
+  "Code": "Success", 
+  "Data": {}, 
+  "TaskId": "7424648"
 }
 ```
 
@@ -3235,6 +3235,44 @@ def get_status(task_id):
         print "task status error."
         return None
     return result.get("Data")
+```
+
+​	**返回示例**
+
+```json
+{
+  "Message": "Success.", 
+  "Code": "Success", 
+  "Data": {
+    "Status": "FINISH", 
+    "ResourceId": "1de33272-dcfb-11e9-8dd9-0242ac1107f9", 
+    "TaskType": "newOrderUpdateVM"
+  }, 
+  "TaskId": "60095b3a-dcfc-11e9-9f67-0242ac110002"
+}
+```
+
+### 8.定制模板
+
+​	**代码示例**
+
+```python
+def create_template(vm_id):
+    """
+    定制模板
+    @params: vm_id: 主机实例ID
+    """
+    action = "CreateTemplate"
+    method = "POST"
+    url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
+    body = {
+        "InstanceId": vm_id,
+        "DisplayName": "模板名称",
+        "PowerOn": False
+    }
+    res = requests.get(url, json=body)
+    result = json.loads(res.content)
+    print result
 ```
 
 ​	**返回示例**
