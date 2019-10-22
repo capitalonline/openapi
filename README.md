@@ -68,3 +68,4 @@
          * [5.修改公网带宽](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5修改公网带宽)
          * [6.修改云主机实例计费类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6修改云主机实例计费类型)
          * [7.获取任务状态](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7获取任务状态)
+         * [8.定制模板](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8定制模板)
