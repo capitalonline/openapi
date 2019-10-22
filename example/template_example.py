@@ -63,7 +63,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     url = url + '/?' + urllib.urlencode(D)
     return url
 
-def create_template(vm_id):
+def create_template(vm_id, name):
     """创建模板"""
 
     action = "CreateTemplate"
@@ -73,7 +73,7 @@ def create_template(vm_id):
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {
         "InstanceId": vm_id,
-        "DisplayName":"test-api-tpl3"
+        "DisplayName": name
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -102,8 +102,7 @@ def list_template():
     body = {
         "PageSize": 10,
         "PageNumber": 1,
-        "Keyword": "centos-openshift-3.11-beta2"
-        # "TemplateId":"74c76042-76ba-11e9-8962-0a580af412d2"
+        # "Keyword": "test"
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -128,9 +127,8 @@ def sync_template(template_id, region_id):
 
 if __name__ == "__main__":
 
-    vm_id = "50971028-e2a3-11e9-b380-de55f62159fe"
     # 1.定制模板
-    create_template(vm_id)
+    create_template(vm_id="xxxx", name="display_name")
 
     # 2.删除模板
     # delete_template(template_id, region_id)
