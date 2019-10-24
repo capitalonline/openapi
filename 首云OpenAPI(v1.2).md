@@ -54,6 +54,9 @@
          * [9.DeletePublicNetwork](#9deletepublicnetwork)
          * [10.DeletePrivateNetwork](#10deleteprivatenetwork)
          * [11.RenewPublicNetwork](#11renewpublicnetwork)
+      * [账单相关](#账单相关)
+         * [1.DescribeBill](#1describebill)
+         * [2.DescribeBillInfo](#2describebillinfo)
       * [其他公共接口](#其他公共接口)
          * [1.DescribeAvailableResource](#1describeavailableresource)
          * [2.<strong>DescribeTask</strong>](#2describetask)
@@ -1158,7 +1161,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+​	**请求方法：POST**
 
 ​	**请求参数：**
 
@@ -2519,6 +2522,231 @@ def modify_public_qos(publicId, qos):
 {
 "Code":"Success",
 "Message":"Success."
+}
+```
+
+## 账单相关
+
+### 1.DescribeBill
+
+   **Action: DescribeBill**
+
+​	**描述：** 查询账单
+
+   **请求地址:** cdsapi.capitalonline.net/billing
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值       | 描述       |
+| -------- | ------ | -------- | ------------ | ---------- |
+| DateFromTo | string | 是       | 2019.09.02 - 2019.09.03 | 账单区间("-"左右有一个空格) |
+
+   **返回参数：**
+
+| 名称            | 类型     | 示例值                               | 描述             |
+| :-------------- | -------- | :----------------------------------- | :--------------- |
+| Code            | Interger | Success                              | 错误码           |
+| Data            | string   |                                      |                  |
+| TotalMasterCost | Float    | 10.90                                | 主账户消费金额   |
+| TotalViceCost   | Float    | 11.92                                | 副账户消费金额   |
+| BillInfo        | List     | []                                   | 账单记录         |
+| RegionId        | String   | CN_Beijing_E                         | 节点ID           |
+| ResourceId      | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID           |
+| ResourceName    | String   | test                                 | 资源名称         |
+| ResourceType    | String   | vm                                   | 资源类型         |
+| TotalCost       | Float    | 9.62                                 | 该资源消费       |
+| VdcId           | String   | b420f679-80a7-44f7-bf08-6e3bfadf3400 | 虚拟数据中心ID   |
+| VdcName         | String   | testVdc                              | 虚拟数据中心名称 |
+| CreateTime      | String   | 2019-10-23 12:40:04                  | 创建时间         |
+| DeleteTime      | String   |                                      | 删除时间         |
+
+​	**错误码:**
+
+| httpcode | 错误码                    | 错误信息                                            | 描述                   |
+| -------- | ------------------------- | --------------------------------------------------- | ---------------------- |
+| 400      | InvalidPublicId.Malformed | The specified parameter   "PrivateID" is not valid. | 指定公网Id参数格式错误 |
+
+​	**返回示例:**
+
+```json
+{
+    "Code": "success",
+    "Data": {
+        "BillInfo": [
+            {
+                "CreateTime": "2019-10-23 12:40:04",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_E",
+                "ResourceId": "2e579aa0-f54f-11e9-814d-f6de00b3aa12",
+                "ResourceName": "prometheus_grafana",
+                "ResourceType": "vm",
+                "TotalCost": 9.62,
+                "VdcId": "b420f679-80a7-44f7-bf08-6e3bfadf3400",
+                "VdcName": "北京五"
+            },
+            {
+                "CreateTime": "2019-10-23 11:30:51",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_E",
+                "ResourceId": "82210d38-f545-11e9-b7e9-0242ac110002",
+                "ResourceName": "ip",
+                "ResourceType": "ip",
+                "TotalCost": 5.54,
+                "VdcId": "b420f679-80a7-44f7-bf08-6e3bfadf3400",
+                "VdcName": "北京五"
+            },
+            {
+                "CreateTime": "2019-10-23 11:30:51",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_E",
+                "ResourceId": "834db44a-f545-11e9-b7e9-0242ac110002",
+                "ResourceName": "公网1",
+                "ResourceType": "wan",
+                "TotalCost": 31.25,
+                "VdcId": "b420f679-80a7-44f7-bf08-6e3bfadf3400",
+                "VdcName": "北京五"
+            },
+            {
+                "CreateTime": "2019-10-23 11:13:21",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_C",
+                "ResourceId": "113222ee-f543-11e9-a759-0242ac110002",
+                "ResourceName": "ip",
+                "ResourceType": "ip",
+                "TotalCost": 5.67,
+                "VdcId": "78eef50b-4c3e-4854-9f77-ce33065a6905",
+                "VdcName": "test北京3"
+            },
+            {
+                "CreateTime": "2019-10-23 11:13:21",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_C",
+                "ResourceId": "11778992-f543-11e9-a759-0242ac110002",
+                "ResourceName": "公网1",
+                "ResourceType": "wan",
+                "TotalCost": 12.41,
+                "VdcId": "78eef50b-4c3e-4854-9f77-ce33065a6905",
+                "VdcName": "test北京3"
+            },
+            {
+                "CreateTime": "2019-10-22 10:31:23",
+                "DeleteTime": "",
+                "RegionId": "CN_Beijing_A",
+                "ResourceId": "0a45b9ca-f474-11e9-88e8-f6de00b3aa12",
+                "ResourceName": "jiao",
+                "ResourceType": "vm",
+                "TotalCost": 9.82,
+                "VdcId": "f5afe607-5848-41b3-9c15-d5ba8fc0721b",
+                "VdcName": "fasdfdsafa"
+            },
+            {
+                "CreateTime": "2019-04-19 15:22:43",
+                "DeleteTime": "2019-08-26 12:22:38",
+                "RegionId": "EUR_Netherlands_A",
+                "ResourceId": "49751",
+                "ResourceName": "template_STO",
+                "ResourceType": "template_STO",
+                "TotalCost": 2.66,
+                "VdcId": "",
+                "VdcName": ""
+            },
+            {
+                "CreateTime": "2017-09-28 15:35:52",
+                "DeleteTime": "",
+                "RegionId": "US_Dallas_A",
+                "ResourceId": "065201c1-0041-414d-97c8-d8415bd507a6",
+                "ResourceName": "GET请求",
+                "ResourceType": "oss",
+                "TotalCost": 0,
+                "VdcId": "",
+                "VdcName": ""
+            }
+        ],
+        "TotalMasterCost": 0,
+        "TotalViceCost": 76.97
+    },
+    "Message": "bill day query success",
+    "TaskId": ""
+}
+```
+
+### 2.DescribeBillInfo
+
+   **Action: DescribeBillInfo**
+
+​	**描述：** 查询账单
+
+   **请求地址:** cdsapi.capitalonline.net/billing
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述         |
+| ---------- | ------ | -------- | ------------------------------------ | ------------ |
+| DateFrom   | string | 是       | 2019.09.02                           | 账单开始时间 |
+| DateTo     | String | 是       | 2019.09.03                           | 账单结束时间 |
+| ResourceId | String | 是       | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID       |
+
+   **返回参数：**
+
+| 名称          | 类型     | 示例值                                                       | 描述             |
+| :------------ | -------- | :----------------------------------------------------------- | :--------------- |
+| Code          | Interger | Success                                                      | 错误码           |
+| Data          | string   |                                                              |                  |
+| TotalCost     | Float    | 9.62                                                         | 查询资源总消费   |
+| BillDetail    | List     | []                                                           | 账单记录         |
+| RegionId      | String   | CN_Beijing_E                                                 | 节点ID           |
+| ResourceId    | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12                         | 资源ID           |
+| ResourceName  | String   | test                                                         | 资源名称         |
+| ResourceType  | String   | vm                                                           | 资源类型         |
+| VdcId         | String   | b420f679-80a7-44f7-bf08-6e3bfadf3400                         | 虚拟数据中心ID   |
+| VdcName       | String   | testVdc                                                      | 虚拟数据中心名称 |
+| CreateTime    | String   | 2019-10-23 12:40:04                                          | 创建时间         |
+| Configuration | String   | 高性能云主机:系统硬盘:60GB,vCPU:4C,内存:8GB,操作系统:CDS-OS-CentOS7.6-64bit-General-V3 | 配置简介         |
+| CostDetail    | String   | 高性能云主机:系统硬盘:0E-8,vCPU:0.00202508,内存:0.01215040,操作系统:0E-8 | 消费详情         |
+| StartTime     | String   | 1571846400                                                   | 账单开始时间戳   |
+| EndTime       | String   | 1571846400                                                   | 账单结束时间戳   |
+| PayType       | String   | 1                                                            | 计费类型         |
+| PayDesc       | String   | 按需计费                                                     | 计费类型描述     |
+| Status        | String   | running                                                      | 资源状态         |
+| UnitPrice     | Float    | 0.01417548                                                   | 资源单价         |
+| IPs           | List     | []                                                           | IP列表           |
+
+​	**返回示例:**
+
+```json
+{
+    "Code": "success",
+    "Data": {
+        "BillDetail": [
+            {
+                "Configuration": "高性能云主机:系统硬盘:60GB,vCPU:4C,内存:8GB,操作系统:CDS-OS-CentOS7.6-64bit-General-V3",
+                "CostDetail": "高性能云主机:系统硬盘:0E-8,vCPU:0.00202508,内存:0.01215040,操作系统:0E-8",
+                "CreateTime": "2019-10-23 12:40:04",
+                "EndTime": 1571846400,
+                "IPs": [
+                    "118.186.60.2"
+                ],
+                "PayDesc": "按需计费",
+                "PayType": "1",
+                "RegionId": "CN_Beijing_E",
+                "ResourceId": "2e579aa0-f54f-11e9-814d-f6de00b3aa12",
+                "ResourceName": "prometheus_grafana",
+                "StartTime": 1571805679,
+                "Status": "running",
+                "TotalCost": 9.62,
+                "UnitPrice": 0.01417548,
+                "VdcId": "b420f679-80a7-44f7-bf08-6e3bfadf3400",
+                "VdcName": "北京五"
+            }
+        ],
+        "TotalCost": 9.62
+    },
+    "Message": "bill details query success",
+    "TaskId": ""
 }
 ```
 
