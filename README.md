@@ -34,6 +34,7 @@
          * [9.ModifySecurityGroupRule](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9modifysecuritygrouprule)
          * [10.JoinSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10joinsecuritygroup)
          * [11.LeaveSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11leavesecuritygroup)
+         * [12.ModifySecurityGroupRulePriority](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12modifysecuritygrouprulepriority)
       * [模板相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#模板相关)
          * [1.CreateTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createtemplate)
          * [2.DeleteTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletetemplate)
