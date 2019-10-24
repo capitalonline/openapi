@@ -1681,6 +1681,53 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
+### 12.ModifySecurityGroupRulePriority
+
+​	**Action：ModifySecurityGroupRulePriority**
+
+​	**描述：** 修改安全组规则优先级
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称            | 类型   | 是否必选 | 示例值                               | 描述                   |
+| --------------- | ------ | -------- | ------------------------------------ | ---------------------- |
+| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID               |
+| BindData        | String | 是       | [{"RuleId":"xxx", "Priority":"xxx"}] | 绑定数据               |
+| RuleId          | String | 是       | 76571028-e2a3-11e9-b380-de55f62159fe | (BindData中参数)规则ID |
+| Priority        | Int    | 否       | 1                                    | (BindData中参数)优先级 |
+
+​	**返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String | 7688573 | 任务ID   |
+
+​	**错误码：**
+
+| httpcode | 错误码                       | 错误信息                                              | 描述                   |
+| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
+
+​	**返回示例**
+
+```json
+{
+"Code":"Success",
+"Message":"Success.",
+"Data":{},
+"TaskId":"7688573"
+}
+```
+
+## 
+
 ## 模板相关
 
 ### 1.CreateTemplate
