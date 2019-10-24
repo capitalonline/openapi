@@ -1161,7 +1161,7 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+​	**请求方法：GET**
 
 ​	**请求参数：**
 
