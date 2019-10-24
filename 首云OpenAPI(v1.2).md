@@ -37,6 +37,7 @@
          * [9.ModifySecurityGroupRule](#9modifysecuritygrouprule)
          * [10.JoinSecurityGroup](#10joinsecuritygroup)
          * [11.LeaveSecurityGroup](#11leavesecuritygroup)
+         * [12.ModifySecurityGroupRulePriority](#12modifysecuritygrouprulepriority)
       * [模板相关](#模板相关)
          * [1.CreateTemplate](#1createtemplate)
          * [2.DeleteTemplate](#2deletetemplate)
