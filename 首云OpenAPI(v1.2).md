@@ -1253,6 +1253,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
 | --------------- | ------ | -------- | ------------------------------------ | -------- |
 | SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
+| RuleId          | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组规则ID |
 
 ​	**返回参数：**
 
@@ -1389,6 +1390,7 @@ def down_card(InterfaceId, InstanceId):
 | ----------------- | ------ | -------- | ------ | ----------------------------------------------------------- |
 | SecurityGroupType | String | 否       | public | 安全组类型(public/private),不填默认筛选所有类型的安全组列表 |
 | Keyword           | String | 否       | test   | 查询关键字                                                  |
+| SecurityGroupId   | String | 否       | xxxx   | 安全组ID                                                  |
 
 ​	**返回参数：**
 
