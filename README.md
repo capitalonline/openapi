@@ -52,6 +52,7 @@
          * [9.DeletePublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9deletepublicnetwork)
          * [10.DeletePrivateNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10deleteprivatenetwork)
          * [11.RenewPublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11renewpublicnetwork)
+         * [12.DescribeBandwidthTraffic](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12describebandwidthtraffic)
       * [账单相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#账单相关)
          * [1.DescribeBill](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebill)
          * [2.DescribeBillInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebillinfo)

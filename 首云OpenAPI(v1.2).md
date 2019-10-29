@@ -55,6 +55,7 @@
          * [9.DeletePublicNetwork](#9deletepublicnetwork)
          * [10.DeletePrivateNetwork](#10deleteprivatenetwork)
          * [11.RenewPublicNetwork](#11renewpublicnetwork)
+         * [12.DescribeBandwidthTraffic](#12describebandwidthtraffic)
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
          * [2.DescribeBillInfo](#2describebillinfo)
@@ -2086,11 +2087,11 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 
 ​	**请求参数：**
 
-| 名称          | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
-| ------------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的节点Id                                              |
-| VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id                       |
-| PublicNetwork | string | 否       | PublicNetword: {     "Name": "公网1",     "Type": "BGP_4", "BillingMethod": "BandwIdth", "Qos": 20, ''Ip':4, "AutoRenew":0, "FloatBandwich":200} | 参数不填写时默认不购买公网 Name:公网名称，不填写时默认写公网1 公网带宽类型，取值范围：       BGP_4(4线BGP)       BGP_2(双线BGP)       ChinaTelecom(电信)      AntIdDOS(防DDOS) BillingMethod：公网带宽计费方式，取值范围：      BandwIdth（固定带宽，默认）Traffic（流量按需）       DataPackage（流量包）      BandwIdth_95（95峰值） Qos：类型是固定带宽时，此处是公网带宽大小，最大500，步长5；类型是95峰值时，此处代表保底带宽，最大为500，步长50；类型是流量包时，代表流量包大小，单位是GB，最大是51200（50T) Ip：购买的Ip数量，可选参数:{4,8,16,32,64} 带宽类型为流量包和95峰值时，是否自动续费，1为自动续费（默认），0为不自动续费 公网类型为95峰值时，带宽大小的封顶带宽，为空时，默认为带宽大小的120% |
+| 名称          | 类型   | 是否必选 | 示例值                                                       | 描述                                   |
+| ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
+| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的节点Id                        |
+| VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
+| PublicNetwork | string | 否       | PublicNetword: {     "Name": "公网1",     "Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, ''Ip':4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
 
 ​	**返回参数：**
 
@@ -2137,8 +2138,8 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-        "RegionID": site_code,
-        "VDCName": vdc_name,
+        "RegionId": site_code,
+        "VdcName": vdc_name,
         "PublicNetwork": {
             "Name": vdc_name,
             "Type": wan_code,
@@ -2572,6 +2573,51 @@ def modify_public_qos(publicId, qos):
 {
 "Code":"Success",
 "Message":"Success."
+}
+```
+
+### 12.DescribeBandwidthTraffic
+
+​	**Action:DescribeBandwidthTraffic**
+
+​	**描述：** 获取网络最近五分钟流量
+
+​	**请求地址:** cdsapi.capitalonline.net/network
+
+​	**请求方法：GET**
+
+​	**请求参数：**
+
+| 名称      | 类型   | 是否必选 | 示例值                               | 描述                                                     |
+| --------- | ------ | -------- | ------------------------------------ | -------------------------------------------------------- |
+| NetworkId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 网络Id(若查询公网即为PublicId， 若查询私网即为PrivateId) |
+
+​	**返回参数：**
+
+| 名称 | 类型     | 示例值  | 描述     |
+| :--- | -------- | :------ | :------- |
+| Code | Interger | Success | 错误码   |
+| Data | string   | {}      | 返回数据 |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+| 400      | InvalidPublicId.Malformed | The specified parameter   "PublicId" is not valid. | 指定公网Id参数格式错误 |
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "LastFiveMinutesUsage": {
+            "Inbps": 0,
+            "Outbps": 107.467
+        },
+        "MaxQos": 5
+    },
+    "Message": "Success."
 }
 ```
 
