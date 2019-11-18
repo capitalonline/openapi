@@ -2268,7 +2268,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | VdcId  | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
 | Name   | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
 | Type   | string | 否       | auto                                 | 私网类型                        |
-| Addres | string | 否       | 192.168.0.0                          | 私网地址                        |
+| Address | string | 否       | 192.168.0.0                          | 私网地址                        |
 | Mask   | string | 否       | 16                                   | 私网掩码                        |
 
 ​	**返回参数：**
