@@ -59,6 +59,8 @@
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
          * [2.DescribeBillInfo](#2describebillinfo)
+      * [冷云计量相关](#冷云计量相关)
+         * [1.GetMetering](#GetMetering)
       * [其他公共接口](#其他公共接口)
          * [1.DescribeAvailableResource](#1describeavailableresource)
          * [2.DescribeTask](#2describetask)
