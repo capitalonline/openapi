@@ -2845,7 +2845,82 @@ def modify_public_qos(publicId, qos):
     "TaskId": ""
 }
 ```
+## 冷云计量相关
 
+### 1.GetMetering
+
+   **Action: GetMetering**
+
+​  **描述：** 获取客户一个或多个存储池计量信息
+
+   **请求地址:** cdsapi.capitalonline.net/ccs-product
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值       | 描述       |
+| -------- | ------ | -------- | ------------ | ---------- |
+| EndTime | string | 是       | "20191101" | 获取截止到EndTime的计量信息 |
+| Uid | string | 否       | "1001" | 单独获取这个存储池的计量信息 |
+
+   **返回参数：**
+
+| 名称            | 类型     | 示例值                               | 描述             |
+| :-------------- | -------- | :----------------------------------| :---------------|
+| Code            | string   | Success                            | 错误码           |
+| Message         | string   | uid不存在                           | 错误信息         |
+| Data            | string   | []                               | 客户计量信息      |
+
+​	**错误码:**
+
+| httpcode | 错误码                    | 错误信息                                            | 描述                   |
+| -------- | ------------------------- | --------------------------------------------------- | --------------------|
+| 400      | InvalidParamater          | 非法的CustomerId                                     | 非法的CustomerId。   |
+| 400      | InvalidParamater          | uid不存在                                            | uid不存在            |
+| 400      | InvalidParameter.IsNull   | 缺少必要参数                                          | 缺少必要参数          |
+​	**返回示例:**
+
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "Cold": 165.1226,
+            "Id": "2001",
+            "Name": "wlj_存储池1",
+            "TotalSize": "10240",
+            "Warm": 37.9796
+        }
+    ],
+    "Message": "Success."
+}
+```
+​	**请求调用示例**
+
+```python
+def get_metering(end_time, uid=None):
+    """
+    查询账号下的存储池计量信息
+    @params: end_time: 获取截止到end_time的计量信息
+    @params: uid: 要查询的存储池Id不传则是查询所有存储池计量信息
+    """
+    action = "GetMetering"
+    method = "GET"
+    param = {
+        "EndTime": end_time
+    }
+    if uid:
+        param.update({'Uid': uid})
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    if result.get("Code") != "Success":
+        # return result.get("Message")
+        return result
+    print(result)
+    return result.get("Data")
+```
 
 
 ## 其他公共接口
