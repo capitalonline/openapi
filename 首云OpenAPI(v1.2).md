@@ -25,6 +25,7 @@
          * [13.DisconnectNetworkInterface](#13disconnectnetworkinterface)
          * [14.ModifyIpAddress](#14modifyipaddress)
          * [15.DescribeInstanceMonitor](#15describeinstancemonitor)
+         * [16.StartInstance](#16startinstance)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -72,6 +73,8 @@
             * [公共模板](#公共模板)
       * [示例](#示例)
          * [1.获取请求url](#1获取请求url)
+         * [2.获取虚拟数据中心公网信息](#2获取虚拟数据中心公网信息)
+         * [3.获取机器信息](#3获取机器信息)
          * [4.创建云主机实例](#4创建云主机实例)
          * [5.修改公网带宽](#5修改公网带宽)
          * [6.修改云主机实例计费类型](#6修改云主机实例计费类型)
@@ -1106,6 +1109,46 @@ def down_card(InterfaceId, InstanceId):
         "Period": "60"
     },
     "Message": "Success."
+}
+```
+
+### 16. StartInstance
+
+​	**Action:StartInstance**
+
+​	**描述:** 云服务器开机
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：GET**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
+| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取 |
+
+​	**返回参数：**
+
+| 名称   | 类型   | 示例值                               | 描述   |
+| :----- | ------ | :----------------------------------- | :----- |
+| Code   | string | Success                              | 错误码 |
+| TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
+
+​	**返回示例:**
+
+```json
+{
+"Code":"Success",
+"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376",
 }
 ```
 
