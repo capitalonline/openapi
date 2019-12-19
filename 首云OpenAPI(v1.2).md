@@ -218,7 +218,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | string   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
-| PrivateIp          | string   | 否       | [{“PrivateID”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “ip”: [“10.0.0.2”, “10.0.0.3”, “10.0.0.4”]}] | 私网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配私网ip |
+| PrivateIp          | string   | 否       | [{“PrivateID”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0.3”, “10.0.0.4”]}] | 私网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配私网ip |
 
 **返回参数:**
 
