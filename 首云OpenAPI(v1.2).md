@@ -790,6 +790,8 @@ def reset_os(vm_id, os_id):
 | DataDisks               | string   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
 | PublicNetworkInterface  | string   |                                                              | 公网网卡信息              |
 | PrivateNetworkInterface | string   |                                                              | 私网网卡信息              |
+| Cpu                     | int      | 4                                                            | Cpu信息             |
+| Ram                     | int      | 4                                                            | Ram信息             |
 
 ​	**错误码：**
 
@@ -833,7 +835,9 @@ def reset_os(vm_id, os_id):
                 "PublicNetworkInterface":{},
                 "InstanceChargeType":"PostPaid",
                 "VdcName":"cdsApi-testaa",
-                "InstanceName":"root"
+                "InstanceName":"root",
+                "Cpu": 4,
+                "Ram": 4
             }
         ],
         "PageNumber":1,
@@ -3511,7 +3515,9 @@ def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
             },
             "InstanceChargeType":"PostPaid",
             "VdcName":"Beijing-TerraformTest",
-            "InstanceName":"TerraformTest"
+            "InstanceName":"TerraformTest",
+            "Cpu": 4,
+            "Ram": 4
         }
     ]
 }
