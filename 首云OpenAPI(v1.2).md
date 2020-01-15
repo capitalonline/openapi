@@ -2968,6 +2968,46 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
+**调用代码示例:**
+
+```python
+def CreateGPN(Qos, Name, PipeId1, PipeId2, VdcId1,VdcId2):
+    """
+    创建云互联组
+    :params Qos: 云互联组带宽
+    :params Name: 云互联组名称
+    :params Pipe1: 接入点1的私网编号
+    :params Pipe2: 接入点2的私网编号 
+    :params VdcId1: 接入点1的虚拟数据中心编号
+    :params VdcId2: 接入点2的虚拟数据中心编号
+    """
+    action = "CreateGPN"
+    method = "POST"
+    url = get_signature(action, AK, AccessKeySecret, method, CCS_URL, param={})
+    body = {
+        "Name": Name,
+        "Qos": Qos,
+        "AccessPoint": [
+            {
+                "VdcId": VdcId1,
+                "AccessPointType": "vdc",
+                "PipeId": PipeId1
+            },
+            {
+                "VdcId": VdcId2,
+                "AccessPointType": "vdc",
+                "PipeId": PipeId2
+            }
+        ],
+        "PopAccessPoint": []
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    if result.get("Code") != "Success":
+        print ("create GPN error: %s" % result.get("Message"))
+    return result.get("TaskId")
+```
+
 ### 18.DeleteGpn
    **Action:** DeleteGpn
 
