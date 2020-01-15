@@ -2694,18 +2694,18 @@ def modify_public_qos(publicId, qos):
 
 **返回参数:**
 
-| 名称     | 类型  | 示例                                | 描述  |
-|:---------|:-----|:-----------------------------------|:------|
-|Code      |String|Success                             |返回码  |
-|Data      |List  |[]                                  |返回数据|
-|GpnId     |String|c20a8424-26be-11ea-8333-0242ac110002|PipeId |
-|Qos       |Int   |300                                 |GPN带宽 |
-|Name      |Strint|北京-无锡                            |GPN名称 |
-|EvpnId    |Int   |12345                               |Evpn编号|
-|Status    |String|ok                                  |GPN状态 |
-|StatusStr |String|正常                                 |GPN状态 |
-|SubOrderId|String|425d533e-2d3d-11ea-93ed-0242ac110002|订单编号 |
-|JoinApps  |List  |[{<br>"PipeId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PipeId: 私网编号 <br>RegionId: 节点编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
+| 名称     | 类型  | 示例                                | 描述      |
+|:---------|:-----|:-----------------------------------|:----------|
+|Code      |String|Success                             |返回码      |
+|Data      |List  |[]                                  |返回数据    |
+|GpnId     |String|c20a8424-26be-11ea-8333-0242ac110002|云互联组编号 |
+|Qos       |Int   |300                                 |GPN带宽     |
+|Name      |Strint|北京-无锡                            |GPN名称     |
+|EvpnId    |Int   |12345                               |Evpn编号    |
+|Status    |String|ok                                  |GPN状态     |
+|StatusStr |String|正常                                 |GPN状态     |
+|SubOrderId|String|425d533e-2d3d-11ea-93ed-0242ac110002|订单编号     |
+|JoinApps  |List  |[{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PrivateId: 私网编号 <br>RegionId: 节点编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
 |JoinPops  |List  |[{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c",<br>"RegionId":"CN_Beijing_A", <br>CityId:城市编号 <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}]|PopId: POP编号 <br>RegionId: 节点编号 <br>PopName: Pop名称 <br>Qos:Pop带宽|
 
 
@@ -2727,7 +2727,7 @@ def modify_public_qos(publicId, qos):
                 {
                     "Address": "10.240.129.0",
                     "CityId": "713d3745-306d-11e7-9796-0050569b4d9c",
-                    "PipeId": "581d0c26-deb1-11e9-a055-0242ac110002",
+                    "PrivateId": "581d0c26-deb1-11e9-a055-0242ac110002",
                     "PrivateNet": "10.240.129.0/16~10.240.129.255/16",
                     "Qos": 5,
                     "RegionId": "CN_Taipei_A",
@@ -2737,7 +2737,7 @@ def modify_public_qos(publicId, qos):
                 {
                     "Address": "192.168.1.0",
                     "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
-                    "PipeId": "cb166f84-1d76-11ea-9c39-0242ac110002",
+                    "PrivateId": "cb166f84-1d76-11ea-9c39-0242ac110002",
                     "PrivateNet": "192.168.1.0/24",
                     "Qos": 5,
                     "RegionId": "CN_Beijing_A",
@@ -2747,7 +2747,7 @@ def modify_public_qos(publicId, qos):
                 {
                     "Address": "10.240.169.0",
                     "CityId": "123d0d01-306d-11e7-9796-0050569b4d9c",
-                    "PipeId": "c20a8424-26be-11ea-8333-0242ac110002",
+                    "PrivateId": "c20a8424-26be-11ea-8333-0242ac110002",
                     "PrivateNet": "10.240.169.0/16~10.240.169.255/16",
                     "Qos": 5,
                     "RegionId": "CN_Wuxi_A",
@@ -2781,7 +2781,7 @@ def modify_public_qos(publicId, qos):
 | 名称 | 类型 | 是否必选 | 示例 | 描述 |
 |:----:|:----:|:----:|:----|:----|
 |GpnId|String|是|c20a8424-26be-11ea-8333-0242ac110002|Gpn编号|
-|VdcAdd|list|否|[{<br>"VdcId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"PointType":"VDC", <br>"PipeId": "425d533e-2d3d-11ea-93ed-0242ac110002", <br>"CityId": "4257d33e-2d3d-11ea-93ed-0242ac110002"<br>}]|添加VDC接入点|
+|VdcAdd|list|否|[{<br>"VdcId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"PointType":"VDC", <br>"PrivateId": "425d533e-2d3d-11ea-93ed-0242ac110002", <br>"CityId": "4257d33e-2d3d-11ea-93ed-0242ac110002"<br>}]|添加VDC接入点|
 |PopAdd|list|否|[{<br>"PopId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"CityId":"4257d33e-2d3d-11ea-93ed-0242ac110002", <br>"PointType": "Pop"<br>}]|添加POP接入点<br>备注:PopAdd 和 VdcAdd不可同时为[]|
 
 
@@ -2872,7 +2872,7 @@ def modify_public_qos(publicId, qos):
 | Code          | String | Success                             | 返回码        |
 | Message       | String | Success                             | 返回信息      |
 | Data          | Dict   | {}                                  | 返回数据      |
-| PrivateNetwork| list   | [{"PipeId": "928ce33c-22f3-11ea-a1a1-0242ac11001a",<br>"Address": "10.241.7.0"}]|PipeId: 私网id<br>Address: 网段地址|
+| PrivateNetwork| list   | [{"PrivateId": "928ce33c-22f3-11ea-a1a1-0242ac11001a",<br>"Address": "10.241.7.0"}]|PrivateId: 私网id<br>Address: 网段地址|
 | CityId        | String | ea3ca775-306c-11e7-9796-0050569b4d9c| 城市编号       |
 | RegionId      | String | CN_Beijing_A                        | 地区编号       |
 | RegionName    | String | 北京1                                | 地区名称       |
@@ -2894,7 +2894,7 @@ def modify_public_qos(publicId, qos):
                 "PrivateNetwork": [
                     {
                         "Address": "10.241.60.0",
-                        "PipeId": "3b227ec6-1d77-11ea-bd0d-0242ac110002"
+                        "PrivateId": "3b227ec6-1d77-11ea-bd0d-0242ac110002"
                     }
                 ],
                 "RegionId": "CN_Beijing_A",
@@ -2908,7 +2908,7 @@ def modify_public_qos(publicId, qos):
                 "PrivateNetwork": [
                     {
                         "Address": "10.241.65.0",
-                        "PipeId": "1f4932a8-369a-11ea-8778-0242ac110002"
+                        "PrivateId": "1f4932a8-369a-11ea-8778-0242ac110002"
                     }
                 ],
                 "RegionId": "CN_Taipei_A",
@@ -2939,7 +2939,7 @@ def modify_public_qos(publicId, qos):
 |:----:|:----:|:----:|:----|:----|
 |Name|String|是|gpn|接入点名称|
 |Qos|Int|是|5|GPN带宽|
-|AccessPoint|list|是|[{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PipeId":""}]|Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PipeId:私网id|
+|AccessPoint|list|是|[{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}]|Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id|
 |PopAccessPoint|list|是|[{"AccessPointType":"pop",<br/>"PopId":"",<br/>"AccessPointType":"pop"}]|AccessPointType:接入点类型<br/>PopId:pop点id|
 
    **返回参数:**
@@ -2971,13 +2971,13 @@ def modify_public_qos(publicId, qos):
 **调用代码示例:**
 
 ```python
-def CreateGPN(Qos, Name, PipeId1, PipeId2, VdcId1,VdcId2):
+def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     """
     创建云互联组
     :params Qos: 云互联组带宽
     :params Name: 云互联组名称
-    :params Pipe1: 接入点1的私网编号
-    :params Pipe2: 接入点2的私网编号 
+    :params PrivateId1: 接入点1的私网编号
+    :params PrivateId2: 接入点2的私网编号 
     :params VdcId1: 接入点1的虚拟数据中心编号
     :params VdcId2: 接入点2的虚拟数据中心编号
     """
@@ -2991,12 +2991,12 @@ def CreateGPN(Qos, Name, PipeId1, PipeId2, VdcId1,VdcId2):
             {
                 "VdcId": VdcId1,
                 "AccessPointType": "vdc",
-                "PipeId": PipeId1
+                "PrivateId": PrivateId1
             },
             {
                 "VdcId": VdcId2,
                 "AccessPointType": "vdc",
-                "PipeId": PipeId2
+                "PrivateId": PrivateId2
             }
         ],
         "PopAccessPoint": []
