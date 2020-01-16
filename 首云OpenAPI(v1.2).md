@@ -2944,7 +2944,7 @@ def modify_public_qos(publicId, qos):
 |Name|String|是|gpn|接入点名称|
 |Qos|Int|是|5|GPN带宽|
 |AccessPoint|list|是|[{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}]|Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id|
-|PopAccessPoint|list|是|[{"AccessPointType":"pop",<br/>"PopId":"",<br/>"AccessPointType":"pop"}]|AccessPointType:接入点类型<br/>PopId:pop点id|
+|PopAccessPoint|list|是|[{"AccessPointType":"pop",<br/>"PopId":""}]|AccessPointType:接入点类型<br/>PopId:pop点id|
 
    **返回参数:**
 
