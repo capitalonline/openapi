@@ -57,6 +57,13 @@
          * [10.DeletePrivateNetwork](#10deleteprivatenetwork)
          * [11.RenewPublicNetwork](#11renewpublicnetwork)
          * [12.DescribeBandwidthTraffic](#12describebandwidthtraffic)
+         * [13.DescribeGPN](#13describegpn)
+         * [14.AddAccessPoint](#14addaccesspoint)
+         * [15.DeleteAccessPoint](#15deleteaccesspoint)
+         * [16.DescribeAccessInfo](#16describeaccessinfo)
+         * [17.CreateGPN](#17creategpn)
+         * [18.DeleteGPN](#18deletegpn)
+         
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
          * [2.DescribeBillInfo](#2describebillinfo)
@@ -2667,6 +2674,382 @@ def modify_public_qos(publicId, qos):
         "MaxQos": 5
     },
     "Message": "Success."
+}
+```
+
+### 13.DescribeGPN
+**Action:** DescribeGPN
+
+**描述:** 查询云互联组(以下简称GPN)
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法:** POST
+
+**请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----:|:----:|
+|AreaId|String|否|CN|区域编号|
+
+**返回参数:**
+
+| 名称     | 类型  | 示例                                | 描述      |
+|:---------|:-----|:-----------------------------------|:----------|
+|Code      |String|Success                             |返回码      |
+|Data      |List  |[]                                  |返回数据    |
+|GpnId     |String|c20a8424-26be-11ea-8333-0242ac110002|云互联组编号 |
+|Qos       |Int   |300                                 |GPN带宽     |
+|Name      |Strint|北京-无锡                            |GPN名称     |
+|EvpnId    |Int   |12345                               |Evpn编号    |
+|Status    |String|ok                                  |GPN状态     |
+|StatusStr |String|正常                                 |GPN状态     |
+|SubOrderId|String|425d533e-2d3d-11ea-93ed-0242ac110002|订单编号     |
+|JoinApps  |List  |[{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PrivateId: 私网编号 <br>RegionId: 节点编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
+|JoinPops  |List  |[{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}]|PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽|
+
+
+**错误码:**
+
+| httpcode | 错误码| 错误信息 | 描述|
+|:----:|:----:|:----:|:----:|
+| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  | 指定GpnId参数格式错误  |
+
+**返回示例**
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "EvpnId": 14105,
+            "GpnId": "d91cc8a6-306a-11ea-ae2f-0242ac110002",
+            "JoinApps": [
+                {
+                    "Address": "10.240.129.0",
+                    "CityId": "713d3745-306d-11e7-9796-0050569b4d9c",
+                    "PrivateId": "581d0c26-deb1-11e9-a055-0242ac110002",
+                    "PrivateNet": "10.240.129.0/16~10.240.129.255/16",
+                    "Qos": 5,
+                    "RegionId": "CN_Taipei_A",
+                    "VdcId": "206305c4-6b1e-4eef-a582-352216b3b48c",
+                    "VdcName": "CDS-API台湾"
+                },
+                {
+                    "Address": "192.168.1.0",
+                    "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
+                    "PrivateId": "cb166f84-1d76-11ea-9c39-0242ac110002",
+                    "PrivateNet": "192.168.1.0/24",
+                    "Qos": 5,
+                    "RegionId": "CN_Beijing_A",
+                    "VdcId": "179d1487-38dd-4656-9553-e1527bf183b2",
+                    "VdcName": "CDS-API北京"
+                },
+                {
+                    "Address": "10.240.169.0",
+                    "CityId": "123d0d01-306d-11e7-9796-0050569b4d9c",
+                    "PrivateId": "c20a8424-26be-11ea-8333-0242ac110002",
+                    "PrivateNet": "10.240.169.0/16~10.240.169.255/16",
+                    "Qos": 5,
+                    "RegionId": "CN_Wuxi_A",
+                    "VdcId": "72e2157d-4568-4c24-8585-8865f1683a10",
+                    "VdcName": "CDS-API无锡"
+                }
+            ],
+            "JoinPops": null,
+            "Name": "CDS-API-GPN",
+            "Qos": 5,
+            "Status": "ok",
+            "StatusStr": "正常",
+            "SubOrderId": "280dfb38-306b-11ea-85b1-1e50f85e211b"
+        }
+    ],
+    "Message": "Success."
+}
+```
+
+### 14.AddAccessPoint
+**Action:** AddAccessPoint
+
+**描述:** 云互联组增加接入点
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法:** POST
+
+**请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----|:----|
+|GpnId|String|是|c20a8424-26be-11ea-8333-0242ac110002|Gpn编号|
+|VdcAdd|list|否|[{<br>"VdcId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"PointType":"VDC", <br>"PrivateId": "425d533e-2d3d-11ea-93ed-0242ac110002", <br>"CityId": "4257d33e-2d3d-11ea-93ed-0242ac110002"<br>}]|添加VDC接入点|
+|PopAdd|list|否|[{<br>"PopId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"CityId":"4257d33e-2d3d-11ea-93ed-0242ac110002", <br>"PointType": "Pop"<br>}]|添加POP接入点<br>备注:PopAdd 和 VdcAdd不可同时为[]|
+
+
+**返回参数:**
+
+| 名称 | 类型 | 示例 | 描述 |
+|:----|:----|:----|:----|
+|Code|String|Success|返回码|
+|Data|Dict|{}|返回数据|
+
+
+**错误码：**
+
+| httpcode | 错误码 | 错误信息  | 描述 |
+| ---- | ---- | ---- | ---- |
+| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  |  指定GpnId参数格式错误 |
+| 400 | InvalidVdcID.Malformed | The specified parameter "VdcId" is not valid.  |  指定VdcId参数格式错误 |
+
+
+**返回示例**
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": 3247486
+}
+```
+### 15.DeleteAccessPoint
+**Action:** DeleteAccessPoint
+
+**描述:** 云互联组删除接入点
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法:** POST
+
+**请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----|:----|
+|GpnId|String|是|c20a8424-26be-11ea-8333-0242ac110002|Gpn编号|
+|DelPoints|Array|是|["c20a8424-26be-11ea-8333-0242ac110002", <br>"c20a8424-26be-11ea-8333-0242ac110002"<br>]|删除接入点|
+
+
+**返回参数:**
+
+| 名称 | 类型 | 示例 | 描述 |
+|:----|:----|:----|:----|
+|Code|String|Success|返回码|
+|Message|String|Success|返回信息|
+|Data|Dict|{}|返回数据|
+|TaskId|String|111|任务编号|
+
+**错误码：**
+
+| httpcode | 错误码 | 错误信息  | 描述 |
+| ---- | ---- | ---- | ---- |
+| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  | 指定GpnId参数格式错误  | 指定云互联组Id参数格式错误 |
+
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": 3247486
+}
+```
+
+### 16.DescribeAccessInfo
+**Action:** DescribeAccessInfo
+
+**描述:** 查询GPN接入点信息
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法:** POST
+
+**请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----:|:----:|
+|Type|String|是|vdc|接入点类型(vdc/pop)|
+
+**返回参数:**
+
+| 名称          | 类型    | 示例                                | 描述          |
+|:-------------:|:------:|:------------------------------------|:------------:|
+| Code          | String | Success                             | 返回码        |
+| Message       | String | Success                             | 返回信息      |
+| Data          | Dict   | {}                                  | 返回数据      |
+| PrivateNetwork| list   | [{"PrivateId": "928ce33c-22f3-11ea-a1a1-0242ac11001a",<br>"Address": "10.241.7.0"}]|PrivateId: 私网id<br>Address: 网段地址|
+| CityId        | String | ea3ca775-306c-11e7-9796-0050569b4d9c| 城市编号       |
+| RegionId      | String | CN_Beijing_A                        | 地区编号       |
+| RegionName    | String | 北京1                                | 地区名称       |
+| VdcId         | String | 179d1487-38dd-4656-9553-e1527bf183b2| 虚拟数据中心id  |
+| VdcName       | String | vdc1                                | 虚拟数据中心名称 |
+| ZoneName      | String | 中国大陆                             | 大区名称        |
+
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Pop": null,
+        "Vdc": [
+            {
+                "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
+                "PrivateNetwork": [
+                    {
+                        "Address": "10.241.60.0",
+                        "PrivateId": "3b227ec6-1d77-11ea-bd0d-0242ac110002"
+                    }
+                ],
+                "RegionId": "CN_Beijing_A",
+                "RegionName": "北京1",
+                "VdcId": "179d1487-38dd-4656-9553-e1527bf183b2",
+                "VdcName": "CDS-API-BJ",
+                "ZoneName": "中国大陆"
+            },
+            {
+                "CityId": "713d3745-306d-11e7-9796-0050569b4d9c",
+                "PrivateNetwork": [
+                    {
+                        "Address": "10.241.65.0",
+                        "PrivateId": "1f4932a8-369a-11ea-8778-0242ac110002"
+                    }
+                ],
+                "RegionId": "CN_Taipei_A",
+                "RegionName": "台北1",
+                "VdcId": "206305c4-6b1e-4eef-a582-352216b3b48c",
+                "VdcName": "CDS-API-TB",
+                "ZoneName": "亚太地区"
+            }
+        ]
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+```
+
+### 17.CreateGpn
+   **Action:** CreateGPN
+
+   **描述:** 创建GPN
+
+   **请求地址:** cdsapi.capitalonline.net/network
+
+   **请求方法:** POST
+
+   **请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----|:----|
+|Name|String|是|gpn|接入点名称|
+|Qos|Int|是|5|GPN带宽|
+|AccessPoint|list|是|[{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}]|Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id|
+|PopAccessPoint|list|是|[{"AccessPointType":"pop",<br/>"PopId":""}]|AccessPointType:接入点类型<br/>PopId:pop点id|
+
+   **返回参数:**
+
+| 名称 | 类型 | 示例 | 描述 |
+|:----:|:----:|:----|:----:|
+|Code|String|Success|返回码|
+|Message|String|Success|返回信息|
+|Data|Dict|{}|返回数据|
+|TaskId|String|111|任务编号|
+
+   **错误码：**
+
+| httpcode | 错误码 | 错误信息  | 描述 |
+| ---- | ---- | ---- | ---- |
+
+
+   **返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": 3247486
+}
+```
+
+**调用代码示例:**
+
+```python
+def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
+    """
+    创建云互联组
+    :params Qos: 云互联组带宽
+    :params Name: 云互联组名称
+    :params PrivateId1: 接入点1的私网编号
+    :params PrivateId2: 接入点2的私网编号 
+    :params VdcId1: 接入点1的虚拟数据中心编号
+    :params VdcId2: 接入点2的虚拟数据中心编号
+    """
+    action = "CreateGPN"
+    method = "POST"
+    url = get_signature(action, AK, AccessKeySecret, method, CCS_URL, param={})
+    body = {
+        "Name": Name,
+        "Qos": Qos,
+        "AccessPoint": [
+            {
+                "VdcId": VdcId1,
+                "AccessPointType": "vdc",
+                "PrivateId": PrivateId1
+            },
+            {
+                "VdcId": VdcId2,
+                "AccessPointType": "vdc",
+                "PrivateId": PrivateId2
+            }
+        ],
+        "PopAccessPoint": []
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    if result.get("Code") != "Success":
+        print ("create GPN error: %s" % result.get("Message"))
+    return result.get("TaskId")
+```
+
+### 18.DeleteGpn
+   **Action:** DeleteGpn
+
+   **描述:** 删除一个GPN
+
+   **请求地址:** cdsapi.capitalonline.net/gpn
+
+   **请求方法:** POST
+
+   **请求参数:**
+
+| 名称 | 类型 | 是否必选 | 示例 | 描述 |
+|:----:|:----:|:----:|:----:|:----|
+|GpnId|String|是|fjdgh90-98fhd78-kh487|GPN编号|
+
+   **返回参数:**
+
+| 名称 | 类型 | 示例 | 描述 |
+|:----:|:----:|:----|:----:|
+|Code|String|Success|返回码|
+|Message|String|Success|返回信息|
+|Data|Dict|{}|返回数据|
+|TaskId|String|111|任务编号|
+
+   **错误码：**
+
+| httpcode | 错误码 | 错误信息  | 描述 |
+| ---- | ---- | ---- | ---- |
+
+
+   **返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": 3247486
 }
 ```
 
