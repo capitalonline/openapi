@@ -765,7 +765,7 @@ def reset_os(vm_id, os_id):
 | PageNumber | Integer | 否       | 1                                                            | Vdc列表的页码。起始值：1   默认值：1，默认每页显示10个Vdc的详细信息 |
 | VdcId      | string  | 否       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d                         | 云服务器所属的Vdc                                            |
 | InstanceId | string  | 否       | ["f9053ea8-fc23-4032-8a7f-01def77b4cc0","a67644ba-873f-11e9-bf49-0242ac1104e7"] | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| PublicIp   | string  | 否       | 101.251.1.1                                                  | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址    |
+| PublicIp   | array  | 否       | ["101.251.1.1"]                                                  | 公网Ip     |
 | PageSize   | int     | 否       | 10                                                           | 每页返回数量                                                 |
 
 ​	**返回参数:**
