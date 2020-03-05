@@ -26,6 +26,12 @@
          * [14.ModifyIpAddress](#14modifyipaddress)
          * [15.DescribeInstanceMonitor](#15describeinstancemonitor)
          * [16.StartInstance](#16startinstance)
+         * [17.ModifyInstanceName](#17modifyinstancename)
+         * [18.DescribeTags](#18describetags)
+         * [19.CreateTag](#19createtag)
+         * [20.DeleteTag](#20deletetag)
+         * [21.AddInstancesTags](#21addinstancestags)
+         * [22.DeleteInstancesTags](#22deleteinstancestags)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -63,6 +69,7 @@
          * [16.DescribeAccessInfo](#16describeaccessinfo)
          * [17.CreateGPN](#17creategpn)
          * [18.DeleteGPN](#18deletegpn)
+         * [19.ModifyVdcName](#19modifyvdcname)
          
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
@@ -797,8 +804,9 @@ def reset_os(vm_id, os_id):
 | DataDisks               | string   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
 | PublicNetworkInterface  | string   |                                                              | 公网网卡信息              |
 | PrivateNetworkInterface | string   |                                                              | 私网网卡信息              |
-| Cpu                     | int      | 4                                                            | Cpu信息             |
-| Ram                     | int      | 4                                                            | Ram信息             |
+| Cpu                     | int      | 4                                                            | Cpu信息                   |
+| Ram                     | int      | 4                                                            | Ram信息                   |
+| Tags                    | list     | [{"TagId":"1234","TagName":"tag_abc"}]                       | 云主机资源的标签信息      |
 
 ​	**错误码：**
 
@@ -844,12 +852,20 @@ def reset_os(vm_id, os_id):
                 "VdcName":"cdsApi-testaa",
                 "InstanceName":"root",
                 "Cpu": 4,
-                "Ram": 4
-            }
+                "Ram": 4,
+                "Tags": [
+                  {
+                    "TagId": "123",
+                    "TagName": "tag_abc"
+                  }
+                ],
+                "VdcId": "c603ee06-cef3-439d-bdea-fd72768ecb77",
+                "VdcName": "test-j"
+              } 
         ],
         "PageNumber":1,
         "PageCount":1
-    },
+    }
 }
 ```
 
@@ -1160,8 +1176,249 @@ def down_card(InterfaceId, InstanceId):
 
 ```json
 {
-"Code":"Success",
-"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376",
+    "Code":"Success",
+    "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
+}
+```
+
+### 17.ModifyInstanceName
+
+**Action:ModifyInstanceName**
+
+**描述：** 修改云主机名称
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称         | 类型   | 是否必选 | 示例值                               | 描述                                         |
+| ------------ | ------ | -------- | ------------------------------------ | -------------------------------------------- |
+| InstanceId   | string |   是     | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
+| InstanceName | string |   是     | shouduzaixhost                       | 云服务器的主机名                             |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**错误码：**
+
+| httpcode | 错误码                                | 错误信息                                                              | 描述                           |
+| -------- | ------------------------------------- | --------------------------------------------------------------------- | ------------------------------ |
+| 403      | IncorrectInstanceStatus               | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound                      | the Instance has   deleted                                            | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceID.Malformed           | The specified parameter   "InstanceID" is not valid.                  | 指定云服务器ID参数格式错误     |
+| 400      | InvalidInstanceType.ValueUnauthorized | The  specified InstanceType is not authorized.                        | 指定的云主机规格未授权使用。   |
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
+}
+```
+
+### 18.DescribeTags
+
+**Action:DescribeTags**
+
+**描述：** 获取用户标签
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+不需要额外参数
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**错误码：**
+
+| httpcode | 错误码                   | 错误信息                                                              | 描述                           |
+| -------- | ------------------------ | --------------------------------------------------------------------- | ------------------------------ |
+| 403      | IncorrectInstanceStatus  | The current status of the resource does not support this operation.   | 该资源目前的状态不支持此操作。 |
+
+**返回示例：**
+
+```json
+{
+  "Message": "Success.",
+  "Code": "Success",
+  "Data": [
+    {
+      "TagId": 257,
+      "TagName": "sdfasdfasdfasdf"
+    },
+    {
+      "TagId": 263,
+      "TagName": "abcd1234xxx"
+    },
+    {
+      "TagId": 266,
+      "TagName": "testonly_label_1"
+    }
+  ]
+}
+```
+
+### 19.CreateTag
+
+**Action: CreateTag**
+
+**描述：** 创建用户标签
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值 | 描述     |
+| ------- | ------ | -------- | ------ | -------- |
+| TagName | string |    是    |  abcd  | 标签名称 |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
+}
+```
+
+### 20.DeleteTag
+
+**Action: DeleteTag**
+
+**描述：** 删除用户标签
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值 | 描述     |
+| ------- | ------ | -------- | ------ | -------- |
+| TagId   | string |    是    |        | 标签Id   |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**错误码：**
+
+| httpcode | 错误码 | 错误信息                      | 描述                   |
+| -------- | ------ | ----------------------------- | ---------------------- |
+| 400      | 20101  | 当前有云主机 xxx 正在使用标签 | 有有云主机正在使用标签 |
+
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
+}
+```
+
+### 21.AddInstancesTags
+
+**Action: AddInstancesTags**
+
+**描述：** 为云主机添加标签
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | --------------- |
+| InstanceIds | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs       |
+| AddTagIds   | string |    否    | "123,456"                                                                   | 被添加标签的IDs |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
+}
+```
+
+### 22.DeleteInstancesTags
+
+**Action: DeleteInstancesTags**
+
+**描述：** 删除云主机标签
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| InstanceIds | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs           |
+| DelTagIds   | string |    否    | "123,456"                                                                   | 需要被删除的标签IDs |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
 }
 ```
 
@@ -3050,6 +3307,49 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     "Data": {},
     "Message": "Success.",
     "TaskId": 3247486
+}
+```
+
+### 19.ModifyVdceName
+
+**Action：ModifyVdcName**
+
+**描述：** 修改VDC名称
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值                               | 描述               |
+| ------- | ------ | -------- | ------------------------------------ | -----------------  |
+| VdcId   | string |   是     | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 虚拟数据中心的编号 |
+| VdcName | string |   是     | shouduzaixhost                       | 虚拟数据中心的名称 |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+**错误码：**
+
+| httpcode | 错误码                 | 错误信息                                                              | 描述                           |
+| -------- | ---------------------- | --------------------------------------------------------------------- | ------------------------------ |
+| 403      | IncorrectVdcStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | VdcNotFound            | the Vdc has   deleted                                                 | 指定的Vdc已被删除              |
+| 400      | InvalidVdcId.Malformed | The specified parameter   "VdcId" is not valid.                       | 指定VdcId参数格式错误          |
+
+**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "Success.",
+  "TaskId": ""
 }
 ```
 
