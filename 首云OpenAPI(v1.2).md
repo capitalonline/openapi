@@ -3982,6 +3982,7 @@ def get_status(task_id):
 | 客户专用带宽   | Customer_Specific_Bandwidth        |
 | VIP专用带宽    | Bandwidth_VIP_Dedicated            |
 | 全球优化BGP    | Globally_Optimized_BGP             |
+| BGP优化    | Bandwidth_BGP_Optimized             |
 
 ## 附件四
 
