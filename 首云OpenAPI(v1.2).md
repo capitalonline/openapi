@@ -3370,6 +3370,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | 名称     | 类型   | 是否必选 | 示例值       | 描述       |
 | -------- | ------ | -------- | ------------ | ---------- |
 | DateFromTo | string | 是       | 2019.09.02 - 2019.09.03 | 账单区间("-"左右有一个空格) |
+| Currency | string | 否       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
 
    **返回参数：**
 
@@ -3517,6 +3518,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | DateFrom   | string | 是       | 2019.09.02                           | 账单开始时间 |
 | DateTo     | String | 是       | 2019.09.03                           | 账单结束时间 |
 | ResourceId | String | 是       | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID       |
+| Currency | string | 否       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
 
    **返回参数：**
 
