@@ -4257,7 +4257,7 @@ def describe_bms_vnc(BaremetalId):
 | Code    | string | Success  | 错误码   |
 | Message | string | Automatic renewal of order has been opened  | 提示信息 |
 | Data    | list   | []       | 返回数据  |
-| Suborder_ids | list | ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"] | 子订单Id |
+| SuborderIds | list | ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"] | 子订单Id |
 
 
 **错误码：**
@@ -4278,7 +4278,7 @@ def describe_bms_vnc(BaremetalId):
   "Message": "Success.",
   "Data": [
       {
-        "Suborder_ids": 
+        "SuborderIds": 
             ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"]
       }
   ]
