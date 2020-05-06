@@ -3366,7 +3366,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 ## 裸金属相关
 
-### 1. DescribeBmsGoods
+### 1.DescribeBmsGoods
 
 **Action: DescribeBmsGoods**
 
@@ -3484,7 +3484,7 @@ def describe_bms_goods(RegionId):
 
 
 
-### 2. DescribeBmsGoodsPrice
+### 2.DescribeBmsGoodsPrice
 
 **Action: DescribeBmsGoodsPrice**
 
@@ -3560,7 +3560,7 @@ def describe_bms_price():
     result = json.loads(res.content)
 ```
 
-### 3. DescribeBmsImage
+### 3.DescribeBmsImage
 
 **Action: DescribeBmsImage**
 
@@ -3655,7 +3655,7 @@ def describe_bms_images():
     result = json.loads(res.content)
 ```
 
-### 4. CreateBmsInstance
+### 4.CreateBmsInstance
 
 **Action: CreateBmsInstance**
 
@@ -3757,7 +3757,7 @@ def create_bms_instance():
 ```
 
 
-### 5. DescribeBms
+### 5.DescribeBms
 
 **Action: DescribeBms**
 
@@ -3879,7 +3879,7 @@ def describe_bms_list():
 ```
 
 
-### 6. DescribeBmsDetail
+### 6.DescribeBmsDetail
 
 **Action: DescribeBmsDetail**
 
@@ -4029,7 +4029,7 @@ def describe_bms_detail(id):
 
 
 
-### 7. DescribeBmsPower
+### 7.DescribeBmsPower
 
 **Action: DescribeBmsPower**
 
@@ -4100,7 +4100,7 @@ def operat_bms_power(id, state):
 
 
 
-### 8. ReinstallBms
+### 8.ReinstallBms
 
 **Action: ReinstallBms**
 
@@ -4170,7 +4170,7 @@ def operat_bms_reinstall(id, image_id, passwd):
 
 
 
-### 9. DescribeBmsVNC
+### 9.DescribeBmsVNC
 
 **Action: DescribeBmsVNC**
 
@@ -4230,7 +4230,7 @@ def describe_bms_vnc(BaremetalId):
 
 
 
-### 10. ModifyBmsOrder
+### 10.ModifyBmsOrder
 
 **Action: ModifyBmsOrder**
 
