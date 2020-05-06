@@ -70,6 +70,17 @@
          * [17.CreateGPN](#17creategpn)
          * [18.DeleteGPN](#18deletegpn)
          * [19.ModifyVdcName](#19modifyvdcname)
+      * [裸金属相关](#裸金属相关)
+         * [1. DescribeBmsGoods](#1-describebmsgoods)
+         * [2. DescribeBmsGoodsPrice](#2-describebmsgoodsprice)
+         * [3. DescribeBmsImage](#3-describebmsimage)
+         * [4. CreateBmsInstance](#4-createbmsinstance)
+         * [5. DescribeBms](#5-describebms)
+         * [6. DescribeBmsDetail](#6-describebmsdetail)
+         * [7. DescribeBmsPower](#7-describebmspower)
+         * [8. ReinstallBms](#8-ReinstallBms)
+         * [9. DescribeBmsVNC](#9-describebmsvnc)
+         * [10. ModifyBmsOrder](#10-modifybmsorder)  
          
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
@@ -3351,6 +3362,943 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
   "Message": "Success.",
   "TaskId": ""
 }
+```
+
+## 裸金属相关
+
+### 1. DescribeBmsGoods
+
+**Action: DescribeBmsGoods**
+
+**描述:** 查询裸金属商品列表
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | CN_Beijing_F                 | 可用区编号 |
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| PrePaid     | list   | []                                 | 预付费，包年包月商品列表 PostPaid         |
+| PostPaid    | list   | null                               | 按量付费商品列表           |
+| GoodsId     | int    | 6034                               | 商品ID           |
+| GoodsName   | string | 裸金属测试产品v1                     | 商品名称           |
+| Computes    | list   | []                                 | 商品里产品配置信息            |
+| Id（Computes） | string | f59c9873-b57d-43e8-94c3-3ed0ba3550b0 | 产品配置Id         |
+| CpuInfo     | string | Intel Xeon Silver 4110*2           | CPU信息          |
+| Cpu         | int    | 32                                 | CPU个数           |
+| Ram         | int    | 64                                 | 内存大小           |
+| Frequency   | string | 2.1GHz                             | 主频           |
+| Disks       | list   | []                                 | 本地盘信息           |
+| Id（Disks） | string | 8e857eb1-c8c1-4c73-9bc3-ea200121ed1a | 本地盘Id         |
+| Type        | string | SSD                               | 磁盘类型           |
+| Capacity    | int    | 480                               | 容量           |
+| Count       | int    | 1                                 | 个数           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "PostPaid": [
+            {
+                "Computes": [
+                    {
+                        "Cpu": 32,
+                        "CpuInfo": "Intel Xeon Silver 4110",
+                        "Disks": [
+                            {
+                                "Capacity": 480,
+                                "Count": 1,
+                                "Id": "ab72e15b-f3ab-4448-9094-ab271813f405",
+                                "Type": "SSD"
+                            }
+                        ],
+                        "Frequency": "2.1GHz",
+                        "Id": "8fbdb61e-b941-46db-89f6-f8953b278ec9",
+                        "Ram": 64
+                    }
+                ],
+                "GoodsId": 7685,
+                "GoodsName": "裸金属-02SS01（公测）"
+            }
+        ],
+        "PrePaid": [            
+            {
+                "Computes": [
+                    {
+                        "Cpu": 32,
+                        "CpuInfo": "Intel Xeon Silver 6148",
+                        "Disks": [
+                            {
+                                "Capacity": 3200,
+                                "Count": 1,
+                                "Id": "d7a3f7ef-98e1-417c-a7e4-a5720e273f67",
+                                "Type": "NVME"
+                            }
+                        ],
+                        "Frequency": "3.5GHz",
+                        "Id": "1b69ecca-453c-4535-8c96-16edf1ec6da9",
+                        "Ram": 64
+                    }
+                ],
+                "GoodsId": 7793,
+                "GoodsName": "裸金属-03SA03（公测）"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_bms_goods(RegionId):
+    action = "DescribeBmsGoods"
+    method = "GET"
+    param = {
+        "RegionId": RegionId
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+```
+
+
+
+### 2. DescribeBmsGoodsPrice
+
+**Action: DescribeBmsGoodsPrice**
+
+**描述:** 计算裸金属商品价格
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述         |
+| ------------------ | ------- | ----- | ------------------------------------ | ------------ |
+| RegionId           | string  | 是   | CN_Beijing_F                           | 可用区编号 |
+| GoodsId            | int     | 是   | 7955                                   | 商品ID |
+| ComputeId          | string  | 是   | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469   | 规格配置ID |
+| InstanceChargeType | string  | 是   | PrePaid                                | 付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid：按量付费。 目前只支持包年包月 |
+| PrepaidMonth       | int     | 是   | 1                                      | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| Amount             | int     | 是   | 10                                     | 指定创建裸金属服务器的数量，默认取值：1 |
+
+
+**返回数据：**
+
+| 名称        | 类型   | 示例                                | 描述          |
+| ----------- | ----- | ---------------------------------- | ------------ |
+| Code        | string |  Success                            | 返回状态码: Success: 成功 |
+| Message     | string |  Success                            | 返回信息 |
+| Data        | object |  {}                                 | 返回数据            |
+| TradeAmount | string |  6660.00                            | 交易价格           |
+| UnitPrice   | string |  666.00                             | 单价          |
+| Currency    | string |  CN                                 | 结算方式,CN:人命币 US:美元            |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| 400      | DataNotExists              | Please check that the parameters are correct.      |  请检查参数是否正确。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "Currency": "CN",
+        "TradeAmount": "0.79",
+        "UnitPrice": "10000.00"
+    }
+}
+```
+
+ **代码调用示例**
+ ```python
+def describe_bms_price():
+    action = "DescribeBmsGoodsPrice"
+    method = "POST"
+    param = {
+        "RegionId": "CN_Beijing_F",
+        "InstanceChargeType": "PrePaid",
+        "ComputeId": "8fbdb61e-b941-46db-89f6-f8953b278ec9",
+        "PrepaidMonth":1,
+        "GoodsId": 7685,
+        "Amount": 1
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json= param)
+    result = json.loads(res.content)
+```
+
+### 3. DescribeBmsImage
+
+**Action: DescribeBmsImage**
+
+**描述:** 查询裸金属镜像列表
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| ImageType   | string | 否       | private                              | 镜像类型: public:公有镜像,private:私有镜像|
+| OsType      | string | 否       | centos                               | 操作系统类型: centos,ubuntu等 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string |  Success                            | 返回状态码: Success: 成功 |
+| Message     | string |  null                               | 返回信息 |
+| Data        | object |  {}                                 | 返回数据            |
+| Id          | string |  8                                  | 镜像ID           |
+| Name        | string |  ubuntu14.04_64                     | 镜像名称         |
+| Type        | string |  public                             | 镜像类型: public:公有镜像,private:私有镜像 |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterIsEmpty           | The parameter "ImageType" cannot be empty.          | 参数ImageType不能为空。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+    "Ubuntu": [
+      {
+        "Id": "8",
+        "Name": "ubuntu14.04_64",
+        "Type": "public"
+      }
+    ],
+    "Redhat": [
+      {
+        "Id": "7",
+        "Name": "rhel7.6_64",
+        "Type": "public"
+      }
+    ],
+    "Windows": [
+      {
+        "Id": "13",
+        "Name": "windows2012r2_64",
+        "Type": "public"
+      },
+      {
+        "Id": "11",
+        "Name": "windows2016_64",
+        "Type": "public"
+      }
+    ],
+    "Centos": [
+      {
+        "Id": "2",
+        "Name": "centos6.9_64",
+        "Type": "public"
+      }
+    ]
+  }
+}
+```
+
+ **代码调用示例**
+ ```python
+def describe_bms_images():
+    action = "DescribeBmsImage"
+    method = "POST"
+    param = {
+          "ImageType": "public"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+```
+
+### 4. CreateBmsInstance
+
+**Action: CreateBmsInstance**
+
+**描述:** 创建裸金属服务器
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称                | 类型   | 是否必须  | 示例                                 | 描述         |
+| ------------------ | ------ | -------- | ------------------------------------ | ------------ |
+| RegionId           | string  | 是   | CN_Beijing_F                           | 可用区编号 |
+| VdcId              | string  | 是   | f4a1ec63-a2c3-4979-a4bf-86f546054e6f   | 虚拟数据中心ID|
+| Password           | string  | 是   | MengYou&&Cds-2019                      | 密码 |
+| InstanceName       | string  | 是   | shouduzaixbms                          | 主机名称 |
+| AssignHostNo       | string  | 否   | 001                                    | 主机编号，编号至少三位，不足三位自动补全 |
+| InstanceChargeType | string  | 是   | PostPaid                               | 付费方式，取值范围： PrePaid：预付费，包年包月, 目前只支持包年包月 |
+| AutoRenew          | int     | 是   | 1                                      | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费 |
+| PrepaidMonth       | int     | 是   | 1                                      | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| ComputeId          | string  | 是   | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469   | 规格配置ID |
+| GoodsId            | int     | 是   | 7955                                   | 商品ID |
+| ImageId            | string  | 是   | d6012cd8-b672-11e9-9265-525400b97470   | 镜像ID |
+| EnableMonitor      | string  | 否   | 1                                      | 是否开启监控, 1为开启，0为关闭，默认为关闭。 |
+| PipeIds            | list    | 是   | `["9fd88912-b668-11e9-a140-0242ac110002",]`| 网段主键ID列表 |
+| Amount             | int     | 是   | 10                                     | 指定创建裸金属服务器的数量，取值范围：1-100 |
+
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string |  Success                            | 返回状态码: Success: 成功 |
+| Message     | string |  订单创建成功，任务已下发，请等待...... | 返回信息                 |
+| Data        | object |  {}                                 | 返回数据                 |
+| TaskIds     | list   |["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| 400      | ImageNotFound              | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470]    |  该镜像在该可用区不存在。     |
+| 400      | OrderGoodsConfEmpty        | Order goods config is empty                        |  商品配置Id不存在或者为空。     |
+| 400      | NotSufficient              | Current configuration inventory is insufficient, please choose other configuration of goods!                |  当前配置库存不足，请选择其他配置的商品！     |
+| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
+| 400      | DataNotExists              | Please check that the parameters are correct.      |  请检查参数是否正确。     |
+| 400      | AmountOversize             | The parameter Amount is too large for 1-100.       |  参数Amount的值超出100。     |
+| 400      | VdcNotFound                | The parameter VdcId is not valid.                  |  参数VdcId是无效的。     |
+| 400      | IpNotEnough                | Please check that the number of Ip is enough.      |  请检查Ip数量是否充足。     |
+| 400      | PipeIdNotFound             | The parameter PipeIds is not valid.                |  参数PipeIds是无效的。     |
+      
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+      "TaskIds": ["f232d398-a77c-11e9-9d43-0242ac110003",
+                  "72dc0cae-a867-11e9-8184-0242ac110003"]
+  }
+}
+```
+
+ **代码调用示例**
+ ```python
+def create_bms_instance():
+    action = "CreateBmsInstance"
+    method = "POST"
+    param = {
+        "RegionId": "CN_Beijing_F",
+        "VdcId": "062f81d7-cee2-4aca-880f-ad8766c78dab",
+        "InstanceName": "shouduzaixbms",
+        "Password": "Tester123",
+        "AssignHostNo": "001",
+        "InstanceChargeType": "PrePaid",
+        "AutoRenew": 1,
+        "PrepaidMonth": 1,
+        "ComputeId": "eb41773f-c944-4831-810b-9db4826996f2",
+        "GoodsId": 7685,
+        "ImageId": "0dff0137-ed2b-4ebb-bccf-6ec9d982fbfb",
+        "EnableMonitor": "1",
+        "PipeIds": [
+                    "79281b44-73db-11ea-ac8e-0242ac110002",
+                    "6c00cd1c-73db-11ea-8379-0242ac110002"
+                   ],
+        "Amount": 1
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+```
+
+
+### 5. DescribeBms
+
+**Action: DescribeBms**
+
+**描述**:  查询裸金属列表
+
+**请求地址**:  cdsapi.capitalonline.net/bms
+
+**请求方法**: GET
+
+**请求参数**: 
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ---------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| VdcId      | string | 否       | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | 虚拟数据中心ID                                               |
+| Name       | string | 否       | bms003                               | 裸金属名称                                                   |
+| PageNumber | string | 否       | 1                                    | Bms列表页码。起始值：1, 默认值：1               |
+| PageSize   | string | 否       | 10                                   | 每页返回数量，默认值：500                    |
+
+**返回参数**:
+
+| 名称          | 类型    | 示例值                                                       | 描述                                                         |
+| ------------- | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Code          | string  | Success                                                      | 错误码                                                       |
+| Message       | string  | null                                                         | 返回信息说明                                                 |
+| Data          | object  | {}                                                           | 裸金属服务器列表记录，包含裸金属服务器信息，网卡信息，分页信息 |
+| Baremetals    | list    | []                                                         | 裸金属服务器列表 |
+| BaremetalId  | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3                         | 裸金属ID                                                     |
+| Name         | string | bms-test                                                     | 裸金属名称                                                       |
+| Cpu          | int    | 32                                                           | Cpu个数                                                      |
+| Ram          | int    | 64                                                           | 内存大小                                                     |
+| State        | string | running                                                      | 运行中                                                       |
+| EnableMonitor| bool   | True                                                         | 是否开启监控, True: 开启, False: 关闭                                       |
+| Status       | string | 运行中                                                        | 运行状态                                                      |
+| VdcId        | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d                         | 虚拟数据中心ID                                               |
+| RegionId     | string | CN_Beijing_F                                                 | 可用区编号                                                      |
+| VdcName      | string | bms003                                                       | 虚拟数据中心名称                                             |
+| RegionName   | string | 中国大陆-北京-可用区F                                          | 区域名称                                                     |
+| InstanceChargeType | string | PostPaid                                                    | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
+| IsAutoRenewal| int    | 0                                                           | 0: 没有开启自动续约，1: 开启自动续约                                             |
+| CreateDate   | string | 2019-08-08 11:45:51                                         | 裸金属创建时间                                               |
+| Networks     | object | {}                                                           | 网络                                                         |
+| NetworkCards | list   | []                                                           | 网卡                                                         |
+| Id(NetworkCards) | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c                     | 网卡Id                                                     |
+| VlanId       | string | 1020                                                         | Vlan编号                                                     |
+| IpType       | string | private                                                      | Ip类型：public/private                                       |
+| IpVersion    | string | ipV4                                                         | Ip版本                                       |
+| IpAddress    | string | 10.241.36.1                                                  | Ip地址                                                       |
+| Netmask      | string | 255.255.0.0                                                  | 掩码地址                                                     |
+| Gateway      | string | 10.241.36.1                                                  | 网关地址                                                     |
+| ConnectState | string | on                                                           | 是否连接  on\off                                             |
+| TotalCount    | int     | 3                                                            | 裸金属服务器总数                                             |
+| PageSize      | int     | 10                                                           | 每页大小                                                     |
+| Pages         | int     | 1                                                            | 页数                                                     |
+| PageNumber    | int     | 1                                                            | 当前页                                                       |
+
+
+**错误码**
+
+| httpcode | 错误码       | 错误信息                        | 描述        |
+| -------- | ------------ | ------------------------------- | ----------- |
+| 400      | ParameterIsEmpty | The parameter "VdcId" cannot be empty.     | 参数VdcId不能为空。     |
+
+**返回示例**
+
+~~~json
+{
+    "Code": "Success",
+    "Message": "Success.",
+    "Data": {
+        "Baremetals": [
+            {
+                "BaremetalId": "0d19f7e6-553f-43be-ab3f-b5c31b3511d9",
+                "Cpu": 32,
+                "CreateDate": "2020-04-16 11:56:58",
+                "EnableMonitor": "0",
+                "InstanceChargeType": "PostPaid",
+                "IsAutoRenewal": 1,
+                "Name": "test-wwh",
+                "Networks": {
+                    "NetworkCards": [                        
+                        {
+                            "ConnectState": "on",
+                            "Gateway": "10.240.57.1",
+                            "Id": "69ed5a7b-8599-4104-a1fa-211db097b73d",
+                            "IpAddress": "10.240.57.1",
+                            "IpType": "private",
+                            "IpVersion": "ipV4",
+                            "Netmask": "255.255.0.0",
+                            "VlanId": "3214"
+                        }
+                    ]
+                },
+                "Ram": 64,
+                "RegionId": "CN_Beijing_F",
+                "RegionName": "中国大陆-北京-可用区F（内测）",
+                "State": "error",
+                "Status": "错误",
+                "VdcId": "9db2c835-3d4b-42a9-ad03-d381d7e6efb8",
+                "VdcName": "test-wwh-盘古"
+            }],
+        "TotalCount": 3,
+        "PageSize": 500,
+        "PageNumber": 1
+    }
+}
+~~~
+
+ **代码调用示例**
+ ```python
+def describe_bms_list():
+    action = "DescribeBms"
+    method = "GET"
+    param = {
+        # "VdcId":"2ee7edc8-ebc3-4e21-9188-f82d4e4fd9bf"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+```
+
+
+### 6. DescribeBmsDetail
+
+**Action: DescribeBmsDetail**
+
+**描述**:  查询裸金属详情
+
+**请求地址**:  cdsapi.capitalonline.net/bms
+
+**请求方法**: GET
+
+**请求参数**: 
+
+| 名称 | 类型   | 是否必选 | 示例值                               | 描述         |
+| ---- | ------ | -------- | ------------------------------------ | ------------ |
+| BaremetalId   | string | 是       | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | 裸金属主键ID |
+
+**返回参数**:
+
+| 名称         | 类型   | 示例值                                                       | 描述                                                         |
+| ------------ | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Code         | string | Success                                                      | 错误码                                                       |
+| Message      | string | null                                                         | 返回信息说明                                                 |
+| Data         | object | {}                                                           | 裸金属服务器详情数据                                         |
+| BaremetalId  | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3                         | 裸金属ID                                                     |
+| Name         | string | bms-test                                                     | 裸金属名称                                                       |
+| Cpu          | int    | 32                                                           | Cpu个数                                                      |
+| Ram          | int    | 64                                                           | 内存大小                                                     |
+| State        | string | running                                                      | 运行中                                                       |
+| EnableMonitor| string | 1                                                            | 是否开启监控, 1: 开启, 0: 关闭                                       |
+| Status       | string | 运行中                                                        | 运行状态                                                      |
+| VdcId        | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d                         | 虚拟数据中心ID                                               |
+| RegionId     | string | CN_Beijing_F                                                 | 可用区编号                                                      |
+| VdcName      | string | bms003                                                       | 虚拟数据中心名称                                             |
+| RegionName   | string | 中国大陆-北京-可用区F                                          | 区域名称                                                     |
+| ImageName    | string | ubuntu14.04_64                                               | 镜像名称                                                     |
+| InstanceChargeType | string | PostPaid                                                    | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
+| BillStatus   | string | 1                                                           | 1: 计费中                                             |
+| IsAutoRenewal| int    | 0                                                           | 0: 没有开启自动续约，1: 开启自动续约                                             |
+| RunningTime  | string | 0天3小时1分钟35秒                                            | 运行时间                                                     |
+| CreateDate   | string | 2019-08-08 11:45:51                                         | 裸金属创建时间                                               |
+| ExpireDate   | string | 2019-09-01 00:00:00                                        | 裸金属到期时间                                               |
+| Volumes      | list   | []                                                           | 存储挂载                                                     |
+| Id(Volumes)  | string | 951496fa-73a6-461b-96dd-4ffba09ef5a7                         | 挂载ID                                                     |
+| Type         | string | hard                                                         | 存储类型                                                     |
+| Capacity     | int    | 480                                                          | 容量大小                                                     |
+| Iops         | int    | 500                                                          | Iops大小                                                     |
+| Mbps         | int    | 70                                                           | Mbps大小                                                     |
+| VolumeType   | string | SSD                                                          | 硬盘类型                                                     |
+| VolumeId     | string | cb4228a9-58bb-44b2-8ddd-9e46168b364d                         | 硬盘Id                                                     |
+| VolumePath   | string | sda                                                          | 卷名                                                     |
+| UpdateDate   | string | 2020-04-17T07:47:23.000+0000                                 | 更新时间                                                     |
+| Networks     | object | {}                                                           | 网络                                                         |
+| NetworkCards | list   | []                                                           | 网卡                                                         |
+| Id(NetworkCards) | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c                     | 网卡Id                                                     |
+| Mac          | list   | ["e4:43:4b:6b:a7:0e","e4:43:4b:6b:a7:10"]                    | Mac地址                                                      |
+| VlanId       | string | 1020                                                         | Vlan编号                                                     |
+| WorkMode     | string | bond6                                                        | 网卡绑定信息                                                 |
+| IpType       | string | private                                                      | Ip类型：public/private                                       |
+| IpVersion    | string | ipV4                                                         | Ip版本                                       |
+| IpAddress    | string | 10.241.36.1                                                  | Ip地址                                                       |
+| Netmask      | string | 255.255.0.0                                                  | 掩码地址                                                     |
+| Gateway      | string | 10.241.36.1                                                  | 网关地址                                                     |
+| ConnectState | string | on                                                           | 是否连接  on\off                                             |
+
+**错误码**
+
+| httpcode | 错误码           | 错误信息                 | 描述                 |
+| -------- | ---------------- | ------------------------ | -------------------- |
+| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
+| 400      | InstanceNotFound           | the Instance has deleted or The specified parameter InstanceID is not valid.   | 	实例被删除或者BaremetalId无效     |
+
+**返回示例**
+
+~~~json
+{
+    "Code": "Success",
+    "Message": "Success.",
+    "Data": {
+        "BaremetalId": "19cd1c58-11d4-4ed0-8c19-81aa4cf3574a",
+        "BillStatus": "1",
+        "Cpu": 32,
+        "CreateDate": "2020-04-30 11:22:41",
+        "EnableMonitor": "0",
+        "ExpireDate": "2020-05-01 00:00:00",
+        "ImageName": "centos7.6_64",
+        "InstanceChargeType": "PrePaid",
+        "IsAutoRenewal": 0,
+        "Name": "openapi006",
+        "Networks": {
+            "NetworkCards": [                
+                {
+                    "ConnectState": "on",
+                    "Gateway": "10.241.14.1",
+                    "Id": "2e976bfd-f355-4bae-9c09-b88d431fcc54",
+                    "IpAddress": "10.241.14.4",
+                    "IpType": "private",
+                    "IpVersion": "ipV4",
+                    "Mac": [
+                        "6C:92:BF:FF:BD:6A",
+                        "6C:92:BF:FF:BD:6B"
+                    ],
+                    "Netmask": "255.255.0.0",
+                    "VlanId": "3733",
+                    "WorkMode": "bond6"
+                }
+            ]
+        },
+        "Ram": 64,
+        "RegionId": "CN_Beijing_F",
+        "RegionName": "中国大陆-北京-可用区F（内测）",
+        "RunningTime": "0天7小时18分钟55秒",
+        "State": "rebuilding",
+        "Status": "重装中",
+        "VdcId": "9db2c835-3d4b-42a9-ad03-d381d7e6efb8",
+        "VdcName": "test-wwh-盘古",
+        "Volumes": [
+            {
+                "BaremetalId": "19cd1c58-11d4-4ed0-8c19-81aa4cf3574a",
+                "Capacity": 480,
+                "CreateDate": "2020-04-30T03:10:00.000+0000",
+                "Id": "a5f18fb1-f4a4-4e8c-973f-865ee8662b0c",
+                "Iops": 0,
+                "Mbps": 0,
+                "Type": "hard",
+                "UpdateDate": "2020-04-30T03:10:00.000+0000",
+                "VolumeId": "454a1d9d-25c3-48cc-8787-404447e81f49",
+                "VolumePath": "sda",
+                "VolumeType": "SSD"
+            }
+        ]
+    }
+}
+~~~
+
+ **代码调用示例**
+ ```python
+def describe_bms_detail(id):
+    action = "DescribeBmsDetail"
+    method = "GET"
+    param = {
+        "BaremetalId": id
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+```
+
+
+
+### 7. DescribeBmsPower
+
+**Action: DescribeBmsPower**
+
+**描述**:  裸金属服务器的电源操作（开机、关机、重启）
+
+**请求地址**:  cdsapi.capitalonline.net/bms
+
+**请求方法**: POST
+
+**请求参数**: 
+
+| 名称   | 类型   | 是否必选 | 示例值 | 描述                                                         |
+| ------ | ------ | -------- | ------ | ------------------------------------------------------------ |
+| Operate | string | 是       | start  | 操作电源的状态<br />start:  开启<br />stop:  关闭<br />reset:  重启 |
+| BaremetalIds    | list   | 是       | [“2df3f6b4-26ed-4c93-943d-a81a39ced124”] | 裸金属资源（ID）列表  |                                        |
+
+**返回参数**:
+
+| 名称    | 类型   | 示例值                                 | 描述       |
+| ------- | ------ | -------------------------------------- | ---------- |
+| Code    | string | Success                                | 返回状态码 |
+| Message | string | Success                                | 提示信息   |
+| Data    | object | {}                                   | 返回数据   |
+| TaskId  | list | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务编号列表，与裸金属资源(ID)列表按照下标一一对应 |
+| BaremetalIds     | list | ["d226f190-f942-4257-8f3e-9cce8dfc0f2b"] | 裸金属资源(ID)列表 |
+
+**错误码**
+
+| httpcode | 错误码             | 错误信息                                       | 描述                   |
+| -------- | ------------------ | ---------------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid           | The parameter "Operate" is required.              | 	参数Operate是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "Operate" cannot be empty.          | 	参数Operate不能为空。     |
+| 400      | InstanceError              | The Instance is not allowed to operate  or The specified parameter BaremetalId is not valid. | 	实例当前状态不允许操作或者BaremetalId无效     |
+| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
+| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+
+
+**返回示例**
+
+~~~json
+{
+    "Code": "Success",
+    "Msg": "Success.",
+    "Data": {
+        "BaremetalIds": [
+            "2df3f6b4-26ed-4c93-943d-a81a39ced124"
+        ],
+        "TaskIds": [
+            "72dc0cae-a867-11e9-8184-0242ac110003"
+        ]
+    }
+}
+~~~
+
+ **代码调用示例**
+ ```python
+def operat_bms_power(id, state):
+    action = "DescribeBmsPower"
+    method = "POST"
+    param = {
+        "BaremetalIds": [id],
+        "Operate": state
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+```
+
+
+
+### 8. ReinstallBms
+
+**Action: ReinstallBms**
+
+**描述**:  裸金属服务器系统重装
+
+**请求地址**:  cdsapi.capitalonline.net/bms
+
+**请求方法**: POST
+
+**请求参数**: 
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述     |
+| ---------- | ------ | -------- | ------------------------------------ | -------- |
+| BaremetalId| string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID |
+| ImageId    | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID   |
+| Password   | string | 是       | capitalonline                        | 密码     |
+
+**返回参数**
+
+| 名称        | 类型   | 示例值                               | 描述       |
+| ----------- | ------ | ------------------------------------ | ---------- |
+| Code        | string | Success                              | 返回状态码 |
+| Message     | string | Success                              | 提示信息   |
+| Data        | object | {}                                   | 返回数据   |
+| TaskIds     | list   | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务ID     |
+
+**错误码**
+
+| httpcode | 错误码           | 错误信息                 | 描述               |
+| -------- | ---------------- | ------------------------ | ------------------ |
+| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
+| 400      | ImageNotFound              | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470]   | 	该镜像在该可用区不存在。     |
+| 400      | RebuildFailed              | Compute state is not correct   | 	服务器状态不正确。     |
+| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
+| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+
+
+**返回示例**
+
+~~~json
+{
+    "Code": "Success",
+    "Message": "Success.",
+    "Data": {
+        "TaskIds": [
+            "97fe8058-8524-11ea-80e3-0242ac110003"
+        ]
+    }
+}
+~~~
+
+ **代码调用示例**
+ ```python
+def operat_bms_reinstall(id, image_id, passwd):    
+    action = "ReinstallBms"
+    method = "POST"
+    param = {
+        "BaremetalId": id,
+        "ImageId": image_id,
+        "Password": passwd
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+```
+
+
+
+### 9. DescribeBmsVNC
+
+**Action: DescribeBmsVNC**
+
+**描述:** 获取裸金属服务器的VNC访问地址
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 裸金属编号id |
+
+**返回数据：**
+
+| 名称        | 类型   | 示例                                                          | 描述                                |
+| ----------- | ------ | ------------------------------------------------------------ | ------------------------------------ |
+| Code        | string | Success                                                      | 错误码 |
+| Message     | string | Success                                                      | 提示信息                             |
+| Data        | object | {}                                                           | 返回数据                             |
+| Url         | string | http://114.112.35.22/vnc/?authId=&token=                     | 裸金属VNC访问地址                    |
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
+| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+    "Url": "http://114.112.35.22/vnc/?authId=1c4c81e990bd4805a46575f411fe86b0&token=03cf4b2b6a911c0525fa1eed0d904370796060a6b6b85a261c143c7545ba633f"
+  }
+}
+```
+
+ **代码调用示例**
+ ```python
+def describe_bms_vnc(BaremetalId):
+    action = "DescribeBmsVNC"
+    method = "GET"
+    param = {
+        "BaremetalId": BaremetalId
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+```
+
+
+
+### 10. ModifyBmsOrder
+
+**Action: ModifyBmsOrder**
+
+**描述:** 更新裸金属订单
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型    | 是否必须 | 示例                                 | 描述                                                         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 裸金属编号id                                                 |
+| AutoRenewal | int    | 是       | 1                                    | 是否开启自动续约<br />0: 不开启，1: 开启                     |
+| BillMethod  | string | 否       | 1                                    | 计费方式<br />1: 包年包月<br />目前只支持包年包月 |
+| Duration    | int    | 否       | 1                                    | 续约时长                                                     |
+| IsToMonth   | int    | 否       | 1                                    | 是否计费到月底<br />0: 否，1: 是                             |
+
+**返回数据：**
+
+| 名称    | 类型    | 示例      | 描述     |
+| ------- | ------ | -------- | -------- |
+| Code    | string | Success  | 错误码   |
+| Message | string | Automatic renewal of order has been opened  | 提示信息 |
+| Data    | list   | []       | 返回数据  |
+| Suborder_ids | list | ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"] | 子订单Id |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.            | 参数BaremetalId是必选项。  |
+| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.        | 参数BaremetalId不能为空。  |
+| 400      | OrderUpdateError           | Order update failed!                                | 订单更新失败。             |
+| 400      | InstanceNotFound           | the BaremetalInstance has deleted or The specified parameter "BaremetalId" is not valid. | 裸金属服务器已删除或者参数BaremetalId无效   |
+| 400      | OrderResourceError         | ResourceId not found! | 裸金属编号id未找到   |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": [
+      {
+        "Suborder_ids": 
+            ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"]
+      }
+  ]
+}
+```
+
+ **代码调用示例**
+ ```python
+def update_bms_order(id, renewal):    
+    action = "ModifyBmsOrder"
+    method = "POST"
+    param = {
+        "BaremetalId": id,
+        "AutoRenewal": renewal,
+        "Duration": 2,
+	    "IsToMonth": 1
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
 ```
 
 ## 账单相关
