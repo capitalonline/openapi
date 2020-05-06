@@ -71,16 +71,16 @@
          * [18.DeleteGPN](#18deletegpn)
          * [19.ModifyVdcName](#19modifyvdcname)
       * [裸金属相关](#裸金属相关)
-         * [1. DescribeBmsGoods](#1describebmsgoods)
-         * [2. DescribeBmsGoodsPrice](#2describebmsgoodsprice)
-         * [3. DescribeBmsImage](#3describebmsimage)
-         * [4. CreateBmsInstance](#4createbmsinstance)
-         * [5. DescribeBms](#5describebms)
-         * [6. DescribeBmsDetail](#6describebmsdetail)
-         * [7. DescribeBmsPower](#7describebmspower)
-         * [8. ReinstallBms](#8ReinstallBms)
-         * [9. DescribeBmsVNC](#9describebmsvnc)
-         * [10. ModifyBmsOrder](#10modifybmsorder)  
+         * [1.DescribeBmsGoods](#1describebmsgoods)
+         * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
+         * [3.DescribeBmsImage](#3describebmsimage)
+         * [4.CreateBmsInstance](#4createbmsinstance)
+         * [5.DescribeBms](#5describebms)
+         * [6.DescribeBmsDetail](#6describebmsdetail)
+         * [7.DescribeBmsPower](#7describebmspower)
+         * [8.ReinstallBms](#8ReinstallBms)
+         * [9.DescribeBmsVNC](#9describebmsvnc)
+         * [10.ModifyBmsOrder](#10modifybmsorder)  
          
       * [账单相关](#账单相关)
          * [1.DescribeBill](#1describebill)
@@ -3366,7 +3366,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 ## 裸金属相关
 
-### 1. DescribeBmsGoods
+### 1.DescribeBmsGoods
 
 **Action: DescribeBmsGoods**
 
@@ -3484,7 +3484,7 @@ def describe_bms_goods(RegionId):
 
 
 
-### 2. DescribeBmsGoodsPrice
+### 2.DescribeBmsGoodsPrice
 
 **Action: DescribeBmsGoodsPrice**
 
@@ -3560,7 +3560,7 @@ def describe_bms_price():
     result = json.loads(res.content)
 ```
 
-### 3. DescribeBmsImage
+### 3.DescribeBmsImage
 
 **Action: DescribeBmsImage**
 
@@ -3655,7 +3655,7 @@ def describe_bms_images():
     result = json.loads(res.content)
 ```
 
-### 4. CreateBmsInstance
+### 4.CreateBmsInstance
 
 **Action: CreateBmsInstance**
 
@@ -3757,7 +3757,7 @@ def create_bms_instance():
 ```
 
 
-### 5. DescribeBms
+### 5.DescribeBms
 
 **Action: DescribeBms**
 
@@ -3879,7 +3879,7 @@ def describe_bms_list():
 ```
 
 
-### 6. DescribeBmsDetail
+### 6.DescribeBmsDetail
 
 **Action: DescribeBmsDetail**
 
@@ -4029,7 +4029,7 @@ def describe_bms_detail(id):
 
 
 
-### 7. DescribeBmsPower
+### 7.DescribeBmsPower
 
 **Action: DescribeBmsPower**
 
@@ -4100,7 +4100,7 @@ def operat_bms_power(id, state):
 
 
 
-### 8. ReinstallBms
+### 8.ReinstallBms
 
 **Action: ReinstallBms**
 
@@ -4170,7 +4170,7 @@ def operat_bms_reinstall(id, image_id, passwd):
 
 
 
-### 9. DescribeBmsVNC
+### 9.DescribeBmsVNC
 
 **Action: DescribeBmsVNC**
 
@@ -4230,7 +4230,7 @@ def describe_bms_vnc(BaremetalId):
 
 
 
-### 10. ModifyBmsOrder
+### 10.ModifyBmsOrder
 
 **Action: ModifyBmsOrder**
 
@@ -4863,33 +4863,48 @@ def get_status(task_id):
 
 #### 节点名称
 
-| 节点名称      | RegionId          |
-| ------------- | ----------------- |
-| 北京1         | CN_Beijing_A      |
-| 北京2         | CN_Beijing_B      |
-| 北京3         | CN_Beijing_C      |
-| 北京4（测试） | CN_Beijing_D      |
-| 北京5         | CN_Beijing_E      |
-| 北京6（测试） | CN_Beijing_F      |
-| 达拉斯1       | US_Dallas_A       |
-| 达拉斯2       | US_Dallas_B       |
-| 达拉斯3       | US_Dallas_C       |
-| 德国1         | EUR_Germany_A     |
-| 德国2         | EUR_Germany_B     |
-| 东京1         | APAC_Tokyo_A      |
-| 广州1         | CN_Guangzhou_A    |
-| 荷兰1         | EUR_Netherlands_A |
-| 洛杉矶1       | US_LosAngeles_A   |
-| 纽约1         | US_NewYork_A      |
-| 上海1         | CN_Shanghai_A     |
-| 上海2（测试） | CN_Shanghai_B     |
-| 首尔1         | APAC_Seoul_A      |
-| 台北1         | CN_Taipei_A       |
-| 无锡1         | CN_Wuxi_A         |
-| 香港1         | CN_Hongkong_A     |
-| 新加坡1       | APAC_Singapore_A  |
-| 新加坡2       | APAC_Singapore_B  |
-| 孟买1         | APAC_Mumbai_A     |
+| 节点名称      | RegionId          |  是否支持裸金属  |
+| ------------- | ---------------- | -------------- |
+| 北京1         | CN_Beijing_A      |      否        |           
+| 北京2         | CN_Beijing_B      |      否        |  
+| 北京3         | CN_Beijing_C      |      否        |  
+| 北京4（测试）  | CN_Beijing_D      |      否        |  
+| 北京5         | CN_Beijing_E      |      否        |  
+| 北京6（测试）  | CN_Beijing_F      |      是        |  
+| 北京8         | CN_Beijing_H      |      否        | 
+| 北京9         | CN_Beijing_I      |      是        | 
+| 北京10        | CN_Beijing_J      |      是        |  
+| 达拉斯1       | US_Dallas_A       |      否        |  
+| 达拉斯2       | US_Dallas_B       |      否        |  
+| 达拉斯3       | US_Dallas_C       |      否        |
+| 达拉斯4       | US_Dallas_D       |      是        |  
+| 达拉斯5       | US_Dallas_E       |      是        |  
+| 达拉斯6       | US_Dallas_F       |      是        | 
+| 达拉斯7       | US_Dallas_G       |      否        |  
+| 达拉斯8       | US_Dallas_H       |      是        |   
+| 达拉斯9       | US_Dallas_I       |      否        | 
+| 德国1         | EUR_Germany_A     |      否        |  
+| 德国2         | EUR_Germany_B     |      否        |  
+| 东京1         | APAC_Tokyo_A      |      否        |  
+| 广州1         | CN_Guangzhou_A    |      否        |  
+| 荷兰1         | EUR_Netherlands_A |      否        |  
+| 洛杉矶1       | US_LosAngeles_A   |      否        |  
+| 纽约1         | US_NewYork_A      |      否        |  
+| 上海1         | CN_Shanghai_A     |      否        |  
+| 上海2（测试）  | CN_Shanghai_B     |      否        | 
+| 上海3         | CN_Shanghai_C     |      否        | 
+| 首尔1         | APAC_Seoul_A      |      否        |  
+| 台北1         | CN_Taipei_A       |      否        |  
+| 无锡1         | CN_Wuxi_A         |      否        | 
+| 无锡2         | CN_Wuxi_B         |      是        |   
+| 香港1         | CN_Hongkong_A     |      否        |  
+| 新加坡1       | APAC_Singapore_A  |      否        |  
+| 新加坡2       | APAC_Singapore_B  |      否        |
+| 新加坡3       | APAC_Singapore_C  |      否        | 
+| 新加坡4       | APAC_Singapore_D  |      否        |   
+| 孟买1         | APAC_Mumbai_A     |      否        | 
+| 孟买2         | APAC_Mumbai_B     |      否        | 
+| 孟买3         | APAC_Mumbai_C     |      是        | 
 
 ## 附件二
 
