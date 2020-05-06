@@ -4870,7 +4870,7 @@ def get_status(task_id):
 | 北京3         | CN_Beijing_C      |      否        |  
 | 北京4（测试）  | CN_Beijing_D      |      否        |  
 | 北京5         | CN_Beijing_E      |      否        |  
-| 北京6（测试）  | CN_Beijing_F      |      否        |  
+| 北京6（测试）  | CN_Beijing_F      |      是        |  
 | 北京8         | CN_Beijing_H      |      否        | 
 | 北京9         | CN_Beijing_I      |      是        | 
 | 北京10        | CN_Beijing_J      |      是        |  
