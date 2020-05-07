@@ -31,13 +31,13 @@ MongoDB产品提供以下相关API接口。
 
 ### 1. DescribeZones
 
-**Action：**DescribeZones
+**Action：** DescribeZones
 
-**描述：**获取云数据库MongoDB支持的站点区域
+**描述：** 获取云数据库MongoDB支持的站点区域
 
-**请求地址：**cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb
 
-**请求方法：**GET
+**请求方法：** GET
 
 **请求参数：**
 
@@ -202,7 +202,7 @@ def get_mongodb_Zones():
 | 参数名     | 类型   | 说明                                                   |
 | :--------- | :----- | ------------------------------------------------------ |
 | Code       | string | 状态码                                                 |
-| Data       | list   | 数据                                                   |
+| Data       | dict   | 数据                                                   |
 | CityId     | string | 城市编号                                               |
 | CityName   | string | 城市名称                                               |
 | IsSaling   | int    | 站点是否能购买服务，1：站点支持购买；0：资源不足以下线 |
@@ -215,13 +215,13 @@ def get_mongodb_Zones():
 
 ### 2. DescribeSpecInfo
 
-**Action：**DescribeSpecInfo
+**Action：** DescribeSpecInfo
 
-**描述：**获取某个站点支持的MongoDB产品类型以及规格
+**描述：** 获取某个站点支持的MongoDB产品类型以及规格
 
-**请求地址：**cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb
 
-**请求方法：**GET
+**请求方法：** GET
 
 **请求参数：**
 
@@ -363,13 +363,13 @@ def get_mongodb_spec_info(RegionId):
 
 ### 3. CreateDBInstance
 
-**Action：**CreateDBInstance
+**Action：** CreateDBInstance
 
-**描述：**创建MongoDB云数据库实例
+**描述：** 创建MongoDB云数据库实例
 
-**请求地址：**cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb
 
-**请求方法：**POST
+**请求方法：** POST
 
 **请求参数：**
 
@@ -436,13 +436,13 @@ def create_mongodb():
 
 ### 4. DescribeDBInstances
 
-**Action：**DescribeDBInstances
+**Action：** DescribeDBInstances
 
-**描述：**获取MongoDB实例列表（支持常见字段过滤:实例编号、实例名称、实例IP）
+**描述：** 获取MongoDB实例列表（支持常见字段过滤:实例编号、实例名称、实例IP）
 
-**请求地址：**cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb
 
-**请求方法：**GET
+**请求方法：** GET
 
 **请求参数：**
 
@@ -529,13 +529,13 @@ def get_mongodb_instances_list():
 
 ### 5. DeleteDBInstance
 
-**Action：**DeleteDBInstance
+**Action：** DeleteDBInstance
 
-**描述：**删除MongoDB实例
+**描述：** 删除MongoDB实例
 
-**请求地址：**cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb
 
-**请求方法：**POST
+**请求方法：** POST
 
 **请求参数：**
 
