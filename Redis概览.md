@@ -1,4 +1,4 @@
-MySQL 公开API目录
+Redis 公开API目录
 =================
 * [API概览](#api概览)
 * [认证方式](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
@@ -480,25 +480,26 @@ def get_redis_instances_list():
 **返回示例：**
 
 ```json
-{
-    "Code": "Success",
-    "Data": [{
-        "CloneServices": None,
-        "DisplayName": "亚太地区-香港-可用区A",
-        "IP": "66.66.0.42",
-        "InstanceName": "test",
-        "InstanceUuid": "*************",
+"Data": [{
+        "CloneServices": null,
+        "CreatedTime": "2020-03-13 15:38:35",
+        "DisplayName": "中国大陆-北京-可用区H",
+        "IP": "********",
+        "InstanceName": "********",
+        "InstanceUuid": "***************",
         "LinkType": "default_link",
-         "LinkTypeStr": "默认链路",
+        "LinkTypeStr": "默认链路",
         "MasterInfo": "",
         "Port": 9736,
-        "Ram": 2048,
-        "RegionId": "CN_Hongkong_A",
-        "RelationService": None,
+        "Ram": 1024,
+        "RegionId": "CN_Beijing_H",
+        "RelationService": null,
+        "RoGroups": null,
         "Status": "RUNNING",
         "StatusStr": "运行中",
         "SubProductName": "Redis 读写分离版",
-        "VdcId": "*************": "香港PaaS",
+        "VdcId": "cacdf937-d484-435a-894b-241be9309d80",
+        "VdcName": "北京8",
         "Version": "2.8.19"
     }],
     "Message": "Success."
