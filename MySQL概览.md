@@ -698,7 +698,7 @@ def create_mysql_super_account(instance_uuid, ):
 ```json
 {
     "Code": "Success",
-    "Data": None,
+    "Data": {},
     "Message": "Success.",
     "TaskId": ""
 }
@@ -919,7 +919,7 @@ def delete_mysql(instance_uuid, ):
 ```json
 {
     "Code": "Success",
-    "Data": None,
+    "Data": {},
     "Message": "Success.",
     "TaskId": ""
 }
@@ -1005,22 +1005,22 @@ def get_mysql_modifiable_spec(instance_uuid):
         "CpuRam": [{
             "CPU": 2,
             "N": "2C4G",
-            "PaasGoodsId": ******,
+            "PaasGoodsId": "******",
             "RAM": 4
         }, {
             "CPU": 4,
             "Name": "4C8G",
-            "PaasGoodsId": ******,
+            "PaasGoodsId": "******",
             "RAM": 8
         }, {
             "CPU": 8,
             "Name": "8C16G",
-            "PaasGoodsId": ******,
+            "PaasGoodsId": "******",
             "RAM": 16
         }, {
             "CPU": 8,
             "Name": "8C32G",
-            "PaasGoodsId": ******,
+            "PaasGoodsId": "******",
             "RAM": 32
         }],
         "ProductName": "MySQL 高可用版\n",
