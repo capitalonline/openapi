@@ -1,3 +1,23 @@
+
+MySQL 公开API目录
+=================
+* [API概览](#api概览)
+* [认证方式](https://github.com/capitalonline/openapi/edit/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
+* [错误码](#错误码)
+* [实例](#实例)
+   * [1.DescribeRegins](#1describeregins) 
+   * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig) 
+   * [3.CreateDBInstance](#3createdbinstance) 
+   * [4.DescribeDBInstances](#4describedbinstances) 
+   * [5.DescribeModifiableDBSpec](#6describemodifiabledbspec) 
+   * [6.ModifyDBInstanceSpec](#7modifydbinstancespec) 
+   * [7.DeleteDBInstance](#8deletedbinstance)
+* [账号](#账号)
+   * [1.CreatePrivilegedAccount](#5createprivilegedaccount)
+* [只读实例](#只读实例)
+   * [1.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig) 
+   * [2.CreateReadOnlyDBInstance](#10createreadonlydbinstance) 
+
 ### API概览
 
 云数据库MySQL提供以下API接口。
@@ -493,10 +513,10 @@ def create_mysql():
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '**********'
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "**********"
 }
 ```
 
@@ -672,10 +692,10 @@ def create_mysql_super_account(instance_uuid, ):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': None,
-    'Message': 'Success.',
-    'TaskId': ''
+    "Code": "Success",
+    "Data": None,
+    "Message": "Success.",
+    "TaskId": ""
 }
 ```
 
@@ -739,44 +759,44 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {
-        'AttachDisk': [{
-            'BasicIops': '3000',
-            'DiskMax': 2000,
-            'DiskMaxExpand': 2000,
-            'DiskMin': 100,
-            'DiskName': '性能型',
-            'DiskStep': 100,
-            'DiskUnit': 'G',
-            'DiskValue': 'high_disk'
+    "Code": "Success",
+    "Data": {
+        "AttachDisk": [{
+            "BasicIops": "3000",
+            "DiskMax": 2000,
+            "DiskMaxExpand": 2000,
+            "DiskMin": 100,
+            "DiskName": "性能型",
+            "DiskStep": 100,
+            "DiskUnit": "G",
+            "DiskValue": "high_disk"
         }],
-        'CpuRam': [{
-            'CPU': 2,
-            'N': '2C4G',
-            'PaasGoodsId': 6704,
-            'RAM': 4
+        "CpuRam": [{
+            "CPU": 2,
+            "N": "2C4G",
+            "PaasGoodsId": 6704,
+            "RAM": 4
         }, {
-            'CPU': 4,
-            'Name': '4C8G',
-            'PaasGoodsId': 6707,
-            'RAM': 8
+            "CPU": 4,
+            "Name": "4C8G",
+            "PaasGoodsId": 6707,
+            "RAM": 8
         }, {
-            'CPU': 8,
-            'Name': '8C16G',
-            'PaasGoodsId': 6710,
-            'RAM': 16
+            "CPU": 8,
+            "Name": "8C16G",
+            "PaasGoodsId": 6710,
+            "RAM": 16
         }, {
-            'CPU': 8,
-            'Name': '8C32G',
-            'PaasGoodsId': 6716,
-            'RAM': 32
+            "CPU": 8,
+            "Name": "8C32G",
+            "PaasGoodsId": 6716,
+            "RAM": 32
         }],
-        'ProductName': 'MySQL 高可用版\n',
-        'RegionId': 'CN_Hongkong_A'
+        "ProductName": "MySQL 高可用版\n",
+        "RegionId": "CN_Hongkong_A"
     },
-    'Message': 'Success.',
-    'TaskId': ''
+    "Message": "Success.",
+    "TaskId": ""
 }
 ```
 
@@ -836,10 +856,10 @@ def modify_mysql_spec(instance_uuid, ):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '***********'
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***********"
 }
 ```
 
@@ -893,10 +913,10 @@ def delete_mysql(instance_uuid, ):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '************'
+    "Code": "Success",
+    "Data": None,
+    "Message": "Success.",
+    "TaskId": ""
 }
 ```
 
@@ -965,44 +985,44 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {
-        'AttachDisk': [{
-            'BasicIops': '3000',
-            'DiskMax': 2000,
-            'DiskMaxExpand': 2000,
-            'DiskMin': 100,
-            'DiskName': '性能型',
-            'DiskStep': 100,
-            'DiskUnit': 'G',
-            'DiskValue': 'high_disk'
+    "Code": "Success",
+    "Data": {
+        "AttachDisk": [{
+            "BasicIops": "3000",
+            "DiskMax": 2000,
+            "DiskMaxExpand": 2000,
+            "DiskMin": 100,
+            "DiskName": "性能型",
+            "DiskStep": 100,
+            "DiskUnit": "G",
+            "DiskValue": "high_disk"
         }],
-        'CpuRam': [{
-            'CPU': 2,
-            'N': '2C4G',
-            'PaasGoodsId': ******,
-            'RAM': 4
+        "CpuRam": [{
+            "CPU": 2,
+            "N": "2C4G",
+            "PaasGoodsId": ******,
+            "RAM": 4
         }, {
-            'CPU': 4,
-            'Name': '4C8G',
-            'PaasGoodsId': ******,
-            'RAM': 8
+            "CPU": 4,
+            "Name": "4C8G",
+            "PaasGoodsId": ******,
+            "RAM": 8
         }, {
-            'CPU': 8,
-            'Name': '8C16G',
-            'PaasGoodsId': ******,
-            'RAM': 16
+            "CPU": 8,
+            "Name": "8C16G",
+            "PaasGoodsId": ******,
+            "RAM": 16
         }, {
-            'CPU': 8,
-            'Name': '8C32G',
-            'PaasGoodsId': ******,
-            'RAM': 32
+            "CPU": 8,
+            "Name": "8C32G",
+            "PaasGoodsId": ******,
+            "RAM": 32
         }],
-        'ProductName': 'MySQL 高可用版\n',
-        'RegionId': '******'
+        "ProductName": "MySQL 高可用版\n",
+        "RegionId": "******"
     },
-    'Message': 'Success.',
-    'TaskId': ''
+    "Message": "Success.",
+    "TaskId": ""
 }
 ```
 
@@ -1063,9 +1083,9 @@ def create_mysql_for_readonly(instance_uuid):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '***********'
-} 
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***********"
+}
 ```
