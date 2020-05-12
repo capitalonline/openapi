@@ -1,3 +1,20 @@
+MySQL 公开API目录
+=================
+* [API概览](#api概览)
+* [认证方式](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
+  * [1.公共请求参数](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1公共请求参数)
+  * [2.签名机制](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2签名机制)
+    * [步骤一：构造规范化请求字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤一构造规范化请求字符串)
+    * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
+  * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
+* [错误码](#错误码)
+* [实例](#实例)
+    * [1.DescribeRegins](#1describeregins)
+    * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+    * [3.CreateDBInstance](#3createdbinstance) 
+    * [4.DescribeDBInstances](#4describedbinstances)
+    * [5.DeleteDBInstance](#5deletedbinstance)
+
 ### API概览
 
 云数据库Redis提供以下API接口。
@@ -392,10 +409,10 @@ def create_redis():
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '****************'
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "****************"
 }
 ```
 
@@ -464,27 +481,27 @@ def get_redis_instances_list():
 
 ```json
 {
-    'Code': 'Success',
-    'Data': [{
-        'CloneServices': None,
-        'DisplayName': '亚太地区-香港-可用区A',
-        'IP': '66.66.0.42',
-        'InstanceName': 'test',
-        'InstanceUuid': '*************',
-        'LinkType': 'default_link',
-         'LinkTypeStr': '默认链路',
-        'MasterInfo': '',
-        'Port': 9736,
-        'Ram': 2048,
-        'RegionId': 'CN_Hongkong_A',
-        'RelationService': None,
-        'Status': 'RUNNING',
-        'StatusStr': '运行中',
-        'SubProductName': 'Redis 读写分离版',
-        'VdcId': '*************': '香港PaaS',
-        'Version': '2.8.19'
+    "Code": "Success",
+    "Data": [{
+        "CloneServices": None,
+        "DisplayName": "亚太地区-香港-可用区A",
+        "IP": "66.66.0.42",
+        "InstanceName": "test",
+        "InstanceUuid": "*************",
+        "LinkType": "default_link",
+         "LinkTypeStr": "默认链路",
+        "MasterInfo": "",
+        "Port": 9736,
+        "Ram": 2048,
+        "RegionId": "CN_Hongkong_A",
+        "RelationService": None,
+        "Status": "RUNNING",
+        "StatusStr": "运行中",
+        "SubProductName": "Redis 读写分离版",
+        "VdcId": "*************": "香港PaaS",
+        "Version": "2.8.19"
     }],
-    'Message': 'Success.'
+    "Message": "Success."
 }
 ```
 
@@ -539,9 +556,9 @@ def delete_redis(instance_uuid, ):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '****************'
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "****************"
 }
 ```
