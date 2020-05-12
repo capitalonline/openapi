@@ -1,4 +1,19 @@
-## 云数据库-MongoDB Open API
+MongoDB 公开API目录
+=================
+* [API概览](#api概览)
+* [认证方式](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
+  * [1.公共请求参数](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1公共请求参数)
+  * [2.签名机制](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2签名机制)
+    * [步骤一：构造规范化请求字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤一构造规范化请求字符串)
+    * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
+  * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
+* [错误码](#错误码)
+* [实例](#实例)
+    * [1.DescribeZones](#1describezones)
+    * [2.DescribeSpecInfo](#2describespecinfo)
+    * [3.CreateDBInstance](#3createdbinstance)
+    * [4.DescribeDBInstances](#4describedbinstances)
+    * [5.DeleteDBInstance](#5deletedbinstance)
 
 ### API概览
 
@@ -29,7 +44,7 @@ MongoDB产品提供以下相关API接口。
 
 
 
-### 1. DescribeZones
+### 1.DescribeZones
 
 **Action：** DescribeZones
 
@@ -213,7 +228,7 @@ def get_mongodb_Zones():
 
 
 
-### 2. DescribeSpecInfo
+### 2.DescribeSpecInfo
 
 **Action：** DescribeSpecInfo
 
@@ -361,7 +376,7 @@ def get_mongodb_spec_info(RegionId):
 
 
 
-### 3. CreateDBInstance
+### 3.CreateDBInstance
 
 **Action：** CreateDBInstance
 
@@ -416,10 +431,10 @@ def create_mongodb():
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': ''
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": ""
 }
 ```
 
@@ -434,7 +449,7 @@ def create_mongodb():
 
 
 
-### 4. DescribeDBInstances
+### 4.DescribeDBInstances
 
 **Action：** DescribeDBInstances
 
@@ -527,7 +542,7 @@ def get_mongodb_instances_list():
 
 
 
-### 5. DeleteDBInstance
+### 5.DeleteDBInstance
 
 **Action：** DeleteDBInstance
 
@@ -568,10 +583,10 @@ def delete_mongodb(instance_uuid, ):
 
 ```json
 {
-    'Code': 'Success',
-    'Data': {},
-    'Message': 'Success.',
-    'TaskId': '***************'
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***************"
 }
 ```
 
