@@ -4917,7 +4917,6 @@ def get_status(task_id):
 | 标准型           | Standard   |
 | 通用型           | General    |
 | 均衡型           | Balance    |
-| 均衡型           | Balance    |
 | 紧凑型           | Compact    |
 | 内存型           | Memory     |
 | 独享型           | Exclusive  |
