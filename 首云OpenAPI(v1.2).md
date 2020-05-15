@@ -4925,6 +4925,7 @@ def get_status(task_id):
 | G2.通用型        | G2_General |
 | G2.计算型        | G2_Compute |
 | G2.内存型        | G2_Memory  |
+| G2L.密集计算型       | G2_Dense |
 
 ## 附件三
 
