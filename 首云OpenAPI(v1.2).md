@@ -4917,6 +4917,7 @@ def get_status(task_id):
 | 标准型           | Standard   |
 | 通用型           | General    |
 | 均衡型           | Balance    |
+| 均衡型           | Balance    |
 | 紧凑型           | Compact    |
 | 内存型           | Memory     |
 | 独享型           | Exclusive  |
@@ -4925,6 +4926,7 @@ def get_status(task_id):
 | G2.通用型        | G2_General |
 | G2.计算型        | G2_Compute |
 | G2.内存型        | G2_Memory  |
+| G2L.密集计算型       | G2_Dense |
 
 ## 附件三
 
