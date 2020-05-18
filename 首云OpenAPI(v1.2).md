@@ -235,8 +235,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
-| Password           | string   | 是       | EcsV587!                                                     | 云服务器密码                                                 |
-| PublicKey          | string   | 是       |                                                              | 云服务器公钥                                                |
+| Password           | string   | 否       | EcsV587!                                                     | 云服务器密码                                                 |
+| PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 否       | shouduzaixhost                                               | 云服务器的主机名    默认写入主机Id                           |
 | AssignCCSId        | integer  | 否       | 1                                                            | 是否启用编号，1为启用，0为不启用                             |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
