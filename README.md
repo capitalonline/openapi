@@ -74,7 +74,7 @@
          * [4.CreateBmsInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4createbmsinstance)
          * [5.DescribeBms](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5describebms)
          * [6.DescribeBmsDetail](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6describebmsdetail)
-         * [7.DescribeBmsPower](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7describebmspower)
+         * [7.OperateBmsPower](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7operatebmspower)
          * [8.ReinstallBms](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8ReinstallBms)
          * [9.DescribeBmsVNC](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9describebmsvnc)
          * [10.ModifyBmsOrder](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10modifybmsorder) 

@@ -77,7 +77,7 @@
          * [4.CreateBmsInstance](#4createbmsinstance)
          * [5.DescribeBms](#5describebms)
          * [6.DescribeBmsDetail](#6describebmsdetail)
-         * [7.DescribeBmsPower](#7describebmspower)
+         * [7.OperateBmsPower](#7operatebmspower)
          * [8.ReinstallBms](#8ReinstallBms)
          * [9.DescribeBmsVNC](#9describebmsvnc)
          * [10.ModifyBmsOrder](#10modifybmsorder)  
@@ -4032,9 +4032,9 @@ def describe_bms_detail(id):
 
 
 
-### 7.DescribeBmsPower
+### 7.OperateBmsPower
 
-**Action: DescribeBmsPower**
+**Action: OperateBmsPower**
 
 **描述**:  裸金属服务器的电源操作（开机、关机、重启）
 
@@ -4090,7 +4090,7 @@ def describe_bms_detail(id):
  **代码调用示例**
  ```python
 def operat_bms_power(id, state):
-    action = "DescribeBmsPower"
+    action = "OperateBmsPower"
     method = "POST"
     param = {
         "BaremetalIds": [id],
