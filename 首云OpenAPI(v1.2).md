@@ -32,6 +32,11 @@
          * [20.DeleteTag](#20deletetag)
          * [21.AddInstancesTags](#21addinstancestags)
          * [22.DeleteInstancesTags](#22deleteinstancestags)
+         * [23.DescribeInstanceType](#23DescribeInstanceType)
+         * [24.CreateInstanceConsoleURL](#24CreateInstanceConsoleURL)
+         * [25.DescribePublicIp](#25DescribePublicIp)
+         * [26.DescribePrivateIp](#26DescribePrivateIp)
+         * [27.ResetInstancesPassword](#27ResetInstancesPassword)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1435,6 +1440,256 @@ def down_card(InterfaceId, InstanceId):
   "TaskId": ""
 }
 ```
+
+### 23.DescribeInstanceType
+
+**Action: DescribeInstanceType**
+
+**描述：** 获取主机可售规格详情
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| RegionId | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 区域id     |
+| InstanceType   | string |    是    | "Standard"                                               | 主机类型 |
+| InstanceChargeType   | string |    否    | "PostPaid"     | 云主机的付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid（默认）：按量付费。 |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "Cpu": 1,
+            "Name": "1核1G",
+            "Ram": 1
+        },
+        {
+            "Cpu": 1,
+            "Name": "1核2G",
+            "Ram": 2
+        }
+    ],
+    "Message": "Success."
+}
+```
+
+
+### 24.CreateInstanceConsoleURL
+
+**Action: CreateInstanceConsoleURL**
+
+**描述：** 生成云主机控制台地址
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| InstanceId | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云服务器的编号，可以在DescribeInstances中获取     |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "URL": "https://consoxxxx.capitalonline.abc:1234/console/axxxxx-11ea-98ec-8xx0d/xxxx"
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+
+```
+
+### 25.DescribePublicIp
+
+**Action: DescribePublicIp**
+
+**描述：** 获取公网IP使用详情
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| VdcId | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号     |
+| PublicId | string |    是    | "123443ea8-fcxxxxx01defxxx104e7" | 公网ID     |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "UnusedList": [
+            "123.123.11.11",
+            "123.145.13.11"
+        ],
+        "UnusedTotal": 2,
+        "UsedList": [
+            {
+                "Address": "111.222.14.111",
+                "Usage": "云服务器使用(xxx)"
+            }
+        ],
+        "UsedTotal": 1
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+
+```
+
+### 26.DescribePrivateIp
+
+**Action: DescribePrivateIp**
+
+**描述：** 获取私网IP使用详情
+
+**请求地址:** cdsapi.capitalonline.net/network
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| VdcId | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号     |
+| PrivateId | string |    是    | "123443ea8-fcxxxxx01defxxx104e7" | 私网ID     |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "UnusedList": [
+            "12.12.11.11",
+            "12.14.13.11"
+        ],
+        "UnusedTotal": 2,
+        "UsedList": [
+            {
+                "Address": "11.22.14.11",
+                "Usage": "云服务器使用(xxx)"
+            }
+        ],
+        "UsedTotal": 1
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+
+```
+
+### 27.ResetInstancesPassword
+
+**Action: ResetInstancesPassword**
+
+**描述：** 修改云主机密码
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| InstanceIds | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | 主机编号，多个用逗号隔开     |
+| Password| string |    是    | "xxxx" | 新主机密码     |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "InstanceId": "xxxxx",
+            "TaskId": 12334545
+        },
+        {
+            "InstanceId": "1233445454",
+            "TaskId": 233454556
+        }
+    ],
+    "Message": "Success."
+}
+```
+
 
 ## 安全组相关
 
