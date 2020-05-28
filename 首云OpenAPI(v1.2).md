@@ -2332,7 +2332,10 @@ def down_card(InterfaceId, InstanceId):
 | ----------- | ------ | -------- | ------ | ---------------- |
 | InstanceId  | String | 是       | Test   | 云主机实例ID     |
 | DisplayName | String | 是       | 模板   | 模板名称         |
-| PowerOn     | Bool   | 是       | 1      | 是否开机定制模板 |
+| PowerOn     | Bool   | 是       | True      | 是否开机定制模板 |
+| WithDataDisk     | Bool   | 否       | True      | 所定制的模板是否需要挂载原主机数据盘，默认为 True |
+| InstanceUserName     | String   | 否       | root     |  云主机用户名, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写用户名 如您修改过管理员权限默认账户，请填写修改后的名称。如用户名不一致，会导致创建云主机失败！ |
+| InstancePassword     | String   | 否       | xxxx      | 云主机密码, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写云主机密码  |
 
 ​	**返回参数：** 
 
