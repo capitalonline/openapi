@@ -305,14 +305,14 @@ def get_redis_config():
                         }],
                         "CpuRam": [{
                             "CPU": 0,
-                            "Name": "8G",
-                            "PaasGoodsId": 5774,
-                            "RAM": 8
-                        }, {
-                            "CPU": 0,
                             "Name": "1G",
                             "PaasGoodsId": 5765,
                             "RAM": 1
+                        }, {
+                            "CPU": 0,
+                            "Name": "2G",
+                            "PaasGoodsId": 5768,
+                            "RAM": 2
                         }, {
                             "CPU": 0,
                             "Name": "4G",
@@ -320,14 +320,24 @@ def get_redis_config():
                             "RAM": 4
                         }, {
                             "CPU": 0,
+                            "Name": "8G",
+                            "PaasGoodsId": 5774,
+                            "RAM": 8
+                        }, {
+                            "CPU": 0,
                             "Name": "16G",
                             "PaasGoodsId": 5777,
                             "RAM": 16
                         }, {
                             "CPU": 0,
-                            "Name": "2G",
-                            "PaasGoodsId": 5768,
-                            "RAM": 2
+                            "Name": "32G",
+                            "PaasGoodsId": 8012,
+                            "RAM": 32
+                        }, {
+                            "CPU": 0,
+                            "Name": "64G",
+                            "PaasGoodsId": 8021,
+                            "RAM": 64
                         }]
                     }
                 }],
@@ -340,6 +350,64 @@ def get_redis_config():
                 "SubProductName": "Redis 读写分离版"
             }],
             "Version": "2.8.19"
+        }, {
+            "Architectures": [{
+                "ArchitectureName": "集群",
+                "ComputeRoles": [{
+                    "ComputeName": "高I/O型",
+                    "Standards": {
+                        "AttachDisk": [{
+                            "BasicIops": "5000",
+                            "DiskMax": 2000,
+                            "DiskMaxExpand": 2000,
+                            "DiskMin": 100,
+                            "DiskName": "超高性能型",
+                            "DiskStep": 100,
+                            "DiskUnit": "G",
+                            "DiskValue": "ssd_disk"
+                        }],
+                        "CpuRam": [{
+                            "CPU": 0,
+                            "Name": "8G",
+                            "PaasGoodsId": 8063,
+                            "RAM": 8
+                        }, {
+                            "CPU": 0,
+                            "Name": "12G",
+                            "PaasGoodsId": 8069,
+                            "RAM": 12
+                        }, {
+                            "CPU": 0,
+                            "Name": "20G",
+                            "PaasGoodsId": 8075,
+                            "RAM": 20
+                        }, {
+                            "CPU": 0,
+                            "Name": "32G",
+                            "PaasGoodsId": 8081,
+                            "RAM": 32
+                        }, {
+                            "CPU": 0,
+                            "Name": "64G",
+                            "PaasGoodsId": 8087,
+                            "RAM": 64
+                        }, {
+                            "CPU": 0,
+                            "Name": "128G",
+                            "PaasGoodsId": 8093,
+                            "RAM": 128
+                        }]
+                    }
+                }],
+                "EnginesType": [],
+                "NetworkLinks": [{
+                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
+                    "LinkType": "default_link",
+                    "Name": "默认链路"
+                }],
+                "SubProductName": "Redis 集群版"
+            }],
+            "Version": "5.0"
         }],
         "RegionId": "CN_Hongkong_A"
     },
