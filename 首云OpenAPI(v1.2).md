@@ -866,7 +866,7 @@ def reset_os(vm_id, os_id):
                     "DataDisks":[]
                 },
                 "VdcId":"0bb08ed7-e686-4168-93e5-e0187579753b",
-                "PublicNetworkInterface":{},
+                "PublicNetworkInterface":[],
                 "InstanceChargeType":"PostPaid",
                 "VdcName":"cdsApi-testaa",
                 "InstanceName":"root",
