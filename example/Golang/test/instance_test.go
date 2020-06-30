@@ -18,7 +18,7 @@ func TestCreateInstance(t *testing.T) {
 	InstanceName := "go-api"
 	InstanceType := "High"
 	ImageId := "Centos_7.6_64"
-	Password := "!QAZ2wsx"
+	Password := "!"
 
 	res := model.CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Password, 4, 4, 1)
 	fmt.Println(res)
@@ -87,7 +87,7 @@ func TestResetImageByPassword(t *testing.T) {
 func TestResetImageByPublicKey(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	imageId := "Centos_7.6_64"
-	PublicKey := "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClyx+YOk31Ga8U+QFKTgfYm2M+xKOnBTS4LHYJEnxLNJj0rvZGPZ0qQHHBCBMnB5gVgs3Zo59hUEkcy9LiyN3qiEWsam7ya38ePXQ5h8z/AN2JHeEedShlGCEJ/sKRWzqnsPYKvgJw/JTKz/EFExFCqPjFpdHsRedBM6IisK/1v1dSusvOV7Jbh6aApXi+1oml4brpmHYqsHrg+o6AT+7yGlBryA5pUUDqMjkauCc/Pugm/VcleOuhf0UCaK01b1l7nEgvkoqbBBGuPNn6XjBVoimjmRXGxGnyo9QYTpx8cxrXUTzN2G8XkBjqV4c5Xim49psGQKHKoApSarGXPlhd jian.jiao@capitalonline.net"
+	PublicKey := "ssh-rsa"
 	res := model.ResetImage(instanceId, imageId, "", PublicKey)
 	fmt.Println(res)
 }
@@ -95,7 +95,7 @@ func TestResetImageByPublicKey(t *testing.T) {
 func TestModifyIpAddress(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	interfaceId := "36457034-baa2-11ea-8771-c60e117040ec"
-	address := "164.52.56.162"
+	address := "xxx.xx.xx.xxx"
 	res := model.ModifyIpAddress(instanceId, interfaceId, address)
 	fmt.Println(res)
 }
