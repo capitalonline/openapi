@@ -253,8 +253,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64          |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
-| PublicIp           | string   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
-| PrivateIp          | string   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0.3”, “10.0.0.4”]}] | 私网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配私网ip |
+| PublicIp           | list   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
+| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0
+
 
 **返回参数:**
 
@@ -321,8 +322,8 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
         "AutoRenew": 1,
         "PrepaidMonth": 1,
         "Amount": Amount,
-        "PublicIp": "",
-        "PrivateIp": ""
+        "PublicIp": ["auto"], # 自动分配
+        "PrivateIp": []
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -652,7 +653,7 @@ def add_disk(vm_id):
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | DiskId     | string | 是       | a67644ba-873f-11e9-bf49-0242ac1104e7 | 硬盘编号                                     |
-| DataSize   | string | 是       | 100                                  | 硬盘扩容后的大小                             |
+| DataSize   | int | 是       | 100                                  | 硬盘扩容后的大小                             |
 
 ​	**返回参数：**
 
