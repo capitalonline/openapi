@@ -2677,7 +2677,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 | ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
 | RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的节点Id                        |
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
-| PublicNetwork | string | 否       | PublicNetword: {     "Name": "公网1",     "Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, ''Ip':4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
+| PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
 
 ​	**返回参数：**
 
