@@ -4943,7 +4943,7 @@ def get_metering(end_time, uid=None):
                         "Key":"Bandwidth"
                     }
                 ],
-                "Type":"Bandwidth_China_Optimized"
+                "Type":"Bandwidth_BGP_Optimized"
             },
             {
                 "BillingMethod":[
@@ -5209,7 +5209,6 @@ def get_status(task_id):
 | 台湾优化       | Bandwidth_Taiwai_Optimized         |
 | 电信           | Bandwidth_China_Telecom            |
 | 双线BGP        | Bandwidth_Tow_Line_BGP             |
-| BGP-中国优化   | Bandwidth_China_Optimized          |
 | 客户专用带宽   | Customer_Specific_Bandwidth        |
 | VIP专用带宽    | Bandwidth_VIP_Dedicated            |
 | 全球优化BGP    | Globally_Optimized_BGP             |
