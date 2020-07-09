@@ -1612,13 +1612,13 @@ create_temp_instance(instance_uuid="****************",select_time="2020-06-10 05
 
 ### 18.DescribeTemporaryDBInstances
 
-**Action：StartBatchRollbackToTemporaryDBInstance**
+**Action：DescribeTemporaryDBInstances**
 
 **描述：** 获取某个主实例的临时实例列表
 
 **请求地址：** cdsapi.capitalonline.net/mysql
 
-**请求方法：**GET
+**请求方法：** GET
 
 **请求参数：**
 
