@@ -1698,7 +1698,7 @@ def get_temp_instance(instance_uuid):
 
 **请求地址：** cdsapi.capitalonline.net/mysql
 
-**请求方法：**POST
+**请求方法：** POST
 
 **请求参数：**
 
@@ -1754,7 +1754,7 @@ def ragularization_temp_instance(instance_uuid,temporary_instance_id):
 
 **请求地址：** cdsapi.capitalonline.net/mysql
 
-**请求方法：**POST
+**请求方法：** POST
 
 **请求参数：**
 
