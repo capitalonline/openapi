@@ -10,7 +10,7 @@ MySQL 公开API目录
   * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
 * [错误码](#错误码)
 * [实例](#实例)
-   * [1.DescribeRegins](#1describeregins) 
+   * [1.DescribeRegions](#1describeregions) 
    * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig) 
    * [3.CreateDBInstance](#3createdbinstance) 
    * [4.DescribeDBInstances](#4describedbinstances) 
@@ -19,6 +19,18 @@ MySQL 公开API目录
    * [7.DeleteDBInstance](#8deletedbinstance)
 * [账号](#账号)
    * [1.CreatePrivilegedAccount](#5createprivilegedaccount)
+* [备份](#备份)
+   * [1.CreateBackup](#11createbackup)
+   * [2.DescribeBackups](#12describebackups)
+   * [3.DeleteBackup](#13deletebackup)
+   * [4.DownloadBackup](#14downloadbackup)
+* [恢复](#恢复)
+   * [1.StartBatchRollback](#15startbatchrollback)
+   * [2.DescribeRollbackRangeTime](#16describerollbackrangetime)
+   * [3.StartBatchRollbackToTemporaryDBInstance](#17startbatchrollbacktotemporarydbinstance)
+   * [4.DescribeTemporaryDBInstances](#18describetemporarydbinstances)
+   * [5.RegularizeTemporaryDBInstances](#19regularizetemporarydbinstances)
+   * [6.DeleteTemporaryDBInstances](#20deletetemporarydbinstances)   
 * [只读实例](#只读实例)
    * [1.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig) 
    * [2.CreateReadOnlyDBInstance](#10createreadonlydbinstance) 
@@ -31,7 +43,7 @@ MySQL 公开API目录
 
 | API                       | 描述                                                   |
 | ------------------------- | ------------------------------------------------------ |
-| DescribeRegins            | 获取云数据库MySQL支持购买的站点区域                    |
+| DescribeRegions            | 获取云数据库MySQL支持购买的站点区域                    |
 | DescribeAvailableDBConfig | 获取某个站点可购买的MySQL产品类型以及规格              |
 | CreateDBInstance          | 创建MySQL云数据库实例                                  |
 | DescribeDBInstances       | 查看MySQL实例列表                                      |
@@ -44,6 +56,26 @@ MySQL 公开API目录
 | API                     | 描述           |
 | ----------------------- | -------------- |
 | CreatePrivilegedAccount | 创建高权限账号 |
+
+#### 备份
+
+| API             | 描述                 |
+| --------------- | -------------------- |
+| CreateBackup    | 为实例创建一个备份集 |
+| DescribeBackups | 查看备份集列表       |
+| DeleteBackup    | 删除数据备份文件     |
+| DownloadBackup  | 获取备份下载地址     |
+
+#### 恢复
+
+| API                                     | 描述                                                      |
+| --------------------------------------- | --------------------------------------------------------- |
+| DescribeRollbackRangeTime               | 查询可恢复时间（主从版适用）                              |
+| StartBatchRollback                      | 集群版数据库恢复（覆盖性恢复）                            |
+| StartBatchRollbackToTemporaryDBInstance | 主从版数据库恢复（7天内任意时间点的恢复，恢复到临时实例） |
+| DescribeTemporaryDBInstances            | 获取某个主实例的临时实例列表                              |
+| RegularizeTemporaryDBInstances          | 临时实例转正                                              |
+| DeleteTemporaryDBInstances              | 删除临时实例                                              |
 
 #### 只读实例
 
@@ -65,9 +97,9 @@ MySQL 公开API目录
 | 500          | InternalError        | 内部错误                         |
 | 500          | CreateOrderExcept    | 创建订单异常                     |
 
-### 1.DescribeRegins
+### 1.DescribeRegions
 
-**Action：DescribeRegins**
+**Action：DescribeRegions**
 
 **描述：** 获取云数据库MySQL支持购买的站点区域。
 
@@ -100,7 +132,7 @@ def get_mysql_zones():
     """
     获取云数据库MySQL支持的站点区域
     """
-    action = "DescribeRegins"
+    action = "DescribeRegions"
     method = "GET"
     param = {
     }
@@ -1094,3 +1126,682 @@ def create_mysql_for_readonly(instance_uuid):
     "TaskId": "***********"
 }
 ```
+### 11.CreateBackup
+
+**Action：CreateBackup**
+
+**描述：** 为实例创建一个备份集，支持云数据库MySQL主从版实例和集群版实例
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明                           |
+| :----------- | :--- | :----- | ------------------------------ |
+| InstanceUuid | 是   | string | 实例编号                       |
+| BackupType   | 是   | string | 备份类型（目前只支持物理备份） |
+| Desc         | 否   | string | 备份的描述,不传默认为空字符串  |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def create_backup(instance_uuid):
+    """
+    创建MySQL备份
+    :param instance_uuid: 实例编号
+    """
+    action = "CreateBackup"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "BackupType": "physical-backup",  # 目前只支持物理备份
+        "Desc": "test-openapi-python"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***********"
+}
+```
+
+### 12.DescribeBackups
+
+**Action：DescribeBackups**
+
+**描述：** 查看备份集列表
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 参数名     | 类型   | 说明                           |
+| :--------- | :----- | ------------------------------ |
+| Message    | string | 信息描述                       |
+| Code       | string | 状态码                         |
+| Data       | dict   | 数据                           |
+| BackupId   | string | 备份id                         |
+| Status     | string | 备份状态                       |
+| BackupType | string | 备份类型（全备份）             |
+| StartTime  | string | 开始时间                       |
+| EndTime    | string | 结束时间                       |
+| BackupMode | string | 备份策略（自动备份、手动备份） |
+| BackupSize | string | 备份文件大小，单位字节         |
+| Desc       | string | 备份描述                       |
+
+**请求示例：**
+
+```python
+def get_mysql_backups(instance_uuid):
+    """
+    查看备份集列表
+    :param instance_uuid: 实例编号
+    :return:
+    """
+    action = "DescribeBackups"
+    method = "GET"
+    param = {
+        "InstanceUuid": instance_uuid
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "BackupId": "**************************",
+        "BackupMode": "auto",
+        "BackupSize": 677496,
+        "BackupType": "physical-backup",
+        "Desc": "",
+        "EndTime": "2020-06-18 04:10:13",
+        "InstanceId": "**************************",
+        "StartTime": "2020-06-18 04:09:59",
+        "Status": "finished"
+    }, {
+        "BackupId": "**************************",
+        "BackupMode": "auto",
+        "BackupSize": 677494,
+        "BackupType": "physical-backup",
+        "Desc": "",
+        "EndTime": "2020-06-17 04:10:22",
+        "InstanceId": "**************************",
+        "StartTime": "2020-06-17 04:10:08",
+        "Status": "finished"
+    }, {
+        "BackupId": "**************************",
+        "BackupMode": "auto",
+        "BackupSize": 677498,
+        "BackupType": "physical-backup",
+        "Desc": "",
+        "EndTime": "2020-06-16 04:10:17",
+        "InstanceId": "**************************",
+        "StartTime": "2020-06-16 04:10:03",
+        "Status": "finished"
+    }, {
+        "BackupId": "**************************",
+        "BackupMode": "manual",
+        "BackupSize": 677484,
+        "BackupType": "physical-backup",
+        "Desc": "",
+        "EndTime": "2020-06-15 15:04:59",
+        "InstanceId": "**************************",
+        "StartTime": "2020-06-15 15:04:41",
+        "Status": "finished"
+    }],
+    "Message": "Success."
+}
+```
+
+### 13.DeleteBackup
+
+**Action：DeleteBackup**
+
+**描述：** 删除数据备份文件
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+| BackupId     | 是   | string | 备份编号 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def delete_backup(instance_uuid, backupid):
+    """
+    删除数据备份文件
+    :param backupid: 备份编号
+    :param instance_uuid: 实例编号
+    """
+    action = "DeleteBackup"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "BackupId": backupid,
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***********"
+}
+```
+
+### 14.DownloadBackup
+
+**Action：DownloadBackup**
+
+**描述：** 获取备份下载地址
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+| BackupId     | 是   | string | 备份编号 |
+
+**返回参数：**
+
+| 参数名                    | 类型      | 说明                                                     |
+| :------------------------ | :-------- | -------------------------------------------------------- |
+| Message                   | string    | 信息描述                                                 |
+| Code                      | string    | 状态码                                                   |
+| Data                      | dict      | 数据                                                     |
+| BackupId                  | string    | 备份编号                                                 |
+| Status                    | string    | 备份状态                                                 |
+| BackupType                | string    | 备份的类型（全备份）                                     |
+| StartTime                 | string    | 备份的开始时间                                           |
+| EndTime                   | string    | 备份的结束时间                                           |
+| BackupMode                | ststringr | 备份策略（自动或者手动备份）                             |
+| BackupSize                | string    | 备份文件大小，单位字节                                   |
+| Desc                      | string    | 备份的描述（手动备份可以自定义内容），自动备份为空字符串 |
+| BackupDownloadUrl         | string    | 公网下载地址                                             |
+| BackupIntranetDownloadUrl | string    | 内网下载地址                                             |
+
+**请求示例：**
+
+```python
+def get_backup_describe(instance_uuid, backupid):
+    """
+    获取备份详情
+    :param backupid: 备份编号
+    :param instance_uuid: 实例编号
+    :return:
+    """
+    action = "DownloadBackup"
+    method = "GET"
+    param = {
+        "InstanceUuid": instance_uuid,
+        "BackupId": backupid
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "BackupDownloadUrl": "https://gic.***************",
+        "BackupIntranetDownloadUrl": "http://88.***************",
+        "BackupMode": "auto",
+        "BackupSize": 68140,
+        "BackupType": "full-backup",
+        "Desc": "",
+        "EndTime": "2020-06-18 04:00:26",
+        "InstanceId": "***************",
+        "StartTime": "2020-06-18 04:00:06",
+        "Status": "finished"
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+```
+
+### 15.StartBatchRollback
+
+**Action：StartBatchRollback**
+
+**描述：** 集群版数据库恢复（覆盖性恢复）
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明           |
+| :----------- | :--- | :----- | -------------- |
+| InstanceUuid | 是   | string | 实例编号       |
+| BackupId     | 是   | string | 选择的备份编号 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def start_batch_rollback(instance_uuid, backupid):
+    """
+    MySQL集群备份恢复
+    :param backupid: 备份编号
+    :param instance_uuid: 实例编号
+    """
+    action = "StartBatchRollback"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "BackupId": backupid,
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success.",
+    "TaskId": "***********"
+}
+```
+
+### 16.DescribeRollbackRangeTime
+
+**Action：DescribeRollbackRangeTime**
+
+**描述：** 查询可恢复时间（主从版适用）
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 参数名          | 类型   | 说明     |
+| :-------------- | :----- | -------- |
+| Message         | string | 信息描述 |
+| Code            | string | 状态码   |
+| Data            | dict   | 数据     |
+| LeftBorderTime  | 是     | string   |
+| RightBorderTime | 是     | string   |
+
+**请求示例：**
+
+```python
+def get_time_range(instance_uuid):
+    """
+    获取备份支持的时间范围(主从实例支持的时间范围)
+    :param instance_uuid: 实例编号
+    """
+    action = "DescribeRollbackRangeTime"
+    method = "GET"
+    param = { "InstanceUuid": instance_uuid}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {}
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "LeftBorderTime": "2020-06-23 09:32:31",
+        "RightBorderTime": "2020-06-23 16:25:17"
+    },
+    "Message": "success",
+    "TaskId": ""
+}
+```
+
+### 17.StartBatchRollbackToTemporaryDBInstance
+
+**Action：StartBatchRollbackToTemporaryDBInstance**
+
+**描述：** 主从版数据库恢复（7天内任意时间点的恢复，恢复到临时实例）
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名                | 必选 | 类型   | 说明                                                   |
+| :-------------------- | :--- | :----- | ------------------------------------------------------ |
+| InstanceUuid          | 是   | string | 实例编号                                               |
+| SelectTime            | 是   | string | 选择恢复的时间点（使用查询可恢复时间接口查询时间范围） |
+| TemporaryInstanceName | 是   | string | 临时实例服务名称                                       |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def create_temp_instance(instance_uuid,select_time,temporary_instance_name):
+    """
+    主从实例回滚时间点到临时实例
+    :param instance_uuid: 要恢复的实例名称
+    :param select_time: 选择恢复的时间点 格式："2020-06-10 05:53:57"（必须在支持范围之内）
+    :param temporary_instance_name: 临时实例的名称
+    :return:
+    """
+    action = "StartBatchRollbackToTemporaryDBInstance"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+            "InstanceUuid": instance_uuid,
+            "SelectTime":select_time,
+            "TemporaryInstanceName":temporary_instance_name}
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+    
+#调用例子
+create_temp_instance(instance_uuid="****************",select_time="2020-06-10 05:53:57",temporary_instance_name="***********")  #获取恢复支持的时间范围
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务已下发,请等待执行",
+    "TaskId": "***********"
+}
+```
+
+### 18.DescribeTemporaryDBInstances
+
+**Action：DescribeTemporaryDBInstances**
+
+**描述：** 获取某个主实例的临时实例列表
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 参数名                | 类型   | 说明                              |
+| :-------------------- | :----- | --------------------------------- |
+| Message               | string | 信息描述                          |
+| Code                  | string | 状态码                            |
+| Data                  | dict   | 数据                              |
+| Status                | string | 实例状态                          |
+| StatusStr             | string | 实例状态中文                      |
+| SelectRecoveryTime    | string | 该临时实例恢复的时间点            |
+| CreateTime            | string | 临时实例创建时间                  |
+| TemporaryInstanceUuid | string | 临时实例编号（转正/删除时候用到） |
+| Progress              | string | 临时实例创建进度                  |
+| TemporaryInstanceName | string | 临时实例名称                      |
+| Ip                    | string | 临时实例IP                        |
+| Port                  | string | 临时实例端口                      |
+
+**请求示例：**
+
+```python
+def get_temp_instance(instance_uuid):
+    """
+    获取临时实例列表
+    :param instance_uuid: 实例编号
+    """
+    action = "DescribeTemporaryDBInstances"
+    method = "GET"
+    param = {"InstanceUuid": instance_uuid}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {}
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "CreateTime": "2020-06-23 15:56:17",
+        "Ip": "*********",
+        "Port": "6033",
+        "SelectRecoveryTime": "2020-06-23 13:52:51",
+        "Status": "RUNNING",
+        "StatusStr": "运行中",
+        "TemporaryInstanceName": "**********",
+        "TemporaryInstanceUuid": "**********"
+    },{
+        "CreateTime": "2020-06-24 11:30:21",
+        "Ip": "",
+        "Port": "",
+        "SelectRecoveryTime": "2020-06-24 11:20:48",
+        "Status": "CREATING",
+        "StatusStr": "创建中",
+        "TemporaryInstanceName": "*********",
+        "TemporaryInstanceUuid": "*********"
+    }],
+    "Message": "success"
+}
+```
+
+### 19.RegularizeTemporaryDBInstances
+
+**Action：RegularizeTemporaryDBInstances**
+
+**描述：** 临时实例转正
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名                | 必选 | 类型   | 说明                   |
+| :-------------------- | :--- | :----- | ---------------------- |
+| InstanceUuid          | 是   | string | 主实例编号             |
+| TemporaryInstanceUuid | 是   | string | 主实例下的临时实例编号 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+
+**请求示例：**
+
+```python
+def ragularization_temp_instance(instance_uuid,temporary_instance_id):
+    """
+    临时实例转正
+    :param instance_uuid: 实例编号
+    :param temporary_instance_id: 主实例的临时实例编号
+    """
+    action = "RagularizeTemporaryDBInstances"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {"InstanceUuid": instance_uuid,"TemporaryInstanceUuid":temporary_instance_id}
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": None,
+    "Message": "临时实例转正操作成功",
+    "TaskId": ""
+}
+```
+
+### 20.DeleteTemporaryDBInstances
+
+**Action：DeleteTemporaryDBInstances**
+
+**描述：** 删除临时实例
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名                | 必选 | 类型   | 说明                   |
+| :-------------------- | :--- | :----- | ---------------------- |
+| InstanceUuid          | 是   | string | 实例编号               |
+| TemporaryInstanceUuid | 是   | string | 主实例下的临时实例编号 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def delete_temp_instance(instance_uuid,temporary_instance_id):
+    """
+    删除临时实例
+    :param instance_uuid: 实例编号
+    :param temporary_instance_id: 删除的实例编号
+    """
+    action = "DeleteTemporaryDBInstances"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {"InstanceUuid": instance_uuid,"TemporaryInstanceUuid":temporary_instance_id}
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+
+
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "删除任务已经下发，请等待执行完成。",
+    "TaskId": "**********************"
+}
+```
+
