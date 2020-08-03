@@ -251,12 +251,10 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64          |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 | PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0
-| UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 
 
 **返回参数:**
@@ -5230,11 +5228,18 @@ def get_status(task_id):
 |            | Centos_7.1_64                    |                                        |
 |            | Centos_7.0_64                    |                                        |
 | Debian     | Debian_8.1_64                    |                                        |
+|            | Debian_8.1_32                    |                                        |
+|            | Debian_7.8_64                    |                                        |
 | Redhat     | Redhat_6.5_64                    |                                        |
+|            | Redhat_5.10_64                   |                                        |
 | Ubuntu     | Ubuntu_16.04_64                  |                                        |
 |            | Ubuntu_14.04_64                  |                                        |
 |            | Ubuntu_14.10_64                  |                                        |
 | Windows    | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版     |
+|            | Windows_2008_Enterprise_32_EN    | Windows 2008 企业版 32位 英文版        |
+|            | Windows_2008_Enterprise_32_CN    | Windows 2008 企业版 32位 中文版        |
+|            | Windows_2008_Enterprise_64_EN    | Windows 2008 企业版 64位 英文版        |
+|            | Windows_2008_Enterprise_64_CN    | Windows 2008 企业版 64位 中文版        |
 |            | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版     |
 |            | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版     |
 |            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版 |
