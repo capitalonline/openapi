@@ -5228,11 +5228,18 @@ def get_status(task_id):
 |            | Centos_7.1_64                    |                                        |
 |            | Centos_7.0_64                    |                                        |
 | Debian     | Debian_8.1_64                    |                                        |
+|            | Debian_8.1_32                    |                                        |
+|            | Debian_7.8_64                    |                                        |
 | Redhat     | Redhat_6.5_64                    |                                        |
+|            | Redhat_5.10_64                   |                                        |
 | Ubuntu     | Ubuntu_16.04_64                  |                                        |
 |            | Ubuntu_14.04_64                  |                                        |
 |            | Ubuntu_14.10_64                  |                                        |
 | Windows    | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版     |
+|            | Windows_2008_Enterprise_32_EN    | Windows 2008 企业版 32位 英文版        |
+|            | Windows_2008_Enterprise_32_CN    | Windows 2008 企业版 32位 中文版        |
+|            | Windows_2008_Enterprise_64_EN    | Windows 2008 企业版 64位 英文版        |
+|            | Windows_2008_Enterprise_64_CN    | Windows 2008 企业版 64位 中文版        |
 |            | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版     |
 |            | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版     |
 |            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版 |
