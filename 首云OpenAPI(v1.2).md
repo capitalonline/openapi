@@ -397,7 +397,7 @@ def delete_instance(vm_ids):
     return True
 ```
 
-### 3. StopInstance
+### 3.StopInstance
 
 ​	**Action:StopInstance**
 
@@ -986,7 +986,7 @@ def up_card(InterfaceId, InstanceId):
     return task_id
 ```
 
-### 13.**DisconnectNetworkInterface**
+### 13.DisconnectNetworkInterface
 
 ​	**Action：DisconnectNetworkInterface**
 
@@ -1051,7 +1051,7 @@ def down_card(InterfaceId, InstanceId):
 
 
 
-### 14. ModifyIpAddress
+### 14.ModifyIpAddress
 
 ​	**Action：ModifyIpAddress**
 
@@ -1163,7 +1163,7 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
-### 16. StartInstance
+### 16.StartInstance
 
 ​	**Action:StartInstance**
 
