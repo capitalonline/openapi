@@ -984,7 +984,7 @@ def up_card(InterfaceId, InstanceId):
     return task_id
 ```
 
-### 13.DisconnectNetworkInterface
+### 13.**DisconnectNetworkInterface**
 
 ​	**Action：DisconnectNetworkInterface**
 
