@@ -723,7 +723,7 @@ def get_redis_backups_list(instance_uuid):
 
 **Action：DownloadBackup**
 
-**描述：** 获取备份文件信息及b备份文件下载地址
+**描述：** 获取备份文件信息及备份文件下载地址
 
 **请求地址：** cdsapi.capitalonline.net/redis
 
