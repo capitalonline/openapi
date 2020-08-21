@@ -14,6 +14,10 @@ Redis 公开API目录
     * [3.CreateDBInstance](#3createdbinstance) 
     * [4.DescribeDBInstances](#4describedbinstances)
     * [5.DeleteDBInstance](#5deletedbinstance)
+    * [6.DescribeBackups](#6describebackups)
+    * [7.DownloadBackup](#7downloadbackup)
+    * [8.CreateBackup](#8createbackup)
+    * [9.DeleteBackup](#9deletebackup)
 
 ### API概览
 
@@ -27,7 +31,16 @@ Redis 公开API目录
 | DescribeAvailableDBConfig | 获取某个站点可购买的Redis产品类型以及规格 |
 | CreateDBInstance          | 创建Redis云数据库实例                     |
 | DescribeDBInstances       | 查看Redis实例列表                         |
-| DeleteDBInstance          | 删除RedisL实例                            |
+| DeleteDBInstance          | 删除Redis实例                            |
+
+#### 备份
+
+| API             | 描述                                |
+| --------------- | ----------------------------------- |
+| DescribeBackups | 获取备份集列表                      |
+| DownloadBackup  | 获取备份文件信息及内网下载地址      |
+| CreateBackup    | 创建备份（物理全备份，RDB格式文件） |
+| DeleteBackup    | 删除备份文件                        |
 
 #### 错误码
 
@@ -631,3 +644,278 @@ def delete_redis(instance_uuid, ):
     "TaskId": "****************"
 }
 ```
+### 6.DescribeBackups
+
+**Action：DescribeBackups**
+
+**描述：** 获取备份集列表
+
+**请求地址：** cdsapi.capitalonline.net/redis
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数**：
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def get_redis_backups_list(instance_uuid):
+    """
+    获取Redis实例备份列表
+    """
+    action = "DescribeBackups"
+    method = "GET"
+    param = {
+        "InstanceUuid": instance_uuid,  # 实例ID
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, REDIS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "BackupId": "**************",
+        "BackupMode": "manual",
+        "BackupSize": 178,
+        "BackupType": "full-backup",
+        "Desc": "",
+        "EndTime": "2020-08-21 18:11:21",
+        "InstanceId": "***************",
+        "StartTime": "2020-08-21 18:11:04",
+        "Status": "finished"
+    }, {
+        "BackupId": "***************",
+        "BackupMode": "manual",
+        "BackupSize": 178,
+        "BackupType": "full-backup",
+        "Desc": "",
+        "EndTime": "2020-08-21 18:01:34",
+        "InstanceId": "********************",
+        "StartTime": "2020-08-21 18:01:16",
+        "Status": "finished"
+    }],
+    "Message": "success"
+}
+```
+
+### 7.DownloadBackup
+
+**Action：DownloadBackup**
+
+**描述：** 获取备份文件信息及b备份文件下载地址
+
+**请求地址：** cdsapi.capitalonline.net/redis
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明           |
+| :----------- | :--- | :----- | -------------- |
+| InstanceUuid | 是   | string | 实例编号       |
+| BackupId     | 是   | string | 备份文件的编号 |
+
+**返回参数**：
+
+| 参数名                    | 类型   | 说明                                                     |
+| :------------------------ | :----- | -------------------------------------------------------- |
+| Message                   | string | 信息描述                                                 |
+| Code                      | string | 状态码                                                   |
+| Data                      | dict   | 数据                                                     |
+| BackupId                  | string | 备份编号                                                 |
+| Status                    | string | 备份状态                                                 |
+| BackupType                | string | 备份的类型                                               |
+| StartTime                 | string | 备份的开始时间                                           |
+| EndTime                   | string | 备份的结束时间                                           |
+| ShardId                   | string | 集群版分片id，其他产品为空字符串                         |
+| BackupMode                | string | 备份的类型（自动或者手动备份）                           |
+| BackupSize                | string | 备份文件大小，单位字节                                   |
+| Desc                      | string | 备份的描述（手动备份可以自定义内容），自动备份为空字符串 |
+| BackupDownloadUrl         | string | 公网下载地址                                             |
+| BackupIntranetDownloadUrl | string | 同内网下载地址                                           |
+
+**请求示例：**
+
+```python
+def get_redis_backups_download(instance_uuid,backup_id):
+    """
+    获取Redis实例备份详情
+    """
+    action = "DownloadBackup"
+    method = "GET"
+    param = {
+        "InstanceUuid": instance_uuid,  # 实例ID
+        "BackupId": backup_id,  # 备份ID
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, REDIS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "BackupDownloadUrl": "https:/***************************",
+        "BackupId": "**********",
+        "BackupIntranetDownloadUrl": "http://***************",
+        "BackupMode": "manual",
+        "BackupSize": 176,
+        "BackupType": "full-backup",
+        "Desc": "",
+        "EndTime": "2020-08-21 15:59:02",
+        "InstanceId": "*************",
+        "ShardId": "*************",
+        "StartTime": "2020-08-21 15:58:45",
+        "Status": "finished"
+    },
+    "Message": "success",
+    "TaskId": ""
+}
+```
+
+### 8.CreateBackup
+
+**Action：CreateBackup**
+
+**描述：** 创建备份（物理全备份，RDB格式文件）
+
+**请求地址：** cdsapi.capitalonline.net/redis
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明                                                      |
+| :----------- | :--- | :----- | --------------------------------------------------------- |
+| InstanceUuid | 是   | string | 实例编号                                                  |
+| BackupType   | 否   | string | 备份类型（目前只支持物理全备份,默认为full-backup,可以不传 |
+| Desc         | 否   | string | 备份的描述,不传默认为空字符串                             |
+
+**返回参数**：
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def create_redis_backup(instance_uuid):
+    """
+    创建Redis备份
+    :param instance_uuid: 实例编号
+    """
+    action = "CreateBackup"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, REDIS_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "BackupType": "full-backup",  # 目前只支持物理全备份,默认为full-backup
+        "Desc": "测试Redis备份"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "succes",
+    "TaskId": "*************"
+}
+```
+
+### 9.DeleteBackup
+
+**Action：DeleteBackup**
+
+**描述：** 删除备份文件
+
+**请求地址：** cdsapi.capitalonline.net/redis
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明               |
+| :----------- | :--- | :----- | ------------------ |
+| InstanceUuid | 是   | string | 实例编号           |
+| BackupId     | 是   | string | 删除的备份文件编号 |
+
+**返回参数**：
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def delete_redis_backup(instance_uuid, backup_id):
+    """
+    删除Redis实例备份
+    :param instance_uuid: 实例编号
+    :param backup_id: 备份编号
+    """
+    action = "DeleteBackup"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, REDIS_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "BackupId": backup_id,
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "success",
+    "TaskId": "*************"
+}
+```
+
+
