@@ -37,7 +37,6 @@
          * [25.DescribePublicIp](#25DescribePublicIp)
          * [26.DescribePrivateIp](#26DescribePrivateIp)
          * [27.ResetInstancesPassword](#27ResetInstancesPassword)
-         * [28.CreateInstanceHtmlConsoleURL](#28CreateInstanceHtmlConsoleURL)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1698,7 +1697,7 @@ def down_card(InterfaceId, InstanceId):
 
 **Action: CreateInstanceHtmlConsoleURL**
 
-**描述：** 生成云主机HTML控制台地址
+**描述：** 生成云主机控制台地址
 
 **请求地址:** cdsapi.capitalonline.net/ccs
 
