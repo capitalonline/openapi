@@ -37,6 +37,7 @@
          * [25.DescribePublicIp](#25DescribePublicIp)
          * [26.DescribePrivateIp](#26DescribePrivateIp)
          * [27.ResetInstancesPassword](#27ResetInstancesPassword)
+         * [28.CreateInstanceHtmlConsoleURL](#28CreateInstanceHtmlConsoleURL)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1496,7 +1497,7 @@ def down_card(InterfaceId, InstanceId):
 ```
 
 
-### 24.CreateInstanceConsoleURL
+### 24.CreateInstanceConsoleURL(近期将下线该功能)
 
 **Action: CreateInstanceConsoleURL**
 
@@ -1691,6 +1692,48 @@ def down_card(InterfaceId, InstanceId):
     ],
     "Message": "Success."
 }
+```
+
+### 28.CreateInstanceHtmlConsoleURL
+
+**Action: CreateInstanceHtmlConsoleURL**
+
+**描述：** 生成云主机HTML控制台地址
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
+| InstanceId | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在DescribeInstances中获取     |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "URL": "https://console.capitalonline.net/web_console/xxxxxx?os_type=centos&instance=xxx&info=xxxxxxxx"
+    },
+    "Message": "Success.",
+    "TaskId": ""
+}
+
 ```
 
 
