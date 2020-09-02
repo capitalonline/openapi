@@ -3680,7 +3680,7 @@ def describe_bms_images():
 | ComputeId          | string  | 是   | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469   | 规格配置ID |
 | GoodsId            | int     | 是   | 7955                                   | 商品ID |
 | ImageId            | string  | 是   | d6012cd8-b672-11e9-9265-525400b97470   | 镜像ID |
-| EnableMonitor      | string  | 否   | 1                                      | 是否开启监控, 1为开启，0为关闭，默认为关闭。 |
+| EnableMonitor      | int     | 否   | 1                                      | 是否开启监控, 1为开启，0为关闭，默认为关闭。 |
 | PipeIds            | list    | 是   | `["9fd88912-b668-11e9-a140-0242ac110002",]`| 网段主键ID列表 |
 | Amount             | int     | 是   | 10                                     | 指定创建裸金属服务器的数量，取值范围：1-100 |
 
@@ -3744,7 +3744,7 @@ def create_bms_instance():
         "ComputeId": "eb41773f-c944-4831-810b-9db4826996f2",
         "GoodsId": 7685,
         "ImageId": "0dff0137-ed2b-4ebb-bccf-6ec9d982fbfb",
-        "EnableMonitor": "1",
+        "EnableMonitor": 1,
         "PipeIds": [
                     "79281b44-73db-11ea-ac8e-0242ac110002",
                     "6c00cd1c-73db-11ea-8379-0242ac110002"
