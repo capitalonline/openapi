@@ -34,10 +34,11 @@
          * [21.AddInstancesTags](#21addinstancestags)
          * [22.DeleteInstancesTags](#22deleteinstancestags)
          * [23.DescribeInstanceType](#23DescribeInstanceType)
-         * [24.DescribePublicIp](#25DescribePublicIp)
-         * [25.DescribePrivateIp](#26DescribePrivateIp)
-         * [26.ResetInstancesPassword](#27ResetInstancesPassword)
-         * [27.CreateInstanceHtmlConsoleURL](#28CreateInstanceHtmlConsoleURL)
+         * [24.DescribePublicIp](#24DescribePublicIp)
+         * [25.DescribePrivateIp](#25DescribePrivateIp)
+         * [26.ResetInstancesPassword](#26ResetInstancesPassword)
+         * [27.CreateInstanceHtmlConsoleURL](#27CreateInstanceHtmlConsoleURL)
+         * [28.ExtendSystemDisk](#28ExtendSystemDisk)
       * [安全组相关](#安全组相关)
          * [1.CreateSecurityGroup](#1createsecuritygroup)
          * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1702,6 +1703,48 @@ def down_card(InterfaceId, InstanceId):
 
 ```
 
+### 28.ExtendSystemDisk
+
+**Action: ExtendSystemDisk**
+
+**描述：** 系统盘扩容
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                                          |
+| ----------- | ------ | -------- | -------------------------------------- | --------------------------------------------- |
+| InstanceId  | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在DescribeInstances中获取 |
+| Size        | int    |    否    | 200                                    | 系统盘大小                                    |
+| IOPS        | int    |    否    | 5                                      |  IOPS预置性能包个数                           |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "order_audit": 0
+    },
+    "Message": "",
+    "TaskId": "111111"
+}
+```
 
 ## 安全组相关
 
