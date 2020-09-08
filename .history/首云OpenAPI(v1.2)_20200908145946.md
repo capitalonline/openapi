@@ -4913,81 +4913,126 @@ def get_metering(end_time, uid=None):
 
 ```json
 {
-    "RegionStatus": "1",
-    "RegionStatusZh": "正常",
-    "RegionId": "CN_Taipei_A",
-    "WanGoods": [
-        {
-            "BillingMethod": [
-                {
-                    "MaxQos": 51200,
-                    "Key": "DataPackage"
-                },
-                {
-                    "MaxQos": 500,
-                    "Key": "BandwIdth"
-                },
-                {
-                    "MaxQos": 500,
-                    "Key": "Traffic"
-                }
-            ],
-            "Type": "Bandwidth_China_Optimized"
-        },
-        {
-            "BillingMethod": [
-                {
-                    "MaxQos": 500,
-                    "Key": "Traffic"
-                }
-            ],
-            "Type": "Bandwidth_VIP_Dedicated"
-        }
-    ],
-    "InstanceGoods": [
-        {
-            "ImageGoods": {
-                "PublicImage": [
+    "Message":"Success.",
+    "Code":"Success",
+    "Data":{
+        "WanGoods":[
+            {
+                "BillingMethod":[
                     {
-                        "GicDisplayName": "Centos 8.0 64位",
-                        "ImageType": "centos",
-                        "ImageId": "Centos_8.0_64"
-                    },
+                        "MaxQos":500,
+                        "Key":"Bandwidth"
+                    }
                 ],
-                "PrivateImages": null
+                "Type":"DDos"
             },
-            "DiskGoods": [
-                {
-                    "MinSize": 100,
-                    "MaxSize": 4000,
-                    "Type": "high_disk",
-                    "Step": 100
+            {
+                "BillingMethod":[
+                    {
+                        "MaxQos":500,
+                        "Key":"Bandwidth"
+                    },
+                    {
+                        "MaxQos":51200,
+                        "Key":"DataPackage"
+                    },
+                    {
+                        "MaxQos":500,
+                        "Key":"Traffic"
+                    }
+                ],
+                "Type":"Bandwidth_Tow_Line_BGP"
+            },
+            {
+                "BillingMethod":[
+                    {
+                        "MaxQos":51200,
+                        "Key":"DataPackage"
+                    },
+                    {
+                        "MaxQos":500,
+                        "Key":"Bandwidth"
+                    }
+                ],
+                "Type":"Bandwidth_BGP_Optimized"
+            },
+            {
+                "BillingMethod":[
+                    {
+                        "MaxQos":500,
+                        "Key":"Traffic"
+                    },
+                    {
+                        "MaxQos":500,
+                        "Key":"Bandwidth"
+                    }
+                ],
+                "Type":"Bandwidth_BGP"
+            }
+        ],
+        "RegionId":"CN_Beijing_A",
+        "InstanceGoods":[
+            {
+                "ImageGoods":{
+                    "PublicImage":[
+                        {
+                            "GicDisplayName":"CDS-OS-CentOS7.6-64bit-General-V2",
+                            "ImageType":"centos",
+                            "ImageId":"Centos_7.6_64"
+                        }
+                    ],
+                    "PrivateImages":[
+                        {
+                            "GicDisplayName":"fefefefef",
+                            "ImageType":"centos",
+                            "ImageId":"38ef3c80-760f-11e9-9fd4-0242ac11001c"
+                        },
+                        {
+                            "GicDisplayName":"ttt",
+                            "ImageType":"centos",
+                            "ImageId":"e39a1fd4-7235-11e9-b26c-0242ac11001c"
+                        },
+                        {
+                            "GicDisplayName":"as",
+                            "ImageType":"centos",
+                            "ImageId":"24ee2d8c-7230-11e9-882f-0242ac11001c"
+                        },
+                        {
+                            "GicDisplayName":"test-rrr",
+                            "ImageType":"centos",
+                            "ImageId":"3ac59da8-5b5f-11e9-8334-0242ac11000c"
+                        },
+                        {
+                            "GicDisplayName":"y",
+                            "ImageType":"centos",
+                            "ImageId":"7057622c-3c00-11e9-a42b-0242ac11000c"
+                        },
+                        {
+                            "GicDisplayName":"rrrr",
+                            "ImageType":"centos",
+                            "ImageId":"f7ce04ea-5ab4-11e9-8ee0-0242ac11000e"
+                        }
+                    ]
                 },
-                {
-                    "MinSize": 50,
-                    "MaxSize": 4000,
-                    "Type": "ssd_disk",
-                    "Step": 50
-                }
-            ],
-            "InstanceType": "Standard",
-            "SystemDiskGoods": [
-                {
-                    "MinSize": 0,
-                    "MaxSize": 500,
-                    "Type": "system_disk",
-                    "Step": 10
-                },
-                {
-                    "MinSize": 0,
-                    "MaxSize": 500,
-                    "Type": "ssd_system_disk",
-                    "Step": 10
-                }
-            ]
-        }
-    ],
-    "RegionName": "台北-可用区A"
+                "DiskGoods":[
+                    {
+                        "MinSize":50,
+                        "MaxSize":4000,
+                        "Type":"big_disk",
+                        "Step":50
+                    },
+                    {
+                        "MinSize":100,
+                        "MaxSize":4000,
+                        "Type":"high_disk",
+                        "Step":100
+                    }
+                ],
+                "InstanceType":"high_ccs"
+            },
+        ],
+        "RegionName":"北京-可用区A"
+    }
 }
 ```
 
