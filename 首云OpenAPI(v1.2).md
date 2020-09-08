@@ -2582,7 +2582,7 @@ def down_card(InterfaceId, InstanceId):
 | Data           | List     | []                                                           | 返回数据列表                                                 |
 | VdcId          | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                                                      |
 | VdcName        | string   | capitalcloud                                                 | Vdc名称                                                      |
-| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区可用区                                            |
+| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区                                          |
 | VdcStatus      | string   | ok                                                           | Vdc的使用状态                                                |
 | PublicNetwork  | string   | {"Name": "公网1",<br/>"Status":"ok";<br />    "Type": "BGP_4",<br/>    "Qos": "20",<br/>''Ip':"38.121.60.96"<br />"Mask":"28"} | Name:公网名称<br />Status：状态<br />Type：公网带宽类型<br />Qos：带宽大小<br />Ip：购买的Ip段<br />Mask:掩码 |
 | PrivateNetwork | string   | [{<br />"Name":"私网1",<br />"Status":"ok",<br />"Ip":"10.241.16.0/16"<br />"Id":"22b729aa-4540-11e9-99c5-0242ac11001b"},<br />{<br />"Name":"私网2",<br />"Status":"ok",<br />"Ip":"10.241.40.0"<br />"Mask":"16"<br />"Id":"c0d2bbf7-0e09-49d5-8dc7-8fe90e722c47"}] | Name：私网名称<br />Status：状态<br />Ip：购买的私网Ip段<br />Mask:掩码<br />ID:网络id |
