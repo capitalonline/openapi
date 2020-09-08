@@ -98,7 +98,7 @@
          * [1.DescribeAvailableResource](#1describeavailableresource)
          * [2.DescribeTask](#2describetask)
       * [附件一](#附件一)
-            * [节点名称](#节点名称)
+            * [可用区名称](#可用区名称)
       * [附件二](#附件二)
             * [主机类型](#主机类型)
       * [附件三](#附件三)
@@ -2543,7 +2543,7 @@ def down_card(InterfaceId, InstanceId):
 | TemplateId   | String | xxx                 | 模板ID       |
 | OSType       | String | centos 7.4 64位     | 模板类型     |
 | CreateTime   | String | 2019-05-15 10:38:28 | 创建时间     |
-| Region       | List   | []                  | 节点信息     |
+| Region       | List   | []                  | 可用区信息     |
 | RegionId     | String | CN_Beijing_C        | 区域ID       |
 | RegionName   | String | 北京-可用区C        | 区域名称     |
 
@@ -2625,7 +2625,7 @@ def down_card(InterfaceId, InstanceId):
 | Data           | List     | []                                                           | 返回数据列表                                                 |
 | VdcId          | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                                                      |
 | VdcName        | string   | capitalcloud                                                 | Vdc名称                                                      |
-| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区节点                                            |
+| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区                                          |
 | VdcStatus      | string   | ok                                                           | Vdc的使用状态                                                |
 | PublicNetwork  | string   | {"Name": "公网1",<br/>"Status":"ok";<br />    "Type": "BGP_4",<br/>    "Qos": "20",<br/>''Ip':"38.121.60.96"<br />"Mask":"28"} | Name:公网名称<br />Status：状态<br />Type：公网带宽类型<br />Qos：带宽大小<br />Ip：购买的Ip段<br />Mask:掩码 |
 | PrivateNetwork | string   | [{<br />"Name":"私网1",<br />"Status":"ok",<br />"Ip":"10.241.16.0/16"<br />"Id":"22b729aa-4540-11e9-99c5-0242ac11001b"},<br />{<br />"Name":"私网2",<br />"Status":"ok",<br />"Ip":"10.241.40.0"<br />"Mask":"16"<br />"Id":"c0d2bbf7-0e09-49d5-8dc7-8fe90e722c47"}] | Name：私网名称<br />Status：状态<br />Ip：购买的私网Ip段<br />Mask:掩码<br />ID:网络id |
@@ -2729,7 +2729,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 
 | 名称          | 类型   | 是否必选 | 示例值                                                       | 描述                                   |
 | ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
-| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的节点Id                        |
+| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的可用区Id                        |
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
 | PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
 
@@ -3289,7 +3289,7 @@ def modify_public_qos(publicId, qos):
 |Status    |String|ok                                  |GPN状态     |
 |StatusStr |String|正常                                 |GPN状态     |
 |SubOrderId|String|425d533e-2d3d-11ea-93ed-0242ac110002|订单编号     |
-|JoinApps  |List  |[{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PrivateId: 私网编号 <br>RegionId: 节点编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
+|JoinApps  |List  |[{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
 |JoinPops  |List  |[{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}]|PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽|
 
 
@@ -4645,7 +4645,7 @@ def update_bms_order(id, renewal):
 | TotalMasterCost | Float    | 10.90                                | 主账户消费金额   |
 | TotalViceCost   | Float    | 11.92                                | 副账户消费金额   |
 | BillInfo        | List     | []                                   | 账单记录         |
-| RegionId        | String   | CN_Beijing_E                         | 节点ID           |
+| RegionId        | String   | CN_Beijing_E                         | 可用区ID           |
 | ResourceId      | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID           |
 | ResourceName    | String   | test                                 | 资源名称         |
 | ResourceType    | String   | vm                                   | 资源类型         |
@@ -4792,7 +4792,7 @@ def update_bms_order(id, renewal):
 | Data          | string   |                                                              |                  |
 | TotalCost     | Float    | 9.62                                                         | 查询资源总消费   |
 | BillDetail    | List     | []                                                           | 账单记录         |
-| RegionId      | String   | CN_Beijing_E                                                 | 节点ID           |
+| RegionId      | String   | CN_Beijing_E                                                 |可用区ID           |
 | ResourceId    | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12                         | 资源ID           |
 | ResourceName  | String   | test                                                         | 资源名称         |
 | ResourceType  | String   | vm                                                           | 资源类型         |
@@ -4927,7 +4927,7 @@ def get_metering(end_time, uid=None):
 
 ​	**Action：DescribeAvailableResource**
 
-​	**描述：** 查询节点下网络类型计费方式和云服务器类型
+​	**描述：** 查询可用区下网络类型计费方式和云服务器类型
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -4956,126 +4956,81 @@ def get_metering(end_time, uid=None):
 
 ```json
 {
-    "Message":"Success.",
-    "Code":"Success",
-    "Data":{
-        "WanGoods":[
-            {
-                "BillingMethod":[
-                    {
-                        "MaxQos":500,
-                        "Key":"Bandwidth"
-                    }
-                ],
-                "Type":"DDos"
-            },
-            {
-                "BillingMethod":[
-                    {
-                        "MaxQos":500,
-                        "Key":"Bandwidth"
-                    },
-                    {
-                        "MaxQos":51200,
-                        "Key":"DataPackage"
-                    },
-                    {
-                        "MaxQos":500,
-                        "Key":"Traffic"
-                    }
-                ],
-                "Type":"Bandwidth_Tow_Line_BGP"
-            },
-            {
-                "BillingMethod":[
-                    {
-                        "MaxQos":51200,
-                        "Key":"DataPackage"
-                    },
-                    {
-                        "MaxQos":500,
-                        "Key":"Bandwidth"
-                    }
-                ],
-                "Type":"Bandwidth_BGP_Optimized"
-            },
-            {
-                "BillingMethod":[
-                    {
-                        "MaxQos":500,
-                        "Key":"Traffic"
-                    },
-                    {
-                        "MaxQos":500,
-                        "Key":"Bandwidth"
-                    }
-                ],
-                "Type":"Bandwidth_BGP"
-            }
-        ],
-        "RegionId":"CN_Beijing_A",
-        "InstanceGoods":[
-            {
-                "ImageGoods":{
-                    "PublicImage":[
-                        {
-                            "GicDisplayName":"CDS-OS-CentOS7.6-64bit-General-V2",
-                            "ImageType":"centos",
-                            "ImageId":"Centos_7.6_64"
-                        }
-                    ],
-                    "PrivateImages":[
-                        {
-                            "GicDisplayName":"fefefefef",
-                            "ImageType":"centos",
-                            "ImageId":"38ef3c80-760f-11e9-9fd4-0242ac11001c"
-                        },
-                        {
-                            "GicDisplayName":"ttt",
-                            "ImageType":"centos",
-                            "ImageId":"e39a1fd4-7235-11e9-b26c-0242ac11001c"
-                        },
-                        {
-                            "GicDisplayName":"as",
-                            "ImageType":"centos",
-                            "ImageId":"24ee2d8c-7230-11e9-882f-0242ac11001c"
-                        },
-                        {
-                            "GicDisplayName":"test-rrr",
-                            "ImageType":"centos",
-                            "ImageId":"3ac59da8-5b5f-11e9-8334-0242ac11000c"
-                        },
-                        {
-                            "GicDisplayName":"y",
-                            "ImageType":"centos",
-                            "ImageId":"7057622c-3c00-11e9-a42b-0242ac11000c"
-                        },
-                        {
-                            "GicDisplayName":"rrrr",
-                            "ImageType":"centos",
-                            "ImageId":"f7ce04ea-5ab4-11e9-8ee0-0242ac11000e"
-                        }
-                    ]
+    "RegionStatus": "1",
+    "RegionStatusZh": "正常",
+    "RegionId": "CN_Taipei_A",
+    "WanGoods": [
+        {
+            "BillingMethod": [
+                {
+                    "MaxQos": 51200,
+                    "Key": "DataPackage"
                 },
-                "DiskGoods":[
+                {
+                    "MaxQos": 500,
+                    "Key": "BandwIdth"
+                },
+                {
+                    "MaxQos": 500,
+                    "Key": "Traffic"
+                }
+            ],
+            "Type": "Bandwidth_China_Optimized"
+        },
+        {
+            "BillingMethod": [
+                {
+                    "MaxQos": 500,
+                    "Key": "Traffic"
+                }
+            ],
+            "Type": "Bandwidth_VIP_Dedicated"
+        }
+    ],
+    "InstanceGoods": [
+        {
+            "ImageGoods": {
+                "PublicImage": [
                     {
-                        "MinSize":50,
-                        "MaxSize":4000,
-                        "Type":"big_disk",
-                        "Step":50
+                        "GicDisplayName": "Centos 8.0 64位",
+                        "ImageType": "centos",
+                        "ImageId": "Centos_8.0_64"
                     },
-                    {
-                        "MinSize":100,
-                        "MaxSize":4000,
-                        "Type":"high_disk",
-                        "Step":100
-                    }
                 ],
-                "InstanceType":"high_ccs"
+                "PrivateImages": null
             },
-        ],
-        "RegionName":"北京-可用区A"
-    }
+            "DiskGoods": [
+                {
+                    "MinSize": 100,
+                    "MaxSize": 4000,
+                    "Type": "high_disk",
+                    "Step": 100
+                },
+                {
+                    "MinSize": 50,
+                    "MaxSize": 4000,
+                    "Type": "ssd_disk",
+                    "Step": 50
+                }
+            ],
+            "InstanceType": "Standard",
+            "SystemDiskGoods": [
+                {
+                    "MinSize": 0,
+                    "MaxSize": 500,
+                    "Type": "system_disk",
+                    "Step": 10
+                },
+                {
+                    "MinSize": 0,
+                    "MaxSize": 500,
+                    "Type": "ssd_system_disk",
+                    "Step": 10
+                }
+            ]
+        }
+    ],
+    "RegionName": "台北-可用区A"
 }
 ```
 
@@ -5177,47 +5132,47 @@ def get_status(task_id):
 
 ## 附件一
 
-#### 节点名称
+#### 可用区名称
 
-| 节点名称      | RegionId          |  是否支持裸金属  |
-| ------------- | ---------------- | -------------- |
-| 北京A         | CN_Beijing_A      |      否        |           
-| 北京B         | CN_Beijing_B      |      否        |  
-| 北京C         | CN_Beijing_C      |      否        | 
-| 北京E         | CN_Beijing_E      |      否        |  
-| 北京H         | CN_Beijing_H      |      否        | 
-| 北京I         | CN_Beijing_I      |      是        | 
-| 北京J        | CN_Beijing_J      |      是        |  
-| 达拉斯A       | US_Dallas_A       |      否        |  
-| 达拉斯B       | US_Dallas_B       |      否        |  
-| 达拉斯C       | US_Dallas_C       |      否        |
-| 达拉斯D       | US_Dallas_D       |      是        |  
-| 达拉斯E       | US_Dallas_E       |      是        |  
-| 达拉斯F       | US_Dallas_F       |      是        | 
-| 达拉斯G       | US_Dallas_G       |      否        |  
-| 达拉斯H       | US_Dallas_H       |      是        |   
-| 达拉斯I       | US_Dallas_I       |      否        | 
-| 德国A         | EUR_Germany_A     |      否        |  
-| 德国B         | EUR_Germany_B     |      否        |  
-| 东京A         | APAC_Tokyo_A      |      否        |  
-| 广州A         | CN_Guangzhou_A    |      否        |  
-| 荷兰A         | EUR_Netherlands_A |      否        |  
-| 洛杉矶A       | US_LosAngeles_A   |      否        |  
-| 纽约A         | US_NewYork_A      |      否        |  
-| 上海A         | CN_Shanghai_A     |      否        |  
-| 上海C         | CN_Shanghai_C     |      否        | 
-| 首尔A         | APAC_Seoul_A      |      否        |  
-| 台北A         | CN_Taipei_A       |      否        |  
-| 无锡A         | CN_Wuxi_A         |      否        | 
-| 无锡B         | CN_Wuxi_B         |      是        |   
-| 香港A         | CN_Hongkong_A     |      否        |  
-| 新加坡A       | APAC_Singapore_A  |      否        |  
-| 新加坡B       | APAC_Singapore_B  |      否        |
-| 新加坡C       | APAC_Singapore_C  |      否        | 
-| 新加坡D       | APAC_Singapore_D  |      否        |   
-| 孟买A         | APAC_Mumbai_A     |      否        | 
-| 孟买B         | APAC_Mumbai_B     |      否        | 
-| 孟买C         | APAC_Mumbai_C     |      是        | 
+| 可用区名称      | RegionId          |  是否支持裸金属  | 所在大区 |
+| ------------- | ---------------- | -------------- | 中国大陆 |
+| 北京A         | CN_Beijing_A      |      否        | 中国大陆 | 
+| 北京B         | CN_Beijing_B      |      否        |  中国大陆 |
+| 北京C         | CN_Beijing_C      |      否        | 中国大陆 |
+| 北京E         | CN_Beijing_E      |      否        |  中国大陆 |
+| 北京H         | CN_Beijing_H      |      否        | 中国大陆 |
+| 北京I         | CN_Beijing_I      |      是        | 中国大陆 |
+| 北京J        | CN_Beijing_J      |      是        |  中国大陆 |
+| 达拉斯A       | US_Dallas_A       |      否        |  北美地区 |
+| 达拉斯B       | US_Dallas_B       |      否        |  北美地区 |
+| 达拉斯C       | US_Dallas_C       |      否        |北美地区 |
+| 达拉斯D       | US_Dallas_D       |      是        |  北美地区 |
+| 达拉斯E       | US_Dallas_E       |      是        |  北美地区 |
+| 达拉斯F       | US_Dallas_F       |      是        | 北美地区 |
+| 达拉斯G       | US_Dallas_G       |      否        |  北美地区 |
+| 达拉斯H       | US_Dallas_H       |      是        |   北美地区 |
+| 达拉斯I       | US_Dallas_I       |      否        | 北美地区 |
+| 德国A         | EUR_Germany_A     |      否        |  欧洲地区 |
+| 德国B         | EUR_Germany_B     |      否        |   欧洲地区 |
+| 东京A         | APAC_Tokyo_A      |      否        |   亚太地区 |
+| 广州A         | CN_Guangzhou_A    |      否        |  中国大陆 |
+| 荷兰A         | EUR_Netherlands_A |      否        |   欧洲地区 |
+| 洛杉矶A       | US_LosAngeles_A   |      否        |  北美地区 |
+| 纽约A         | US_NewYork_A      |      否        |  北美地区 |
+| 上海A         | CN_Shanghai_A     |      否        |  中国大陆 |
+| 上海C         | CN_Shanghai_C     |      否        | 中国大陆 |
+| 首尔A         | APAC_Seoul_A      |      否        |    亚太地区 |
+| 台北A         | CN_Taipei_A       |      否        |  中国大陆 |
+| 无锡A         | CN_Wuxi_A         |      否        | 中国大陆 |
+| 无锡B         | CN_Wuxi_B         |      是        |   中国大陆 |
+| 香港A         | CN_Hongkong_A     |      否        |  中国大陆 |
+| 新加坡A       | APAC_Singapore_A  |      否        |    亚太地区 |
+| 新加坡B       | APAC_Singapore_B  |      否        |  亚太地区 |
+| 新加坡C       | APAC_Singapore_C  |      否        |   亚太地区 |
+| 新加坡D       | APAC_Singapore_D  |      否        |     亚太地区 |
+| 孟买A         | APAC_Mumbai_A     |      否        |   亚太地区 |
+| 孟买B         | APAC_Mumbai_B     |      否        |   亚太地区 |
+| 孟买C         | APAC_Mumbai_C     |      是        |   亚太地区 |
 
 ## 附件二
 
