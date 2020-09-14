@@ -8,6 +8,7 @@ Redis 公开API目录
     * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
   * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
 * [错误码](#错误码)
+* [访问地址](#访问地址)
 * [实例](#实例)
     * [1.DescribeRegins](#1describeregins)
     * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
@@ -54,6 +55,14 @@ Redis 公开API目录
 | 409          | ResourceInUse        | 资源正在被其他任务占用，操作冲突 |
 | 500          | InternalError        | 内部错误                         |
 | 500          | CreateOrderExcept    | 创建订单异常                     |
+
+### 访问地址
+
+| 地区     | 访问地址                      |
+| -------- | ----------------------------- |
+| 中国大陆 | cdsapi.capitalonline.net      |
+| 亚太地区 | cdsapi-asia.capitalonline.net |
+| 欧美地区 | cdsapi-us.capitalonline.net   |
 
 ### 1.DescribeRegins
 
