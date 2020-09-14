@@ -4726,9 +4726,9 @@ def create_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
 ```
-### 2.AttackDisk
+### 2.AttachDisk
 
-**Action: AttackDisk**
+**Action: AttachDisk**
 
 **描述:** 挂载裸金属云盘
 
@@ -4780,7 +4780,7 @@ def create_disk():
  **代码调用示例**
  ```python
 def attack_disk():
-   action = "AttackDisk"
+   action = "AttachDisk"
    method = "POST"
    param = {
        "InstanceId": "d95423a8-f3fb-11ea-800c-f0d4e2e923e0",
@@ -4790,9 +4790,9 @@ def attack_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
 ```
-### 3.DetackDisk
+### 3.DetachDisk
 
-**Action: DetackDisk**
+**Action: DetachDisk**
 
 **描述:** 卸载裸金属云盘
 
@@ -4843,7 +4843,7 @@ def attack_disk():
  **代码调用示例**
  ```python
 def detack_disk():
-   action = "DetackDisk"
+   action = "DetachDisk"
    method = "POST"
    param = {
        "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
