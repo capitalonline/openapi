@@ -87,7 +87,22 @@
        * [8.ReinstallBms](#8ReinstallBms)
        * [9.DescribeBmsVNC](#9describebmsvnc)
        * [10.ModifyBmsOrder](#10modifybmsorder)  
-
+     * [裸金属云盘相关](#裸金属云盘相关)
+       * [1.CreateDisk](#1createDisk)
+       * [2.AttachDisk](#2attachDisk)
+       * [3.DetachDisk](#3detachDisk)
+       * [4.DeleteDisk](#4deleteDisk)
+       * [5.DescribeDisks](#5describeDisks)
+       * [6.DescribeDiskUsage](#6describeDiskUsage)
+       * [7.DescribePoolUsage](#7describePoolUsage)
+       * [8.ChangeIops](#8changeIops)
+       * [9.ChangeBandwidth](#9changeBandwidth)
+       * [10.ExpansionSize](#10expansionSize)  
+       * [11.CreateSnapshot](#11createSnapshot)  
+       * [12.CloneSnapshot](#12cloneSnapshot)  
+       * [13.DeleteSnapshot](#13deleteSnapshot)  
+       * [14.RollbackSnapshot](#14rollbackSnapshot)  
+       * [15.DescribeGoodsId](#15describeGoodsId) 
      * [账单相关](#账单相关)
        * [1.DescribeBill](#1describebill)
        * [2.DescribeBillInfo](#2describebillinfo)
@@ -4636,6 +4651,1002 @@ def update_bms_order(id, renewal):
     res = requests.post(url, json=param)
     result = json.loads(res.content)
  ```
+
+## 裸金属云盘相关
+
+### 1.CreateDisk
+
+**Action: CreateDisk**
+
+**描述:** 创建裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
+| Name     | string | 是       | dkis-hk-A                 | 创建的磁盘名字 |
+| Size     | int | 是       | 200                 | 磁盘大小，单位G |
+| Num     | int | 是       | 1                 | 创建磁盘的数量 |
+| GoodsId     | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                 | 商品ID |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| DiskInfo     | list   | []                                 | 包含磁盘id、任务id         |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| DiskId | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 产品配置Id         |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "DiskId":"0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+              "TaskId": "0c610d7a-f3fb-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def create_disk():
+   action = "CreateDisk"
+   method = "POST"
+   param = {
+       "RegionId": "CN_Beijing_F",
+       "Name": "test1",
+       "Size": 200,
+       "Num": 1,
+       "GoodsId": "bbf63749-0186-4c68-8adc-9bf584bc1376"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 2.AttackDisk
+
+**Action: AttackDisk**
+
+**描述:** 挂载裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| InstanceId     | string | 是       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机资源id |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "InstanceId" is required.              | 	参数InstanceId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "InstanceId" cannot be empty.          | 	参数InstanceId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def attack_disk():
+   action = "AttackDisk"
+   method = "POST"
+   param = {
+       "InstanceId": "d95423a8-f3fb-11ea-800c-f0d4e2e923e0",
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 3.DetackDisk
+
+**Action: DetackDisk**
+
+**描述:** 卸载裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def detack_disk():
+   action = "DetackDisk"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 4.DeleteDisk
+
+**Action: DeleteDisk**
+
+**描述:** 删除裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def delete_disk():
+   action = "DeleteDisk"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 5.DescribeDisks
+
+**Action: DescribeDisks**
+
+**描述:** 查询裸金属云盘列表
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 否       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
+| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| InstanceId     | string | 否       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机id |
+| Name     | string | 否       | test1                 | 创建的磁盘名字 |
+| PageNumber     | string | 否       | 1                 | Disk列表页码 |
+| PageSize     | string | 否       | 10                 | 每页返回数量；默认50 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| Total        | int | 20                                                      | 返回数据的条数         
+| DiskList    | list    | []                                                         | 磁盘列表 |
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |
+| Name         | string | bms-test                                                     | 磁盘名称                                                       |
+| State        | string | attach                                                      | 挂载         
+| Size          | int    | 200                                                           | 磁盘大小；单位G                                                      |
+| Iops          | int    | 5000                                                           | 最大iops                                                     |
+| Bw          | int    | 4000                                                           | 最大磁盘带宽；单位Mb                                                       |
+| DiskType       | string | Nvme                                                        | 磁盘类型                                                      |                                          |
+| RegionId     | string | CN_Beijing_F                                                 | 可用区id                                                      |
+| CustomerId     | string | E001                                                 | 用户id                                                      |
+| UserId     | string | C001                                                 | 用户id                                                      |
+| CreateTime     | string | 2020-08-13 07:20:00                                                 | 创建时间                                                      |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParametersIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "Total": 1,
+        "DiskList": [
+             {
+                "Name": "disk-hk-A",
+                "State": "attach",
+                "Size": 500,
+                "Iops": 3000,
+                "Bw": 3000,
+                "DiskType": "Nvme",
+                "RegionId": "35304122-8504-400c-a61c-56ba244c5dda",
+                "CustomerId": "E001",
+                "UserId": "",
+                "CreateTime": "2020-08-13 07:20:00"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_disks():
+   action = "DescribeDisks"
+   method = "GET"
+   param = {
+       "RegionId": "",
+       "DiskId": "",
+       "InstanceId": "d95423a8-f3fb-11ea-800c-f0d4e2e923e0",
+       "Name": "disk-hk-A",
+       "PageNumber": "1",
+       "PageSize": "10"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 6.DescribeDiskUsage
+
+**Action: DescribeDiskUsage**
+
+**描述:** 查询裸金属云盘使用详情
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |     
+| Use          | int    | 200                                                           | 磁盘已使用大小；单位G                                                      |
+| Size          | int    | 500                                                           | 磁盘总容量；单位G                                                     |
+| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "Total": 1,
+        "DiskList": [
+             {
+                "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+                "Use": 200,
+                "Size": 500,
+                "Iops": 3000,
+                "Ratio": "40%"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_diskUsage():
+   action = "DescribeDiskUsage"
+   method = "GET"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 7.DescribePoolUsage
+
+**Action: DescribePoolUsage**
+
+**描述:** 查询裸金属云盘存储池使用详情
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
+| PoolName     | string | 是       | nvme_pool                 | 存储池名字 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| PoolName  | string | nvme_pool                         | 存储池名字                                                     |     
+| Use          | int    | 200                                                           | 存储池已使用大小；单位G                                                      |
+| Size          | int    | 500                                                           | 存储池总容量；单位G                                                     |
+| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "Total": 1,
+        "DiskList": [
+             {
+                "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+                "Use": "200",
+                "Size": 500,
+                "Iops": 3000,
+                "Ratio": "40%"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_poolUsage():
+   action = "DescribePoolUsage"
+   method = "GET"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 8.ChangeIops
+
+**Action: ChangeIops**
+
+**描述:** 更改裸金属云盘IOPS
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Iops     | int | 是       | 1000                 | 增加的iops |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def change_iops():
+   action = "ChangeIops"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Iops": 1000
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 9.ChangeBandwidth
+
+**Action: ChangeBandwidth**
+
+**描述:** 更改裸金属云盘带宽
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Iops     | int | 是       | 1000                 | 增加的iops |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def change_bandwidth():
+   action = "ChangeBandwidth"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Iops": 1000
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 10.ExpansionSize
+
+**Action: ExpansionSize**
+
+**描述:** 更改裸金属云盘带宽
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Size     | int | 是       | 500                 | 增加的容量 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_diskUsage():
+   action = "DescribeDiskUsage"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Size": 500
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 11.CreateSnapshot
+
+**Action: CreateSnapshot**
+
+**描述:** 创建裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| SnapshotName     | string | 是       | 500                 | 创建快照的名字 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| SnapshotId   | string | c000ba4c-f404-11ea-800c-f0d4e2e923e0                     | 快照id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0",
+        "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def create_snapshot():
+   action = "CreateSnapshot"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "SnapshotName": "disk-hk-A-snap1"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 12.CloneSnapshot
+
+**Action: CloneSnapshot**
+
+**描述:** 克隆裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| Name     | string | 是       | dish-hk-B     | 克隆生成的新磁盘名字 |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| DiskId   | string | d4965bac-f405-11ea-800c-f0d4e2e923e0                     | 克隆生成的新磁盘id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0",
+        "DiskId": "d4965bac-f405-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def clone_snapshot():
+   action = "CloneSnapshot"
+   method = "POST"
+   param = {
+       "Name": "disk-hk-B",
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 13.DeleteSnapshot
+
+**Action: DeleteSnapshot**
+
+**描述:** 删除裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def delete_snapshot():
+   action = "DeleteSnapshot"
+   method = "POST"
+   param = {
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 14.RollbackSnapshot
+
+**Action: RollbackSnapshot**
+
+**描述:** 裸金属云盘快照回滚
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def rollback_snapshot():
+   action = "RollbackSnapshot"
+   method = "POST"
+   param = {
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 15.DescribeGoodsId
+
+**Action: DescribeGoodsId**
+
+**描述:** 查询裸金属云盘商品id
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
+| Bw     | int | 是       | 2000                 | 带宽 |
+| Iops     | int | 是       | 8000                 | iops |
+| Type     | string | 是       | ssd                 | 磁盘类型 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| GoodsId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 商品id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "GoodsId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_goodsId():
+   action = "DescribeGoodsId"
+   method = "GET"
+   param = {
+       "RegionId": "35304122-8504-400c-a61c-56ba244c5dda",
+       "Bw": 2000,
+       "Iops": 8000,
+       "Type": "ssd"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
 
 ## 账单相关
 
