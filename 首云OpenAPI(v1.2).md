@@ -280,7 +280,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 
-| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0
+| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  | 
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 
 
