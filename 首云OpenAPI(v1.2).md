@@ -102,7 +102,7 @@
        * [12.CloneSnapshot](#12cloneSnapshot)  
        * [13.DeleteSnapshot](#13deleteSnapshot)  
        * [14.RollbackSnapshot](#14rollbackSnapshot)  
-       * [15.DescribeGoodsId](#15describeGoodsId) 
+       * [15.DescribeGoodsId](#15describeGoodsId)        
      * [账单相关](#账单相关)
        * [1.DescribeBill](#1describebill)
        * [2.DescribeBillInfo](#2describebillinfo)
@@ -4668,7 +4668,7 @@ def update_bms_order(id, renewal):
 | 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
 | ----------- | ------ | -------- | --------------------------------- | ------------ |
 | RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
-| Name     | string | 是       | dkis-hk-A                 | 创建的磁盘名字 |
+| Name     | string | 是       | disk-hk-A                 | 创建的磁盘名字 |
 | Size     | int | 是       | 200                 | 磁盘大小，单位G |
 | Num     | int | 是       | 1                 | 创建磁盘的数量 |
 | GoodsId     | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                 | 商品ID |
@@ -5004,9 +5004,8 @@ def describe_disks():
        "PageNumber": "1",
        "PageSize": "10"
    }
-   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
-   res = requests.post(url, json=param)
-   result = json.loads(res.content)
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
 ```
 
 ### 6.DescribeDiskUsage
@@ -5055,17 +5054,11 @@ def describe_disks():
   "Code": "Success",
   "Message": "Success.",
   "Data": {
-        "Total": 1,
-        "DiskList": [
-             {
-                "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
-                "Use": 200,
-                "Size": 500,
-                "Iops": 3000,
-                "Ratio": "40%"
-            }
-        ]
-    }
+        "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+        "Use": 200,
+        "Size": 500,
+        "Ratio": "40%"
+   }
 }
 ```
  **代码调用示例**
@@ -5076,9 +5069,8 @@ def describe_diskUsage():
    param = {
        "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
    }
-   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
-   res = requests.post(url, json=param)
-   result = json.loads(res.content)
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
 ```
 
 ### 7.DescribePoolUsage
@@ -5128,30 +5120,24 @@ def describe_diskUsage():
   "Code": "Success",
   "Message": "Success.",
   "Data": {
-        "Total": 1,
-        "DiskList": [
-             {
-                "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
-                "Use": "200",
-                "Size": 500,
-                "Iops": 3000,
-                "Ratio": "40%"
-            }
-        ]
-    }
+        "PoolName": "ssd_pool",
+        "Use": 200,
+        "Size": 500,
+        "Ratio": "40%"
+   }
 }
 ```
  **代码调用示例**
  ```python
 def describe_poolUsage():
-   action = "DescribePoolUsage"
-   method = "GET"
-   param = {
-       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+    action = "DescribePoolUsage"
+    method = "GET"
+    param = {
+        "RegionId": "a3c21f88-f356-11ea-800c-f0d4e2e923e0",
+        "PoolName": "ssd_pool"
    }
-   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
-   res = requests.post(url, json=param)
-   result = json.loads(res.content)
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
 ```
 
 ### 8.ChangeIops
@@ -5169,7 +5155,7 @@ def describe_poolUsage():
 | 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
 | ----------- | ------ | -------- | --------------------------------- | ------------ |
 | DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| Iops     | int | 是       | 1000                 | 增加的iops |
+| Iops     | int | 是       | 1000                 | iops |
 
 
 **返回数据：**
@@ -5230,7 +5216,7 @@ def change_iops():
 | 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
 | ----------- | ------ | -------- | --------------------------------- | ------------ |
 | DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| Iops     | int | 是       | 1000                 | 增加的iops |
+| Bw     | int | 是       | 1000                 | 增加的iops |
 
 
 **返回数据：**
@@ -5269,7 +5255,7 @@ def change_bandwidth():
    method = "POST"
    param = {
        "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
-       "Iops": 1000
+       "Bw": 1000
    }
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
@@ -5281,7 +5267,7 @@ def change_bandwidth():
 
 **Action: ExpansionSize**
 
-**描述:** 更改裸金属云盘带宽
+**描述:** 裸金属云盘扩容
 
 **请求地址:** cdsapi.capitalonline.net/storage-service
 
@@ -5353,7 +5339,7 @@ def describe_diskUsage():
 | 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
 | ----------- | ------ | -------- | --------------------------------- | ------------ |
 | DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| SnapshotName     | string | 是       | 500                 | 创建快照的名字 |
+| SnapshotName     | string | 是       | disk-hk-A-snap1                 | 创建快照的名字 |
 
 
 **返回数据：**
@@ -5641,9 +5627,8 @@ def describe_goodsId():
        "Iops": 8000,
        "Type": "ssd"
    }
-   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
-   res = requests.post(url, json=param)
-   result = json.loads(res.content)
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
 ```
 
 
