@@ -1,118 +1,133 @@
-
 目录
 =================
 
    * [首云公开API文档](#首云公开api文档)
-      * [认证方式](#认证方式)
-         * [1.公共请求参数](#1公共请求参数)
-         * [2.签名机制](#2签名机制)
-            * [步骤一：构造规范化请求字符串](#步骤一构造规范化请求字符串)
-            * [步骤二：构造签名字符串](#步骤二构造签名字符串)
-         * [3.获取签名代码](#2获取签名代码)
-      * [访问地址](#访问地址)
-      * [实例相关](#实例相关)
-         * [1.CreateInstance](#1createinstance)
-         * [2.DeleteInstance](#2deleteinstance)
-         * [3.StopInstance](#3stopinstance)
-         * [4.RebootInstance](#4rebootinstance)
-         * [5.ModifyInstanceChargeType](#5modifyinstancechargetype)
-         * [6.ModifyInstanceSpec](#6modifyinstancespec)
-         * [7.CreateDisk](#7createdisk)
-         * [8.ResizeDisk](#8resizedisk)
-         * [9.DeleteDisk](#9deletedisk)
-         * [10.ResetImage](#10resetimage)
-         * [11.DescribeInstances](#11describeinstances)
-         * [12.ConnectNetworkInterface](#12connectnetworkinterface)
-         * [13.DisconnectNetworkInterface](#13disconnectnetworkinterface)
-         * [14.ModifyIpAddress](#14modifyipaddress)
-         * [15.DescribeInstanceMonitor](#15describeinstancemonitor)
-         * [16.StartInstance](#16startinstance)
-         * [17.ModifyInstanceName](#17modifyinstancename)
-         * [18.DescribeTags](#18describetags)
-         * [19.CreateTag](#19createtag)
-         * [20.DeleteTag](#20deletetag)
-         * [21.AddInstancesTags](#21addinstancestags)
-         * [22.DeleteInstancesTags](#22deleteinstancestags)
-         * [23.DescribeInstanceType](#23DescribeInstanceType)
-         * [24.DescribePublicIp](#25DescribePublicIp)
-         * [25.DescribePrivateIp](#26DescribePrivateIp)
-         * [26.ResetInstancesPassword](#27ResetInstancesPassword)
-         * [27.CreateInstanceHtmlConsoleURL](#28CreateInstanceHtmlConsoleURL)
-      * [安全组相关](#安全组相关)
-         * [1.CreateSecurityGroup](#1createsecuritygroup)
-         * [2.DeleteSecurityGroup](#2deletesecuritygroup)
-         * [3.ForceDeleteSecurityGroup](#3forcedeletesecuritygroup)
-         * [4.DescribeSecurityGroupAttribute](#4describesecuritygroupattribute)
-         * [5.ModifySecurityGroupAttribute](#5modifysecuritygroupattribute)
-         * [6.DescribeSecurityGroups](#6describesecuritygroups)
-         * [7.AddSecurityGroupRule](#7addsecuritygrouprule)
-         * [8.RemoveSecurityGroupRule](#8removesecuritygrouprule)
-         * [9.ModifySecurityGroupRule](#9modifysecuritygrouprule)
-         * [10.JoinSecurityGroup](#10joinsecuritygroup)
-         * [11.LeaveSecurityGroup](#11leavesecuritygroup)
-         * [12.ModifySecurityGroupRulePriority](#12modifysecuritygrouprulepriority)
-      * [模板相关](#模板相关)
-         * [1.CreateTemplate](#1createtemplate)
-         * [2.DeleteTemplate](#2deletetemplate)
-         * [3.SyncTemplate](#3synctemplate)
-         * [4.DescribeTemplateInfo](#4describetemplateinfo)
-      * [虚拟数据中心相关](#虚拟数据中心相关)
-         * [1.DescribeVdc](#1describevdc)
-         * [2.CreateVdc](#2createvdc)
-         * [3.DeleteVdc](#3deletevdc)
-         * [4.CreatePublicNetwork](#4createpublicnetwork)
-         * [5.CreatePrivateNetwork](#5createprivatenetwork)
-         * [6.ModifyPublicNetwork](#6modifypublicnetwork)
-         * [7.AddPublicIp](#7addpublicip)
-         * [8.DeletePublicIp](#8deletepublicip)
-         * [9.DeletePublicNetwork](#9deletepublicnetwork)
-         * [10.DeletePrivateNetwork](#10deleteprivatenetwork)
-         * [11.RenewPublicNetwork](#11renewpublicnetwork)
-         * [12.DescribeBandwidthTraffic](#12describebandwidthtraffic)
-         * [13.DescribeGPN](#13describegpn)
-         * [14.AddAccessPoint](#14addaccesspoint)
-         * [15.DeleteAccessPoint](#15deleteaccesspoint)
-         * [16.DescribeAccessInfo](#16describeaccessinfo)
-         * [17.CreateGPN](#17creategpn)
-         * [18.DeleteGPN](#18deletegpn)
-         * [19.ModifyVdcName](#19modifyvdcname)
-      * [裸金属相关](#裸金属相关)
-         * [1.DescribeBmsGoods](#1describebmsgoods)
-         * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
-         * [3.DescribeBmsImage](#3describebmsimage)
-         * [4.CreateBmsInstance](#4createbmsinstance)
-         * [5.DescribeBms](#5describebms)
-         * [6.DescribeBmsDetail](#6describebmsdetail)
-         * [7.OperateBmsPower](#7operatebmspower)
-         * [8.ReinstallBms](#8ReinstallBms)
-         * [9.DescribeBmsVNC](#9describebmsvnc)
-         * [10.ModifyBmsOrder](#10modifybmsorder)  
-         
-      * [账单相关](#账单相关)
-         * [1.DescribeBill](#1describebill)
-         * [2.DescribeBillInfo](#2describebillinfo)
-      * [冷云计量相关](#冷云计量相关)
-         * [1.GetMetering](#1GetMetering)
-      * [其他公共接口](#其他公共接口)
-         * [1.DescribeAvailableResource](#1describeavailableresource)
-         * [2.DescribeTask](#2describetask)
-      * [附件一](#附件一)
-            * [可用区名称](#可用区名称)
-      * [附件二](#附件二)
-            * [主机类型](#主机类型)
-      * [附件三](#附件三)
-            * [带宽类型](#带宽类型)
-      * [附件四](#附件四)
-            * [公共模板](#公共模板)
-      * [示例](#示例)
-         * [1.获取请求url](#1获取请求url)
-         * [2.获取虚拟数据中心公网信息](#2获取虚拟数据中心公网信息)
-         * [3.获取机器信息](#3获取机器信息)
-         * [4.创建云主机实例](#4创建云主机实例)
-         * [5.修改公网带宽](#5修改公网带宽)
-         * [6.修改云主机实例计费类型](#6修改云主机实例计费类型)
-         * [7.获取任务状态](#7获取任务状态)
-         * [8.定制模板](#8定制模板)
+     * [认证方式](#认证方式)
+       * [1.公共请求参数](#1公共请求参数)
+       * [2.签名机制](#2签名机制)
+         * [步骤一：构造规范化请求字符串](#步骤一构造规范化请求字符串)
+         * [步骤二：构造签名字符串](#步骤二构造签名字符串)
+       * [3.获取签名代码](#2获取签名代码)
+     * [访问地址](#访问地址)
+     * [实例相关](#实例相关)
+       * [1.CreateInstance](#1createinstance)
+       * [2.DeleteInstance](#2deleteinstance)
+       * [3.StopInstance](#3stopinstance)
+       * [4.RebootInstance](#4rebootinstance)
+       * [5.ModifyInstanceChargeType](#5modifyinstancechargetype)
+       * [6.ModifyInstanceSpec](#6modifyinstancespec)
+       * [7.CreateDisk](#7createdisk)
+       * [8.ResizeDisk](#8resizedisk)
+       * [9.DeleteDisk](#9deletedisk)
+       * [10.ResetImage](#10resetimage)
+       * [11.DescribeInstances](#11describeinstances)
+       * [12.ConnectNetworkInterface](#12connectnetworkinterface)
+       * [13.DisconnectNetworkInterface](#13disconnectnetworkinterface)
+       * [14.ModifyIpAddress](#14modifyipaddress)
+       * [15.DescribeInstanceMonitor](#15describeinstancemonitor)
+       * [16.StartInstance](#16startinstance)
+       * [17.ModifyInstanceName](#17modifyinstancename)
+       * [18.DescribeTags](#18describetags)
+       * [19.CreateTag](#19createtag)
+       * [20.DeleteTag](#20deletetag)
+       * [21.AddInstancesTags](#21addinstancestags)
+       * [22.DeleteInstancesTags](#22deleteinstancestags)
+       * [23.DescribeInstanceType](#23DescribeInstanceType)
+       * [24.DescribePublicIp](#24DescribePublicIp)
+       * [25.DescribePrivateIp](#25DescribePrivateIp)
+       * [26.ResetInstancesPassword](#26ResetInstancesPassword)
+       * [27.CreateInstanceHtmlConsoleURL](#27CreateInstanceHtmlConsoleURL)
+       * [28.ExtendSystemDisk](#28ExtendSystemDisk)
+     * [安全组相关](#安全组相关)
+       * [1.CreateSecurityGroup](#1createsecuritygroup)
+       * [2.DeleteSecurityGroup](#2deletesecuritygroup)
+       * [3.ForceDeleteSecurityGroup](#3forcedeletesecuritygroup)
+       * [4.DescribeSecurityGroupAttribute](#4describesecuritygroupattribute)
+       * [5.ModifySecurityGroupAttribute](#5modifysecuritygroupattribute)
+       * [6.DescribeSecurityGroups](#6describesecuritygroups)
+       * [7.AddSecurityGroupRule](#7addsecuritygrouprule)
+       * [8.RemoveSecurityGroupRule](#8removesecuritygrouprule)
+       * [9.ModifySecurityGroupRule](#9modifysecuritygrouprule)
+       * [10.JoinSecurityGroup](#10joinsecuritygroup)
+       * [11.LeaveSecurityGroup](#11leavesecuritygroup)
+       * [12.ModifySecurityGroupRulePriority](#12modifysecuritygrouprulepriority)
+     * [模板相关](#模板相关)
+       * [1.CreateTemplate](#1createtemplate)
+       * [2.DeleteTemplate](#2deletetemplate)
+       * [3.SyncTemplate](#3synctemplate)
+       * [4.DescribeTemplateInfo](#4describetemplateinfo)
+     * [虚拟数据中心相关](#虚拟数据中心相关)
+       * [1.DescribeVdc](#1describevdc)
+       * [2.CreateVdc](#2createvdc)
+       * [3.DeleteVdc](#3deletevdc)
+       * [4.CreatePublicNetwork](#4createpublicnetwork)
+       * [5.CreatePrivateNetwork](#5createprivatenetwork)
+       * [6.ModifyPublicNetwork](#6modifypublicnetwork)
+       * [7.AddPublicIp](#7addpublicip)
+       * [8.DeletePublicIp](#8deletepublicip)
+       * [9.DeletePublicNetwork](#9deletepublicnetwork)
+       * [10.DeletePrivateNetwork](#10deleteprivatenetwork)
+       * [11.RenewPublicNetwork](#11renewpublicnetwork)
+       * [12.DescribeBandwidthTraffic](#12describebandwidthtraffic)
+       * [13.DescribeGPN](#13describegpn)
+       * [14.AddAccessPoint](#14addaccesspoint)
+       * [15.DeleteAccessPoint](#15deleteaccesspoint)
+       * [16.DescribeAccessInfo](#16describeaccessinfo)
+       * [17.CreateGPN](#17creategpn)
+       * [18.DeleteGPN](#18deletegpn)
+       * [19.ModifyVdcName](#19modifyvdcname)
+     * [裸金属相关](#裸金属相关)
+       * [1.DescribeBmsGoods](#1describebmsgoods)
+       * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
+       * [3.DescribeBmsImage](#3describebmsimage)
+       * [4.CreateBmsInstance](#4createbmsinstance)
+       * [5.DescribeBms](#5describebms)
+       * [6.DescribeBmsDetail](#6describebmsdetail)
+       * [7.OperateBmsPower](#7operatebmspower)
+       * [8.ReinstallBms](#8ReinstallBms)
+       * [9.DescribeBmsVNC](#9describebmsvnc)
+       * [10.ModifyBmsOrder](#10modifybmsorder)  
+     * [裸金属云盘相关](#裸金属云盘相关)
+       * [1.CreateDisk](#1createDisk)
+       * [2.AttachDisk](#2attachDisk)
+       * [3.DetachDisk](#3detachDisk)
+       * [4.DeleteDisk](#4deleteDisk)
+       * [5.DescribeDisks](#5describeDisks)
+       * [6.DescribeDiskUsage](#6describeDiskUsage)
+       * [7.DescribePoolUsage](#7describePoolUsage)
+       * [8.ChangeIops](#8changeIops)
+       * [9.ChangeBandwidth](#9changeBandwidth)
+       * [10.ExpansionSize](#10expansionSize)  
+       * [11.CreateSnapshot](#11createSnapshot)  
+       * [12.CloneSnapshot](#12cloneSnapshot)  
+       * [13.DeleteSnapshot](#13deleteSnapshot)  
+       * [14.RollbackSnapshot](#14rollbackSnapshot)  
+       * [15.DescribeGoodsId](#15describeGoodsId)        
+     * [账单相关](#账单相关)
+       * [1.DescribeBill](#1describebill)
+       * [2.DescribeBillInfo](#2describebillinfo)
+     * [冷云计量相关](#冷云计量相关)
+       * [1.GetMetering](#1GetMetering)
+     * [其他公共接口](#其他公共接口)
+       * [1.DescribeAvailableResource](#1describeavailableresource)
+       * [2.DescribeTask](#2describetask)
+     * [附件一](#附件一)
+           * [可用区名称](#可用区名称)
+     * [附件二](#附件二)
+           * [主机类型](#主机类型)
+     * [附件三](#附件三)
+           * [带宽类型](#带宽类型)
+     * [附件四](#附件四)
+           * [公共模板](#公共模板)
+     * [示例](#示例)
+       * [1.获取请求url](#1获取请求url)
+       * [2.获取虚拟数据中心公网信息](#2获取虚拟数据中心公网信息)
+       * [3.获取机器信息](#3获取机器信息)
+       * [4.创建云主机实例](#4创建云主机实例)
+       * [5.修改公网带宽](#5修改公网带宽)
+       * [6.修改云主机实例计费类型](#6修改云主机实例计费类型)
+       * [7.获取任务状态](#7获取任务状态)
+       * [8.定制模板](#8定制模板)
 
 
 # 首云公开API文档
@@ -224,11 +239,11 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 ## 访问地址
 
 
-| 地区             | 访问地址                           |
-| ---------------- | ------                          |
-| 中国大陆           | cdsapi.capitalonline.net      |
-| 亚太地区           | cdsapi-asia.capitalonline.net |
-| 欧美地区           | cdsapi-us.capitalonline.net   |
+| 地区     | 访问地址                      |
+| -------- | ----------------------------- |
+| 中国大陆 | cdsapi.capitalonline.net      |
+| 亚太地区 | cdsapi-asia.capitalonline.net |
+| 欧美地区 | cdsapi-us.capitalonline.net   |
 
 
 ## 实例相关
@@ -250,20 +265,26 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
 | Password           | string   | 否       | EcsV587!                                                     | 云服务器密码                                                 |
+<<<<<<< HEAD
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
+=======
+| PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                 |
+| InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                                             |
+| AssignCCSId        | integer  | 否       | 1                                                            | 是否启用编号，1为启用，0为不启用                             |
+>>>>>>> f97a6949e762514401c337a10bd6ee0f5b52b1f8
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
-| ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64          |
+| ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
 | SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
-| PublicIp           | list   | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
-| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0
+| PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
+| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  | 
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 
 
@@ -663,7 +684,7 @@ def add_disk(vm_id):
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | DiskId     | string | 是       | a67644ba-873f-11e9-bf49-0242ac1104e7 | 硬盘编号                                     |
-| DataSize   | int | 是       | 100                                  | 硬盘扩容后的大小                             |
+| DataSize   | int    | 是       | 100                                  | 硬盘扩容后的大小                             |
 
 ​	**返回参数：**
 
@@ -750,8 +771,8 @@ def add_disk(vm_id):
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | ImageId    | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376 | 模板Id                                       |
-| Password   | string   | 否     | EcsV587!                             | 云服务器密码                                 |
-| PublicKey  | string   | 否     |                                      | 云服务器公钥                                 |
+| Password   | string | 否       | EcsV587!                             | 云服务器密码                                 |
+| PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
 
 ​	**返回参数：**
 
@@ -806,13 +827,13 @@ def reset_os(vm_id, os_id):
 
 ​	**请求参数：**
 
-| 名称       | 类型    | 是否必选 | 示例值                                  | 描述                                                                |
-| ---------- | ------- | -------- | --------------------------------------- | ------------------------------------------------------------------- |
-| PageNumber | Integer | 否       | 1                                       | Vdc列表的页码。起始值：1   默认值：1，默认每页显示10个Vdc的详细信息 |
-| VdcId      | string  | 否       | "773f14c2-c8bc-4f66-acd7-ec34d3bfde7d"  | 云服务器所属的Vdc                                                   |
-| InstanceId | string  | 否       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0"  | 云服务器的编号，可以在查询云服务器详情中查出                        |
-| PublicIp   | array   | 否       | ["101.251.1.1"]                         | 公网Ip                                                              |
-| PageSize   | int     | 否       | 10                                      | 每页返回数量                                                        |
+| 名称       | 类型    | 是否必选 | 示例值                                 | 描述                                                         |
+| ---------- | ------- | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| PageNumber | Integer | 否       | 1                                      | Vdc列表的页码。起始值：1   默认值：1，默认每页显示10个Vdc的详细信息 |
+| VdcId      | string  | 否       | "773f14c2-c8bc-4f66-acd7-ec34d3bfde7d" | 云服务器所属的Vdc                                            |
+| InstanceId | string  | 否       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在查询云服务器详情中查出                 |
+| PublicIp   | array   | 否       | ["101.251.1.1"]                        | 公网Ip                                                       |
+| PageSize   | int     | 否       | 10                                     | 每页返回数量                                                 |
 
 ​	**返回参数:**
 
@@ -1225,8 +1246,8 @@ def down_card(InterfaceId, InstanceId):
 
 | 名称         | 类型   | 是否必选 | 示例值                               | 描述                                         |
 | ------------ | ------ | -------- | ------------------------------------ | -------------------------------------------- |
-| InstanceId   | string |   是     | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
-| InstanceName | string |   是     | shouduzaixhost                       | 云服务器的主机名                             |
+| InstanceId   | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
+| InstanceName | string | 是       | shouduzaixhost                       | 云服务器的主机名                             |
 
 **返回参数：**
 
@@ -1237,12 +1258,12 @@ def down_card(InterfaceId, InstanceId):
 
 **错误码：**
 
-| httpcode | 错误码                                | 错误信息                                                              | 描述                           |
-| -------- | ------------------------------------- | --------------------------------------------------------------------- | ------------------------------ |
+| httpcode | 错误码                                | 错误信息                                                     | 描述                           |
+| -------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
 | 403      | IncorrectInstanceStatus               | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
-| 400      | InstanceNotFound                      | the Instance has   deleted                                            | 指定的云服务器已被删除         |
-| 400      | InvalidInstanceID.Malformed           | The specified parameter   "InstanceID" is not valid.                  | 指定云服务器ID参数格式错误     |
-| 400      | InvalidInstanceType.ValueUnauthorized | The  specified InstanceType is not authorized.                        | 指定的云主机规格未授权使用。   |
+| 400      | InstanceNotFound                      | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceID.Malformed           | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
+| 400      | InvalidInstanceType.ValueUnauthorized | The  specified InstanceType is not authorized.               | 指定的云主机规格未授权使用。   |
 
 **返回示例：**
 
@@ -1278,9 +1299,9 @@ def down_card(InterfaceId, InstanceId):
 
 **错误码：**
 
-| httpcode | 错误码                   | 错误信息                                                              | 描述                           |
-| -------- | ------------------------ | --------------------------------------------------------------------- | ------------------------------ |
-| 403      | IncorrectInstanceStatus  | The current status of the resource does not support this operation.   | 该资源目前的状态不支持此操作。 |
+| httpcode | 错误码                  | 错误信息                                                     | 描述                           |
+| -------- | ----------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus | The current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
 
 **返回示例：**
 
@@ -1319,7 +1340,7 @@ def down_card(InterfaceId, InstanceId):
 
 | 名称    | 类型   | 是否必选 | 示例值 | 描述     |
 | ------- | ------ | -------- | ------ | -------- |
-| TagName | string |    是    |  abcd  | 标签名称 |
+| TagName | string | 是       | abcd   | 标签名称 |
 
 **返回参数：**
 
@@ -1351,9 +1372,9 @@ def down_card(InterfaceId, InstanceId):
 
 **请求参数：**
 
-| 名称    | 类型   | 是否必选 | 示例值 | 描述     |
-| ------- | ------ | -------- | ------ | -------- |
-| TagId   | string |    是    |        | 标签Id   |
+| 名称  | 类型   | 是否必选 | 示例值 | 描述   |
+| ----- | ------ | -------- | ------ | ------ |
+| TagId | string | 是       |        | 标签Id |
 
 **返回参数：**
 
@@ -1392,10 +1413,10 @@ def down_card(InterfaceId, InstanceId):
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | --------------- |
-| InstanceIds | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs       |
-| AddTagIds   | string |    否    | "123,456"                                                                   | 被添加标签的IDs |
+| 名称        | 类型   | 是否必选 | 示例值                                                       | 描述            |
+| ----------- | ------ | -------- | ------------------------------------------------------------ | --------------- |
+| InstanceIds | string | 是       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs       |
+| AddTagIds   | string | 否       | "123,456"                                                    | 被添加标签的IDs |
 
 **返回参数：**
 
@@ -1429,10 +1450,10 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| InstanceIds | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs           |
-| DelTagIds   | string |    否    | "123,456"                                                                   | 需要被删除的标签IDs |
+| 名称        | 类型   | 是否必选 | 示例值                                                       | 描述                |
+| ----------- | ------ | -------- | ------------------------------------------------------------ | ------------------- |
+| InstanceIds | string | 是       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7" | 云主机IDs           |
+| DelTagIds   | string | 否       | "123,456"                                                    | 需要被删除的标签IDs |
 
 **返回参数：**
 
@@ -1465,11 +1486,11 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| RegionId | string |    是    | CN_Beijing_A | 选择可用区,见附件     |
-| InstanceType   | string |    是    | "Standard"                                               | 主机类型 |
-| InstanceChargeType   | string |    否    | "PostPaid"     | 云主机的付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid（默认）：按量付费。 |
+| 名称               | 类型   | 是否必选 | 示例值       | 描述                                                         |
+| ------------------ | ------ | -------- | ------------ | ------------------------------------------------------------ |
+| RegionId           | string | 是       | CN_Beijing_A | 选择可用区,见附件                                            |
+| InstanceType       | string | 是       | "Standard"   | 主机类型                                                     |
+| InstanceChargeType | string | 否       | "PostPaid"   | 云主机的付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid（默认）：按量付费。 |
 
 **返回参数：**
 
@@ -1517,10 +1538,10 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| VdcId | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号     |
-| PublicId | string |    是    | "123443ea8-fcxxxxx01defxxx104e7" | 公网ID     |
+| 名称     | 类型   | 是否必选 | 示例值                                                | 描述    |
+| -------- | ------ | -------- | ----------------------------------------------------- | ------- |
+| VdcId    | string | 是       | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号 |
+| PublicId | string | 是       | "123443ea8-fcxxxxx01defxxx104e7"                      | 公网ID  |
 
 **返回参数：**
 
@@ -1571,10 +1592,10 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| VdcId | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号     |
-| PrivateId | string |    是    | "123443ea8-fcxxxxx01defxxx104e7" | 私网ID     |
+| 名称      | 类型   | 是否必选 | 示例值                                                | 描述    |
+| --------- | ------ | -------- | ----------------------------------------------------- | ------- |
+| VdcId     | string | 是       | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | Vdc编号 |
+| PrivateId | string | 是       | "123443ea8-fcxxxxx01defxxx104e7"                      | 私网ID  |
 
 **返回参数：**
 
@@ -1625,10 +1646,10 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| InstanceIds | string |    是    | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | 主机编号，多个用逗号隔开     |
-| Password| string |    是    | "xxxx" | 新主机密码     |
+| 名称        | 类型   | 是否必选 | 示例值                                                | 描述                     |
+| ----------- | ------ | -------- | ----------------------------------------------------- | ------------------------ |
+| InstanceIds | string | 是       | "f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7" | 主机编号，多个用逗号隔开 |
+| Password    | string | 是       | "xxxx"                                                | 新主机密码               |
 
 **返回参数：**
 
@@ -1672,9 +1693,9 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述                                                               |
-| ----------- | ------ | -------- | --------------------------------------------------------------------------- | ------------------- |
-| InstanceId | string |    是    | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在DescribeInstances中获取     |
+| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                                          |
+| ---------- | ------ | -------- | -------------------------------------- | --------------------------------------------- |
+| InstanceId | string | 是       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在DescribeInstances中获取 |
 
 **返回参数：**
 
@@ -1701,6 +1722,48 @@ def down_card(InterfaceId, InstanceId):
 
 ```
 
+### 28.ExtendSystemDisk
+
+**Action: ExtendSystemDisk**
+
+**描述：** 系统盘扩容
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                                          |
+| ---------- | ------ | -------- | -------------------------------------- | --------------------------------------------- |
+| InstanceId | string | 是       | "f9053ea8-fc23-4032-8a7f-01def77b4cc0" | 云服务器的编号，可以在DescribeInstances中获取 |
+| Size       | int    | 否       | 200                                    | 系统盘大小                                    |
+| IOPS       | int    | 否       | 5                                      | IOPS预置性能包个数                            |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+| TaskId  | String |         | 任务ID   |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "order_audit": 0
+    },
+    "Message": "",
+    "TaskId": "111111"
+}
+```
 
 ## 安全组相关
 
@@ -1844,9 +1907,9 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
-| --------------- | ------ | -------- | ------------------------------------ | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
+| 名称            | 类型   | 是否必选 | 示例值                               | 描述         |
+| --------------- | ------ | -------- | ------------------------------------ | ------------ |
+| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID     |
 | RuleId          | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组规则ID |
 
 ​	**返回参数：**
@@ -1984,7 +2047,7 @@ def down_card(InterfaceId, InstanceId):
 | ----------------- | ------ | -------- | ------ | ----------------------------------------------------------- |
 | SecurityGroupType | String | 否       | public | 安全组类型(public/private),不填默认筛选所有类型的安全组列表 |
 | Keyword           | String | 否       | test   | 查询关键字                                                  |
-| SecurityGroupId   | String | 否       | xxxx   | 安全组ID                                                  |
+| SecurityGroupId   | String | 否       | xxxx   | 安全组ID                                                    |
 
 ​	**返回参数：**
 
@@ -2339,14 +2402,14 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**请求参数:** 
 
-| 名称        | 类型   | 是否必选 | 示例值 | 描述             |
-| ----------- | ------ | -------- | ------ | ---------------- |
-| InstanceId  | String | 是       | Test   | 云主机实例ID     |
-| DisplayName | String | 是       | 模板   | 模板名称         |
-| PowerOn     | Bool   | 是       | True      | 是否开机定制模板 |
-| WithDataDisk     | Bool   | 否       | True      | 所定制的模板是否需要挂载原主机数据盘，默认为 True |
-| InstanceUserName     | String   | 否       | root     |  云主机用户名, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写用户名 如您修改过管理员权限默认账户，请填写修改后的名称。如用户名不一致，会导致创建云主机失败！ |
-| InstancePassword     | String   | 否       | xxxx      | 云主机密码, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写云主机密码  |
+| 名称             | 类型   | 是否必选 | 示例值 | 描述                                                         |
+| ---------------- | ------ | -------- | ------ | ------------------------------------------------------------ |
+| InstanceId       | String | 是       | Test   | 云主机实例ID                                                 |
+| DisplayName      | String | 是       | 模板   | 模板名称                                                     |
+| PowerOn          | Bool   | 是       | True   | 是否开机定制模板                                             |
+| WithDataDisk     | Bool   | 否       | True   | 所定制的模板是否需要挂载原主机数据盘，默认为 True            |
+| InstanceUserName | String | 否       | root   | 云主机用户名, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写用户名 如您修改过管理员权限默认账户，请填写修改后的名称。如用户名不一致，会导致创建云主机失败！ |
+| InstancePassword | String | 否       | xxxx   | 云主机密码, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写云主机密码 |
 
 ​	**返回参数：** 
 
@@ -2499,7 +2562,7 @@ def down_card(InterfaceId, InstanceId):
 | TemplateId   | String | xxx                 | 模板ID       |
 | OSType       | String | centos 7.4 64位     | 模板类型     |
 | CreateTime   | String | 2019-05-15 10:38:28 | 创建时间     |
-| Region       | List   | []                  | 可用区信息     |
+| Region       | List   | []                  | 可用区信息   |
 | RegionId     | String | CN_Beijing_C        | 区域ID       |
 | RegionName   | String | 北京-可用区C        | 区域名称     |
 
@@ -2581,7 +2644,7 @@ def down_card(InterfaceId, InstanceId):
 | Data           | List     | []                                                           | 返回数据列表                                                 |
 | VdcId          | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                                                      |
 | VdcName        | string   | capitalcloud                                                 | Vdc名称                                                      |
-| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区                                          |
+| RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区                                                |
 | VdcStatus      | string   | ok                                                           | Vdc的使用状态                                                |
 | PublicNetwork  | string   | {"Name": "公网1",<br/>"Status":"ok";<br />    "Type": "BGP_4",<br/>    "Qos": "20",<br/>''Ip':"38.121.60.96"<br />"Mask":"28"} | Name:公网名称<br />Status：状态<br />Type：公网带宽类型<br />Qos：带宽大小<br />Ip：购买的Ip段<br />Mask:掩码 |
 | PrivateNetwork | string   | [{<br />"Name":"私网1",<br />"Status":"ok",<br />"Ip":"10.241.16.0/16"<br />"Id":"22b729aa-4540-11e9-99c5-0242ac11001b"},<br />{<br />"Name":"私网2",<br />"Status":"ok",<br />"Ip":"10.241.40.0"<br />"Mask":"16"<br />"Id":"c0d2bbf7-0e09-49d5-8dc7-8fe90e722c47"}] | Name：私网名称<br />Status：状态<br />Ip：购买的私网Ip段<br />Mask:掩码<br />ID:网络id |
@@ -2685,7 +2748,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 
 | 名称          | 类型   | 是否必选 | 示例值                                                       | 描述                                   |
 | ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
-| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的可用区Id                        |
+| RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的可用区Id                      |
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
 | PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
 
@@ -2859,13 +2922,13 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 
 ​	**请求参数：**
 
-| 名称   | 类型   | 是否必选 | 示例值                               | 描述                            |
-| ------ | ------ | -------- | ------------------------------------ | ------------------------------- |
-| VdcId  | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
-| Name   | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
-| Type   | string | 否       | auto                                 | 私网类型                        |
+| 名称    | 类型   | 是否必选 | 示例值                               | 描述                            |
+| ------- | ------ | -------- | ------------------------------------ | ------------------------------- |
+| VdcId   | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
+| Name    | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
+| Type    | string | 否       | auto                                 | 私网类型                        |
 | Address | string | 否       | 192.168.0.0                          | 私网地址                        |
-| Mask   | string | 否       | 16                                   | 私网掩码                        |
+| Mask    | string | 否       | 16                                   | 私网掩码                        |
 
 ​	**返回参数：**
 
@@ -3218,6 +3281,7 @@ def modify_public_qos(publicId, qos):
 ```
 
 ### 13.DescribeGPN
+
 **Action:** DescribeGPN
 
 **描述:** 查询云互联组(以下简称GPN)
@@ -3228,34 +3292,35 @@ def modify_public_qos(publicId, qos):
 
 **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----:|:----:|
-|AreaId|String|否|CN|区域编号|
+|  名称  |  类型  | 是否必选 | 示例 |   描述   |
+| :----: | :----: | :------: | :--: | :------: |
+| AreaId | String |    否    |  CN  | 区域编号 |
 
 **返回参数:**
 
-| 名称     | 类型  | 示例                                | 描述      |
-|:---------|:-----|:-----------------------------------|:----------|
-|Code      |String|Success                             |返回码      |
-|Data      |List  |[]                                  |返回数据    |
-|GpnId     |String|c20a8424-26be-11ea-8333-0242ac110002|云互联组编号 |
-|Qos       |Int   |300                                 |GPN带宽     |
-|Name      |Strint|北京-无锡                            |GPN名称     |
-|EvpnId    |Int   |12345                               |Evpn编号    |
-|Status    |String|ok                                  |GPN状态     |
-|StatusStr |String|正常                                 |GPN状态     |
-|SubOrderId|String|425d533e-2d3d-11ea-93ed-0242ac110002|订单编号     |
-|JoinApps  |List  |[{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}]|PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽|
-|JoinPops  |List  |[{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}]|PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽|
+| 名称       | 类型   | 示例                                                         | 描述                                                         |
+| :--------- | :----- | :----------------------------------------------------------- | :----------------------------------------------------------- |
+| Code       | String | Success                                                      | 返回码                                                       |
+| Data       | List   | []                                                           | 返回数据                                                     |
+| GpnId      | String | c20a8424-26be-11ea-8333-0242ac110002                         | 云互联组编号                                                 |
+| Qos        | Int    | 300                                                          | GPN带宽                                                      |
+| Name       | Strint | 北京-无锡                                                    | GPN名称                                                      |
+| EvpnId     | Int    | 12345                                                        | Evpn编号                                                     |
+| Status     | String | ok                                                           | GPN状态                                                      |
+| StatusStr  | String | 正常                                                         | GPN状态                                                      |
+| SubOrderId | String | 425d533e-2d3d-11ea-93ed-0242ac110002                         | 订单编号                                                     |
+| JoinApps   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
+| JoinPops   | List   | [{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}] | PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽 |
 
 
 **错误码:**
 
-| httpcode | 错误码| 错误信息 | 描述|
-|:----:|:----:|:----:|:----:|
-| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  | 指定GpnId参数格式错误  |
+| httpcode |         错误码         |                   错误信息                    |         描述          |
+| :------: | :--------------------: | :-------------------------------------------: | :-------------------: |
+|   400    | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid. | 指定GpnId参数格式错误 |
 
 **返回示例**
+
 ```json
 {
     "Code": "Success",
@@ -3308,6 +3373,7 @@ def modify_public_qos(publicId, qos):
 ```
 
 ### 14.AddAccessPoint
+
 **Action:** AddAccessPoint
 
 **描述:** 云互联组增加接入点
@@ -3318,30 +3384,31 @@ def modify_public_qos(publicId, qos):
 
 **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----|:----|
-|GpnId|String|是|c20a8424-26be-11ea-8333-0242ac110002|Gpn编号|
-|VdcAdd|list|否|[{<br>"VdcId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"PointType":"VDC", <br>"PrivateId": "425d533e-2d3d-11ea-93ed-0242ac110002", <br>"CityId": "4257d33e-2d3d-11ea-93ed-0242ac110002"<br>}]|添加VDC接入点|
-|PopAdd|list|否|[{<br>"PopId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"CityId":"4257d33e-2d3d-11ea-93ed-0242ac110002", <br>"PointType": "Pop"<br>}]|添加POP接入点<br>备注:PopAdd 和 VdcAdd不可同时为[]|
+|  名称  |  类型  | 是否必选 | 示例                                                         | 描述                                               |
+| :----: | :----: | :------: | :----------------------------------------------------------- | :------------------------------------------------- |
+| GpnId  | String |    是    | c20a8424-26be-11ea-8333-0242ac110002                         | Gpn编号                                            |
+| VdcAdd |  list  |    否    | [{<br>"VdcId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"PointType":"VDC", <br>"PrivateId": "425d533e-2d3d-11ea-93ed-0242ac110002", <br>"CityId": "4257d33e-2d3d-11ea-93ed-0242ac110002"<br>}] | 添加VDC接入点                                      |
+| PopAdd |  list  |    否    | [{<br>"PopId": "c20a8769-26be-11ea-8333-0242ac110002", <br>"CityId":"4257d33e-2d3d-11ea-93ed-0242ac110002", <br>"PointType": "Pop"<br>}] | 添加POP接入点<br>备注:PopAdd 和 VdcAdd不可同时为[] |
 
 
 **返回参数:**
 
-| 名称 | 类型 | 示例 | 描述 |
-|:----|:----|:----|:----|
-|Code|String|Success|返回码|
-|Data|Dict|{}|返回数据|
+| 名称 | 类型   | 示例    | 描述     |
+| :--- | :----- | :------ | :------- |
+| Code | String | Success | 返回码   |
+| Data | Dict   | {}      | 返回数据 |
 
 
 **错误码：**
 
-| httpcode | 错误码 | 错误信息  | 描述 |
-| ---- | ---- | ---- | ---- |
-| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  |  指定GpnId参数格式错误 |
-| 400 | InvalidVdcID.Malformed | The specified parameter "VdcId" is not valid.  |  指定VdcId参数格式错误 |
+| httpcode | 错误码                 | 错误信息                                      | 描述                  |
+| -------- | ---------------------- | --------------------------------------------- | --------------------- |
+| 400      | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid. | 指定GpnId参数格式错误 |
+| 400      | InvalidVdcID.Malformed | The specified parameter "VdcId" is not valid. | 指定VdcId参数格式错误 |
 
 
 **返回示例**
+
 ```json
 {
     "Code": "Success",
@@ -3350,7 +3417,9 @@ def modify_public_qos(publicId, qos):
     "TaskId": 3247486
 }
 ```
+
 ### 15.DeleteAccessPoint
+
 **Action:** DeleteAccessPoint
 
 **描述:** 云互联组删除接入点
@@ -3361,26 +3430,26 @@ def modify_public_qos(publicId, qos):
 
 **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----|:----|
-|GpnId|String|是|c20a8424-26be-11ea-8333-0242ac110002|Gpn编号|
-|DelPoints|Array|是|["c20a8424-26be-11ea-8333-0242ac110002", <br>"c20a8424-26be-11ea-8333-0242ac110002"<br>]|删除接入点|
+|   名称    |  类型  | 是否必选 | 示例                                                         | 描述       |
+| :-------: | :----: | :------: | :----------------------------------------------------------- | :--------- |
+|   GpnId   | String |    是    | c20a8424-26be-11ea-8333-0242ac110002                         | Gpn编号    |
+| DelPoints | Array  |    是    | ["c20a8424-26be-11ea-8333-0242ac110002", <br>"c20a8424-26be-11ea-8333-0242ac110002"<br>] | 删除接入点 |
 
 
 **返回参数:**
 
-| 名称 | 类型 | 示例 | 描述 |
-|:----|:----|:----|:----|
-|Code|String|Success|返回码|
-|Message|String|Success|返回信息|
-|Data|Dict|{}|返回数据|
-|TaskId|String|111|任务编号|
+| 名称    | 类型   | 示例    | 描述     |
+| :------ | :----- | :------ | :------- |
+| Code    | String | Success | 返回码   |
+| Message | String | Success | 返回信息 |
+| Data    | Dict   | {}      | 返回数据 |
+| TaskId  | String | 111     | 任务编号 |
 
 **错误码：**
 
-| httpcode | 错误码 | 错误信息  | 描述 |
-| ---- | ---- | ---- | ---- |
-| 400 | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid.  | 指定GpnId参数格式错误  | 指定云互联组Id参数格式错误 |
+| httpcode | 错误码                 | 错误信息                                      | 描述                  |
+| -------- | ---------------------- | --------------------------------------------- | --------------------- |
+| 400      | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid. | 指定GpnId参数格式错误 |
 
 
 **返回示例**
@@ -3395,6 +3464,7 @@ def modify_public_qos(publicId, qos):
 ```
 
 ### 16.DescribeAccessInfo
+
 **Action:** DescribeAccessInfo
 
 **描述:** 查询GPN接入点信息
@@ -3405,24 +3475,24 @@ def modify_public_qos(publicId, qos):
 
 **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----:|:----:|
-|Type|String|是|vdc|接入点类型(vdc/pop)|
+| 名称 |  类型  | 是否必选 | 示例 |        描述         |
+| :--: | :----: | :------: | :--: | :-----------------: |
+| Type | String |    是    | vdc  | 接入点类型(vdc/pop) |
 
 **返回参数:**
 
-| 名称          | 类型    | 示例                                | 描述          |
-|:-------------:|:------:|:------------------------------------|:------------:|
-| Code          | String | Success                             | 返回码        |
-| Message       | String | Success                             | 返回信息      |
-| Data          | Dict   | {}                                  | 返回数据      |
-| PrivateNetwork| list   | [{"PrivateId": "928ce33c-22f3-11ea-a1a1-0242ac11001a",<br>"Address": "10.241.7.0"}]|PrivateId: 私网id<br>Address: 网段地址|
-| CityId        | String | ea3ca775-306c-11e7-9796-0050569b4d9c| 城市编号       |
-| RegionId      | String | CN_Beijing_A                        | 地区编号       |
-| RegionName    | String | 北京1                                | 地区名称       |
-| VdcId         | String | 179d1487-38dd-4656-9553-e1527bf183b2| 虚拟数据中心id  |
-| VdcName       | String | vdc1                                | 虚拟数据中心名称 |
-| ZoneName      | String | 中国大陆                             | 大区名称        |
+|      名称      |  类型  | 示例                                                         |                  描述                  |
+| :------------: | :----: | :----------------------------------------------------------- | :------------------------------------: |
+|      Code      | String | Success                                                      |                 返回码                 |
+|    Message     | String | Success                                                      |                返回信息                |
+|      Data      |  Dict  | {}                                                           |                返回数据                |
+| PrivateNetwork |  list  | [{"PrivateId": "928ce33c-22f3-11ea-a1a1-0242ac11001a",<br>"Address": "10.241.7.0"}] | PrivateId: 私网id<br>Address: 网段地址 |
+|     CityId     | String | ea3ca775-306c-11e7-9796-0050569b4d9c                         |                城市编号                |
+|    RegionId    | String | CN_Beijing_A                                                 |                地区编号                |
+|   RegionName   | String | 北京1                                                        |                地区名称                |
+|     VdcId      | String | 179d1487-38dd-4656-9553-e1527bf183b2                         |             虚拟数据中心id             |
+|    VdcName     | String | vdc1                                                         |            虚拟数据中心名称            |
+|    ZoneName    | String | 中国大陆                                                     |                大区名称                |
 
 
 **返回示例**
@@ -3469,6 +3539,7 @@ def modify_public_qos(publicId, qos):
 ```
 
 ### 17.CreateGpn
+
    **Action:** CreateGPN
 
    **描述:** 创建GPN
@@ -3479,21 +3550,21 @@ def modify_public_qos(publicId, qos):
 
    **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----|:----|
-|Name|String|是|gpn|接入点名称|
-|Qos|Int|是|5|GPN带宽|
-|AccessPoint|list|是|[{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}]|Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id|
-|PopAccessPoint|list|是|[{"AccessPointType":"pop",<br/>"PopId":""}]|AccessPointType:接入点类型<br/>PopId:pop点id|
+|      名称      |  类型  | 是否必选 | 示例                                                         | 描述                                                         |
+| :------------: | :----: | :------: | :----------------------------------------------------------- | :----------------------------------------------------------- |
+|      Name      | String |    是    | gpn                                                          | 接入点名称                                                   |
+|      Qos       |  Int   |    是    | 5                                                            | GPN带宽                                                      |
+|  AccessPoint   |  list  |    是    | [{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}] | Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id |
+| PopAccessPoint |  list  |    是    | [{"AccessPointType":"pop",<br/>"PopId":""}]                  | AccessPointType:接入点类型<br/>PopId:pop点id                 |
 
    **返回参数:**
 
-| 名称 | 类型 | 示例 | 描述 |
-|:----:|:----:|:----|:----:|
-|Code|String|Success|返回码|
-|Message|String|Success|返回信息|
-|Data|Dict|{}|返回数据|
-|TaskId|String|111|任务编号|
+|  名称   |  类型  | 示例    |   描述   |
+| :-----: | :----: | :------ | :------: |
+|  Code   | String | Success |  返回码  |
+| Message | String | Success | 返回信息 |
+|  Data   |  Dict  | {}      | 返回数据 |
+| TaskId  | String | 111     | 任务编号 |
 
    **错误码：**
 
@@ -3553,6 +3624,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 ```
 
 ### 18.DeleteGpn
+
    **Action:** DeleteGpn
 
    **描述:** 删除一个GPN
@@ -3563,18 +3635,18 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
    **请求参数:**
 
-| 名称 | 类型 | 是否必选 | 示例 | 描述 |
-|:----:|:----:|:----:|:----:|:----|
-|GpnId|String|是|fjdgh90-98fhd78-kh487|GPN编号|
+| 名称  |  类型  | 是否必选 |         示例          | 描述    |
+| :---: | :----: | :------: | :-------------------: | :------ |
+| GpnId | String |    是    | fjdgh90-98fhd78-kh487 | GPN编号 |
 
    **返回参数:**
 
-| 名称 | 类型 | 示例 | 描述 |
-|:----:|:----:|:----|:----:|
-|Code|String|Success|返回码|
-|Message|String|Success|返回信息|
-|Data|Dict|{}|返回数据|
-|TaskId|String|111|任务编号|
+|  名称   |  类型  | 示例    |   描述   |
+| :-----: | :----: | :------ | :------: |
+|  Code   | String | Success |  返回码  |
+| Message | String | Success | 返回信息 |
+|  Data   |  Dict  | {}      | 返回数据 |
+| TaskId  | String | 111     | 任务编号 |
 
    **错误码：**
 
@@ -3606,9 +3678,9 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 **请求参数：**
 
 | 名称    | 类型   | 是否必选 | 示例值                               | 描述               |
-| ------- | ------ | -------- | ------------------------------------ | -----------------  |
-| VdcId   | string |   是     | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 虚拟数据中心的编号 |
-| VdcName | string |   是     | shouduzaixhost                       | 虚拟数据中心的名称 |
+| ------- | ------ | -------- | ------------------------------------ | ------------------ |
+| VdcId   | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 虚拟数据中心的编号 |
+| VdcName | string | 是       | shouduzaixhost                       | 虚拟数据中心的名称 |
 
 **返回参数：**
 
@@ -3619,11 +3691,11 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 **错误码：**
 
-| httpcode | 错误码                 | 错误信息                                                              | 描述                           |
-| -------- | ---------------------- | --------------------------------------------------------------------- | ------------------------------ |
+| httpcode | 错误码                 | 错误信息                                                     | 描述                           |
+| -------- | ---------------------- | ------------------------------------------------------------ | ------------------------------ |
 | 403      | IncorrectVdcStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
-| 400      | VdcNotFound            | the Vdc has   deleted                                                 | 指定的Vdc已被删除              |
-| 400      | InvalidVdcId.Malformed | The specified parameter   "VdcId" is not valid.                       | 指定VdcId参数格式错误          |
+| 400      | VdcNotFound            | the Vdc has   deleted                                        | 指定的Vdc已被删除              |
+| 400      | InvalidVdcId.Malformed | The specified parameter   "VdcId" is not valid.              | 指定VdcId参数格式错误          |
 
 **返回示例：**
 
@@ -3650,40 +3722,40 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| RegionId     | string | 是       | CN_Beijing_F                 | 可用区编号 |
+| 名称     | 类型   | 是否必须 | 示例         | 描述       |
+| -------- | ------ | -------- | ------------ | ---------- |
+| RegionId | string | 是       | CN_Beijing_F | 可用区编号 |
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| PrePaid     | list   | []                                 | 预付费，包年包月商品列表 PostPaid         |
-| PostPaid    | list   | null                               | 按量付费商品列表           |
-| GoodsId     | int    | 6034                               | 商品ID           |
-| GoodsName   | string | 裸金属测试产品v1                     | 商品名称           |
-| Computes    | list   | []                                 | 商品里产品配置信息            |
-| Id（Computes） | string | f59c9873-b57d-43e8-94c3-3ed0ba3550b0 | 产品配置Id         |
-| CpuInfo     | string | Intel Xeon Silver 4110*2           | CPU信息          |
-| Cpu         | int    | 32                                 | CPU个数           |
-| Ram         | int    | 64                                 | 内存大小           |
-| Frequency   | string | 2.1GHz                             | 主频           |
-| Disks       | list   | []                                 | 本地盘信息           |
-| Id（Disks） | string | 8e857eb1-c8c1-4c73-9bc3-ea200121ed1a | 本地盘Id         |
-| Type        | string | SSD                               | 磁盘类型           |
-| Capacity    | int    | 480                               | 容量           |
-| Count       | int    | 1                                 | 个数           |
+| 名称           | 类型   | 示例                                 | 描述                              |
+| -------------- | ------ | ------------------------------------ | --------------------------------- |
+| Code           | string | Success                              | 返回状态码: Success: 成功         |
+| Message        | string | null                                 | 返回信息                          |
+| Data           | object | {}                                   | 返回数据                          |
+| PrePaid        | list   | []                                   | 预付费，包年包月商品列表 PostPaid |
+| PostPaid       | list   | null                                 | 按量付费商品列表                  |
+| GoodsId        | int    | 6034                                 | 商品ID                            |
+| GoodsName      | string | 裸金属测试产品v1                     | 商品名称                          |
+| Computes       | list   | []                                   | 商品里产品配置信息                |
+| Id（Computes） | string | f59c9873-b57d-43e8-94c3-3ed0ba3550b0 | 产品配置Id                        |
+| CpuInfo        | string | Intel Xeon Silver 4110*2             | CPU信息                           |
+| Cpu            | int    | 32                                   | CPU个数                           |
+| Ram            | int    | 64                                   | 内存大小                          |
+| Frequency      | string | 2.1GHz                               | 主频                              |
+| Disks          | list   | []                                   | 本地盘信息                        |
+| Id（Disks）    | string | 8e857eb1-c8c1-4c73-9bc3-ea200121ed1a | 本地盘Id                          |
+| Type           | string | SSD                                  | 磁盘类型                          |
+| Capacity       | int    | 480                                  | 容量                              |
+| Count          | int    | 1                                    | 个数                              |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| httpcode | 错误码           | 错误信息                                  | 描述                   |
+| -------- | ---------------- | ----------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid | The parameter "RegionId" is required.     | 参数RegionId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "RegionId" cannot be empty. | 参数RegionId不能为空。 |
 
  **返回示例**
 
@@ -3741,7 +3813,9 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_bms_goods(RegionId):
     action = "DescribeBmsGoods"
@@ -3752,7 +3826,7 @@ def describe_bms_goods(RegionId):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
     res = requests.get(url)
     result = json.loads(res.content)
-```
+ ```
 
 
 
@@ -3768,36 +3842,36 @@ def describe_bms_goods(RegionId):
 
 **请求参数：**
 
-| 名称               | 类型   | 是否必须 | 示例                                 | 描述         |
-| ------------------ | ------- | ----- | ------------------------------------ | ------------ |
-| RegionId           | string  | 是   | CN_Beijing_F                           | 可用区编号 |
-| GoodsId            | int     | 是   | 7955                                   | 商品ID |
-| ComputeId          | string  | 是   | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469   | 规格配置ID |
-| InstanceChargeType | string  | 是   | PrePaid                                | 付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid：按量付费。 目前只支持包年包月 |
-| PrepaidMonth       | int     | 是   | 1                                      | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
-| Amount             | int     | 是   | 10                                     | 指定创建裸金属服务器的数量，默认取值：1 |
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述                                                         |
+| ------------------ | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| RegionId           | string | 是       | CN_Beijing_F                         | 可用区编号                                                   |
+| GoodsId            | int    | 是       | 7955                                 | 商品ID                                                       |
+| ComputeId          | string | 是       | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469 | 规格配置ID                                                   |
+| InstanceChargeType | string | 是       | PrePaid                              | 付费方式，取值范围： PrePaid：预付费，包年包月。 PostPaid：按量付费。 目前只支持包年包月 |
+| PrepaidMonth       | int    | 是       | 1                                    | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| Amount             | int    | 是       | 10                                   | 指定创建裸金属服务器的数量，默认取值：1                      |
 
 
 **返回数据：**
 
-| 名称        | 类型   | 示例                                | 描述          |
-| ----------- | ----- | ---------------------------------- | ------------ |
-| Code        | string |  Success                            | 返回状态码: Success: 成功 |
-| Message     | string |  Success                            | 返回信息 |
-| Data        | object |  {}                                 | 返回数据            |
-| TradeAmount | string |  6660.00                            | 交易价格           |
-| UnitPrice   | string |  666.00                             | 单价          |
-| Currency    | string |  CN                                 | 结算方式,CN:人命币 US:美元            |
+| 名称        | 类型   | 示例    | 描述                       |
+| ----------- | ------ | ------- | -------------------------- |
+| Code        | string | Success | 返回状态码: Success: 成功  |
+| Message     | string | Success | 返回信息                   |
+| Data        | object | {}      | 返回数据                   |
+| TradeAmount | string | 6660.00 | 交易价格                   |
+| UnitPrice   | string | 666.00  | 单价                       |
+| Currency    | string | CN      | 结算方式,CN:人命币 US:美元 |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
-| 400      | DataNotExists              | Please check that the parameters are correct.      |  请检查参数是否正确。     |
+| httpcode | 错误码           | 错误信息                                      | 描述                   |
+| -------- | ---------------- | --------------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid | The parameter "RegionId" is required.         | 参数RegionId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "RegionId" cannot be empty.     | 参数RegionId不能为空。 |
+| 400      | DataNotExists    | Please check that the parameters are correct. | 请检查参数是否正确。   |
 
 
  **返回示例**
@@ -3815,6 +3889,7 @@ def describe_bms_goods(RegionId):
 ```
 
  **代码调用示例**
+
  ```python
 def describe_bms_price():
     action = "DescribeBmsGoodsPrice"
@@ -3830,7 +3905,7 @@ def describe_bms_price():
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json= param)
     result = json.loads(res.content)
-```
+ ```
 
 ### 3.DescribeBmsImage
 
@@ -3844,30 +3919,30 @@ def describe_bms_price():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | ------------------------------------ | ------------ |
-| ImageType   | string | 否       | private                              | 镜像类型: public:公有镜像,private:私有镜像|
-| OsType      | string | 否       | centos                               | 操作系统类型: centos,ubuntu等 |
+| 名称      | 类型   | 是否必须 | 示例    | 描述                                       |
+| --------- | ------ | -------- | ------- | ------------------------------------------ |
+| ImageType | string | 否       | private | 镜像类型: public:公有镜像,private:私有镜像 |
+| OsType    | string | 否       | centos  | 操作系统类型: centos,ubuntu等              |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string |  Success                            | 返回状态码: Success: 成功 |
-| Message     | string |  null                               | 返回信息 |
-| Data        | object |  {}                                 | 返回数据            |
-| Id          | string |  8                                  | 镜像ID           |
-| Name        | string |  ubuntu14.04_64                     | 镜像名称         |
-| Type        | string |  public                             | 镜像类型: public:公有镜像,private:私有镜像 |
+| 名称    | 类型   | 示例           | 描述                                       |
+| ------- | ------ | -------------- | ------------------------------------------ |
+| Code    | string | Success        | 返回状态码: Success: 成功                  |
+| Message | string | null           | 返回信息                                   |
+| Data    | object | {}             | 返回数据                                   |
+| Id      | string | 8              | 镜像ID                                     |
+| Name    | string | ubuntu14.04_64 | 镜像名称                                   |
+| Type    | string | public         | 镜像类型: public:公有镜像,private:私有镜像 |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterIsEmpty           | The parameter "ImageType" cannot be empty.          | 参数ImageType不能为空。     |
+| httpcode | 错误码           | 错误信息                                   | 描述                    |
+| -------- | ---------------- | ------------------------------------------ | ----------------------- |
+| 400      | ParameterIsEmpty | The parameter "ImageType" cannot be empty. | 参数ImageType不能为空。 |
 
 
  **返回示例**
@@ -3915,6 +3990,7 @@ def describe_bms_price():
 ```
 
  **代码调用示例**
+
  ```python
 def describe_bms_images():
     action = "DescribeBmsImage"
@@ -3925,7 +4001,7 @@ def describe_bms_images():
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
     result = json.loads(res.content)
-```
+ ```
 
 ### 4.CreateBmsInstance
 
@@ -3939,52 +4015,52 @@ def describe_bms_images():
 
 **请求参数：**
 
-| 名称                | 类型   | 是否必须  | 示例                                 | 描述         |
-| ------------------ | ------ | -------- | ------------------------------------ | ------------ |
-| RegionId           | string  | 是   | CN_Beijing_F                           | 可用区编号 |
-| VdcId              | string  | 是   | f4a1ec63-a2c3-4979-a4bf-86f546054e6f   | 虚拟数据中心ID|
-| Password           | string  | 是   | MengYou&&Cds-2019                      | 密码 |
-| InstanceName       | string  | 是   | shouduzaixbms                          | 主机名称 |
-| AssignHostNo       | string  | 否   | 001                                    | 主机编号，编号至少三位，不足三位自动补全 |
-| InstanceChargeType | string  | 是   | PostPaid                               | 付费方式，取值范围： PrePaid：预付费，包年包月, 目前只支持包年包月 |
-| AutoRenew          | int     | 是   | 1                                      | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费 |
-| PrepaidMonth       | int     | 是   | 1                                      | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
-| ComputeId          | string  | 是   | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469   | 规格配置ID |
-| GoodsId            | int     | 是   | 7955                                   | 商品ID |
-| ImageId            | string  | 是   | d6012cd8-b672-11e9-9265-525400b97470   | 镜像ID |
-| EnableMonitor      | string  | 否   | 1                                      | 是否开启监控, 1为开启，0为关闭，默认为关闭。 |
-| PipeIds            | list    | 是   | `["9fd88912-b668-11e9-a140-0242ac110002",]`| 网段主键ID列表 |
-| Amount             | int     | 是   | 10                                     | 指定创建裸金属服务器的数量，取值范围：1-100 |
+| 名称               | 类型   | 是否必须 | 示例                                        | 描述                                                         |
+| ------------------ | ------ | -------- | ------------------------------------------- | ------------------------------------------------------------ |
+| RegionId           | string | 是       | CN_Beijing_F                                | 可用区编号                                                   |
+| VdcId              | string | 是       | f4a1ec63-a2c3-4979-a4bf-86f546054e6f        | 虚拟数据中心ID                                               |
+| Password           | string | 是       | MengYou&&Cds-2019                           | 密码                                                         |
+| InstanceName       | string | 是       | shouduzaixbms                               | 主机名称                                                     |
+| AssignHostNo       | string | 否       | 001                                         | 主机编号，编号至少三位，不足三位自动补全                     |
+| InstanceChargeType | string | 是       | PostPaid                                    | 付费方式，取值范围： PrePaid：预付费，包年包月, 目前只支持包年包月 |
+| AutoRenew          | int    | 是       | 1                                           | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费     |
+| PrepaidMonth       | int    | 是       | 1                                           | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| ComputeId          | string | 是       | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469        | 规格配置ID                                                   |
+| GoodsId            | int    | 是       | 7955                                        | 商品ID                                                       |
+| ImageId            | string | 是       | d6012cd8-b672-11e9-9265-525400b97470        | 镜像ID                                                       |
+| EnableMonitor      | int    | 否       | 1                                           | 是否开启监控, 1为开启，0为关闭，默认为关闭。                 |
+| PipeIds            | list   | 是       | `["9fd88912-b668-11e9-a140-0242ac110002",]` | 网段主键ID列表                                               |
+| Amount             | int    | 是       | 10                                          | 指定创建裸金属服务器的数量，取值范围：1-100                  |
 
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string |  Success                            | 返回状态码: Success: 成功 |
-| Message     | string |  订单创建成功，任务已下发，请等待...... | 返回信息                 |
-| Data        | object |  {}                                 | 返回数据                 |
-| TaskIds     | list   |["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id           |
+| 名称    | 类型   | 示例                                     | 描述                      |
+| ------- | ------ | ---------------------------------------- | ------------------------- |
+| Code    | string | Success                                  | 返回状态码: Success: 成功 |
+| Message | string | 订单创建成功，任务已下发，请等待......   | 返回信息                  |
+| Data    | object | {}                                       | 返回数据                  |
+| TaskIds | list   | ["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id                |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
-| 400      | ImageNotFound              | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470]    |  该镜像在该可用区不存在。     |
-| 400      | OrderGoodsConfEmpty        | Order goods config is empty                        |  商品配置Id不存在或者为空。     |
-| 400      | NotSufficient              | Current configuration inventory is insufficient, please choose other configuration of goods!                |  当前配置库存不足，请选择其他配置的商品！     |
-| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
-| 400      | DataNotExists              | Please check that the parameters are correct.      |  请检查参数是否正确。     |
-| 400      | AmountOversize             | The parameter Amount is too large for 1-100.       |  参数Amount的值超出100。     |
-| 400      | VdcNotFound                | The parameter VdcId is not valid.                  |  参数VdcId是无效的。     |
-| 400      | IpNotEnough                | Please check that the number of Ip is enough.      |  请检查Ip数量是否充足。     |
-| 400      | PipeIdNotFound             | The parameter PipeIds is not valid.                |  参数PipeIds是无效的。     |
-      
+| httpcode | 错误码              | 错误信息                                                     | 描述                                     |
+| -------- | ------------------- | ------------------------------------------------------------ | ---------------------------------------- |
+| 400      | ParameterInvalid    | The parameter "RegionId" is required.                        | 参数RegionId是必选项。                   |
+| 400      | ParameterIsEmpty    | The parameter "RegionId" cannot be empty.                    | 参数RegionId不能为空。                   |
+| 400      | ImageNotFound       | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470] | 该镜像在该可用区不存在。                 |
+| 400      | OrderGoodsConfEmpty | Order goods config is empty                                  | 商品配置Id不存在或者为空。               |
+| 400      | NotSufficient       | Current configuration inventory is insufficient, please choose other configuration of goods! | 当前配置库存不足，请选择其他配置的商品！ |
+| 400      | TaskToCoreFaild     | Push task to core failed                                     | 创建任务失败！                           |
+| 400      | DataNotExists       | Please check that the parameters are correct.                | 请检查参数是否正确。                     |
+| 400      | AmountOversize      | The parameter Amount is too large for 1-100.                 | 参数Amount的值超出100。                  |
+| 400      | VdcNotFound         | The parameter VdcId is not valid.                            | 参数VdcId是无效的。                      |
+| 400      | IpNotEnough         | Please check that the number of Ip is enough.                | 请检查Ip数量是否充足。                   |
+| 400      | PipeIdNotFound      | The parameter PipeIds is not valid.                          | 参数PipeIds是无效的。                    |
+
 
  **返回示例**
 
@@ -4000,6 +4076,7 @@ def describe_bms_images():
 ```
 
  **代码调用示例**
+
  ```python
 def create_bms_instance():
     action = "CreateBmsInstance"
@@ -4016,7 +4093,7 @@ def create_bms_instance():
         "ComputeId": "eb41773f-c944-4831-810b-9db4826996f2",
         "GoodsId": 7685,
         "ImageId": "0dff0137-ed2b-4ebb-bccf-6ec9d982fbfb",
-        "EnableMonitor": "1",
+        "EnableMonitor": 1,
         "PipeIds": [
                     "79281b44-73db-11ea-ac8e-0242ac110002",
                     "6c00cd1c-73db-11ea-8379-0242ac110002"
@@ -4026,7 +4103,7 @@ def create_bms_instance():
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
     result = json.loads(res.content)
-```
+ ```
 
 
 ### 5.DescribeBms
@@ -4041,56 +4118,56 @@ def create_bms_instance():
 
 **请求参数**: 
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                                         |
-| ---------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| VdcId      | string | 否       | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | 虚拟数据中心ID                                               |
-| Name       | string | 否       | bms003                               | 裸金属名称                                                   |
-| PageNumber | string | 否       | 1                                    | Bms列表页码。起始值：1, 默认值：1               |
-| PageSize   | string | 否       | 10                                   | 每页返回数量，默认值：500                    |
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                              |
+| ---------- | ------ | -------- | ------------------------------------ | --------------------------------- |
+| VdcId      | string | 否       | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | 虚拟数据中心ID                    |
+| Name       | string | 否       | bms003                               | 裸金属名称                        |
+| PageNumber | string | 否       | 1                                    | Bms列表页码。起始值：1, 默认值：1 |
+| PageSize   | string | 否       | 10                                   | 每页返回数量，默认值：500         |
 
 **返回参数**:
 
-| 名称          | 类型    | 示例值                                                       | 描述                                                         |
-| ------------- | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Code          | string  | Success                                                      | 错误码                                                       |
-| Message       | string  | null                                                         | 返回信息说明                                                 |
-| Data          | object  | {}                                                           | 裸金属服务器列表记录，包含裸金属服务器信息，网卡信息，分页信息 |
-| Baremetals    | list    | []                                                         | 裸金属服务器列表 |
-| BaremetalId  | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3                         | 裸金属ID                                                     |
-| Name         | string | bms-test                                                     | 裸金属名称                                                       |
-| Cpu          | int    | 32                                                           | Cpu个数                                                      |
-| Ram          | int    | 64                                                           | 内存大小                                                     |
-| State        | string | running                                                      | 运行中                                                       |
-| EnableMonitor| bool   | True                                                         | 是否开启监控, True: 开启, False: 关闭                                       |
-| Status       | string | 运行中                                                        | 运行状态                                                      |
-| VdcId        | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d                         | 虚拟数据中心ID                                               |
-| RegionId     | string | CN_Beijing_F                                                 | 可用区编号                                                      |
-| VdcName      | string | bms003                                                       | 虚拟数据中心名称                                             |
-| RegionName   | string | 中国大陆-北京-可用区F                                          | 区域名称                                                     |
-| InstanceChargeType | string | PostPaid                                                    | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
-| IsAutoRenewal| int    | 0                                                           | 0: 没有开启自动续约，1: 开启自动续约                                             |
-| CreateDate   | string | 2019-08-08 11:45:51                                         | 裸金属创建时间                                               |
-| Networks     | object | {}                                                           | 网络                                                         |
-| NetworkCards | list   | []                                                           | 网卡                                                         |
-| Id(NetworkCards) | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c                     | 网卡Id                                                     |
-| VlanId       | string | 1020                                                         | Vlan编号                                                     |
-| IpType       | string | private                                                      | Ip类型：public/private                                       |
-| IpVersion    | string | ipV4                                                         | Ip版本                                       |
-| IpAddress    | string | 10.241.36.1                                                  | Ip地址                                                       |
-| Netmask      | string | 255.255.0.0                                                  | 掩码地址                                                     |
-| Gateway      | string | 10.241.36.1                                                  | 网关地址                                                     |
-| ConnectState | string | on                                                           | 是否连接  on\off                                             |
-| TotalCount    | int     | 3                                                            | 裸金属服务器总数                                             |
-| PageSize      | int     | 10                                                           | 每页大小                                                     |
-| Pages         | int     | 1                                                            | 页数                                                     |
-| PageNumber    | int     | 1                                                            | 当前页                                                       |
+| 名称               | 类型   | 示例值                               | 描述                                                         |
+| ------------------ | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Code               | string | Success                              | 错误码                                                       |
+| Message            | string | null                                 | 返回信息说明                                                 |
+| Data               | object | {}                                   | 裸金属服务器列表记录，包含裸金属服务器信息，网卡信息，分页信息 |
+| Baremetals         | list   | []                                   | 裸金属服务器列表                                             |
+| BaremetalId        | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | 裸金属ID                                                     |
+| Name               | string | bms-test                             | 裸金属名称                                                   |
+| Cpu                | int    | 32                                   | Cpu个数                                                      |
+| Ram                | int    | 64                                   | 内存大小                                                     |
+| State              | string | running                              | 运行中                                                       |
+| EnableMonitor      | bool   | True                                 | 是否开启监控, True: 开启, False: 关闭                        |
+| Status             | string | 运行中                               | 运行状态                                                     |
+| VdcId              | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | 虚拟数据中心ID                                               |
+| RegionId           | string | CN_Beijing_F                         | 可用区编号                                                   |
+| VdcName            | string | bms003                               | 虚拟数据中心名称                                             |
+| RegionName         | string | 中国大陆-北京-可用区F                | 区域名称                                                     |
+| InstanceChargeType | string | PostPaid                             | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
+| IsAutoRenewal      | int    | 0                                    | 0: 没有开启自动续约，1: 开启自动续约                         |
+| CreateDate         | string | 2019-08-08 11:45:51                  | 裸金属创建时间                                               |
+| Networks           | object | {}                                   | 网络                                                         |
+| NetworkCards       | list   | []                                   | 网卡                                                         |
+| Id(NetworkCards)   | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c | 网卡Id                                                       |
+| VlanId             | string | 1020                                 | Vlan编号                                                     |
+| IpType             | string | private                              | Ip类型：public/private                                       |
+| IpVersion          | string | ipV4                                 | Ip版本                                                       |
+| IpAddress          | string | 10.241.36.1                          | Ip地址                                                       |
+| Netmask            | string | 255.255.0.0                          | 掩码地址                                                     |
+| Gateway            | string | 10.241.36.1                          | 网关地址                                                     |
+| ConnectState       | string | on                                   | 是否连接  on\off                                             |
+| TotalCount         | int    | 3                                    | 裸金属服务器总数                                             |
+| PageSize           | int    | 10                                   | 每页大小                                                     |
+| Pages              | int    | 1                                    | 页数                                                         |
+| PageNumber         | int    | 1                                    | 当前页                                                       |
 
 
 **错误码**
 
-| httpcode | 错误码       | 错误信息                        | 描述        |
-| -------- | ------------ | ------------------------------- | ----------- |
-| 400      | ParameterIsEmpty | The parameter "VdcId" cannot be empty.     | 参数VdcId不能为空。     |
+| httpcode | 错误码           | 错误信息                               | 描述                |
+| -------- | ---------------- | -------------------------------------- | ------------------- |
+| 400      | ParameterIsEmpty | The parameter "VdcId" cannot be empty. | 参数VdcId不能为空。 |
 
 **返回示例**
 
@@ -4138,6 +4215,7 @@ def create_bms_instance():
 ~~~
 
  **代码调用示例**
+
  ```python
 def describe_bms_list():
     action = "DescribeBms"
@@ -4148,7 +4226,7 @@ def describe_bms_list():
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
     res = requests.get(url)
     result = json.loads(res.content)
-```
+ ```
 
 
 ### 6.DescribeBmsDetail
@@ -4163,65 +4241,65 @@ def describe_bms_list():
 
 **请求参数**: 
 
-| 名称 | 类型   | 是否必选 | 示例值                               | 描述         |
-| ---- | ------ | -------- | ------------------------------------ | ------------ |
-| BaremetalId   | string | 是       | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | 裸金属主键ID |
+| 名称        | 类型   | 是否必选 | 示例值                               | 描述         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| BaremetalId | string | 是       | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | 裸金属主键ID |
 
 **返回参数**:
 
-| 名称         | 类型   | 示例值                                                       | 描述                                                         |
-| ------------ | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Code         | string | Success                                                      | 错误码                                                       |
-| Message      | string | null                                                         | 返回信息说明                                                 |
-| Data         | object | {}                                                           | 裸金属服务器详情数据                                         |
-| BaremetalId  | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3                         | 裸金属ID                                                     |
-| Name         | string | bms-test                                                     | 裸金属名称                                                       |
-| Cpu          | int    | 32                                                           | Cpu个数                                                      |
-| Ram          | int    | 64                                                           | 内存大小                                                     |
-| State        | string | running                                                      | 运行中                                                       |
-| EnableMonitor| string | 1                                                            | 是否开启监控, 1: 开启, 0: 关闭                                       |
-| Status       | string | 运行中                                                        | 运行状态                                                      |
-| VdcId        | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d                         | 虚拟数据中心ID                                               |
-| RegionId     | string | CN_Beijing_F                                                 | 可用区编号                                                      |
-| VdcName      | string | bms003                                                       | 虚拟数据中心名称                                             |
-| RegionName   | string | 中国大陆-北京-可用区F                                          | 区域名称                                                     |
-| ImageName    | string | ubuntu14.04_64                                               | 镜像名称                                                     |
-| InstanceChargeType | string | PostPaid                                                    | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
-| BillStatus   | string | 1                                                           | 1: 计费中                                             |
-| IsAutoRenewal| int    | 0                                                           | 0: 没有开启自动续约，1: 开启自动续约                                             |
-| RunningTime  | string | 0天3小时1分钟35秒                                            | 运行时间                                                     |
-| CreateDate   | string | 2019-08-08 11:45:51                                         | 裸金属创建时间                                               |
-| ExpireDate   | string | 2019-09-01 00:00:00                                        | 裸金属到期时间                                               |
-| Volumes      | list   | []                                                           | 存储挂载                                                     |
-| Id(Volumes)  | string | 951496fa-73a6-461b-96dd-4ffba09ef5a7                         | 挂载ID                                                     |
-| Type         | string | hard                                                         | 存储类型                                                     |
-| Capacity     | int    | 480                                                          | 容量大小                                                     |
-| Iops         | int    | 500                                                          | Iops大小                                                     |
-| Mbps         | int    | 70                                                           | Mbps大小                                                     |
-| VolumeType   | string | SSD                                                          | 硬盘类型                                                     |
-| VolumeId     | string | cb4228a9-58bb-44b2-8ddd-9e46168b364d                         | 硬盘Id                                                     |
-| VolumePath   | string | sda                                                          | 卷名                                                     |
-| UpdateDate   | string | 2020-04-17T07:47:23.000+0000                                 | 更新时间                                                     |
-| Networks     | object | {}                                                           | 网络                                                         |
-| NetworkCards | list   | []                                                           | 网卡                                                         |
-| Id(NetworkCards) | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c                     | 网卡Id                                                     |
-| Mac          | list   | ["e4:43:4b:6b:a7:0e","e4:43:4b:6b:a7:10"]                    | Mac地址                                                      |
-| VlanId       | string | 1020                                                         | Vlan编号                                                     |
-| WorkMode     | string | bond6                                                        | 网卡绑定信息                                                 |
-| IpType       | string | private                                                      | Ip类型：public/private                                       |
-| IpVersion    | string | ipV4                                                         | Ip版本                                       |
-| IpAddress    | string | 10.241.36.1                                                  | Ip地址                                                       |
-| Netmask      | string | 255.255.0.0                                                  | 掩码地址                                                     |
-| Gateway      | string | 10.241.36.1                                                  | 网关地址                                                     |
-| ConnectState | string | on                                                           | 是否连接  on\off                                             |
+| 名称               | 类型   | 示例值                                    | 描述                                                         |
+| ------------------ | ------ | ----------------------------------------- | ------------------------------------------------------------ |
+| Code               | string | Success                                   | 错误码                                                       |
+| Message            | string | null                                      | 返回信息说明                                                 |
+| Data               | object | {}                                        | 裸金属服务器详情数据                                         |
+| BaremetalId        | string | a0492924-1dc1-462e-9cbb-622dc1ec49a3      | 裸金属ID                                                     |
+| Name               | string | bms-test                                  | 裸金属名称                                                   |
+| Cpu                | int    | 32                                        | Cpu个数                                                      |
+| Ram                | int    | 64                                        | 内存大小                                                     |
+| State              | string | running                                   | 运行中                                                       |
+| EnableMonitor      | string | 1                                         | 是否开启监控, 1: 开启, 0: 关闭                               |
+| Status             | string | 运行中                                    | 运行状态                                                     |
+| VdcId              | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d      | 虚拟数据中心ID                                               |
+| RegionId           | string | CN_Beijing_F                              | 可用区编号                                                   |
+| VdcName            | string | bms003                                    | 虚拟数据中心名称                                             |
+| RegionName         | string | 中国大陆-北京-可用区F                     | 区域名称                                                     |
+| ImageName          | string | ubuntu14.04_64                            | 镜像名称                                                     |
+| InstanceChargeType | string | PostPaid                                  | 计费方式<br />PrePaid：预付费 <br />PostPaid：按量付费<br />目前只支持包年包月 |
+| BillStatus         | string | 1                                         | 1: 计费中                                                    |
+| IsAutoRenewal      | int    | 0                                         | 0: 没有开启自动续约，1: 开启自动续约                         |
+| RunningTime        | string | 0天3小时1分钟35秒                         | 运行时间                                                     |
+| CreateDate         | string | 2019-08-08 11:45:51                       | 裸金属创建时间                                               |
+| ExpireDate         | string | 2019-09-01 00:00:00                       | 裸金属到期时间                                               |
+| Volumes            | list   | []                                        | 存储挂载                                                     |
+| Id(Volumes)        | string | 951496fa-73a6-461b-96dd-4ffba09ef5a7      | 挂载ID                                                       |
+| Type               | string | hard                                      | 存储类型                                                     |
+| Capacity           | int    | 480                                       | 容量大小                                                     |
+| Iops               | int    | 500                                       | Iops大小                                                     |
+| Mbps               | int    | 70                                        | Mbps大小                                                     |
+| VolumeType         | string | SSD                                       | 硬盘类型                                                     |
+| VolumeId           | string | cb4228a9-58bb-44b2-8ddd-9e46168b364d      | 硬盘Id                                                       |
+| VolumePath         | string | sda                                       | 卷名                                                         |
+| UpdateDate         | string | 2020-04-17T07:47:23.000+0000              | 更新时间                                                     |
+| Networks           | object | {}                                        | 网络                                                         |
+| NetworkCards       | list   | []                                        | 网卡                                                         |
+| Id(NetworkCards)   | string | b0143a8a-2fb1-4c66-b0e4-34b12ff9e33c      | 网卡Id                                                       |
+| Mac                | list   | ["e4:43:4b:6b:a7:0e","e4:43:4b:6b:a7:10"] | Mac地址                                                      |
+| VlanId             | string | 1020                                      | Vlan编号                                                     |
+| WorkMode           | string | bond6                                     | 网卡绑定信息                                                 |
+| IpType             | string | private                                   | Ip类型：public/private                                       |
+| IpVersion          | string | ipV4                                      | Ip版本                                                       |
+| IpAddress          | string | 10.241.36.1                               | Ip地址                                                       |
+| Netmask            | string | 255.255.0.0                               | 掩码地址                                                     |
+| Gateway            | string | 10.241.36.1                               | 网关地址                                                     |
+| ConnectState       | string | on                                        | 是否连接  on\off                                             |
 
 **错误码**
 
-| httpcode | 错误码           | 错误信息                 | 描述                 |
-| -------- | ---------------- | ------------------------ | -------------------- |
-| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
-| 400      | InstanceNotFound           | the Instance has deleted or The specified parameter InstanceID is not valid.   | 	实例被删除或者BaremetalId无效     |
+| httpcode | 错误码           | 错误信息                                                     | 描述                          |
+| -------- | ---------------- | ------------------------------------------------------------ | ----------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.                     | 参数BaremetalId是必选项。     |
+| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty.                 | 参数BaremetalId不能为空。     |
+| 400      | InstanceNotFound | the Instance has deleted or The specified parameter InstanceID is not valid. | 实例被删除或者BaremetalId无效 |
 
 **返回示例**
 
@@ -4287,6 +4365,7 @@ def describe_bms_list():
 ~~~
 
  **代码调用示例**
+
  ```python
 def describe_bms_detail(id):
     action = "DescribeBmsDetail"
@@ -4297,7 +4376,7 @@ def describe_bms_detail(id):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
     res = requests.get(url)
     result = json.loads(res.content)
-```
+ ```
 
 
 
@@ -4313,30 +4392,30 @@ def describe_bms_detail(id):
 
 **请求参数**: 
 
-| 名称   | 类型   | 是否必选 | 示例值 | 描述                                                         |
-| ------ | ------ | -------- | ------ | ------------------------------------------------------------ |
-| Operate | string | 是       | start  | 操作电源的状态<br />start:  开启<br />stop:  关闭<br />reset:  重启 |
-| BaremetalIds    | list   | 是       | [“2df3f6b4-26ed-4c93-943d-a81a39ced124”] | 裸金属资源（ID）列表  |                                        |
+| 名称         | 类型   | 是否必选 | 示例值                                   | 描述                                                         |
+| ------------ | ------ | -------- | ---------------------------------------- | ------------------------------------------------------------ |
+| Operate      | string | 是       | start                                    | 操作电源的状态<br />start:  开启<br />stop:  关闭<br />reset:  重启 |
+| BaremetalIds | list   | 是       | [“2df3f6b4-26ed-4c93-943d-a81a39ced124”] | 裸金属资源（ID）列表                                         |
 
 **返回参数**:
 
-| 名称    | 类型   | 示例值                                 | 描述       |
-| ------- | ------ | -------------------------------------- | ---------- |
-| Code    | string | Success                                | 返回状态码 |
-| Message | string | Success                                | 提示信息   |
-| Data    | object | {}                                   | 返回数据   |
-| TaskId  | list | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务编号列表，与裸金属资源(ID)列表按照下标一一对应 |
-| BaremetalIds     | list | ["d226f190-f942-4257-8f3e-9cce8dfc0f2b"] | 裸金属资源(ID)列表 |
+| 名称         | 类型   | 示例值                                   | 描述                                               |
+| ------------ | ------ | ---------------------------------------- | -------------------------------------------------- |
+| Code         | string | Success                                  | 返回状态码                                         |
+| Message      | string | Success                                  | 提示信息                                           |
+| Data         | object | {}                                       | 返回数据                                           |
+| TaskId       | list   | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务编号列表，与裸金属资源(ID)列表按照下标一一对应 |
+| BaremetalIds | list   | ["d226f190-f942-4257-8f3e-9cce8dfc0f2b"] | 裸金属资源(ID)列表                                 |
 
 **错误码**
 
-| httpcode | 错误码             | 错误信息                                       | 描述                   |
-| -------- | ------------------ | ---------------------------------------------- | ---------------------- |
-| 400      | ParameterInvalid           | The parameter "Operate" is required.              | 	参数Operate是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "Operate" cannot be empty.          | 	参数Operate不能为空。     |
-| 400      | InstanceError              | The Instance is not allowed to operate  or The specified parameter BaremetalId is not valid. | 	实例当前状态不允许操作或者BaremetalId无效     |
-| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
-| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+| httpcode | 错误码           | 错误信息                                                     | 描述                                      |
+| -------- | ---------------- | ------------------------------------------------------------ | ----------------------------------------- |
+| 400      | ParameterInvalid | The parameter "Operate" is required.                         | 参数Operate是必选项。                     |
+| 400      | ParameterIsEmpty | The parameter "Operate" cannot be empty.                     | 参数Operate不能为空。                     |
+| 400      | InstanceError    | The Instance is not allowed to operate  or The specified parameter BaremetalId is not valid. | 实例当前状态不允许操作或者BaremetalId无效 |
+| 400      | TaskToCoreFaild  | Push task to core failed                                     | 创建任务失败！                            |
+| 400      | DataNotExists    | Please check that the parameters are correct.                | 请检查参数是否正确。                      |
 
 
 **返回示例**
@@ -4357,6 +4436,7 @@ def describe_bms_detail(id):
 ~~~
 
  **代码调用示例**
+
  ```python
 def operat_bms_power(id, state):
     action = "OperateBmsPower"
@@ -4368,7 +4448,7 @@ def operat_bms_power(id, state):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
     result = json.loads(res.content)
-```
+ ```
 
 
 
@@ -4384,31 +4464,31 @@ def operat_bms_power(id, state):
 
 **请求参数**: 
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述     |
-| ---------- | ------ | -------- | ------------------------------------ | -------- |
-| BaremetalId| string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID |
-| ImageId    | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID   |
-| Password   | string | 是       | capitalonline                        | 密码     |
+| 名称        | 类型   | 是否必选 | 示例值                               | 描述     |
+| ----------- | ------ | -------- | ------------------------------------ | -------- |
+| BaremetalId | string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID |
+| ImageId     | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID   |
+| Password    | string | 是       | capitalonline                        | 密码     |
 
 **返回参数**
 
-| 名称        | 类型   | 示例值                               | 描述       |
-| ----------- | ------ | ------------------------------------ | ---------- |
-| Code        | string | Success                              | 返回状态码 |
-| Message     | string | Success                              | 提示信息   |
-| Data        | object | {}                                   | 返回数据   |
-| TaskIds     | list   | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务ID     |
+| 名称    | 类型   | 示例值                                   | 描述       |
+| ------- | ------ | ---------------------------------------- | ---------- |
+| Code    | string | Success                                  | 返回状态码 |
+| Message | string | Success                                  | 提示信息   |
+| Data    | object | {}                                       | 返回数据   |
+| TaskIds | list   | ["72dc0cae-a867-11e9-8184-0242ac110003"] | 任务ID     |
 
 **错误码**
 
-| httpcode | 错误码           | 错误信息                 | 描述               |
-| -------- | ---------------- | ------------------------ | ------------------ |
-| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
-| 400      | ImageNotFound              | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470]   | 	该镜像在该可用区不存在。     |
-| 400      | RebuildFailed              | Compute state is not correct   | 	服务器状态不正确。     |
-| 400      | TaskToCoreFaild            | Push task to core failed                           |  创建任务失败！     |
-| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+| httpcode | 错误码           | 错误信息                                                     | 描述                      |
+| -------- | ---------------- | ------------------------------------------------------------ | ------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.                     | 参数BaremetalId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty.                 | 参数BaremetalId不能为空。 |
+| 400      | ImageNotFound    | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470] | 该镜像在该可用区不存在。  |
+| 400      | RebuildFailed    | Compute state is not correct                                 | 服务器状态不正确。        |
+| 400      | TaskToCoreFaild  | Push task to core failed                                     | 创建任务失败！            |
+| 400      | DataNotExists    | Please check that the parameters are correct.                | 请检查参数是否正确。      |
 
 
 **返回示例**
@@ -4426,6 +4506,7 @@ def operat_bms_power(id, state):
 ~~~
 
  **代码调用示例**
+
  ```python
 def operat_bms_reinstall(id, image_id, passwd):    
     action = "ReinstallBms"
@@ -4438,7 +4519,7 @@ def operat_bms_reinstall(id, image_id, passwd):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
     result = json.loads(res.content)
-```
+ ```
 
 
 
@@ -4460,20 +4541,20 @@ def operat_bms_reinstall(id, image_id, passwd):
 
 **返回数据：**
 
-| 名称        | 类型   | 示例                                                          | 描述                                |
-| ----------- | ------ | ------------------------------------------------------------ | ------------------------------------ |
-| Code        | string | Success                                                      | 错误码 |
-| Message     | string | Success                                                      | 提示信息                             |
-| Data        | object | {}                                                           | 返回数据                             |
-| Url         | string | http://114.112.35.22/vnc/?authId=&token=                     | 裸金属VNC访问地址                    |
+| 名称    | 类型   | 示例                                     | 描述              |
+| ------- | ------ | ---------------------------------------- | ----------------- |
+| Code    | string | Success                                  | 错误码            |
+| Message | string | Success                                  | 提示信息          |
+| Data    | object | {}                                       | 返回数据          |
+| Url     | string | http://114.112.35.22/vnc/?authId=&token= | 裸金属VNC访问地址 |
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | --------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.              | 	参数BaremetalId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.          | 	参数BaremetalId不能为空。     |
-| 400      | DataNotExists              | Please check that the parameters are correct.         |  请检查参数是否正确。     |
+| httpcode | 错误码           | 错误信息                                      | 描述                      |
+| -------- | ---------------- | --------------------------------------------- | ------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.      | 参数BaremetalId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty.  | 参数BaremetalId不能为空。 |
+| 400      | DataNotExists    | Please check that the parameters are correct. | 请检查参数是否正确。      |
 
  **返回示例**
 
@@ -4488,6 +4569,7 @@ def operat_bms_reinstall(id, image_id, passwd):
 ```
 
  **代码调用示例**
+
  ```python
 def describe_bms_vnc(BaremetalId):
     action = "DescribeBmsVNC"
@@ -4498,7 +4580,7 @@ def describe_bms_vnc(BaremetalId):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
     res = requests.get(url)
     result = json.loads(res.content)
-```
+ ```
 
 
 
@@ -4514,33 +4596,33 @@ def describe_bms_vnc(BaremetalId):
 
 **请求参数：**
 
-| 名称        | 类型    | 是否必须 | 示例                                 | 描述                                                         |
-| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 裸金属编号id                                                 |
-| AutoRenewal | int    | 是       | 1                                    | 是否开启自动续约<br />0: 不开启，1: 开启                     |
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述                                              |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------- |
+| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 裸金属编号id                                      |
+| AutoRenewal | int    | 是       | 1                                    | 是否开启自动续约<br />0: 不开启，1: 开启          |
 | BillMethod  | string | 否       | 1                                    | 计费方式<br />1: 包年包月<br />目前只支持包年包月 |
-| Duration    | int    | 否       | 1                                    | 续约时长                                                     |
-| IsToMonth   | int    | 否       | 1                                    | 是否计费到月底<br />0: 否，1: 是                             |
+| Duration    | int    | 否       | 1                                    | 续约时长                                          |
+| IsToMonth   | int    | 否       | 1                                    | 是否计费到月底<br />0: 否，1: 是                  |
 
 **返回数据：**
 
-| 名称    | 类型    | 示例      | 描述     |
-| ------- | ------ | -------- | -------- |
-| Code    | string | Success  | 错误码   |
-| Message | string | Automatic renewal of order has been opened  | 提示信息 |
-| Data    | list   | []       | 返回数据  |
-| SuborderIds | list | ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"] | 子订单Id |
+| 名称        | 类型   | 示例                                       | 描述     |
+| ----------- | ------ | ------------------------------------------ | -------- |
+| Code        | string | Success                                    | 错误码   |
+| Message     | string | Automatic renewal of order has been opened | 提示信息 |
+| Data        | list   | []                                         | 返回数据 |
+| SuborderIds | list   | ["697cb2d8-93ca-41bc-89f2-bde77fb71e6b"]   | 子订单Id |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "BaremetalId" is required.            | 参数BaremetalId是必选项。  |
-| 400      | ParameterIsEmpty           | The parameter "BaremetalId" cannot be empty.        | 参数BaremetalId不能为空。  |
-| 400      | OrderUpdateError           | Order update failed!                                | 订单更新失败。             |
-| 400      | InstanceNotFound           | the BaremetalInstance has deleted or The specified parameter "BaremetalId" is not valid. | 裸金属服务器已删除或者参数BaremetalId无效   |
-| 400      | OrderResourceError         | ResourceId not found! | 裸金属编号id未找到   |
+| httpcode | 错误码             | 错误信息                                                     | 描述                                      |
+| -------- | ------------------ | ------------------------------------------------------------ | ----------------------------------------- |
+| 400      | ParameterInvalid   | The parameter "BaremetalId" is required.                     | 参数BaremetalId是必选项。                 |
+| 400      | ParameterIsEmpty   | The parameter "BaremetalId" cannot be empty.                 | 参数BaremetalId不能为空。                 |
+| 400      | OrderUpdateError   | Order update failed!                                         | 订单更新失败。                            |
+| 400      | InstanceNotFound   | the BaremetalInstance has deleted or The specified parameter "BaremetalId" is not valid. | 裸金属服务器已删除或者参数BaremetalId无效 |
+| 400      | OrderResourceError | ResourceId not found!                                        | 裸金属编号id未找到                        |
 
  **返回示例**
 
@@ -4558,6 +4640,7 @@ def describe_bms_vnc(BaremetalId):
 ```
 
  **代码调用示例**
+
  ```python
 def update_bms_order(id, renewal):    
     action = "ModifyBmsOrder"
@@ -4571,7 +4654,988 @@ def update_bms_order(id, renewal):
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
     result = json.loads(res.content)
+ ```
+
+## 裸金属云盘相关
+
+### 1.CreateDisk
+
+**Action: CreateDisk**
+
+**描述:** 创建裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
+| Name     | string | 是       | disk-hk-A                 | 创建的磁盘名字 |
+| Size     | int | 是       | 200                 | 磁盘大小，单位G |
+| Num     | int | 是       | 1                 | 创建磁盘的数量 |
+| GoodsId     | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                 | 商品ID |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| DiskInfo     | list   | []                                 | 包含磁盘id、任务id         |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| DiskId | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 产品配置Id         |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "DiskId":"0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+              "TaskId": "0c610d7a-f3fb-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
 ```
+ **代码调用示例**
+ ```python
+def create_disk():
+   action = "CreateDisk"
+   method = "POST"
+   param = {
+       "RegionId": "CN_Beijing_F",
+       "Name": "test1",
+       "Size": 200,
+       "Num": 1,
+       "GoodsId": "bbf63749-0186-4c68-8adc-9bf584bc1376"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 2.AttachDisk
+
+**Action: AttachDisk**
+
+**描述:** 挂载裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| InstanceId     | string | 是       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机资源id |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "InstanceId" is required.              | 	参数InstanceId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "InstanceId" cannot be empty.          | 	参数InstanceId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def attack_disk():
+   action = "AttachDisk"
+   method = "POST"
+   param = {
+       "InstanceId": "d95423a8-f3fb-11ea-800c-f0d4e2e923e0",
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 3.DetachDisk
+
+**Action: DetachDisk**
+
+**描述:** 卸载裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def detack_disk():
+   action = "DetachDisk"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+### 4.DeleteDisk
+
+**Action: DeleteDisk**
+
+**描述:** 删除裸金属云盘
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskInfo": [
+             {
+              "TaskId": "6667a809-f3fc-11ea-800c-f0d4e2e923e0"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def delete_disk():
+   action = "DeleteDisk"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 5.DescribeDisks
+
+**Action: DescribeDisks**
+
+**描述:** 查询裸金属云盘列表
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 否       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
+| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| InstanceId     | string | 否       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机id |
+| Name     | string | 否       | test1                 | 创建的磁盘名字 |
+| PageNumber     | string | 否       | 1                 | Disk列表页码 |
+| PageSize     | string | 否       | 10                 | 每页返回数量；默认50 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| Total        | int | 20                                                      | 返回数据的条数         
+| DiskList    | list    | []                                                         | 磁盘列表 |
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |
+| Name         | string | bms-test                                                     | 磁盘名称                                                       |
+| State        | string | attach                                                      | 挂载         
+| Size          | int    | 200                                                           | 磁盘大小；单位G                                                      |
+| Iops          | int    | 5000                                                           | 最大iops                                                     |
+| Bw          | int    | 4000                                                           | 最大磁盘带宽；单位Mb                                                       |
+| DiskType       | string | Nvme                                                        | 磁盘类型                                                      |                                          |
+| RegionId     | string | CN_Beijing_F                                                 | 可用区id                                                      |
+| CustomerId     | string | E001                                                 | 用户id                                                      |
+| UserId     | string | C001                                                 | 用户id                                                      |
+| CreateTime     | string | 2020-08-13 07:20:00                                                 | 创建时间                                                      |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParametersIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "Total": 1,
+        "DiskList": [
+             {
+                "Name": "disk-hk-A",
+                "State": "attach",
+                "Size": 500,
+                "Iops": 3000,
+                "Bw": 3000,
+                "DiskType": "Nvme",
+                "RegionId": "35304122-8504-400c-a61c-56ba244c5dda",
+                "CustomerId": "E001",
+                "UserId": "",
+                "CreateTime": "2020-08-13 07:20:00"
+            }
+        ]
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_disks():
+   action = "DescribeDisks"
+   method = "GET"
+   param = {
+       "RegionId": "",
+       "DiskId": "",
+       "InstanceId": "d95423a8-f3fb-11ea-800c-f0d4e2e923e0",
+       "Name": "disk-hk-A",
+       "PageNumber": "1",
+       "PageSize": "10"
+   }
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
+```
+
+### 6.DescribeDiskUsage
+
+**Action: DescribeDiskUsage**
+
+**描述:** 查询裸金属云盘使用详情
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |     
+| Use          | int    | 200                                                           | 磁盘已使用大小；单位G                                                      |
+| Size          | int    | 500                                                           | 磁盘总容量；单位G                                                     |
+| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+        "Use": 200,
+        "Size": 500,
+        "Ratio": "40%"
+   }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_diskUsage():
+   action = "DescribeDiskUsage"
+   method = "GET"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
+```
+
+### 7.DescribePoolUsage
+
+**Action: DescribePoolUsage**
+
+**描述:** 查询裸金属云盘存储池使用详情
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
+| PoolName     | string | 是       | nvme_pool                 | 存储池名字 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| PoolName  | string | nvme_pool                         | 存储池名字                                                     |     
+| Use          | int    | 200                                                           | 存储池已使用大小；单位G                                                      |
+| Size          | int    | 500                                                           | 存储池总容量；单位G                                                     |
+| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "PoolName": "ssd_pool",
+        "Use": 200,
+        "Size": 500,
+        "Ratio": "40%"
+   }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_poolUsage():
+    action = "DescribePoolUsage"
+    method = "GET"
+    param = {
+        "RegionId": "a3c21f88-f356-11ea-800c-f0d4e2e923e0",
+        "PoolName": "ssd_pool"
+   }
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
+```
+
+### 8.ChangeIops
+
+**Action: ChangeIops**
+
+**描述:** 更改裸金属云盘IOPS
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Iops     | int | 是       | 1000                 | iops |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def change_iops():
+   action = "ChangeIops"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Iops": 1000
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 9.ChangeBandwidth
+
+**Action: ChangeBandwidth**
+
+**描述:** 更改裸金属云盘带宽
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Bw     | int | 是       | 1000                 | 增加的iops |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def change_bandwidth():
+   action = "ChangeBandwidth"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Bw": 1000
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 10.ExpansionSize
+
+**Action: ExpansionSize**
+
+**描述:** 裸金属云盘扩容
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| Size     | int | 是       | 500                 | 增加的容量 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_diskUsage():
+   action = "DescribeDiskUsage"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "Size": 500
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 11.CreateSnapshot
+
+**Action: CreateSnapshot**
+
+**描述:** 创建裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
+| SnapshotName     | string | 是       | disk-hk-A-snap1                 | 创建快照的名字 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| SnapshotId   | string | c000ba4c-f404-11ea-800c-f0d4e2e923e0                     | 快照id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0",
+        "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def create_snapshot():
+   action = "CreateSnapshot"
+   method = "POST"
+   param = {
+       "DiskId": "0767874e-f3fb-11ea-800c-f0d4e2e923e0",
+       "SnapshotName": "disk-hk-A-snap1"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 12.CloneSnapshot
+
+**Action: CloneSnapshot**
+
+**描述:** 克隆裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| Name     | string | 是       | dish-hk-B     | 克隆生成的新磁盘名字 |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| DiskId   | string | d4965bac-f405-11ea-800c-f0d4e2e923e0                     | 克隆生成的新磁盘id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0",
+        "DiskId": "d4965bac-f405-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def clone_snapshot():
+   action = "CloneSnapshot"
+   method = "POST"
+   param = {
+       "Name": "disk-hk-B",
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 13.DeleteSnapshot
+
+**Action: DeleteSnapshot**
+
+**描述:** 删除裸金属云盘快照
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def delete_snapshot():
+   action = "DeleteSnapshot"
+   method = "POST"
+   param = {
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+
+### 14.RollbackSnapshot
+
+**Action: RollbackSnapshot**
+
+**描述:** 裸金属云盘快照回滚
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "TaskId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def rollback_snapshot():
+   action = "RollbackSnapshot"
+   method = "POST"
+   param = {
+       "SnapshotId": "c000ba4c-f404-11ea-800c-f0d4e2e923e0"
+   }
+   url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
+   res = requests.post(url, json=param)
+   result = json.loads(res.content)
+```
+
+### 15.DescribeGoodsId
+
+**Action: DescribeGoodsId**
+
+**描述:** 查询裸金属云盘商品id
+
+**请求地址:** cdsapi.capitalonline.net/storage-service
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | --------------------------------- | ------------ |
+| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
+| Bw     | int | 是       | 2000                 | 带宽 |
+| Iops     | int | 是       | 8000                 | iops |
+| Type     | string | 是       | ssd                 | 磁盘类型 |
+
+
+**返回数据：**
+
+| 名称        | 类型   |  示例                                | 描述          |
+| ----------- | ----- |  ---------------------------------- | ------------ |
+| Code        | string | Success                            | 返回状态码: Success: 成功 |
+| Message     | string | null                               | 返回信息 |
+| Data        | object | {}                                 | 返回数据            |
+| GoodsId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 商品id           |
+
+
+**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                           | 描述                     |
+| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
+| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+        "GoodsId": "b86646e9-f403-11ea-800c-f0d4e2e923e0"
+    }
+}
+```
+ **代码调用示例**
+ ```python
+def describe_goodsId():
+   action = "DescribeGoodsId"
+   method = "GET"
+   param = {
+       "RegionId": "35304122-8504-400c-a61c-56ba244c5dda",
+       "Bw": 2000,
+       "Iops": 8000,
+       "Type": "ssd"
+   }
+   url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
+   res = requests.get(url)
+```
+
 
 ## 账单相关
 
@@ -4587,10 +5651,10 @@ def update_bms_order(id, renewal):
 
    **请求参数：**
 
-| 名称     | 类型   | 是否必选 | 示例值       | 描述       |
-| -------- | ------ | -------- | ------------ | ---------- |
+| 名称       | 类型   | 是否必选 | 示例值                  | 描述                        |
+| ---------- | ------ | -------- | ----------------------- | --------------------------- |
 | DateFromTo | string | 是       | 2019.09.02 - 2019.09.03 | 账单区间("-"左右有一个空格) |
-| Currency | string | 是       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
+| Currency   | string | 是       | 账户币种(CN/US)         | 账户币种, 默认CN(人民币)    |
 
    **返回参数：**
 
@@ -4601,7 +5665,7 @@ def update_bms_order(id, renewal):
 | TotalMasterCost | Float    | 10.90                                | 主账户消费金额   |
 | TotalViceCost   | Float    | 11.92                                | 副账户消费金额   |
 | BillInfo        | List     | []                                   | 账单记录         |
-| RegionId        | String   | CN_Beijing_E                         | 可用区ID           |
+| RegionId        | String   | CN_Beijing_E                         | 可用区ID         |
 | ResourceId      | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID           |
 | ResourceName    | String   | test                                 | 资源名称         |
 | ResourceType    | String   | vm                                   | 资源类型         |
@@ -4733,12 +5797,12 @@ def update_bms_order(id, renewal):
 
    **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述         |
-| ---------- | ------ | -------- | ------------------------------------ | ------------ |
-| DateFrom   | string | 是       | 2019.09.02                           | 账单开始时间 |
-| DateTo     | String | 是       | 2019.09.03                           | 账单结束时间 |
-| ResourceId | String | 是       | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID       |
-| Currency | string | 否       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                     |
+| ---------- | ------ | -------- | ------------------------------------ | ------------------------ |
+| DateFrom   | string | 是       | 2019.09.02                           | 账单开始时间             |
+| DateTo     | String | 是       | 2019.09.03                           | 账单结束时间             |
+| ResourceId | String | 是       | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | 资源ID                   |
+| Currency   | string | 否       | 账户币种(CN/US)                      | 账户币种, 默认CN(人民币) |
 
    **返回参数：**
 
@@ -4748,7 +5812,7 @@ def update_bms_order(id, renewal):
 | Data          | string   |                                                              |                  |
 | TotalCost     | Float    | 9.62                                                         | 查询资源总消费   |
 | BillDetail    | List     | []                                                           | 账单记录         |
-| RegionId      | String   | CN_Beijing_E                                                 |可用区ID           |
+| RegionId      | String   | CN_Beijing_E                                                 | 可用区ID         |
 | ResourceId    | String   | 2e579aa0-f54f-11e9-814d-f6de00b3aa12                         | 资源ID           |
 | ResourceName  | String   | test                                                         | 资源名称         |
 | ResourceType  | String   | vm                                                           | 资源类型         |
@@ -4799,13 +5863,14 @@ def update_bms_order(id, renewal):
     "TaskId": ""
 }
 ```
+
 ## 冷云计量相关
 
 ### 1.GetMetering
 
    **Action: GetMetering**
 
-​  **描述：** 获取客户一个或多个存储池计量信息
+  **描述：** 获取客户一个或多个存储池计量信息
 
    **请求地址:** cdsapi.capitalonline.net/ccs-product
 
@@ -4813,26 +5878,27 @@ def update_bms_order(id, renewal):
 
    **请求参数：**
 
-| 名称     | 类型   | 是否必选 | 示例值       | 描述       |
-| -------- | ------ | -------- | ------------ | ---------- |
-| EndTime | string | 是       | "20191101" | 获取截止到EndTime的计量信息 |
-| Uid | string | 否       | "1001" | 单独获取这个存储池的计量信息 |
+| 名称    | 类型   | 是否必选 | 示例值     | 描述                         |
+| ------- | ------ | -------- | ---------- | ---------------------------- |
+| EndTime | string | 是       | "20191101" | 获取截止到EndTime的计量信息  |
+| Uid     | string | 否       | "1001"     | 单独获取这个存储池的计量信息 |
 
    **返回参数：**
 
-| 名称            | 类型     | 示例值                               | 描述             |
-| :-------------- | -------- | :----------------------------------| :---------------|
-| Code            | string   | Success                            | 错误码           |
-| Message         | string   | uid不存在                           | 错误信息         |
-| Data            | string   | []                               | 客户计量信息      |
+| 名称    | 类型   | 示例值    | 描述         |
+| :------ | ------ | :-------- | :----------- |
+| Code    | string | Success   | 错误码       |
+| Message | string | uid不存在 | 错误信息     |
+| Data    | string | []        | 客户计量信息 |
 
 ​	**错误码:**
 
-| httpcode | 错误码                    | 错误信息                                            | 描述                   |
-| -------- | ------------------------- | --------------------------------------------------- | --------------------|
-| 400      | InvalidParamater          | 非法的CustomerId                                     | 非法的CustomerId。   |
-| 400      | InvalidParamater          | uid不存在                                            | uid不存在            |
-| 400      | InvalidParameter.IsNull   | 缺少必要参数                                          | 缺少必要参数          |
+| httpcode | 错误码                  | 错误信息         | 描述               |
+| -------- | ----------------------- | ---------------- | ------------------ |
+| 400      | InvalidParamater        | 非法的CustomerId | 非法的CustomerId。 |
+| 400      | InvalidParamater        | uid不存在        | uid不存在          |
+| 400      | InvalidParameter.IsNull | 缺少必要参数     | 缺少必要参数       |
+
 ​	**返回示例:**
 
 ```json
@@ -4850,6 +5916,7 @@ def update_bms_order(id, renewal):
     "Message": "Success."
 }
 ```
+
 ​	**请求调用示例**
 
 ```python
@@ -5090,69 +6157,69 @@ def get_status(task_id):
 
 #### 可用区名称
 
-| 可用区名称      | RegionId          |  是否支持裸金属  | 所在大区 |
-| ------------- | ---------------- | -------------- | ------ |
-| 北京A         | CN_Beijing_A      |      否        | 中国大陆 | 
-| 北京B         | CN_Beijing_B      |      否        |  中国大陆 |
-| 北京C         | CN_Beijing_C      |      否        | 中国大陆 |
-| 北京E         | CN_Beijing_E      |      否        |  中国大陆 |
-| 北京H         | CN_Beijing_H      |      否        | 中国大陆 |
-| 北京I         | CN_Beijing_I      |      是        | 中国大陆 |
-| 北京J        | CN_Beijing_J      |      是        |  中国大陆 |
-| 达拉斯A       | US_Dallas_A       |      否        |  北美地区 |
-| 达拉斯B       | US_Dallas_B       |      否        |  北美地区 |
-| 达拉斯C       | US_Dallas_C       |      否        |北美地区 |
-| 达拉斯D       | US_Dallas_D       |      是        |  北美地区 |
-| 达拉斯E       | US_Dallas_E       |      是        |  北美地区 |
-| 达拉斯F       | US_Dallas_F       |      是        | 北美地区 |
-| 达拉斯G       | US_Dallas_G       |      否        |  北美地区 |
-| 达拉斯H       | US_Dallas_H       |      是        |   北美地区 |
-| 达拉斯I       | US_Dallas_I       |      否        | 北美地区 |
-| 德国A         | EUR_Germany_A     |      否        |  欧洲地区 |
-| 德国B         | EUR_Germany_B     |      否        |   欧洲地区 |
-| 东京A         | APAC_Tokyo_A      |      否        |   亚太地区 |
-| 广州A         | CN_Guangzhou_A    |      否        |  中国大陆 |
-| 荷兰A         | EUR_Netherlands_A |      否        |   欧洲地区 |
-| 洛杉矶A       | US_LosAngeles_A   |      否        |  北美地区 |
-| 纽约A         | US_NewYork_A      |      否        |  北美地区 |
-| 上海A         | CN_Shanghai_A     |      否        |  中国大陆 |
-| 上海C         | CN_Shanghai_C     |      否        | 中国大陆 |
-| 首尔A         | APAC_Seoul_A      |      否        |    亚太地区 |
-| 台北A         | CN_Taipei_A       |      否        |  中国大陆 |
-| 无锡A         | CN_Wuxi_A         |      否        | 中国大陆 |
-| 无锡B         | CN_Wuxi_B         |      是        |   中国大陆 |
-| 香港A         | CN_Hongkong_A     |      否        |  中国大陆 |
-| 新加坡A       | APAC_Singapore_A  |      否        |    亚太地区 |
-| 新加坡B       | APAC_Singapore_B  |      否        |  亚太地区 |
-| 新加坡C       | APAC_Singapore_C  |      否        |   亚太地区 |
-| 新加坡D       | APAC_Singapore_D  |      否        |     亚太地区 |
-| 孟买A         | APAC_Mumbai_A     |      否        |   亚太地区 |
-| 孟买B         | APAC_Mumbai_B     |      否        |   亚太地区 |
-| 孟买C         | APAC_Mumbai_C     |      是        |   亚太地区 |
+| 可用区名称 | RegionId          | 是否支持裸金属 | 所在大区 |
+| ---------- | ----------------- | -------------- | -------- |
+| 北京A      | CN_Beijing_A      | 否             | 中国大陆 |
+| 北京B      | CN_Beijing_B      | 否             | 中国大陆 |
+| 北京C      | CN_Beijing_C      | 否             | 中国大陆 |
+| 北京E      | CN_Beijing_E      | 否             | 中国大陆 |
+| 北京H      | CN_Beijing_H      | 否             | 中国大陆 |
+| 北京I      | CN_Beijing_I      | 是             | 中国大陆 |
+| 北京J      | CN_Beijing_J      | 是             | 中国大陆 |
+| 达拉斯A    | US_Dallas_A       | 否             | 北美地区 |
+| 达拉斯B    | US_Dallas_B       | 否             | 北美地区 |
+| 达拉斯C    | US_Dallas_C       | 否             | 北美地区 |
+| 达拉斯D    | US_Dallas_D       | 是             | 北美地区 |
+| 达拉斯E    | US_Dallas_E       | 是             | 北美地区 |
+| 达拉斯F    | US_Dallas_F       | 是             | 北美地区 |
+| 达拉斯G    | US_Dallas_G       | 否             | 北美地区 |
+| 达拉斯H    | US_Dallas_H       | 是             | 北美地区 |
+| 达拉斯I    | US_Dallas_I       | 否             | 北美地区 |
+| 德国A      | EUR_Germany_A     | 否             | 欧洲地区 |
+| 德国B      | EUR_Germany_B     | 否             | 欧洲地区 |
+| 东京A      | APAC_Tokyo_A      | 否             | 亚太地区 |
+| 广州A      | CN_Guangzhou_A    | 否             | 中国大陆 |
+| 荷兰A      | EUR_Netherlands_A | 否             | 欧洲地区 |
+| 洛杉矶A    | US_LosAngeles_A   | 否             | 北美地区 |
+| 纽约A      | US_NewYork_A      | 否             | 北美地区 |
+| 上海A      | CN_Shanghai_A     | 否             | 中国大陆 |
+| 上海C      | CN_Shanghai_C     | 否             | 中国大陆 |
+| 首尔A      | APAC_Seoul_A      | 否             | 亚太地区 |
+| 台北A      | CN_Taipei_A       | 否             | 中国大陆 |
+| 无锡A      | CN_Wuxi_A         | 否             | 中国大陆 |
+| 无锡B      | CN_Wuxi_B         | 是             | 中国大陆 |
+| 香港A      | CN_Hongkong_A     | 否             | 中国大陆 |
+| 新加坡A    | APAC_Singapore_A  | 否             | 亚太地区 |
+| 新加坡B    | APAC_Singapore_B  | 否             | 亚太地区 |
+| 新加坡C    | APAC_Singapore_C  | 否             | 亚太地区 |
+| 新加坡D    | APAC_Singapore_D  | 否             | 亚太地区 |
+| 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
+| 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
+| 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
 
 ## 附件二
 
 #### 主机类型
 
-| 计算类型配置名称 | 计算类型ID |
-| ---------------- | ---------- |
-| IO增强型         | IO         |
-| 高性能型         | High       |
-| 标准型           | Standard   |
-| 通用型           | General    |
-| 均衡型           | Balance    |
-| 紧凑型           | Compact    |
-| 内存型           | Memory     |
-| 独享型           | Exclusive  |
-| 高I/O型          | HighIO     |
-| 计算型           | Compute    |
-| G2.通用型        | G2_General |
-| G2.计算型        | G2_Compute |
-| G2.内存型        | G2_Memory  |
-| G2L.通用型        | G2L_General |
-| G2L.计算型        | G2L_Compute |
-| G2L.内存型        | G2L_Memory  |
-| G2L.密集计算型       | G2L_Dense |
+| 计算类型配置名称 | 计算类型ID  |
+| ---------------- | ----------- |
+| IO增强型         | IO          |
+| 高性能型         | High        |
+| 标准型           | Standard    |
+| 通用型           | General     |
+| 均衡型           | Balance     |
+| 紧凑型           | Compact     |
+| 内存型           | Memory      |
+| 独享型           | Exclusive   |
+| 高I/O型          | HighIO      |
+| 计算型           | Compute     |
+| G2.通用型        | G2_General  |
+| G2.计算型        | G2_Compute  |
+| G2.内存型        | G2_Memory   |
+| G2L.通用型       | G2L_General |
+| G2L.计算型       | G2L_Compute |
+| G2L.内存型       | G2L_Memory  |
+| G2L.密集计算型   | G2L_Dense   |
 
 ## 附件三
 
@@ -5174,7 +6241,7 @@ def get_status(task_id):
 | 客户专用带宽   | Customer_Specific_Bandwidth        |
 | VIP专用带宽    | Bandwidth_VIP_Dedicated            |
 | 全球优化BGP    | Globally_Optimized_BGP             |
-| BGP优化    | Bandwidth_BGP_Optimized             |
+| BGP优化        | Bandwidth_BGP_Optimized            |
 
 ## 附件四
 
