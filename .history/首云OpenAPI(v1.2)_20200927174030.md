@@ -265,8 +265,14 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
 | Password           | string   | 否       | EcsV587!                                                     | 云服务器密码                                                 |
+<<<<<<< HEAD
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
+=======
+| PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                 |
+| InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                                             |
+| AssignCCSId        | integer  | 否       | 1                                                            | 是否启用编号，1为启用，0为不启用                             |
+>>>>>>> f97a6949e762514401c337a10bd6ee0f5b52b1f8
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
