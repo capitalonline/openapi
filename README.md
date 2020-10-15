@@ -15,6 +15,7 @@
        * [3.StopInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3stopinstance)
        * [4.RebootInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4rebootinstance)
        * [5.ModifyInstanceChargeType](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5modifyinstancechargetype)
+       * [6.ModifyInstanceSpec](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6modifyinstancespec)
        * [7.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7createdisk)
        * [8.ResizeDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8resizedisk)
        * [9.DeleteDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9deletedisk)
