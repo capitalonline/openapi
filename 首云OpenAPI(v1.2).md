@@ -1760,6 +1760,55 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
+### 29.DescribeInstancePrice
+
+**Action: DescribeInstancePrice**
+
+**描述：** 云主机价格
+
+**请求地址:** cdsapi.capitalonline.net/ccs
+
+**请求方法：POST**
+
+**请求参数：**
+
+
+| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                                          |
+| ---------- | ------ | -------- | -------------------------------------- | --------------------------------------------- |
+| RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
+| InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
+| AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
+| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
+| Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
+| InstanceType       | string   | 否       | Standard                                                     |                                                              |
+| ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
+| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
+| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
+| Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
+
+**返回参数：**
+
+
+| 名称    | 类型   | 示例值  | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | String | Success | 错误码   |
+| Message | String | Success | 提示信息 |
+| Data    | Object | {}      | 返回信息 |
+
+
+**返回示例：**
+
+```json
+{
+    "Message": "success",
+    "Code": "Success",
+    "Data": {
+        "TotalPrice": 244.8
+    }
+}
+```
+
 ## 安全组相关
 
 ### 1.CreateSecurityGroup
