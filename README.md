@@ -37,6 +37,10 @@
        * [26.ResetInstancesPassword](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#26ResetInstancesPassword)
        * [27.CreateInstanceHtmlConsoleURL](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#27CreateInstanceHtmlConsoleURL)
        * [28.ExtendSystemDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#28ExtendSystemDisk)
+       * [29.DescribeInstancePrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#29DescribeInstancePrice)
+       * [30.StopInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#30StopInstances)
+       * [31.StartInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#31StartInstances)
+       * [32.RebootInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#32RebootInstances)
 
      * [安全组相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#安全组相关)
        * [1.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createsecuritygroup)

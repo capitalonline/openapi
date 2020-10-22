@@ -38,6 +38,10 @@
        * [26.ResetInstancesPassword](#26ResetInstancesPassword)
        * [27.CreateInstanceHtmlConsoleURL](#27CreateInstanceHtmlConsoleURL)
        * [28.ExtendSystemDisk](#28ExtendSystemDisk)
+       * [29.DescribeInstancePrice](#29DescribeInstancePrice)
+       * [30.StopInstances](#30StopInstances)
+       * [31.StartInstances](#31StartInstances)
+       * [32.RebootInstances](#32RebootInstances)
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -464,7 +468,7 @@ def delete_instance(vm_ids):
 
 ​	**Action：RebootInstance**
 
-​	**描述：** 云服务器开机
+​	**描述：** 云服务器重启
 
 ​	**请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1808,6 +1812,127 @@ def down_card(InterfaceId, InstanceId):
     }
 }
 ```
+
+### 30.StopInstances
+
+​	**Action:StopInstances**
+
+​	**描述:** 批量云服务器关机
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：GET**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
+| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0,bbf63749-0186-4c68-8adc-9bf584bc1376 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
+
+​	**返回参数：**
+
+| 名称   | 类型   | 示例值                               | 描述   |
+| :----- | ------ | :----------------------------------- | :----- |
+| Code   | string | Success                              | 错误码 |
+| TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
+
+​	**返回示例:**
+
+```json
+{
+"Code":"Success",
+"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376",
+}
+```
+
+### 31.StartInstances
+
+​	**Action:StartInstances**
+
+​	**描述:** 批量云服务器开机
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：GET**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
+| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
+
+​	**返回参数：**
+
+| 名称   | 类型   | 示例值                               | 描述   |
+| :----- | ------ | :----------------------------------- | :----- |
+| Code   | string | Success                              | 错误码 |
+| TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
+
+​	**返回示例:**
+
+```json
+{
+    "Code":"Success",
+    "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
+}
+```
+
+### 32.RebootInstances
+
+​	**Action：RebootInstances**
+
+​	**描述：** 批量云服务器重启
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：GET**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
+| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
+
+​	**返回示例：**
+
+```json
+{
+"Code":"Success",
+"TaskId":"63749"
+}
+```
+
 
 ## 安全组相关
 
@@ -6264,6 +6389,19 @@ def get_status(task_id):
 | G2L.计算型       | G2L_Compute |
 | G2L.内存型       | G2L_Memory  |
 | G2L.密集计算型   | G2L_Dense   |
+| 密集计算型ic3 |	CCS.IC3  |
+| 计算型c3	   |  CCS.C3  |
+| 通用型g3	   |  CCS.G3  |
+| 内存型r3	   |  CCS.R3  |
+| 密集计算型ic2 |	CCS.iC2  |
+| 计算型c2	   |  CCS.C2  |
+| 通用型g2	   |  CCS.G2  |
+| 内存型r2	   |  CCS.R2  |
+| 密集计算型ic1 |	CCS.IC1  |
+| 计算型c1	   |  CCS.C1  |
+| 通用型g1	   |  CCS.G1  |
+| 内存型r1	   |  CCS.R1  |
+
 
 ## 附件三
 
