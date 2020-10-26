@@ -3463,7 +3463,8 @@ def modify_public_qos(publicId, qos):
 
 |  名称  |  类型  | 是否必选 | 示例 |   描述   |
 | :----: | :----: | :------: | :--: | :------: |
-| AreaId | String |    否    |  CN  | 区域编号 |
+| GpnId  | String |    否    | 55271ebc-135d-11eb-97aa-0242ac110002 | GPN编号 |
+| Key    | String |    否    | 中美互联 | 关键词 |
 
 **返回参数:**
 
@@ -3479,6 +3480,7 @@ def modify_public_qos(publicId, qos):
 | StatusStr  | String | 正常                                                         | GPN状态                                                      |
 | SubOrderId | String | 425d533e-2d3d-11ea-93ed-0242ac110002                         | 订单编号                                                     |
 | JoinApps   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
+| JoinVpcs   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
 | JoinPops   | List   | [{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}] | PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽 |
 
 
@@ -3486,7 +3488,6 @@ def modify_public_qos(publicId, qos):
 
 | httpcode |         错误码         |                   错误信息                    |         描述          |
 | :------: | :--------------------: | :-------------------------------------------: | :-------------------: |
-|   400    | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid. | 指定GpnId参数格式错误 |
 
 **返回示例**
 
@@ -3527,6 +3528,18 @@ def modify_public_qos(publicId, qos):
                     "RegionId": "CN_Wuxi_A",
                     "VdcId": "72e2157d-4568-4c24-8585-8865f1683a10",
                     "VdcName": "CDS-API无锡"
+                }
+            ],
+            "JoinVpcs": [
+                {
+                    "Address": "10.241.165.0",
+                    "CityId": "e48e2312-306d-11e7-9796-0050569b4d9c",
+                    "PrivateId": "ea683378-09f6-11eb-8e89-0242ac1112b3",
+                    "PrivateNet": "10.241.165.0/16~10.241.165.255/16",
+                    "Qos": 5,
+                    "RegionId": "US_Dallas_D",
+                    "VdcId": "de96aeb2-0159-11eb-abc1-12d7b66798c8",
+                    "VdcName": "CDS-API达拉斯"
                 }
             ],
             "JoinPops": null,
