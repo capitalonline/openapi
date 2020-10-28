@@ -1960,14 +1960,6 @@ def down_card(InterfaceId, InstanceId):
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
-
-| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
-| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
-| 403      | IncorrectInstanceStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
-| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
-| 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
-
 
 **返回示例：**
 
@@ -2004,14 +1996,6 @@ def down_card(InterfaceId, InstanceId):
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
-
-​	**错误码：**
-
-| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
-| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
-| 403      | IncorrectInstanceStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
-| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
-| 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
 
 
 **返回示例：**
