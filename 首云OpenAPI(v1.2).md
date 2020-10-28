@@ -43,7 +43,7 @@
        * [31.StartInstances](#31StartInstances)
        * [32.RebootInstances](#32RebootInstances)
        * [33.BatchAddNetworkInterfaces](#33BatchAddNetworkInterfaces)
-       * [34.DeleteNetworkInterfaces](#34DeleteNetworkInterfaces)
+       * [34.BatchDeleteNetworkInterfaces](#34BatchDeleteNetworkInterfaces)
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1972,9 +1972,9 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
-### 34.DeleteNetworkInterfaces
+### 34.BatchDeleteNetworkInterfaces
 
-​	**Action：DeleteNetworkInterfaces**
+​	**Action：BatchDeleteNetworkInterfaces**
 
 ​	**描述：** 批量删除云服务器网卡
 
