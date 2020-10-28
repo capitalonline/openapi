@@ -3095,7 +3095,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | ------- | ------ | -------- | ------------------------------------ | ------------------------------- |
 | VdcId   | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
 | Name    | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
-| Type    | string | 否       | auto                                 | 私网类型                        |
+| Type    | string | 否       | manual                               | 私网类型(auto/manual)，默认auto  |
 | Address | string | 否       | 192.168.0.0                          | 私网地址                        |
 | Mask    | string | 否       | 16                                   | 私网掩码                        |
 
@@ -6365,6 +6365,7 @@ def get_status(task_id):
 | 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
+| 弗吉尼亚A   | US_Virginia_A     | 是          | 北美地区 |
 
 ## 附件二
 
