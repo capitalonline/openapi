@@ -42,6 +42,8 @@
        * [30.StopInstances](#30StopInstances)
        * [31.StartInstances](#31StartInstances)
        * [32.RebootInstances](#32RebootInstances)
+       * [33.BatchAddNetworkInterfaces](#33BatchAddNetworkInterfaces)
+       * [34.DeleteNetworkInterfaces](#34DeleteNetworkInterfaces)
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -1933,6 +1935,95 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
+### 33.BatchAddNetworkInterfaces
+
+​	**Action：BatchAddNetworkInterfaces**
+
+​	**描述：** 批量添加云服务器网卡
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
+| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
+| InstanceIds| string | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| VdcId      | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "",
+    "TaskId": "12804345"
+}
+```
+
+### 34.DeleteNetworkInterfaces
+
+​	**Action：DeleteNetworkInterfaces**
+
+​	**描述：** 批量删除云服务器网卡
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
+| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
+| InstanceIds| string | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| VdcId      | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+​	**错误码：**
+
+| httpcode | 错误码                      | 错误信息                                                     | 描述                           |
+| -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| 403      | IncorrectInstanceStatus     | The   current Status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
+| 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
+| 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "",
+    "TaskId": "12804345"
+}
+```
 
 ## 安全组相关
 
