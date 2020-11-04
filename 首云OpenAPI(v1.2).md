@@ -237,7 +237,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
-    return signature
+    D['Signature'] = signature
+    url = url + '/?' + urllib.urlencode(D)
+    return url
 ```
 
 ## 访问地址
