@@ -1847,21 +1847,34 @@ def delete_temp_instance(instance_uuid,temporary_instance_id):
 
 | API参数名             | 类别      | 类型  | 单位   | 含义                                                         |
 | --------------------- | --------- | ----- | ------ | ------------------------------------------------------------ |
-| mysql_cpu_usage       | resources | gauge | 百分比 | cpu使用率&内存使用率                                         |
+| mysql_cpu_usage       | resources | gauge | 百分比 | cpu使用率                                         |
 | mysql_mem_usage       | resources | gauge | 百分比 | 内存使用率                                                   |
-| mysql_space_usage     | resources | gauge | 百分比 | 挂载的数据磁盘容量使用百分(做为一个大类，以后会细分binlog占用空间、表和索引空间占用空间) |
+| mysql_space_usage     | resources | gauge | 百分比 | 挂载的数据磁盘容量使用百分比                                  |
 | mysql_network_trffice | resources | gauge | MB/s   | 业务网卡流量大小每秒，包括进入流量和出去流量                 |
 | mysql_sessions        | engine    | gauge | 个     | 当前打开的连接的数量                                         |
 | mysql_slow_queries    | engine    | gauge | 个     | 查询时间超过 long_query_time 秒的查询的个数                  |
 
 **返回参数**：
 
-| 参数名  | 类型   | 说明     |
-| :------ | :----- | -------- |
-| Message | string | 信息描述 |
-| Code    | string | 状态码   |
-| Data    | dict   | 数据     |
-| TaskId  | string | 任务编号 |
+| 参数名       | 类型   | 说明                                                    |
+| :----------- | :----- | ------------------------------------------------------- |
+| Message      | str    | 信息描述                                                |
+| Code         | str    | 状态码                                                  |
+| Data         | dict   | 数据                                                    |
+| InstanceUuid | str    | 实例编号                                                |
+| ProductType  | str    | 产品类型                                                |
+| MetricKey    | string | 性能指标参数                                            |
+| Period       | int    | 监控粒度（根据时间跨度自适应监控粒度，单位为秒）        |
+| StartTime    | string | 开始时间                                                |
+| EndTime      | string | 结束时间                                                |
+| DataPoints   | list   | 监控数据集合                                            |
+| MetricName   | string | 性能指标名称                                            |
+| MetricType   | string | 指标类型（gauge，counter）                              |
+| MonitorType  | list   | 监控类型（resources，engine, engine_extension, deploy） |
+| Values       | list   | 监控数据列表                                            |
+| Value        | float  | 监控数值                                                |
+| DataTime     | string | 监控时间点                                              |
+
 
 **请求示例：**
 
