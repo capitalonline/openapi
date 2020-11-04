@@ -35,6 +35,8 @@ MySQL 公开API目录
 * [只读实例](#只读实例)
    * [1.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig) 
    * [2.CreateReadOnlyDBInstance](#10createreadonlydbinstance) 
+* [监控](#监控)
+   * [1.DescribeDBInstancePerformance](#21describedbinstanceperformance) 
 
 ### API概览
 
@@ -84,6 +86,12 @@ MySQL 公开API目录
 | ------------------------------- | ------------------------------------------- |
 | DescribeAvailableReadOnlyConfig | 获取当前MySQL主从实例支持购买的只读实例规格 |
 | CreateReadOnlyDBInstance        | 为MySQL添加只读实例（目前只支持主从版）     |
+
+#### 监控
+
+| API                           | 描述                      |
+| ----------------------------- | ------------------------- |
+| DescribeDBInstancePerformance | 获取云数据库MySQL监控指标 |
 
 #### 错误码
 
@@ -1813,6 +1821,107 @@ def delete_temp_instance(instance_uuid,temporary_instance_id):
     "Data": {},
     "Message": "删除任务已经下发，请等待执行完成。",
     "TaskId": "**********************"
+}
+```
+
+### 21.DescribeDBInstancePerformance
+
+**Action：DescribeDBInstancePerformance**
+
+**描述：** 获取云数据库MySQL监控指标
+
+**请求地址：** http://cdsapi.capitalonline.net/paas/monitor
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明                 |
+| :----------- | :--- | :----- | -------------------- |
+| InstanceUuid | 是   | string | 实例编号             |
+| MetricKey    | 是   | string | 可选指标参数(见下表) |
+| StartTime    | 是   | string | 开始时间             |
+| EndTime      | 是   | string | 结束时间             |
+
+**性能参数表：**
+
+| API参数名             | 类别      | 类型  | 单位   | 含义                                                         |
+| --------------------- | --------- | ----- | ------ | ------------------------------------------------------------ |
+| mysql_cpu_usage       | resources | gauge | 百分比 | cpu使用率&内存使用率                                         |
+| mysql_mem_usage       | resources | gauge | 百分比 | 内存使用率                                                   |
+| mysql_space_usage     | resources | gauge | 百分比 | 挂载的数据磁盘容量使用百分(做为一个大类，以后会细分binlog占用空间、表和索引空间占用空间) |
+| mysql_network_trffice | resources | gauge | MB/s   | 业务网卡流量大小每秒，包括进入流量和出去流量                 |
+| mysql_sessions        | engine    | gauge | 个     | 当前打开的连接的数量                                         |
+| mysql_slow_queries    | engine    | gauge | 个     | 查询时间超过 long_query_time 秒的查询的个数                  |
+
+**返回参数**：
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | dict   | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def get_instance_Performance(instance_uuid, metric_key, start_time, end_time):
+    """
+    获取MySQL监控
+    :param instance_uuid: 实例uuid
+    :param metric_key: 性能指标参数
+    :param start_time: 开始时间
+    :param end_time: 结束时间
+    """
+    action = "DescribeDBInstancePerformance"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AccessKey, SecretAccessKey, method, monitor_url, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "MetricKey": metric_key,
+        "StartTime": start_time,
+        "EndTime": end_time
+    }
+    res = requests.post(url, json=body).json()
+    print(res)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "DataPoints": [{
+            "MetricName": "slow_queries",
+            "MetricType": "counter",
+            "MonitorType": "engine",
+            "Unit": "次",
+            "Values": [{
+                "DateTime": "2020-11-03 14:33:24",
+                "Value": 4
+            }, {
+                "DateTime": "2020-11-03 14:33:54",
+                "Value": 15
+            }, {
+                "DateTime": "2020-11-03 14:34:24",
+                "Value": 35
+            }, {
+                "DateTime": "2020-11-03 14:34:54",
+                "Value": 67
+            }]
+        }],
+        "EndTime": "2020-11-03 14:35:00",
+        "InstanceUuid": "b6120f04-63ab-491c-9049-54fca54102bf",
+        "MetricKey": "mysql_slow_queries",
+        "Period": 30,
+        "ProductType": "mysql-replication",
+        "StartTime": "2020-11-03 14:28:00"
+    },
+    "Message": "success",
+    "TaskId": ""
 }
 ```
 
