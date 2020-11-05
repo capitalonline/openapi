@@ -566,7 +566,7 @@ def delete_instance(vm_ids):
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出                 |
 | Cpu        | int    | 否       | 4                                    | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    <br />不填写默认不更改 |
 | Ram        | int    | 否       | 8                                    | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    <br />不填写默认不更改 |
-| InstanceType       | string   | 否       | Standard                                                     |          修改主机类型                                       |
+| InstanceType       | string   | 否       | Standard                                                     |          将要修改为新的主机类型                                    |
 
 ​	**返回参数：**
 
