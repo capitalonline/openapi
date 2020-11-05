@@ -42,6 +42,8 @@
        * [30.StopInstances](#30StopInstances)
        * [31.StartInstances](#31StartInstances)
        * [32.RebootInstances](#32RebootInstances)
+       * [33.BatchAddNetworkInterfaces](#33BatchAddNetworkInterfaces)
+       * [34.BatchDeleteNetworkInterfaces](#34BatchDeleteNetworkInterfaces)
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -237,7 +239,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
-    return signature
+    D['Signature'] = signature
+    url = url + '/?' + urllib.urlencode(D)
+    return url
 ```
 
 ## 访问地址
@@ -273,7 +277,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
-| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
@@ -1782,7 +1786,7 @@ def down_card(InterfaceId, InstanceId):
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
-| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
@@ -1933,6 +1937,79 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
+### 33.BatchAddNetworkInterfaces
+
+​	**Action：BatchAddNetworkInterfaces**
+
+​	**描述：** 批量添加云服务器网卡
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
+| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
+| InstanceIds| list | 是         |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "",
+    "TaskId": "12804345"
+}
+```
+
+### 34.BatchDeleteNetworkInterfaces
+
+​	**Action：BatchDeleteNetworkInterfaces**
+
+​	**描述：** 批量删除云服务器网卡
+
+​	**请求地址:** cdsapi.capitalonline.net/ccs
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
+| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
+| InstanceIds| list   | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code   | Interger | Success                              | 错误码 |
+| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "",
+    "TaskId": "12804345"
+}
+```
 
 ## 安全组相关
 
@@ -3095,7 +3172,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | ------- | ------ | -------- | ------------------------------------ | ------------------------------- |
 | VdcId   | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
 | Name    | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
-| Type    | string | 否       | auto                                 | 私网类型                        |
+| Type    | string | 否       | manual                               | 私网类型(auto/manual)，默认auto  |
 | Address | string | 否       | 192.168.0.0                          | 私网地址                        |
 | Mask    | string | 否       | 16                                   | 私网掩码                        |
 
@@ -6378,6 +6455,7 @@ def get_status(task_id):
 | 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
+| 弗吉尼亚A   | US_Virginia_A     | 是          | 北美地区 |
 
 ## 附件二
 
