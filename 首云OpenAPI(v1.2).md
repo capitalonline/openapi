@@ -1154,7 +1154,7 @@ def down_card(InterfaceId, InstanceId):
 | Data       | Dict     | {}                                   | 返回数据列表 |
 | InstanceId | String   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 实例ID       |
 | Period     | String   | 60                                   | 数据粒度     |
-| DataPoints | list     | []                                   | 监控数据列表 |
+| DataPoints | list     | []                                   | 监控数据列表(各项指标单位：CPU/RAM: 百分比，网卡吞吐: Mbps，磁盘吞吐量: Kbps，磁盘IOPS: IOPS) |
 | Timestamp  | String   | 2019-10-09 15:30:00                  | 数据时间点   |
 | Value      | Float    | 49.67                                | 监控数据数值 |
 
