@@ -1952,7 +1952,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
 | ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
 | InstanceIds| list | 是         |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
-| PrivateId/PublicId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID/公网ID                                      |
+| PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe | 私网ID/公网ID(填写公网ID或私网ID)         |
 | VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
 
 ​	**返回参数：**
