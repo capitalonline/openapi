@@ -584,6 +584,7 @@ def get_redis_instances_list():
         "Ram": 1024,
         "RegionId": "CN_Beijing_H",
         "RelationService": null,
+        "ResourceId": "9e8e7d56-d394-4b8f-a2e3-51ca29048073",
         "RoGroups": null,
         "Status": "RUNNING",
         "StatusStr": "运行中",
