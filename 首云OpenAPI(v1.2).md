@@ -6493,6 +6493,14 @@ def get_status(task_id):
 | 计算型c1	   |  CCS.C1  |
 | 通用型g1	   |  CCS.G1  |
 | 内存型r1	   |  CCS.R1  |
+|高主频计算型hfc3	|CCS.HFC3​|
+|高主频通用型hfg3	|CCS.HFG3​|
+|高主频内存型hfr3	|CCS.HFR3​|
+|密集计算网络增强型ic3ne	|CCS.C3NE3​|
+|计算网络增强型c3ne	|CCS.C3NE3​|
+|通用网络增强型g3ne	|CCS.G3NE3​|
+|内存网络增强新r3ne	|CCS.R3NE3​|
+
 
 
 ## 附件三
@@ -6523,7 +6531,10 @@ def get_status(task_id):
 
 | 模板大类型 | 模板类型                         | 中文名称                               |
 | ---------- | -------------------------------- | -------------------------------------- |
-| Centos     | Centos_7.8_64                   |                                        |
+| Centos     | Centos_8.2_64                   |                                        |
+|            | Centos_8.1_64                   |                                        |
+|            | Centos_8.0_64                   |                                        |
+|            | Centos_7.8_64                   |                                        |
 |            | Centos_7.6_64                    |                                        |
 |            | Centos_7.5_64                    |                                        |
 |            | Centos_7.4_64                    |                                        |
@@ -6531,22 +6542,35 @@ def get_status(task_id):
 |            | Centos_7.2_64                    |                                        |
 |            | Centos_7.1_64                    |                                        |
 |            | Centos_7.0_64                    |                                        |
-| Debian     | Debian_8.1_64                    |                                        |
+|	         | Centos_6.9_64	                |                                         |
+|	         | Centos_6.9_32	                |                                         |
+|	         | Centos_6.8_64	                |                                         |
+|	         | Centos_6.8_32	                |                                         |
+|	         | Centos_6.7_64	                |                                         |
+|	         | Centos_6.7_32	                |                                         |
+|	         | Centos_6.5_64	                |                                         |
+|	         | Centos_6.4_64	                |                                         |
+|	         | Centos_6.3_64	                |                                         |
+|	         | Centos_6.2_64                    |                                         |
+| Debian     | Debian_9.11_64                    |                                        |
+|            | Debian_8.11_64                    |                                        |
+|            | Debian_8.1_64                    |                                        |
 | Redhat     | Redhat_6.5_64                    |                                        |
-| Ubuntu     | Ubuntu_16.04_64                  |                                        |
+| Ubuntu     | Ubuntu_18.04_64	                 |                                        |
+|            | Ubuntu_16.04_64                  |                                        |
 |            | Ubuntu_14.04_64                  |                                        |
-|            | Ubuntu_14.10_64                  |                                        |
-| Windows    | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版     |
-|            | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版     |
-|            | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版     |
-|            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版 |
+| Windows    | Windows_2019_Datacenter_64_CN | Windows 2019 数据中心版 64位 中文版     |
+|            | Windows_2016_Datacenter_64_EN | Windows 2016 数据中心版 64位 英文版   |
+|            | Windows_2016_Datacenter_64_CN | Windows 2016 数据中心版 64位 中文版   |
+|            | Windows_2012_Standard_64_EN | Windows 2012 标准版 64位 英文版   |
+|            | Windows_2012_Standard_64_CN | Windows 2012 标准版 64位 中文版   |
+|            | Windows_2012_R2_Standard_64_EN | Windows 2012 R2 标准版 64位 英文版   |
+|            | Windows_2012_R2_Standard_64_CN | Windows 2012 R2 标准版 64位 中文版   |
+|            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版  |
 |            | Windows_2012_R2_Datacenter_64_CN | Windows 2012 R2 数据中心版 64位 中文版 |
-|            | Windows_2012_Standard_64_EN      | Windows 2012 标准版 64位 英文版        |
-|            | Windows_2012_Standard_64_CN      | Windows 2012 标准版 64位 中文版        |
-|            | Windows_2012_Datacenter_64_EN    | Windows 2012 数据中心版 64位 英文版    |
-|            | Windows_2012_Datacenter_64_CN    | Windows 2012 数据中心版 64位 中文版    |
-|            | Windows_2016_Datacenter_64_EN    | Windows 2016 数据中心版 64位 英文版    |
-|            | Windows_2016_Datacenter_64_CN    | Windows 2016 数据中心版 64位 中文版    |
+|            | Windows_2012_Datacenter_64_EN | Windows 2012 数据中心版 64位 英文版 |
+|            | Windows_2012_Datacenter_64_CN | Windows 2012 数据中心版 64位 中文版 |
+|            | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版 |
 
 ## 示例
 
