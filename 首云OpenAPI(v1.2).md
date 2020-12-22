@@ -6496,10 +6496,7 @@ def get_status(task_id):
 |高主频计算型hfc3	|CCS.HFC3​|
 |高主频通用型hfg3	|CCS.HFG3​|
 |高主频内存型hfr3	|CCS.HFR3​|
-|密集计算网络增强型ic3ne	|CCS.C3NE3​|
-|计算网络增强型c3ne	|CCS.C3NE3​|
-|通用网络增强型g3ne	|CCS.G3NE3​|
-|内存网络增强新r3ne	|CCS.R3NE3​|
+
 
 
 
