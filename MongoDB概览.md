@@ -511,6 +511,7 @@ def get_mongodb_instances_list():
         "Ram": 2048,
         "RegionId": "CN_Hongkong_A",
         "RelationService": null,
+        "ResourceId": "71bf731e-7cc8-4307-8408-4952e4dcd470",
         "Status": "RUNNING",
         "StatusStr": "运行中",
         "SubProductName": "MongoDB 副本集版",

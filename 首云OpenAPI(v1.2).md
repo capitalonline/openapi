@@ -239,7 +239,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
-    return signature
+    D['Signature'] = signature
+    url = url + '/?' + urllib.urlencode(D)
+    return url
 ```
 
 ## 访问地址
@@ -275,7 +277,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
-| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
@@ -566,7 +568,7 @@ def delete_instance(vm_ids):
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出                 |
 | Cpu        | int    | 否       | 4                                    | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    <br />不填写默认不更改 |
 | Ram        | int    | 否       | 8                                    | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    <br />不填写默认不更改 |
-| InstanceType       | string   | 否       | Standard                                                     |          修改主机类型                                       |
+| InstanceType       | string   | 否       | Standard                                                     |          将要修改为新的主机类型                                    |
 
 ​	**返回参数：**
 
@@ -1152,7 +1154,7 @@ def down_card(InterfaceId, InstanceId):
 | Data       | Dict     | {}                                   | 返回数据列表 |
 | InstanceId | String   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 实例ID       |
 | Period     | String   | 60                                   | 数据粒度     |
-| DataPoints | list     | []                                   | 监控数据列表 |
+| DataPoints | list     | []                                   | 监控数据列表(各项指标单位：CPU/RAM: 百分比，网卡吞吐: Mbps，磁盘吞吐量: Kbps，磁盘IOPS: IOPS) |
 | Timestamp  | String   | 2019-10-09 15:30:00                  | 数据时间点   |
 | Value      | Float    | 49.67                                | 监控数据数值 |
 
@@ -1784,7 +1786,7 @@ def down_card(InterfaceId, InstanceId):
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
-| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 否       | Standard                                                     |                                                              |
@@ -1947,10 +1949,10 @@ def down_card(InterfaceId, InstanceId):
 
 ​	**请求参数：**
 
-| 名称       | 类型    | 是否必选 | 示例值                                        | 描述                                         |
+| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
 | ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
-| InstanceIds| list   | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
-| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| InstanceIds| list | 是         |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe | 私网ID/公网ID(填写公网ID或私网ID)         |
 | VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
 | Password   | string | 否       | xxxx                                         | 主机密码                                    |
 
