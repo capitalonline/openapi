@@ -1990,7 +1990,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
 | ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
 | InstanceIds| list   | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
-| PrivateId  | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe         | 私网ID                                      |
+| PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe  | 私网ID/公网ID(填写公网ID或私网ID)                                |
 | VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
 
 ​	**返回参数：**
@@ -3173,7 +3173,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | ------- | ------ | -------- | ------------------------------------ | ------------------------------- |
 | VdcId   | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
 | Name    | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
-| Type    | string | 否       | auto                                 | 私网类型                        |
+| Type    | string | 否       | manual                               | 私网类型(auto/manual)，默认auto  |
 | Address | string | 否       | 192.168.0.0                          | 私网地址                        |
 | Mask    | string | 否       | 16                                   | 私网掩码                        |
 
@@ -3541,7 +3541,8 @@ def modify_public_qos(publicId, qos):
 
 |  名称  |  类型  | 是否必选 | 示例 |   描述   |
 | :----: | :----: | :------: | :--: | :------: |
-| AreaId | String |    否    |  CN  | 区域编号 |
+| GpnId  | String |    否    | 55271ebc-135d-11eb-97aa-0242ac110002 | GPN编号 |
+| Key    | String |    否    | 中美互联 | 关键词 |
 
 **返回参数:**
 
@@ -3556,7 +3557,8 @@ def modify_public_qos(publicId, qos):
 | Status     | String | ok                                                           | GPN状态                                                      |
 | StatusStr  | String | 正常                                                         | GPN状态                                                      |
 | SubOrderId | String | 425d533e-2d3d-11ea-93ed-0242ac110002                         | 订单编号                                                     |
-| JoinApps   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
+| JoinVdcs   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VdcName": "北京一", <br>"VdcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
+| JoinVpcs   | List   | [{<br>"PrivateId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"RegionId":"CN_Beijing_A", <br>"VpcName": "北京一", <br>"VpcId": "425d533e-2d3d-11ea-93ed-0242ac110002",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PrivateNet": "10.240.129.0/16~10.240.129.255/16", <br>"Address": "10.240.129.0", <br>"Qos": 300<br>}] | PrivateId: 私网编号 <br>RegionId: 可用区编号 <br>VdcName: 数据中心名称 <br>VdcId: 数据中心编号 <br>CityId:城市编号 <br>PrivateNet:私网网段 <br>Address:私网地址 <br>Qos:私网带宽 |
 | JoinPops   | List   | [{<br>"PopId":"2f8695bc-223f-11ea-bf4e-0050569e6138",<br>"CityId": "713d3745-306d-11e7-9796-0050569b4d9c", <br>"PopName": "北京一Pop", <br>"Qos": 300<br>}] | PopId: POP编号 <br>CityId:城市编号 <br>PopName: Pop名称 <br>Qos:Pop带宽 |
 
 
@@ -3564,7 +3566,6 @@ def modify_public_qos(publicId, qos):
 
 | httpcode |         错误码         |                   错误信息                    |         描述          |
 | :------: | :--------------------: | :-------------------------------------------: | :-------------------: |
-|   400    | InvalidGpnID.Malformed | The specified parameter "GpnId" is not valid. | 指定GpnId参数格式错误 |
 
 **返回示例**
 
@@ -3575,7 +3576,7 @@ def modify_public_qos(publicId, qos):
         {
             "EvpnId": 14105,
             "GpnId": "d91cc8a6-306a-11ea-ae2f-0242ac110002",
-            "JoinApps": [
+            "JoinVdcs": [
                 {
                     "Address": "10.240.129.0",
                     "CityId": "713d3745-306d-11e7-9796-0050569b4d9c",
@@ -3605,6 +3606,18 @@ def modify_public_qos(publicId, qos):
                     "RegionId": "CN_Wuxi_A",
                     "VdcId": "72e2157d-4568-4c24-8585-8865f1683a10",
                     "VdcName": "CDS-API无锡"
+                }
+            ],
+            "JoinVpcs": [
+                {
+                    "Address": "10.241.165.0",
+                    "CityId": "e48e2312-306d-11e7-9796-0050569b4d9c",
+                    "PrivateId": "ea683378-09f6-11eb-8e89-0242ac1112b3",
+                    "PrivateNet": "10.241.165.0/16~10.241.165.255/16",
+                    "Qos": 5,
+                    "RegionId": "US_Dallas_D",
+                    "VpcId": "de96aeb2-0159-11eb-abc1-12d7b66798c8",
+                    "VpcName": "CDS-API达拉斯"
                 }
             ],
             "JoinPops": null,
@@ -6422,6 +6435,7 @@ def get_status(task_id):
 | 达拉斯G    | US_Dallas_G       | 否             | 北美地区 |
 | 达拉斯H    | US_Dallas_H       | 是             | 北美地区 |
 | 达拉斯I    | US_Dallas_I       | 否             | 北美地区 |
+| 达拉斯J    | US_Dallas_J       | 否             | 北美地区 |
 | 德国A      | EUR_Germany_A     | 否             | 欧洲地区 |
 | 德国B      | EUR_Germany_B     | 否             | 欧洲地区 |
 | 东京A      | APAC_Tokyo_A      | 否             | 亚太地区 |
@@ -6443,6 +6457,7 @@ def get_status(task_id):
 | 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
+| 弗吉尼亚A   | US_Virginia_A     | 是          | 北美地区 |
 
 ## 附件二
 
@@ -6479,6 +6494,11 @@ def get_status(task_id):
 | 计算型c1	   |  CCS.C1  |
 | 通用型g1	   |  CCS.G1  |
 | 内存型r1	   |  CCS.R1  |
+|高主频计算型hfc3	|CCS.HFC3​|
+|高主频通用型hfg3	|CCS.HFG3​|
+|高主频内存型hfr3	|CCS.HFR3​|
+
+
 
 
 ## 附件三
@@ -6509,7 +6529,10 @@ def get_status(task_id):
 
 | 模板大类型 | 模板类型                         | 中文名称                               |
 | ---------- | -------------------------------- | -------------------------------------- |
-| Centos     | Centos_7.8_64                   |                                        |
+| Centos     | Centos_8.2_64                   |                                        |
+|            | Centos_8.1_64                   |                                        |
+|            | Centos_8.0_64                   |                                        |
+|            | Centos_7.8_64                   |                                        |
 |            | Centos_7.6_64                    |                                        |
 |            | Centos_7.5_64                    |                                        |
 |            | Centos_7.4_64                    |                                        |
@@ -6517,22 +6540,35 @@ def get_status(task_id):
 |            | Centos_7.2_64                    |                                        |
 |            | Centos_7.1_64                    |                                        |
 |            | Centos_7.0_64                    |                                        |
-| Debian     | Debian_8.1_64                    |                                        |
+|	         | Centos_6.9_64	                |                                         |
+|	         | Centos_6.9_32	                |                                         |
+|	         | Centos_6.8_64	                |                                         |
+|	         | Centos_6.8_32	                |                                         |
+|	         | Centos_6.7_64	                |                                         |
+|	         | Centos_6.7_32	                |                                         |
+|	         | Centos_6.5_64	                |                                         |
+|	         | Centos_6.4_64	                |                                         |
+|	         | Centos_6.3_64	                |                                         |
+|	         | Centos_6.2_64                    |                                         |
+| Debian     | Debian_9.11_64                    |                                        |
+|            | Debian_8.11_64                    |                                        |
+|            | Debian_8.1_64                    |                                        |
 | Redhat     | Redhat_6.5_64                    |                                        |
-| Ubuntu     | Ubuntu_16.04_64                  |                                        |
+| Ubuntu     | Ubuntu_18.04_64	                 |                                        |
+|            | Ubuntu_16.04_64                  |                                        |
 |            | Ubuntu_14.04_64                  |                                        |
-|            | Ubuntu_14.10_64                  |                                        |
-| Windows    | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版     |
-|            | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版     |
-|            | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版     |
-|            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版 |
+| Windows    | Windows_2019_Datacenter_64_CN | Windows 2019 数据中心版 64位 中文版     |
+|            | Windows_2016_Datacenter_64_EN | Windows 2016 数据中心版 64位 英文版   |
+|            | Windows_2016_Datacenter_64_CN | Windows 2016 数据中心版 64位 中文版   |
+|            | Windows_2012_Standard_64_EN | Windows 2012 标准版 64位 英文版   |
+|            | Windows_2012_Standard_64_CN | Windows 2012 标准版 64位 中文版   |
+|            | Windows_2012_R2_Standard_64_EN | Windows 2012 R2 标准版 64位 英文版   |
+|            | Windows_2012_R2_Standard_64_CN | Windows 2012 R2 标准版 64位 中文版   |
+|            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版  |
 |            | Windows_2012_R2_Datacenter_64_CN | Windows 2012 R2 数据中心版 64位 中文版 |
-|            | Windows_2012_Standard_64_EN      | Windows 2012 标准版 64位 英文版        |
-|            | Windows_2012_Standard_64_CN      | Windows 2012 标准版 64位 中文版        |
-|            | Windows_2012_Datacenter_64_EN    | Windows 2012 数据中心版 64位 英文版    |
-|            | Windows_2012_Datacenter_64_CN    | Windows 2012 数据中心版 64位 中文版    |
-|            | Windows_2016_Datacenter_64_EN    | Windows 2016 数据中心版 64位 英文版    |
-|            | Windows_2016_Datacenter_64_CN    | Windows 2016 数据中心版 64位 中文版    |
+|            | Windows_2012_Datacenter_64_EN | Windows 2012 数据中心版 64位 英文版 |
+|            | Windows_2012_Datacenter_64_CN | Windows 2012 数据中心版 64位 中文版 |
+|            | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版 |
 
 ## 示例
 
