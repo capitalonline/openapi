@@ -145,7 +145,7 @@
 | 名称             | String | 是否必填 | 描述                                                         |
 | ---------------- | ------ | -------- | ------------------------------------------------------------ |
 | Action           | String | 是       | API 的动作名称                                               |
-| AccessKeyId      | String | 是       | 访问密钥 ID。AccessKey 用于调用 AP                           |
+| AccessKeyId      | String | 是       | 访问密钥 ID（位于用户中心-->用户安全-->密钥管理）                         |
 | Signature        | String | 是       | 您的签名                                                     |
 | SignatureMethod  | String | 是       | 签名方式。取值范围：HMAC-SHA1。                              |
 | SignatureVersion | String | 是       | 签名算法版本。取值范围：1.0。                                |
@@ -280,7 +280,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
-| InstanceType       | string   | 否       | Standard                                                     |                                                              |
+| InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
 | SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
