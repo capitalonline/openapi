@@ -2700,7 +2700,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值       | 描述       |
 | ---------- | ------ | -------- | ------------ | ---------- |
 | TemplateId | String | 是       | xxx          | 模板ID     |
-| RegionId   | String | 是       | CN_Beijing_A | 安全组描述 |
+| RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
 ​	**返回参数：** 
 
@@ -2745,7 +2745,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值       | 描述       |
 | ---------- | ------ | -------- | ------------ | ---------- |
 | TemplateId | String | 是       | xxx          | 模板ID     |
-| RegionId   | String | 是       | CN_Beijing_A | 安全组描述 |
+| RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
 ​	**返回参数：** 
 
