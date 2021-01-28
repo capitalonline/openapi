@@ -2701,7 +2701,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值       | 描述       |
 | ---------- | ------ | -------- | ------------ | ---------- |
 | TemplateId | String | 是       | xxx          | 模板ID     |
-| RegionId   | String | 是       | CN_Beijing_A | 安全组描述 |
+| RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
 ​	**返回参数：** 
 
@@ -2746,7 +2746,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称       | 类型   | 是否必选 | 示例值       | 描述       |
 | ---------- | ------ | -------- | ------------ | ---------- |
 | TemplateId | String | 是       | xxx          | 模板ID     |
-| RegionId   | String | 是       | CN_Beijing_A | 安全组描述 |
+| RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
 ​	**返回参数：** 
 
@@ -6436,6 +6436,7 @@ def get_status(task_id):
 | 达拉斯H    | US_Dallas_H       | 是             | 北美地区 |
 | 达拉斯I    | US_Dallas_I       | 否             | 北美地区 |
 | 达拉斯J    | US_Dallas_J       | 否             | 北美地区 |
+| 迈阿密A    | US_Miami_A       | 否             | 北美地区 |
 | 德国A      | EUR_Germany_A     | 否             | 欧洲地区 |
 | 德国B      | EUR_Germany_B     | 否             | 欧洲地区 |
 | 东京A      | APAC_Tokyo_A      | 否             | 亚太地区 |
