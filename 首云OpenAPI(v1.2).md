@@ -6435,6 +6435,7 @@ def get_status(task_id):
 | 达拉斯H    | US_Dallas_H       | 是             | 北美地区 |
 | 达拉斯I    | US_Dallas_I       | 否             | 北美地区 |
 | 达拉斯J    | US_Dallas_J       | 否             | 北美地区 |
+| 迈阿密A    | US_Miami_A       | 否             | 北美地区 |
 | 德国A      | EUR_Germany_A     | 否             | 欧洲地区 |
 | 德国B      | EUR_Germany_B     | 否             | 欧洲地区 |
 | 东京A      | APAC_Tokyo_A      | 否             | 亚太地区 |
