@@ -6522,6 +6522,7 @@ def get_status(task_id):
 | VIP专用带宽    | Bandwidth_VIP_Dedicated            |
 | 全球优化BGP    | Globally_Optimized_BGP             |
 | BGP优化        | Bandwidth_BGP_Optimized            |
+| 华东BGP优化        | Bandwidth_East_China_BGP            |
 
 ## 附件四
 
