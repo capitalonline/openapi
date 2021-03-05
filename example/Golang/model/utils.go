@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	SecretId  = "2b9f4116f0bb11e9abc032d9a6a8e186"
-	SecretKey = "c7856fe23d15ee0a33643dfa3e4521b5c00f6f67a4b02b0905ccc5161634a47cfb3af5dccecab5a815330b92618a5207c7597e9c112ee91b89160ce0fe7d9f5f"
+	SecretId  = ""
+	SecretKey = ""
 )
 
 func percentEncode(str string) string {
