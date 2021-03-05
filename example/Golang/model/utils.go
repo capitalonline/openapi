@@ -13,14 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"encoding/json"
+	"github.com/google/uuid"
 )
 
 var (
-	SecretId 	= ""
-	SecretKey 	= ""
-
+	SecretId  = "2b9f4116f0bb11e9abc032d9a6a8e186"
+	SecretKey = "c7856fe23d15ee0a33643dfa3e4521b5c00f6f67a4b02b0905ccc5161634a47cfb3af5dccecab5a815330b92618a5207c7597e9c112ee91b89160ce0fe7d9f5f"
 )
 
 func percentEncode(str string) string {
@@ -70,13 +69,13 @@ func getSignedURL(action, url, reqMethod string, param []byte) string {
 		"Version":          "2019-08-08",
 	}
 
-	if len(param) > 0 && reqMethod == "GET"{
+	if len(param) > 0 && reqMethod == "GET" {
 		par := make(map[string]string)
 		err := json.Unmarshal(param, &par)
 		if err != nil {
 			panic(err)
 		}
-		for k, v :=range par {
+		for k, v := range par {
 			request[k] = v
 		}
 	}
@@ -87,7 +86,16 @@ func getSignedURL(action, url, reqMethod string, param []byte) string {
 	return signedURL
 }
 
-func doHttpPost(action, url, method string, reqBody []byte) string {
+type CommonReturn struct {
+	Code       string
+	Data       interface{}
+	Message    string
+	PageCount  int
+	PageNumber int
+	TaskId     string
+}
+
+func doHttpPost(action, url, method string, reqBody []byte) CommonReturn {
 	fmt.Println("ReqBody: ", string(reqBody))
 
 	signedURL := getSignedURL(action, url, method, reqBody)
@@ -103,6 +111,8 @@ func doHttpPost(action, url, method string, reqBody []byte) string {
 	fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
-	return string(body)
-}
 
+	commonReturn := CommonReturn{}
+	json.Unmarshal(body, &commonReturn)
+	return commonReturn
+}
