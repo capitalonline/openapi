@@ -157,6 +157,8 @@
         * [3.CreateDBInstance](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#3createdbinstance)
         * [4.DescribeDBInstances](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#4describedbinstances)
         * [5.DeleteDBInstance](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#5deletedbinstance)
+      * [Kafka相关](https://github.com/capitalonline/openapi/blob/master/Kafka%E6%A6%82%E8%A7%88.md)
+        * [1.GetKafkaList](https://github.com/capitalonline/openapi/blob/master/Kafka%E6%A6%82%E8%A7%88.md#1getkafkalist)
       * [HaProxy相关](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate)
         * [1.DescribeZones](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#1describezones)
         * [2.DescribeLoadBalancersSpec](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#2describeloadbalancersspec)
