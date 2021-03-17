@@ -1,14 +1,14 @@
 package test
 
 import (
-	"testing"
 	"OpenAPI-GO/model"
 	"fmt"
+	"testing"
 )
 
-func TestDescribeInstance(t *testing.T)  {
+func TestDescribeInstance(t *testing.T) {
 	result := model.DescribeInstances("f6124738-346d-4b21-8a7c-f86bf04b76ed")
-	fmt.Printf("%v", string(result))
+	fmt.Printf("%v", result)
 }
 
 func TestCreateInstance(t *testing.T) {
@@ -18,7 +18,7 @@ func TestCreateInstance(t *testing.T) {
 	InstanceName := "go-api"
 	InstanceType := "High"
 	ImageId := "Centos_7.6_64"
-	Password := "!"
+	Password := "!QAZ2wsx"
 
 	res := model.CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Password, 4, 4, 1)
 	fmt.Println(res)
@@ -31,25 +31,25 @@ func TestDeleteInstance(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestStopInstance(t *testing.T)  {
+func TestStopInstance(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	res := model.StopInstance(instanceId)
 	fmt.Println(res)
 }
 
-func TestStartInstance(t *testing.T)  {
+func TestStartInstance(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	res := model.StartInstance(instanceId)
 	fmt.Println(res)
 }
 
-func TestRebootInstance(t *testing.T)  {
+func TestRebootInstance(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	res := model.RebootInstance(instanceId)
 	fmt.Println(res)
 }
 
-func TestModifyInstanceSpec(t *testing.T)  {
+func TestModifyInstanceSpec(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	res := model.ModifyInstanceSpec(instanceId, 4, 8)
 	fmt.Println(res)
@@ -61,7 +61,7 @@ func TestCreateDisk(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestResizeDisk(t *testing.T)  {
+func TestResizeDisk(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	diskId := "22b01c34-b9ff-11ea-b1f3-0242ac110002"
 	size := 200
@@ -87,7 +87,7 @@ func TestResetImageByPassword(t *testing.T) {
 func TestResetImageByPublicKey(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	imageId := "Centos_7.6_64"
-	PublicKey := "ssh-rsa"
+	PublicKey := "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClyx+YOk31Ga8U+QFKTgfYm2M+xKOnBTS4LHYJEnxLNJj0rvZGPZ0qQHHBCBMnB5gVgs3Zo59hUEkcy9LiyN3qiEWsam7ya38ePXQ5h8z/AN2JHeEedShlGCEJ/sKRWzqnsPYKvgJw/JTKz/EFExFCqPjFpdHsRedBM6IisK/1v1dSusvOV7Jbh6aApXi+1oml4brpmHYqsHrg+o6AT+7yGlBryA5pUUDqMjkauCc/Pugm/VcleOuhf0UCaK01b1l7nEgvkoqbBBGuPNn6XjBVoimjmRXGxGnyo9QYTpx8cxrXUTzN2G8XkBjqV4c5Xim49psGQKHKoApSarGXPlhd jian.jiao@capitalonline.net"
 	res := model.ResetImage(instanceId, imageId, "", PublicKey)
 	fmt.Println(res)
 }
@@ -95,7 +95,7 @@ func TestResetImageByPublicKey(t *testing.T) {
 func TestModifyIpAddress(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	interfaceId := "36457034-baa2-11ea-8771-c60e117040ec"
-	address := "xxx.xx.xx.xxx"
+	address := "164.52.56.162"
 	res := model.ModifyIpAddress(instanceId, interfaceId, address)
 	fmt.Println(res)
 }
@@ -112,5 +112,10 @@ func TestModifyInstanceName(t *testing.T) {
 	instanceId := "f6124738-346d-4b21-8a7c-f86bf04b76ed"
 	instanceName := "TestGoApi"
 	res := model.ModifyInstanceName(instanceId, instanceName)
+	fmt.Println(res)
+}
+
+func TestGetHistoryInstance(t *testing.T) {
+	res := model.GetHistoryInstance("2020-12-30", 10, 1)
 	fmt.Println(res)
 }

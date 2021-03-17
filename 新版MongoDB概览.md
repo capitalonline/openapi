@@ -58,7 +58,7 @@ MongoDB产品提供以下相关API接口。
 
 **描述：** 获取云数据库MongoDB支持的站点区域
 
-**请求地址：** cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
 
 **请求方法：** GET
 
@@ -125,13 +125,6 @@ def get_mongodb_Zones():
         "RegionName": "亚太地区",
         "SiteName": "新加坡1"
     }, {
-        "CityId": "5c432e0e-306e-11e7-9796-0050569b4d9c",
-        "CityName": "阿姆斯特丹",
-        "IsSaling": 1,
-        "RegionId": "EUR_Netherlands_A",
-        "RegionName": "欧洲地区",
-        "SiteName": "荷兰1"
-    }, {
         "CityId": "154ed19e-306e-11e7-9796-0050569b4d9c",
         "CityName": "纽约",
         "IsSaling": 1,
@@ -142,24 +135,10 @@ def get_mongodb_Zones():
         "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
         "CityName": "北京",
         "IsSaling": 1,
-        "RegionId": "CN_Beijing_B",
-        "RegionName": "中国大陆",
-        "SiteName": "北京2"
-    }, {
-        "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
-        "CityName": "北京",
-        "IsSaling": 1,
         "RegionId": "CN_Beijing_E",
         "RegionName": "中国大陆",
         "SiteName": "北京5"
-    }, {
-        "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
-        "CityName": "北京",
-        "IsSaling": 1,
-        "RegionId": "CN_Beijing_A",
-        "RegionName": "中国大陆",
-        "SiteName": "北京1"
-    }, {
+    },  {
         "CityId": "e48e2312-306d-11e7-9796-0050569b4d9c",
         "CityName": "达拉斯",
         "IsSaling": 1,
@@ -173,48 +152,13 @@ def get_mongodb_Zones():
         "RegionId": "CN_Taipei_A",
         "RegionName": "亚太地区",
         "SiteName": "台北1"
-    }, {
-        "CityId": "123d0d01-306d-11e7-9796-0050569b4d9c",
-        "CityName": "无锡",
-        "IsSaling": 1,
-        "RegionId": "CN_Wuxi_A",
-        "RegionName": "中国大陆",
-        "SiteName": "无锡1"
-    }, {
-        "CityId": "87fcbbd6-be0a-11e7-9d6b-0242ac110004",
-        "CityName": "首尔",
-        "IsSaling": 1,
-        "RegionId": "APAC_Seoul_A",
-        "RegionName": "亚太地区",
-        "SiteName": "首尔1"
-    }, {
-        "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
-        "CityName": "北京",
-        "IsSaling": 1,
-        "RegionId": "CN_Beijing_C",
-        "RegionName": "中国大陆",
-        "SiteName": "北京3"
-    }, {
+    },  {
         "CityId": "c11a5abe-3f7e-11e7-86b1-0242ac11000e",
         "CityName": "广州",
         "IsSaling": 1,
         "RegionId": "CN_Guangzhou_A",
         "RegionName": "中国大陆",
         "SiteName": "广州1"
-    }, {
-        "CityId": "b44355d0-65e7-11e7-8ea9-0050569b651c",
-        "CityName": "上海",
-        "IsSaling": 1,
-        "RegionId": "CN_Shanghai_A",
-        "RegionName": "中国大陆",
-        "SiteName": "上海1"
-    }, {
-        "CityId": "ea3ca775-306c-11e7-9796-0050569b4d9c",
-        "CityName": "北京",
-        "IsSaling": 1,
-        "RegionId": "",
-        "RegionName": "中国大陆",
-        "SiteName": "北京8"
     }],
     "Message": "Success."
 }
@@ -242,7 +186,7 @@ def get_mongodb_Zones():
 
 **描述：** 获取某个站点支持的MongoDB产品类型以及规格
 
-**请求地址：** cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
 
 **请求方法：** GET
 
@@ -390,7 +334,7 @@ def get_mongodb_spec_info(RegionId):
 
 **描述：** 创建MongoDB云数据库实例
 
-**请求地址：** cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
 
 **请求方法：** POST
 
@@ -402,11 +346,10 @@ def get_mongodb_spec_info(RegionId):
 | VdcID        | 是   | string | 数据中心的编号                                 |
 | BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配id |
 | InstanceName | 是   | string | 实例名称                                       |
-| PaasGoodsId  | 是   | string | 产品的规格编号                                 |
+| PaasGoodsId  | 是   | int    | 产品的规格编号，注意：对比旧版使用Integer类型  |
 | DiskType     | 是   | string | 磁盘类型                                       |
 | DiskValue    | 是   | int    | 磁盘大小                                       |
 | Password     | 是   | string | Mongodb 最高权限数据库密码                     |
-| Amount       | 否   | int    | 购买的数量一次最多购买三个                     |
 
 **请求示例：**
 
@@ -463,7 +406,7 @@ def create_mongodb():
 
 **描述：** 获取MongoDB实例列表（支持常见字段过滤:实例编号、实例名称、实例IP）
 
-**请求地址：** cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
 
 **请求方法：** GET
 
@@ -517,7 +460,7 @@ def get_mongodb_instances_list():
         "SubProductName": "MongoDB 副本集版",
         "VdcId": "d459c74b-d60e-4f28-adbb-67be402f76f3",
         "VdcName": "香港PaaS",
-        "Version": "3.4.21"
+        "Version": "4.0.3"
     }],
     "Message": "Success."
 }
@@ -557,7 +500,7 @@ def get_mongodb_instances_list():
 
 **描述：** 删除MongoDB实例
 
-**请求地址：** cdsapi.capitalonline.net/mongodb
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
 
 **请求方法：** POST
 

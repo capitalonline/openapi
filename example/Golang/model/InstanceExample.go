@@ -7,7 +7,7 @@ import (
 
 var CcsUrl = "https://cdsapi.capitalonline.net/ccs"
 
-func CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Password string, Cpu, Ram, Amount int) string {
+func CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Password string, Cpu, Ram, Amount int) CommonReturn {
 	action := "CreateInstance"
 	method := "POST"
 
@@ -15,21 +15,21 @@ func CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Passwo
 	var PrivateIp, DataDisk []interface{}
 
 	body, err := json.Marshal(map[string]interface{}{
-		"RegionId": RegionId,
-		"VdcId": VdcId,
-		"InstanceName": InstanceName,
-		"Cpu": Cpu,
-		"Ram": Ram,
-		"InstanceType": InstanceType,
-		"ImageId": ImageId,
-		"DataDisk": DataDisk,
+		"RegionId":           RegionId,
+		"VdcId":              VdcId,
+		"InstanceName":       InstanceName,
+		"Cpu":                Cpu,
+		"Ram":                Ram,
+		"InstanceType":       InstanceType,
+		"ImageId":            ImageId,
+		"DataDisk":           DataDisk,
 		"InstanceChargeType": "PostPaid",
-		"Password": Password,
-		"AutoRenew": 1,
-		"PrepaidMonth": 1,
-		"Amount": Amount,
-		"PublicIp": PublicIp,
-		"PrivateIp": PrivateIp,
+		"Password":           Password,
+		"AutoRenew":          1,
+		"PrepaidMonth":       1,
+		"Amount":             Amount,
+		"PublicIp":           PublicIp,
+		"PrivateIp":          PrivateIp,
 	})
 	if err != nil {
 		panic(err)
@@ -38,7 +38,7 @@ func CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Passwo
 	return res
 }
 
-func DescribeInstances(InstanceId string) string {
+func DescribeInstances(InstanceId string) CommonReturn {
 	action := "DescribeInstances"
 	method := "POST"
 
@@ -53,7 +53,7 @@ func DescribeInstances(InstanceId string) string {
 	return res
 }
 
-func DeleteInstance(InstanceIds []string) string {
+func DeleteInstance(InstanceIds []string) CommonReturn {
 	action := "DeleteInstance"
 	method := "POST"
 
@@ -67,7 +67,7 @@ func DeleteInstance(InstanceIds []string) string {
 	return res
 }
 
-func StopInstance(InstanceId string) string {
+func StopInstance(InstanceId string) CommonReturn {
 	action := "StopInstance"
 	method := "GET"
 
@@ -81,7 +81,7 @@ func StopInstance(InstanceId string) string {
 	return res
 }
 
-func StartInstance(InstanceId string) string {
+func StartInstance(InstanceId string) CommonReturn {
 	action := "StartInstance"
 	method := "GET"
 
@@ -95,7 +95,7 @@ func StartInstance(InstanceId string) string {
 	return res
 }
 
-func RebootInstance(InstanceId string) string {
+func RebootInstance(InstanceId string) CommonReturn {
 	action := "RebootInstance"
 	method := "GET"
 
@@ -109,14 +109,14 @@ func RebootInstance(InstanceId string) string {
 	return res
 }
 
-func ModifyInstanceSpec(InstanceId string, Cpu, Ram int) string {
+func ModifyInstanceSpec(InstanceId string, Cpu, Ram int) CommonReturn {
 	action := "ModifyInstanceSpec"
 	method := "POST"
 
 	body, err := json.Marshal(map[string]interface{}{
 		"InstanceId": InstanceId,
-		"Cpu": Cpu,
-		"Ram": Ram,
+		"Cpu":        Cpu,
+		"Ram":        Ram,
 	})
 	if err != nil {
 		panic(err)
@@ -130,7 +130,7 @@ type DiskParam struct {
 	Type string
 }
 
-func CreateDisk(InstanceId string) string {
+func CreateDisk(InstanceId string) CommonReturn {
 	action := "CreateDisk"
 	method := "POST"
 
@@ -150,14 +150,14 @@ func CreateDisk(InstanceId string) string {
 	return res
 }
 
-func ResizeDisk(InstanceId, DiskId string, Size int) string {
+func ResizeDisk(InstanceId, DiskId string, Size int) CommonReturn {
 	action := "ResizeDisk"
 	method := "POST"
 
 	body, err := json.Marshal(map[string]interface{}{
 		"InstanceId": InstanceId,
-		"DiskId":  DiskId,
-		"DataSize": Size,
+		"DiskId":     DiskId,
+		"DataSize":   Size,
 	})
 	if err != nil {
 		panic(err)
@@ -166,13 +166,13 @@ func ResizeDisk(InstanceId, DiskId string, Size int) string {
 	return res
 }
 
-func DeleteDisk(InstanceId string, DiskIds []string) string {
+func DeleteDisk(InstanceId string, DiskIds []string) CommonReturn {
 	action := "DeleteDisk"
 	method := "POST"
 
 	body, err := json.Marshal(map[string]interface{}{
 		"InstanceId": InstanceId,
-		"DiskIds":  DiskIds,
+		"DiskIds":    DiskIds,
 	})
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func DeleteDisk(InstanceId string, DiskIds []string) string {
 	return res
 }
 
-func ResetImage(InstanceId, ImageId, Password, PublicKey string) string {
+func ResetImage(InstanceId, ImageId, Password, PublicKey string) CommonReturn {
 	action := "ResetImage"
 	method := "POST"
 	if Password == "" && PublicKey == "" {
@@ -189,7 +189,7 @@ func ResetImage(InstanceId, ImageId, Password, PublicKey string) string {
 	}
 	param := map[string]interface{}{
 		"InstanceId": InstanceId,
-		"ImageId":  ImageId,
+		"ImageId":    ImageId,
 	}
 	if Password != "" {
 		param["Password"] = Password
@@ -205,13 +205,13 @@ func ResetImage(InstanceId, ImageId, Password, PublicKey string) string {
 	return res
 }
 
-func ModifyIpAddress(InstanceId, InterfaceId, Address string) string {
+func ModifyIpAddress(InstanceId, InterfaceId, Address string) CommonReturn {
 	action := "ModifyIpAddress"
 	method := "POST"
 	body, err := json.Marshal(map[string]string{
-		"InstanceId": InstanceId,
+		"InstanceId":  InstanceId,
 		"InterfaceId": InterfaceId,
-		"Address": Address,
+		"Address":     Address,
 	})
 	if err != nil {
 		panic(err)
@@ -220,11 +220,11 @@ func ModifyIpAddress(InstanceId, InterfaceId, Address string) string {
 	return res
 }
 
-func ModifyInstanceName(InstanceId, InstanceName string) string {
+func ModifyInstanceName(InstanceId, InstanceName string) CommonReturn {
 	action := "ModifyInstanceName"
 	method := "POST"
 	body, err := json.Marshal(map[string]string{
-		"InstanceId": InstanceId,
+		"InstanceId":   InstanceId,
 		"InstanceName": InstanceName,
 	})
 	if err != nil {
@@ -232,4 +232,52 @@ func ModifyInstanceName(InstanceId, InstanceName string) string {
 	}
 	res := doHttpPost(action, CcsUrl, method, body)
 	return res
+}
+
+// 获取历史实例信息
+type HistoryInstance struct {
+	InstanceName   string
+	InstanceId     string
+	VdcName        string
+	VdcId          string
+	InstanceStatus string
+	CreateTime     string
+	Cpu            int
+	Ram            int
+	RegionId       string
+	TotalDiskSize  int
+}
+
+type Result struct {
+	Date         string
+	InstanceInfo []HistoryInstance
+	PageNumber   int
+	PageCount    int
+}
+
+func GetHistoryInstance(Date string, PageSize, PageNum int) *Result {
+	if Date == "" {
+		return nil
+	}
+
+	action := "DescribeHistoryInstance"
+	body, err := json.Marshal(map[string]interface{}{
+		"Date":       Date,
+		"PageSize":   PageSize,
+		"PageNumber": PageNum,
+	})
+	if err != nil {
+		panic(err)
+	}
+	res := doHttpPost(action, CcsUrl, "POST", body)
+	if res.Code != "Success" {
+		panic(res.Message)
+	}
+	resByte, _ := json.Marshal(res.Data)
+	result := Result{
+		PageCount:  res.PageCount,
+		PageNumber: res.PageNumber,
+	}
+	json.Unmarshal(resByte, &result)
+	return &result
 }

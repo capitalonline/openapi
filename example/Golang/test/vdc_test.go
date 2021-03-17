@@ -1,23 +1,23 @@
 package test
 
 import (
-	"testing"
 	"OpenAPI-GO/model"
 	"fmt"
+	"testing"
 )
 
-func TestDescribeVdc(t *testing.T)  {
+func TestDescribeVdc(t *testing.T) {
 	result := model.DescribeVdc("APAC_Seoul_A", "8cf43b43-7920-4478-acf6-969245dcec14", "")
-	fmt.Printf("%v", string(result))
+	fmt.Printf("%v", result)
 }
 
 func TestCreateVdc(t *testing.T) {
 	info := model.PublicNetworkInfo{
-		Name: "TestGoPublic",
-		Type: "Bandwidth_BGP",
+		Name:          "TestGoPublic",
+		Type:          "Bandwidth_BGP",
 		BillingMethod: "BandwIdth",
-		Qos: 5,
-		IPNum: 4,
+		Qos:           5,
+		IPNum:         4,
 	}
 	result := model.CreateVdc("APAC_Seoul_A", "TestGo", info)
 	fmt.Println(result)

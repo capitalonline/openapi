@@ -664,6 +664,7 @@ def get_mysql_instances_list():
         "Ram": 8192,
         "RegionId": "CN_Hongkong_A",
         "RelationService": null,
+        "ResourceId": "45533175-2c4b-4e5f-8280-85b68e932381",
         "RoGroups": [{
             "Cpu": 4,
             "CreateTime": "2020-05-04 00:37:13",
@@ -675,6 +676,7 @@ def get_mysql_instances_list():
             "Progress": 100,
             "Ram": 8192,
             "ServiceId": "5f88d00f-d01b-4103-ba29-5810b027f7c9",
+            "ResourceId": "45533175-2c4b-4e5f-8280-85b68e932381",
             "ServiceName": "mysql_for_readonly",
             "Status": "RUNNING",
             "SvcType": "mysql-readonly"
