@@ -6498,7 +6498,18 @@ def get_status(task_id):
 |高主频计算型hfc3	|CCS.HFC3​|
 |高主频通用型hfg3	|CCS.HFG3​|
 |高主频内存型hfr3	|CCS.HFR3​|
-
+|密集计算型ic3v2 |CCS.IC3V2​|
+|计算型c3v2	      |CCS.C3V2​|
+|通用型g3v2	      |CCS.G3V2 |
+|内存型r3v2	      |CCS.R3V2 |
+|密集计算型ic2v2  | CCS.IC2V2 |
+|计算型c2v2	      |CCS.C2V2 |
+|通用型g2v2	      |CCS.G2V2 |
+|内存型r2v2	      |CCS.R2V2 |
+|密集计算型ic1v2  | CCS.IC1V2 |
+|计算型c1v2	     |CCS.C1V2 |
+|通用型g1v2	     |CCS.G1V2 |
+|内存型r1v2	     |CCS.R1V2 |
 
 
 
