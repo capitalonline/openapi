@@ -92,7 +92,9 @@
        * [7.OperateBmsPower](#7operatebmspower)
        * [8.ReinstallBms](#8ReinstallBms)
        * [9.DescribeBmsVNC](#9describebmsvnc)
-       * [10.ModifyBmsOrder](#10modifybmsorder)  
+       * [10.ModifyBmsOrder](#10modifybmsorder)
+       * [11.DescribeBmsTask](#11describebmstask)
+       * [12.DeleteBmsInstance](#12describebmstask)
      * [裸金属云盘相关](#裸金属云盘相关)
        * [1.CreateDisk](#1createDisk)
        * [2.AttachDisk](#2attachDisk)
@@ -4282,16 +4284,18 @@ def describe_bms_images():
 | Password           | string | 是       | MengYou&&Cds-2019                           | 密码                                                         |
 | InstanceName       | string | 是       | shouduzaixbms                               | 主机名称                                                     |
 | AssignHostNo       | string | 否       | 001                                         | 主机编号，编号至少三位，不足三位自动补全                     |
-| InstanceChargeType | string | 是       | PostPaid                                    | 付费方式，取值范围： PrePaid：预付费，包年包月, 目前只支持包年包月 |
+| InstanceChargeType | string | 是       | PostPaid                                    | 付费方式，取值范围： PrePaid：预付费，包年包月, PostPaid：按需计费 |
 | AutoRenew          | int    | 是       | 1                                           | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费     |
 | PrepaidMonth       | int    | 是       | 1                                           | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
 | ComputeId          | string | 是       | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469        | 规格配置ID                                                   |
 | GoodsId            | int    | 是       | 7955                                        | 商品ID                                                       |
 | ImageId            | string | 是       | d6012cd8-b672-11e9-9265-525400b97470        | 镜像ID                                                       |
-| EnableMonitor      | int    | 否       | 1                                           | 是否开启监控, 1为开启，0为关闭，默认为关闭。                 |
+| EnableMonitor      | boolean | 否      | True                                            | 是否开启监控, True为开启，False为关闭，默认为关闭。            |
 | PipeIds            | list   | 是       | `["9fd88912-b668-11e9-a140-0242ac110002",]` | 网段主键ID列表                                               |
 | Amount             | int    | 是       | 10                                          | 指定创建裸金属服务器的数量，取值范围：1-100                  |
-
+| Raid               | string | 否       | 1                                           | 数据盘自定义Raid,支持 0, 1, 5, 10                             |
+| CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
+| CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
 
 
 **返回数据：**
@@ -4301,7 +4305,7 @@ def describe_bms_images():
 | Code    | string | Success                                  | 返回状态码: Success: 成功 |
 | Message | string | 订单创建成功，任务已下发，请等待......   | 返回信息                  |
 | Data    | object | {}                                       | 返回数据                  |
-| TaskIds | list   | ["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id                |
+| TaskId | list   | ["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id                |
 
 
 
@@ -4729,6 +4733,10 @@ def operat_bms_power(id, state):
 | BaremetalId | string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID |
 | ImageId     | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID   |
 | Password    | string | 是       | capitalonline                        | 密码     |
+| Raid               | string | 否       | 1                      | 数据盘自定义Raid,支持 0, 1, 5, 10                             |
+| CustomPartition    | list   | 否       | ["/","swap", "/aaa"]   | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
+| CustomPartitionSize | list   | 否      | [100,  128,  300 ]     | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
+
 
 **返回参数**
 
@@ -4915,6 +4923,125 @@ def update_bms_order(id, renewal):
     res = requests.post(url, json=param)
     result = json.loads(res.content)
  ```
+
+### 11.DescribeBmsTask
+
+**Action: DescribeBmsTask**
+
+**描述:** 查询创建裸金属服务器任务状态
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** GET
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| TaskId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 创建裸金属服务器返回的TaskId |
+
+**返回数据：**
+
+| 名称    | 类型   | 示例                                     | 描述              |
+| ------- | ------ | ---------------------------------------- | ----------------- |
+| Code    | string | Success                                  | 错误码            |
+| Message | string | Success                                  | 提示信息          |
+| Data    | object | {}                                       | 返回数据          |
+| BareMetalIds | list | ["27f262ec-92fd-4a77-ba78-6f682b7533e3"] | 裸金属服务器的编号id |
+| Status | string | succeed / init                            | 任务状态: succeed（完成）, init(进行中)   | 
+
+**错误码：**
+
+| httpcode | 错误码           | 错误信息                                      | 描述                      |
+| -------- | ---------------- | --------------------------------------------- | ------------------------- |
+| 400      | ParameterInvalid | The parameter "TaskId" is required.      | 参数TaskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "TaskId" cannot be empty.  | 参数TaskId不能为空。 |
+| 400      | DataNotExists    | Please check that the parameters are correct. | 请检查参数是否正确。      |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {
+    "BareMetalIds":["27f262ec-92fd-4a77-ba78-6f682b7533e3"],
+    "Status":"succeed"
+  }
+}
+```
+
+ **代码调用示例**
+
+ ```python
+def describe_bms_task(TaskId):
+    action = "DescribeBmsTask"
+    method = "GET"
+    param = {
+        "TaskId": TaskId
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+ ```
+
+### 12.DeleteBmsInstance
+
+**Action: DeleteBmsInstance**
+
+**描述:** 删除按需计费的裸金属服务器
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 按需裸金属服务器的编号id（删除前请先关机） |
+
+**返回数据：**
+
+| 名称    | 类型   | 示例                                     | 描述              |
+| ------- | ------ | ---------------------------------------- | ----------------- |
+| Code    | string | Success                                  | 错误码            |
+| Message | string | Success                                  | 提示信息          |
+| Data    | object | {}                                       | 返回数据          |
+
+
+**错误码：**
+
+| httpcode | 错误码           | 错误信息                                      | 描述                      |
+| -------- | ---------------- | --------------------------------------------- | ------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.      | 参数BaremetalId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty.  | 参数BaremetalId不能为空。 |
+| 400      | LogicError       | 选择中包含有（非按需计费／非关机状态）的主机       | 只能删除按需计费和关机状态的主机     |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {}
+}
+```
+
+ **代码调用示例**
+
+ ```python
+def delete_bms_instance(BaremetalId):
+    action = "DeleteBmsInstance"
+    method = "POST"
+    param = {
+        "BaremetalId": BaremetalId
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+ ```
+
 
 ## 裸金属云盘相关
 
