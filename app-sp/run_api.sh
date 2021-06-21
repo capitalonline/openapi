@@ -31,7 +31,7 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/dist/;
+        root   /app/app-sp/dist/;
         try_files tempuri tempuri/ /index.html last;
         index  index.html;
     }
