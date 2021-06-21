@@ -5,7 +5,7 @@ import store from './store';
 import './public-path'
 import VueRouter from 'vue-router';
 import ElementUI from 'element-ui';
-import '~/assets/reset.scss';
+import './assets/reset.scss';
 
 Vue.use(ElementUI)
 

@@ -26,8 +26,8 @@ module.exports = {
       jsonpFunction: `webpackJsonp_AppSp`,
     }
   },
-  chainWebpack: config => {
-    config.resolve.alias
-      .set("~", path.join(__dirname, "../app-main/src"))
-  }
+  // chainWebpack: config => {
+  //   config.resolve.alias
+  //     .set("~", path.join(__dirname, "../app-main/src"))
+  // }
 }
