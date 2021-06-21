@@ -1,0 +1,43 @@
+<template>
+  <div id="app">
+    <Header></Header>
+    <el-container class="container">
+      <el-aside width="200px">
+        <left-menu></left-menu>
+      </el-aside>
+      <el-main class="main-content">
+        <router-view></router-view>
+      </el-main>
+    </el-container>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import Header from './components/Header.vue';
+import LeftMenu from './components/LeftMenu.vue';
+
+@Component({
+  components: {
+    Header,
+    LeftMenu
+  },
+})
+export default class App extends Vue {}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  color: #333;
+}
+.container {
+  height: 100%;
+}
+.main-content {
+  background: #f5f6fa;
+}
+</style>

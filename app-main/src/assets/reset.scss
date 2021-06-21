@@ -1,0 +1,34 @@
+@import 'variable.scss';
+
+html, body, div, p {
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+}
+
+
+/* 表格 */
+.el-table th, .el-table td {
+  padding: 6px 0;
+  font-size: 12px;
+}
+.el-table th {
+  background-color: #eef1f6;
+}
+
+/* 按钮 */  
+.el-button {
+  padding: 8px 20px;
+  font-size: 12px;
+}
+.el-button--text {
+  padding: 0;
+  font-size: 12px;
+}
+
+/* 弹窗 */
+.el-dialog__footer {
+  text-align: center;
+}
