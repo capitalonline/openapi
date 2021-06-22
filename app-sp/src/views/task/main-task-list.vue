@@ -1,10 +1,12 @@
 <template>
   <div>
-    <div class="action-box">
-      <el-button type="primary" @click="FnShowCreate">新建主任务配置</el-button>
-    </div> 
+    <action-block :search_option="search_con" create_btn="新建主任务配置" @fn-search="FnGetList" @fn-create="FnShowCreate"></action-block>
     <el-table :data="task_list" border>
-      <el-table-column prop="id" label="ID"></el-table-column>
+      <el-table-column prop="id" label="ID">
+        <template #default="scope">
+          <el-button type="text" @click="FnDetail(scope.row.id)">{{ scope.row.id }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column prop="maintask_type" label="类型"></el-table-column>
       <el-table-column prop="maintask_name" label="名称"></el-table-column>
       <el-table-column prop="priority" label="优先级"></el-table-column>
@@ -82,18 +84,26 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import draggerTask from '../../components/draggerTask.vue';
+import actionBlock from '../../components/actionBlock.vue';
 import Service from '../../https/task/main-task';
 import SubService from '../../https/task/sub-task';
 
 @Component({
   components: {
     LabelBlock,
-    draggerTask
+    draggerTask,
+    actionBlock
   },
 })
 export default class App extends Vue {
   $message;
   $confirm;
+  $router;
+  private search_con = {
+    id: '请输入任务ID',
+    maintask_type: '请输入任务类型',
+    maintask_name: '请输入任务名称'
+  };
   private create_dialog :Boolean = false;
   private dialog_title :String = '';
   private task_list = [];
@@ -147,8 +157,12 @@ export default class App extends Vue {
     this.default_id = '';
     this.default_sub_task = [];
   };
-  private async FnGetList() {
-    let resData :any = await Service.get_maintask_list();
+  private async FnGetList(data :any = {}) {
+    let reqData :any = {};
+    if(data.id) reqData.id = data.id;
+    if(data.maintask_type) reqData.maintask_type = data.maintask_type;
+    if(data.maintask_name) reqData.maintask_name = data.maintask_name;
+    let resData :any = await Service.get_maintask_list(reqData);
     if(resData.code == 200) {
       this.task_list = resData.data.maintask_info;
     }
@@ -217,6 +231,9 @@ export default class App extends Vue {
       this.FnGetList();
     }
   };
+  private FnDetail(id) {
+    this.$router.push(`/mainTaskDetail/${id}`)
+  };
 
   created() {
     this.FnGetList();
@@ -225,18 +242,12 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.action-box {
-  padding: 20px;
-  background: #f2f2f2;
-  border: 1px solid #e7e7e7;
-  margin-bottom: 20px;
-}
 .sub-task-box {
   padding: 10px 20px 20px;
   background: #f2f2f2;
   border: 1px solid #e7e7e7;
 }
 .switch-box {
-  line-height: 40px;
+  line-height: 32px;
 }
 </style>

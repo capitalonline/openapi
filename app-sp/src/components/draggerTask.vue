@@ -1,34 +1,5 @@
 <template>
   <div>
-    <!-- <div class="wrapper-group">
-      <vuedraggable class="left-wrapper" v-model="main_task" :group='{name: "maintask"}'>
-        <div v-for="(list, index) in main_task" :key="index" class="list-box" :class="{'active': index == default_index}">
-          <vuedraggable class="wrapper" v-model="main_task[index]" :group='{name: "task"+index, put: true}'>
-            <div v-for="item in main_task[index]" :key="item.id" class="item"> 
-              <div>{{ item.subtask_name }}</div>
-            </div>
-          </vuedraggable>
-          <div class="btn-box">
-            <el-button type="text" @click="FnAddRelTask(index)">
-              <i class="el-icon-circle-plus-outline"></i>
-            </el-button>
-            <el-button type="text">
-              <i class="el-icon-remove-outline"></i>
-            </el-button>
-          </div>
-        </div>
-        <p slot="header" class="title">关联任务：</p>
-      </vuedraggable>
-
-
-      <vuedraggable class="right-wrapper" v-model="default_sub_task" :group='{name: "task"+default_index, put: true}'>
-        <div v-for="item in default_sub_task" :key="item.id" class="list-box">
-          {{ item.subtask_name }}
-        </div>
-        <p slot="header" class="title">已有子任务：</p>
-      </vuedraggable>
-    </div> -->
-
     <div class="wrapper-group">
       <vuedraggable class="left-wrapper" v-model="main_task" @end="FnEmit">
         <div v-for="(list, index) in main_task" :key="index" class="list-box">
@@ -44,15 +15,12 @@
           </div>
           <div class="btn-box">
             <el-button type="text">
-              <i class="el-icon-remove-outline"></i>
+              <i class="el-icon-remove-outline" @click="FnDel(index)"></i>
             </el-button>
           </div>
         </div>
       </vuedraggable>
     </div>
-
-    
-
     <div class="add-btn">
       <el-button type="text" @click="FnShowRelSubTask">
         关联子任务 <i class="el-icon-plus"></i>
@@ -75,30 +43,19 @@ export default class App extends Vue {
   @Prop({ default: [] }) private sub_task!: Array<any>;
   @Prop({ default: [] }) private rel_task!: Array<any>;
   private main_task = [];
-  private default_main_task = [];
-  private sub_task_list = [];
-  private default_sub_task = [];
-  private default_index = 0;
-
   private FnShowRelSubTask() {
     this.main_task.push([])
   };
-  private FnAddRelTask(index) {
-    if(this.sub_task_list[index]) {
-      this.default_sub_task = this.sub_task_list[index];
-    } else {
-      this.default_sub_task = JSON.parse(JSON.stringify(this.sub_task));
-      this.sub_task_list.push(this.default_sub_task);
-    }
-    this.default_index = index;
+  private FnDel(index) {
+    this.main_task.splice(index, 1);
+    this.FnEmit();
   };
   private FnEmit() {
     this.$emit('fn-rel-task', this.main_task)
   }
 
   @Watch('rel_task')
-  private FnWatchRel(newVal, oldVal) {
-    console.log("newVal", newVal)
+  private FnWatchRel(newVal) {
     this.main_task = newVal;
   }
 }
@@ -157,7 +114,7 @@ export default class App extends Vue {
   }
 }
 .add-btn {
-  line-height: 40px;
+  line-height: 32px;
 }
 </style>
 

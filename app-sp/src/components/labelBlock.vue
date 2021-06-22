@@ -24,7 +24,7 @@ export default class extends Vue {
   .left-label {
     width: 120px;
     min-width: 120px;
-    line-height: 52px;
+    line-height: 44px;
   }
   .right-content {
     flex: 1;

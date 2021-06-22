@@ -13,6 +13,14 @@ const routes: RouteConfig[] = [
     component: () => import(/* webpackChunkName: "about" */ '../views/task/main-task-list.vue'),
   },
   {
+    path: '/mainTaskDetail/:id',
+    name: 'main_task_detail',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/task/main-task-detail.vue'),
+  },
+  {
     path: '/subTask',
     name: 'sub_task_list',
     // route level code-splitting

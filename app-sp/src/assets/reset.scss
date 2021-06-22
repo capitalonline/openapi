@@ -18,6 +18,16 @@ html, body {
   background-color: #eef1f6;
 }
 
+/* 输入框 */
+.el-input__inner {
+  height: 32px;
+  font-size: 12px;
+}
+.el-input-number,
+.el-input__icon {
+  line-height: 30px;
+}
+
 /* 按钮 */  
 .el-button {
   padding: 8px 20px;

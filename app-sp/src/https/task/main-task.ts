@@ -2,10 +2,11 @@ import service from "../http"
 
 export default {
   // 获取主任务配置列表
-  get_maintask_list() {
+  get_maintask_list(reqData :any) {
     return service({
       method: "GET",
-      url: "/api/v1/maintask/configuration"
+      url: "/api/v1/maintask/configuration",
+      params: reqData
     })
   },
   // 添加主任务配置
@@ -29,6 +30,14 @@ export default {
     return service({
       method: "DELETE",
       url: "/api/v1/maintask/configuration",
+      params: reqData
+    })
+  },
+  // 获取主任务详情
+  get_maintask_detail(reqData: any) {
+    return service({
+      method: "GET",
+      url: "/api/v1/maintask/configuration/detail",
       params: reqData
     })
   }
