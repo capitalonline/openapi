@@ -13,7 +13,8 @@
       <el-table-column prop="retry" label="重试次数"></el-table-column>
       <el-table-column prop="timeout" label="超时时间"></el-table-column>
       <el-table-column prop="fallback_url" label="回退地址"></el-table-column>
-      <el-table-column>
+      <el-table-column prop="is_valid" label="is_valid"></el-table-column>
+      <el-table-column label="操作">
         <template #default="scope">
           <el-button type="text" @click="FnShowUpdate(scope.row)">编辑</el-button>
           <el-button type="text" @click="FnShowDel(scope.row.id, scope.row.maintask_name)">删除</el-button>

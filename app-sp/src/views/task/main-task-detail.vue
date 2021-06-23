@@ -1,10 +1,14 @@
 <template>
   <div>
-    <div>{{ maintask_name }}</div>
+    <div class="name-title">{{ maintask_name }}</div>
     <div class="flow-box">
       <div v-for="flow in subtask_list" :key="flow" class="flow">
         <div v-for="item in flow" :key="item" class="item">
-          {{ item.subtask_name }}
+          <div class="row"><span class="left-title">子任务名称：</span>{{ item.subtask_name }}</div>
+          <div class="row"><span class="left-title">子任务类型：</span>{{ item.subtask_type }}</div>
+          <div class="row"><span class="left-title">子任务依赖参数：</span>{{ item.params }}</div>
+          <div class="row"><span class="left-title">子任务优先级：</span>{{ item.priority }}</div>
+          <div class="row"><span class="left-title">子任务重试次数：</span>{{ item.retry }}</div>
         </div>
       </div>
     </div>
@@ -38,14 +42,25 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.name-title {
+  margin-bottom: 20px;
+}
 .flow-box {
   display: flex;
+  font-size: 12px;
   justify-content: space-around;
   .flow {
     width: 500px;
-    padding: 20px;
+    padding: 20px 20px 10px;
+    background: #fff;
+    border-radius: 4px;
     .item {
       padding: 20px;
+      box-shadow: 2px 2px 2px 2px #455cc633;
+      margin-bottom: 20px;
+      .row {
+        line-height: 22px;
+      }
     }
   }
 }

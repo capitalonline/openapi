@@ -2,10 +2,11 @@ import service from "../http"
 
 export default {
   // 获取子任务配置列表
-  get_subtask_list() {
+  get_subtask_list(reqData :any = {}) {
     return service({
       method: "GET",
-      url: "/api/v1/subtask/configuration"
+      url: "/api/v1/subtask/configuration",
+      params: reqData
     })
   },
   // 添加子任务配置

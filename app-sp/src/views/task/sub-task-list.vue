@@ -1,11 +1,10 @@
 <template>
   <div>
-    <div class="action-box">
-      <el-button type="primary" @click="FnShowCreate">新建子任务配置</el-button>
-    </div> 
+    <action-block :search_option="search_con" create_btn="新建子任务配置" @fn-search="FnGetList" @fn-create="FnShowCreate"></action-block>
     <el-table :data="task_list" border>
-      <el-table-column prop="subtask_name" label="任务名称"></el-table-column>
-      <el-table-column prop="subtask_type" label="任务类型"></el-table-column>
+      <el-table-column prop="id" label="ID"></el-table-column>
+      <el-table-column prop="subtask_name" label="名称"></el-table-column>
+      <el-table-column prop="subtask_type" label="类型"></el-table-column>
       <el-table-column prop="dependent_params" label="依赖参数"></el-table-column>
       <el-table-column prop="priority" label="优先级"></el-table-column>
       <el-table-column prop="retry" label="重试次数"></el-table-column>
@@ -16,6 +15,7 @@
       <el-table-column prop="exec_url" label="执行URL"></el-table-column>
       <el-table-column prop="check_url" label="检查URL"></el-table-column>
       <el-table-column prop="fallback_url" label="回退URL"></el-table-column>
+      <el-table-column prop="is_valid" label="is_valid"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button type="text" @click="FnShowUpdate(scope.row)">编辑</el-button>
@@ -41,21 +41,7 @@
         </label-block>
         <label-block label="子任务依赖参数">
           <template #default>
-            <el-button type="text" @click="FnAddDepen" class="add-btn">
-              <i class="el-icon-plus"></i> 添加
-            </el-button>
-            <div v-for="item in sub_config.dependent_params" :key="item" class="add-box">
-              <div class="m-right10"><el-input type="text" v-model="item.key"></el-input></div>
-              <div><el-select v-model="item.value">
-                <el-option 
-                  v-for="(value, type) in dependent_type" 
-                  :key="type" 
-                  :label="value.label" 
-                  :value="value.value">
-                </el-option>
-              </el-select>
-              </div>
-            </div>
+            <params :params="default_dependent_params" @fn-change="FnGetDep"></params>
           </template>
         </label-block>
         <label-block label="子任务优先级">
@@ -103,21 +89,7 @@
         </label-block>
         <label-block label="子任务执行参数">
           <template #default>
-            <el-button type="text" @click="FnAddExec" class="add-btn">
-              <i class="el-icon-plus"></i> 添加
-            </el-button>
-            <div v-for="item in sub_config.exec_url_body" :key="item" class="add-box">
-              <div class="m-right10"><el-input type="text" v-model="item.key"></el-input></div>
-              <div><el-select v-model="item.value">
-                <el-option 
-                  v-for="(value, type) in dependent_type" 
-                  :key="type" 
-                  :label="value.label" 
-                  :value="value.value">
-                </el-option>
-              </el-select>
-              </div>
-            </div>
+            <params :params="default_dependent_params" @fn-change="FnGetExec"></params>
           </template>
         </label-block>
         <label-block label="子任务检查URL">
@@ -151,27 +123,32 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import ActionBlock from '../../components/actionBlock.vue';
 import LabelBlock from '../../components/labelBlock.vue';
+import Params from '../../components/params.vue';
 import Service from '../../https/task/sub-task';
 
 @Component({
   components: {
-    LabelBlock
+    LabelBlock,
+    ActionBlock,
+    Params
   },
 })
 export default class App extends Vue {
   $message;
   $confirm;
+  private search_con = {
+    id: '请输入任务ID',
+    subtask_type: '请输入任务类型',
+    subtask_name: '请输入任务名称'
+  };
   private create_dialog :Boolean = false;
   private dialog_title :String = '';
-  private dependent_type = {
-    number: {label: '数值', value: 0},
-    string: {label: '字符串', value: ''},
-    object: {label: '字典', value: {}},
-    list: {label: '列表', value: []}
-  }
   private task_list = [];
   private default_id = '';
+  private default_dependent_params = [];
+  private default_exec_url_body = [];
   private sub_config = {
     subtask_name: '',
     subtask_type: '',
@@ -201,8 +178,7 @@ export default class App extends Vue {
     this.sub_config.dependent_params = [];
     let dependent_params = JSON.parse(row.dependent_params);
     for(let key in dependent_params) {
-      console.log("aaa", dependent_params[key])
-      this.sub_config.dependent_params.push({key: key, value: dependent_params[key]})
+      this.default_dependent_params.push({key: key, value: dependent_params[key]})
     }
     this.sub_config.priority = row.priority;
     this.sub_config.retry = row.retry;
@@ -214,17 +190,18 @@ export default class App extends Vue {
     this.sub_config.exec_url_body = [];
     let exec_url_body = JSON.parse(row.exec_url_body)
     for(let key in exec_url_body) {
-      this.sub_config.exec_url_body.push({key: key, value: exec_url_body[key]})
+      this.default_exec_url_body.push({key: key, value: exec_url_body[key]})
     }
     this.sub_config.check_url = row.check_url;
     this.sub_config.fallback_url = row.fallback_url;
     this.sub_config.is_valid = Boolean(row.is_valid);
   };
-  private FnAddDepen() {
-    this.sub_config.dependent_params.push({key: "", value: ""})
+
+  private FnGetDep(param) {
+    this.sub_config.dependent_params = param;
   };
-  private FnAddExec() {
-    this.sub_config.exec_url_body.push({key: "", value: ""})
+  private FnGetExec(param) {
+    this.sub_config.exec_url_body = param;
   };
   private FnClose() {
     this.create_dialog = false;
@@ -243,8 +220,12 @@ export default class App extends Vue {
     this.sub_config.check_url = '';
     this.sub_config.fallback_url = '';
   };
-  private async FnGetList() {
-    let resData :any = await Service.get_subtask_list();
+  private async FnGetList(data :any= {}) {
+    let reqData :any = {};
+    if(data.id) reqData.id = data.id;
+    if(data.subtask_type) reqData.subtask_type = data.subtask_type;
+    if(data.subtask_name) reqData.subtask_name = data.subtask_name;
+    let resData :any = await Service.get_subtask_list(reqData);
     if(resData.code == 200) {
       this.task_list = resData.data.subtask_info;
     }
@@ -332,18 +313,8 @@ export default class App extends Vue {
   background: #f2f2f2;
   border: 1px solid #e7e7e7;
 }
-.add-btn {
-  line-height: 40px;
-}
-.add-box {
-  display: flex;
-  line-height: 46px;
-  .m-right10 {
-    margin-right: 10px;
-  }
-}
 .switch-box {
-  line-height: 40px;
+  line-height: 30px;
 }
 .sure-btn {
   margin-top: 10px;

@@ -24,7 +24,9 @@ export default class extends Vue {
   private search_value = {
     id: '',
     maintask_name: '',
-    maintask_type: ''
+    maintask_type: '',
+    subtask_type: '',
+    subtask_name: ''
   };
 
   private FnSearch() {
