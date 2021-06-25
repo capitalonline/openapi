@@ -253,7 +253,7 @@ export default class App extends Vue {
       exec_url_body: JSON.stringify(exec_url_body),
       check_url: this.sub_config.check_url,
       fallback_url: this.sub_config.fallback_url,
-      id_valid: Number(this.sub_config.is_valid)
+      is_valid: Number(this.sub_config.is_valid)
     };
     if(this.default_id) {
       this.FnUpdate(reqData);

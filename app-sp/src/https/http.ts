@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 let instance = axios.create({
-  baseURL: ""
+  baseURL: "/app-sp"
 })
 
 // 添加请求拦截器
