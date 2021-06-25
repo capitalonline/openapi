@@ -9,11 +9,8 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
     },
     proxy: {
-      '/app-sp/api': {
+      '/api': {
         target: 'http://10.128.22.12:9000',
-        pathRewrite: {
-          '^/app-sp/api': '/api'
-        },
         ws: true,
         changeOrigin: true
       },
