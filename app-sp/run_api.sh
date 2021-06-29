@@ -12,7 +12,7 @@ if [[ $# -ge 1 ]]; then
     if [[ $1 != 'pro' ]] && [[ $1 != 'pre' ]] && [[ $1 != 'dev' ]] && [[ $1 != 'test' ]]; then
         echo 'usage: ./run_api.sh [pro|pre|dev|test]'
     fi
-    if [[ $1 == 'dev' ]]; then
+    if [[ $1 == 'test' ]]; then
         backend=http://10.128.22.12:9000
     fi
     if [[ $1 == 'pre' ]]; then

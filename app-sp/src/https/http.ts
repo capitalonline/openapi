@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 let instance = axios.create({
-  // baseURL: "http://localhost:30000/"
+  baseURL: process.env.VUE_APP_BASE_API
 })
 
 // 添加请求拦截器

@@ -28,5 +28,5 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### 预上线环境部署
-> docker run -p 6124:80 -v /data/cloud-os-sp-front:/app -d --name pre-cloud-os-sp-front  cloud-os-sp-front:v1 sh -c "cd /app;bash run_api.sh dev"
+### 测试环境部署
+> docker run -p 6124:80 -v /data/cloud-os-sp-front:/app -d --name pre-cloud-os-sp-front  cloud-os-sp-front:v1 sh -c "cd /app;bash run_api.sh test"
