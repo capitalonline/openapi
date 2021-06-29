@@ -30,6 +30,7 @@ export default class extends Vue {
     flex: 1;
     padding: 6px 0;
     overflow: auto;
+    line-height: 32px;
   }
 }
 </style>

@@ -139,9 +139,9 @@ export default class App extends Vue {
   $message;
   $confirm;
   private search_con = {
-    id: '请输入任务ID',
-    subtask_type: '请输入任务类型',
-    subtask_name: '请输入任务名称'
+    id: { placeholder: '请输入任务ID' },
+    subtask_type: { placeholder: '请输入任务类型' },
+    subtask_name: { placeholder: '请输入任务名称' }
   };
   private create_dialog :Boolean = false;
   private dialog_title :String = '';

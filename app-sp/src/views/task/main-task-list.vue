@@ -101,9 +101,9 @@ export default class App extends Vue {
   $confirm;
   $router;
   private search_con = {
-    id: '请输入任务ID',
-    maintask_type: '请输入任务类型',
-    maintask_name: '请输入任务名称'
+    id: { placeholder: '请输入任务ID' },
+    maintask_type: { placeholder: '请输入任务类型' },
+    maintask_name: { placeholder: '请输入任务名称' }
   };
   private create_dialog :Boolean = false;
   private dialog_title :String = '';

@@ -2,11 +2,16 @@
   <div class="action-box">
       <div class="search-box">
         <div v-for="(value, key) in search_option" :key="key" class="search-input">
-          <el-input v-model="search_value[key]" :placeholder="value"></el-input>
+          <el-select v-model="search_value[key]" v-if="value.list">
+            <el-option v-for="item in value.list" :key="item.type" :label="item.label" :value="item.type"></el-option>
+          </el-select>
+          <el-input v-model="search_value[key]" :placeholder="value.placeholder" v-else></el-input>
         </div>
         <div><el-button type="primary" @click="FnSearch">查 询</el-button></div>
       </div>
-      <el-button type="primary" @click="FnShowCreate" v-if="create_btn">{{ create_btn }}</el-button>
+      <slot>
+        <el-button type="primary" @click="FnShowCreate" v-if="create_btn">{{ create_btn }}</el-button>
+      </slot>
     </div>
 </template>
 
@@ -55,8 +60,9 @@ export default class extends Vue {
 }
 .search-box {
   display: flex;
+  flex-wrap: wrap;
   .search-input {
-    width: 280px;
+    width: 200px;
     margin-right: 20px;
     margin-bottom: 20px;
   }

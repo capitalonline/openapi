@@ -5,33 +5,34 @@ Vue.use(VueRouter);
 
 const routes: RouteConfig[] = [
   {
+    path: '/instance',
+    name: 'instance_list',
+    component: () => import('../views/instance/list.vue'),
+  },
+  {
+    path: '/instance/create',
+    name: 'instance_create',
+    component: () => import('../views/instance/create.vue'),
+  },
+  {
     path: '/mainTask',
     name: 'main_task_list',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/task/main-task-list.vue'),
+    component: () => import('../views/task/main-task-list.vue'),
   },
   {
     path: '/mainTaskDetail/:id',
     name: 'main_task_detail',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/task/main-task-detail.vue'),
+    component: () => import( '../views/task/main-task-detail.vue'),
   },
   {
     path: '/subTask',
     name: 'sub_task_list',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/task/sub-task-list.vue'),
+    component: () => import('../views/task/sub-task-list.vue'),
   },
   {
     path: '/project',
     name: 'project_list',
-    component: () => import(/* webpackChunkName: "about" */ '../views/project/list.vue'),
+    component: () => import('../views/project/list.vue'),
   }
 ];
 

@@ -45,6 +45,10 @@ export default class App extends Vue {
   private active_menu :String = "sub_task_list";
   private menu = [
     {
+      name: "instance_list",
+      label: "云服务器"
+    },
+    {
       name: "task",
       label: "任务管理",
       children: [

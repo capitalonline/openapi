@@ -26,7 +26,7 @@ import LeftMenu from './components/LeftMenu.vue';
 export default class App extends Vue {}
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -35,7 +35,8 @@ export default class App extends Vue {}
   color: #333;
 }
 .container {
-  height: 100%;
+  height: calc(100% - 52px);
+  overflow: auto;
 }
 .main-content {
   background: #f5f6fa;
