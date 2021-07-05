@@ -15,6 +15,16 @@ const routes: RouteConfig[] = [
     component: () => import('../views/instance/create.vue'),
   },
   {
+    path: '/event',
+    name: 'event_list',
+    component: () => import('../views/event/list.vue'),
+  },
+  {
+    path: '/event/:id',
+    name: 'event_detail',
+    component: () => import('../views/event/detail.vue'),
+  },
+  {
     path: '/mainTask',
     name: 'main_task_list',
     component: () => import('../views/task/main-task-list.vue'),

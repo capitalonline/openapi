@@ -9,7 +9,6 @@
         :key="item.name" 
         v-if="item.children">
         <template slot="title">
-          <i class="el-icon-menu"></i>
           <span>{{ item.label }}</span>
         </template>
         <el-menu-item 
@@ -25,7 +24,6 @@
         :key="item.name" 
         @click="FnChangeUrl(item.name)"
         v-else>
-        <i class="el-icon-menu"></i>
         <span>{{ item.label }}</span>
       </el-menu-item>
     </template>
@@ -47,6 +45,14 @@ export default class App extends Vue {
     {
       name: "instance_list",
       label: "云服务器"
+    },
+    {
+      name: "disk_list",
+      label: "云盘"
+    },
+    {
+      name: "event_list",
+      label: "事件"
     },
     {
       name: "task",
