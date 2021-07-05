@@ -7,12 +7,12 @@
           <el-button type="text" @click="FnDetail(scope.row.id)">{{ scope.row.id }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="maintask_type" label="类型"></el-table-column>
+      <!-- <el-table-column prop="maintask_type" label="类型"></el-table-column> -->
       <el-table-column prop="maintask_name" label="名称"></el-table-column>
       <el-table-column prop="priority" label="优先级"></el-table-column>
       <el-table-column prop="retry" label="重试次数"></el-table-column>
       <el-table-column prop="timeout" label="超时时间"></el-table-column>
-      <el-table-column prop="fallback_url" label="回退地址"></el-table-column>
+      <el-table-column prop="callback_url" label="回退地址"></el-table-column>
       <el-table-column prop="is_valid" label="is_valid"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
@@ -32,11 +32,11 @@
             <el-input type="text" v-model="main_config.main_name"></el-input>
           </template>
         </label-block>
-        <label-block label="主任务类型">
+        <!-- <label-block label="主任务类型">
           <template #default>
             <el-input type="text" v-model="main_config.main_type"></el-input>
           </template>
-        </label-block>
+        </label-block> -->
         <label-block label="主任务优先级">
           <template #default>
             <el-input-number v-model="main_config.priority" :min="1" :max="10"></el-input-number>
@@ -54,7 +54,7 @@
         </label-block>
         <label-block label="主任务回退地址">
           <template #default>
-            <el-input type="text" v-model="main_config.fallback_url"></el-input>
+            <el-input type="text" v-model="main_config.callback_url"></el-input>
           </template>
         </label-block>
         <label-block label="有效" v-if="default_id" class="switch-box">
@@ -102,7 +102,7 @@ export default class App extends Vue {
   $router;
   private search_con = {
     id: { placeholder: '请输入任务ID' },
-    maintask_type: { placeholder: '请输入任务类型' },
+    // maintask_type: { placeholder: '请输入任务类型' },
     maintask_name: { placeholder: '请输入任务名称' }
   };
   private create_dialog :Boolean = false;
@@ -116,7 +116,7 @@ export default class App extends Vue {
     priority: 1,
     retry: 1,
     timeout: 60,
-    fallback_url: '',
+    callback_url: '',
     sub_task: [],
     is_valid: true,
   };
@@ -132,11 +132,11 @@ export default class App extends Vue {
     await this.FnGetSubList();
     this.default_id = row.id;
     this.main_config.main_name = row.maintask_name;
-    this.main_config.main_type = row.maintask_type;
+    // this.main_config.main_type = row.maintask_type;
     this.main_config.retry = row.retry;
     this.main_config.priority = row.priority;
     this.main_config.timeout = row.timeout;
-    this.main_config.fallback_url = row.fallback_url;
+    this.main_config.callback_url = row.callback_url;
     this.main_config.is_valid = Boolean(row.is_valid);
     this.default_sub_task = JSON.parse(row.subtask_flow).map(list => {
       return list.map(item => {
@@ -151,7 +151,7 @@ export default class App extends Vue {
     this.main_config.retry = 1;
     this.main_config.priority = 1;
     this.main_config.timeout = 60;
-    this.main_config.fallback_url = '';
+    this.main_config.callback_url = '';
     this.main_config.sub_task = [];
     this.main_config.is_valid = true;
     this.sub_task_list = [];
@@ -164,13 +164,13 @@ export default class App extends Vue {
     if(data.maintask_type) reqData.maintask_type = data.maintask_type;
     if(data.maintask_name) reqData.maintask_name = data.maintask_name;
     let resData :any = await Service.get_maintask_list(reqData);
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.task_list = resData.data.maintask_info;
     }
   };
   private async FnGetSubList() {
     let resData :any = await SubService.get_subtask_list();
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.sub_task_list =  resData.data.subtask_info;
     }
   };
@@ -184,12 +184,12 @@ export default class App extends Vue {
   private FnConfirm() {
     // TODO：数据校验
     let reqData = {
-      maintask_type: this.main_config.main_type,
+      // maintask_type: this.main_config.main_type,
       maintask_name: this.main_config.main_name,
       priority: this.main_config.priority,
       retry: this.main_config.retry,
       timeout: this.main_config.timeout,
-      fallback_url: this.main_config.fallback_url,
+      callback_url: this.main_config.callback_url,
       subtask_flow: JSON.stringify(this.main_config.sub_task),
       is_valid: Number(this.main_config.is_valid)
     }
@@ -201,7 +201,7 @@ export default class App extends Vue {
   };
   private async FnCreate(reqData) {
     let resData :any = await Service.add_maintask(reqData);
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功新建主任务配置！');
       this.FnGetList();
@@ -209,7 +209,7 @@ export default class App extends Vue {
   };
   private async FnUpdate(reqData) {
     let resData :any = await Service.update_maitask(Object.assign({}, reqData, {id: this.default_id}));
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功更新主任务配置！');
       this.FnGetList();
@@ -227,7 +227,7 @@ export default class App extends Vue {
   };
   private async FnDel() {
     let resData :any = await Service.delete_maintask({id: this.default_id});
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.$message.success(resData.msg || '成功删除主项目配置！');
       this.FnGetList();
     }

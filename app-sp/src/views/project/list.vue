@@ -92,7 +92,7 @@ export default class App extends Vue {
   };
   private async FnGetList() {
     let resData :any = await Service.get_project_list();
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.project_list = resData.data.project_info;
     }
   };
@@ -106,7 +106,7 @@ export default class App extends Vue {
   };
   private async FnCreate() {
     let resData :any = await Service.create_project(this.project_config);
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功创建项目！');
       this.FnGetList();
@@ -114,7 +114,7 @@ export default class App extends Vue {
   };
   private async FnUpdate() {
     let resData :any = await Service.update_project(Object.assign({}, this.project_config, {id: this.default_id}));
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功更新项目！');
       this.FnGetList();
@@ -132,7 +132,7 @@ export default class App extends Vue {
   };
   private async FnDel() {
     let resData :any = await Service.delete_project({id: this.default_id});
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.default_id = '';
       this.$message.success(resData.msg || '成功删除项目！');
       this.FnGetList();

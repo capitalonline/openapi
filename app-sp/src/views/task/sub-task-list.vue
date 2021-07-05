@@ -4,7 +4,7 @@
     <el-table :data="task_list" border>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="subtask_name" label="名称"></el-table-column>
-      <el-table-column prop="subtask_type" label="类型"></el-table-column>
+      <!-- <el-table-column prop="subtask_type" label="类型"></el-table-column> -->
       <el-table-column prop="dependent_params" label="依赖参数"></el-table-column>
       <el-table-column prop="priority" label="优先级"></el-table-column>
       <el-table-column prop="retry" label="重试次数"></el-table-column>
@@ -14,7 +14,7 @@
       <el-table-column prop="timeout" label="检查时间间隔"></el-table-column>
       <el-table-column prop="exec_url" label="执行URL"></el-table-column>
       <el-table-column prop="check_url" label="检查URL"></el-table-column>
-      <el-table-column prop="fallback_url" label="回退URL"></el-table-column>
+      <el-table-column prop="callback_url" label="回退URL"></el-table-column>
       <el-table-column prop="is_valid" label="is_valid"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
@@ -34,11 +34,11 @@
             <el-input type="text" v-model="sub_config.subtask_name"></el-input>
           </template>
         </label-block>
-        <label-block label="子任务类型">
+        <!-- <label-block label="子任务类型">
           <template #default>
             <el-input type="text" v-model="sub_config.subtask_type"></el-input>
           </template>
-        </label-block>
+        </label-block> -->
         <label-block label="子任务依赖参数">
           <template #default>
             <params :params="default_dependent_params" @fn-change="FnGetDep"></params>
@@ -99,7 +99,7 @@
         </label-block>
         <label-block label="子任务回退URL">
           <template #default>
-            <el-input type="text" v-model="sub_config.fallback_url"></el-input>
+            <el-input type="text" v-model="sub_config.callback_url"></el-input>
           </template>
         </label-block>
         <label-block label="有效" v-if="default_id" class="switch-box">
@@ -140,7 +140,7 @@ export default class App extends Vue {
   $confirm;
   private search_con = {
     id: { placeholder: '请输入任务ID' },
-    subtask_type: { placeholder: '请输入任务类型' },
+    // subtask_type: { placeholder: '请输入任务类型' },
     subtask_name: { placeholder: '请输入任务名称' }
   };
   private create_dialog :Boolean = false;
@@ -162,7 +162,7 @@ export default class App extends Vue {
     exec_url: '',
     exec_url_body: [],
     check_url: '',
-    fallback_url: '',
+    callback_url: '',
     is_valid: true,
   };
   private FnShowCreate() {
@@ -173,7 +173,7 @@ export default class App extends Vue {
     this.create_dialog = true;
     this.dialog_title = '更新子任务配置';
     this.default_id = row.id;
-    this.sub_config.subtask_type = row.subtask_type;
+    // this.sub_config.subtask_type = row.subtask_type;
     this.sub_config.subtask_name = row.subtask_name;
     this.sub_config.dependent_params = [];
     let dependent_params = JSON.parse(row.dependent_params);
@@ -193,7 +193,7 @@ export default class App extends Vue {
       this.default_exec_url_body.push({key: key, value: exec_url_body[key]})
     }
     this.sub_config.check_url = row.check_url;
-    this.sub_config.fallback_url = row.fallback_url;
+    this.sub_config.callback_url = row.callback_url;
     this.sub_config.is_valid = Boolean(row.is_valid);
   };
 
@@ -218,7 +218,7 @@ export default class App extends Vue {
     this.sub_config.exec_url = '';
     this.sub_config.exec_url_body = [];
     this.sub_config.check_url = '';
-    this.sub_config.fallback_url = '';
+    this.sub_config.callback_url = '';
   };
   private async FnGetList(data :any= {}) {
     let reqData :any = {};
@@ -226,7 +226,7 @@ export default class App extends Vue {
     if(data.subtask_type) reqData.subtask_type = data.subtask_type;
     if(data.subtask_name) reqData.subtask_name = data.subtask_name;
     let resData :any = await Service.get_subtask_list(reqData);
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.task_list = resData.data.subtask_info;
     }
   };
@@ -240,7 +240,7 @@ export default class App extends Vue {
       exec_url_body[item.key] = item.value
     });
     let reqData = {
-      subtask_type: this.sub_config.subtask_type,
+      // subtask_type: this.sub_config.subtask_type,
       subtask_name: this.sub_config.subtask_name,
       dependent_params: JSON.stringify(dependent_params),
       priority: this.sub_config.priority,
@@ -252,7 +252,7 @@ export default class App extends Vue {
       exec_url: this.sub_config.exec_url,
       exec_url_body: JSON.stringify(exec_url_body),
       check_url: this.sub_config.check_url,
-      fallback_url: this.sub_config.fallback_url,
+      callback_url: this.sub_config.callback_url,
       is_valid: Number(this.sub_config.is_valid)
     };
     if(this.default_id) {
@@ -263,7 +263,7 @@ export default class App extends Vue {
   };
   private async FnCreate(reqData) {
     let resData :any = await Service.add_subtask(reqData);
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功新建子任务配置！');
       this.FnGetList();
@@ -271,7 +271,7 @@ export default class App extends Vue {
   };
   private async FnUpdate(reqData) {
     let resData :any = await Service.update_subtask(Object.assign({}, reqData, {id: this.default_id}));
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.FnClose();
       this.$message.success(resData.msg || '成功新建子任务配置！');
       this.FnGetList();
@@ -289,7 +289,7 @@ export default class App extends Vue {
   };
   private async FnDel() {
     let resData :any = await Service.delete_subtask({id: this.default_id});
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.$message.success(resData.msg || '成功删除子项目配置！');
       this.FnGetList();
     }

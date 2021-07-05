@@ -28,7 +28,7 @@ export default class extends Vue {
   private subtask_list = [];
   private async FnGetDetail() {
     let resData :any = await Service.get_maintask_detail({id: this.$route.params.id})
-    if(resData.code == 200) {
+    if(resData.code == 'Success') {
       this.maintask_name = resData.data.maintask_name;
       this.subtask_list = JSON.parse(resData.data.subtask_flow_detail);
       console.log("subtask_list", this.subtask_list)
