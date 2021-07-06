@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Loading, Message } from "element-ui";
 
 let instance = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API
+  baseURL: process.env.VUE_APP_BASE_API
 })
 console.log("process.env", process.env)
 // 添加请求拦截器

@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  publicPath: '/child/app-op',
   devServer: {
     // 监听端口
     port: 20000,
