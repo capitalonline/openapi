@@ -6665,6 +6665,7 @@ def get_status(task_id):
 | 华东BGP        | Bandwidth_East_China_BGP            |
 | 华北BGP        | Bandwidth_North_China_BGP            |
 | 东南亚优化BGP        | Bandwidth_SoutheastAsia_Optimization_BGP     |
+|标准BGP |Bandwidth_Standard_BGP|
 
 ## 附件四
 
