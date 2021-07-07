@@ -37,20 +37,20 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/app-main/;
-        try_files $uri $uri/ /index.html last;
+        root   /app/;
+        try_files $uri $uri/ /app-main/index.html last;
         index  index.html;
     }
 
     location /child/app-sp/ {
-        root   /app/child/app-sp/;
-        try_files $uri $uri/ /index.html last;
+        root   /app/;
+        try_files $uri $uri/ /child/app-sp/index.html last;
         index  index.html;
     }
 
     location /child/app-op/ {
-        root   /app/child/app-op/;
-        try_files $uri $uri/ /index.html last;
+        root   /app/;
+        try_files $uri $uri/ /child/app-op/index.html last;
         index  index.html;
     }
 
