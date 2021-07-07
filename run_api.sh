@@ -37,7 +37,7 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/app-main/;
+        root   /app/app-main/dist/;
         try_files $uri $uri/ /index.html last;
         index  index.html;
     }
