@@ -1,11 +1,11 @@
 #!/bin/sh
-cd app-main
+cd /app/app-main
 npm install
 npm run build
-cd child/app-sp
+cd /app/child/app-sp
 npm install
 npm run build
-cd child/app-op
+cd /app/child/app-op
 npm install
 npm run build
 ##
@@ -37,7 +37,7 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/;
+        root   /app/app-main/;
         try_files $uri $uri/ /index.html last;
         index  index.html;
     }
