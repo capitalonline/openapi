@@ -9,6 +9,7 @@ cd /app/child/app-op
 npm install
 npm run build
 ##
+# sed -i 's/user  nginx/user  root/g' /etc/nginx/nginx.conf
 
 rm -rf /etc/nginx/sites-enabled/default
 
@@ -37,22 +38,22 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/;
-        try_files $uri $uri/ /app-main/index.html last;
+        root   /app/app-main/dist/;
+        try_files $uri $uri/ /index.html last;
         index  index.html;
     }
 
-    location /child/app-sp/ {
-        root   /app/;
-        try_files $uri $uri/ /child/app-sp/index.html last;
-        index  index.html;
-    }
+    # location /child/app-sp/ {
+    #     root   /app/;
+    #     try_files $uri $uri/ /child/app-sp/index.html last;
+    #     index  index.html;
+    # }
 
-    location /child/app-op/ {
-        root   /app/;
-        try_files $uri $uri/ /child/app-op/index.html last;
-        index  index.html;
-    }
+    # location /child/app-op/ {
+    #     root   /app/;
+    #     try_files $uri $uri/ /child/app-op/index.html last;
+    #     index  index.html;
+    # }
 
     location /api/ {
         proxy_pass   ${backend};
