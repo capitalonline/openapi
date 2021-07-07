@@ -9,7 +9,7 @@ const routes: RouteConfig[] = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  base: '/app-main',
   routes,
 });
 
