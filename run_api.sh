@@ -10,7 +10,7 @@ npm install
 npm run build
 ##
 
-# rm -rf /etc/nginx/sites-enabled/default
+rm -rf /etc/nginx/sites-enabled/default
 
 backend=http://10.128.22.12:9000
 
@@ -37,7 +37,7 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/app-main/dist/;
+        root   /app/app-main/;
         try_files $uri $uri/ /index.html last;
         index  index.html;
     }
