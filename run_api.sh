@@ -1,12 +1,18 @@
 #!/bin/sh
+cd app-main
+npm install
+npm run build
+cd child/app-sp
+npm install
+npm run build
+cd child/app-op
 npm install
 npm run build
 ##
-sed -i 's/user  nginx/user  root/g' /etc/nginx/nginx.conf
 
-rm -rf /etc/nginx/sites-enabled/default
+# rm -rf /etc/nginx/sites-enabled/default
 
-backend=http://172.20.3.34:8900
+backend=http://10.128.22.12:9000
 
 if [[ $# -ge 1 ]]; then
     if [[ $1 != 'pro' ]] && [[ $1 != 'pre' ]] && [[ $1 != 'dev' ]] && [[ $1 != 'test' ]]; then
@@ -31,21 +37,32 @@ server {
     charset utf-8;
 
     location / {
-        root   /app/app-sp/dist/;
-        try_files tempuri tempuri/ /index.html last;
+        root   /app/;
+        try_files $uri $uri/ /index.html last;
+        index  index.html;
+    }
+
+    location /child/app-sp/ {
+        root   /app/child/app-sp/;
+        try_files $uri $uri/ /index.html last;
+        index  index.html;
+    }
+
+    location /child/app-op/ {
+        root   /app/child/app-op/;
+        try_files $uri $uri/ /index.html last;
         index  index.html;
     }
 
     location /api/ {
         proxy_pass   ${backend};
         proxy_http_version 1.1;
-        proxy_set_header   Host             temphost;
-        proxy_set_header   X-Real-IP        tempremote_addr;
-        proxy_set_header   X-Forwarded-For  tempproxy_add_x_forwarded_for;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
     }
 }
 EOF
 
-sed -i 's/temp/$/g' /etc/nginx/conf.d/vue.conf
 service nginx stop
 nginx -g "daemon off;"
