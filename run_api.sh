@@ -1,15 +1,25 @@
 #!/bin/sh
-cd /app/app-main
-npm install
-npm run build
-cd /app/child/app-sp
-npm install
-npm run build
-cd /app/child/app-op
-npm install
-npm run build
-##
-# sed -i 's/user  nginx/user  root/g' /etc/nginx/nginx.conf
+# set -e
+
+mkdir -p /app/app-main/
+mkdir -p /app/child/app-sp/
+
+cd /build/app-main
+# cnpm install &&
+# npm run build &&
+mv /build/app-main/dist/* /app/app-main/
+
+
+
+# cd /build/child/app-op
+# npm install 
+# npm run build 
+# mv /build/child/app-op/dist/* /app/child/app-op/
+
+cd /build/child/app-sp
+# cnpm install &&
+# npm run build &&
+mv /build/child/app-sp/dist/* /app/child/app-sp/
 
 rm -rf /etc/nginx/sites-enabled/default
 
@@ -37,29 +47,31 @@ server {
 
     charset utf-8;
 
-    location /app-main {
-        root   /app/;
-        try_files $uri $uri/ /app-main/index.html last;
+    location / {
+        root   /app/app-main/;
+        try_files tempuri tempuri/ /index.html last;
         index  index.html;
     }
 
-    # location /child/app-sp/ {
-    #     root   /app/;
-    #     try_files $uri $uri/ /child/app-sp/index.html last;
-    #     index  index.html;
-    # }
+    location /child/app-sp {
+        root   /app/;
+        try_files $uri $uri/ /child/app-sp/index.html last;
+        index  index.html;
+    }
 
-    # location /child/app-op/ {
-    #     root   /app/;
-    #     try_files $uri $uri/ /child/app-op/index.html last;
-    #     index  index.html;
-    # }
+    location /child/app-op/ {
+        root   /app/;
+        index  index.html;
+        try_files $uri $uri/ /child/app-op/index.html last;
+    }
 
     location /api/ {
         proxy_pass   ${backend};
     }
 }
 EOF
+
+sed -i 's/temp/$/g' /etc/nginx/conf.d/vue.conf
 
 service nginx stop
 nginx -g "daemon off;"

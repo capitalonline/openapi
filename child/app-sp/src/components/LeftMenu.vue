@@ -51,13 +51,11 @@ export default class App extends Vue {
       label: "云盘"
     },
     {
-      name: "event_list",
-      label: "事件"
-    },
-    {
       name: "task",
       label: "任务管理",
       children: [
+        { name: 'event_list', label: "事件列表" },
+        { name: 'task_list', label: "任务记录" },
         { name: 'main_task_list', label: "主任务管理" },
         { name: 'sub_task_list', label: "子任务管理" }
       ]
@@ -75,9 +73,14 @@ export default class App extends Vue {
     }
   };
 
+  created() {
+
+  };
+
   @Watch('$route')
   private FnWatchRouter(to, from) {
-    this.active_menu = to.name
+    console.log("to", to)
+    this.active_menu = to.meta.menu || to.name
   }
 }
 </script>

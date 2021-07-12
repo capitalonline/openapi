@@ -4,7 +4,12 @@
     <el-table :data="task_list" border>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="subtask_name" label="名称"></el-table-column>
-      <!-- <el-table-column prop="subtask_type" label="类型"></el-table-column> -->
+      <el-table-column prop="is_series" label="重复配置">
+        <template #default="scope">
+          <div>{{ scope.row.is_series }}</div>
+          <div v-if="scope.row.is_series">{{ scope.row.serial_set_key }}</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="dependent_params" label="依赖参数"></el-table-column>
       <el-table-column prop="priority" label="优先级"></el-table-column>
       <el-table-column prop="retry" label="重试次数"></el-table-column>
@@ -12,7 +17,8 @@
       <el-table-column prop="is_period" label="周期性任务"></el-table-column>
       <el-table-column prop="is_async" label="异步任务"></el-table-column>
       <el-table-column prop="timeout" label="检查时间间隔"></el-table-column>
-      <el-table-column prop="exec_url" label="执行URL"></el-table-column>
+      <el-table-column prop="executor" label="执行对象"></el-table-column>
+      <el-table-column prop="executor_path" label="执行地址"></el-table-column>
       <el-table-column prop="check_url" label="检查URL"></el-table-column>
       <el-table-column prop="callback_url" label="回退URL"></el-table-column>
       <el-table-column prop="is_valid" label="is_valid"></el-table-column>
@@ -34,11 +40,20 @@
             <el-input type="text" v-model="sub_config.subtask_name"></el-input>
           </template>
         </label-block>
-        <!-- <label-block label="子任务类型">
+        <label-block label="可重复配置" class="switch-box">
           <template #default>
-            <el-input type="text" v-model="sub_config.subtask_type"></el-input>
+            <el-switch
+              v-model="sub_config.is_series"
+              active-color="#455cc6"
+              inactive-color="#ccc">
+            </el-switch>
           </template>
-        </label-block> -->
+        </label-block>
+        <label-block label="重复配置参数" v-if="sub_config.is_series">
+          <template #default>
+            <el-input type="text" v-model="sub_config.serial_set_key"></el-input>
+          </template>
+        </label-block>
         <label-block label="子任务依赖参数">
           <template #default>
             <params :params="default_dependent_params" @fn-change="FnGetDep"></params>
@@ -82,16 +97,21 @@
             <el-input-number v-model="sub_config.check_interval" :min="1" :max="600"></el-input-number> 秒
           </template>
         </label-block>
-        <label-block label="子任务执行URL">
+        <label-block label="子任务执行对象">
           <template #default>
-            <el-input type="text" v-model="sub_config.exec_url"></el-input>
+            <el-input type="text" v-model="sub_config.executor"></el-input>
           </template>
         </label-block>
-        <label-block label="子任务执行参数">
+        <label-block label="子任务执行地址">
           <template #default>
-            <params :params="default_dependent_params" @fn-change="FnGetExec"></params>
+            <el-input type="text" v-model="sub_config.executor_path"></el-input>
           </template>
         </label-block>
+        <!-- <label-block label="子任务执行参数">
+          <template #default>
+            <params :params="default_executor_path_body" @fn-change="FnGetExec"></params>
+          </template>
+        </label-block> -->
         <label-block label="子任务检查URL">
           <template #default>
             <el-input type="text" v-model="sub_config.check_url"></el-input>
@@ -148,7 +168,7 @@ export default class App extends Vue {
   private task_list = [];
   private default_id = '';
   private default_dependent_params = [];
-  private default_exec_url_body = [];
+  private default_executor_path_body = [];
   private sub_config = {
     subtask_name: '',
     subtask_type: '',
@@ -156,11 +176,14 @@ export default class App extends Vue {
     priority: 1,
     retry: 1,
     timeout: 60,
+    is_series: false,
+    serial_set_key: '',
     is_period: true,
     is_async: true,
     check_interval: 60,
-    exec_url: '',
-    exec_url_body: [],
+    executor: '',
+    executor_path: '',
+    executor_path_body: [],
     check_url: '',
     callback_url: '',
     is_valid: true,
@@ -176,22 +199,26 @@ export default class App extends Vue {
     // this.sub_config.subtask_type = row.subtask_type;
     this.sub_config.subtask_name = row.subtask_name;
     this.sub_config.dependent_params = [];
+    this.default_dependent_params = [];
     let dependent_params = JSON.parse(row.dependent_params);
     for(let key in dependent_params) {
-      this.default_dependent_params.push({key: key, value: dependent_params[key]})
+      this.default_dependent_params.push({key: key, value: JSON.stringify(dependent_params[key])})
     }
     this.sub_config.priority = row.priority;
     this.sub_config.retry = row.retry;
     this.sub_config.timeout = row.timeout;
+    this.sub_config.is_series = Boolean(row.is_series);
+    this.sub_config.serial_set_key = row.serial_set_key;
     this.sub_config.is_period = Boolean(row.is_period);
     this.sub_config.is_async = Boolean(row.is_async);
     this.sub_config.check_interval = row.check_interval;
-    this.sub_config.exec_url = row.exec_url;
-    this.sub_config.exec_url_body = [];
-    let exec_url_body = JSON.parse(row.exec_url_body)
-    for(let key in exec_url_body) {
-      this.default_exec_url_body.push({key: key, value: exec_url_body[key]})
-    }
+    this.sub_config.executor = row.executor;
+    this.sub_config.executor_path = row.executor_path;
+    this.sub_config.executor_path_body = [];
+    // let executor_path_body = JSON.parse(row.executor_path_body)
+    // for(let key in executor_path_body) {
+    //   this.default_executor_path_body.push({key: key, value: executor_path_body[key]})
+    // }
     this.sub_config.check_url = row.check_url;
     this.sub_config.callback_url = row.callback_url;
     this.sub_config.is_valid = Boolean(row.is_valid);
@@ -201,7 +228,7 @@ export default class App extends Vue {
     this.sub_config.dependent_params = param;
   };
   private FnGetExec(param) {
-    this.sub_config.exec_url_body = param;
+    this.sub_config.executor_path_body = param;
   };
   private FnClose() {
     this.create_dialog = false;
@@ -209,14 +236,19 @@ export default class App extends Vue {
     this.sub_config.subtask_type = '';
     this.sub_config.subtask_name = '';
     this.sub_config.dependent_params = [];
+    this.default_dependent_params = [];
     this.sub_config.priority = 1;
     this.sub_config.retry = 1;
     this.sub_config.timeout = 60;
+    this.sub_config.is_series = false;
+    this.sub_config.serial_set_key = '';
     this.sub_config.is_period = true;
     this.sub_config.is_async = true;
     this.sub_config.check_interval = 60;
-    this.sub_config.exec_url = '';
-    this.sub_config.exec_url_body = [];
+    this.sub_config.executor = '';
+    this.sub_config.executor_path = '';
+    this.sub_config.executor_path_body = [];
+    this.default_executor_path_body = [];
     this.sub_config.check_url = '';
     this.sub_config.callback_url = '';
   };
@@ -232,12 +264,12 @@ export default class App extends Vue {
   };
   private FnConfirm() {
     let dependent_params = {};
-    let exec_url_body = {};
+    let executor_path_body = {};
     this.sub_config.dependent_params.forEach(item => {
-      dependent_params[item.key] = item.value
+      dependent_params[item.key] = JSON.parse(item.value)
     });
-    this.sub_config.exec_url_body.forEach(item => {
-      exec_url_body[item.key] = item.value
+    this.sub_config.executor_path_body.forEach(item => {
+      executor_path_body[item.key] = item.value
     });
     let reqData = {
       // subtask_type: this.sub_config.subtask_type,
@@ -246,11 +278,14 @@ export default class App extends Vue {
       priority: this.sub_config.priority,
       retry: this.sub_config.retry,
       timeout: this.sub_config.timeout,
+      is_series: Number(this.sub_config.is_series),
+      serial_set_key: this.sub_config.serial_set_key,
       is_period: Number(this.sub_config.is_period),
       is_async: Number(this.sub_config.is_async),
       check_interval: this.sub_config.check_interval,
-      exec_url: this.sub_config.exec_url,
-      exec_url_body: JSON.stringify(exec_url_body),
+      executor: this.sub_config.executor,
+      executor_path: this.sub_config.executor_path,
+      // executor_path_body: JSON.stringify(executor_path_body),
       check_url: this.sub_config.check_url,
       callback_url: this.sub_config.callback_url,
       is_valid: Number(this.sub_config.is_valid)
