@@ -9,7 +9,8 @@
                 v-for="item in sub_task"
                 :key="item.id"
                 :label="item.subtask_name"
-                :value="item.id">
+                :value="item.id"
+                :disabled="!item.is_valid">
               </el-option>
             </el-select>
           </div>

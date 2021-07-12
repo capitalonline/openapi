@@ -2,47 +2,54 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 
 Vue.use(VueRouter);
-
 const routes: RouteConfig[] = [
   {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
+    meta: {menu: 'instance_list'}
   },
   {
     path: '/instance/create',
     name: 'instance_create',
     component: () => import('../views/instance/create.vue'),
+    meta: {menu: 'instance_list'}
   },
   {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
+    meta: {menu: 'event_list'}
   },
   {
     path: '/event/:id',
     name: 'event_detail',
     component: () => import('../views/event/detail.vue'),
+    meta: {menu: 'event_list'}
   },
   {
     path: '/mainTask',
     name: 'main_task_list',
     component: () => import('../views/task/main-task-list.vue'),
+    meta: {menu: 'main_task_list'}
   },
   {
     path: '/mainTaskDetail/:id',
     name: 'main_task_detail',
     component: () => import( '../views/task/main-task-detail.vue'),
+    meta: {menu: 'main_task_list'}
   },
   {
     path: '/subTask',
     name: 'sub_task_list',
     component: () => import('../views/task/sub-task-list.vue'),
+    meta: {menu: 'sub_task_list'}
   },
   {
     path: '/project',
     name: 'project_list',
     component: () => import('../views/project/list.vue'),
+    meta: {menu: 'project_list'}
   }
 ];
 

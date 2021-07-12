@@ -1,4 +1,4 @@
-# app-op
+# app-sp
 
 ## Project setup
 ```

@@ -31,25 +31,29 @@ export default class extends Vue {
   @Prop({ default: '' }) private params!: [];
   private dependent_params = [];
   private dependent_type = [
-    {type: 'number', label: '数值', value: 0},
-    {type: 'string', label: '字符串', value: ''},
-    {type: 'object', label: '字典', value: {}},
-    {type: 'list', label: '列表', value: []},
-  ]
+    {type: 'number', label: '数值', value: JSON.stringify(0)},
+    {type: 'string', label: '字符串', value: JSON.stringify('')},
+    {type: 'object', label: '字典', value: JSON.stringify({})},
+    {type: 'list', label: '列表', value: JSON.stringify([])},
+  ];
   private FnAddDepen() {
     this.dependent_params.push({key: '', value: ''})
-  };
+  }
   private FnEmit() {
     this.$emit('fn-change', this.dependent_params)
-  };
+  }
   private FnDel(index) {
     this.dependent_params.splice(index, 1)
     this.FnEmit()
-  };
+  }
 
   @Watch('params')
   private FnWatchRel(newVal) {
     this.dependent_params = newVal;
+  }
+
+  mounted() {
+    this.dependent_params = this.params;
   }
 }
 </script>

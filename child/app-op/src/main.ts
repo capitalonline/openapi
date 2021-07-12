@@ -17,7 +17,7 @@ function render(props: prop = {}) {
   const { container } = props;
   router = new VueRouter({
     mode: 'history',
-    base: window.__POWERED_BY_QIANKUN__ ? '/app-op' : '/child/app-op',
+    base: window.__POWERED_BY_QIANKUN__ ? '/under-app-op' : '/child/app-op',
     routes,
   })
 
