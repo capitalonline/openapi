@@ -37,9 +37,10 @@
                                     prop="ecs"
                                     label="ECS实例"
                                 >
-                                    <el-select v-model="form_data.ecs">
+                                    <Area :list="instances_list" />
+                                    <!-- <el-select v-model="form_data.ecs">
                                         <el-option v-for="item in instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                    </el-select>
+                                    </el-select> -->
                                 </el-form-item>
                                 <el-form-item
                                     prop="ecs"
@@ -161,8 +162,12 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
+import Area from '../../components/Area.vue'
 @Component({
-  components: { backHeader },
+  components: { 
+      backHeader,
+      Area
+    },
 
 })
 export default class CreateDisk extends Vue{
@@ -197,6 +202,76 @@ export default class CreateDisk extends Vue{
             label:'天津',
             value:'tj'
         },
+    ]
+    private instances_list=[
+        {
+            label:'中国大陆',
+            value:'zh',
+            children:[
+                {
+                    label:'北京',
+                    value:'bj'
+                },
+                {
+                    label:'广州',
+                    value:'gz'
+                },
+                {
+                    label:'上海',
+                    value:'sh'
+                },
+                {
+                    label:'无锡',
+                    value:'wx'
+                },
+            ]
+
+        },
+        {
+            label:'亚太地区',
+            value:'ytdq',
+            children:[
+                {
+                    label:'新加披',
+                    value:'xjp'
+                },
+                {
+                    label:'孟买',
+                    value:'mm'
+                },
+                {
+                    label:'香港',
+                    value:'hk'
+                },
+            ]
+
+        },
+        {
+            label:'北美地区',
+            value:'bmdq',
+            children:[
+                {
+                    label:'达拉斯',
+                    value:'dls'
+                },
+                {
+                    label:'弗吉尼亚',
+                    value:'fjny'
+                },
+            ]
+
+        },
+        {
+            label:'欧洲地区',
+            value:'eroup',
+            children:[
+                {
+                    label:'法兰克福',
+                    value:'franch'
+                },
+            ]
+
+        }
     ]
     private ECS_instance_list=[
         {
@@ -261,6 +336,11 @@ export default class CreateDisk extends Vue{
     //设置可用区
     private sel_use_area(id:string){
         this.form_data={...this.form_data,use_area:id}
+    }
+    //获取可用区ID
+    private get area_id(){
+        console.log("get_use_area",this.$store.state.area_id)
+        return this.$store.state.area_id;
     }
     //新增云盘配置
     private add(){
