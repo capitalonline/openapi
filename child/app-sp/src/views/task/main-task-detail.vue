@@ -2,7 +2,7 @@
   <div>
     <div class="name-title">{{ maintask_name }}</div>
     <div>
-      dependent_params: {{ dependent_params }}
+      <json-viewer :value="dependent_params" copyable></json-viewer>
     </div>
     <div class="flow-box">
       <div v-for="(flow, index) in subtask_list" :key="index">
@@ -22,10 +22,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Service from '../../https/task/main-task'
+import Service from '../../https/task/main-task';
+import JsonViewer from 'vue-json-viewer';
 
 @Component({
-  
+  components: {
+    JsonViewer
+  }
 })
 export default class extends Vue {
   $route;
@@ -33,13 +36,13 @@ export default class extends Vue {
   private dependent_params = '';
   private subtask_list = [];
   private async FnGetDetail() {
-    let resData :any = await Service.get_maintask_detail({id: this.$route.params.id})
-    if(resData.code == 'Success') {
+    const resData: any = await Service.get_maintask_detail({id: this.$route.params.id})
+    if ( resData.code === 'Success' ) {
       this.maintask_name = resData.data.maintask_info.maintask_name;
-      this.dependent_params = resData.data.maintask_info.dependent_params;
+      this.dependent_params = JSON.parse(resData.data.maintask_info.dependent_params);
       this.subtask_list = JSON.parse(resData.data.maintask_info.subtask_flow_detail);
     }
-  };
+  }
 
   created() {
     this.FnGetDetail()

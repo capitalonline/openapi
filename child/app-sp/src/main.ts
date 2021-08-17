@@ -1,28 +1,53 @@
 import Vue from 'vue';
 import App from './App.vue';
-import routes from './router';
+import all_routes from './router';
 import store from './store';
-import './public-path'
+import './public-path';
 import VueRouter from 'vue-router';
 import ElementUI from 'element-ui';
 import './assets/reset.scss';
+import './assets/common.scss';
+import { getUserInfo } from '../src/init'
 
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false;
 
 let router = null;
-let instance:any;
+let instance: any;
 interface prop {
   [propName: string]: any
 };
 
 function render(props: prop = {}) {
   const { container } = props;
+  let routes = [];
+  for (let item of all_routes) {
+    if (store.state.auth_info[item.name]) {
+      routes.push(item)
+    } else if (item.meta.no_auth) {
+      routes.push(item)
+    }
+    else {
+      for (let key in store.state.auth_info) {
+        if (store.state.auth_info[key].includes(item.name)) {
+          routes.push(item)
+        }
+      }
+    }
+  }
+  console.log('routes', routes)
   router = new VueRouter({
     mode: 'history',
     base: window.__POWERED_BY_QIANKUN__ ? '/under-app-sp' : '/child/app-sp',
     routes,
+  })
+  router.beforeEach((to, from, next) => {
+    if (!to.name) {
+      next({ name: routes[0].name })
+    } else {
+      next()
+    }
   })
 
   instance = new Vue({
@@ -34,7 +59,9 @@ function render(props: prop = {}) {
 
 // 独立运行时
 if(!window.__POWERED_BY_QIANKUN__) {
-  render();
+  getUserInfo().then(() => {
+    render();
+  })
 }
 
 export async function bootstrap() {
@@ -43,6 +70,7 @@ export async function bootstrap() {
 
 export async function mount(props: any) {
   console.log('mount', props)
+  await getUserInfo()
   render(props)
 }
 

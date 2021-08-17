@@ -38,26 +38,41 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
     
   },
 })
-export default class App extends Vue {
+export default class LeftMenu extends Vue {
   $router;
-  private active_menu :String = "sub_task_list";
-  private menu = [
+  $store;
+  private active_menu: string = '';
+  private active_name: string = ''
+  private all_menu = [
     {
       name: "instance_list",
       label: "云服务器"
+    },
+    {
+      name:'alarm_manage',
+      label:'报警管理',
+      children:[
+        {name:'alarm_info',label:'报警信息'},
+        {name:'alarm_strategy',label:'报警策略'},
+        {name:'alarm_contact',label:'报警联系人'},
+      ]
     },
     {
       name: "disk_list",
       label: "云盘"
     },
     {
+      name: "mirror_list",
+      label: "公共镜像列表"
+    },
+    {
       name: "task",
       label: "任务管理",
       children: [
         { name: 'event_list', label: "事件列表" },
-        { name: 'task_list', label: "任务记录" },
-        { name: 'main_task_list', label: "主任务管理" },
-        { name: 'sub_task_list', label: "子任务管理" }
+        // { name: 'event_detail', label: "任务记录" },
+        { name: 'main_task_list', label: "主任务配置" },
+        { name: 'sub_task_list', label: "子任务配置" }
       ]
     },
     {
@@ -65,22 +80,43 @@ export default class App extends Vue {
       label: "项目管理",
     }
   ];
-  FnChangeUrl(name) {
-    if(this.active_menu == name) {
+  private menu: Array<object> = [];
+  private FnChangeUrl(name): void {
+    if(this.active_name == name) {
       this.$router.go(0)
     } else {
       this.$router.push({ name: name })
     }
   };
-
   created() {
+    this.all_menu.forEach(item => {
+      if (item.children) {
+        let child_list = []
+        item.children.forEach(child => {
+          if (this.$store.state.auth_info[child.name]) {
+            child_list.push(child)
+          }
+        })
+        if (child_list.length > 0) {
+          this.menu.push({
+            name: item.name,
+            label: item.label,
+            children: child_list
+          })
+        }
+      } else {
+        if (this.$store.state.auth_info[item.name]) {
+          this.menu.push(item)
+        }
+      }
+    })
+  }
 
-  };
 
   @Watch('$route')
   private FnWatchRouter(to, from) {
-    console.log("to", to)
-    this.active_menu = to.meta.menu || to.name
+    this.active_name = to.name;
+    this.active_menu = to.meta.menu || to.name;
   }
 }
 </script>

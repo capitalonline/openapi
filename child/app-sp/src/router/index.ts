@@ -16,6 +16,60 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
+    path: '/instance',
+    name: 'instance_list',
+    component: () => import('../views/instance/list.vue'),
+    meta: {menu: 'instance_list'}
+  },
+  {
+    path: '/instance/monitor/:id',
+    name: 'instance_monitor',
+    component: () => import('../views/instance/monitor.vue'),
+    meta: {menu: 'instance_list', no_auth: true}
+  },
+  {
+    path:'/alarmInfo',
+    name:'alarm_info',
+    component:()=>import('../views/alarm/info.vue'),
+    meta:{menu:'alarm_info'}
+  },
+  {
+    path:'/alarmStrategy',
+    name:'alarm_strategy',
+    component:()=>import('../views/alarm/strategy.vue'),
+    meta:{menu:'alarm_strategy'}
+  },
+  {
+    path:'/alarmStrategy/create',
+    name:'alarm_strategy_create',
+    component:()=>import('../views/alarm/add_strategy.vue'),
+    meta:{menu:'alarm_strategy'}
+  },
+  {
+    path:'/alarmContact',
+    name:'alarm_contact',
+    component:()=>import('../views/alarm/contact.vue'),
+    meta:{menu:'alarm_contact'}
+  },
+  {
+    path:'/disk',
+    name:'disk_list',
+    component:()=>import('../views/disk/list.vue'),
+    meta:{menu:'disk_list'}
+  },
+  {
+    path:'/mirror',
+    name:'mirror_list',
+    component:()=>import('../views/mirror/list.vue'),
+    meta:{menu:'mirror_list'}
+  },
+  {
+    path:'/disk/create',
+    name:'disk_create',
+    component:()=>import('../views/disk/create.vue'),
+    meta:{menu:'disk_list'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
@@ -50,6 +104,12 @@ const routes: RouteConfig[] = [
     name: 'project_list',
     component: () => import('../views/project/list.vue'),
     meta: {menu: 'project_list'}
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/404.vue'),
+    meta: {menu: '404', no_auth: true}
   }
 ];
 

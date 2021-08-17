@@ -5,10 +5,9 @@ Vue.use(VueRouter);
 console.log(import('../views/Home.vue'))
 const routes: RouteConfig[] = [
   {
-    path: '/test',
-    name: 'Home',
-    component: () => import('../views/Home.vue'),
-  },
+    path: '/',
+    redirect: '/child/app-sp/instance'
+  }
 ];
 
 const router = new VueRouter({

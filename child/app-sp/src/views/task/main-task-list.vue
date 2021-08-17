@@ -1,10 +1,16 @@
 <template>
   <div>
-    <action-block :search_option="search_con" create_btn="新建主任务配置" @fn-search="FnGetList" @fn-create="FnShowCreate"></action-block>
+    <action-block :search_option="search_con" 
+      create_btn="新建主任务配置" 
+      @fn-search="FnGetList" 
+      @fn-create="FnShowCreate"
+      :disabled="!operate_auth.includes('create')"
+    ></action-block>
     <el-table :data="task_list" border>
       <el-table-column prop="id" label="ID">
         <template #default="scope">
-          <el-button type="text" @click="FnDetail(scope.row.id)">{{ scope.row.id }}</el-button>
+          <el-button type="text" @click="FnDetail(scope.row.id)"
+            :disabled="!operate_auth.includes('main_task_detail')">{{ scope.row.id }}</el-button>
         </template>
       </el-table-column>
       <!-- <el-table-column prop="maintask_type" label="类型"></el-table-column> -->
@@ -16,11 +22,23 @@
       <el-table-column prop="is_valid" label="is_valid"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="text" @click="FnShowUpdate(scope.row)">编辑</el-button>
-          <el-button type="text" @click="FnShowDel(scope.row.id, scope.row.maintask_name)">删除</el-button>
+          <el-button type="text" @click="FnShowUpdate(scope.row)" 
+            :disabled="!operate_auth.includes('edit')">编辑</el-button>
+          <el-button type="text" @click="FnShowDel(scope.row.id, scope.row.maintask_name)"
+            :disabled="!operate_auth.includes('delete')">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      @size-change="FnGetList()"
+      @current-change="FnGetList()"
+      :current-page.sync="page_info.page_index"
+      :page-sizes="page_info.page_sizes"
+      :page-size.sync="page_info.page_size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="page_info.total">
+    </el-pagination>
 
     <el-dialog
       :title="dialog_title"
@@ -96,18 +114,21 @@ import SubService from '../../https/task/sub-task';
     actionBlock
   },
 })
-export default class App extends Vue {
+export default class MainTaskList extends Vue {
   $message;
   $confirm;
   $router;
+  $route;
+  $store;
   private search_con = {
     id: { placeholder: '请输入任务ID' },
     // maintask_type: { placeholder: '请输入任务类型' },
     maintask_name: { placeholder: '请输入任务名称' }
   };
-  private create_dialog :Boolean = false;
-  private dialog_title :String = '';
+  private create_dialog: boolean = false;
+  private dialog_title: string = '';
   private task_list = [];
+  private operate_auth = [];
   private default_id = '';
   private default_sub_task = [];
   private main_config = {
@@ -120,13 +141,19 @@ export default class App extends Vue {
     sub_task: [],
     is_valid: true,
   };
-  private sub_task_list = []
-  private FnShowCreate() {
+  private sub_task_list = [];
+  private page_info = {
+    page_sizes: [20, 50, 100],
+    page_size: 20,
+    page_index: 1,
+    total: 0
+  };
+  private FnShowCreate(): void {
     this.create_dialog = true;
     this.dialog_title = '新建主任务配置';
     this.FnGetSubList();
-  };
-  private async FnShowUpdate(row) {
+  }
+  private async FnShowUpdate(row){
     this.create_dialog = true;
     this.dialog_title = '更新主任务配置';
     await this.FnGetSubList();
@@ -142,9 +169,9 @@ export default class App extends Vue {
       return list.map(item => {
         return item.subtask_index_id
       })
-    });
-  };
-  private FnClose() {
+    })
+  }
+  private FnClose(): void {
     this.create_dialog = false;
     this.main_config.main_name = '';
     this.main_config.main_type = '';
@@ -157,30 +184,33 @@ export default class App extends Vue {
     this.sub_task_list = [];
     this.default_id = '';
     this.default_sub_task = [];
-  };
-  private async FnGetList(data :any = {}) {
-    let reqData :any = {};
-    if(data.id) reqData.id = data.id;
-    if(data.maintask_type) reqData.maintask_type = data.maintask_type;
-    if(data.maintask_name) reqData.maintask_name = data.maintask_name;
-    let resData :any = await Service.get_maintask_list(reqData);
-    if(resData.code == 'Success') {
+  }
+  private async FnGetList(data: any = {}) {
+    let reqData: any = {};
+    if (data.id) reqData.id = data.id;
+    if (data.maintask_type) reqData.maintask_type = data.maintask_type;
+    if (data.maintask_name) reqData.maintask_name = data.maintask_name;
+    reqData.page_number = this.page_info.page_index;
+    reqData.page_size = this.page_info.page_size;
+    const resData: any = await Service.get_maintask_list(reqData);
+    if ( resData.code === 'Success' ) {
       this.task_list = resData.data.maintask_info;
+      this.page_info.total = resData.data.total;
     }
-  };
+  }
   private async FnGetSubList() {
-    let resData :any = await SubService.get_subtask_list();
-    if(resData.code == 'Success') {
+    const resData: any = await SubService.get_subtask_list();
+    if ( resData.code === 'Success' ) {
       this.sub_task_list =  resData.data.subtask_info;
     }
-  };
+  }
   private FnGetRelTask(task_list) {
     this.main_config.sub_task = task_list.map(list => {
       return list.map(item => {
         return {'subtask_index_id': item}
       })
     })
-  };
+  }
   private FnConfirm() {
     // TODO：数据校验
     let reqData = {
@@ -198,23 +228,23 @@ export default class App extends Vue {
     } else {
       this.FnCreate(reqData);
     }
-  };
+  }
   private async FnCreate(reqData) {
-    let resData :any = await Service.add_maintask(reqData);
-    if(resData.code == 'Success') {
+    const resData: any = await Service.add_maintask(reqData);
+    if ( resData.code === 'Success' ) {
       this.FnClose();
       this.$message.success(resData.msg || '成功新建主任务配置！');
       this.FnGetList();
     }
-  };
+  }
   private async FnUpdate(reqData) {
-    let resData :any = await Service.update_maitask(Object.assign({}, reqData, {id: this.default_id}));
-    if(resData.code == 'Success') {
+    const resData: any = await Service.update_maitask(Object.assign({}, reqData, {id: this.default_id}));
+    if ( resData.code === 'Success' ) {
       this.FnClose();
       this.$message.success(resData.msg || '成功更新主任务配置！');
       this.FnGetList();
     }
-  };
+  }
   private FnShowDel(id, task_name) {
     this.$confirm(`确认删除主任务配置 -- ${task_name}`, '删除提示', {
       cancelButtonText: '取消',
@@ -224,21 +254,22 @@ export default class App extends Vue {
       this.default_id = id;
       this.FnDel();
     }).catch();
-  };
+  }
   private async FnDel() {
-    let resData :any = await Service.delete_maintask({id: this.default_id});
-    if(resData.code == 'Success') {
+    const resData: any = await Service.delete_maintask({id: this.default_id});
+    if ( resData.code === 'Success' ) {
       this.$message.success(resData.msg || '成功删除主项目配置！');
       this.FnGetList();
     }
-  };
+  }
   private FnDetail(id) {
     this.$router.push(`/mainTaskDetail/${id}`)
-  };
+  }
 
   created() {
+    this.operate_auth = this.$store.state.auth_info[this.$route.name]
     this.FnGetList();
-  };
+  }
 }
 </script>
 

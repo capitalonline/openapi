@@ -15,17 +15,40 @@
       </svg>
     </div>
     <div class="right-content">
-      xu.guo
+      <el-dropdown @command="handleCommand">
+        <span class="el-dropdown-link">
+          {{ loginName }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="logout">登出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { logout } from '../https/public';
 
 @Component
 export default class Header extends Vue {
+  $store;
   @Prop() private msg!: string;
+  private get loginName() {
+    return this.$store.state.login_name
+  }
+  private handleCommand(command) {
+    if (command === 'logout') {
+      this.FnLogout();
+    }
+  }
+  private async FnLogout() {
+    const resData: any = await logout();
+    if (resData.code === 'Success') {
+      // window.location.href
+    }
+  }
 }
 </script>
 
