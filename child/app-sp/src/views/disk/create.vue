@@ -267,7 +267,7 @@ export default class CreateDisk extends Vue{
         if(this.form_data.disk_list.length===this.disk_total){
             return;
         }
-        console.log("add")
+        // console.log("add")
         this.form_data={...this.form_data,disk_list:[...this.form_data.disk_list,{
             disk_name:'',
             type:'hdd',
