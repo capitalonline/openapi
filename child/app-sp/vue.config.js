@@ -4,17 +4,24 @@ module.exports = {
   publicPath: '/child/app-sp/',
   devServer: {
     // 监听端口
-    port: 30000,
+    port: 50000,
     // 配置跨域请求头，解决开发环境的跨域问题
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': '*'
     },
     proxy: {
       '/api': {
         target: 'http://10.128.22.12:9000',
+        // target:'http://10.131.162.69:8001',
         ws: true,
         changeOrigin: true
       },
+      '/ecs_business': {
+        // target: 'http://10.128.22.12:9000',
+        target:'http://ecs-business.gic.test',
+        ws: true,
+        changeOrigin: true
+      }
     }
   },
   configureWebpack: {
@@ -26,9 +33,5 @@ module.exports = {
       // 按需加载相关，设置为 webpackJsonp_VueMicroApp 即可
       jsonpFunction: `webpackJsonp_AppSp`,
     }
-  },
-  // chainWebpack: config => {
-  //   config.resolve.alias
-  //     .set("~", path.join(__dirname, "../app-main/src"))
-  // }
+  }
 }

@@ -14,7 +14,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
   
 })
 export default class extends Vue {
-  @Prop({ default: '' }) private label!: String;
+  @Prop({ default: '' }) private label!: string;
 }
 </script>
 

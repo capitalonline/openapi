@@ -5,20 +5,20 @@ mkdir -p /app/app-main/
 mkdir -p /app/child/app-sp/
 
 cd /build/app-main
-# cnpm install &&
-# npm run build &&
+npm install &&
+npm run build &&
 mv /build/app-main/dist/* /app/app-main/
 
 
 
-# cd /build/child/app-op
-# npm install 
-# npm run build 
-# mv /build/child/app-op/dist/* /app/child/app-op/
+cd /build/child/app-op
+npm install 
+npm run build 
+mv /build/child/app-op/dist/* /app/child/app-op/
 
 cd /build/child/app-sp
-# cnpm install &&
-# npm run build &&
+cnpm install &&
+npm run build &&
 mv /build/child/app-sp/dist/* /app/child/app-sp/
 
 rm -rf /etc/nginx/sites-enabled/default

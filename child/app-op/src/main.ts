@@ -8,7 +8,7 @@ import VueRouter from 'vue-router';
 Vue.config.productionTip = false;
 
 let router = null;
-let instance:any;
+let instance: any;
 interface prop {
   [propName: string]: any
 };

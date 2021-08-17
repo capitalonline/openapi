@@ -58,6 +58,7 @@ export default class App extends Vue {
   @Watch('rel_task')
   private FnWatchRel(newVal) {
     this.main_task = newVal;
+    this.FnEmit()
   }
 }
 </script>

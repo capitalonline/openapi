@@ -6,7 +6,7 @@
         <left-menu></left-menu>
       </el-aside>
       <el-main class="main-content">
-        <router-view></router-view>
+        <router-view :key="key"></router-view>
       </el-main>
     </el-container>
   </div>
@@ -23,7 +23,12 @@ import LeftMenu from './components/LeftMenu.vue';
     LeftMenu
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  $route;
+  get key(){
+    return this.$route.path+  Math.random()
+  }
+}
 </script>
 
 <style lang="scss">

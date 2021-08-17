@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="action-box">
-      <el-button type="primary" @click="FnShowCreate">新建项目</el-button>
+      <el-button type="primary" 
+        @click="FnShowCreate"
+        :disabled="!operate_auth.includes('create')"
+      >新建项目</el-button>
     </div> 
     <el-table :data="project_list" border>
       <el-table-column prop="id" label="ID"></el-table-column>
@@ -10,8 +13,10 @@
       <el-table-column prop="project_domain" label="项目地址"></el-table-column>
       <el-table-column>
         <template #default="scope">
-          <el-button type="text" @click="FnShowUpdate(scope.row)">编辑</el-button>
-          <el-button type="text" @click="FnConfirmDel(scope.row.id, scope.row.project_name)">删除</el-button>
+          <el-button type="text" @click="FnShowUpdate(scope.row)"
+            :disabled="!operate_auth.includes('edit')">编辑</el-button>
+          <el-button type="text" @click="FnConfirmDel(scope.row.id, scope.row.project_name)"
+           :disabled="!operate_auth.includes('delete')">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -62,9 +67,12 @@ import Service from '../../https/project';
 export default class App extends Vue {
   $message;
   $confirm;
+  $store;
+  $route;
   private create_dialog :Boolean = false;
   private dialog_title :String = '';
   private project_list = [];
+  private operate_auth = [];
   private default_id = "";
   private project_config = {
     project_id: '', 
@@ -74,14 +82,14 @@ export default class App extends Vue {
   private FnShowCreate() {
     this.create_dialog = true;
     this.dialog_title = '新建项目';
-  };
+  }
   private FnClose() {
     this.create_dialog = false;
     this.default_id = "";
     this.project_config.project_id = '';
     this.project_config.project_name = '';
     this.project_config.project_domain = '';
-  };
+  }
   private FnShowUpdate(row) {
     this.create_dialog = true;
     this.dialog_title = '更新项目' + row.project_name;
@@ -89,13 +97,13 @@ export default class App extends Vue {
     this.project_config.project_id = row.project_id;
     this.project_config.project_name = row.project_name;
     this.project_config.project_domain = row.project_domain;
-  };
+  }
   private async FnGetList() {
-    let resData :any = await Service.get_project_list();
-    if(resData.code == 'Success') {
+    const resData: any = await Service.get_project_list();
+    if ( resData.code === 'Success' ) {
       this.project_list = resData.data.project_info;
     }
-  };
+  }
   private FnConfirm() {
     // TODO: 数据校验
     if(this.default_id) {
@@ -103,23 +111,23 @@ export default class App extends Vue {
     } else {
       this.FnCreate();
     }
-  };
+  }
   private async FnCreate() {
-    let resData :any = await Service.create_project(this.project_config);
-    if(resData.code == 'Success') {
+    const resData: any = await Service.create_project(this.project_config);
+    if ( resData.code === 'Success' ) {
       this.FnClose();
       this.$message.success(resData.msg || '成功创建项目！');
       this.FnGetList();
     }
-  };
+  }
   private async FnUpdate() {
-    let resData :any = await Service.update_project(Object.assign({}, this.project_config, {id: this.default_id}));
-    if(resData.code == 'Success') {
+    const resData: any = await Service.update_project(Object.assign({}, this.project_config, {id: this.default_id}));
+    if ( resData.code === 'Success' ) {
       this.FnClose();
       this.$message.success(resData.msg || '成功更新项目！');
       this.FnGetList();
     }
-  };
+  }
   private FnConfirmDel(id, project_name) {
     this.$confirm(`确认删除项目 -- ${project_name}`, '删除提示', {
       cancelButtonText: '取消',
@@ -129,10 +137,10 @@ export default class App extends Vue {
       this.default_id = id;
       this.FnDel();
     }).catch();
-  };
+  }
   private async FnDel() {
-    let resData :any = await Service.delete_project({id: this.default_id});
-    if(resData.code == 'Success') {
+    const resData: any = await Service.delete_project({id: this.default_id});
+    if ( resData.code === 'Success' ) {
       this.default_id = '';
       this.$message.success(resData.msg || '成功删除项目！');
       this.FnGetList();
@@ -141,8 +149,9 @@ export default class App extends Vue {
 
 
   created() {
+    this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetList()
-  };
+  }
 }
 </script>
 

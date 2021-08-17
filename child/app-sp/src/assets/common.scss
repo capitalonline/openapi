@@ -1,0 +1,81 @@
+.prompt_message {
+  font-size: 12px;
+  color: #666;
+}
+.warning_message {
+  font-size: 12px;
+  color: #e6a23c;
+}
+.num_message {
+  color: #455cc6;
+}
+.building,
+.restarting,
+.shutting_down,
+.starting_up,
+.deleting,
+.updating,
+.destroying,
+.recovering {
+  color:#4984E7;
+}
+.running {
+  color:#2DA867;
+}
+.deleted,
+.destroy {
+  color: #e6a23c;
+}
+.shutdown,
+.error,
+.failed {
+  color:#DA3B18;
+}
+.m-left10 {
+  margin-left: 10px;
+}
+.m-right10 {
+  margin-right: 10px;
+}
+.m-bottom10 {
+  margin-bottom: 10px;
+}
+.m-left20 {
+  margin-left: 20px;
+}
+.m-right20 {
+  margin-right: 20px;
+}
+.m-bottom20 {
+  margin-bottom: 20px;
+}
+/* loading */
+.loading > .el-loading-spinner {
+  width: 230px; 
+  top: 40%; 
+  left: 50%; 
+  margin-left: -115px; 
+  background-color: #FAFAFA; 
+  height: 43px; 
+  line-height: 36px; 
+  border: 1px solid #888; 
+  border-radius: 4px;
+}
+.loading i,.loading p{
+  display: inline-block; 
+  font-size:16px; 
+  color:#555 !important;
+}
+.loading i{
+  margin-right:10px;
+}
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: #f5f5f5;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+}
