@@ -33,20 +33,22 @@
                     <el-card>
                         <div class="card_inline">
                             <el-form-item
-                                prop="ecs"
+                                prop="area"
                                 :label="form_data.isMounted==='1' ? 'ECS实例' : '地域及可用区'"
                             >
-                                <Area :list="instances_list" @get_area_id="get_area_id" :area="'北京'" />
+                                <Area :list="area_list" @get_area_id="get_area_id" :area="'北京'" />
                             </el-form-item>
                             <el-form-item
-                                prop="area"
+                                prop="az"
                                 label=""
                             >
-                                <Az :list="area_list" @get_az="get_az" :isEdit="isEdit" :az="'可用区1'" />
+                                <el-select v-model="form_data.az" placeholder="请选择可用区">
+                                    <el-option v-for="item in az_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                </el-select>
                             </el-form-item>
                             <template v-if="form_data.isMounted==='1'">
                             <el-form-item
-                                prop="use_area"
+                                prop="ecs_id"
                                 label=""
                             >
                                 <el-select v-model="form_data.ecs_id" placeholder="请选择ECS实例名称（实例ID)">
@@ -61,8 +63,8 @@
                                 label="实例详情"
                             >
                                 <template>
-                                    <div class="area">地域及可用区：{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
-                                    <div class="area">实例规格:{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
+                                    <div class="area">地域及可用区：{{form_data.area}}&nbsp;&nbsp;{{form_data.az}}</div>
+                                    <div class="area">实例规格:{{form_data.ecs_id}}</div>
                                 </template>
                             </el-form-item>
                         </template>
@@ -150,12 +152,10 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
 import Area from '../../components/Area.vue';
-import Az from '../../components/availableArea.vue'
 @Component({
   components: { 
       backHeader,
       Area,
-      Az
     },
 
 })
@@ -170,7 +170,7 @@ export default class CreateDisk extends Vue{
         instance_detail:'',
         del_set:false,
         area:'beijing',
-        use_area:'1',
+        az:'1',
         disk_list:[
             {
                 disk_name:'',
@@ -181,19 +181,8 @@ export default class CreateDisk extends Vue{
         ]
         
     }
-    private isEdit="可用区1"
     private disk_total:number=16
-    private instance_list=[
-        {
-            label:'北京',
-            value:'beijing'
-        },
-        {
-            label:'天津',
-            value:'tj'
-        },
-    ]
-    private instances_list=[
+    private area_list=[
         {
             label:'中国大陆',
             value:'zh',
@@ -273,7 +262,7 @@ export default class CreateDisk extends Vue{
             value:'beijing2'
         }
     ]
-    private area_list=[
+    private az_list=[
         {
             label:'可用区1',
             value:'1'
