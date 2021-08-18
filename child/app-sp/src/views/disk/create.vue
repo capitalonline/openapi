@@ -30,63 +30,50 @@
                             </template>
                         </el-form-item>
                     </el-card>
-                    <template v-if="form_data.isMounted==='1'">
-                        <el-card>
-                            <div class="card_inline">
-                                <el-form-item
-                                    prop="ecs"
-                                    label="ECS实例"
-                                >
-                                    <Area :list="instances_list" />
-                                    <!-- <el-select v-model="form_data.ecs">
-                                        <el-option v-for="item in instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                    </el-select> -->
-                                </el-form-item>
-                                <el-form-item
-                                    prop="ecs"
-                                    label=""
-                                >
-                                    <el-select v-model="form_data.ecs_id" placeholder="请选择ECS实例名称（实例ID)">
-                                        <el-option v-for="item in ECS_instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </div>
-                            <template v-if="form_data.ecs_id!==''">
-                                <el-form-item
-                                    prop="instance_detail"
-                                    label="实例详情"
-                                >
-                                    <template>
-                                        <div class="area">地域及可用区：{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
-                                        <div class="area">实例规格:{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
-                                    </template>
-                                </el-form-item>
+                    <el-card>
+                        <div class="card_inline">
+                            <el-form-item
+                                prop="ecs"
+                                :label="form_data.isMounted==='1' ? 'ECS实例' : '地域及可用区'"
+                            >
+                                <Area :list="instances_list" @get_area_id="get_area_id" :area="'北京'" />
+                            </el-form-item>
+                            <el-form-item
+                                prop="area"
+                                label=""
+                            >
+                                <Az :list="area_list" @get_az="get_az" :isEdit="isEdit" :az="'可用区1'" />
+                            </el-form-item>
+                            <template v-if="form_data.isMounted==='1'">
+                            <el-form-item
+                                prop="use_area"
+                                label=""
+                            >
+                                <el-select v-model="form_data.ecs_id" placeholder="请选择ECS实例名称（实例ID)">
+                                    <el-option v-for="item in ECS_instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                </el-select>
+                            </el-form-item>
                             </template>
-                        </el-card>
+                        </div>
+                        <template v-if="form_data.ecs_id!=='' && form_data.isMounted==='1'">
+                            <el-form-item
+                                prop="instance_detail"
+                                label="实例详情"
+                            >
+                                <template>
+                                    <div class="area">地域及可用区：{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
+                                    <div class="area">实例规格:{{form_data.ecs}}&nbsp;&nbsp;{{form_data.ecs_id}}</div>
+                                </template>
+                            </el-form-item>
+                        </template>
+                    </el-card>
+                    <template v-if="form_data.isMounted==='1'">
                         <el-card>
                             <el-form-item
                                 prop="del_set"
                                 label="删除设置"
                             >
                                 <el-radio :label="form_data.del_set ? form_data.del_set : ''" v-model="form_data.del_set" @click.native.prevent="set_del">云盘随实例删除</el-radio>
-                            </el-form-item>
-                        </el-card>
-                    </template>
-                    <template v-else>
-                        <el-card>
-                            <el-form-item
-                                prop="area"
-                                label="地域"
-                            >
-                                <el-select v-model="form_data.area">
-                                    <el-option v-for="item in instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item
-                                prop="use_area"
-                                label="可用区"
-                            >
-                                <el-button v-for="item in use_area_list" :key="item.id" @click="sel_use_area(item.id)" :type="form_data.use_area===item.id ? 'primary' : 'default'">{{item.name}}</el-button>
                             </el-form-item>
                         </el-card>
                     </template>
@@ -162,11 +149,13 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
-import Area from '../../components/Area.vue'
+import Area from '../../components/Area.vue';
+import Az from '../../components/availableArea.vue'
 @Component({
   components: { 
       backHeader,
-      Area
+      Area,
+      Az
     },
 
 })
@@ -192,6 +181,7 @@ export default class CreateDisk extends Vue{
         ]
         
     }
+    private isEdit="可用区1"
     private disk_total:number=16
     private instance_list=[
         {
@@ -291,21 +281,19 @@ export default class CreateDisk extends Vue{
         {
             label:'可用区2',
             value:'2'
-        }
-    ]
-    private use_area_list=[
-        {
-            id:'1',
-            name:'可用区A'
         },
         {
-            id:'2',
-            name:'可用区B'
+            label:'可用区3',
+            value:'3'
         },
         {
-            id:'3',
-            name:'可用区C'
-        }
+            label:'可用区4',
+            value:'4'
+        },
+        {
+            label:'可用区5',
+            value:'5'
+        },
     ]
     private disk_type_list=[
         {
@@ -317,6 +305,10 @@ export default class CreateDisk extends Vue{
             label:'高性能型（SSD）'
         }
     ]
+    private get area_id (){
+        console.log("area_id",this.$store.state.area_id)
+        return this.$store.state.area_id
+    }
     private mount(value:string){
         this.disk_total=value==="1" ? 16 : 50
         this.get_disk_quantity()
@@ -333,14 +325,15 @@ export default class CreateDisk extends Vue{
         this.form_data={...this.form_data,del_set:!this.form_data.del_set}
         console.log("this",this.form_data)
     }
-    //设置可用区
-    private sel_use_area(id:string){
+    //设置可用区ID
+    private get_az(id:string){
+        console.log("id",id)
         this.form_data={...this.form_data,use_area:id}
     }
-    //获取可用区ID
-    private get area_id(){
-        console.log("get_use_area",this.$store.state.area_id)
-        return this.$store.state.area_id;
+    //设置区域ID
+    private get_area_id (val:string){
+        console.log("get_area_id",val)
+        this.form_data={...this.form_data,area:val}
     }
     //新增云盘配置
     private add(){

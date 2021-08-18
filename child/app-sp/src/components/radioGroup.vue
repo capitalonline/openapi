@@ -1,23 +1,16 @@
 <template>
     <div class="radio-btn">
-        <el-radio-group v-model="area_id" size="small">
+        <el-radio-group v-model="syncValue" size="mini">
             <el-radio-button v-for="item in list" :key="item.value" :label="item.label" ></el-radio-button>
         </el-radio-group>
     </div>
 </template>
 <script lang="ts">
-import {Component, Vue,Prop} from 'vue-property-decorator';
-// import store from '../store'
+import {Component, Vue,Prop, PropSync} from 'vue-property-decorator';
 @Component({})
 export default class Area extends Vue{
     @Prop({default:()=>[]}) private list!:any;
-    private get area_id (){
-        return this.$store.state.area_id
-    }
-    private set area_id (val){
-        console.log("set",val)
-        this.$store.commit("SET_AREA_ID",val)
-    }
+    @PropSync('value',{type:String}) syncValue!:string;
 }
 </script>
 <style lang="scss">
@@ -30,7 +23,6 @@ export default class Area extends Vue{
         text-overflow: ellipsis;
     }
     .el-radio-button:first-child .el-radio-button__inner{
-        border-right: none;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
@@ -38,6 +30,9 @@ export default class Area extends Vue{
         border-right: 1px solid #DCDFE6;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
+    }
+    .el-radio-button:first-child:last-child .el-radio-button__inner{
+        border-radius:4px
     }
 }
 </style>

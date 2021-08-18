@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-select v-model="area_id">
+        <el-select v-model="label">
             <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" class="item">
                 <div>
                     <span class="label">{{item.label}}</span>
-                    <radio-group :list="item.children"></radio-group>
+                    <radio-group :list="item.children" :value.sync="value"></radio-group>
                 </div>
                 
             </el-option>
@@ -21,11 +21,17 @@ import RadioGroup from './radioGroup.vue'
 })
 export default class Area extends Vue{
     @Prop({default:()=>[]}) private list!:any;
-    private selected_id:string=""
-    private selected_name:string=""
-    private get area_id (){
-        console.log("area_id",this.$store.state.area_id)
-        return this.$store.state.area_id
+    @Prop({default:''}) private area!:any;
+    private label:string=this.area
+    private value:string=this.area
+    @Watch("value")
+    private watch_val(newVal){
+        this.label=newVal
+        this.get_area_id(newVal)
+    }
+    @Emit("get_area_id")
+    get_area_id(val){
+
     }
 }
 </script>

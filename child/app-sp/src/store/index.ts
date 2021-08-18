@@ -13,7 +13,6 @@ export default new Vuex.Store({
     auth_info: {},
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
-    area_id:''
   },
   getters: {
   },
@@ -38,9 +37,6 @@ export default new Vuex.Store({
       storage.set('status_list', JSON.stringify(status));
       state.status_list = status;
     },
-    SET_AREA_ID(state, id){
-      state.area_id = id
-    }
   },
   actions: {
   },
