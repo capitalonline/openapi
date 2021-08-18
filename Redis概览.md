@@ -463,9 +463,10 @@ def get_redis_config():
 | :------ | :----- | -------- |
 | Message | string | 信息描述 |
 | Code    | string | 状态码   |
-| Data    | dict   | 数据     |
-| InstanceUuid    | list   | 实例编码     |
+| Data    | dict   | 包含任务编码和实例编码列表     |
+| InstancesUuid    | list   | 实例编码     |
 | TaskId  | string | 任务id   |
+
 
 **请求示例：**
 
@@ -499,7 +500,7 @@ def create_redis():
     "Message": "Success.",
     "Code": "Success",
     "Data": {
-        "InstanceUuid":["5d74bb81-0473-464d-b15b-0ae418619248"],
+        "InstancesUuid":["5d74bb81-0473-464d-b15b-0ae418619248",],
         "TaskId": "****************"
     }
 }
