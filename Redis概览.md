@@ -1,24 +1,20 @@
 Redis 公开API目录
 =================
-* [API概览](#api概览)
-* [认证方式](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
-  * [1.公共请求参数](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1公共请求参数)
-  * [2.签名机制](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2签名机制)
-    * [步骤一：构造规范化请求字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤一构造规范化请求字符串)
-    * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
-  * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
-* [错误码](#错误码)
-* [访问地址](#访问地址)
-* [实例](#实例)
-    * [1.DescribeRegins](#1describeregins)
-    * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
-    * [3.CreateDBInstance](#3createdbinstance) 
-    * [4.DescribeDBInstances](#4describedbinstances)
-    * [5.DeleteDBInstance](#5deletedbinstance)
-    * [6.DescribeBackups](#6describebackups)
-    * [7.DownloadBackup](#7downloadbackup)
-    * [8.CreateBackup](#8createbackup)
-    * [9.DeleteBackup](#9deletebackup)
+- [Redis 公开API目录](#redis-公开api目录)
+    - [API概览](#api概览)
+      - [实例](#实例)
+      - [备份](#备份)
+      - [错误码](#错误码)
+    - [访问地址](#访问地址)
+    - [1.DescribeRegins](#1describeregins)
+    - [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+    - [3.CreateDBInstance](#3createdbinstance)
+    - [4.DescribeDBInstances](#4describedbinstances)
+    - [5.DeleteDBInstance](#5deletedbinstance)
+    - [6.DescribeBackups](#6describebackups)
+    - [7.DownloadBackup](#7downloadbackup)
+    - [8.CreateBackup](#8createbackup)
+    - [9.DeleteBackup](#9deletebackup)
 
 ### API概览
 
@@ -468,6 +464,7 @@ def get_redis_config():
 | Message | string | 信息描述 |
 | Code    | string | 状态码   |
 | Data    | dict   | 数据     |
+| InstanceUuid    | list   | 实例编码     |
 | TaskId  | string | 任务id   |
 
 **请求示例：**
@@ -499,10 +496,12 @@ def create_redis():
 
 ```json
 {
-    "Code": "Success",
-    "Data": {},
     "Message": "Success.",
-    "TaskId": "****************"
+    "Code": "Success",
+    "Data": {
+        "InstanceUuid":["5d74bb81-0473-464d-b15b-0ae418619248"],
+        "TaskId": "****************"
+    }
 }
 ```
 
