@@ -1,9 +1,9 @@
 <template>
     <div>
         <el-select v-model="label">
-            <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" class="item">
+            <el-option v-for="item in list" :key="item.region_id" :label="item.region_name" :value="item.region_id" class="item">
                 <div>
-                    <span class="label">{{item.label}}</span>
+                    <span class="label">{{item.region_name}}</span>
                     <radio-group :list="item.children" :value.sync="value"></radio-group>
                 </div>
                 

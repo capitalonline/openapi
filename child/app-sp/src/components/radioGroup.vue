@@ -1,7 +1,7 @@
 <template>
     <div class="radio-btn">
         <el-radio-group v-model="syncValue" size="mini">
-            <el-radio-button v-for="item in list" :key="item.value" :label="item.label" ></el-radio-button>
+            <el-radio-button v-for="item in list" :key="item.region_id" :label="item.region_name" ></el-radio-button>
         </el-radio-group>
     </div>
 </template>

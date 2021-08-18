@@ -8,7 +8,10 @@
                         <el-form-item
                             prop="customer_id"
                             label="客户ID"
-                            :rules="[{required:true,message:'请输入客户ID',trigger:'blur'}]"
+                            :rules="[
+                                {required:true,message:'请输入客户ID',trigger:'blur'},
+                                { required: true, trigger: 'blur', validator: validatePass }
+                            ]"
                         >
                             <el-input v-model="form_data.customer_id" />
                         </el-form-item>
@@ -36,14 +39,14 @@
                                 prop="area"
                                 :label="form_data.isMounted==='1' ? 'ECS实例' : '地域及可用区'"
                             >
-                                <Area :list="area_list" @get_area_id="get_area_id" :area="'北京'" />
+                                <Area :list="area_list" @get_area_id="get_area_id" :area="form_data.area" />
                             </el-form-item>
                             <el-form-item
                                 prop="az"
                                 label=""
                             >
                                 <el-select v-model="form_data.az" placeholder="请选择可用区">
-                                    <el-option v-for="item in az_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                    <el-option v-for="item in az_list" :key="item.az_id" :label="item.az_name" :value="item.az_id"></el-option>
                                 </el-select>
                             </el-form-item>
                             <template v-if="form_data.isMounted==='1'">
@@ -152,6 +155,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
 import Area from '../../components/Area.vue';
+import Service from '../../https/instance/create'
+import { Form } from "element-ui";
 @Component({
   components: { 
       backHeader,
@@ -163,14 +168,13 @@ export default class CreateDisk extends Vue{
     $router;
     private form_data:any={
         customer_id:'',
-        customer_name:'张三',
+        customer_name:'',
         isMounted:'1',
-        ecs:'beijing',
+        area:'',
+        az:'',
         ecs_id:'',
         instance_detail:'',
         del_set:false,
-        area:'beijing',
-        az:'1',
         disk_list:[
             {
                 disk_name:'',
@@ -294,16 +298,57 @@ export default class CreateDisk extends Vue{
             label:'高性能型（SSD）'
         }
     ]
-    private get area_id (){
-        console.log("area_id",this.$store.state.area_id)
-        return this.$store.state.area_id
+    private validatePass:any = (rule:any, value:string, callback:any)=>{
+        console.log("value",value)
+        if(value.length>6){
+            return callback()
+        }else{
+            return callback(new Error("请输入正确的客户ID"))
+        }
+        
     }
+    //监听客户ID
+    @Watch("form_data.customer_id")
+    private watch_customer_id(newVal){
+        const form = this.$refs.form as Form
+        form.validate((valid:boolean)=>{
+            console.log("valid",valid)
+            if(valid){
+                this.get_customer_name()
+            }
+        })
+    }
+    //获取客户名称
+    private async get_customer_name(){
+        const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
+        if (resData.code == 'Success') {
+            this.form_data={...this.form_data,customer_name:resData.data.customer_name}
+            this.get_area_list();
+        }
+    }
+    //获取地区列表
+    private async get_area_list(){
+        const resData: any = await Service.get_region_az_list({customer_id: this.form_data.customer_id});
+        if (resData.code == 'Success') {
+        this.area_list = resData.data;
+        // if (this.default_region.region_id == this.region_list[0].region_id) {
+        //         this.FnChangeAz(this.default_az.az_id)
+        //     } else {
+        //         this.default_region = this.region_list[0];
+        //     }
+        }
+    }
+    
+    //设置挂载
     private mount(value:string){
         this.disk_total=value==="1" ? 16 : 50
         this.get_disk_quantity()
-        const {form_data:{disk_list}}=this
-        if(value==="1"){
-
+        const {form_data:{isMounted,disk_list}}=this
+        if(value==="1" && isMounted==='0'){
+            this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
+                item.quantity=0
+                return item
+            })}
         }
         this.form_data={...this.form_data,isMounted:value}
     }
@@ -322,6 +367,9 @@ export default class CreateDisk extends Vue{
     //设置区域ID
     private get_area_id (val:string){
         console.log("get_area_id",val)
+        const {area_list}=this
+        const fil:any = area_list.filter((item:any)=>item.region_name===val)
+        this.az_list = fil[0].az_list
         this.form_data={...this.form_data,area:val}
     }
     //新增云盘配置
@@ -396,6 +444,9 @@ export default class CreateDisk extends Vue{
             .el-card.is-always-shadow{
                 margin-bottom: 20px !important;
             }
+            .el-card.is-always-shadow:last-child{
+                margin-bottom: 0px !important;
+            }
         }
         .detail_box{
             width: 380px;
@@ -410,8 +461,8 @@ export default class CreateDisk extends Vue{
         .button_box{
             position: fixed;
             bottom: 0;
-            padding: 20px;
-            width: 360px;
+            padding: 20px 0 20px 20px;
+            width: 380px;
             right: 30px;
             .el-button{
                 width: 100%;
