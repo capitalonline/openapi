@@ -1,42 +1,37 @@
 
 MySQL 公开API目录
 =================
-* [API概览](#api概览)
-* [认证方式](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#认证方式)
-  * [1.公共请求参数](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1公共请求参数)
-  * [2.签名机制](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2签名机制)
-    * [步骤一：构造规范化请求字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤一构造规范化请求字符串)
-    * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
-  * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
-* [错误码](#错误码)
-* [访问地址](#访问地址)
-* [实例](#实例)
-   * [1.DescribeRegions](#1describeregions) 
-   * [2.DescribeAvailableDBConfig](#2describeavailabledbconfig) 
-   * [3.CreateDBInstance](#3createdbinstance) 
-   * [4.DescribeDBInstances](#4describedbinstances) 
-   * [5.DescribeModifiableDBSpec](#6describemodifiabledbspec) 
-   * [6.ModifyDBInstanceSpec](#7modifydbinstancespec) 
-   * [7.DeleteDBInstance](#8deletedbinstance)
-* [账号](#账号)
-   * [1.CreatePrivilegedAccount](#5createprivilegedaccount)
-* [备份](#备份)
-   * [1.CreateBackup](#11createbackup)
-   * [2.DescribeBackups](#12describebackups)
-   * [3.DeleteBackup](#13deletebackup)
-   * [4.DownloadBackup](#14downloadbackup)
-* [恢复](#恢复)
-   * [1.StartBatchRollback](#15startbatchrollback)
-   * [2.DescribeRollbackRangeTime](#16describerollbackrangetime)
-   * [3.StartBatchRollbackToTemporaryDBInstance](#17startbatchrollbacktotemporarydbinstance)
-   * [4.DescribeTemporaryDBInstances](#18describetemporarydbinstances)
-   * [5.RegularizeTemporaryDBInstances](#19regularizetemporarydbinstances)
-   * [6.DeleteTemporaryDBInstances](#20deletetemporarydbinstances)   
-* [只读实例](#只读实例)
-   * [1.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig) 
-   * [2.CreateReadOnlyDBInstance](#10createreadonlydbinstance) 
-* [监控](#监控)
-   * [1.DescribeDBInstancePerformance](#21describedbinstanceperformance) 
+- [MySQL 公开API目录](#mysql-公开api目录)
+    - [API概览](#api概览)
+      - [实例](#实例)
+      - [账号](#账号)
+      - [备份](#备份)
+      - [恢复](#恢复)
+      - [只读实例](#只读实例)
+      - [监控](#监控)
+      - [错误码](#错误码)
+    - [访问地址](#访问地址)
+    - [1.DescribeRegions](#1describeregions)
+    - [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+    - [3.CreateDBInstance](#3createdbinstance)
+    - [4.DescribeDBInstances](#4describedbinstances)
+    - [5.CreatePrivilegedAccount](#5createprivilegedaccount)
+    - [6.DescribeModifiableDBSpec](#6describemodifiabledbspec)
+    - [7.ModifyDBInstanceSpec](#7modifydbinstancespec)
+    - [8.DeleteDBInstance](#8deletedbinstance)
+    - [9.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig)
+    - [10.CreateReadOnlyDBInstance](#10createreadonlydbinstance)
+    - [11.CreateBackup](#11createbackup)
+    - [12.DescribeBackups](#12describebackups)
+    - [13.DeleteBackup](#13deletebackup)
+    - [14.DownloadBackup](#14downloadbackup)
+    - [15.StartBatchRollback](#15startbatchrollback)
+    - [16.DescribeRollbackRangeTime](#16describerollbackrangetime)
+    - [17.StartBatchRollbackToTemporaryDBInstance](#17startbatchrollbacktotemporarydbinstance)
+    - [18.DescribeTemporaryDBInstances](#18describetemporarydbinstances)
+    - [19.RegularizeTemporaryDBInstances](#19regularizetemporarydbinstances)
+    - [20.DeleteTemporaryDBInstances](#20deletetemporarydbinstances)
+    - [21.DescribeDBInstancePerformance](#21describedbinstanceperformance)
 
 ### API概览
 
@@ -535,6 +530,7 @@ def get_mysql_spec_info():
 | Message | string | 信息描述 |
 | Code    | string | 状态码   |
 | Data    | dict   | 数据     |
+| InstanceUuid    | list   | 实例编码     |
 | TaskId  | string | 任务id   |
 
 **请求示例：**
@@ -569,10 +565,12 @@ def create_mysql():
 
 ```json
 {
-    "Code": "Success",
-    "Data": {},
     "Message": "Success.",
-    "TaskId": "**********"
+    "Code": "Success",
+    "Data": {
+        "InstanceUuid":["5d74bb81-0473-464d-b15b-0ae418619248"],
+        "TaskId": "**********"
+    }
 }
 ```
 
