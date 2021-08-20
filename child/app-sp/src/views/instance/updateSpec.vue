@@ -31,8 +31,8 @@ import Service from '../../https/instance/create';
 
 @Component
 export default class resetPwd extends Vue{
-  @Prop({default: 'f9755192-b89d-11eb-b74e-1e00e202ff80'}) private az_id!: string;
-  @Prop({default: 'E020910'}) private customer_id!: string;
+  @Prop({default: ''}) private az_id!: string;
+  @Prop({default: ''}) private customer_id!: string;
   private calc_list = [];
   private default_calc = {
     ecs_goods_id: '',
@@ -47,6 +47,9 @@ export default class resetPwd extends Vue{
     ram: ''
   }
   private async FnGetSpecList() {
+    if (!this.az_id) {
+      return
+    }
     let resData: any = await Service.get_spec_list({
       az_id: this.az_id,
       customer_id: this.customer_id
@@ -82,9 +85,12 @@ export default class resetPwd extends Vue{
   private FnChangeSpec(newVal) {
     this.data.ram = this.data.default_spec.ram_size_list[0];
   }
-
-
-  private created() {
+  @Watch('az_id') 
+  private FnChangeAz(newVal, oldVal) {
+    this.FnGetSpecList();
+  }
+  @Watch('customer_id')
+  private FnChangeCustomer(newVal, oldVal) {
     this.FnGetSpecList();
   }
 }

@@ -88,7 +88,7 @@
           </el-table-column>
         </el-table>
         <div v-if="dialog_component" class="component-box">
-          <component :is="dialog_component" ref="child_componet"></component>
+          <component :is="dialog_component" ref="child_componet" :system_disk="true"></component>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -115,7 +115,7 @@ import Record from './record.vue';
 import Detail from './detail.vue';
 import resetPwd from './resetPwd.vue';
 import updateSpec from './updateSpec.vue';
-import updateSystem from './updateSystem.vue';
+import updateOs from './updateOs.vue';
 import moment from 'moment';
 @Component({
   components: {
@@ -125,7 +125,7 @@ import moment from 'moment';
     Detail,
     resetPwd, 
     updateSpec, 
-    updateSystem
+    updateOs
   },
 })
 
@@ -253,7 +253,7 @@ export default class App extends Vue {
       this.dialog_component = updateSpec;
     }
     else if (type === 'update_system') {
-      this.dialog_component = updateSystem;
+      this.dialog_component = updateOs;
     }
   }
   private FnConfirm() {

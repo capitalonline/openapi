@@ -7,7 +7,7 @@
           <label-block label="客户ID">
             <div class="input-msg-box">
               <div class="input-box">
-                <el-input v-model="customer_id_input"></el-input>
+                <el-input v-model="customer_id"></el-input>
               </div>
               <div v-show="error_msg.customer_id.show" class="warning_message">{{ error_msg.customer_id.msg }}</div>
             </div>
@@ -44,16 +44,76 @@
 
         <el-card>
           <label-block label="计算规格">
-            <update-spec :az_id="default_az.az_id" :customer_id="customer_id"></update-spec>
+            <div class="row">
+              <span class="left-title">类型</span>
+              <el-select v-model="default_calc" value-key="ecs_goods_id">
+                <el-option v-for="calc in calc_list" :key="calc.ecs_goods_id" :value="calc" :label="calc.ecs_goods_name"></el-option>
+              </el-select>
+            </div>
+            <div class="row">
+              <span class="left-title">vCPU</span>
+              <el-select v-model="default_spec" value-key="cpu_size" class="m-right20">
+                <el-option v-for="spec in default_calc.ecs_spec_list" :key="spec.cpu_size" :value="spec" :label="spec.cpu_size"></el-option>
+              </el-select>
+              <span class="left-title">内存</span>
+              <el-select v-model="default_ram">
+                <el-option v-for="ram in default_spec.ram_size_list" :key="ram" :value="ram" :label="ram"></el-option>
+              </el-select>
+            </div>
           </label-block>
         </el-card>
 
         <el-card>
-          <update-os :az_id="default_az.az_id" :customer_id="customer_id"></update-os>
+          <label-block label="镜像">
+            <div class="m-bottom10">
+              <el-radio-group v-model="default_os_template_type.os_template_type">
+                <el-radio-button v-for="(value, os_template_type) in os_list" :key="os_template_type" :label="os_template_type"> {{ value.name }} </el-radio-button>
+              </el-radio-group>
+            </div>
+            <el-select v-model="default_os_type" class="m-right20">
+              <el-option v-for="os_type in default_os_template_type.os_types" :key="os_type" :value="os_type" :label="os_type"></el-option>
+            </el-select>
+            <el-select v-model="default_os_version" value-key="os_id" class="m-right10">
+              <el-option v-for="version in default_os_template_type.os_versions[default_os_type]" :key="version.os_id" :value="version" :label="version.name"></el-option>
+            </el-select>
+            <span v-show="error_msg.os_id.show" class="warning_message">{{ error_msg.os_id.msg }}</span>
+          </label-block>
         </el-card>
 
         <el-card class="disk-box">
-          <update-disk :az_id="default_az.az_id" :customer_id="customer_id" :system_disk="true" :data_disk="true"></update-disk>
+          <label-block label="系统盘" class="m-bottom10">
+            <el-select v-model="default_system_info" value-key="ecs_goods_id" class="m-right20" @change="FnChangeSysGoods">
+              <el-option v-for="item in system_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
+            </el-select>
+            <el-input-number v-model="system_size" 
+              :min="Number(default_system_info.disk_min)" 
+              :max="Number(default_system_info.disk_max)" 
+              :step="Number(default_system_info.disk_step)"
+              step-strictly></el-input-number> 
+            {{ default_system_info.disk_unit }}
+          </label-block>
+          <label-block label="数据盘">
+            <!-- TODO key值 -->
+            <div v-for="(data, index) in data_disk_list" :key="index" class="m-bottom10">
+              <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
+              <el-select v-model="data.default_disk_info" value-key="ecs_goods_id" class="m-right20">
+                <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
+              </el-select>
+              <el-input-number v-model="data.disk_size" 
+                :min="Number(data.default_disk_info.disk_min)" 
+                :max="Number(data.default_disk_info.disk_max)" 
+                :step="Number(data.default_disk_info.disk_step)"
+                step-strictly></el-input-number> 
+              {{ data.default_disk_info.disk_unit }}
+              <el-input-number v-model="data.num" :min="data.min" :max="FnGetSurplus + data.num" :step="1" class="m-left10 m-right10"></el-input-number> 
+              <el-checkbox v-model="data.del">随实例删除</el-checkbox>
+            </div>
+            <div class="disk-btn">
+              <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+              <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘， 
+              还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
+            </div>
+          </label-block>
         </el-card>
 
         <el-card>
@@ -73,7 +133,26 @@
             </div>
             <div class="prompt_message"> 2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符</div>
           </label-block>
-          <update-pwd></update-pwd>
+          <label-block label="用户名">
+            {{ default_os_version.username }}
+          </label-block>
+          <label-block label="密码">
+            <template #default>
+              <div class="input-msg-box">
+                <div class="input-box">
+                  <el-input type="password" v-model="ecs_name_info.password" placeholder="请输入密码" @blur="FnCheckPwd"></el-input>
+                </div>
+                <div v-show="error_msg.password.show" class="warning_message">{{ error_msg.password.msg }}</div>
+              </div>
+              <div class="prompt_message"> 8-30个字符，且同时包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+=_|{}[]:;,.?/中的特殊字符）</div>
+              <div class="input-msg-box">
+                <div class="input-box">
+                  <el-input type="password" v-model="ecs_name_info.confirm_password" placeholder="请确认密码" @blur="FnCheckConPwd"></el-input>
+                </div>
+                <div v-show="error_msg.confirm_password.show" class="warning_message">{{ error_msg.confirm_password.msg }}</div>
+              </div>
+            </template>
+          </label-block>
         </el-card>
       </div>
       <div class="right-box">
@@ -120,10 +199,6 @@
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import BackHeader from '../../components/backHeader.vue';
-import updateSpec from './updateSpec.vue';
-import updateOs from './updateOs.vue';
-import updateDisk from './updateDisk.vue';
-import updatePwd from './resetPwd.vue';
 import Service from '../../https/instance/create';
 import { checkPwd } from '../../utils/checkPwd';
 import { checkEcsName } from '../../utils/checkEcsName';
@@ -131,11 +206,7 @@ import { checkEcsName } from '../../utils/checkEcsName';
 @Component({
   components: {
     LabelBlock,
-    BackHeader,
-    updateSpec,
-    updateOs,
-    updateDisk,
-    updatePwd
+    BackHeader
   },
 })
 
@@ -143,7 +214,6 @@ export default class App extends Vue {
   $message;
   $router;
   private customer_id = '';
-  private customer_id_input = '';
   private customer_name = '';
   private region_list = [];
   private default_region = {
@@ -180,11 +250,20 @@ export default class App extends Vue {
     ram_size_list: []
   };
   private default_ram = '';
+  private os_list = [];
+  private default_os_template_type = {
+    os_template_type: '',
+    os_types: [],
+    os_versions: {}
+  };
+  private default_os_type = '';
   private default_os_version = {
     os_id: '',
     os_type: '',
     username: ''
   }; 
+  private system_disk_info = [];
+  private data_disk_info = [];
   private default_system_info = {
     ecs_goods_id: '',
     disk_name: '',
@@ -217,9 +296,8 @@ export default class App extends Vue {
     confirm_password: ''
   };
   private async FnGetCustomerName() {
-    const resData: any = await Service.get_customer_name({customer_id: this.customer_id_input});
+    const resData: any = await Service.get_customer_name({customer_id: this.customer_id});
     if (resData.code == 'Success') {
-      this.customer_id = this.customer_id_input;
       this.customer_name = resData.data.customer_name;
       this.error_msg.customer_id.show = false;
       this.FnGetRegionAzList();
@@ -259,17 +337,100 @@ export default class App extends Vue {
       }
     }
   }
+  private async FnGetSpecList() {
+    let resData: any = await Service.get_spec_list({
+      az_id: this.default_az.az_id,
+      customer_id: this.customer_id
+    });
+    if (resData.code == 'Success') {
+      this.calc_list = resData.data.length > 0 ? resData.data : [{ecs_spec_list: []}];
+      this.default_calc = this.calc_list[0];
+    }
+  }
+  private async FnGetOsList() {
+    let resData: any = await Service.get_os_list({
+      customer_id: this.customer_id, 
+      az_id: this.default_az.az_id});
+    if (resData.code == 'Success') {
+      this.os_list = resData.data;
+      if (this.default_os_template_type.os_template_type == Object.keys(this.os_list)[0]) {
+        this.FnChangeOsTemplateType(this.default_os_template_type.os_template_type)
+      } else {
+        this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
+      }   
+    }
+  }
+  private async FnGetDiskInfo() {
+    let resData: any = await Service.get_disk_info({
+      az_id: this.default_az.az_id,
+      customer_id: this.customer_id
+    });
+    if (resData.code == 'Success') {
+      this.system_disk_info = resData.data.system_disk;
+      this.default_system_info = this.system_disk_info[0];
+      this.FnChangeSysGoods();
+      this.data_disk_info = resData.data.data_disk;
+    }
+  }
+  private FnChangeSysGoods() {
+    this.system_size = this.default_system_info.disk_min;
+  }
+  private FnAddDataDisk() {
+    if (this.FnGetSurplus == 0) {
+      return
+    }
+    let data = {
+      default_disk_info: {
+        disk_min: 0,
+        disk_max: 0,
+        disk_step: 0,
+        disk_unit: 'G',
+        disk_name: ''
+      },
+      disk_size: 0,
+      num: 1,
+      min: 1,
+      del: false
+    }
+    data.default_disk_info = this.data_disk_info[0];
+    if ( !data.default_disk_info.disk_max ) {
+      return
+    }
+    data.disk_size = data.default_disk_info.disk_min;
+    this.data_disk_list.push(data);
+  }
+  private FnDelDataDisk(index) {
+    this.data_disk_list.splice(index, 1)
+  }
   private FnCheckEcsName (): boolean {
     let data: any = checkEcsName(this.ecs_name_info.ecs_name);
     this.error_msg.ecs_name.show = !data.flag;
     this.error_msg.ecs_name.msg = data.msg;
     return this.error_msg.ecs_name.show
   }
+  private FnCheckPwd(): boolean {
+    let data: any = checkPwd(this.ecs_name_info.password);
+    this.error_msg.password.show = !data.flag;
+    this.error_msg.password.msg = data.msg;
+    return this.error_msg.password.show
+  }
+  private FnCheckConPwd(): boolean {
+    if (this.ecs_name_info.password != this.ecs_name_info.confirm_password) {
+      this.error_msg.confirm_password.show = true;
+    } else {
+      this.error_msg.confirm_password.show = false;
+    }
+    return this.error_msg.confirm_password.show
+  }
   private async FnCreate() {
     if (!this.customer_id) {
       this.error_msg.customer_id.show = true;
       return
     } else if(this.FnCheckEcsName()) {
+      return
+    } else if(this.FnCheckPwd()) {
+      return
+    } else if(this.FnCheckConPwd()) {
       return
     } else if(!this.default_subnet.subnet_id) {
       this.error_msg.subnet_id.show = true;
@@ -341,7 +502,21 @@ export default class App extends Vue {
     }
   }
 
-  @Watch('customer_id_input')
+  private get FnGetDiskNum(): number {
+    if (this.data_disk_list.length > 0) {
+      return this.data_disk_list.reduce((accumulator, currentValue: any = {num: 0}) => {
+        return accumulator + currentValue.num
+      }, 0);
+    } else {
+      return 0
+    }
+  }
+
+  private get FnGetSurplus() {
+    return 16 - this.FnGetDiskNum
+  }
+
+  @Watch('customer_id')
   private FnChangeCustomerId(newVal) {
     if (newVal.length > 6) {
       this.FnGetCustomerName();
@@ -362,6 +537,9 @@ export default class App extends Vue {
   private FnChangeAz(newVal) {
     if (newVal) {
       this.FnGetNetList();
+      this.FnGetSpecList();
+      this.FnGetOsList();
+      this.FnGetDiskInfo();
     }
   }
   @Watch('default_vpc.vpc_id')
@@ -381,6 +559,43 @@ export default class App extends Vue {
       this.error_msg.subnet_id.show = true;
     }
   }
+  @Watch('default_calc.ecs_goods_id')
+  private FnChangeCalc(newVal) {
+    if (newVal) {
+      this.default_spec = this.default_calc.ecs_spec_list[0];
+    }
+  }
+  @Watch('default_spec.cpu_size')
+  private FnChangeSpec(newVal) {
+    if (newVal) {
+      this.default_ram = this.default_spec.ram_size_list[0];
+    }
+  }
+  @Watch('default_os_template_type.os_template_type')
+  private FnChangeOsTemplateType(newVal) {
+      this.default_os_template_type.os_types = this.os_list[newVal].os_types;
+      this.default_os_template_type.os_versions = this.os_list[newVal].os_versions;
+      if (this.default_os_type == this.default_os_template_type.os_types[0]) {
+        this.FnChangeOsType(this.default_os_type)
+      } else {
+        this.default_os_type = this.default_os_template_type.os_types[0];
+      }
+  }
+  @Watch('default_os_type')
+  private FnChangeOsType(newVal) {
+    if (newVal) {
+      this.default_os_version = this.default_os_template_type.os_versions[this.default_os_type][0];
+      this.error_msg.os_id.show = false;
+    } else {
+      this.default_os_version = {
+        os_id: '',
+        os_type: '',
+        username: ''
+      };
+      this.error_msg.os_id.show = true;
+    }
+  }
+
 }
 </script>
 
@@ -427,6 +642,25 @@ export default class App extends Vue {
 }
 .create-btn {
   width: 100%;
+}
+.disk-box {
+  .el-select {
+    width: 160px;
+  }
+  i {
+    font-size: 24px;
+    margin-right: 2px;
+    vertical-align: middle;
+  }
+  .delete-icon {
+    margin-right: 6px;
+    color: #da3b18;
+    cursor: pointer;
+  }
+  .disk-btn {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 </style>
 
