@@ -58,16 +58,22 @@ const routes: RouteConfig[] = [
     meta:{menu:'disk_list'}
   },
   {
-    path:'/mirror',
-    name:'mirror_list',
-    component:()=>import('../views/mirror/list.vue'),
-    meta:{menu:'mirror_list'}
-  },
-  {
     path:'/disk/create',
     name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
     meta:{menu:'disk_list'}
+  },
+  {
+    path:'/disk/capacity',
+    name:'disk_capacity',
+    component:()=>import('../views/disk/capacity.vue'),
+    meta:{menu:'disk_list'}
+  },
+  {
+    path:'/mirror',
+    name:'mirror_list',
+    component:()=>import('../views/mirror/list.vue'),
+    meta:{menu:'mirror_list'}
   },
   {
     path: '/event',

@@ -10,7 +10,7 @@
                             label="客户ID"
                             :rules="[
                                 {required:true,message:'请输入客户ID',trigger:'blur'},
-                                { required: true, trigger: 'blur', validator: validatePass }
+                                { required: true, trigger: 'blur', validator: validate_customer }
                             ]"
                         >
                             <el-input v-model="form_data.customer_id" />
@@ -54,7 +54,7 @@
                                 prop="ecs_id"
                                 label=""
                             >
-                                <el-select v-model="form_data.ecs_id" placeholder="请选择ECS实例名称（实例ID)">
+                                <el-select v-model="form_data.ecs_id" filterable placeholder="请选择ECS实例名称（实例ID)">
                                     <el-option v-for="item in ECS_instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
                                 </el-select>
                             </el-form-item>
@@ -78,7 +78,7 @@
                                 prop="del_set"
                                 label="删除设置"
                             >
-                                <el-radio :label="form_data.del_set ? form_data.del_set : ''" v-model="form_data.del_set" @click.native.prevent="set_del">云盘随实例删除</el-radio>
+                                <el-checkbox v-model="form_data.del_set">云盘随实例删除</el-checkbox>
                             </el-form-item>
                         </el-card>
                     </template>
@@ -87,7 +87,8 @@
                             prop="disk_name"
                             label="云盘名称"
                         >
-                            <el-input v-model="inn.disk_name" />
+                            <el-input v-model="inn.disk_name" minlength="2" maxlength="60" show-word-limit />
+                            <div class="remark">{{disk_validate_msg}}</div>
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
@@ -111,14 +112,34 @@
                         >
                             <el-input-number v-model="inn.quantity" :step="1" :min="0" :max="dis_change ? inn.quantity : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
                         </el-form-item>
-                        <div class="operate_btns" v-if="index===form_data.disk_list.length-1">
-                            <el-button @click="add" v-if="!dis_change">+</el-button>
-                            <el-button @click="del(index)" v-if="form_data.disk_list.length>1">-</el-button>
-                        </div>
+                        <template v-if="index===form_data.disk_list.length-1">
+                            <el-form-item
+                                prop="btn"
+                                label=""
+                            >
+                                <div class="operate_btns">
+                                    <i class="el-icon-circle-plus" type="primary" @click="add" v-if="!dis_change"></i>
+                                    <i class="el-icon-remove" @click="del(index)" v-if="form_data.disk_list.length>1"></i>
+                                    <span class="disk-num">您已选择&nbsp;<span class="num">{{total}}</span>&nbsp;块盘， 还可以添加&nbsp;<span class="num">{{disk_total - total}}</span>&nbsp;块盘</span>
+                                </div>
+                            </el-form-item>
+                        </template>
                         
                     </el-card>
-                    
+                    <el-card>
+                        <el-form-item
+                            prop="fee"
+                            label="是否开始计费"
+                        >
+                            <el-radio-group v-model="form_data.fee">
+                                <el-radio :label="1">是</el-radio>
+                                <el-radio :label="0">否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-card>
                 </el-form>
+                    
+                    
             </div>
             <div class="detail_box">
                 <el-card class="box-card">
@@ -145,7 +166,7 @@
             </div>
             <div class="button_box">
                 <el-card class="box-card">
-                    <el-button type="primary">创建</el-button>
+                    <el-button type="primary" @click="create">创建</el-button>
                 </el-card>
             </div>
         </div>
@@ -182,10 +203,13 @@ export default class CreateDisk extends Vue{
                 capacity:100,
                 quantity:0
             }
-        ]
+        ],
+        fee:''
         
     }
-    private disk_total:number=16
+    private disk_total:number=16;//云盘限制数量
+    private total:number=0;//已选择云盘数量
+    private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符"
     private area_list=[
         {
             label:'中国大陆',
@@ -298,14 +322,13 @@ export default class CreateDisk extends Vue{
             label:'高性能型（SSD）'
         }
     ]
-    private validatePass:any = (rule:any, value:string, callback:any)=>{
+    private validate_customer:any = (rule:any, value:string, callback:any)=>{
         console.log("value",value)
         if(value.length>6){
             return callback()
         }else{
             return callback(new Error("请输入正确的客户ID"))
         }
-        
     }
     //监听客户ID
     @Watch("form_data.customer_id")
@@ -338,13 +361,18 @@ export default class CreateDisk extends Vue{
         //     }
         }
     }
-    
+    //监听云盘名称
+    @Watch("form_data.disk_list",{ immediate: true, deep: true })
+    private watch_disk_name(newVal){
+        console.log("newVal",newVal)
+    }
     //设置挂载
     private mount(value:string){
         this.disk_total=value==="1" ? 16 : 50
         this.get_disk_quantity()
         const {form_data:{isMounted,disk_list}}=this
         if(value==="1" && isMounted==='0'){
+            this.dis_change=false
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
                 item.quantity=0
                 return item
@@ -353,12 +381,6 @@ export default class CreateDisk extends Vue{
         this.form_data={...this.form_data,isMounted:value}
     }
     private dis_change=false//判断挂载总数是否达到16
-    //删除设置
-    private set_del(){
-        console.log("Aaa",this.form_data.del_set,!this.form_data.del_set)
-        this.form_data={...this.form_data,del_set:!this.form_data.del_set}
-        console.log("this",this.form_data)
-    }
     //设置可用区ID
     private get_az(id:string){
         console.log("id",id)
@@ -401,11 +423,10 @@ export default class CreateDisk extends Vue{
     //判断挂载总数是否达到16或者50
     private get_disk_quantity(){
         const {disk_list}=this.form_data
-        const total = disk_list.reduce((pre,cur)=>{
+        this.total = disk_list.reduce((pre,cur)=>{
             return pre+cur.quantity
         },0)
-        console.log("total",total)
-        if(total>=this.disk_total){
+        if(this.total>=this.disk_total){
             this.dis_change=true
             
         }else{
@@ -415,6 +436,10 @@ export default class CreateDisk extends Vue{
     //监听容量改变
     private change_capacity(val){
         console.log("val",val)
+    }
+    //创建、
+    private create(){
+        console.log("form_data",this.form_data)
     }
     // private create(){
     //     console.log("#####",this.form_data)
@@ -436,9 +461,21 @@ export default class CreateDisk extends Vue{
             }
             .operate_btns{
                 width: 100%;
-                text-align: right;
-                .el-button:first-child{
+                // text-align: right;
+                .el-icon-circle-plus:before,.el-icon-remove:before{
+                    font-size:24px;
+                    cursor: pointer;
                     margin-right: 10px;
+                    color: #455cc6;
+                    
+                }
+                .disk-num{
+                    float: right;
+                    font-size: 12px;
+                    color: #666;
+                    .num{
+                        color: #455cc6;
+                    }
                 }
             }
             .el-card.is-always-shadow{
@@ -446,6 +483,10 @@ export default class CreateDisk extends Vue{
             }
             .el-card.is-always-shadow:last-child{
                 margin-bottom: 0px !important;
+            }
+            .remark{
+                font-size: 12px;
+                color: #666;
             }
         }
         .detail_box{
