@@ -38,7 +38,7 @@
       </el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
-          <el-button type="text" @click="operateRecord(scope.row.disk_id)">操作记录</el-button>
+          <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
           <el-dropdown @command="handleOperate">
             <span class="el-dropdown-link">
               更多<i class="el-icon-arrow-down el-icon--right"></i>
@@ -56,20 +56,20 @@
         </template>
       </el-table-column>
     </el-table>
-    <template v-if="record_visible">
-      <Record :visible="record_visible" :record_id="record_id" @close = "close_disk" />
+    <template v-if="visible && operate_type==='record'">
+      <Record :visible="visible" :record_id="mount_id[0].disk_id" @close = "close_disk" />
     </template>
-    <template v-if="mount_visible">
-      <mount-disk :visible="mount_visible" :mount_id="mount_id" @close = "close_disk" />
+    <template v-if="visible && operate_type==='mount'">
+      <mount-disk :visible="visible" :mount_id="mount_id" @close = "close_disk" />
     </template>
-    <template v-if="un_visible">
-      <UnInstall :visible="un_visible" :mount_id="mount_id" @close = "close_disk" />
+    <template v-if="visible && operate_type==='unInstall'">
+      <UnInstall :visible="visible" :mount_id="mount_id" @close = "close_disk" />
     </template>
-    <template v-if="attr_visible">
-      <edit-attr :visible="attr_visible" :attr="mount_id[0]" @close = "close_disk" />
+    <template v-if="visible && operate_type==='edit_attr'">
+      <edit-attr :visible="visible" :attr="mount_id[0]" @close = "close_disk" />
     </template>
-    <template v-if="name_visible">
-      <edit-name :visible="name_visible" :name="mount_id[0].disk_name" @close = "close_disk" />
+    <template v-if="visible && operate_type==='edit_name'">
+      <edit-name :visible="visible" :name="mount_id[0].disk_name" @close = "close_disk" />
     </template>
   </div>
 </template>
@@ -167,14 +167,9 @@ export default class extends Vue {
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
   }
-  private record_id:string=""
-  private record_visible:Boolean = false;
-  private mount_visible:Boolean = false;
-  private un_visible:Boolean = false;
-  private attr_visible:Boolean = false
-  private name_visible:Boolean = false
+  private visible:Boolean = false;
+  private operate_type:string=""
   private mount_id:any = []
-  private attr:any={}
   private diskAttribute=[
     {
       text:'数据盘',
@@ -196,6 +191,7 @@ export default class extends Vue {
   private handleOperate(obj){
     console.log("$event",obj)
     this.mount_id=[obj.value]
+    this.operate_type =obj.label 
     if(obj.label==="mount"){
       this.mount()
     }else if(obj.label==="unInstall"){
@@ -203,17 +199,18 @@ export default class extends Vue {
     }else if(obj.label==="capacity"){
       this.capacity()
     }else if(obj.label==="edit_attr"){
-      this.attr_visible = true
+      this.visible = true
     }else if(obj.label==="edit_name"){
-      this.name_visible = true
+      this.visible = true
     }
   }
   private create(){
     this.$router.push('/disk/create')
   }
-  private operateRecord(id:string){
-    this.record_id=id
-    this.record_visible=true
+  private operateRecord(obj:any){
+    this.mount_id=[obj]
+    this.visible=true
+    this.operate_type = "record"
   }
   //挂载云盘
   private mount(){
@@ -233,7 +230,8 @@ export default class extends Vue {
       this.$message.warning('只允许对同一可用区的云盘进行批量操作！')
       return;
     }
-    this.mount_visible=true
+    this.operate_type="mount"
+    this.visible=true
   }
   //卸载云盘
   private unInstall(){
@@ -258,9 +256,11 @@ export default class extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      this.un_visible=true
+      this.operate_type="unInstall"
+      this.visible=true
     }).catch(() => {
-                
+      console.log("aaa")
+        this.close_disk()
     });
   }
   //逻辑删除云盘
@@ -327,14 +327,10 @@ export default class extends Vue {
   // show_err_msg(label:string,value:any,remark:string){
     
   // }
-  private close_disk(val:String){
-    this.mount_visible = false
-    this.record_visible = false
-    this.un_visible = false
-    this.attr_visible = false
-    this.name_visible = false
+  private close_disk(){
+    this.visible = false
     this.mount_id=[]
-    this.attr = {}
+    this.operate_type = ''
     this.toggleSelection()
     
   }
