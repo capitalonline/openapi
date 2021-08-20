@@ -48,12 +48,13 @@
             >
                 <el-checkbox v-model="form_data.del_set">云盘随实例删除</el-checkbox>
             </el-form-item>
-            <div class="btn">
-              <el-button type="primary" @click="confirm">确定挂载</el-button>
-              <el-button type="default" @click="cancel">取消</el-button>
-            </div>
+            
           </el-form>
         </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="confirm">确定挂载</el-button>
+          <el-button @click="cancel">取消</el-button>
+        </span>
     </el-dialog>
 </template>
 <script lang="ts">
@@ -62,7 +63,7 @@ import {Form} from 'element-ui'
 @Component({})
 export default class MountDisk extends Vue{
     @Prop(Boolean) visible!:Boolean;
-    @Prop({default:()=>[]}) mount_id!:Array<string>
+    @Prop({default:()=>[]}) mount_id!:any
     private form_data:any={
       instance_id:'',
       del_set:false,

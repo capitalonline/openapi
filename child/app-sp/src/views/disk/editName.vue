@@ -17,10 +17,10 @@
             <el-input v-model="new_name" placeholder="请输入新的名称"></el-input>
         </div>
         <div class="remark">长度限制为2-40个字符</div>
-        <div class="btn">
+        <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
             <el-button @click="cancel">取消</el-button>
-        </div>
+        </span>
     </el-dialog>
 </template>
 <script lang="ts">
