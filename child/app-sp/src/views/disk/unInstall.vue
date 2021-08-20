@@ -26,11 +26,11 @@
                 <div>1.执行卸载操作前,请停止云盘数据的读写。</div>
                 <div>2.执行卸载操作前,请确认预设的文件索引已被删除,避免引起实例重启。</div>
             </div>
-            <div class="btn">
-              <el-button type="primary" @click="confirm">确定卸载</el-button>
-              <el-button type="default" @click="cancel">取消</el-button>
-            </div>
         </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="confirm">确定卸载</el-button>
+            <el-button @click="cancel">取消</el-button>
+        </span>
     </el-dialog>
 </template>
 <script lang="ts">
@@ -39,7 +39,7 @@ import {Form} from 'element-ui'
 @Component({})
 export default class MountDisk extends Vue{
     @Prop(Boolean) visible!:Boolean;
-    @Prop({default:()=>[]}) mount_id!:Array<string>
+    @Prop({default:()=>[]}) mount_id!:any
     
     private confirm(){
       this.back()

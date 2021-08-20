@@ -24,10 +24,10 @@
             <div class="label">删除设置:</div>
             <el-checkbox v-model="checked">云盘随实例删除</el-checkbox>
         </div>
-        <div class="btn">
+        <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
             <el-button @click="cancel">取消</el-button>
-        </div>
+        </span>
     </el-dialog>
 </template>
 <script lang="ts">

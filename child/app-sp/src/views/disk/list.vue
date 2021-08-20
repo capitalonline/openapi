@@ -6,8 +6,8 @@
         <el-button type="primary" @click="mount">挂载</el-button>
         <el-button type="primary" @click="unInstall">卸载</el-button>
         <el-button type="primary" @click="del_disk">逻辑删除</el-button>
-        <el-button type="primary" @click="operate('recover')">恢复</el-button>
-        <el-button type="primary" @click="destroy">销毁</el-button>
+        <el-button type="primary" @click="restore('restore')">恢复</el-button>
+        <el-button type="primary" @click="restore('destroy')">销毁</el-button>
         <el-button type="primary" @click="capacity">扩容</el-button>
       </template>
     </action-block>
@@ -44,12 +44,12 @@
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="{label:'mount',value:scope.row}">挂载</el-dropdown-item>
-              <el-dropdown-item :command="{label:'unInstall',value:scope.row}">卸载</el-dropdown-item>
-              <el-dropdown-item :command="{label:'delete',value:scope.row.disk_id}">逻辑删除</el-dropdown-item>
-              <el-dropdown-item :command="{label:'destroy',value:scope.row.disk_id}" disabled>销毁</el-dropdown-item>
-              <el-dropdown-item :command="{label:'capacity',value:scope.row}">扩容</el-dropdown-item>
-              <el-dropdown-item :command="{label:'edit_attr',value:scope.row}">编辑属性</el-dropdown-item>
+              <el-dropdown-item :command="{label:'mount',value:scope.row}" :disabled="!limit_disk_operate('mount',scope.row)">挂载</el-dropdown-item>
+              <el-dropdown-item :command="{label:'unInstall',value:scope.row}" :disabled="!limit_disk_operate('unInstall',scope.row)">卸载</el-dropdown-item>
+              <el-dropdown-item :command="{label:'delete',value:scope.row}" :disabled="!limit_disk_operate('delete',scope.row)">逻辑删除</el-dropdown-item>
+              <el-dropdown-item :command="{label:'destroy',value:scope.row}" :disabled="!limit_disk_operate('destroy',scope.row)">销毁</el-dropdown-item>
+              <el-dropdown-item :command="{label:'capacity',value:scope.row}" :disabled="!limit_disk_operate('capacity',scope.row)">扩容</el-dropdown-item>
+              <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_name',value:scope.row}">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
@@ -71,6 +71,9 @@
     <template v-if="visible && operate_type==='edit_name'">
       <edit-name :visible="visible" :name="mount_id[0].disk_name" @close = "close_disk" />
     </template>
+    <template v-if="visible && (operate_type==='delete' || operate_type==='restore' || operate_type==='destroy')">
+      <Common :visible="visible" :mount_id="mount_id" :title="common_operate[operate_type]" @close = "close_disk" />
+    </template>
   </div>
 </template>
 
@@ -81,8 +84,10 @@ import Record from '../instance/record.vue';
 import MountDisk from './mountDisk.vue';
 import UnInstall from './unInstall.vue';
 import EditAttr from './editAttr.vue';
-import EditName from './editName.vue'
+import EditName from './editName.vue';
+import Common from './commonDialog.vue'
 import {Table} from 'element-ui'
+
 @Component({
   components:{
     ActionBlock,
@@ -90,7 +95,8 @@ import {Table} from 'element-ui'
     MountDisk,
     UnInstall,
     EditAttr,
-    EditName
+    EditName,
+    Common
   }
 })
 export default class extends Vue {
@@ -105,22 +111,23 @@ export default class extends Vue {
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghj",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "待挂载",                                                      
+      "status": "使用中",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                          
       "az_name": "可用区A",                                                 
       "az_id": "254",                                                         
       "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "已关机",
-      "is_follow_delete":'1'                                   
+      "ecs_status": "运行中",
+      "is_follow_delete":'1',
+      "ecs_az_name":'可用区A'                             
     },
     {
       "customer_id": "E25875",                                                
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghj",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "待挂载",                                                      
+      "status": "已删除",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                           
       "az_name": "可用区A",                                                 
@@ -128,35 +135,40 @@ export default class extends Vue {
       "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj", 
       "ecs_status": "运行中", 
-      "is_follow_delete":'0'                                             
+      "is_follow_delete":'0',
+      "ecs_az_name":'可用区A'                                           
     },
     {
       "customer_id": "E25875",                                                
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghi",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "使用中",                                                      
+      "status": "已删除",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                           
       "az_name": "可用区B",                                                 
       "az_id": "254",                                                         
       "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "运行中",                                                  
+      "ecs_status": "运行中", 
+      "is_follow_delete":'0' ,
+      "ecs_az_name":'可用区A'                                                
     },
     {
       "customer_id": "E25875",                                                
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghj",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "使用中",                                                      
+      "status": "错误",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                           
       "az_name": "可用区A",                                                 
       "az_id": "254",                                                         
-      "disk_type": "系统盘",                                                   
+      "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj",
-      "ecs_status": "运行中",                                                   
+      "ecs_status": "运行中", 
+      "is_follow_delete":'0' ,
+      "ecs_az_name":'可用区A'                                                  
     },
   ]
   private loading = false
@@ -169,7 +181,12 @@ export default class extends Vue {
   }
   private visible:Boolean = false;
   private operate_type:string=""
-  private mount_id:any = []
+  private mount_id:any = [];
+  private common_operate:any = {
+  delete:'逻辑删除',
+  restore:'恢复',
+  destroy:'销毁'
+}
   private diskAttribute=[
     {
       text:'数据盘',
@@ -185,9 +202,6 @@ export default class extends Vue {
 
     })
   }
-  private operate(value:string){
-    console.log("value",value)
-  }
   private handleOperate(obj){
     console.log("$event",obj)
     this.mount_id=[obj.value]
@@ -196,6 +210,10 @@ export default class extends Vue {
       this.mount()
     }else if(obj.label==="unInstall"){
       this.unInstall()
+    }else if(obj.label==="delete"){
+      this.del_disk()
+    }else if(obj.label==="destroy"){
+      this.restore('destroy')
     }else if(obj.label==="capacity"){
       this.capacity()
     }else if(obj.label==="edit_attr"){
@@ -212,7 +230,7 @@ export default class extends Vue {
     this.visible=true
     this.operate_type = "record"
   }
-  //挂载云盘
+  //挂载云盘---缺少判断条件
   private mount(){
     if(this.mount_id.length===0){
       this.$message.warning('请选择要操作的云盘！')
@@ -259,7 +277,6 @@ export default class extends Vue {
       this.operate_type="unInstall"
       this.visible=true
     }).catch(() => {
-      console.log("aaa")
         this.close_disk()
     });
   }
@@ -273,9 +290,29 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
+    const fil:any = this.mount_id.filter(item=>item.status==="使用中")
+    if(fil.length>0){
+      this.$message.warning('只允许对待挂载的云盘进行批量操作,请先卸载使用中的云盘，再手动删除！')
+      return;
+    }
+    const flag:boolean = this.mount_id.every((item,index,arr)=>{
+      console.log("mount_id",this.mount_id)
+      return item.status ==='待挂载' || item.status ==='错误'
+    })
+    console.log("flag",flag)
+    if(!flag){
+      this.$message.warning('只允许对待挂载或错误的云盘进行批量操作！')
+      return;
+    }
+    if(!this.judge_disk('disk_type','数据盘')){
+      this.$message.warning('只允许对数据盘进行批量操作！')
+      return;
+    }
+    this.operate_type="delete"
+    this.visible = true
   }
-  //销毁云盘
-  private destroy(){
+  //恢复或销毁云盘
+  private restore(str:string){
     if(this.mount_id.length===0){
       this.$message.warning('请选择要操作的云盘！')
       return;
@@ -284,6 +321,15 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
+    const flag:boolean = this.mount_id.every((item,index,arr)=>{
+      return item.status ==='已删除' && item.is_follow_delete ==='0'
+    })
+    if(!flag){
+      this.$message.warning('只允许对已删除且不随实例删除的云盘进行批量操作！')
+      return;
+    }
+    this.operate_type=str
+    this.visible = true
   }
   //扩容
   private capacity(){
@@ -293,6 +339,10 @@ export default class extends Vue {
     }
     if(!this.judge_disk('customer_id',this.mount_id[0].customer_id)){
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
+      return;
+    }
+    if(!this.judge_disk('az_name',this.mount_id[0].az_name)){
+      this.$message.warning('只允许对同一可用区的云盘进行批量操作！')
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
@@ -306,10 +356,7 @@ export default class extends Vue {
     //   this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
     //   return;
     // }
-    if(!this.judge_disk('az_name',this.mount_id[0].az_name)){
-      this.$message.warning('只允许对同一可用区的云盘进行批量操作！')
-      return;
-    }
+    
     this.$router.push({
       path:'/disk/capacity',
       query:{
@@ -323,10 +370,22 @@ export default class extends Vue {
       return item[label] ===val
     })
   }
-  //展示错误信息
-  // show_err_msg(label:string,value:any,remark:string){
-    
-  // }
+  //限制云盘操作
+  private limit_disk_operate(label:string,obj:any){
+    if(label==="mount"){
+      return obj.status==="待挂载" && obj.az_name === obj.ecs_az_name && (obj.ecs_status==="运行中" || obj.ecs_status==="已关机")
+    }else if(label==="unInstall"){
+      return obj.status==="使用中" && obj.disk_type==="数据盘"
+    }else if(label==="delete"){
+      return (obj.status==="待挂载" || obj.status==="错误") && obj.disk_type==="数据盘"
+    }else if(label==="destroy"){
+      return obj.status==="已删除" && obj.is_follow_delete==="0"
+    }else if(label==="capacity"){
+      return (obj.status==="使用中" && obj.ecs_status==="运行中") || obj.status==="待挂载"
+    }else if(label==="edit_attr"){
+      return obj.status==="挂载中"
+    }
+  }
   private close_disk(){
     this.visible = false
     this.mount_id=[]
