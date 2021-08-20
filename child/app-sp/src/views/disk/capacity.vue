@@ -21,11 +21,11 @@
                 </el-table-column>
                 <el-table-column prop="az_name" label="可用区"></el-table-column>
                 <el-table-column prop="disk_type" label="云盘类型"></el-table-column>
-                <el-table-column prop="size" label="当前规格"></el-table-column>
+                <el-table-column prop="capacity_size" label="当前规格"></el-table-column>
                 <el-table-column prop="status" label="状态"></el-table-column>
-                <el-table-column prop="capacity_size" label="扩容后容量">
+                <el-table-column prop="size" label="扩容后容量">
                     <template slot-scope="scope">
-                        <el-input-number size="small" v-model="scope.row.capacity_size" :step="100" :max="2000" :min="Number(scope.row.size)" @change="change_capacity"></el-input-number>
+                        <el-input-number size="small" v-model="scope.row.size" :step="100" :max="2000" :min="Number(scope.row.capacity_size)"></el-input-number>
                     </template>
                 </el-table-column>
                 <el-table-column prop="bill_way" label="计费方式"></el-table-column>
@@ -34,7 +34,7 @@
         </div>
         
         <div class="footer">
-            <el-checkbox v-model="isSelectedAll"></el-checkbox>
+            <el-checkbox v-model="isSelectedAll" @change="select_all"></el-checkbox>
             <div class="btn">
                 <el-button type="primary" @click="confirm">确定扩容</el-button>
                 <el-button type="default" @click="cancel">取消</el-button>
@@ -45,6 +45,7 @@
 <script lang="ts">
 import {Vue,Component,Watch} from 'vue-property-decorator'
 import backHeader from '../../components/backHeader.vue'
+import {Table} from 'element-ui'
 @Component({
     components:{
         backHeader
@@ -57,23 +58,35 @@ export default class Capacity extends Vue{
     private capacity_list:any=[];
     private isSelectedAll:boolean=false
     created() {
-        console.log("list",JSON.parse(this.$route.query.list))
         this.list = JSON.parse(this.$route.query.list)
         this.list.map(item=>{
-            item.capacity_size = Number(item.size)
+            item.capacity_size = item.size
             return item;
         })
         console.log("this.list",this.list)
     }
-    @Watch("list",{immediate:true,deep:true})
-    private watch_list(newVal){
-        console.log("newVal",newVal)
-    }
+    // @Watch("list",{immediate:true,deep:true})
+    // private watch_list(newVal){
+    //     console.log("newVal",newVal,this.list)
+    // }
     private handleSelectionChange(val){
+        if(val.length===this.list.length){
+            this.isSelectedAll = true
+        }else{
+            this.isSelectedAll = false
+        }
+        
         this.capacity_list = val
+        console.log("capacity_list",this.capacity_list)
     }
-    private change_capacity(val){
-        console.log("change_capacity",val)
+    private select_all(check){
+        console.log("check",check)
+        const table = this.$refs.capacity_table as Table
+        if(check){
+            table.toggleAllSelection()
+        }else{
+            table.clearSelection()
+        }
     }
     private confirm(){
         this.$router.push('/disk')

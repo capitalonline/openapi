@@ -5,9 +5,9 @@
         <el-button type="primary" @click="create">创建云盘</el-button>
         <el-button type="primary" @click="mount">挂载</el-button>
         <el-button type="primary" @click="unInstall">卸载</el-button>
-        <el-button type="primary" @click="operate('delete')">逻辑删除</el-button>
+        <el-button type="primary" @click="del_disk">逻辑删除</el-button>
         <el-button type="primary" @click="operate('recover')">恢复</el-button>
-        <el-button type="primary" @click="operate('destroy')">销毁</el-button>
+        <el-button type="primary" @click="destroy">销毁</el-button>
         <el-button type="primary" @click="capacity">扩容</el-button>
       </template>
     </action-block>
@@ -46,9 +46,11 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="{label:'mount',value:scope.row}">挂载</el-dropdown-item>
               <el-dropdown-item :command="{label:'unInstall',value:scope.row}">卸载</el-dropdown-item>
-              <el-dropdown-item :command="{label:'delete',value:scope.row.disk_id}">删除</el-dropdown-item>
+              <el-dropdown-item :command="{label:'delete',value:scope.row.disk_id}">逻辑删除</el-dropdown-item>
               <el-dropdown-item :command="{label:'destroy',value:scope.row.disk_id}" disabled>销毁</el-dropdown-item>
               <el-dropdown-item :command="{label:'capacity',value:scope.row}">扩容</el-dropdown-item>
+              <el-dropdown-item :command="{label:'edit_attr',value:scope.row}">编辑属性</el-dropdown-item>
+              <el-dropdown-item :command="{label:'edit_name',value:scope.row}">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
         </template>
@@ -63,6 +65,12 @@
     <template v-if="un_visible">
       <UnInstall :visible="un_visible" :mount_id="mount_id" @close = "close_disk" />
     </template>
+    <template v-if="attr_visible">
+      <edit-attr :visible="attr_visible" :attr="mount_id[0]" @close = "close_disk" />
+    </template>
+    <template v-if="name_visible">
+      <edit-name :visible="name_visible" :name="mount_id[0].disk_name" @close = "close_disk" />
+    </template>
   </div>
 </template>
 
@@ -72,6 +80,8 @@ import ActionBlock from '../../components/actionBlock.vue'
 import Record from '../instance/record.vue';
 import MountDisk from './mountDisk.vue';
 import UnInstall from './unInstall.vue';
+import EditAttr from './editAttr.vue';
+import EditName from './editName.vue'
 import {Table} from 'element-ui'
 @Component({
   components:{
@@ -79,6 +89,8 @@ import {Table} from 'element-ui'
     Record,
     MountDisk,
     UnInstall,
+    EditAttr,
+    EditName
   }
 })
 export default class extends Vue {
@@ -93,28 +105,30 @@ export default class extends Vue {
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghj",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "使用中",                                                      
+      "status": "待挂载",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                          
       "az_name": "可用区A",                                                 
       "az_id": "254",                                                         
       "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "已关机",                                     
+      "ecs_status": "已关机",
+      "is_follow_delete":'1'                                   
     },
     {
       "customer_id": "E25875",                                                
       "customer_name": "张三",                                                 
       "disk_id": "d-bp153va98b325ghj",                                        
       "disk_name": "ssd-20210626",                                            
-      "status": "使用中",                                                      
+      "status": "待挂载",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                           
       "az_name": "可用区A",                                                 
       "az_id": "254",                                                         
       "disk_type": "数据盘",                                                   
       "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "运行中",                                              
+      "ecs_status": "运行中", 
+      "is_follow_delete":'0'                                             
     },
     {
       "customer_id": "E25875",                                                
@@ -138,7 +152,7 @@ export default class extends Vue {
       "status": "使用中",                                                      
       "feature": "高性能型（SSD）",                                             
       "size": "100",                                                           
-      "az_name": "可用区C",                                                 
+      "az_name": "可用区A",                                                 
       "az_id": "254",                                                         
       "disk_type": "系统盘",                                                   
       "ecs_id": "i-abcr50fvgj",
@@ -156,8 +170,11 @@ export default class extends Vue {
   private record_id:string=""
   private record_visible:Boolean = false;
   private mount_visible:Boolean = false;
-  private un_visible:Boolean = false
+  private un_visible:Boolean = false;
+  private attr_visible:Boolean = false
+  private name_visible:Boolean = false
   private mount_id:any = []
+  private attr:any={}
   private diskAttribute=[
     {
       text:'数据盘',
@@ -178,15 +195,17 @@ export default class extends Vue {
   }
   private handleOperate(obj){
     console.log("$event",obj)
+    this.mount_id=[obj.value]
     if(obj.label==="mount"){
-      this.mount_id=[obj.value]
       this.mount()
     }else if(obj.label==="unInstall"){
-      this.mount_id=[obj.value]
       this.unInstall()
     }else if(obj.label==="capacity"){
-      this.mount_id=[obj.value]
       this.capacity()
+    }else if(obj.label==="edit_attr"){
+      this.attr_visible = true
+    }else if(obj.label==="edit_name"){
+      this.name_visible = true
     }
   }
   private create(){
@@ -244,6 +263,28 @@ export default class extends Vue {
                 
     });
   }
+  //逻辑删除云盘
+  private del_disk(){
+    if(this.mount_id.length===0){
+      this.$message.warning('请选择要操作的云盘！')
+      return;
+    }
+    if(!this.judge_disk('customer_id',this.mount_id[0].customer_id)){
+      this.$message.warning('只允许对同一客户的云盘进行批量操作！')
+      return;
+    }
+  }
+  //销毁云盘
+  private destroy(){
+    if(this.mount_id.length===0){
+      this.$message.warning('请选择要操作的云盘！')
+      return;
+    }
+    if(!this.judge_disk('customer_id',this.mount_id[0].customer_id)){
+      this.$message.warning('只允许对同一客户的云盘进行批量操作！')
+      return;
+    }
+  }
   //扩容
   private capacity(){
     if(this.mount_id.length===0){
@@ -254,10 +295,17 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
-    if(!(this.judge_disk("ecs_status","运行中") && this.judge_disk("status","使用中")) && !this.judge_disk('status','待挂载')){
+    const flag:boolean = this.mount_id.every((item,index,arr)=>{
+      return (item.ecs_status ==="运行中" && item.status==="使用中") || item.status ==="待挂载"
+    })
+    if(!flag){
       this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
       return;
     }
+    // if(!(this.judge_disk("ecs_status","运行中") && this.judge_disk("status","使用中")) && !this.judge_disk('status','待挂载')){
+    //   this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
+    //   return;
+    // }
     if(!this.judge_disk('az_name',this.mount_id[0].az_name)){
       this.$message.warning('只允许对同一可用区的云盘进行批量操作！')
       return;
@@ -269,16 +317,24 @@ export default class extends Vue {
       }
     })
   }
+  //判断已选择云盘是否符合操作要求
   private judge_disk(label:string,val:any){
     return this.mount_id.every((item,index,arr)=>{
       return item[label] ===val
     })
   }
+  //展示错误信息
+  // show_err_msg(label:string,value:any,remark:string){
+    
+  // }
   private close_disk(val:String){
     this.mount_visible = false
     this.record_visible = false
     this.un_visible = false
+    this.attr_visible = false
+    this.name_visible = false
     this.mount_id=[]
+    this.attr = {}
     this.toggleSelection()
     
   }
