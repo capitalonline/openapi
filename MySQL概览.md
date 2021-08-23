@@ -568,9 +568,9 @@ def create_mysql():
     "Message": "Success.",
     "Code": "Success",
     "Data": {
-        "InstancesUuid":["5d74bb81-0473-464d-b15b-0ae418619248",],
-        "TaskId": "**********"
-    }
+        "InstancesUuid":["5d74bb81-0473-464d-b15b-0ae418619248",]
+    },
+    "TaskId": "**********"
 }
 ```
 
