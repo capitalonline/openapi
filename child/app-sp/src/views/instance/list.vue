@@ -88,7 +88,7 @@
           </el-table-column>
         </el-table>
         <div v-if="dialog_component" class="component-box">
-          <component :is="dialog_component" ref="child_componet" :system_disk="true"></component>
+          <component :is="dialog_component" ref="child_componet" :system_disk="true" :customer_id="customer_id" :az_id="az_id"></component>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -153,6 +153,7 @@ export default class App extends Vue {
   private search_reqData = {};
   private instance_list: Array<Object> = [];
   private customer_id: string = '';
+  private az_id: string = '';
   private multiple_selection: Array<Object> = [];
   private status_relation = {};
   private operate_auth = [];

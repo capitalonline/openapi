@@ -44,16 +44,20 @@
 
         <el-card>
           <label-block label="计算规格">
-            <update-spec :az_id="default_az.az_id" :customer_id="customer_id"></update-spec>
+            <update-spec :az_id="default_az.az_id" :customer_id="customer_id" @fn-spec="FnGetSpec"></update-spec>
           </label-block>
         </el-card>
 
         <el-card>
-          <update-os :az_id="default_az.az_id" :customer_id="customer_id"></update-os>
+          <update-os :az_id="default_az.az_id" :customer_id="customer_id" @fn-os="FnGetOs"></update-os>
         </el-card>
 
         <el-card class="disk-box">
-          <update-disk :az_id="default_az.az_id" :customer_id="customer_id" :system_disk="true" :data_disk="true"></update-disk>
+          <update-disk :az_id="default_az.az_id" :customer_id="customer_id" 
+            :system_disk="true" 
+            :data_disk="true" 
+            @fn-system-disk="FnGetSystemDisk" 
+            @fn-data-disk="FnGetDataDisk"></update-disk>
         </el-card>
 
         <el-card>
@@ -73,7 +77,7 @@
             </div>
             <div class="prompt_message"> 2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符</div>
           </label-block>
-          <update-pwd></update-pwd>
+          <update-pwd ref="update_pwd"></update-pwd>
         </el-card>
       </div>
       <div class="right-box">
@@ -91,11 +95,11 @@
           </div>
           <div class="right-row">
             <div>计算规格</div>
-            <div>{{ default_spec.cpu_size }}核{{ default_ram }}G</div>
+            <div>{{ ecs_spec_info.cpu_size }}核{{ ecs_spec_info.ram_size }}G</div>
           </div>
           <div class="right-row">
-            <div>系统盘({{ default_system_info.disk_name }})</div>
-            <div>{{ system_size }}{{ default_system_info.disk_unit }}</div>
+            <div>系统盘({{ system_info.disk_name }})</div>
+            <div>{{ system_info.disk_size }}{{ system_info.disk_unit }}</div>
           </div>
           <div v-for="(item, index) in data_disk_list" :key="index" class="right-row">
             <div>数据盘({{ item.default_disk_info.disk_name }})</div>
@@ -125,7 +129,6 @@ import updateOs from './updateOs.vue';
 import updateDisk from './updateDisk.vue';
 import updatePwd from './resetPwd.vue';
 import Service from '../../https/instance/create';
-import { checkPwd } from '../../utils/checkPwd';
 import { checkEcsName } from '../../utils/checkEcsName';
 
 @Component({
@@ -169,34 +172,10 @@ export default class App extends Vue {
     ip_type: '',
     ip_not_used: 0
   };
-  private calc_list = [];
-  private default_calc = {
-    ecs_goods_id: '',
-    ecs_goods_name: '',
-    ecs_spec_list: []
-  };
-  private default_spec = {
-    cpu_size: '',
-    ram_size_list: []
-  };
-  private default_ram = '';
-  private default_os_version = {
-    os_id: '',
-    os_type: '',
-    username: ''
-  }; 
-  private default_system_info = {
-    ecs_goods_id: '',
-    disk_name: '',
-    disk_type: '',
-    disk_feature: '',
-    disk_min: 0,
-    disk_max: 0,
-    disk_step: 0,
-    disk_unit: 'G'
-  };
-  private data_disk_list: Array<Object> = [];
-  private system_size = 0;
+  private ecs_spec_info: any = {};
+  private os_info: any = {}; 
+  private system_info: any = {};
+  private data_disk_list = [];
   private num_info = {
     num: 1,
     min: 1,
@@ -206,10 +185,7 @@ export default class App extends Vue {
     customer_id: { show: false, msg: '请输入正确的customer_id' },
     vpc_id: { show: false, msg: '无可用VPC' },
     subnet_id: { show: false, msg: '无可用子网' },
-    os_id: { show: false, msg: '无可用镜像' },
     ecs_name: { show: false, msg: '请输入正确的实例名称' },
-    password: { show: false, msg: '' },
-    confirm_password: { show: false, msg: '两次密码输入不一致' }
   }
   private ecs_name_info = {
     ecs_name: '',
@@ -265,6 +241,34 @@ export default class App extends Vue {
     this.error_msg.ecs_name.msg = data.msg;
     return this.error_msg.ecs_name.show
   }
+  private FnGetSpec(data): void {
+    this.ecs_spec_info = {
+      ecs_goods_id: data.ecs_goods_id,
+      ecs_goods_name: data.ecs_goods_name,
+      cpu_size: data.cpu_size,
+      ram_size: data.ram_size
+    }
+  }
+  private FnGetOs(data): void {
+    this.os_info = {
+      os_id: data.os_id,
+      os_type: data.os_type,
+      username: data.os_username
+    }
+  }
+  private FnGetSystemDisk(data): void {
+    this.system_info = {
+      ecs_goods_id: data.ecs_goods_id,
+      disk_feature: data.disk_feature,
+      disk_type: data.disk_type,
+      disk_size: data.disk_size,
+      disk_name: data.disk_name,
+      disk_unit: data.disk_unit
+    }
+  }
+  private FnGetDataDisk(data): void {
+    this.data_disk_list = data;
+  }
   private async FnCreate() {
     if (!this.customer_id) {
       this.error_msg.customer_id.show = true;
@@ -274,12 +278,15 @@ export default class App extends Vue {
     } else if(!this.default_subnet.subnet_id) {
       this.error_msg.subnet_id.show = true;
       return
-    } else if(!this.default_os_version.os_id) {
-      this.error_msg.os_id.show = true;
-      return
     } else if(this.default_subnet.ip_not_used < this.num_info.num) {
       this.$message.warning('所选网络可用IP数量不足！')
       return
+    }
+    let pwd_result = (this.$refs.FnSubmit as any).FnSubmit();
+    if (!pwd_result.flag) {
+      return
+    } else {
+      this.ecs_name_info.password = pwd_result.password;
     }
     let data_list = [];
     this.data_disk_list.forEach((item: any) => {
@@ -311,26 +318,26 @@ export default class App extends Vue {
         }]
       },
       ecs_spec_info: {
-        ecs_goods_id: this.default_calc.ecs_goods_id,
-        goods_name: this.default_calc.ecs_goods_name,
-        cpu_size: this.default_spec.cpu_size,
-        ram_size: this.default_ram
+        ecs_goods_id: this.ecs_spec_info.ecs_goods_id,
+        goods_name: this.ecs_spec_info.ecs_goods_name,
+        cpu_size: this.ecs_spec_info.cpu_size,
+        ram_size: this.ecs_spec_info.ram_size
       },
-      os_id: this.default_os_version.os_id,
-      os_type: this.default_os_version.os_type,
+      os_id: this.os_info.os_id,
+      os_type: this.os_info.os_type,
       disk_info: {
         system_disk: {
-          ecs_goods_id: this.default_system_info.ecs_goods_id,
-          goods_name: this.default_system_info.disk_name,
-          disk_feature: this.default_system_info.disk_feature,
-          disk_type: this.default_system_info.disk_type,
-          disk_size: this.system_size
+          ecs_goods_id: this.system_info.ecs_goods_id,
+          goods_name: this.system_info.disk_name,
+          disk_feature: this.system_info.disk_feature,
+          disk_type: this.system_info.disk_type,
+          disk_size: this.system_info.disk_size
         },
         data_disks: data_list
       },
       num: this.num_info.num,
       ecs_name: this.ecs_name_info.ecs_name,
-      username: this.default_os_version.username || 'root',
+      username: this.os_info.username || 'root',
       password: this.ecs_name_info.password
     }
     console.log("reqData", reqData)

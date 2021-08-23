@@ -16,6 +16,7 @@
           :min="Number(data.default_system_info.disk_min)" 
           :max="Number(data.default_system_info.disk_max)" 
           :step="Number(data.default_system_info.disk_step)"
+          @change="FnSysEmit"
           step-strictly></el-input-number> 
         {{ data.default_system_info.disk_unit }}
       </el-form-item>
@@ -33,14 +34,15 @@
             :min="Number(disk.default_disk_info.disk_min)" 
             :max="Number(disk.default_disk_info.disk_max)" 
             :step="Number(disk.default_disk_info.disk_step)"
+            @change="FnDataEmit"
             step-strictly></el-input-number> 
           {{ disk.default_disk_info.disk_unit }}
         </el-form-item>
         <el-form-item>
-          <el-input-number v-model="disk.num" :min="disk.min" :max="FnGetSurplus + disk.num" :step="1" class="m-left10 m-right10"></el-input-number> 
+          <el-input-number v-model="disk.num" :min="disk.min" :max="FnGetSurplus + disk.num" :step="1" class="m-left10 m-right10" @change="FnDataEmit"></el-input-number> 
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="disk.del">随实例删除</el-checkbox>
+          <el-checkbox v-model="disk.del" @change="FnDataEmit">随实例删除</el-checkbox>
         </el-form-item>
       </div>
       <el-form-item label="数据盘">
@@ -55,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 
 @Component
@@ -69,6 +71,11 @@ export default class resetPwd extends Vue{
   private data_disk_list = [];
   private data = {
     default_system_info: {
+      ecs_goods_id: '',
+      disk_name: '',
+      disk_unit: '',
+      disk_feature: '',
+      disk_type: '',
       disk_min: 0,
       disk_max: 500,
       disk_step: 10
@@ -125,10 +132,30 @@ export default class resetPwd extends Vue{
     }
     data.disk_size = data.default_disk_info.disk_min;
     this.data_disk_list.push(data);
+    this.FnDataEmit();
   }
   private FnDelDataDisk(index) {
-    this.data_disk_list.splice(index, 1)
+    this.data_disk_list.splice(index, 1);
+    this.FnDataEmit();
   }
+
+  @Emit('fn-system-disk')
+  private FnSysEmit() {
+    return {
+      ecs_goods_id: this.data.default_system_info.ecs_goods_id,
+      disk_name: this.data.default_system_info.disk_name,
+      disk_feature: this.data.default_system_info.disk_feature,
+      disk_type: this.data.default_system_info.disk_type,
+      disk_size: this.data.system_size,
+      disk_unit: this.data.default_system_info.disk_unit
+    }
+  }
+
+  @Emit('fn-data-disk')
+  private FnDataEmit() {
+    return this.data_disk_list
+  }
+
   private FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
@@ -145,6 +172,7 @@ export default class resetPwd extends Vue{
   @Watch('data.default_system_info.ecs_goods_id')
   private FnChangeSystem() {
     this.data.system_size = this.data.default_system_info.disk_min? Number(this.data.default_system_info.disk_min) : 0;
+    this.FnSysEmit();
   }
   @Watch('az_id') 
   private FnChangeAz(newVal, oldVal) {

@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 import updateDisk from './updateDisk.vue';
 
@@ -50,7 +50,11 @@ export default class resetPwd extends Vue{
   };
   private data = {
     default_os_type: '',
-    default_os_version: {}
+    default_os_version: {
+      os_id: '',
+      os_type: '',
+      username: ''
+    }
   }
   private async FnGetOsList() {
     if (!this.az_id) {
@@ -64,6 +68,16 @@ export default class resetPwd extends Vue{
       this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
     }
   }
+
+  @Emit('fn-os')
+  private FnEmit() {
+    return {
+      os_id: this.data.default_os_version.os_id,
+      os_type: this.data.default_os_version.os_type,
+      username: this.data.default_os_version.username
+    }
+  }
+
   private FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
@@ -71,9 +85,7 @@ export default class resetPwd extends Vue{
     })
     return {
       flag: flag,
-      spec_info: {
-        
-      }
+      os_info: this.FnEmit()
     }
   }
   private FnResetForm(formName) {
@@ -96,7 +108,11 @@ export default class resetPwd extends Vue{
     if (newVal) {
       this.data.default_os_version = this.default_os_template_type.os_versions[newVal][0];
     } else {
-      this.data.default_os_version = {}
+      this.data.default_os_version = {
+        os_id: '',
+        os_type: '',
+        username: ''
+      }
     }
   }
 

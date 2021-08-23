@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="内存" prop="ram" class="m-left20">
-        <el-select v-model="data.ram">
+        <el-select v-model="data.ram" @change="FnEmit">
           <el-option v-for="ram in data.default_spec.ram_size_list" :key="ram" :value="ram" :label="ram"></el-option>
         </el-select>
       </el-form-item>
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 
 @Component
@@ -59,31 +59,39 @@ export default class resetPwd extends Vue{
       this.default_calc = this.calc_list[0];
     }
   }
-  private FnSubmit() {
+
+  @Emit('fn-spec')
+  private FnEmit() {
+    return {
+      ecs_goods_id: this.default_calc.ecs_goods_id,
+      ecs_goods_name: this.default_calc.ecs_goods_name,
+      cpu_size: this.data.default_spec.cpu_size,
+      ram_size: this.data.ram,
+    }
+  }
+
+  public FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
       flag = valid;
     })
     return {
       flag: flag,
-      spec_info: {
-        ecs_goods_id: this.default_calc.ecs_goods_id,
-        ecs_goods_name: this.default_calc.ecs_goods_name,
-        cpu_size: this.data.default_spec.cpu_size,
-        ram_size: this.data.ram,
-      }
+      spec_info: this.FnEmit()
     }
   }
-  private FnResetForm(formName) {
+  public FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
   }
   @Watch('default_calc.ecs_goods_id')
   private FnChangeCalc(newVal) {
     this.data.default_spec = this.default_calc.ecs_spec_list[0];
+    this.FnEmit();
   }
   @Watch('data.default_spec.cpu_size')
   private FnChangeSpec(newVal) {
     this.data.ram = this.data.default_spec.ram_size_list[0];
+    this.FnEmit();
   }
   @Watch('az_id') 
   private FnChangeAz(newVal, oldVal) {
