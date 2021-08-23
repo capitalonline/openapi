@@ -24,14 +24,25 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import {Vue,Component,Prop,Emit} from 'vue-property-decorator'
+import {Vue,Component,Prop,Emit} from 'vue-property-decorator';
+import Service from '../../https/disk/list'
 @Component({})
 export default class EditName extends Vue{
+    $message;
     @Prop(Boolean) visible!:Boolean;
-    @Prop(String) name!:string;
-    private new_name:string = this.name
-    private confirm(){
+    @Prop({default:()=>{}}) name!:any;
+    private new_name:string = this.name.disk_name
+    private async confirm(){
         console.log("checked",this.new_name)
+        let res:any = Service.edit_disk_name({
+            disk_id:this.name.disk_id,
+            disk_name:this.new_name
+        })
+        if (res.code == 'Success') {
+            this.$message.success("修改成功")
+            
+        }
+        this.back()
     }
     private cancel(){
         this.back()

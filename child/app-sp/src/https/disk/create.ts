@@ -4,7 +4,7 @@ import {getOptions}from '../event/common'
 
 export default{
     //获取事件列表
-    get_disk_list(req){
-        return service(getOptions('POST','/eds/api_create_disk/',req))
+    create(req){
+        return service(getOptions('POST','/ebs/api_create_disk/',req))
     }
 }

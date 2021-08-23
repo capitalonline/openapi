@@ -1,6 +1,6 @@
 <template>
   <div>
-    <action-block :search_option="search" @fn-search="getDiskList">
+    <action-block :search_option="search_dom" @fn-search="search">
       <template #default>
         <el-button type="primary" @click="create">创建云盘</el-button>
         <el-button type="primary" @click="mount">挂载</el-button>
@@ -15,7 +15,6 @@
       :data="disk_list"
       border
       ref="disk_table"
-      v-loading="loading"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection"></el-table-column>
@@ -33,8 +32,8 @@
       <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" :filter-method="filterAttribute"></el-table-column>
       <el-table-column prop="ecs_id" label="实例名称/ID">
         <template slot-scope="scope">
-          <span>{{scope.row.ecs_id ? `${scope.row.ecs_id} / ${scope.row.size}` : ''}}</span>
-        </template>ecs_id
+          <span>{{scope.row.ecs_id ? `${scope.row.ecs_name} / ${scope.row.ecs_id}` : ''}}</span>
+        </template>
       </el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
@@ -56,6 +55,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="current"
+      :page-sizes="[20, 50, 100]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
     <template v-if="visible && operate_type==='record'">
       <Record :visible="visible" :record_id="mount_id[0].disk_id" @close = "close_disk" />
     </template>
@@ -69,7 +77,7 @@
       <edit-attr :visible="visible" :attr="mount_id[0]" @close = "close_disk" />
     </template>
     <template v-if="visible && operate_type==='edit_name'">
-      <edit-name :visible="visible" :name="mount_id[0].disk_name" @close = "close_disk" />
+      <edit-name :visible="visible" :name="mount_id[0]" @close = "close_disk" />
     </template>
     <template v-if="visible && (operate_type==='delete' || operate_type==='restore' || operate_type==='destroy')">
       <Common :visible="visible" :mount_id="mount_id" :title="common_operate[operate_type]" @close = "close_disk" />
@@ -87,7 +95,7 @@ import EditAttr from './editAttr.vue';
 import EditName from './editName.vue';
 import Common from './commonDialog.vue'
 import {Table} from 'element-ui'
-
+import Service from '../../https/disk/list' 
 @Component({
   components:{
     ActionBlock,
@@ -102,9 +110,7 @@ import {Table} from 'element-ui'
 export default class extends Vue {
   $message;
   $router;
-  private state_list:any=[
-
-  ]
+  private state_list:any=[]
   private disk_list:any=[
     {
       "customer_id": "E25875",                                                
@@ -171,8 +177,11 @@ export default class extends Vue {
       "ecs_az_name":'可用区A'                                                  
     },
   ]
-  private loading = false
-  private search = {
+  private current:number = 1;
+  private size:number=20;
+  private total:number = 0;
+  private disk_state:any = []
+  private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
     status:{list:this.state_list,placeholder:'请选择与云盘状态'},
@@ -187,6 +196,7 @@ export default class extends Vue {
   restore:'恢复',
   destroy:'销毁'
 }
+  private req_data:any={}
   private diskAttribute=[
     {
       text:'数据盘',
@@ -197,10 +207,44 @@ export default class extends Vue {
       value:'system_disk'
     },
   ]
+  created() {
+    // this.get_disk_state();
+    // this.getDiskList()
+  }
+  //获取云盘状态列表
+  private async get_disk_state(){
+    let res:any = await Service.get_disk_state({})
+    if(res.code==="Success"){
+      this.state_list = res.data || []
+    }
+  }
   private async getDiskList(){
-    let res:any=await({
-
+    const {req_data}=this
+    let res:any = await Service.get_disk_list({
+      disk_id:req_data.disk_id || '',
+      ecs_id:req_data.ecs_id || '',
+      status:req_data.status || '',
+      customer_id:req_data.customer_id || '',
+      customer_name:req_data.customer_name || '',
+      page_index:this.current,
+      page_size:this.size,
     })
+    if(res.code==="Success"){
+      this.disk_list = res.data || []
+    }
+  }
+  private search(data:any={}){
+    this.current = 1;
+    this.req_data = data;
+    this.getDiskList()
+  }
+  private handleSizeChange(size){
+    this.size = size
+    this.getDiskList()
+  }
+  private handleCurrentChange(cur){
+    this.current = cur
+    this.getDiskList()
   }
   private handleOperate(obj){
     console.log("$event",obj)
@@ -403,9 +447,7 @@ export default class extends Vue {
   private filterAttribute(value:String){
 
   }
-  created() {
-    
-  }
+  
 }
 </script>
 <style lang="scss" scoped>

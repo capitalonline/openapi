@@ -1,6 +1,6 @@
 <template>
     <div>
-        <action-block :search_option="search" @fn-search="getDiskList">
+        <action-block :search_option="search_dom" @fn-search="search">
             <template #default>
                 <el-button type="primary" @click="create_mirror">创建镜像</el-button>
                 <el-button type="primary" @click="operate('mount')">复制</el-button>
@@ -10,7 +10,8 @@
                 <el-button type="primary" @click="create_instance">创建实例</el-button>
             </template>
         </action-block>
-        <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
+        <Common :search_data="search_data" />
+        <!-- <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
             <el-tab-pane label="公共镜像" name="0">
                 <Common />
             </el-tab-pane>
@@ -20,7 +21,7 @@
             <el-tab-pane label="共享镜像" name="2">
                 共享镜像
             </el-tab-pane>
-        </el-tabs>
+        </el-tabs> -->
     </div>
 </template>
 <script lang="ts">
@@ -38,15 +39,17 @@ export default class Mirror extends Vue{
         {type:'name',label:'镜像名称'},
         {type:'id',label:'镜像id'},
     ]
-    private search:any={
+    private search_dom:any={
         name:{placeholder:'请输入内容查询',list:this.list,type:'composite',width:340}
     }
-    private activeName:string='0'
+    private activeName:string='0';
+    private search_data:any = {}
     created() {
         
     }
-    private getDiskList(data:any){
+    private search(data:any){
         console.log("data",data)
+        this.search_data=data
     }
     private create_mirror(){
 

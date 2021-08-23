@@ -35,14 +35,28 @@
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,Emit} from "vue-property-decorator";
-import {Form} from 'element-ui'
+import {Form} from 'element-ui';
+import Service from '../../https/disk/list'
 @Component({})
 export default class MountDisk extends Vue{
+    $message;
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>[]}) mount_id!:any
     
-    private confirm(){
-      this.back()
+    private async confirm(){
+        const temp:Array<string> = []
+        this.mount_id.forEach(ele=>{
+            temp.push(ele.disk_id)
+        })
+        let res:any = await Service.unmount({
+            customer_id:this.mount_id[0].customer_id,
+            disk_ids:temp,
+        })
+        if (res.code == 'Success') {
+            this.$message.success("卸载成功")
+            
+        }
+        this.back()
     }
     private cancel(){
       this.back()

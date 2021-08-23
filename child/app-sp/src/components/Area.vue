@@ -5,6 +5,7 @@
                 <div>
                     <span class="label">{{item.region_name}}</span>
                     <radio-group :list="item.children" :value.sync="value"></radio-group>
+                    
                 </div>
                 
             </el-option>

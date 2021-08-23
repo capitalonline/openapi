@@ -103,14 +103,14 @@
                                 prop="capacity"
                                 label=""
                             >
-                                <el-input-number v-model="inn.capacity" :step="100" :min="100" :max="2000" @change="change_capacity"></el-input-number>&nbsp;GB
+                                <el-input-number v-model="inn.disk_size" :step="100" :min="100" :max="2000" @change="change_capacity"></el-input-number>&nbsp;GB
                             </el-form-item>
                         </div>
                         <el-form-item
                             prop="quantity"
                             label="数量"
                         >
-                            <el-input-number v-model="inn.quantity" :step="1" :min="0" :max="dis_change ? inn.quantity : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
+                            <el-input-number v-model="inn.amount" :step="1" :min="0" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
                         </el-form-item>
                         <template v-if="index===form_data.disk_list.length-1">
                             <el-form-item
@@ -176,7 +176,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
 import Area from '../../components/Area.vue';
-import Service from '../../https/instance/create'
+import Service from '../../https/instance/create';
+import disk_service from '../../https/disk/create'
 import { Form } from "element-ui";
 @Component({
   components: { 
@@ -187,6 +188,7 @@ import { Form } from "element-ui";
 })
 export default class CreateDisk extends Vue{
     $router;
+    $message;
     private form_data:any={
         customer_id:'',
         customer_name:'',
@@ -199,9 +201,9 @@ export default class CreateDisk extends Vue{
         disk_list:[
             {
                 disk_name:'',
-                type:'hdd',
-                capacity:100,
-                quantity:0
+                ecs_goods_id:'hdd',
+                disk_size:100,
+                amount:0,
             }
         ],
         fee:''
@@ -209,77 +211,78 @@ export default class CreateDisk extends Vue{
     }
     private disk_total:number=16;//云盘限制数量
     private total:number=0;//已选择云盘数量
-    private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符"
-    private area_list=[
-        {
-            label:'中国大陆',
-            value:'zh',
-            children:[
-                {
-                    label:'北京',
-                    value:'bj'
-                },
-                {
-                    label:'广州',
-                    value:'gz'
-                },
-                {
-                    label:'上海',
-                    value:'sh'
-                },
-                {
-                    label:'无锡',
-                    value:'wx'
-                },
-            ]
+    private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
+    private area_list:any=[]
+    // private area_list=[
+    //     {
+    //         label:'中国大陆',
+    //         value:'zh',
+    //         children:[
+    //             {
+    //                 label:'北京',
+    //                 value:'bj'
+    //             },
+    //             {
+    //                 label:'广州',
+    //                 value:'gz'
+    //             },
+    //             {
+    //                 label:'上海',
+    //                 value:'sh'
+    //             },
+    //             {
+    //                 label:'无锡',
+    //                 value:'wx'
+    //             },
+    //         ]
 
-        },
-        {
-            label:'亚太地区',
-            value:'ytdq',
-            children:[
-                {
-                    label:'新加披',
-                    value:'xjp'
-                },
-                {
-                    label:'孟买',
-                    value:'mm'
-                },
-                {
-                    label:'香港',
-                    value:'hk'
-                },
-            ]
+    //     },
+    //     {
+    //         label:'亚太地区',
+    //         value:'ytdq',
+    //         children:[
+    //             {
+    //                 label:'新加披',
+    //                 value:'xjp'
+    //             },
+    //             {
+    //                 label:'孟买',
+    //                 value:'mm'
+    //             },
+    //             {
+    //                 label:'香港',
+    //                 value:'hk'
+    //             },
+    //         ]
 
-        },
-        {
-            label:'北美地区',
-            value:'bmdq',
-            children:[
-                {
-                    label:'达拉斯',
-                    value:'dls'
-                },
-                {
-                    label:'弗吉尼亚',
-                    value:'fjny'
-                },
-            ]
+    //     },
+    //     {
+    //         label:'北美地区',
+    //         value:'bmdq',
+    //         children:[
+    //             {
+    //                 label:'达拉斯',
+    //                 value:'dls'
+    //             },
+    //             {
+    //                 label:'弗吉尼亚',
+    //                 value:'fjny'
+    //             },
+    //         ]
 
-        },
-        {
-            label:'欧洲地区',
-            value:'eroup',
-            children:[
-                {
-                    label:'法兰克福',
-                    value:'franch'
-                },
-            ]
+    //     },
+    //     {
+    //         label:'欧洲地区',
+    //         value:'eroup',
+    //         children:[
+    //             {
+    //                 label:'法兰克福',
+    //                 value:'franch'
+    //             },
+    //         ]
 
-        }
-    ]
+    //     }
+    // ]
     private ECS_instance_list=[
         {
             label:'实例1',
@@ -373,6 +376,7 @@ export default class CreateDisk extends Vue{
         const {form_data:{isMounted,disk_list}}=this
         if(value==="1" && isMounted==='0'){
             this.dis_change=false
+            this.total=0
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
                 item.quantity=0
                 return item
@@ -438,8 +442,20 @@ export default class CreateDisk extends Vue{
         console.log("val",val)
     }
     //创建、
-    private create(){
+    private async create(){
         console.log("form_data",this.form_data)
+        const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
+        let res:any = await disk_service.create({
+            customer_id,
+            ecs_id,
+            is_follow_delete:del_set ? '1' : '0',
+            az_id:az,
+            disk_list
+        })
+        if (res.code == 'Success') {
+            this.$message.success("新增成功")
+        }
+        this.$router.push('/disk')
     }
     // private create(){
     //     console.log("#####",this.form_data)

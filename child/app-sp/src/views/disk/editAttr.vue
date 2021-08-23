@@ -31,9 +31,11 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import {Vue,Component,Prop,Emit} from 'vue-property-decorator'
+import {Vue,Component,Prop,Emit} from 'vue-property-decorator';
+import Service from '../../https/disk/list'
 @Component({})
 export default class EditAttr extends Vue{
+    $message;
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>{}}) attr!:any;
     private checked:boolean = this.attr.is_follow_delete==='1' ? true : false
@@ -42,6 +44,15 @@ export default class EditAttr extends Vue{
     }
     private confirm(){
         console.log("checked",this.checked)
+        let res:any = Service.edit_disk_attr({
+            disk_id:this.attr.disk_id,
+            is_follow_delete:this.checked ? '1' : '0'
+        })
+        if (res.code == 'Success') {
+            this.$message.success("修改成功")
+            
+        }
+        this.back()
     }
     private cancel(){
         this.back()

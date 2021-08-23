@@ -2,13 +2,13 @@
     <div>
         <el-table :data="list" border class="event-table">
             <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="mirror_id" label="镜像ID"></el-table-column>
-            <el-table-column prop="name" label="镜像名称"></el-table-column>
-            <el-table-column prop="os" label="操作系统"></el-table-column>
+            <el-table-column prop="os_id" label="镜像ID"></el-table-column>
+            <el-table-column prop="os_name" label="镜像名称"></el-table-column>
+            <el-table-column prop="os_type_value" label="操作系统"></el-table-column>
             <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column prop="quantity" label="容量"></el-table-column>
+            <el-table-column prop="disk_size" label="容量"></el-table-column>
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
-            <el-table-column prop="progress" label="创建进度"></el-table-column>
+            <el-table-column prop="processing" label="创建进度"></el-table-column>
             <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button type="text" @click="create">创建实例</el-button>
@@ -31,14 +31,17 @@
     </div>
 </template>
 <script lang="ts">
-import {Vue,Component} from 'vue-property-decorator'
-import Record from '../instance/record.vue'
+import {Vue,Component,Prop,Watch} from 'vue-property-decorator'
+import Record from '../instance/record.vue';
+import Service from '../../https/mirror/list'
 @Component({
     components:{
         Record
     }
 })
 export default class Mirror extends Vue{
+    @Prop({default:()=>{}})search_data!:any
+
     private list:any=[]
     private record_visible:Boolean=false
     private record_id:String=''
@@ -48,8 +51,25 @@ export default class Mirror extends Vue{
     created() {
         
     }
+    @Watch("search_data",{immediate:true,deep:true})
+    private watch_search_data(newVal){
+        console.log("newVal",newVal)
+        this.current = 1
+        this.getMirrorList()
+    }
     private create(){
-
+        // this.getMirrorList()
+    }
+    private async getMirrorList(){
+        let res:any=await Service.get_mirror_list({
+            os_id :this.search_data.namesub,
+            os_name:this.search_data.name,
+            page_index:this.current,
+            page_size:this.size,
+        })
+        if(res.code==="Success"){
+            this.list = res.data || []
+        }
     }
     private operate(id:String){
         this.record_id=id
@@ -57,9 +77,11 @@ export default class Mirror extends Vue{
     }
     private handleSizeChange(size){
         this.size = size
+        this.getMirrorList()
     }
     private handleCurrentChange(cur){
         this.current = cur
+        this.getMirrorList()
     }
 }
 </script>

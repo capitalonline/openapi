@@ -59,9 +59,11 @@
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,Emit} from "vue-property-decorator";
-import {Form} from 'element-ui'
+import {Form} from 'element-ui';
+import Service from '../../https/disk/list'
 @Component({})
 export default class MountDisk extends Vue{
+  $message;
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>[]}) mount_id!:any
     private form_data:any={
@@ -88,11 +90,26 @@ export default class MountDisk extends Vue{
           status:'创建中',
       }
     ]
+    
     private confirm(){
       const form = this.$refs.form as Form
-      form.validate((valid:boolean)=>{
+      form.validate(async (valid:boolean)=>{
         if(valid){
-
+            const temp:Array<string> = []
+            this.mount_id.forEach(ele=>{
+              temp.push(ele.disk_id)
+            })
+            let res:any = await Service.mount({
+              customer_id:this.mount_id[0].customer_id,
+              disk_ids:temp,
+              ecs_id:this.form_data.instance_id,
+              is_follow_delete:this.form_data.del_set ? '1' : '0'
+            })
+            if (res.code == 'Success') {
+                this.$message.success("挂载成功")
+                
+            }
+            this.back()
         }
       })
     }

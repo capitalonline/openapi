@@ -32,14 +32,37 @@
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,Emit} from "vue-property-decorator";
+import Service from '../../https/disk/list'
 @Component({})
 export default class MountDisk extends Vue{
+    $message;
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>[]}) mount_id!:any
     @Prop(String) title!:string;
     private alert_title:string = `是否确定要对以下云盘执行 ${this.title} 操作`
-    private confirm(){
-      
+    private async confirm(){
+      let res:any;
+      const temp:Array<string> = []
+        this.mount_id.forEach(ele=>{
+            temp.push(ele.disk_id)
+      })
+      const req_data:any={
+        customer_id:this.mount_id[0].customer_id,
+        disk_ids:temp,
+      }
+      if(this.title==="逻辑删除"){
+        res = await Service.del_disk({...req_data})
+      }else if(this.title==="恢复"){
+        res = await Service.recover({...req_data})
+      }else if(this.title==="销毁"){
+        res = await Service.destroy({...req_data})
+      }else{
+        return;
+      }
+      if (res.code == 'Success') {
+          this.$message.success(`${this.title}成功`)
+      }
+      this.back()
     }
     private cancel(){
       this.back()

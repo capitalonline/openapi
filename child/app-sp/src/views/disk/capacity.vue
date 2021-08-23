@@ -45,6 +45,7 @@
 <script lang="ts">
 import {Vue,Component,Watch} from 'vue-property-decorator'
 import backHeader from '../../components/backHeader.vue'
+import Service from '../../https/disk/list'
 import {Table} from 'element-ui'
 @Component({
     components:{
@@ -54,6 +55,7 @@ import {Table} from 'element-ui'
 export default class Capacity extends Vue{
     $route;
     $router;
+    $message
     private list:any=[];
     private capacity_list:any=[];
     private isSelectedAll:boolean=false
@@ -88,7 +90,15 @@ export default class Capacity extends Vue{
             table.clearSelection()
         }
     }
-    private confirm(){
+    private async confirm(){
+        let res:any=await Service.expansion({
+            customer_id:this.capacity_list[0].customer_id,
+            expansion_info:this.capacity_list
+        })
+        if (res.code == 'Success') {
+            this.$message.success("扩容成功")
+            
+        }
         this.$router.push('/disk')
     }
     private cancel(){
