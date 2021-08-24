@@ -4,7 +4,7 @@
     <div class="create-box">
       <div class="left-box">
         <el-card>
-          <label-block label="客户ID">
+          <label-block label="客户ID" :is_required="true">
             <div class="input-msg-box">
               <div class="input-box">
                 <el-input v-model="customer_id_input"></el-input>
@@ -57,7 +57,8 @@
             :system_disk="true" 
             :data_disk="true" 
             @fn-system-disk="FnGetSystemDisk" 
-            @fn-data-disk="FnGetDataDisk"></update-disk>
+            @fn-data-disk="FnGetDataDisk">
+            </update-disk>
         </el-card>
 
         <el-card>
@@ -282,7 +283,7 @@ export default class App extends Vue {
       this.$message.warning('所选网络可用IP数量不足！')
       return
     }
-    let pwd_result = (this.$refs.FnSubmit as any).FnSubmit();
+    let pwd_result = (this.$refs.update_pwd as any).FnSubmit();
     if (!pwd_result.flag) {
       return
     } else {

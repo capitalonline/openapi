@@ -10,11 +10,11 @@
       {{ username }}
     </el-form-item>
     <el-form-item label="新密码" prop="password">
-      <el-input type="password" v-model="data.password"></el-input>
+      <div class="long-input"><el-input type="password" v-model="data.password"></el-input></div>
       <div class="prompt_message"> 8-30个字符，且同时包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+=_|{}[]:;,.?/中的特殊字符）</div>
     </el-form-item>
     <el-form-item label="确认密码" prop="confirm_password">
-      <el-input type="password" v-model="data.confirm_password"></el-input>
+      <div class="long-input"><el-input type="password" v-model="data.confirm_password"></el-input></div>
     </el-form-item>
   </el-form>
 </template>
@@ -68,5 +68,8 @@ export default class resetPwd extends Vue{
 <style lang="scss" scoped>
 .prompt_message {
   line-height: 22px;
+}
+.long-input {
+  width: 420px;
 }
 </style>

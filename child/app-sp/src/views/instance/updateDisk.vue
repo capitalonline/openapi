@@ -61,11 +61,12 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 
 @Component
-export default class resetPwd extends Vue{
+export default class resetPwd extends Vue {
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: false}) private system_disk!: boolean;
   @Prop({default: false}) private data_disk!: boolean;
+  $message;
   private system_disk_info = [];
   private data_disk_info = [];
   private data_disk_list = [];
@@ -126,8 +127,10 @@ export default class resetPwd extends Vue{
       min: 1,
       del: false
     }
-    data.default_disk_info = this.data_disk_info[0];
-    if ( !data.default_disk_info.disk_max ) {
+    data.default_disk_info = this.data_disk_info[0] || {};
+    if ( !data.default_disk_info.disk_name ) {
+      this.$message.warning('请输入客户ID');
+      
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
