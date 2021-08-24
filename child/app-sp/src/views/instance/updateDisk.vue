@@ -61,7 +61,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 
 @Component
-export default class resetPwd extends Vue {
+export default class updateDisk extends Vue {
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: false}) private system_disk!: boolean;
@@ -166,10 +166,15 @@ export default class resetPwd extends Vue {
     })
     return {
       flag: flag,
+      system_disk: this.FnSysEmit()
     }
   }
   private FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
+  }
+
+  private created() {
+    this.FnGetDiskInfo();
   }
 
   @Watch('data.default_system_info.ecs_goods_id')

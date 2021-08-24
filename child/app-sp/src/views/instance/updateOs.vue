@@ -3,7 +3,9 @@
     :model="data"
     ref="resetForm"
     label-position="left" 
-    label-width="120px" 
+    label-width="120px"
+    :rules="rules"
+    :inline-message="true"
     class="pwd-form">
     <el-form-item label="镜像">
       <el-radio-group v-model="default_os_template_type.os_template_type">
@@ -11,37 +13,28 @@
       </el-radio-group>
     </el-form-item>
     <div class="inline-form">
-      <el-form-item label="" class="m-right20">
+      <el-form-item label="" class="m-right20" prop="default_os_type">
         <el-select v-model="data.default_os_type">
           <el-option v-for="os_type in default_os_template_type.os_types" :key="os_type" :value="os_type" :label="os_type"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="">
+      <el-form-item label="" prop="default_os_version">
         <el-select v-model="data.default_os_version" value-key="os_id">
           <el-option v-for="version in default_os_template_type.os_versions[data.default_os_type]" :key="version.os_id" :value="version" :label="version.name"></el-option>
         </el-select>
       </el-form-item>
     </div>
-    <tempale v-if="system_disk">
-      <update-disk :az_id="az_id" :customer_id="customer_id" :system_disk="system_disk"></update-disk>
-    </tempale>
   </el-form>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
-import updateDisk from './updateDisk.vue';
 
-@Component({
-  components: {
-    updateDisk
-  }
-})
-export default class resetPwd extends Vue{
+@Component
+export default class updateOs extends Vue{
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
-  @Prop({default: false}) private system_disk!: boolean;
   private os_list = {};
   private default_os_template_type = {
     os_template_type: '',
@@ -56,6 +49,16 @@ export default class resetPwd extends Vue{
       username: ''
     }
   }
+  private FnCheckOs = (rule, value, callback) => {
+    if (!value.os_id) {
+      callback(new Error('请选择镜像'));
+    }
+    callback();
+  }
+  private rules = {
+    default_os_type: [{ required: true, trigger: 'change', message: ' '}],
+    default_os_version: [{ required: true, validator: this.FnCheckOs, trigger: 'change' }],
+  };
   private async FnGetOsList() {
     if (!this.az_id) {
       return
@@ -90,6 +93,10 @@ export default class resetPwd extends Vue{
   }
   private FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
+  }
+
+  private created() {
+    this.FnGetOsList();
   }
 
   @Watch('default_os_template_type.os_template_type')

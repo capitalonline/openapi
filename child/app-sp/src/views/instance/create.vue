@@ -243,12 +243,7 @@ export default class App extends Vue {
     return this.error_msg.ecs_name.show
   }
   private FnGetSpec(data): void {
-    this.ecs_spec_info = {
-      ecs_goods_id: data.ecs_goods_id,
-      ecs_goods_name: data.ecs_goods_name,
-      cpu_size: data.cpu_size,
-      ram_size: data.ram_size
-    }
+    this.ecs_spec_info = data
   }
   private FnGetOs(data): void {
     this.os_info = {
@@ -318,12 +313,7 @@ export default class App extends Vue {
           ip_type: this.default_subnet.ip_type
         }]
       },
-      ecs_spec_info: {
-        ecs_goods_id: this.ecs_spec_info.ecs_goods_id,
-        goods_name: this.ecs_spec_info.ecs_goods_name,
-        cpu_size: this.ecs_spec_info.cpu_size,
-        ram_size: this.ecs_spec_info.ram_size
-      },
+      ecs_spec_info: this.ecs_spec_info,
       os_id: this.os_info.os_id,
       os_type: this.os_info.os_type,
       disk_info: {
