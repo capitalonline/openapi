@@ -32,6 +32,7 @@
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
       <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
+      <el-table-column prop="az_name" label="可用区"></el-table-column>
       <el-table-column prop="status" label="状态">
         <template #default="scope">
           <span :class="scope.row.status">{{ scope.row.status_display }}</span>
@@ -66,7 +67,10 @@
     </el-pagination>
 
     <el-dialog :title="operate_title" :visible.sync="show_operate_dialog">
-      <div>
+      <template v-if="default_operate_type === 'recover_ecs'">
+        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id"></Recover>
+      </template>
+      <div v-else>
         <el-alert
           :title="`是否确定要对以下实例执行 ${operate_title} 操作`"
           type="warning"
@@ -124,6 +128,7 @@ import resetPwd from './resetPwd.vue';
 import updateSpec from './updateSpec.vue';
 import updateOs from './updateOs.vue';
 import updateDisk from './updateDisk.vue';
+import Recover from './recover.vue';
 import moment from 'moment';
 @Component({
   components: {
@@ -134,7 +139,8 @@ import moment from 'moment';
     resetPwd, 
     updateSpec, 
     updateOs,
-    updateDisk
+    updateDisk,
+    Recover
   },
 })
 
@@ -251,7 +257,6 @@ export default class App extends Vue {
     this.operate_title = operate_info.label;
     this.show_operate_dialog = true;
     this.default_operate_type = type;
-    console.log('default_operate_type', this.default_operate_type)
   }
   private FnJudgeCustomer(operate_info): boolean {
     this.customer_id = '';
@@ -276,19 +281,14 @@ export default class App extends Vue {
   }
   private FnJudegCustomerAz(operate_info): boolean {
     this.customer_id = '';
-    this.az_id = 'f9755192-b89d-11eb-b74e-1e00e202ff80';
+    this.az_id = '';
     let flag = true;
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
       }
-      // if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
-      //   this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
-      //   flag = false;
-      //   break;
-      // }
-      if (item.customer_id !== this.customer_id) {
+      if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
         flag = false;
         break;
@@ -302,6 +302,10 @@ export default class App extends Vue {
     return flag
   }
   private FnConfirm() {
+    if ( this.default_operate_type === 'recover_ecs' ) {
+      (this.$refs.recover as any).FnRecover();
+      return
+    }
     const reqData = {
       op_type: this.default_operate_type,
       customer_id: this.customer_id,
@@ -314,9 +318,6 @@ export default class App extends Vue {
     }
     else if( this.default_operate_type === 'delete_ecs' ) {
       this.FnDelete(reqData);
-    } 
-    else if ( this.default_operate_type === 'recover_ecs' ) {
-      this.FnRecover(reqData);
     }
     else if ( this.default_operate_type === 'destroy_ecs' ) {
       this.FnDestroy(reqData);
@@ -341,14 +342,6 @@ export default class App extends Vue {
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(reqData);
-    if(resData.code == "Success") {
-      this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
-      this.show_operate_dialog = false;
-      this.FnGetList()
-    }
-  }
-  private async FnRecover(reqData) {
-    const resData: any = await Service.recover_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
       this.show_operate_dialog = false;
@@ -397,9 +390,15 @@ export default class App extends Vue {
       reqData.os_id = os_data.os_info.os_id;
       reqData.os_type = os_data.os_info.os_type;
       reqData.disk_info = {
-        system_disk: disk_data.system_disk
+        system_disk: {
+          ecs_goods_id: disk_data.ecs_goods_id,
+          goods_name: disk_data.disk_name,
+          disk_feature: disk_data.disk_feature,
+          disk_type: disk_data.disk_type,
+          disk_size: disk_data.disk_size
+        },
       }
-      reqData.password = pwd_data.spec_info.password;
+      reqData.password = pwd_data.password;
       let resData: any = await Service.update_system(reqData);
       if (resData.code === 'Success') {
         this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);

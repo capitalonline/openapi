@@ -12,9 +12,9 @@ import service from '../http'
 export default {
   get_instance_list(reqData) {
     return service({
-      method: 'POST',
+      method: 'GET',
       url: '/ecs_business/v1/ecs/ecs_list/',
-      data: reqData
+      params: reqData
     })
   },
   operate_instance(reqData) {
@@ -70,6 +70,13 @@ export default {
       method: 'POST',
       url: '/ecs_business/v1/ecs/ecs_change_system/',
       data: reqData
+    })
+  },
+  get_usage_ip(reqData) {
+    return service({
+      method: 'GET',
+      url: '/ecs_business/v1/ecs/get_deleted_ecs_ip/',
+      params: reqData
     })
   }
 }
