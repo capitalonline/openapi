@@ -145,6 +145,7 @@ export default class Monitor extends Vue{
     this.default_tab = Object.keys(this.tab_list)[0];
     this.default_time = Object.keys(this.time_list)[0];
     this.FnChangeTime();
+    console.log('default_tab', this.time_list)
   }
 }
 </script>
