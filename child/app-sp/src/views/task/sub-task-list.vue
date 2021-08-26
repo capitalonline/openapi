@@ -135,6 +135,20 @@
             <el-input-number v-model="sub_config.check_interval" :min="1" :max="600"></el-input-number> 秒
           </template>
         </label-block>
+        <label-block label="资源调度" class="switch-box">
+          <template #default>
+            <el-switch
+              v-model="sub_config.need_schedule"
+              active-color="#455cc6"
+              inactive-color="#ccc">
+            </el-switch>
+            <label-block label="调度参数" v-if="sub_config.need_schedule">
+              <template #default>
+                <Item :params="default_schedule_output_params" type="key" @fn-change="FnGetSchedule"></Item>  
+              </template>
+            </label-block>
+          </template>
+        </label-block>
         <label-block label="子任务执行对象">
           <template #default>
             <el-select v-model="sub_config.executor">
@@ -180,13 +194,15 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/actionBlock.vue';
 import LabelBlock from '../../components/labelBlock.vue';
 import Params from '../../components/params/index.vue';
+import Item from '../../components/params/item.vue'
 import Service from '../../https/task/sub-task';
 
 @Component({
   components: {
     LabelBlock,
     ActionBlock,
-    Params
+    Params,
+    Item
   },
 })
 export default class App extends Vue {
@@ -206,6 +222,7 @@ export default class App extends Vue {
   private default_id = '';
   private default_dependent_params = {};
   private default_serial_set_sub_params = {};
+  private default_schedule_output_params = [];
   private executor_list = ['kvm_ecs_controller', 'kvm_ebs_controller', 'kvm_images_controller', 'kvm_test_controller'];
   private sub_config = {
     subtask_name: '',
@@ -226,6 +243,8 @@ export default class App extends Vue {
     check_url: '',
     callback_url: '',
     is_valid: true,
+    need_schedule: false,
+    schedule_output_params: []
   };
   private page_info = {
     page_sizes: [20, 50, 100],
@@ -273,25 +292,13 @@ export default class App extends Vue {
     this.sub_config.check_url = row.check_url;
     this.sub_config.callback_url = row.callback_url;
     this.sub_config.is_valid = Boolean(row.is_valid);
+    this.sub_config.need_schedule = Boolean(row.need_schedule);
+    this.default_schedule_output_params = row.schedule_output_params.split(',').map(item => {
+      return {
+        key: item
+      }
+    })
   }
-
-  // private FnHandleParam(params): Array<Object> {
-  //   let type: string = '';
-  //   let outside = {};
-  //   for (let key in params){
-  //     if ( key.indexOf('.') > 0 ) {
-  //       if (!outside[key.split('.')[0]]) {
-  //         outside[key.split('.')[0]] = {};
-  //       }
-  //       outside[key.split('.')[0]][key.split('.')[1]] = params[key];
-  //     } else {
-  //       outside[key] = params[key];
-  //     }
-  //   }
-  //   console.log('outside', outside)
-  //   return this.FnHandleParamItem(outside)
-  // }
-
   private FnHandleParam(params) : Array<Object> {
     let type: string = '';
     let handle_params = [];
@@ -330,6 +337,9 @@ export default class App extends Vue {
   }
   private FnGetExec(param) {
     this.sub_config.executor_path_body = param;
+  }
+  private FnGetSchedule(param) {
+    this.sub_config.schedule_output_params = param;
   }
   private FnClose() {
     this.create_dialog = false;
@@ -371,6 +381,7 @@ export default class App extends Vue {
   private FnConfirm() {
     let dependent_params = {};
     let executor_path_body = {};
+    let default_schedule_output_params = [];
     this.sub_config.dependent_params.forEach(item => {
       if (item.type === 'object') {
         let key = '';
@@ -396,6 +407,11 @@ export default class App extends Vue {
         dependent_params[this.sub_config.serial_set_key] = sub_params;
       }
     }
+    if (this.sub_config.need_schedule) {
+      default_schedule_output_params = this.sub_config.schedule_output_params.map(item => {
+        return item.key
+      })
+    }
     let reqData = {
       subtask_name: this.sub_config.subtask_name,
       dependent_params: JSON.stringify(dependent_params),
@@ -411,7 +427,9 @@ export default class App extends Vue {
       executor_path: this.sub_config.executor_path,
       check_url: this.sub_config.check_url,
       callback_url: this.sub_config.callback_url,
-      is_valid: Number(this.sub_config.is_valid)
+      is_valid: Number(this.sub_config.is_valid),
+      need_schedule: Number(this.sub_config.need_schedule),
+      schedule_output_params: default_schedule_output_params.join()
     };
     if (this.default_id) {
       this.FnUpdate(reqData);
