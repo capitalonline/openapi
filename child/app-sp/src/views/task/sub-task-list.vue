@@ -391,9 +391,11 @@ export default class App extends Vue {
           key = item.key;
         }
         dependent_params[key] = {};
-        item.value.forEach(child => {
-          dependent_params[key][child.key] = child.value;
-        })
+        if (item.value instanceof Array) {
+          item.value.forEach(child => {
+            dependent_params[key][child.key] = child.value;
+          })
+        }
       } else {
         dependent_params[item.key] = item.value;
       }
