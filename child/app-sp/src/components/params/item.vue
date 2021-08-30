@@ -7,7 +7,7 @@
       <div class="m-right10">
         <el-input type="text" v-model="item.key" @blur="FnEmit"></el-input>
       </div>
-      <div>
+      <div v-if="type!=='key'">
         <el-select v-model="item.type" @change="FnChangeDep(item)">
           <el-option 
             v-for="(value, key) in dependent_type" 
@@ -35,6 +35,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 export default class ParamsItem extends Vue {
   @Prop({ default: '' }) readonly params!: [];
   @Prop({ default: false }) readonly second!: boolean;
+  @Prop({ default: '' }) readonly type!: string;
   private dependent_params = [];
   private dependent_type = {
     'number': { label: '数值', value: 0 },
@@ -71,13 +72,11 @@ export default class ParamsItem extends Vue {
   private FnWatchRel(newVal) {
     this.dependent_params = newVal;
     this.FnEmit()
-    console.log('Watch', newVal)
   }
 
   mounted() {
     this.dependent_params = this.params;
     this.FnEmit()
-    console.log('Mounted')
   }
 }
 </script>

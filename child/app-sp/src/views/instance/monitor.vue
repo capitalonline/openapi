@@ -47,13 +47,13 @@
         ></line-echart>
         <line-echart 
           chart_id="ram_chart"
-          title="CPU使用率（%）"
+          title="内存使用率（%）"
           :time_frame="default_date_timer"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="sur_ram_chart"
-          title="CPU使用率（%）"
+          title="剩余百分比使用率（%）"
           :time_frame="default_date_timer"
           class="item">
         </line-echart>
@@ -145,6 +145,7 @@ export default class Monitor extends Vue{
     this.default_tab = Object.keys(this.tab_list)[0];
     this.default_time = Object.keys(this.time_list)[0];
     this.FnChangeTime();
+    console.log('default_tab', this.time_list)
   }
 }
 </script>

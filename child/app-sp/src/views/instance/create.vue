@@ -4,7 +4,7 @@
     <div class="create-box">
       <div class="left-box">
         <el-card>
-          <label-block label="客户ID">
+          <label-block label="客户ID" :is_required="true">
             <div class="input-msg-box">
               <div class="input-box">
                 <el-input v-model="customer_id_input"></el-input>
@@ -57,7 +57,8 @@
             :system_disk="true" 
             :data_disk="true" 
             @fn-system-disk="FnGetSystemDisk" 
-            @fn-data-disk="FnGetDataDisk"></update-disk>
+            @fn-data-disk="FnGetDataDisk">
+            </update-disk>
         </el-card>
 
         <el-card>
@@ -242,12 +243,7 @@ export default class App extends Vue {
     return this.error_msg.ecs_name.show
   }
   private FnGetSpec(data): void {
-    this.ecs_spec_info = {
-      ecs_goods_id: data.ecs_goods_id,
-      ecs_goods_name: data.ecs_goods_name,
-      cpu_size: data.cpu_size,
-      ram_size: data.ram_size
-    }
+    this.ecs_spec_info = data
   }
   private FnGetOs(data): void {
     this.os_info = {
@@ -282,7 +278,7 @@ export default class App extends Vue {
       this.$message.warning('所选网络可用IP数量不足！')
       return
     }
-    let pwd_result = (this.$refs.FnSubmit as any).FnSubmit();
+    let pwd_result = (this.$refs.update_pwd as any).FnSubmit();
     if (!pwd_result.flag) {
       return
     } else {
@@ -317,12 +313,7 @@ export default class App extends Vue {
           ip_type: this.default_subnet.ip_type
         }]
       },
-      ecs_spec_info: {
-        ecs_goods_id: this.ecs_spec_info.ecs_goods_id,
-        goods_name: this.ecs_spec_info.ecs_goods_name,
-        cpu_size: this.ecs_spec_info.cpu_size,
-        ram_size: this.ecs_spec_info.ram_size
-      },
+      ecs_spec_info: this.ecs_spec_info,
       os_id: this.os_info.os_id,
       os_type: this.os_info.os_type,
       disk_info: {

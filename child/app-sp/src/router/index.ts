@@ -16,12 +16,6 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
-    path: '/instance',
-    name: 'instance_list',
-    component: () => import('../views/instance/list.vue'),
-    meta: {menu: 'instance_list'}
-  },
-  {
     path: '/instance/monitor/:id',
     name: 'instance_monitor',
     component: () => import('../views/instance/monitor.vue'),

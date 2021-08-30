@@ -18,7 +18,7 @@
          :disabled="!operate_auth.includes('destroy')">销 毁</el-button>
         <el-button type="primary" @click="FnOperate('update_spec')">更换实例规格</el-button>
         <el-button type="primary" @click="FnOperate('update_system')">更换系统盘</el-button>
-        <el-button type="primary" @click="FnOperate('update_pwd')">更换密码</el-button>
+        <el-button type="primary" @click="FnOperate('reset_pwd')">更换密码</el-button>
       </template>
     </action-block>
 
@@ -32,16 +32,14 @@
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
       <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
+      <el-table-column prop="az_name" label="可用区"></el-table-column>
       <el-table-column prop="status" label="状态">
         <template #default="scope">
           <span :class="scope.row.status">{{ scope.row.status_display }}</span>
-
         </template>
       </el-table-column>
       <el-table-column label="配置详情">
         <template #default="scope">
-          <!-- <el-button type="text" @click="FnToDetail(scope.row.ecs_id)" 
-            :disabled="!operate_auth.includes('instance_detail') || ['failed', 'building'].includes(scope.row.status)">配置详情</el-button> -->
             <el-button type="text" @click="FnToDetail(scope.row.ecs_id)" 
             :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
         </template>
@@ -69,7 +67,10 @@
     </el-pagination>
 
     <el-dialog :title="operate_title" :visible.sync="show_operate_dialog">
-      <div>
+      <template v-if="default_operate_type === 'recover_ecs'">
+        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id"></Recover>
+      </template>
+      <div v-else>
         <el-alert
           :title="`是否确定要对以下实例执行 ${operate_title} 操作`"
           type="warning"
@@ -87,8 +88,18 @@
             </template>
           </el-table-column>
         </el-table>
-        <div v-if="dialog_component" class="component-box">
-          <component :is="dialog_component" ref="child_componet" :system_disk="true" :customer_id="customer_id" :az_id="az_id"></component>
+        <div class="component-box">
+          <template v-if="default_operate_type === 'update_spec'">
+            <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id"></update-spec>
+          </template>
+          <template v-if="default_operate_type === 'update_system'">
+            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id"></update-os>
+            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id"></update-disk>
+            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
+          </template>
+          <template v-if="default_operate_type === 'reset_pwd'">
+            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
+          </template>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -116,6 +127,8 @@ import Detail from './detail.vue';
 import resetPwd from './resetPwd.vue';
 import updateSpec from './updateSpec.vue';
 import updateOs from './updateOs.vue';
+import updateDisk from './updateDisk.vue';
+import Recover from './recover.vue';
 import moment from 'moment';
 @Component({
   components: {
@@ -125,7 +138,9 @@ import moment from 'moment';
     Detail,
     resetPwd, 
     updateSpec, 
-    updateOs
+    updateOs,
+    updateDisk,
+    Recover
   },
 })
 
@@ -155,7 +170,6 @@ export default class App extends Vue {
   private customer_id: string = '';
   private az_id: string = '';
   private multiple_selection: Array<Object> = [];
-  private status_relation = {};
   private operate_auth = [];
   private show_operate_dialog: boolean = false;
   private operate_title: string = '';
@@ -204,8 +218,9 @@ export default class App extends Vue {
     }, this.search_reqData));
     if (resData.code === 'Success') {
       this.instance_list = resData.data.ecs_list;
+      var rows = [];
       if (multiple_selection.length > 0) {
-        var rows = resData.data.ecs_list.filter(row => multiple_selection.includes(row.ecs_id));
+        rows = resData.data.ecs_list.filter(row => multiple_selection.includes(row.ecs_id));
       }
       if (rows && rows.length > 0) {
         this.$nextTick(() => {
@@ -229,35 +244,68 @@ export default class App extends Vue {
       this.$message.warning('请选择要操作的实例！');
       return
     }
-    this.customer_id = '';
-    if (!this.multiple_selection.every((item: any, index) => {
-      if ( index === 0 ) {
-        this.customer_id = item.customer_id
-      }
-      return item.customer_id === this.customer_id
-    })) {
-      this.$message.warning('只允许对同一客户的实例进行批量操作！')
-      return
-    }
     const operate_info = getInsStatus.getInsOperateAuth(type);
-    if (!this.multiple_selection.every((item: any) => operate_info.auth.indexOf(item.status) >= 0)) {
-      this.$message.warning(operate_info.msg)
-      return
+    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(type) >= 0) {
+      if(!this.FnJudegCustomerAz(operate_info)) {
+        return
+      }
+    } else {
+      if(!this.FnJudgeCustomer(operate_info)) {
+        return
+      }
     }
     this.operate_title = operate_info.label;
     this.show_operate_dialog = true;
     this.default_operate_type = type;
-    if (type === 'update_pwd') {
-      this.dialog_component = resetPwd;
+  }
+  private FnJudgeCustomer(operate_info): boolean {
+    this.customer_id = '';
+    let flag = true;
+    for (let index = 0; index < this.multiple_selection.length; index++) {
+      let item: any = this.multiple_selection[index];
+      if ( index === 0 ) {
+        this.customer_id = item.customer_id;
+      }
+      if (item.customer_id !== this.customer_id) {
+        this.$message.warning('只允许对同一客户的实例进行批量操作！')
+        flag = false;
+        break;
+      }
+      if (operate_info.auth.indexOf(item.status) < 0) {
+        this.$message.warning(operate_info.msg)
+        flag = false;
+        break;
+      }
     }
-    else if (type === 'update_spec') {
-      this.dialog_component = updateSpec;
+    return flag
+  }
+  private FnJudegCustomerAz(operate_info): boolean {
+    this.customer_id = '';
+    this.az_id = '';
+    let flag = true;
+    for (let index = 0; index < this.multiple_selection.length; index++) {
+      let item: any = this.multiple_selection[index];
+      if ( index === 0 ) {
+        this.customer_id = item.customer_id;
+      }
+      if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
+        this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
+        flag = false;
+        break;
+      }
+      if (operate_info.auth.indexOf(item.status) < 0) {
+        this.$message.warning(operate_info.msg)
+        flag = false;
+        break;
+      }
     }
-    else if (type === 'update_system') {
-      this.dialog_component = updateOs;
-    }
+    return flag
   }
   private FnConfirm() {
+    if ( this.default_operate_type === 'recover_ecs' ) {
+      (this.$refs.recover as any).FnRecover();
+      return
+    }
     const reqData = {
       op_type: this.default_operate_type,
       customer_id: this.customer_id,
@@ -270,15 +318,12 @@ export default class App extends Vue {
     }
     else if( this.default_operate_type === 'delete_ecs' ) {
       this.FnDelete(reqData);
-    } 
-    else if ( this.default_operate_type === 'recover_ecs' ) {
-      this.FnRecover(reqData);
     }
     else if ( this.default_operate_type === 'destroy_ecs' ) {
       this.FnDestroy(reqData);
     }
-    else if ( this.default_operate_type === 'update_pwd' ) {
-      this.FnUpdatePwd(reqData);
+    else if ( this.default_operate_type === 'reset_pwd' ) {
+      this.FnResetPwd(reqData);
     }
     else if ( this.default_operate_type === 'update_spec') {
       this.FnUpdateSpec(reqData);
@@ -303,14 +348,6 @@ export default class App extends Vue {
       this.FnGetList()
     }
   }
-  private async FnRecover(reqData) {
-    const resData: any = await Service.recover_instance(reqData);
-    if(resData.code == "Success") {
-      this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
-      this.show_operate_dialog = false;
-      this.FnGetList()
-    }
-  }
   private async FnDestroy(reqData) {
     const resData: any = await Service.destroy_instance(reqData);
     if(resData.code == "Success") {
@@ -320,32 +357,61 @@ export default class App extends Vue {
       this.FnGetList()
     }
   }
-  private async FnUpdatePwd(reqData) {
-    let data = (this.$refs.child_componet as any).FnSubmit();
+  private async FnResetPwd(reqData) {
+    let data = (this.$refs.reset_pwd as any).FnSubmit();
     if( data.flag ) {
       reqData.password = data.password;
+      let resData: any = await Service.reset_password(reqData);
+      if (resData.code === 'Success') {
+        this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
+      }
       this.FnClose();
     }
   }
   private async FnUpdateSpec(reqData) {
-    let data = (this.$refs.child_componet as any).FnSubmit();
+    let data = (this.$refs.update_spec as any).FnSubmit();
     if( data.flag ) {
-      reqData.spec_info = data.spec_info;
+      reqData.ecs_goods_id = data.spec_info.ecs_goods_id;
+      reqData.goods_name = data.spec_info.goods_name;
+      reqData.cpu_size = data.spec_info.cpu_size;
+      reqData.ram_size = data.spec_info.ram_size;
+      let resData: any = await Service.update_spec(reqData);
+      if (resData.code === 'Success') {
+        this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
+      }
       this.FnClose();
     }
   }
   private async FnUpdateSystem(reqData) {
-    let data = (this.$refs.child_componet as any).FnSubmit();
-    if( data.flag ) {
-      reqData.spec_info = data.spec_info;
+    let os_data = (this.$refs.update_os as any).FnSubmit();
+    let disk_data = (this.$refs.update_disk as any).FnSubmit();
+    let pwd_data = (this.$refs.reset_pwd as any).FnSubmit();
+    if( os_data.flag && disk_data.flag && pwd_data.flag ) {
+      reqData.os_id = os_data.os_info.os_id;
+      reqData.os_type = os_data.os_info.os_type;
+      reqData.disk_info = {
+        system_disk: {
+          ecs_goods_id: disk_data.ecs_goods_id,
+          goods_name: disk_data.disk_name,
+          disk_feature: disk_data.disk_feature,
+          disk_type: disk_data.disk_type,
+          disk_size: disk_data.disk_size
+        },
+      }
+      reqData.password = pwd_data.password;
+      let resData: any = await Service.update_system(reqData);
+      if (resData.code === 'Success') {
+        this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
+      }
       this.FnClose();
     }
   }
   private FnClose() {
     this.show_operate_dialog = false;
-    if (this.default_operate_type === 'update_pwd') {
-      (this.$refs.child_componet as any).FnResetForm();
+    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) > 0) {
+      // (this.$refs.child_componet as any).FnResetForm();
     }
+    this.FnGetList()
   }
   private FnToDetail(id) {
     this.detail_id = id

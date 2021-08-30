@@ -63,6 +63,9 @@ export default class LineEchart extends Vue{
         end: 10
       }
     ],
+    tooltip: {
+      formatter: '{b0}<br />'+ this.title + ': {c0}'
+    },
     series: []
   }
 
@@ -99,6 +102,11 @@ export default class LineEchart extends Vue{
   private mounted() {
     this.instance = echarts.init(document.querySelector(`#${this.chart_id}`));
     this.FnSetOption();
+    window.addEventListener('resize', () => {
+      if (this.instance) {
+        this.instance.resize();
+      }
+    })
   }
 }
 

@@ -12,9 +12,9 @@ import service from '../http'
 export default {
   get_instance_list(reqData) {
     return service({
-      method: 'POST',
+      method: 'GET',
       url: '/ecs_business/v1/ecs/ecs_list/',
-      data: reqData
+      params: reqData
     })
   },
   operate_instance(reqData) {
@@ -49,6 +49,34 @@ export default {
     return service({
       method: 'GET',
       url: '/ecs_business/v1/ecs/ecs_status_list/'
+    })
+  },
+  reset_password(reqData) {
+    return service({
+      method: 'POST',
+      url: '/ecs_business/v1/ecs/ecs_reset_password/',
+      data: reqData
+    })
+  },
+  update_spec(reqData) {
+    return service({
+      method: 'POST',
+      url: '/ecs_business/v1/ecs/ecs_change_configure/',
+      data: reqData
+    })
+  },
+  update_system(reqData) {
+    return service({
+      method: 'POST',
+      url: '/ecs_business/v1/ecs/ecs_change_system/',
+      data: reqData
+    })
+  },
+  get_usage_ip(reqData) {
+    return service({
+      method: 'GET',
+      url: '/ecs_business/v1/ecs/get_deleted_ecs_ip/',
+      params: reqData
     })
   }
 }

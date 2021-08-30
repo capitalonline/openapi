@@ -30,7 +30,7 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
 
 @Component
-export default class resetPwd extends Vue{
+export default class updateSpec extends Vue{
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
   private calc_list = [];
@@ -82,6 +82,9 @@ export default class resetPwd extends Vue{
   }
   public FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
+  }
+  private created() {
+    this.FnGetSpecList()
   }
   @Watch('default_calc.ecs_goods_id')
   private FnChangeCalc(newVal) {
