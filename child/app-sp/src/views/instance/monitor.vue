@@ -47,13 +47,13 @@
         ></line-echart>
         <line-echart 
           chart_id="ram_chart"
-          title="CPU使用率（%）"
+          title="内存使用率（%）"
           :time_frame="default_date_timer"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="sur_ram_chart"
-          title="CPU使用率（%）"
+          title="剩余百分比使用率（%）"
           :time_frame="default_date_timer"
           class="item">
         </line-echart>
