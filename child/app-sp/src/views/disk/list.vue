@@ -16,20 +16,25 @@
       border
       ref="disk_table"
       @selection-change="handleSelectionChange"
+      @filter-change="filterAttribute"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
       <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
-      <el-table-column prop="status" label="云盘状态"></el-table-column>
+      <el-table-column prop="status_name" label="云盘状态"></el-table-column>
       <el-table-column prop="type" label="类型容量">
         <template slot-scope="scope">
-          <span>{{scope.row.feature ? `${scope.row.feature}${scope.row.size}` : ''}}</span>
+          <span>{{scope.row.feature ? `${scope.row.feature} / ${scope.row.size}GB` : ''}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="az_name" label="地域及可用区"></el-table-column>
-      <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" :filter-method="filterAttribute"></el-table-column>
+      <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" column-key="disk_type">
+        <template slot-scope="scope">
+          <span>{{scope.row.disk_type==="system" ? `数据盘` : '系统盘'}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="ecs_id" label="实例名称/ID">
         <template slot-scope="scope">
           <span>{{scope.row.ecs_id ? `${scope.row.ecs_name} / ${scope.row.ecs_id}` : ''}}</span>
@@ -95,7 +100,8 @@ import EditAttr from './editAttr.vue';
 import EditName from './editName.vue';
 import Common from './commonDialog.vue'
 import {Table} from 'element-ui'
-import Service from '../../https/disk/list' 
+import Service from '../../https/disk/list';
+import {trans} from '../../utils/transIndex'
 @Component({
   components:{
     ActionBlock,
@@ -110,73 +116,7 @@ import Service from '../../https/disk/list'
 export default class extends Vue {
   $message;
   $router;
-  private state_list:any=[]
-  private disk_list:any=[
-    {
-      "customer_id": "E25875",                                                
-      "customer_name": "张三",                                                 
-      "disk_id": "d-bp153va98b325ghj",                                        
-      "disk_name": "ssd-20210626",                                            
-      "status": "使用中",                                                      
-      "feature": "高性能型（SSD）",                                             
-      "size": "100",                                                          
-      "az_name": "可用区A",                                                 
-      "az_id": "254",                                                         
-      "disk_type": "数据盘",                                                   
-      "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "运行中",
-      "is_follow_delete":'1',
-      "ecs_az_name":'可用区A'                             
-    },
-    {
-      "customer_id": "E25875",                                                
-      "customer_name": "张三",                                                 
-      "disk_id": "d-bp153va98b325ghj",                                        
-      "disk_name": "ssd-20210626",                                            
-      "status": "已删除",                                                      
-      "feature": "高性能型（SSD）",                                             
-      "size": "100",                                                           
-      "az_name": "可用区A",                                                 
-      "az_id": "254",                                                         
-      "disk_type": "数据盘",                                                   
-      "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "运行中", 
-      "is_follow_delete":'0',
-      "ecs_az_name":'可用区A'                                           
-    },
-    {
-      "customer_id": "E25875",                                                
-      "customer_name": "张三",                                                 
-      "disk_id": "d-bp153va98b325ghi",                                        
-      "disk_name": "ssd-20210626",                                            
-      "status": "已删除",                                                      
-      "feature": "高性能型（SSD）",                                             
-      "size": "100",                                                           
-      "az_name": "可用区B",                                                 
-      "az_id": "254",                                                         
-      "disk_type": "数据盘",                                                   
-      "ecs_id": "i-abcr50fvgj", 
-      "ecs_status": "运行中", 
-      "is_follow_delete":'0' ,
-      "ecs_az_name":'可用区A'                                                
-    },
-    {
-      "customer_id": "E25875",                                                
-      "customer_name": "张三",                                                 
-      "disk_id": "d-bp153va98b325ghj",                                        
-      "disk_name": "ssd-20210626",                                            
-      "status": "错误",                                                      
-      "feature": "高性能型（SSD）",                                             
-      "size": "100",                                                           
-      "az_name": "可用区A",                                                 
-      "az_id": "254",                                                         
-      "disk_type": "数据盘",                                                   
-      "ecs_id": "i-abcr50fvgj",
-      "ecs_status": "运行中", 
-      "is_follow_delete":'0' ,
-      "ecs_az_name":'可用区A'                                                  
-    },
-  ]
+  private disk_list:any=[]
   private current:number = 1;
   private size:number=20;
   private total:number = 0;
@@ -184,13 +124,14 @@ export default class extends Vue {
   private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
-    status:{list:this.state_list,placeholder:'请选择与云盘状态'},
+    status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
   }
   private visible:Boolean = false;
   private operate_type:string=""
   private mount_id:any = [];
+  private disk_property:Array<String>=[]
   private common_operate:any = {
   delete:'逻辑删除',
   restore:'恢复',
@@ -200,22 +141,22 @@ export default class extends Vue {
   private diskAttribute=[
     {
       text:'数据盘',
-      value:'data_disk'
+      value:'data'
     },
     {
       text:'系统盘',
-      value:'system_disk'
+      value:'system'
     },
   ]
   created() {
-    // this.get_disk_state();
-    // this.getDiskList()
+    this.get_disk_state();
+    this.getDiskList()
   }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
     if(res.code==="Success"){
-      this.state_list = res.data || []
+      this.search_dom.status.list = trans(res.data,'status_name','status','label','type') 
     }
   }
   private async getDiskList(){
@@ -226,11 +167,13 @@ export default class extends Vue {
       status:req_data.status || '',
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
+      disk_property:JSON.stringify(this.disk_property) ,
       page_index:this.current,
       page_size:this.size,
     })
     if(res.code==="Success"){
-      this.disk_list = res.data || []
+      this.disk_list = res.data.result || []
+      this.total = res.data.page_info.count || 0
     }
   }
   private search(data:any={}){
@@ -321,7 +264,7 @@ export default class extends Vue {
       this.operate_type="unInstall"
       this.visible=true
     }).catch(() => {
-        this.close_disk()
+        this.close_disk("0")
     });
   }
   //逻辑删除云盘
@@ -343,7 +286,6 @@ export default class extends Vue {
       console.log("mount_id",this.mount_id)
       return item.status ==='待挂载' || item.status ==='错误'
     })
-    console.log("flag",flag)
     if(!flag){
       this.$message.warning('只允许对待挂载或错误的云盘进行批量操作！')
       return;
@@ -396,10 +338,6 @@ export default class extends Vue {
       this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
       return;
     }
-    // if(!(this.judge_disk("ecs_status","运行中") && this.judge_disk("status","使用中")) && !this.judge_disk('status','待挂载')){
-    //   this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
-    //   return;
-    // }
     
     this.$router.push({
       path:'/disk/capacity',
@@ -417,24 +355,26 @@ export default class extends Vue {
   //限制云盘操作
   private limit_disk_operate(label:string,obj:any){
     if(label==="mount"){
-      return obj.status==="待挂载" && obj.az_name === obj.ecs_az_name && (obj.ecs_status==="运行中" || obj.ecs_status==="已关机")
+      return obj.status==="waiting" && obj.az_id === obj.ecs_az && (obj.ecs_status==="running" || obj.ecs_status==="shutdown")
     }else if(label==="unInstall"){
-      return obj.status==="使用中" && obj.disk_type==="数据盘"
+      return obj.status==="using" && obj.disk_type==="data"
     }else if(label==="delete"){
-      return (obj.status==="待挂载" || obj.status==="错误") && obj.disk_type==="数据盘"
+      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data"
     }else if(label==="destroy"){
-      return obj.status==="已删除" && obj.is_follow_delete==="0"
+      return obj.status==="deleted" && obj.is_follow_delete===false
     }else if(label==="capacity"){
-      return (obj.status==="使用中" && obj.ecs_status==="运行中") || obj.status==="待挂载"
+      return (obj.status==="using" && obj.ecs_status==="running") || obj.status==="waiting"
     }else if(label==="edit_attr"){
-      return obj.status==="挂载中"
+      return obj.status==="using"
     }
   }
-  private close_disk(){
+  private close_disk(val){
     this.visible = false
     this.mount_id=[]
     this.operate_type = ''
     this.toggleSelection()
+    this.current =1;
+    val==="1" && this.getDiskList()
     
   }
   private handleSelectionChange(data){
@@ -444,8 +384,12 @@ export default class extends Vue {
     const table = this.$refs.disk_table as Table
     table.clearSelection()
   }
-  private filterAttribute(value:String){
-
+  private filterAttribute(obj:any){
+    console.log("obj",obj)
+    this.disk_property = obj["disk_type"]
+    console.log("this.disk_property",this.disk_property)
+    this.current = 1
+    this.getDiskList()
   }
   
 }

@@ -62,13 +62,13 @@ export default class MountDisk extends Vue{
       if (res.code == 'Success') {
           this.$message.success(`${this.title}成功`)
       }
-      this.back()
+      this.back("1")
     }
     private cancel(){
-      this.back()
+      this.back("0")
     }
     @Emit("close")
-    private back(){
+    private back(val){
       
     }
 }

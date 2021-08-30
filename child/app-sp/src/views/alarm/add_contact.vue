@@ -24,18 +24,18 @@
                 <el-input v-model="form_data.email" />
             </el-form-item>
             <el-form-item
-                prop="tell"
+                prop="phone"
                 label="电话号码"
                 :rules="[{required:true,message:'请输入电话号码',trigger:'blur'}]"
             >
-                <el-input v-model="form_data.tell" />
+                <el-input v-model="form_data.phone" />
             </el-form-item>
             <el-form-item
-                prop="wechat"
+                prop="wxOpenID"
                 label="微信号"
                 :rules="[{required:true,message:'请输入微信号',trigger:'blur'}]"
             >
-                <el-input v-model="form_data.wechat" />
+                <el-input v-model="form_data.wxOpenID" />
             </el-form-item>
         </el-form>
         <el-divider />
@@ -55,7 +55,7 @@ import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/actionBlock.vue';
 import { Form } from "element-ui";
 import moment from 'moment';
-
+import Service from '../../https/alarm/list'
 @Component({
   components:{
     ActionBlock
@@ -70,17 +70,23 @@ export default class InsDetail extends Vue{
   private form_data:any={
       name:'',
       email:'',
-      tell:'',
-      wechat:''
+      phone:'',
+      wxOpenID:''
 
   }
   created() {
   }
   private confirm(){
       const form = this.$refs.form as Form
-      form.validate((valid:boolean)=>{
+      form.validate(async (valid:boolean)=>{
           if(valid){
-
+            let res:any = await Service.add_contact({
+              ...this.form_data
+            })
+            if(res.code===0){
+              this.$message.success("新建成功")
+            }
+            this.back()
           }
       })
   }

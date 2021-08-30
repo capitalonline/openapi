@@ -9,11 +9,11 @@
     </action-block>
     <el-table :data="list" border class="event-table">
         <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="task_id" label="姓名"></el-table-column>
-        <el-table-column prop="event" label="邮箱"></el-table-column>
-        <el-table-column prop="cloud_id" label="电话号码"></el-table-column>
-        <el-table-column prop="task_name" label="微信号"></el-table-column>
-        <el-table-column prop="task_state" label="所属报警组"></el-table-column>
+        <el-table-column prop="name" label="姓名"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column prop="phone" label="电话号码"></el-table-column>
+        <el-table-column prop="wxOpenID" label="微信号"></el-table-column>
+        <el-table-column prop="groupName" label="所属报警组"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="edit(scope.row.task_id)">编辑</el-button>
@@ -43,6 +43,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/actionBlock.vue'
 import AddContact from './add_contact.vue'
 import AddToGroup from './add_to_group.vue'
+import Service from '../../https/alarm/list'
 @Component({
     components:{
         ActionBlock,
@@ -61,17 +62,16 @@ export default class ContactList extends Vue{
             label:'邮箱'
         },
         {
-            type:'tell',
+            type:'phone',
             label:'电话号码'
         },
         {
-            type:'weChat',
+            type:'wxOpenID',
             label:'微信'
         },
     ]
     private search={
-        type:{placeholder:'请选择属性',list:this.type_list},
-        content:{placeholder:'请输入后查询'}
+        type:{placeholder:'请输入后查询',list:this.type_list,type:'composite',width:340},
     }
     private list = [{name:1}]
     private current:number=1
@@ -80,13 +80,38 @@ export default class ContactList extends Vue{
     private user_visible:Boolean=false
     private user_id:String=""
     private user_title:String="新建联系人"
-    private group_visible:Boolean=false
-
+    private group_visible:Boolean=false;
+    private search_data:any={}
     created() {
         this.fn_search()
     }
     private fn_search(data:any={}){
-
+        this.current = 1
+        this.search_data = data
+        this.getContactList()
+    }
+    private async getContactList(){
+        let obj = {
+            page:this.current,
+            pageSize:this.size
+        }
+        let res:any = await Service.get_contact_list({
+            page:this.current,
+            pageSize:this.size,
+            [this.search_data.typesub ? this.search_data.typesub : 'name']:this.search_data.type
+        })
+        if(res.code===0){
+            this.list = res.data.datas || []
+            this.total = res.data.total || 0
+        }
+    }
+    private handleSizeChange(size){
+        this.size=size
+        this.getContactList()
+    }
+    private handleCurrentChange(cur){
+        this.current = cur
+        this.getContactList()
     }
     private add(){
         this.user_title="新建联系人"
@@ -110,11 +135,6 @@ export default class ContactList extends Vue{
     private addToWarnGroup(){
         this.group_visible=true
     }
-    private handleSizeChange(size){
-        this.size=size
-    }
-    private handleCurrentChange(cur){
-        this.current = cur
-    }
+    
 }
 </script>

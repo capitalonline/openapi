@@ -103,7 +103,7 @@
                                 prop="capacity"
                                 label=""
                             >
-                                <el-input-number v-model="inn.disk_size" :step="100" :min="100" :max="2000" @change="change_capacity"></el-input-number>&nbsp;GB
+                                <el-input-number v-model="inn.disk_size" :step="128" :min="128" :max="2048" @change="change_capacity"></el-input-number>&nbsp;GB
                             </el-form-item>
                         </div>
                         <el-form-item
@@ -213,76 +213,6 @@ export default class CreateDisk extends Vue{
     private total:number=0;//已选择云盘数量
     private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
     private area_list:any=[]
-    // private area_list=[
-    //     {
-    //         label:'中国大陆',
-    //         value:'zh',
-    //         children:[
-    //             {
-    //                 label:'北京',
-    //                 value:'bj'
-    //             },
-    //             {
-    //                 label:'广州',
-    //                 value:'gz'
-    //             },
-    //             {
-    //                 label:'上海',
-    //                 value:'sh'
-    //             },
-    //             {
-    //                 label:'无锡',
-    //                 value:'wx'
-    //             },
-    //         ]
-
-    //     },
-    //     {
-    //         label:'亚太地区',
-    //         value:'ytdq',
-    //         children:[
-    //             {
-    //                 label:'新加披',
-    //                 value:'xjp'
-    //             },
-    //             {
-    //                 label:'孟买',
-    //                 value:'mm'
-    //             },
-    //             {
-    //                 label:'香港',
-    //                 value:'hk'
-    //             },
-    //         ]
-
-    //     },
-    //     {
-    //         label:'北美地区',
-    //         value:'bmdq',
-    //         children:[
-    //             {
-    //                 label:'达拉斯',
-    //                 value:'dls'
-    //             },
-    //             {
-    //                 label:'弗吉尼亚',
-    //                 value:'fjny'
-    //             },
-    //         ]
-
-    //     },
-    //     {
-    //         label:'欧洲地区',
-    //         value:'eroup',
-    //         children:[
-    //             {
-    //                 label:'法兰克福',
-    //                 value:'franch'
-    //             },
-    //         ]
-
-    //     }
-    // ]
     private ECS_instance_list=[
         {
             label:'实例1',

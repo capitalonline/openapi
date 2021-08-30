@@ -9,15 +9,15 @@ export default{
     },
     //云盘状态列表获取
     get_disk_state(req){
-        return service(getOptions('POST','/ebs/api_disk_state/',req))
+        return service(getOptions('POST','/ebs/disk_state/',req))
     },
     //修改云盘名称接口
     edit_disk_name(req){
-        return service(getOptions('POST','/ebs/api_disk_name_update/',req))
+        return service(getOptions('POST','/ebs/disk_name_update/',req))
     },
     //编辑云盘属性接口
     edit_disk_attr(req){
-        return service(getOptions('POST','/ebs/api_disk_property_update/',req))
+        return service(getOptions('POST','/ebs/disk_property_update/ ',req))
     },
     //挂载
     mount(req){

@@ -42,13 +42,13 @@ export default class EditName extends Vue{
             this.$message.success("修改成功")
             
         }
-        this.back()
+        this.back("1")
     }
     private cancel(){
-        this.back()
+        this.back("0")
     }
     @Emit("close")
-    private back(){
+    private back(val){
 
     }
 

@@ -9,12 +9,12 @@
             <el-table-column prop="disk_size" label="容量"></el-table-column>
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
             <el-table-column prop="processing" label="创建进度"></el-table-column>
-            <el-table-column label="操作">
-            <template slot-scope="scope">
-                <el-button type="text" @click="create">创建实例</el-button>
-                <el-button type="text" @click="operate(scope.row.mirror_id)">操作记录</el-button>
-            </template>
-            </el-table-column>
+            <!-- <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="create">创建实例</el-button>
+                    <el-button type="text" @click="operate(scope.row.mirror_id)">操作记录</el-button>
+                </template>
+            </el-table-column> -->
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -48,27 +48,29 @@ export default class Mirror extends Vue{
     private current:number = 1
     private size:number = 20
     private total:number = 0
+    private req_data:any={}
     created() {
-        
+        this.getMirrorList()
     }
     @Watch("search_data",{immediate:true,deep:true})
     private watch_search_data(newVal){
         console.log("newVal",newVal)
+        this.req_data = newVal
+    }
+    private search(){
         this.current = 1
         this.getMirrorList()
     }
-    private create(){
-        // this.getMirrorList()
-    }
     private async getMirrorList(){
+        console.log("this.common",this.search_data,this.req_data)
         let res:any=await Service.get_mirror_list({
-            os_id :this.search_data.namesub,
-            os_name:this.search_data.name,
+            [this.req_data.namesub ? this.req_data.namesub : 'os_name'] :this.req_data.name,
             page_index:this.current,
             page_size:this.size,
         })
         if(res.code==="Success"){
-            this.list = res.data || []
+            this.list = res.data.image_list || []
+            this.total = res.data.pageinfo.count
         }
     }
     private operate(id:String){

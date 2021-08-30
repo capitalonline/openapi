@@ -17,7 +17,7 @@ module.exports = {
         changeOrigin: true
       },
       '/ecs_business': {
-        // target: 'http://10.128.22.12:9000',
+        // target: '10.131.165.157:8001',
         target:'http://ecs-business.gic.test',
         ws: true,
         changeOrigin: true

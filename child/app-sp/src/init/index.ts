@@ -13,6 +13,13 @@ export async function getUserInfo() {
   const resData = await get_user_info({'token': store.state.token});
   if (resData.code == 'Success') {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
-    store.commit('SET_AUTH_INFO', {...resData.data.permission_dict,disk_list:['disk_create','disk_capacity'],mirror_list:[]});
+    store.commit('SET_AUTH_INFO', {
+      ...resData.data.permission_dict,
+      disk_list:['disk_create','disk_capacity'],
+      mirror_list:[],
+      alarm_info:['alarm_strategy_create'],
+      alarm_strategy:[],
+      alarm_contact:[]
+    });
   }
 }

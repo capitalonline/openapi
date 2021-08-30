@@ -38,7 +38,7 @@ export default class EditAttr extends Vue{
     $message;
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>{}}) attr!:any;
-    private checked:boolean = this.attr.is_follow_delete==='1' ? true : false
+    private checked:boolean = this.attr.is_follow_delete
     created() {
         console.log("attr",this.attr)
     }
@@ -50,15 +50,14 @@ export default class EditAttr extends Vue{
         })
         if (res.code == 'Success') {
             this.$message.success("修改成功")
-            
         }
-        this.back()
+        this.back("1")
     }
     private cancel(){
-        this.back()
+        this.back("0")
     }
     @Emit("close")
-    private back(){
+    private back(val){
 
     }
 

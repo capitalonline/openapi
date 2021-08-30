@@ -14,7 +14,11 @@
             @selection-change="handleSelectionChange"
         >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="customer_id" label="策略名称/ID"></el-table-column>
+            <el-table-column prop="customer_id" label="策略名称/ID">
+                <template slot-scope="scope">
+                    <span>{{scope.row.name}} / {{scope.row.id}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="clientName" label="被应用过的产品"></el-table-column>
             <el-table-column prop="disk_id" label="策略状态"></el-table-column>
             <el-table-column prop="diskName" label="创建时间">
@@ -36,6 +40,15 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="current"
+            :page-sizes="[20, 50, 100]"
+            :page-size="size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+        </el-pagination>
         <template v-if="drawer">
             <ApplyStrategy :drawer="drawer" />
         </template>
@@ -45,6 +58,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/actionBlock.vue';
 import ApplyStrategy from './apply_strategy.vue'
+import Service from '../../https/alarm/list'
+import moment from 'moment'
 @Component({
     components:{
         ActionBlock,
@@ -58,10 +73,37 @@ export default class Strategy extends Vue{
     }
     private list=[{customer_id:1}]
     private drawer:Boolean=false
-    
+    private search_data:any={}
+    private current:number = 1
+    private size:number = 20
+    private total:number = 0
+    private moment:any = moment
+    created() {
+        // this.fn_search()
+    }
+    private fn_search(data:any={}){
+        this.current =1
+        this.search_data = data
+        this.getStrategyList()
+    }
+    private async getStrategyList(){
+        const {search_data:{name}} = this
+        let res:any = await Service.get_strategy_list({
+            name,
+        })
+        if(res.code===0){
+            this.list = res.data.datas || []
+            this.total = res.data.total || 0
+        }
 
-    private fn_search(){
-
+    }
+    private handleSizeChange(size){
+        this.size = size
+        this.getStrategyList()
+    }
+    private handleCurrentChange(cur){
+        this.current = cur
+        this.getStrategyList()
     }
     private handleSelectionChange(){
 

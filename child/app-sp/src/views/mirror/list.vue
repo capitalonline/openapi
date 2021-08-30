@@ -1,14 +1,14 @@
 <template>
     <div>
         <action-block :search_option="search_dom" @fn-search="search">
-            <template #default>
+            <!-- <template #default>
                 <el-button type="primary" @click="create_mirror">创建镜像</el-button>
                 <el-button type="primary" @click="operate('mount')">复制</el-button>
                 <el-button type="primary" @click="operate('unInstall')">导入</el-button>
                 <el-button type="primary" @click="operate('delete')">导出</el-button>
                 <el-button type="primary" @click="operate('recover')">删除</el-button>
                 <el-button type="primary" @click="create_instance">创建实例</el-button>
-            </template>
+            </template> -->
         </action-block>
         <Common :search_data="search_data" />
         <!-- <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
@@ -36,8 +36,8 @@ import Common from './common.vue'
 })
 export default class Mirror extends Vue{
     private list=[
-        {type:'name',label:'镜像名称'},
-        {type:'id',label:'镜像id'},
+        {type:'os_name',label:'镜像名称'},
+        {type:'os_id',label:'镜像id'},
     ]
     private search_dom:any={
         name:{placeholder:'请输入内容查询',list:this.list,type:'composite',width:340}
@@ -45,11 +45,10 @@ export default class Mirror extends Vue{
     private activeName:string='0';
     private search_data:any = {}
     created() {
-        
+        this.search()
     }
-    private search(data:any){
-        console.log("data",data)
-        this.search_data=data
+    private search(data:any={}){
+        
     }
     private create_mirror(){
 
