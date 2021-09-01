@@ -11,9 +11,10 @@ export const create_obj = {
                 name:'云服务器ECS',
                 rules:[
                     {
+                        id:'ecs'+Math.floor((Math.random()*9+1)*1000000),
                         name:'cpu使用率',
                         level_name:['Host.cpu.total'],
-                        type:'1',
+                        type:'0',
                         level:[
                             {
                                 range:'>=',
@@ -35,9 +36,10 @@ export const create_obj = {
                         
                     },
                     {
+                        id:'ecs'+Math.floor((Math.random()*9+1)*1000000),
                         name:'磁盘使用率',
                         event_type:'abnormal',
-                        type:'2',
+                        type:'1',
                         event_name:['loss'],
                         alram_type:'ordinary',
                         notice:["短信"]
@@ -250,57 +252,49 @@ export const cycle_num=[
 ]
 export const alarm_type=[
     {
-        id:'serious',
+        id:'2',
         title:'严重',
     },
     {
-        id:'warning',
-        title:'警告',
+        id:'1',
+        title:'告警',
     },
     {
-        id:'ordinary',
+        id:'0',
         title:'普通',
     },
 ]
 export const notice_list = ["邮箱","短信","微信"]
 export const event_type=[
     {
-        id:'abnormal',
+        id:'abnormal_event',
         title:'异常事件',
-    },
-    {
-        id:'success',
-        title:'成功事件',
-    },
-    {
-        id:'error',
-        title:'错误事件',
     },
 ]
 export const event_name=[
     {
-        id:'outage',
+        id:'crash',
         title:'宕机',
     },
     {
-        id:'memoryOverload',
+        id:'oom',
         title:'内存使用过载',
     },
     {
-        id:'diskReadOnly',
+        id:'disk_read_only',
         title:'磁盘只读',
     },
     {
-        id:'IOerror',
+        id:'io_wrong',
         title:'IO错误',
     },
     {
-        id:'diskSpaceRunOut',
+        id:'disk_out_of_space',
         title:'磁盘空间耗尽',
     },
     {
-        id:'loss',
-        title:'丢包',
+        id:'network_packet_drop',
+        title:'网络丢包',
     },
     {
         id:'kernelError',

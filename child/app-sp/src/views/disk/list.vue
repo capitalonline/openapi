@@ -167,7 +167,7 @@ export default class extends Vue {
       status:req_data.status || '',
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
-      disk_property:JSON.stringify(this.disk_property) ,
+      disk_property:this.disk_property ,
       page_index:this.current,
       page_size:this.size,
     })

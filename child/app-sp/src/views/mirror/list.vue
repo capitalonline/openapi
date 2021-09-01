@@ -10,7 +10,7 @@
                 <el-button type="primary" @click="create_instance">创建实例</el-button>
             </template> -->
         </action-block>
-        <Common :search_data="search_data" />
+        <Common :search_data="search_data" ref="common" />
         <!-- <el-tabs v-model="activeName" @tab-click="handleClick" type="card">
             <el-tab-pane label="公共镜像" name="0">
                 <Common />
@@ -45,10 +45,11 @@ export default class Mirror extends Vue{
     private activeName:string='0';
     private search_data:any = {}
     created() {
-        this.search()
     }
-    private search(data:any={}){
-        
+    private search(data){
+        this.search_data = data
+        const common = this.$refs.common as any
+        common.getMirrorList(data)
     }
     private create_mirror(){
 

@@ -54,8 +54,13 @@
                                 prop="ecs_id"
                                 label=""
                             >
-                                <el-select v-model="form_data.ecs_id" filterable placeholder="请选择ECS实例名称（实例ID)">
-                                    <el-option v-for="item in ECS_instance_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                <el-select 
+                                    v-model="form_data.ecs_id"                                      
+                                    placeholder="请选择ECS实例名称（实例ID)"
+                                    filterable
+                                    :filter-method="get_instance_list"
+                                >
+                                    <el-option v-for="item in ECS_instance_list" :key="item.ecs_id" :label="`${item.ecs_id} / ${item.ecs_name}`" :value="item.ecs_id"></el-option>
                                 </el-select>
                             </el-form-item>
                             </template>
@@ -177,18 +182,32 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import backHeader from '../../components/backHeader.vue';
 import Area from '../../components/Area.vue';
 import Service from '../../https/instance/create';
+import ServiceList from '../../https/instance/list';
 import disk_service from '../../https/disk/create'
 import { Form } from "element-ui";
+import scrollDirective from '../../utils/select-directive';
+import moment from 'moment'
+interface Page {
+    current:number,
+    size:number,
+    total:any
+}
 @Component({
-  components: { 
-      backHeader,
-      Area,
+    components: { 
+        backHeader,
+        Area,
     },
+    directives:{
+        scrollDirective
+    }
+
 
 })
 export default class CreateDisk extends Vue{
+    
     $router;
     $message;
+    
     private form_data:any={
         customer_id:'',
         customer_name:'',
@@ -213,16 +232,7 @@ export default class CreateDisk extends Vue{
     private total:number=0;//已选择云盘数量
     private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
     private area_list:any=[]
-    private ECS_instance_list=[
-        {
-            label:'实例1',
-            value:'beijing'
-        },
-        {
-            label:'实例2',
-            value:'beijing2'
-        }
-    ]
+    private ECS_instance_list:any=[]
     private az_list=[
         {
             label:'可用区1',
@@ -280,6 +290,7 @@ export default class CreateDisk extends Vue{
         if (resData.code == 'Success') {
             this.form_data={...this.form_data,customer_name:resData.data.customer_name}
             this.get_area_list();
+            this.get_instance_list("")
         }
     }
     //获取地区列表
@@ -293,6 +304,23 @@ export default class CreateDisk extends Vue{
         //         this.default_region = this.region_list[0];
         //     }
         }
+    }
+    //获取实例列表
+    private async get_instance_list(val){
+        console.log("get_instance_list",val)
+        const resData: any = await ServiceList.get_instance_list({
+            page_index:1,
+            page_size:20,
+            // start_time:'2021-08-01',
+            // end_time:'2021-08-31',
+            ecs_name:val
+        });
+        if (resData.code == 'Success') {
+            this.ECS_instance_list = resData.data.ecs_list;
+        }
+    }
+    private search_instance(){
+        this.get_instance_list()
     }
     //监听云盘名称
     @Watch("form_data.disk_list",{ immediate: true, deep: true })
@@ -387,9 +415,6 @@ export default class CreateDisk extends Vue{
         }
         this.$router.push('/disk')
     }
-    // private create(){
-    //     console.log("#####",this.form_data)
-    // }
 }
 </script>
 <style lang="scss" scoped>
@@ -460,5 +485,4 @@ export default class CreateDisk extends Vue{
     
 
 }
-
 </style>

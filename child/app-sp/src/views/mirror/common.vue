@@ -54,23 +54,19 @@ export default class Mirror extends Vue{
     }
     @Watch("search_data",{immediate:true,deep:true})
     private watch_search_data(newVal){
-        console.log("newVal",newVal)
         this.req_data = newVal
     }
-    private search(){
-        this.current = 1
-        this.getMirrorList()
-    }
-    private async getMirrorList(){
-        console.log("this.common",this.search_data,this.req_data)
+    private async getMirrorList(data:any={}){
+        const req = Object.keys(data).length>0 ? data : this.req_data
+        this.current = Object.keys(data).length>0 ? 1 : this.current
         let res:any=await Service.get_mirror_list({
-            [this.req_data.namesub ? this.req_data.namesub : 'os_name'] :this.req_data.name,
+            [req.namesub ? req.namesub : 'os_name'] :req.name,
             page_index:this.current,
             page_size:this.size,
         })
         if(res.code==="Success"){
             this.list = res.data.image_list || []
-            this.total = res.data.pageinfo.count
+            this.total = res.data.page_info.count
         }
     }
     private operate(id:String){
