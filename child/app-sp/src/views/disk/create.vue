@@ -72,7 +72,7 @@
                             >
                                 <template>
                                     <div class="area">地域及可用区：{{form_data.area}}&nbsp;&nbsp;{{form_data.az}}</div>
-                                    <div class="area">实例规格:{{form_data.ecs_id}}</div>
+                                    <div class="area">实例规格:  {{ecs_specifications[0]}}&nbsp;&nbsp;&nbsp;{{ecs_specifications[1]}}</div>
                                 </template>
                             </el-form-item>
                         </template>
@@ -97,22 +97,22 @@
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
-                                prop="type"
+                                prop="ecs_goods_id"
                                 label="类型/容量"
                             >
-                                <el-select v-model="inn.type">
-                                    <el-option v-for="item in disk_type_list" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                <el-select v-model="inn.ecs_goods_id">
+                                    <el-option v-for="item in disk_type_list" :key="item.ecs_goods_id" :label="item.disk_value" :value="item.ecs_goods_id"></el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item
-                                prop="capacity"
+                                prop="disk_size"
                                 label=""
                             >
                                 <el-input-number v-model="inn.disk_size" :step="128" :min="128" :max="2048" @change="change_capacity"></el-input-number>&nbsp;GB
                             </el-form-item>
                         </div>
                         <el-form-item
-                            prop="quantity"
+                            prop="amount"
                             label="数量"
                         >
                             <el-input-number v-model="inn.amount" :step="1" :min="0" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
@@ -156,17 +156,20 @@
                         <div>--</div>
                     </div>
                     <div class="config-info">
-                        <div>挂载实例规格：</div>
-                        <div>--</div>
+                        <div>挂载实例名称：</div>
+                        <div>{{ecs_specifications.length===3 ? ecs_specifications[2] : '--'}}</div>
                     </div>
-                    <div class="config-info" v-for="(item,index) in form_data.disk_list" :key="index">
-                        <div>规格：</div>
-                        <div>--</div>
+                    <div v-for="(item,index) in form_data.disk_list" :key="index">
+                        <div class="config-info">
+                            <div>云盘规格：</div>
+                            <div>{{}}</div>
+                        </div>
+                        <div class="config-info">
+                            <div>购买数量：</div>
+                            <div>--</div>
+                        </div>
                     </div>
-                    <div class="config-info">
-                        <div>购买数量：</div>
-                        <div>--</div>
-                    </div>
+                    
                 </el-card>
             </div>
             <div class="button_box">
@@ -184,6 +187,7 @@ import Area from '../../components/Area.vue';
 import Service from '../../https/instance/create';
 import ServiceList from '../../https/instance/list';
 import disk_service from '../../https/disk/create'
+import detail_service from '../../https/instance/record_detail'
 import { Form } from "element-ui";
 import scrollDirective from '../../utils/select-directive';
 import moment from 'moment'
@@ -197,9 +201,9 @@ interface Page {
         backHeader,
         Area,
     },
-    directives:{
-        scrollDirective
-    }
+    // directives:{
+    //     scrollDirective
+    // }
 
 
 })
@@ -220,8 +224,8 @@ export default class CreateDisk extends Vue{
         disk_list:[
             {
                 disk_name:'',
-                ecs_goods_id:'hdd',
-                disk_size:100,
+                ecs_goods_id:'',
+                disk_size:128,
                 amount:0,
             }
         ],
@@ -230,43 +234,14 @@ export default class CreateDisk extends Vue{
     }
     private disk_total:number=16;//云盘限制数量
     private total:number=0;//已选择云盘数量
+    private mounted_disk:number=0;//实例已挂载云盘数量
+    private ecs_specifications:Array<string>=[]//实例规格
     private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
-    private area_list:any=[]
+    private az_list:any=[]
     private ECS_instance_list:any=[]
-    private az_list=[
-        {
-            label:'可用区1',
-            value:'1'
-        },
-        {
-            label:'可用区2',
-            value:'2'
-        },
-        {
-            label:'可用区3',
-            value:'3'
-        },
-        {
-            label:'可用区4',
-            value:'4'
-        },
-        {
-            label:'可用区5',
-            value:'5'
-        },
-    ]
-    private disk_type_list=[
-        {
-            value:'hdd',
-            label:'性能型（HDD)'
-        },
-        {
-            value:'ssd',
-            label:'高性能型（SSD）'
-        }
-    ]
+    private area_list=[]
+    private disk_type_list=[]
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
-        console.log("value",value)
         if(value.length>6){
             return callback()
         }else{
@@ -278,12 +253,12 @@ export default class CreateDisk extends Vue{
     private watch_customer_id(newVal){
         const form = this.$refs.form as Form
         form.validate((valid:boolean)=>{
-            console.log("valid",valid)
             if(valid){
                 this.get_customer_name()
             }
         })
     }
+    
     //获取客户名称
     private async get_customer_name(){
         const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
@@ -291,6 +266,7 @@ export default class CreateDisk extends Vue{
             this.form_data={...this.form_data,customer_name:resData.data.customer_name}
             this.get_area_list();
             this.get_instance_list("")
+            this.get_disk_type()
         }
     }
     //获取地区列表
@@ -298,75 +274,96 @@ export default class CreateDisk extends Vue{
         const resData: any = await Service.get_region_az_list({customer_id: this.form_data.customer_id});
         if (resData.code == 'Success') {
         this.area_list = resData.data;
-        // if (this.default_region.region_id == this.region_list[0].region_id) {
-        //         this.FnChangeAz(this.default_az.az_id)
-        //     } else {
-        //         this.default_region = this.region_list[0];
-        //     }
         }
     }
     //获取实例列表
     private async get_instance_list(val){
-        console.log("get_instance_list",val)
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
             page_size:20,
-            // start_time:'2021-08-01',
-            // end_time:'2021-08-31',
             ecs_name:val
         });
         if (resData.code == 'Success') {
             this.ECS_instance_list = resData.data.ecs_list;
         }
     }
-    private search_instance(){
-        this.get_instance_list()
+    //监听实例ID
+    @Watch("form_data.ecs_id")
+    private watch_ecs_id(newVal){
+        if(newVal!==""){
+            this.get_mounted_num()
+        }
     }
+    //获取云盘类型信息
+    private async get_disk_type(){
+        const resData: any = await disk_service.get_disk_type({
+            customer_id:this.form_data.customer_id
+        });
+        if (resData.code == 'Success') {
+            this.disk_type_list = resData.data.system_disk;
+        }
+    }
+    //获取实例挂载数据盘数量
+    private async get_mounted_num(){
+        const resData: any = await detail_service.get_detail({
+            ecs_id:this.form_data.ecs_id
+        });
+        if (resData.code == 'Success') {
+            const {data:{disk,ecs_rule,ecs_name}}=resData
+            this.mounted_disk= disk.data_disk_conf ? disk.data_disk_conf.length : 0;
+            this.ecs_specifications = [ecs_rule.name,`${ecs_rule.cpu_num}${ecs_rule.cpu_unit}${ecs_rule.ram}${ecs_rule.ram_unit}`,ecs_name]
+            this.disk_total = 16 - this.mounted_disk
+            const {form_data:{disk_list}}=this
+            this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
+                item.amount=0
+                return item
+            })}
+            this.get_disk_quantity()
+        }
+    }
+
     //监听云盘名称
     @Watch("form_data.disk_list",{ immediate: true, deep: true })
     private watch_disk_name(newVal){
-        console.log("newVal",newVal)
     }
     //设置挂载
     private mount(value:string){
-        this.disk_total=value==="1" ? 16 : 50
+        this.disk_total=value==="1" ? 16 - this.mounted_disk : 50
         this.get_disk_quantity()
         const {form_data:{isMounted,disk_list}}=this
         if(value==="1" && isMounted==='0'){
             this.dis_change=false
             this.total=0
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
-                item.quantity=0
+                item.amount=0
                 return item
             })}
         }
         this.form_data={...this.form_data,isMounted:value}
     }
     private dis_change=false//判断挂载总数是否达到16
-    //设置可用区ID
-    private get_az(id:string){
-        console.log("id",id)
-        this.form_data={...this.form_data,use_area:id}
-    }
-    //设置区域ID
+    //设置区域ID,获取可用区列表
     private get_area_id (val:string){
-        console.log("get_area_id",val)
         const {area_list}=this
-        const fil:any = area_list.filter((item:any)=>item.region_name===val)
-        this.az_list = fil[0].az_list
-        this.form_data={...this.form_data,area:val}
+        area_list.forEach(item=>{
+            item.region_list && item.region_list.forEach(inn=>{
+                if(inn.region_id===val){
+                    this.az_list = inn.az_list
+                }
+            })
+        })
+        this.form_data={...this.form_data,area:val,az:""}
     }
     //新增云盘配置
     private add(){
         if(this.form_data.disk_list.length===this.disk_total){
             return;
         }
-        // console.log("add")
         this.form_data={...this.form_data,disk_list:[...this.form_data.disk_list,{
             disk_name:'',
-            type:'hdd',
-            capacity:100,
-            quantity:0
+            ecs_goods_id:'',
+            disk_size:128,
+            amount:0
         }]}
     }
     //删除云盘配置
@@ -386,7 +383,7 @@ export default class CreateDisk extends Vue{
     private get_disk_quantity(){
         const {disk_list}=this.form_data
         this.total = disk_list.reduce((pre,cur)=>{
-            return pre+cur.quantity
+            return pre+cur.amount
         },0)
         if(this.total>=this.disk_total){
             this.dis_change=true
@@ -397,11 +394,9 @@ export default class CreateDisk extends Vue{
     }
     //监听容量改变
     private change_capacity(val){
-        console.log("val",val)
     }
     //创建、
     private async create(){
-        console.log("form_data",this.form_data)
         const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
         let res:any = await disk_service.create({
             customer_id,

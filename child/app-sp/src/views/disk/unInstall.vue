@@ -24,7 +24,7 @@
             </el-table>
             <div class="remark">
                 <div>1.执行卸载操作前,请停止云盘数据的读写。</div>
-                <div>2.执行卸载操作前,请确认预设的文件索引已被删除,避免引起实例重启。</div>
+                <div>2.执行卸载操作前,请确认预设的文件索引已被删除,避免影响实例重启。</div>
             </div>
         </div>
         <span slot="footer" class="dialog-footer">

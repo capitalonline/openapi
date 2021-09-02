@@ -9,7 +9,7 @@ export default{
     },
     //云盘状态列表获取
     get_disk_state(req){
-        return service(getOptions('POST','/ebs/disk_state/',req))
+        return service(getOptions('POST','/ebs/disk_status_list/',req))
     },
     //修改云盘名称接口
     edit_disk_name(req){

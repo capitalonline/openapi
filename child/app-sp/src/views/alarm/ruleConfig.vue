@@ -18,17 +18,7 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" @click="edit_rules(pro.id,scope.row.id,scope.row.tab_key)" style="margin:0 10px 0 0">编辑</el-button>
-                    <el-popover
-                        placement="top"
-                        width="160"
-                        v-model="del_rule_visible">
-                        <p>确定删除这条规则吗？</p>
-                        <div style="text-align: right; margin: 10px">
-                            <el-button size="mini" type="text" @click="del_rule_visible = false">取消</el-button>
-                            <el-button size="mini" type="text" @click="del_rule(pro.id,scope.row.id)">确定</el-button>
-                        </div>
-                        <el-button slot="reference" type="text">删除</el-button>
-                    </el-popover>
+                    <el-button type="text" @click="del_rule(pro.id,scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -220,7 +210,6 @@ export default class RuleConfig extends Vue{
     private edit_key:string="";
     private selected_product_id:String="";
     private edit_rule_id:string=""
-    private del_rule_visible:Boolean = false
 
     private rule_data:any={
         name:'',
@@ -234,7 +223,7 @@ export default class RuleConfig extends Vue{
             num:1,
             cycle_time:'1',
             cycle_num:'1',
-            alram_type:'serious',
+            alram_type:'2',
             notice:["邮箱"],
         }]
     }
@@ -264,6 +253,9 @@ export default class RuleConfig extends Vue{
     }
     private del_product(id:String){
         this.selected_products = this.selected_products.filter(item=>item.id!==id)
+        if(this.selected_products.length===0){
+            this.selected_product_id=""
+        }
     }
     private show_rule_box(id:string=""){
         this.selected_products.map(item=>{
@@ -286,7 +278,7 @@ export default class RuleConfig extends Vue{
             num:1,
             cycle_time:'1',
             cycle_num:'1',
-            alram_type:'serious',
+            alram_type:'2',
             notice:["邮箱"],
         }
         this.rule_data = {...this.rule_data,level:[...this.rule_data.level,obj]}
@@ -356,8 +348,6 @@ export default class RuleConfig extends Vue{
             }
             return item;
         })
-        this.del_rule_visible = false
-        console.log("del_rule",this.selected_products)
     }
     private clear(){
         this.tab_key="0"
@@ -371,7 +361,7 @@ export default class RuleConfig extends Vue{
                 num:1,
                 cycle_time:'1',
                 cycle_num:'1',
-                alram_type:'serious',
+                alram_type:'2',
                 notice:["邮箱"],
             }
         ]

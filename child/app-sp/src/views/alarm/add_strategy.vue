@@ -12,7 +12,7 @@
                 prop="stategy"
                 label="选择已有策略"
             >
-                <el-select v-model="form_data.stategy" placeholder="请选择已有策略">
+                <el-select v-model="form_data.stategy" placeholder="请选择已有策略" @change="change_stategy">
                     <el-option
                         v-for="item in strategy_list"
                         :key="item.id"
@@ -23,14 +23,14 @@
                 </el-select>
             </el-form-item>
         </el-form>
-        <RuleConfig />
+        <RuleConfig :stategy_data="stategy_data" />
     </el-card>
 </template>
 <script lang="ts">
 import { Component, Vue,Prop, Watch } from 'vue-property-decorator';
 import { Form } from "element-ui";
 import RuleConfig from './ruleConfig.vue'
-import {productList,create_obj,alarm_type,event_name}from '../../assets/data'
+import {mock,create_obj}from '../../assets/data'
 @Component({
     components:{
         RuleConfig
@@ -42,9 +42,15 @@ export default class Index extends Vue{
         stategy:''
     };
     private strategy_list:any=[]
+    private stategy_data:any=[]
     created() {
         
         this.strategy_list = [{id:'',name:'全部'},...create_obj.data]
+    }
+    private change_stategy(value){
+        if(this.form_data.stategy!==""){
+            this.stategy_data = mock.data.rules
+        }
     }
    
     

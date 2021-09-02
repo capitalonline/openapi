@@ -87,6 +87,93 @@ export const create_obj = {
         ]
     }]
 }
+export const mock = {
+    code:0,
+    message:'成功',
+    data:{
+        "id":'celve',
+        "name": "通用策略",//策略名称
+        "rules": [ 
+          {
+            "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
+            "name": "cpu使用率", //告警规则名称
+            "productType": "ecs",//产品类型
+            "ruleRecords": [
+              {
+                "alarmMethod": ["phone","wx"], //告警方式
+                "alarmType": "metric",//阈值报警还是事件报警
+                "eventName": "",//事件名称
+                "eventType": "",//事件类型
+                "level": 2,//告警等级，严重还是普通等
+                "metricCondition": ">=", //>,<,>=,<=
+                "metricID": "disk.mem.usedutilization",//告警指标
+                "metricMaxValue": 0,//不需要处理
+                "metricPeriod": 1,//几分钟一个周期
+                "metricPeriodNum": 30,//持续几个周期
+                "metricUnit": "%",//输入值后面的单位
+                "metricValue": 90//输入的范围值
+              },
+              {
+                "alarmMethod": ["email","wx"], //告警方式
+                "alarmType": "metric",//阈值报警还是事件报警
+                "eventName": "",//事件名称
+                "eventType": "",//事件类型
+                "level": 1,//告警等级，严重还是普通等
+                "metricCondition": ">", //>,<,>=,<=
+                "metricID": "disk.mem.usedutilization",//告警指标
+                "metricMaxValue": 0,//不需要处理
+                "metricPeriod": 15,//几分钟一个周期
+                "metricPeriodNum": 5,//持续几个周期
+                "metricUnit": "%",//输入值后面的单位
+                "metricValue": 60//输入的范围值
+              }
+            ]
+          },
+          {
+            "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
+            "name": "云盘阈值", //告警规则名称
+            "productType": "ecs",//产品类型
+            "ruleRecords": [
+              {
+                "alarmMethod": ["phone","wx"], //告警方式
+                "alarmType": "metric",//阈值报警还是事件报警
+                "eventName": "",//事件名称
+                "eventType": "",//事件类型
+                "level": 2,//告警等级，严重还是普通等
+                "metricCondition": ">=", //>,<,>=,<=
+                "metricID": "disk.mem.usedutilization",//告警指标
+                "metricMaxValue": 0,//不需要处理
+                "metricPeriod": 1,//几分钟一个周期
+                "metricPeriodNum": 30,//持续几个周期
+                "metricUnit": "%",//输入值后面的单位
+                "metricValue": 90//输入的范围值
+              }
+            ]
+          },
+          {
+            "id":'gpu'+Math.floor((Math.random()*9+1)*1000000),
+            "name": "异常事件报警", //告警规则名称
+            "productType": "gpu",//产品类型
+            "ruleRecords": [
+              {
+                "alarmMethod": ["phone","wx"], //告警方式
+                "alarmType": "event",//阈值报警还是事件报警
+                "eventName": ["crash","oom"],//事件名称
+                "eventType": "abnormal_event",//事件类型
+                "level": 2,//告警等级，严重还是普通等
+                "metricCondition":"" , //>,<,>=,<=
+                "metricID": "",//告警指标
+                "metricMaxValue": 0,//不需要处理
+                "metricPeriod": 0,//几分钟一个周期
+                "metricPeriodNum": 0,//持续几个周期
+                "metricUnit": "",//输入值后面的单位
+                "metricValue": 0//输入的范围值
+              }
+            ]
+          },
+        ]
+      }
+}
 export const productList = [
     {
         id:'ecs',

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-select v-model="label">
-            <el-option v-for="item in list" :key="item.region_id" :label="item.region_name" :value="item.region_id" class="item">
+        <el-select v-model="value">
+            <el-option v-for="item in area_list" :key="item.region_group_id" :label="value" :value="value" class="item">
                 <div>
-                    <span class="label">{{item.region_name}}</span>
-                    <radio-group :list="item.children" :value.sync="value"></radio-group>
+                    <span class="label">{{item.region_group_name}}</span>
+                    <radio-group :list="item.region_list" :value.sync="value"></radio-group>
                     
                 </div>
                 
@@ -23,13 +23,28 @@ import RadioGroup from './radioGroup.vue'
 export default class Area extends Vue{
     @Prop({default:()=>[]}) private list!:any;
     @Prop({default:''}) private area!:any;
-    private label:string=this.area
     private value:string=this.area
+    private area_id:string=""
+    private area_list:any =this.list.length>0 ? JSON.parse(JSON.stringify(this.list)) : []
+    created() {
+    }
+    @Watch("list",{immediate:true,deep:true})
+    private watch_list(newVal){
+        this.area_list= newVal.length>0 ? JSON.parse(JSON.stringify(newVal)) : []
+    }
     @Watch("value")
     private watch_val(newVal){
-        this.label=newVal
-        this.get_area_id(newVal)
+        this.area_list.forEach(item=>{
+            item.region_list && item.region_list.forEach(inn=>{
+                if(inn.region_name===newVal){
+                    this.area_id=inn.region_id
+                }
+            })
+        })
+        console.log("newVal",newVal,this.area_id)
+        this.get_area_id(this.area_id)
     }
+    //返回所选区域ID
     @Emit("get_area_id")
     get_area_id(val){
 

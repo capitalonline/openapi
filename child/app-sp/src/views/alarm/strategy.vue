@@ -21,14 +21,14 @@
             </el-table-column>
             <el-table-column prop="clientName" label="被应用过的产品"></el-table-column>
             <el-table-column prop="disk_id" label="策略状态"></el-table-column>
-            <el-table-column prop="diskName" label="创建时间">
+            <el-table-column prop="createTime" label="创建时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
+                    <span>{{scope.row.createTime ? moment(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="status" label="修改时间">
+            <el-table-column prop="updateTime" label="修改时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
+                    <span>{{scope.row.updateTime ? moment(scope.row.updateTime).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="操作栏">
