@@ -71,7 +71,10 @@
                                 label="实例详情"
                             >
                                 <template>
-                                    <div class="area">地域及可用区：{{form_data.area}}&nbsp;&nbsp;{{form_data.az}}</div>
+                                    <div class="area">地域及可用区：
+                                        <span>{{form_data.az!=="" ? trans_label(form_data.area,area_list,"region_id","region_name","region_list")[1] : ''}}</span>
+                                        <span v-if="form_data.az!==''">&nbsp;&nbsp;{{trans_label(form_data.az,az_list,"az_id","az_name")}}</span>
+                                    </div>
                                     <div class="area">实例规格:  {{ecs_specifications[0]}}&nbsp;&nbsp;&nbsp;{{ecs_specifications[1]}}</div>
                                 </template>
                             </el-form-item>
@@ -153,20 +156,26 @@
                     </div>
                     <div class="config-info">
                         <div>地域及可用区：</div>
-                        <div>--</div>
+                        <div>
+                            <span>{{form_data.az!=="" ? trans_label(form_data.area,area_list,"region_id","region_name","region_list").join('-'):'--'}}</span>
+                            <span v-if="form_data.az!==''">-{{trans_label(form_data.az,az_list,"az_id","az_name")}}</span>
+                        </div>
                     </div>
-                    <div class="config-info">
+                    <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>挂载实例名称：</div>
                         <div>{{ecs_specifications.length===3 ? ecs_specifications[2] : '--'}}</div>
                     </div>
                     <div v-for="(item,index) in form_data.disk_list" :key="index">
                         <div class="config-info">
                             <div>云盘规格：</div>
-                            <div>{{}}</div>
+                            <div>
+                                <span>{{disk_type_list.length > 0 ? `${trans_label(item.ecs_goods_id,disk_type_list,"ecs_goods_id","disk_value")}` : '--'}}</span>
+                                <span v-if="disk_type_list && item.ecs_goods_id">&nbsp;|&nbsp;{{item.disk_size}}GB</span>
+                            </div>
                         </div>
                         <div class="config-info">
                             <div>购买数量：</div>
-                            <div>--</div>
+                            <div>{{item.amount ? item.amount : '--'}}</div>
                         </div>
                     </div>
                     
@@ -258,7 +267,17 @@ export default class CreateDisk extends Vue{
             }
         })
     }
-    
+    //监听实例ID
+    @Watch("form_data.ecs_id")
+    private watch_ecs_id(newVal){
+        if(newVal!==""){
+            this.get_mounted_num()
+        }
+    }
+    //监听云盘名称
+    @Watch("form_data.disk_list",{ immediate: true, deep: true })
+    private watch_disk_name(newVal){
+    }
     //获取客户名称
     private async get_customer_name(){
         const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
@@ -273,7 +292,7 @@ export default class CreateDisk extends Vue{
     private async get_area_list(){
         const resData: any = await Service.get_region_az_list({customer_id: this.form_data.customer_id});
         if (resData.code == 'Success') {
-        this.area_list = resData.data;
+            this.area_list = resData.data;
         }
     }
     //获取实例列表
@@ -287,13 +306,8 @@ export default class CreateDisk extends Vue{
             this.ECS_instance_list = resData.data.ecs_list;
         }
     }
-    //监听实例ID
-    @Watch("form_data.ecs_id")
-    private watch_ecs_id(newVal){
-        if(newVal!==""){
-            this.get_mounted_num()
-        }
-    }
+    
+
     //获取云盘类型信息
     private async get_disk_type(){
         const resData: any = await disk_service.get_disk_type({
@@ -322,10 +336,7 @@ export default class CreateDisk extends Vue{
         }
     }
 
-    //监听云盘名称
-    @Watch("form_data.disk_list",{ immediate: true, deep: true })
-    private watch_disk_name(newVal){
-    }
+    
     //设置挂载
     private mount(value:string){
         this.disk_total=value==="1" ? 16 - this.mounted_disk : 50
@@ -392,6 +403,30 @@ export default class CreateDisk extends Vue{
             this.dis_change=false
         }
     }
+    //将对应id转换成对应的label
+    private trans_label(id,arr,label,name,level){
+        console.log("arr",arr,label)
+        if(!level){
+            let fil:any =  arr.filter(item=>item[label]===id)
+            return fil.length===0 || !fil[0][name] ? '--' : fil[0][name]
+        }else{
+            let str:Array<string>=[]
+            arr.map(item=>{
+                item[level].map(inn=>{
+                    console.log("inn",inn,label,id)
+                    if(inn[label]===id){
+                        console.log("item[name]",name,inn[name])
+                        str = [item.region_group_name,inn[name]]
+                    }
+                    return inn;
+                })
+                return item;
+            })
+            return str;
+        }
+        
+        
+    }
     //监听容量改变
     private change_capacity(val){
     }
@@ -453,6 +488,17 @@ export default class CreateDisk extends Vue{
             .remark{
                 font-size: 12px;
                 color: #666;
+            }
+            .el-input{
+                width: 420px !important;
+            }
+            .card_inline{
+                .el-form-item{
+                    margin-left: -80px !important;
+                }
+                .el-form-item:first-child{
+                    margin-left: 0px !important;
+                }
             }
         }
         .detail_box{
