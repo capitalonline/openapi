@@ -200,6 +200,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import BackHeader from '../../components/backHeader.vue';
 import Service from '../../https/instance/create';
+import diskService from '../../https/disk/create';
 import { checkPwd } from '../../utils/checkPwd';
 import { checkEcsName } from '../../utils/checkEcsName';
 
@@ -361,7 +362,7 @@ export default class App extends Vue {
     }
   }
   private async FnGetDiskInfo() {
-    let resData: any = await Service.get_disk_info({
+    let resData: any = await diskService.get_disk_type({
       az_id: this.default_az.az_id,
       customer_id: this.customer_id
     });

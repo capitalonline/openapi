@@ -30,7 +30,7 @@ export default class Params extends Vue {
     value: []
   };
   private default_params_child = [];
-  private child_dialog = false;
+  private child_dialog: boolean = false;
 
   @Emit('fn-change')
   public FnEmit(data) {

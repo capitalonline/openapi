@@ -59,6 +59,7 @@
 <script lang="ts">
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
+import diskService from '../../https/disk/create';
 
 @Component
 export default class updateDisk extends Vue {
@@ -87,7 +88,7 @@ export default class updateDisk extends Vue {
     if (!this.az_id) {
       return
     }
-    let resData: any = await Service.get_disk_info({
+    let resData: any = await diskService.get_disk_type({
       az_id: this.az_id,
       customer_id: this.customer_id
     });

@@ -19,12 +19,15 @@
 
         <el-card>
           <label-block label="可用区">
-            <el-select v-model="default_region" value-key="region_id" class="m-right20">
+            <!-- <el-select v-model="default_region" value-key="region_id" class="m-right20">
               <el-option v-for="region in region_list" :key="region.region_id" :value="region" :label="region.region_name"></el-option>
-            </el-select>
-            <el-select v-model="default_az" value-key="az_id">
-              <el-option v-for="az in default_region.az_list" :key="az.az_id" :value="az" :label="az.az_name"></el-option>
-            </el-select>
+            </el-select> -->
+            <div class="region-box">
+              <Area :list="region_list" @get_area_id="FnGetRegionId" :area="default_region.region_id" class="m-right20" />
+              <el-select v-model="default_az" value-key="az_id">
+                <el-option v-for="az in default_region.az_list" :key="az.az_id" :value="az" :label="az.az_name"></el-option>
+              </el-select>
+            </div>
           </label-block>
         </el-card>
 
@@ -125,6 +128,7 @@
 import { Component, Watch, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import BackHeader from '../../components/backHeader.vue';
+import Area from '../../components/Area.vue';
 import updateSpec from './updateSpec.vue';
 import updateOs from './updateOs.vue';
 import updateDisk from './updateDisk.vue';
@@ -136,6 +140,7 @@ import { checkEcsName } from '../../utils/checkEcsName';
   components: {
     LabelBlock,
     BackHeader,
+    Area,
     updateSpec,
     updateOs,
     updateDisk,
@@ -206,12 +211,28 @@ export default class App extends Vue {
     const resData: any = await Service.get_region_az_list({customer_id: this.customer_id});
     if (resData.code == 'Success') {
       this.region_list = resData.data;
-      if (this.default_region.region_id == this.region_list[0].region_id) {
-        this.FnChangeAz(this.default_az.az_id)
-      } else {
-        this.default_region = this.region_list[0];
+      // if (this.default_region.region_id == this.region_list[0].region_id) {
+      //   this.FnChangeAz(this.default_az.az_id)
+      // } else {
+      //   this.default_region = this.region_list[0];
+      // }
+    }
+  }
+  private FnGetRegionId(id) {
+    this.default_region.region_id = id;
+    for (let group of this.region_list) {
+      for (let region of group.region_list) {
+        if (region.region_id === id) {
+          this.default_region = region;
+          break;
+        }
       }
     }
+    console.log('this.default_region', this.default_region)
+    this.default_az = this.default_region.az_list[0] || {
+      az_id: '',
+      az_name: ''
+    };
   }
   private async FnGetNetList() {
     const resData: any = await Service.get_net_list({
@@ -347,15 +368,6 @@ export default class App extends Vue {
       this.error_msg.customer_id.show = true;
     }
   }
-  @Watch('default_region.region_id')
-  private FnChangeRegion(newVal) {
-    if (newVal) {
-      this.default_az = this.default_region.az_list[0] || {
-        az_id: '',
-        az_name: ''
-      };
-    }
-  }
   @Watch('default_az.az_id')
   private FnChangeAz(newVal) {
     if (newVal) {
@@ -425,6 +437,9 @@ export default class App extends Vue {
 }
 .create-btn {
   width: 100%;
+}
+.region-box {
+  display: flex;
 }
 </style>
 

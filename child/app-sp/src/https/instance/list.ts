@@ -1,82 +1,35 @@
-// 获取列表
-// 详情 √
-// 电源操作分开接口 √
-// 删除 √
-// 恢复 √
-// 销毁 √
-// 操作记录 √
-// 远程连接（vnc？）
-
 import service from '../http'
+import { getEcsOptions }from '../common'
 
 export default {
   get_instance_list(reqData) {
-    return service({
-      method: 'GET',
-      url: '/ecs_business/v1/ecs/ecs_list/',
-      params: reqData
-    })
+    return service(getEcsOptions('GET', '/ecs/ecs_list/', reqData))
   },
   operate_instance(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/operate/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/operate/', reqData))
   },
   delete_instance(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/delete/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/delete/', reqData))
   },
   recover_instance(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/recover/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/recover/', reqData))
   },
   destroy_instance(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/destroy/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/destroy/', reqData))
   },
   get_status_list() {
-    return service({
-      method: 'GET',
-      url: '/ecs_business/v1/ecs/ecs_status_list/'
-    })
+    return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
   },
   reset_password(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/ecs_reset_password/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/ecs_reset_password/', reqData))
   },
   update_spec(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/ecs_change_configure/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/ecs_change_configure/', reqData))
   },
   update_system(reqData) {
-    return service({
-      method: 'POST',
-      url: '/ecs_business/v1/ecs/ecs_change_system/',
-      data: reqData
-    })
+    return service(getEcsOptions('POST', '/ecs/ecs_change_system/', reqData))
   },
   get_usage_ip(reqData) {
-    return service({
-      method: 'GET',
-      url: '/ecs_business/v1/ecs/get_deleted_ecs_ip/',
-      params: reqData
-    })
+    return service(getEcsOptions('GET', '/ecs/get_deleted_ecs_ip/', reqData))
   }
 }
