@@ -405,7 +405,6 @@ export default class CreateDisk extends Vue{
     }
     //将对应id转换成对应的label
     private trans_label(id,arr,label,name,level){
-        console.log("arr",arr,label)
         if(!level){
             let fil:any =  arr.filter(item=>item[label]===id)
             return fil.length===0 || !fil[0][name] ? '--' : fil[0][name]
@@ -413,9 +412,7 @@ export default class CreateDisk extends Vue{
             let str:Array<string>=[]
             arr.map(item=>{
                 item[level].map(inn=>{
-                    console.log("inn",inn,label,id)
                     if(inn[label]===id){
-                        console.log("item[name]",name,inn[name])
                         str = [item.region_group_name,inn[name]]
                     }
                     return inn;
