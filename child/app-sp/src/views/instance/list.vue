@@ -287,6 +287,7 @@ export default class App extends Vue {
       let item: any = this.multiple_selection[index];
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
+        this.az_id = item.az_id;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
