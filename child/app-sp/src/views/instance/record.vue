@@ -101,14 +101,14 @@ export default class InsDetail extends Vue{
     content:{placeholder:'请输入操作内容'},
   }
   private CODE_STATE={
-  creat_ecs:'创建云服务器',
-  start_up_ecs:'启动云服务器',
-  shutdown_ecs:'停止云服务器',
-  restart_ecs:'重启云服务器',
-  delete_ecs:'逻辑删除云服务器',
-  recover_ecs:'恢复云服务器',
-  destroy_ecs:'销毁云服务器',
-}
+    creat_ecs:'创建云服务器',
+    start_up_ecs:'启动云服务器',
+    shutdown_ecs:'停止云服务器',
+    restart_ecs:'重启云服务器',
+    delete_ecs:'逻辑删除云服务器',
+    recover_ecs:'恢复云服务器',
+    destroy_ecs:'销毁云服务器',
+  }
 private CODE_RESPONSE={
   init:'初始化',
   doing:'进行中',
@@ -137,7 +137,8 @@ private CODE_RESPONSE={
     // this.loading = true
     const {search_data:data}=this
     let res:any = await Service.get_operate_record_list({
-      ecs_id:this.record_id,
+      cloud_id:this.record_id,
+      cloud_type: 'ecs',
       status:data.state || '',
       task_type:data.content || '',
       page_size:this.size,                                                                         
@@ -146,8 +147,6 @@ private CODE_RESPONSE={
     if(res.code==="Success"){
       this.record_list = res.data?.history_record || []
       this.total = res.data?.page_info?.count || 0
-    }else{
-      this.$message.error(res.msg || '操作错误')
     }
   }
   private handleSizeChange(size){
