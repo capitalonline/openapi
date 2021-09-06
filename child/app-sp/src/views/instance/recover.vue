@@ -14,7 +14,7 @@
         <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
         <el-table-column label="原IP（最近使用）">
           <template #default="scope">
-            {{ scope.row.private_net }}{{ ip_usage[scope.row.ecs_id].ip_address }}
+            {{ scope.row.private_net }}{{ ip_usage[scope.row.ecs_id].is_used?'': '已占用' }}
           </template>
         </el-table-column>
         <el-table-column label="恢复后新IP">
@@ -35,7 +35,7 @@ export default class Recover extends Vue {
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: []}) private multiple_selection!: Array<Object>;
   $message;
-  private ip_usage: Object = {};
+  private ip_usage = {};
   private async FnGetIpUsage() {
     let reqData = {
       customer_id: this.customer_id,
@@ -44,21 +44,15 @@ export default class Recover extends Vue {
       })
     }
     this.ip_usage = {};
-    // let resData: any = await Service.get_usage_ip(reqData);
-    // if (resData.code === 'Success') {
-    //   resData.data.ecs_list.forEach(item => {
-    //     this.ip_usage[item.ecs_id] = {
-    //       ip_address: item.ip_address,
-    //       new_ip_address: ''
-    //     }
-    //   })
-    // }
-    this.multiple_selection.forEach((item: any) => {
-      this.ip_usage[item.ecs_id] = {
-        ip_address: item.ip_address,
-        new_ip_address: ''
-      }
-    })
+    let resData: any = await Service.get_usage_ip(reqData);
+    if (resData.code === 'Success') {
+      resData.data.ecs_list.forEach(item => {
+        this.ip_usage[item.ecs_id] = {
+          ip_address: item.ip_address,
+          new_ip_address: ''
+        }
+      })
+    }
   }
   private async FnRecover() {
     let reqData = {
@@ -77,7 +71,6 @@ export default class Recover extends Vue {
   }
 
   created() {
-    console.log('aaa')
     this.FnGetIpUsage()
   }
 }

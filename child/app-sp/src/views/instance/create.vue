@@ -219,7 +219,6 @@ export default class App extends Vue {
     }
   }
   private FnGetRegionId(id) {
-    this.default_region.region_id = id;
     for (let group of this.region_list) {
       for (let region of group.region_list) {
         if (region.region_id === id) {
@@ -228,7 +227,6 @@ export default class App extends Vue {
         }
       }
     }
-    console.log('this.default_region', this.default_region)
     this.default_az = this.default_region.az_list[0] || {
       az_id: '',
       az_name: ''
@@ -272,7 +270,7 @@ export default class App extends Vue {
       os_type: data.os_type,
       username: data.os_username
     }
-    console.log('os_info', data)
+    console.log('data', data)
   }
   private FnGetSystemDisk(data): void {
     this.system_info = {

@@ -19,7 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="" prop="default_os_version">
-        <el-select v-model="data.default_os_version" value-key="os_id">
+        <el-select v-model="data.default_os_version" value-key="os_id" @change="FnEmit">
           <el-option v-for="version in default_os_template_type.os_versions[data.default_os_type]" :key="version.os_id" :value="version" :label="version.name"></el-option>
         </el-select>
       </el-form-item>
@@ -108,7 +108,6 @@ export default class updateOs extends Vue{
     } else {
       this.FnChangeOsType(this.data.default_os_type);
     }
-    this.FnEmit()
   }
 
   @Watch('data.default_os_type')

@@ -89,7 +89,6 @@ export default class updateSpec extends Vue{
   @Watch('default_calc.ecs_goods_id')
   private FnChangeCalc(newVal) {
     this.data.default_spec = this.default_calc.ecs_spec_list[0];
-    this.FnEmit();
   }
   @Watch('data.default_spec.cpu_size')
   private FnChangeSpec(newVal) {
