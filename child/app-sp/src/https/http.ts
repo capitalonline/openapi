@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Loading, Message } from "element-ui";
-import store from '../store'
+import store from '../store';
+import uuid from '../utils/uuid';
 
 let instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API
@@ -23,6 +24,7 @@ instance.interceptors.request.use(
       loadingInstance = Loading.service(loadingOptions);
     }
     config.headers["Access-Token"] = store.state.token;
+    config.headers["X-Request-Id"] = uuid();
     return config
   },
   error => {   // 对请求错误做些什么
