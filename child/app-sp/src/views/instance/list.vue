@@ -18,7 +18,7 @@
          :disabled="!operate_auth.includes('destroy')">销 毁</el-button>
         <el-button type="primary" @click="FnOperate('update_spec')">更换实例规格</el-button>
         <el-button type="primary" @click="FnOperate('update_system')">更换系统盘</el-button>
-        <el-button type="primary" @click="FnOperate('reset_pwd')">更换密码</el-button>
+        <el-button type="primary" @click="FnOperate('reset_pwd')">重置密码</el-button>
       </template>
     </action-block>
 
@@ -27,31 +27,35 @@
       :data="instance_list"
       @selection-change="handleSelectionChange"
       border>
-      <el-table-column type="selection"></el-table-column>
+      <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
       <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
       <el-table-column prop="az_name" label="可用区"></el-table-column>
-      <el-table-column prop="status" label="状态">
+      <el-table-column prop="status" label="状态" width="90">
         <template #default="scope">
           <span :class="scope.row.status">{{ scope.row.status_display }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="配置详情">
+      <el-table-column label="配置详情" width="90">
         <template #default="scope">
             <el-button type="text" @click="FnToDetail(scope.row.ecs_id)" 
             :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="private_net" label="私网IP"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="create_time" label="创建时间">
+        <template #default="scope">
+          <div class="time-box">{{ scope.row.create_time }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button type="text" @click="FnToRecord(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('instance_record')">操作记录</el-button>
             <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)">监控</el-button>
-            <!-- <el-button type="text">远程连接</el-button> -->
+            <el-button type="text" :disabled="scope.row.status !== 'running'" @click="FnToVnc(scope.row.ecs_id)">远程连接</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -407,6 +411,14 @@ export default class App extends Vue {
       this.FnClose();
     }
   }
+  private async FnToVnc(id) {
+    let resData: any = await Service.get_vnc_url({
+      ecs_id: id
+    })
+    if (resData.code === 'Success') {
+      window.open(resData.data.vnc_info);
+    }
+  }
   private FnClose() {
     this.show_operate_dialog = false;
     if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) > 0) {
@@ -483,5 +495,8 @@ export default class App extends Vue {
 .component-box {
   width: 550px;
   margin: 20px auto;
+}
+.time-box {
+  width: 70px;
 }
 </style>

@@ -31,5 +31,8 @@ export default {
   },
   get_usage_ip(reqData) {
     return service(getEcsOptions('GET', '/ecs/get_deleted_ecs_ip/', reqData))
+  },
+  get_vnc_url(reqData) {
+    return service(getEcsOptions('GET', '/ecs/vnc_info/', reqData))
   }
 }

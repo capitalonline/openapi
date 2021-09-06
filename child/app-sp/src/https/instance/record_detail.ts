@@ -7,6 +7,6 @@ export default{
     },
     //获取获取云服务器配置详情
     get_detail(req){
-        return service(getEcsOptions('GET','/ecs/get_ecs_detail/',req))
+        return service(getEcsOptions('POST','/ecs/get_ecs_detail/',req))
     },
 }
