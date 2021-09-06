@@ -60,7 +60,13 @@
                                     filterable
                                     :filter-method="get_instance_list"
                                 >
-                                    <el-option v-for="item in ECS_instance_list" :key="item.ecs_id" :label="`${item.ecs_id} / ${item.ecs_name}`" :value="item.ecs_id"></el-option>
+                                    <el-option 
+                                        v-for="item in ECS_instance_list" 
+                                        :key="item.ecs_id" 
+                                        :label="`${item.ecs_id} / ${item.ecs_name}`" 
+                                        :value="item.ecs_id"
+                                        :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown')"
+                                    ></el-option>
                                 </el-select>
                             </el-form-item>
                             </template>
@@ -274,6 +280,12 @@ export default class CreateDisk extends Vue{
             this.get_mounted_num()
         }
     }
+    //监听可用区ID
+    @Watch("form_data.az")
+    private watch_az(newVal){
+        console.log("form_data.az",newVal)
+        // this.get_instance_list("")
+    }
     //监听云盘名称
     @Watch("form_data.disk_list",{ immediate: true, deep: true })
     private watch_disk_name(newVal){
@@ -300,7 +312,8 @@ export default class CreateDisk extends Vue{
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
             page_size:20,
-            ecs_name:val
+            ecs_name:val,
+            status: "running"
         });
         if (resData.code == 'Success') {
             this.ECS_instance_list = resData.data.ecs_list;
@@ -332,6 +345,7 @@ export default class CreateDisk extends Vue{
                 item.amount=0
                 return item
             })}
+            
             this.get_disk_quantity()
         }
     }
@@ -349,6 +363,8 @@ export default class CreateDisk extends Vue{
                 item.amount=0
                 return item
             })}
+            this.form_data = {...this.form_data,ecs_id:''}
+            this.ecs_specifications=[]
         }
         this.form_data={...this.form_data,isMounted:value}
     }

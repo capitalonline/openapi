@@ -41,7 +41,6 @@ export default class Area extends Vue{
                 }
             })
         })
-        console.log("newVal",newVal,this.area_id)
         this.get_area_id(this.area_id)
     }
     //返回所选区域ID

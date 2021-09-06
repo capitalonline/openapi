@@ -31,13 +31,18 @@
                 {required:true,message:'请选择目标实例',trigger:'blur'},
               ]"
             >
-              <el-select v-model="form_data.instance_id" filterable placeholder="请选择目标实例">
+              <el-select 
+                v-model="form_data.instance_id" 
+                filterable
+                :filter-method="get_instance_list" 
+                placeholder="请选择目标实例"
+              >
                 <el-option 
-                  v-for="item in instance_list" 
-                  :key="item.value" 
-                  :label="item.label" 
-                  :value="item.value"
-                  :disabled="item.az_name!==mount_id[0].az_name || (item.status!=='运行中' && item.status!=='已关机')"
+                  v-for="item in instance_list"
+                  :key="item.ecs_id" 
+                  :label="`${item.ecs_id} / ${item.ecs_name}`" 
+                  :value="item.ecs_id"
+                  :disabled="item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') ||item.num<mount_id.length"
                 ></el-option>
 
               </el-select>
@@ -58,9 +63,11 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import {Vue,Component,Prop,Emit} from "vue-property-decorator";
+import {Vue,Component,Prop,Emit,Watch} from "vue-property-decorator";
 import {Form} from 'element-ui';
 import Service from '../../https/disk/list'
+import ServiceList from '../../https/instance/list';
+import detail_service from '../../https/instance/record_detail'
 @Component({})
 export default class MountDisk extends Vue{
   $message;
@@ -70,27 +77,64 @@ export default class MountDisk extends Vue{
       instance_id:'',
       del_set:false,
     }
-    private instance_list:any=[
-      {
-          label:'实例1',
-          value:'beijing',
-          az_name:'可用区A',
-          status:'运行中'
-      },
-      {
-          label:'实例2',
-          value:'beijing2',
-          az_name:'可用区2',
-          status:'已关机'
-      },
-      {
-          label:'实例3',
-          value:'beijing3',
-          az_name:'可用区A',
-          status:'创建中',
-      }
-    ]
+    private mounted_disk:number=0
+    private list:any= []
     
+    private instance_list:any=[]
+    created() {
+      this.get_instance_list("")
+    }
+    @Watch("instance_list",{deep:true,immediate:true})
+    private watch_instance_list(newVal){
+      console.log("watch_instance_list",newVal)
+    }
+    private set_disable(item){
+      console.log("set_disable",item)
+      let bool = item.az_id!==this.mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') ||item.num<this.mount_id.length
+      let bool1 = item.az_id!==this.mount_id[0].az_id
+      let bool2 = (item.status!=='running' && item.status!=='shutdown')
+      let bool3 = item.num<this.mount_id.length
+      console.log("bool",bool1,bool2,bool3,bool)
+      return bool
+    }
+    @Watch("list",{immediate:true,deep:true})
+    private watch_list(newVal){
+      console.log("watch_num",newVal)
+      if(newVal.length>0){
+          newVal.map((item,index)=>{
+            this.instance_list[index].num = item
+          })
+          console.log("this.instance_list",this.instance_list)
+      }
+    }
+    //获取实例列表
+    private async get_instance_list(val){
+        const resData: any = await ServiceList.get_instance_list({
+            page_index:1,
+            page_size:20,
+            ecs_name:val,
+            status: "running"
+        });
+        if (resData.code == 'Success') {
+            this.instance_list = resData.data.ecs_list || [];
+            this.instance_list.map(async (item)=>{
+              let num = await this.get_mounted_num(item.ecs_id)
+              this.list.push(num)
+          })
+        }
+    }
+    //获取实例挂载数据盘数量
+    private async get_mounted_num(id:string){
+        const resData: any = await detail_service.get_detail({
+            ecs_id:id
+        });
+        if (resData.code == 'Success') {
+          const {data:{disk}}=resData
+          return disk.data_disk_conf ? disk.data_disk_conf.length : 0
+        }else{
+          return 0
+        }
+    }
     private confirm(){
       const form = this.$refs.form as Form
       form.validate(async (valid:boolean)=>{

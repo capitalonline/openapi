@@ -32,7 +32,7 @@
       <el-table-column prop="az_name" label="地域及可用区"></el-table-column>
       <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" column-key="disk_type">
         <template slot-scope="scope">
-          <span>{{scope.row.disk_type==="system" ? `数据盘` : '系统盘'}}</span>
+          <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="ecs_id" label="实例名称/ID">
@@ -227,7 +227,7 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
-    if(!this.judge_disk('status','待挂载')){
+    if(!this.judge_disk('status','waiting')){
       this.$message.warning('只允许对待挂载的云盘进行批量操作！')
       return;
     }
@@ -248,11 +248,11 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
-    if(!this.judge_disk('status','使用中')){
+    if(!this.judge_disk('status','running')){
       this.$message.warning('只允许对使用中的云盘进行批量操作！')
       return;
     }
-    if(!this.judge_disk('disk_type','数据盘')){
+    if(!this.judge_disk('disk_type','data')){
       this.$message.warning('只允许对数据盘进行批量操作！')
       return;
     }
@@ -277,20 +277,20 @@ export default class extends Vue {
       this.$message.warning('只允许对同一客户的云盘进行批量操作！')
       return;
     }
-    const fil:any = this.mount_id.filter(item=>item.status==="使用中")
+    const fil:any = this.mount_id.filter(item=>item.status==="running")
     if(fil.length>0){
       this.$message.warning('只允许对待挂载的云盘进行批量操作,请先卸载使用中的云盘，再手动删除！')
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
       console.log("mount_id",this.mount_id)
-      return item.status ==='待挂载' || item.status ==='错误'
+      return item.status ==='waiting' || item.status ==='error'
     })
     if(!flag){
       this.$message.warning('只允许对待挂载或错误的云盘进行批量操作！')
       return;
     }
-    if(!this.judge_disk('disk_type','数据盘')){
+    if(!this.judge_disk('disk_type','data')){
       this.$message.warning('只允许对数据盘进行批量操作！')
       return;
     }
@@ -308,7 +308,7 @@ export default class extends Vue {
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return item.status ==='已删除' && item.is_follow_delete ==='0'
+      return item.status ==='deleted' && !item.is_follow_delete
     })
     if(!flag){
       this.$message.warning('只允许对已删除且不随实例删除的云盘进行批量操作！')
@@ -332,7 +332,7 @@ export default class extends Vue {
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return (item.ecs_status ==="运行中" && item.status==="使用中") || item.status ==="待挂载"
+      return (item.ecs_status ==="running" && item.status==="running") || item.status ==="waiting"
     })
     if(!flag){
       this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
@@ -385,9 +385,7 @@ export default class extends Vue {
     table.clearSelection()
   }
   private filterAttribute(obj:any){
-    console.log("obj",obj)
     this.disk_property = obj["disk_type"]
-    console.log("this.disk_property",this.disk_property)
     this.current = 1
     this.getDiskList()
   }

@@ -3,9 +3,9 @@ import service from "../http"
 import { getEcsOptions }from '../common'
 
 export default{
-    //获取事件列表
+    //创建云盘
     create(req){
-        return service(getEcsOptions('POST','/ebs/api_create_disk/',req))
+        return service(getEcsOptions('POST','/ebs/create_disk/',req))
     },
     //获取云盘类型信息
     get_disk_type(req){
