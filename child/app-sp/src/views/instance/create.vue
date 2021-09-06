@@ -272,6 +272,7 @@ export default class App extends Vue {
       os_type: data.os_type,
       username: data.os_username
     }
+    console.log('os_info', data)
   }
   private FnGetSystemDisk(data): void {
     this.system_info = {

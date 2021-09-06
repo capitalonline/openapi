@@ -108,6 +108,7 @@ export default class updateOs extends Vue{
     } else {
       this.FnChangeOsType(this.data.default_os_type);
     }
+    this.FnEmit()
   }
 
   @Watch('data.default_os_type')
@@ -121,6 +122,7 @@ export default class updateOs extends Vue{
         username: ''
       }
     }
+    this.FnEmit()
   }
 
   @Watch('az_id') 
