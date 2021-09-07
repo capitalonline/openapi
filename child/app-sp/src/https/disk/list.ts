@@ -37,7 +37,7 @@ export default{
     },
     //销毁
     destroy(req){
-        return service(getEcsOptions('POST','/ebs/destroy/',req))
+        return service(getEcsOptions('POST','/ebs/destroy_disk/',req))
     },
     //扩容
     expansion(req){
