@@ -20,12 +20,20 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="az_name" label="可用区"></el-table-column>
-                <el-table-column prop="disk_type" label="云盘类型"></el-table-column>
-                <el-table-column prop="capacity_size" label="当前规格"></el-table-column>
-                <el-table-column prop="status" label="状态"></el-table-column>
+                <el-table-column prop="disk_type" label="云盘类型">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="capacity_size" label="当前规格">
+                    <template slot-scope="scope">
+                        <span>容量：&nbsp;{{scope.row.capacity_size}}GB</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="status_name" label="状态"></el-table-column>
                 <el-table-column prop="size" label="扩容后容量">
                     <template slot-scope="scope">
-                        <el-input-number size="small" v-model="scope.row.size" :step="100" :max="2000" :min="Number(scope.row.capacity_size)"></el-input-number>
+                        <el-input-number size="small" v-model="scope.row.size" :step="scope.row.disk_type==='data' ? 128 : 8" :max="scope.row.disk_type==='data' ? 2048 : 504" :min="Number(scope.row.capacity_size)"></el-input-number>
                     </template>
                 </el-table-column>
                 <el-table-column prop="bill_way" label="计费方式"></el-table-column>
@@ -79,7 +87,7 @@ export default class Capacity extends Vue{
         }
         
         this.capacity_list = val
-        console.log("capacity_list",this.capacity_list)
+        
     }
     private select_all(check){
         console.log("check",check)
@@ -91,9 +99,24 @@ export default class Capacity extends Vue{
         }
     }
     private async confirm(){
+        if(this.capacity_list.length===0){
+            this.$message.success("请先勾选需要扩容的云盘")
+            return;
+        }
+        const temp:any=[];
+        this.capacity_list.forEach(item=>{
+            temp.push({
+                disk_id:item.disk_id,
+                disk_type:item.disk_type,
+                current_spec:parseInt(item.capacity_size),
+                status:item.status,
+                expansion_spec:parseInt(item.size),
+            })
+        })
+        console.log("capacity_list",this.capacity_list)
         let res:any=await Service.expansion({
             customer_id:this.capacity_list[0].customer_id,
-            expansion_info:this.capacity_list
+            expansion_info:temp
         })
         if (res.code == 'Success') {
             this.$message.success("扩容成功")
@@ -108,7 +131,6 @@ export default class Capacity extends Vue{
 </script>
 <style lang="scss" scoped>
 .root{
-    height: calc(100% - 107px);
     .content{
         height: calc(100% - 163px);
         overflow-y: auto;

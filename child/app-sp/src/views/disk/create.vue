@@ -312,8 +312,7 @@ export default class CreateDisk extends Vue{
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
             page_size:20,
-            ecs_name:val,
-            status: "running"
+            keyword:val,
         });
         if (resData.code == 'Success') {
             this.ECS_instance_list = resData.data.ecs_list;
