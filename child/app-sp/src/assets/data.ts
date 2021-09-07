@@ -94,11 +94,13 @@ export const mock = {
         "id":'celve',
         "name": "通用策略",//策略名称
         "rules": [ 
+          //一条规则
           {
             "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
             "name": "cpu使用率", //告警规则名称
             "productType": "ecs",//产品类型
             "ruleRecords": [
+                //一个阈值指标项
               {
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
@@ -113,6 +115,7 @@ export const mock = {
                 "metricUnit": "%",//输入值后面的单位
                 "metricValue": 90//输入的范围值
               },
+              //一个阈值指标项
               {
                 "alarmMethod": ["email","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
@@ -129,6 +132,7 @@ export const mock = {
               }
             ]
           },
+          //一条规则
           {
             "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
             "name": "云盘阈值", //告警规则名称
@@ -150,8 +154,9 @@ export const mock = {
               }
             ]
           },
+          //一条规则
           {
-            "id":'gpu'+Math.floor((Math.random()*9+1)*1000000),
+            "id":'gpu'+Math.floor((Math.random()*9+1)*1000000),//每条规则ID
             "name": "异常事件报警", //告警规则名称
             "productType": "gpu",//产品类型
             "ruleRecords": [

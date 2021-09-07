@@ -355,17 +355,17 @@ export default class extends Vue {
   //限制云盘操作
   private limit_disk_operate(label:string,obj:any){
     if(label==="mount"){
-      return obj.status==="waiting" && obj.az_id === obj.ecs_az && (obj.ecs_status==="running" || obj.ecs_status==="shutdown")
+      return obj.status==="waiting"
     }else if(label==="unInstall"){
-      return obj.status==="using" && obj.disk_type==="data"
+      return obj.status==="running" && obj.disk_type==="data"
     }else if(label==="delete"){
       return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data"
     }else if(label==="destroy"){
       return obj.status==="deleted" && obj.is_follow_delete===false
     }else if(label==="capacity"){
-      return (obj.status==="using" && obj.ecs_status==="running") || obj.status==="waiting"
+      return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting"
     }else if(label==="edit_attr"){
-      return obj.status==="using"
+      return obj.status==="running"
     }
   }
   private close_disk(val){

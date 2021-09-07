@@ -42,7 +42,7 @@
                   :key="item.ecs_id" 
                   :label="`${item.ecs_id} / ${item.ecs_name}`" 
                   :value="item.ecs_id"
-                  :disabled="item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') ||item.num<mount_id.length"
+                  :disabled="item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown')"
                 ></el-option>
 
               </el-select>
@@ -77,50 +77,28 @@ export default class MountDisk extends Vue{
       instance_id:'',
       del_set:false,
     }
-    private mounted_disk:number=0
-    private list:any= []
     
     private instance_list:any=[]
     created() {
       this.get_instance_list("")
     }
-    @Watch("instance_list",{deep:true,immediate:true})
-    private watch_instance_list(newVal){
-      console.log("watch_instance_list",newVal)
-    }
-    private set_disable(item){
-      console.log("set_disable",item)
-      let bool = item.az_id!==this.mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') ||item.num<this.mount_id.length
-      let bool1 = item.az_id!==this.mount_id[0].az_id
-      let bool2 = (item.status!=='running' && item.status!=='shutdown')
-      let bool3 = item.num<this.mount_id.length
-      console.log("bool",bool1,bool2,bool3,bool)
-      return bool
-    }
-    @Watch("list",{immediate:true,deep:true})
-    private watch_list(newVal){
-      console.log("watch_num",newVal)
-      if(newVal.length>0){
-          newVal.map((item,index)=>{
-            this.instance_list[index].num = item
-          })
-          console.log("this.instance_list",this.instance_list)
+    @Watch("form_data.instance_id")
+    private watch_instance_id(newVal){
+      console.log("watch_instance_id",newVal)
+      if(newVal==="" || !newVal){
+        return;
       }
+      this.get_mounted_num(newVal)
     }
     //获取实例列表
     private async get_instance_list(val){
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
             page_size:20,
-            ecs_name:val,
-            status: "running"
+            keyword:val,
         });
         if (resData.code == 'Success') {
             this.instance_list = resData.data.ecs_list || [];
-            this.instance_list.map(async (item)=>{
-              let num = await this.get_mounted_num(item.ecs_id)
-              this.list.push(num)
-          })
         }
     }
     //获取实例挂载数据盘数量
@@ -130,9 +108,12 @@ export default class MountDisk extends Vue{
         });
         if (resData.code == 'Success') {
           const {data:{disk}}=resData
-          return disk.data_disk_conf ? disk.data_disk_conf.length : 0
-        }else{
-          return 0
+          console.log("data_disk_conf",disk.data_disk_conf.length,this.mount_id.length,disk.data_disk_conf.length<this.mount_id.length)
+          if(16 - disk.data_disk_conf.length<this.mount_id.length){
+            this.$message.warning("该实例可挂载云盘数量不足!")
+            this.form_data.instance_id="";
+            this.get_instance_list(this.form_data.instance_id)
+          }
         }
     }
     private confirm(){
