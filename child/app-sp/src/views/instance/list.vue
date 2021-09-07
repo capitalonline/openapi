@@ -394,11 +394,11 @@ export default class App extends Vue {
       reqData.os_type = os_data.os_info.os_type;
       reqData.disk_info = {
         system_disk: {
-          ecs_goods_id: disk_data.ecs_goods_id,
-          goods_name: disk_data.disk_name,
-          disk_feature: disk_data.disk_feature,
-          disk_type: disk_data.disk_type,
-          disk_size: disk_data.disk_size
+          ecs_goods_id: disk_data.system_disk.ecs_goods_id,
+          goods_name: disk_data.system_disk.disk_name,
+          disk_feature: disk_data.system_disk.disk_feature,
+          disk_type: disk_data.system_disk.disk_type,
+          disk_size: disk_data.system_disk.disk_size
         },
       }
       reqData.password = pwd_data.password;
