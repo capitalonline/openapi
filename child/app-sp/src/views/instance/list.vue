@@ -72,7 +72,7 @@
 
     <el-dialog :title="operate_title" :visible.sync="show_operate_dialog">
       <template v-if="default_operate_type === 'recover_ecs'">
-        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id"></Recover>
+        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" @fn-close="FnClose"></Recover>
       </template>
       <div v-else>
         <el-alert
@@ -261,6 +261,7 @@ export default class App extends Vue {
     this.operate_title = operate_info.label;
     this.show_operate_dialog = true;
     this.default_operate_type = type;
+    clearTimeout(this.timer);
   }
   private FnJudgeCustomer(operate_info): boolean {
     this.customer_id = '';
@@ -341,25 +342,22 @@ export default class App extends Vue {
     const resData: any = await Service.operate_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
-      this.show_operate_dialog = false;
-      this.FnGetList();
+      this.FnClose();
     }
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
-      this.show_operate_dialog = false;
-      this.FnGetList()
+      this.FnClose();
     }
   }
   private async FnDestroy(reqData) {
     const resData: any = await Service.destroy_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
-      this.show_operate_dialog = false;
       this.page_info.page_index = 1;
-      this.FnGetList()
+      this.FnClose();
     }
   }
   private async FnResetPwd(reqData) {
@@ -424,7 +422,7 @@ export default class App extends Vue {
     if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) > 0) {
       // (this.$refs.child_componet as any).FnResetForm();
     }
-    this.FnGetList()
+    this.FnGetList();
   }
   private FnToDetail(id) {
     this.detail_id = id
