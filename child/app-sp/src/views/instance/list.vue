@@ -392,6 +392,7 @@ export default class App extends Vue {
     if( os_data.flag && disk_data.flag && pwd_data.flag ) {
       reqData.os_id = os_data.os_info.os_id;
       reqData.os_type = os_data.os_info.os_type;
+      reqData.username = os_data.os_info.username;
       reqData.disk_info = {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,

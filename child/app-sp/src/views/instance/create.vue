@@ -268,7 +268,7 @@ export default class App extends Vue {
     this.os_info = {
       os_id: data.os_id,
       os_type: data.os_type,
-      username: data.os_username
+      username: data.username
     }
     console.log('data', data)
   }
