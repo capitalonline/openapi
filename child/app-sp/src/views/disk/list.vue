@@ -26,10 +26,15 @@
       <el-table-column prop="status_name" label="云盘状态"></el-table-column>
       <el-table-column prop="type" label="类型容量">
         <template slot-scope="scope">
-          <span>{{scope.row.feature ? `${scope.row.feature} / ${scope.row.size}GB` : ''}}</span>
+          <div>类型：{{scope.row.feature ? `${scope.row.feature}` : ''}}</div>
+          <div>容量：{{scope.row.size ? `${scope.row.size}GB` : ''}}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="az_name" label="地域及可用区"></el-table-column>
+      <el-table-column prop="az_name" label="地域及可用区">
+          <template slot-scope="scope">
+            <span>{{scope.row.region_name}}&nbsp;&nbsp;{{scope.row.az_name}}</span>
+          </template>
+      </el-table-column>
       <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" column-key="disk_type">
         <template slot-scope="scope">
           <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
@@ -70,7 +75,7 @@
       :total="total">
     </el-pagination>
     <template v-if="visible && operate_type==='record'">
-      <Record :visible="visible" :record_id="mount_id[0].disk_id" @close = "close_disk" />
+      <Record :visible="visible" :record_id="mount_id[0].disk_id" @close = "close_disk" :type="'ebs'" />
     </template>
     <template v-if="visible && operate_type==='mount'">
       <mount-disk :visible="visible" :mount_id="mount_id" @close = "close_disk" />

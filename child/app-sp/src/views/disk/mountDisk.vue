@@ -53,7 +53,6 @@
             >
                 <el-checkbox v-model="form_data.del_set">云盘随实例删除</el-checkbox>
             </el-form-item>
-            
           </el-form>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -158,6 +157,10 @@ export default class MountDisk extends Vue{
     width: 100%;
     text-align: center;
   }
+ 
+  
+  
+  
 }
 
 </style>

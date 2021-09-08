@@ -3,7 +3,7 @@
         <back-header title="创建云盘" back_url="/disk"></back-header>
         <div class="main_box">
             <div class="form_box">
-                <el-form :model="form_data" ref="form" label-width="100px" class="demo-dynamic">
+                <el-form :model="form_data" ref="form" label-width="120px" class="demo-dynamic">
                     <el-card>
                         <el-form-item
                             prop="customer_id"
@@ -38,12 +38,17 @@
                             <el-form-item
                                 prop="area"
                                 :label="form_data.isMounted==='1' ? 'ECS实例' : '地域及可用区'"
+                                :rules="[{ required: area_list.length>0, message:'请选择地区',trigger: 'blur'}
+                                ]"
                             >
                                 <Area :list="area_list" @get_area_id="get_area_id" :area="form_data.area" />
                             </el-form-item>
                             <el-form-item
                                 prop="az"
                                 label=""
+                                :rules="[
+                                    { required: az_list.length>0, message:'请选择可用区',trigger: 'blur'}
+                                ]"
                             >
                                 <el-select v-model="form_data.az" placeholder="请选择可用区">
                                     <el-option v-for="item in az_list" :key="item.az_id" :label="item.az_name" :value="item.az_id"></el-option>
@@ -53,6 +58,9 @@
                             <el-form-item
                                 prop="ecs_id"
                                 label=""
+                                :rules="[
+                                    { required: ECS_instance_list.length>0,message:'请选择实例', trigger: 'blur' }
+                                ]"
                             >
                                 <el-select 
                                     v-model="form_data.ecs_id"                                      
@@ -108,6 +116,9 @@
                             <el-form-item
                                 prop="ecs_goods_id"
                                 label="类型/容量"
+                                :rules="[
+                                    { required: disk_type_list.length>0 && (!inn.ecs_goods_id || inn.ecs_goods_id===''),message:'请选择类型', trigger: 'blur' }
+                                ]"
                             >
                                 <el-select v-model="inn.ecs_goods_id">
                                     <el-option v-for="item in disk_type_list" :key="item.ecs_goods_id" :label="item.disk_value" :value="item.ecs_goods_id"></el-option>
@@ -123,6 +134,9 @@
                         <el-form-item
                             prop="amount"
                             label="数量"
+                            :rules="[
+                                { required: disk_type_list.length>0 && (!inn.amount || inn.amount===0),message:'请输入数量', trigger: 'blur' }
+                            ]"
                         >
                             <el-input-number v-model="inn.amount" :step="1" :min="0" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
                         </el-form-item>
@@ -169,7 +183,10 @@
                     </div>
                     <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>挂载实例名称：</div>
-                        <div>{{ecs_specifications.length===3 ? ecs_specifications[2] : '--'}}</div>
+                        <div>
+                            <span class="ecs-name" v-if="ecs_specifications.length===3" @click="goToDetail">{{ecs_specifications[2]}}</span>
+                            <span v-else>--</span>
+                        </div>
                     </div>
                     <div v-for="(item,index) in form_data.disk_list" :key="index">
                         <div class="config-info">
@@ -184,7 +201,14 @@
                             <div>{{item.amount ? item.amount : '--'}}</div>
                         </div>
                     </div>
-                    
+                    <div class="config-info" v-if="form_data.isMounted==='1'">
+                        <div>计费方式：</div>
+                        <div>--</div>
+                    </div>
+                    <div class="config-info" v-if="form_data.isMounted==='1'">
+                        <div>折后价格：</div>
+                        <div>--</div>
+                    </div>
                 </el-card>
             </div>
             <div class="button_box">
@@ -193,6 +217,9 @@
                 </el-card>
             </div>
         </div>
+        <template v-if="detail_visible">
+            <Detail :visible = "detail_visible" :detail_id = "form_data.ecs_id" @close-detail = 'closeDetail' />
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -203,8 +230,9 @@ import Service from '../../https/instance/create';
 import ServiceList from '../../https/instance/list';
 import disk_service from '../../https/disk/create'
 import detail_service from '../../https/instance/record_detail'
+import Detail from '../instance/detail.vue'
 import { Form } from "element-ui";
-import scrollDirective from '../../utils/select-directive';
+// import scrollDirective from '../../utils/select-directive';
 import moment from 'moment'
 interface Page {
     current:number,
@@ -215,6 +243,7 @@ interface Page {
     components: { 
         backHeader,
         Area,
+        Detail
     },
     // directives:{
     //     scrollDirective
@@ -251,11 +280,12 @@ export default class CreateDisk extends Vue{
     private total:number=0;//已选择云盘数量
     private mounted_disk:number=0;//实例已挂载云盘数量
     private ecs_specifications:Array<string>=[]//实例规格
-    private disk_validate_msg:string="2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
+    private disk_validate_msg:string="2-40个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
     private az_list:any=[]
     private ECS_instance_list:any=[]
     private area_list=[]
-    private disk_type_list=[]
+    private disk_type_list=[];
+    private detail_visible:Boolean = false
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
         if(value.length>6){
             return callback()
@@ -405,6 +435,14 @@ export default class CreateDisk extends Vue{
     private changeNum(index,current){
         this.get_disk_quantity()
     }
+    //跳转至云服务器详情
+    private goToDetail(){
+        this.detail_visible=true
+    }
+    //关闭云服务器详情
+    private closeDetail() {
+        this.detail_visible = false
+    }
     //判断挂载总数是否达到16或者50
     private get_disk_quantity(){
         const {disk_list}=this.form_data
@@ -444,18 +482,26 @@ export default class CreateDisk extends Vue{
     }
     //创建、
     private async create(){
-        const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
-        let res:any = await disk_service.create({
-            customer_id,
-            ecs_id,
-            is_follow_delete:del_set ? '1' : '0',
-            az_id:az,
-            disk_list
+        const form = this.$refs.form as Form
+        form.validate(async(valid)=>{
+            if(valid){
+                const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
+                let res:any = await disk_service.create({
+                    customer_id,
+                    ecs_id,
+                    is_follow_delete:del_set ? '1' : '0',
+                    az_id:az,
+                    disk_list
+                })
+                if (res.code == 'Success') {
+                    this.$message.success("新增成功")
+                }
+                this.$router.push('/disk')
+            }else{
+                return false;
+            }
         })
-        if (res.code == 'Success') {
-            this.$message.success("新增成功")
-        }
-        this.$router.push('/disk')
+        
     }
 }
 </script>
@@ -521,6 +567,10 @@ export default class CreateDisk extends Vue{
                 display: flex;
                 justify-content: space-between;
                 font-size: 12px;
+                .ecs-name{
+                    color: #4359C0;
+                    cursor: pointer;
+                }
             }
         }
         .button_box{
@@ -537,5 +587,12 @@ export default class CreateDisk extends Vue{
     }
     
 
+}
+</style>
+<style lang="scss">
+.form_box{
+    .el-form-item__label{
+        text-align: left !important;
+    }
 }
 </style>

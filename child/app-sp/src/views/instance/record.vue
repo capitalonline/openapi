@@ -78,6 +78,7 @@ export default class InsDetail extends Vue{
   $message;
   @Prop(Boolean) visible!:Boolean;
   @Prop(String) record_id!:String
+  @Prop(String) type:String
   private state_list:any = [
     {
         type:'',
@@ -138,7 +139,7 @@ private CODE_RESPONSE={
     const {search_data:data}=this
     let res:any = await Service.get_operate_record_list({
       cloud_id:this.record_id,
-      cloud_type: 'ecs',
+      cloud_type: this.type ? this.type :'ecs',
       status:data.state || '',
       task_type:data.content || '',
       page_size:this.size,                                                                         

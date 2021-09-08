@@ -20,11 +20,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="az_name" label="可用区"></el-table-column>
-                <el-table-column prop="disk_type" label="云盘类型">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
-                    </template>
-                </el-table-column>
+                <el-table-column prop="feature" label="云盘类型"></el-table-column>
                 <el-table-column prop="capacity_size" label="当前规格">
                     <template slot-scope="scope">
                         <span>容量：&nbsp;{{scope.row.capacity_size}}GB</span>
@@ -44,7 +40,7 @@
         <div class="footer">
             <el-checkbox v-model="isSelectedAll" @change="select_all"></el-checkbox>
             <div class="btn">
-                <el-button type="primary" @click="confirm">确定扩容</el-button>
+                <el-button type="primary" @click="confirm">确认扩容</el-button>
                 <el-button type="default" @click="cancel">取消</el-button>
             </div>
         </div>
