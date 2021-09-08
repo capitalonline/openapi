@@ -20,12 +20,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop , Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import { checkPwd } from '../../utils/checkPwd';
 
 @Component
 export default class resetPwd extends Vue{
-  @Prop({default: 'root'}) private username!: string;
+  @Prop({default: 'root/administrator'}) private username!: string;
   private data = {
     password: '',
     confirm_password: ''
@@ -62,6 +62,12 @@ export default class resetPwd extends Vue{
   private FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
   }
+  
+  @Watch('username')
+  private Fnaa(newVal) {
+    console.log('username00', newVal)
+  }
+
 }
 </script>
 

@@ -73,7 +73,7 @@ export default class Recover extends Vue {
     const resData: any = await Service.recover_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 恢 复 任务！`);
-
+      this.Fnclose()
     }
   }
   @Emit('fn-close')

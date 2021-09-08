@@ -97,9 +97,10 @@
             <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id"></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
-            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id"></update-os>
-            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id"></update-disk>
-            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
+            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" @fn-os="FnGetOsInfo"></update-os>
+            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" 
+              :os_disk_size="Number(os_info.disk_size)"></update-disk>
+            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
@@ -189,7 +190,7 @@ export default class App extends Vue {
     total: 0
   }
   private timer = null;
-  private dialog_component = null;
+  private os_info = {};
   private FnSearch(data) {
     this.search_reqData = {
       ecs_id: data.ecs_id,
@@ -384,6 +385,9 @@ export default class App extends Vue {
       }
       this.FnClose();
     }
+  }
+  private FnGetOsInfo(data) {
+    this.os_info = data;
   }
   private async FnUpdateSystem(reqData) {
     let os_data = (this.$refs.update_os as any).FnSubmit();

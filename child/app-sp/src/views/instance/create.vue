@@ -18,7 +18,7 @@
         </el-card>
 
         <el-card>
-          <label-block label="可用区">
+          <label-block label="可用区" :is_required="true">
             <!-- <el-select v-model="default_region" value-key="region_id" class="m-right20">
               <el-option v-for="region in region_list" :key="region.region_id" :value="region" :label="region.region_name"></el-option>
             </el-select> -->
@@ -32,7 +32,7 @@
         </el-card>
 
         <el-card>
-          <label-block label="网络">
+          <label-block label="网络" :is_required="true">
             <el-select v-model="default_vpc" value-key="vpc_id">
               <el-option v-for="vpc in vpc_list" :key="vpc.vpc_id" :value="vpc" :label="vpc.vpc_name"></el-option>
             </el-select>
@@ -58,7 +58,8 @@
         <el-card class="disk-box">
           <update-disk :az_id="default_az.az_id" :customer_id="customer_id" 
             :system_disk="true" 
-            :data_disk="true" 
+            :data_disk="true"
+            :os_disk_size="os_info.disk_size"
             @fn-system-disk="FnGetSystemDisk" 
             @fn-data-disk="FnGetDataDisk">
             </update-disk>
@@ -81,7 +82,7 @@
             </div>
             <div class="prompt_message"> 2-60个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符</div>
           </label-block>
-          <update-pwd ref="update_pwd"></update-pwd>
+          <update-pwd ref="update_pwd" :username="os_info.username"></update-pwd>
         </el-card>
       </div>
       <div class="right-box">
@@ -151,6 +152,7 @@ import { checkEcsName } from '../../utils/checkEcsName';
 export default class App extends Vue {
   $message;
   $router;
+  $set;
   private customer_id = '';
   private customer_id_input = '';
   private customer_name = '';
@@ -268,19 +270,12 @@ export default class App extends Vue {
     this.os_info = {
       os_id: data.os_id,
       os_type: data.os_type,
-      username: data.username
+      username: data.username,
+      disk_size: Number(data.disk_size)
     }
-    console.log('data', data)
   }
   private FnGetSystemDisk(data): void {
-    this.system_info = {
-      ecs_goods_id: data.ecs_goods_id,
-      disk_feature: data.disk_feature,
-      disk_type: data.disk_type,
-      disk_size: data.disk_size,
-      disk_name: data.disk_name,
-      disk_unit: data.disk_unit
-    }
+    this.system_info = data;
   }
   private FnGetDataDisk(data): void {
     this.data_disk_list = data;
@@ -351,7 +346,6 @@ export default class App extends Vue {
       username: this.os_info.username || 'root',
       password: this.ecs_name_info.password
     }
-    console.log("reqData", reqData)
     const resData: any = await Service.create_instance(reqData);
     if (resData.code == 'Success') {
       this.$message.success(resData.msg || '成功下发 创 建 任务！')
