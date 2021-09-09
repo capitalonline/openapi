@@ -73,7 +73,7 @@
                                         :key="item.ecs_id" 
                                         :label="`${item.ecs_id} / ${item.ecs_name}`" 
                                         :value="item.ecs_id"
-                                        :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown')"
+                                        :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==form_data.customer_id"
                                     ></el-option>
                                 </el-select>
                             </el-form-item>
@@ -109,7 +109,7 @@
                             prop="disk_name"
                             label="云盘名称"
                         >
-                            <el-input v-model="inn.disk_name" minlength="2" maxlength="60" show-word-limit />
+                            <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                             <div class="remark">{{disk_validate_msg}}</div>
                         </el-form-item>
                         <div class="card_inline">
@@ -154,7 +154,7 @@
                         </template>
                         
                     </el-card>
-                    <el-card>
+                    <!-- <el-card>
                         <el-form-item
                             prop="fee"
                             label="是否开始计费"
@@ -164,7 +164,7 @@
                                 <el-radio :label="0">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                    </el-card>
+                    </el-card> -->
                 </el-form>
                     
                     
@@ -201,14 +201,14 @@
                             <div>{{item.amount ? item.amount : '--'}}</div>
                         </div>
                     </div>
-                    <div class="config-info" v-if="form_data.isMounted==='1'">
+                    <!-- <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>计费方式：</div>
                         <div>--</div>
                     </div>
                     <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>折后价格：</div>
                         <div>--</div>
-                    </div>
+                    </div> -->
                 </el-card>
             </div>
             <div class="button_box">
@@ -386,6 +386,9 @@ export default class CreateDisk extends Vue{
                 item.amount=1
                 return item
             })}
+            if(this.form_data.disk_list.length>16 - this.mounted_disk){
+                this.del(16 - this.mounted_disk)
+            }
             this.get_disk_quantity()
             
         }
@@ -437,12 +440,12 @@ export default class CreateDisk extends Vue{
         this.get_disk_quantity()
     }
     //删除云盘配置
-    private del(ind) {
+    private del(len) {
         if(this.form_data.disk_list.length===1){
             return;
         }
         const {disk_list}=this.form_data
-        this.form_data={...this.form_data,disk_list:disk_list.slice(0,disk_list.length-1)}
+        this.form_data={...this.form_data,disk_list:disk_list.slice(0,len ? len : disk_list.length-1)}
         this.get_disk_quantity()
     }
     //修改云盘挂在实例数量

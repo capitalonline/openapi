@@ -42,7 +42,7 @@
                   :key="item.ecs_id" 
                   :label="`${item.ecs_id} / ${item.ecs_name}`" 
                   :value="item.ecs_id"
-                  :disabled="item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown')"
+                  :disabled="mount_id.length===0 || item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==mount_id[0].customer_id"
                 ></el-option>
 
               </el-select>
@@ -78,6 +78,7 @@ export default class MountDisk extends Vue{
     }
     
     private instance_list:any=[]
+
     created() {
       this.get_instance_list("")
     }

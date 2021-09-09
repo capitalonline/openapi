@@ -46,7 +46,7 @@ export default class EditName extends Vue{
         }
     }
     private cancel(){
-        
+        this.back("0")
     }
     @Emit("close")
     private back(val){

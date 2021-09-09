@@ -2,13 +2,13 @@
   <div>
     <action-block :search_option="search_dom" @fn-search="search">
       <template #default>
-        <el-button type="primary" @click="create">创建云盘</el-button>
-        <el-button type="primary" @click="mount">挂载</el-button>
-        <el-button type="primary" @click="unInstall">卸载</el-button>
-        <el-button type="primary" @click="del_disk">逻辑删除</el-button>
-        <el-button type="primary" @click="restore('restore')">恢复</el-button>
-        <el-button type="primary" @click="restore('destroy')">销毁</el-button>
-        <el-button type="primary" @click="capacity">扩容</el-button>
+        <el-button type="primary" @click="create" :disabled="!auth_list.includes('disk_create')">创建云盘</el-button>
+        <el-button type="primary" @click="mount" :disabled="!auth_list.includes('mount')">挂载</el-button>
+        <el-button type="primary" @click="unInstall" :disabled="!auth_list.includes('unInstall')">卸载</el-button>
+        <el-button type="primary" @click="del_disk" :disabled="!auth_list.includes('delete')">逻辑删除</el-button>
+        <el-button type="primary" @click="restore('restore')" :disabled="!auth_list.includes('restore')">恢复</el-button>
+        <el-button type="primary" @click="restore('destroy')" :disabled="!auth_list.includes('destroy')">销毁</el-button>
+        <el-button type="primary" @click="capacity" :disabled="!auth_list.includes('disk_capacity')">扩容</el-button>
       </template>
     </action-block>
     <el-table
@@ -64,7 +64,7 @@
               <el-dropdown-item :command="{label:'destroy',value:scope.row}" :disabled="!limit_disk_operate('destroy',scope.row)">销毁</el-dropdown-item>
               <el-dropdown-item :command="{label:'capacity',value:scope.row}" :disabled="!limit_disk_operate('capacity',scope.row)">扩容</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
-              <el-dropdown-item :command="{label:'edit_name',value:scope.row}">修改云盘名称</el-dropdown-item>
+              <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!auth_list.includes('edit_name')">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
         </template>
@@ -126,12 +126,14 @@ import {trans} from '../../utils/transIndex'
 export default class extends Vue {
   $message;
   $router;
-  $$store;
+  $store;
+  $route
   private disk_list:any=[]
   private current:number = 1;
   private size:number=20;
   private total:number = 0;
-  private disk_state:any = []
+  private disk_state:any = [];
+  private auth_list:any=[]
   private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
@@ -164,6 +166,7 @@ export default class extends Vue {
   created() {
     this.get_disk_state();
     this.getDiskList()
+    this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
 
   beforeDestroy() {
@@ -399,19 +402,19 @@ export default class extends Vue {
   //限制云盘操作
   private limit_disk_operate(label:string,obj:any){
     if(label==="mount"){
-      return obj.status==="waiting"
+      return obj.status==="waiting" && this.auth_list.includes(label)
     }else if(label==="unInstall"){
-      return obj.status==="running" && obj.disk_type==="data"
+      return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="delete"){
-      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data"
+      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="restore"){
-      return obj.status==="deleted" && obj.is_follow_delete===false
+      return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
     }else if(label==="destroy"){
-      return obj.status==="deleted" && obj.is_follow_delete===false
+      return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
     }else if(label==="capacity"){
-      return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting"
+      return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting" && this.auth_list.includes('disk_capacity')
     }else if(label==="edit_attr"){
-      return obj.status==="running" && obj.disk_type==="data"
+      return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
     }
   }
   private close_disk(val){
