@@ -40,12 +40,13 @@ export default class EditName extends Vue{
         })
         if (res.code == 'Success') {
             this.$message.success("修改云盘名称任务下发成功！")
-            
+            this.back("1")
+        }else{
+            this.back("0")
         }
-        this.back("1")
     }
     private cancel(){
-        this.back("0")
+        
     }
     @Emit("close")
     private back(val){

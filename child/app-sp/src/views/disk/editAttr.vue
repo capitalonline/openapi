@@ -50,8 +50,10 @@ export default class EditAttr extends Vue{
         })
         if (res.code == 'Success') {
             this.$message.success("修改云盘属性任务下发成功！")
+            this.back("1")
+        }else{
+            this.back("0")
         }
-        this.back("1")
     }
     private cancel(){
         this.back("0")

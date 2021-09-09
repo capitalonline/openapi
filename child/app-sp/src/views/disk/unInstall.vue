@@ -54,9 +54,11 @@ export default class MountDisk extends Vue{
         })
         if (res.code == 'Success') {
             this.$message.success("云盘卸载任务下发成功！")
-            
+            this.back("1")
+        }else{
+            this.back("0")
         }
-        this.back("1")
+        
     }
     private cancel(){
       this.back("0")
