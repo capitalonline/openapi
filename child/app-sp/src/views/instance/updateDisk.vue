@@ -175,7 +175,6 @@ export default class updateDisk extends Vue {
     (this.$refs['resetForm'] as any).resetFields();
   }
   public FnSystemMinSize() {
-    this.FnSysEmit();
     return Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
   }
 
@@ -185,7 +184,8 @@ export default class updateDisk extends Vue {
 
   @Watch('data.default_system_info.ecs_goods_id')
   private FnChangeSystem() {
-    this.data.system_size = this.FnSystemMinSize()
+    this.data.system_size = this.FnSystemMinSize();
+    this.FnSysEmit();
   }
   @Watch('az_id') 
   private FnChangeAz(newVal, oldVal) {
@@ -197,7 +197,8 @@ export default class updateDisk extends Vue {
   }
   @Watch('os_disk_size')
   private FnChangeOs(newVal) {
-    this.data.system_size = this.FnSystemMinSize()
+    this.data.system_size = this.FnSystemMinSize();
+    this.FnSysEmit();
   }
 }
 </script>

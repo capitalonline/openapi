@@ -49,7 +49,7 @@ export default class resetPwd extends Vue{
     password: [{ required: true, validator: this.FnCheckPwd, trigger: 'blur' }],
     confirm_password: [{ required: true, validator: this.FnCheckConfirmPwd, trigger: 'blur' }]
   }
-  private FnSubmit() {
+  public FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
       flag = valid;
@@ -59,7 +59,7 @@ export default class resetPwd extends Vue{
       password: this.data.password
     }
   }
-  private FnResetForm(formName) {
+  public FnResetForm() {
     (this.$refs['resetForm'] as any).resetFields();
   }
   

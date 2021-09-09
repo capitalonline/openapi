@@ -38,7 +38,7 @@
         </el-date-picker>
       </div>
 
-      <div class="chart-box">
+      <div class="chart-box" v-if="default_tab === 'instance'">
         <line-echart 
           chart_id="cpu_chart"
           title="CPU使用率（%）"
@@ -57,7 +57,33 @@
           :time_frame="default_date_timer"
           class="item">
         </line-echart>
-        <div class="item"></div>
+        <line-echart 
+          chart_id="system_chart"
+          title="系统平均负载（%）"
+          :time_frame="default_date_timer"
+          class="item">
+        </line-echart>
+      </div>
+
+      <div class="chart-box" v-if="default_tab === 'disk'">
+        <line-echart 
+          chart_id="disk_chart"
+          title="磁盘使用率（%）"
+          :time_frame="default_date_timer"
+          class="item"
+        ></line-echart>
+        <line-echart 
+          chart_id="disk_through_chart"
+          title="内存吞吐量（Kbps）"
+          :time_frame="default_date_timer"
+          class="item"
+        ></line-echart>
+        <line-echart 
+          chart_id="disk_iops_chart"
+          title="磁盘IOPS（%）"
+          :time_frame="default_date_timer"
+          class="item">
+        </line-echart>
       </div>
     </el-card>
   </div>

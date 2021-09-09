@@ -70,7 +70,7 @@
       :total="page_info.total">
     </el-pagination>
 
-    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog">
+    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false">
       <template v-if="default_operate_type === 'recover_ecs'">
         <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" @fn-close="FnClose"></Recover>
       </template>
@@ -424,8 +424,8 @@ export default class App extends Vue {
   }
   private FnClose() {
     this.show_operate_dialog = false;
-    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) > 0) {
-      // (this.$refs.child_componet as any).FnResetForm();
+    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
+      (this.$refs[this.default_operate_type] as any).FnResetForm()
     }
     this.FnGetList();
   }
