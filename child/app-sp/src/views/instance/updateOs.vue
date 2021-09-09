@@ -50,7 +50,8 @@ export default class updateOs extends Vue{
     default_os_version: {
       os_id: '',
       os_type: '',
-      username: ''
+      username: '',
+      disk_size: 0
     }
   }
   private FnCheckOs = (rule, value, callback) => {
@@ -81,7 +82,8 @@ export default class updateOs extends Vue{
     return {
       os_id: this.data.default_os_version.os_id,
       os_type: this.data.default_os_version.os_type,
-      username: this.data.default_os_version.username
+      username: this.data.default_os_version.username,
+      disk_size: this.data.default_os_version.disk_size
     }
   }
 
@@ -122,7 +124,8 @@ export default class updateOs extends Vue{
       this.data.default_os_version = {
         os_id: '',
         os_type: '',
-        username: ''
+        username: '',
+        disk_size: 0
       }
     }
     this.FnEmit()

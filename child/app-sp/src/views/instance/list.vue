@@ -70,7 +70,7 @@
       :total="page_info.total">
     </el-pagination>
 
-    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog">
+    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false">
       <template v-if="default_operate_type === 'recover_ecs'">
         <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" @fn-close="FnClose"></Recover>
       </template>
@@ -97,9 +97,10 @@
             <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id"></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
-            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id"></update-os>
-            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id"></update-disk>
-            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
+            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" @fn-os="FnGetOsInfo"></update-os>
+            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" 
+              :os_disk_size="Number(os_info.disk_size)"></update-disk>
+            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
@@ -189,7 +190,7 @@ export default class App extends Vue {
     total: 0
   }
   private timer = null;
-  private dialog_component = null;
+  private os_info = {};
   private FnSearch(data) {
     this.search_reqData = {
       ecs_id: data.ecs_id,
@@ -385,6 +386,9 @@ export default class App extends Vue {
       this.FnClose();
     }
   }
+  private FnGetOsInfo(data) {
+    this.os_info = data;
+  }
   private async FnUpdateSystem(reqData) {
     let os_data = (this.$refs.update_os as any).FnSubmit();
     let disk_data = (this.$refs.update_disk as any).FnSubmit();
@@ -420,8 +424,8 @@ export default class App extends Vue {
   }
   private FnClose() {
     this.show_operate_dialog = false;
-    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) > 0) {
-      // (this.$refs.child_componet as any).FnResetForm();
+    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
+      (this.$refs[this.default_operate_type] as any).FnResetForm()
     }
     this.FnGetList();
   }

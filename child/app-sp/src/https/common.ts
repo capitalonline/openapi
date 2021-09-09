@@ -1,7 +1,7 @@
 import qs from 'qs';
 const BASE = "/ecs_business/v1";
 
-function getOptions(base_url: string, met:(string | any), url: string, data: any = null) {
+function getOptions(base_url: string, met:('GET'|'POST'|'PUT'|'DELETE'), url: string, data: any = null) {
     if (met === "GET" || met === "DELETE"){
         return {
             method: met,

@@ -67,6 +67,7 @@ export default class updateDisk extends Vue {
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: false}) private system_disk!: boolean;
   @Prop({default: false}) private data_disk!: boolean;
+  @Prop({default: 0}) private os_disk_size!: number;
   $message;
   private system_disk_info = [];
   private data_disk_info = [];
@@ -173,6 +174,9 @@ export default class updateDisk extends Vue {
   private FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
   }
+  public FnSystemMinSize() {
+    return Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
+  }
 
   private created() {
     this.FnGetDiskInfo();
@@ -180,7 +184,7 @@ export default class updateDisk extends Vue {
 
   @Watch('data.default_system_info.ecs_goods_id')
   private FnChangeSystem() {
-    this.data.system_size = this.data.default_system_info.disk_min? Number(this.data.default_system_info.disk_min) : 0;
+    this.data.system_size = this.FnSystemMinSize();
     this.FnSysEmit();
   }
   @Watch('az_id') 
@@ -190,6 +194,11 @@ export default class updateDisk extends Vue {
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {
     this.FnGetDiskInfo();
+  }
+  @Watch('os_disk_size')
+  private FnChangeOs(newVal) {
+    this.data.system_size = this.FnSystemMinSize();
+    this.FnSysEmit();
   }
 }
 </script>

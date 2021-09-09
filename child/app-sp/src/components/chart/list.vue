@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <div :id="chart_id" class="chart"></div>
+    <div :id="chart_id" :key="chart_id" class="chart"></div>
   </el-card>
 </template>
 
@@ -101,6 +101,7 @@ export default class LineEchart extends Vue{
 
   private mounted() {
     this.instance = echarts.init(document.querySelector(`#${this.chart_id}`));
+    console.log('instance')
     this.FnSetOption();
     window.addEventListener('resize', () => {
       if (this.instance) {
