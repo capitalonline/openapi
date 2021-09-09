@@ -154,7 +154,7 @@
                         </template>
                         
                     </el-card>
-                    <el-card>
+                    <!-- <el-card>
                         <el-form-item
                             prop="fee"
                             label="是否开始计费"
@@ -164,7 +164,7 @@
                                 <el-radio :label="0">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                    </el-card>
+                    </el-card> -->
                 </el-form>
                     
                     
@@ -201,14 +201,14 @@
                             <div>{{item.amount ? item.amount : '--'}}</div>
                         </div>
                     </div>
-                    <div class="config-info" v-if="form_data.isMounted==='1'">
+                    <!-- <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>计费方式：</div>
                         <div>--</div>
                     </div>
                     <div class="config-info" v-if="form_data.isMounted==='1'">
                         <div>折后价格：</div>
                         <div>--</div>
-                    </div>
+                    </div> -->
                 </el-card>
             </div>
             <div class="button_box">
