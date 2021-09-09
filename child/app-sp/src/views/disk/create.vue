@@ -138,7 +138,7 @@
                                 { required: disk_type_list.length>0 && (!inn.amount || inn.amount===0),message:'请输入数量', trigger: 'blur' }
                             ]"
                         >
-                            <el-input-number v-model="inn.amount" :step="1" :min="0" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
+                            <el-input-number v-model="inn.amount" :step="1" :min="1" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
                         </el-form-item>
                         <template v-if="index===form_data.disk_list.length-1">
                             <el-form-item
@@ -270,15 +270,15 @@ export default class CreateDisk extends Vue{
                 disk_name:'',
                 ecs_goods_id:'',
                 disk_size:128,
-                amount:0,
+                amount:1,
             }
         ],
         fee:''
         
     }
     private disk_total:number=16;//云盘限制数量
-    private total:number=0;//已选择云盘数量
-    private mounted_disk:number=0;//实例已挂载云盘数量
+    private total:number=1;//已选择云盘数量
+    private mounted_disk:number=1;//实例已挂载云盘数量
     private ecs_specifications:Array<string>=[]//实例规格
     private disk_validate_msg:string="2-40个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符";
     private az_list:any=[]
@@ -306,9 +306,10 @@ export default class CreateDisk extends Vue{
     //监听实例ID
     @Watch("form_data.ecs_id")
     private watch_ecs_id(newVal){
-        if(newVal!==""){
-            this.get_mounted_num()
+        if(!newVal){
+            return;
         }
+      this.get_mounted_num()
     }
     //监听可用区ID
     @Watch("form_data.az")
@@ -357,6 +358,10 @@ export default class CreateDisk extends Vue{
         });
         if (resData.code == 'Success') {
             this.disk_type_list = resData.data.system_disk;
+            this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map(item=>{
+                item.ecs_goods_id = this.disk_type_list[0].ecs_goods_id;
+                return item;
+            })}
         }
     }
     //获取实例挂载数据盘数量
@@ -369,13 +374,19 @@ export default class CreateDisk extends Vue{
             this.mounted_disk= disk.data_disk_conf ? disk.data_disk_conf.length : 0;
             this.ecs_specifications = [ecs_rule.name,`${ecs_rule.cpu_num}${ecs_rule.cpu_unit}${ecs_rule.ram}${ecs_rule.ram_unit}`,ecs_name]
             this.disk_total = 16 - this.mounted_disk
+            if(this.disk_total<2){
+                this.$message.warning('该实例云盘已挂满！')
+                this.form_data={...this.form_data,ecs_id:''}
+                this.disk_total = 16
+                this.get_instance_list(this.form_data.ecs_id)
+            }
             const {form_data:{disk_list}}=this
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
-                item.amount=0
+                item.amount=1
                 return item
             })}
-            
             this.get_disk_quantity()
+            
         }
     }
 
@@ -383,19 +394,20 @@ export default class CreateDisk extends Vue{
     //设置挂载
     private mount(value:string){
         this.disk_total=value==="1" ? 16 - this.mounted_disk : 50
-        this.get_disk_quantity()
+        
         const {form_data:{isMounted,disk_list}}=this
         if(value==="1" && isMounted==='0'){
             this.dis_change=false
             this.total=0
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
-                item.amount=0
+                item.amount=1
                 return item
             })}
             this.form_data = {...this.form_data,ecs_id:''}
             this.ecs_specifications=[]
         }
         this.form_data={...this.form_data,isMounted:value}
+        this.get_disk_quantity()
     }
     private dis_change=false//判断挂载总数是否达到16
     //设置区域ID,获取可用区列表
@@ -408,7 +420,7 @@ export default class CreateDisk extends Vue{
                 }
             })
         })
-        this.form_data={...this.form_data,area:val,az:""}
+        this.form_data={...this.form_data,area:val,az:this.az_list[0].az_id}
     }
     //新增云盘配置
     private add(){
@@ -417,10 +429,11 @@ export default class CreateDisk extends Vue{
         }
         this.form_data={...this.form_data,disk_list:[...this.form_data.disk_list,{
             disk_name:'',
-            ecs_goods_id:'',
+            ecs_goods_id:this.disk_type_list.length>1 ? this.disk_type_list[0].ecs_goods_id : '',
             disk_size:128,
-            amount:0
+            amount:1
         }]}
+        this.get_disk_quantity()
     }
     //删除云盘配置
     private del(ind) {
@@ -494,7 +507,7 @@ export default class CreateDisk extends Vue{
                     disk_list
                 })
                 if (res.code == 'Success') {
-                    this.$message.success("新增成功")
+                    this.$message.success("云盘创建任务下发成功！")
                 }
                 this.$router.push('/disk')
             }else{

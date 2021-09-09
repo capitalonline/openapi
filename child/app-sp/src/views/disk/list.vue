@@ -23,7 +23,11 @@
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
       <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
-      <el-table-column prop="status_name" label="云盘状态"></el-table-column>
+      <el-table-column prop="status" label="云盘状态">
+        <template slot-scope="scope">
+          <span :class="scope.row.status">{{scope.row.status_name}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="type" label="类型容量">
         <template slot-scope="scope">
           <div>类型：{{scope.row.feature ? `${scope.row.feature}` : ''}}</div>
@@ -56,6 +60,7 @@
               <el-dropdown-item :command="{label:'mount',value:scope.row}" :disabled="!limit_disk_operate('mount',scope.row)">挂载</el-dropdown-item>
               <el-dropdown-item :command="{label:'unInstall',value:scope.row}" :disabled="!limit_disk_operate('unInstall',scope.row)">卸载</el-dropdown-item>
               <el-dropdown-item :command="{label:'delete',value:scope.row}" :disabled="!limit_disk_operate('delete',scope.row)">逻辑删除</el-dropdown-item>
+              <el-dropdown-item :command="{label:'restore',value:scope.row}" :disabled="!limit_disk_operate('restore',scope.row)">恢复</el-dropdown-item>
               <el-dropdown-item :command="{label:'destroy',value:scope.row}" :disabled="!limit_disk_operate('destroy',scope.row)">销毁</el-dropdown-item>
               <el-dropdown-item :command="{label:'capacity',value:scope.row}" :disabled="!limit_disk_operate('capacity',scope.row)">扩容</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
@@ -121,6 +126,7 @@ import {trans} from '../../utils/transIndex'
 export default class extends Vue {
   $message;
   $router;
+  $$store;
   private disk_list:any=[]
   private current:number = 1;
   private size:number=20;
@@ -137,6 +143,8 @@ export default class extends Vue {
   private operate_type:string=""
   private mount_id:any = [];
   private disk_property:Array<String>=[]
+  private clear = null
+
   private common_operate:any = {
   delete:'逻辑删除',
   restore:'恢复',
@@ -157,6 +165,10 @@ export default class extends Vue {
     this.get_disk_state();
     this.getDiskList()
   }
+
+  beforeDestroy() {
+    clearInterval(this.clear)
+  }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
@@ -164,7 +176,17 @@ export default class extends Vue {
       this.search_dom.status.list = trans(res.data,'status_name','status','label','type') 
     }
   }
-  private async getDiskList(){
+  private async getDiskList(loading:boolean = true){
+    let copy_mount_id=[]
+    if(this.clear){
+      clearInterval(this.clear)
+    }
+    if(!loading){
+      this.$store.commit('SET_LOADING', false);
+      copy_mount_id =this.mount_id.map(item=>{
+        return item.disk_id
+      })
+    }
     const {req_data}=this
     let res:any = await Service.get_disk_list({
       disk_id:req_data.disk_id || '',
@@ -178,8 +200,23 @@ export default class extends Vue {
     })
     if(res.code==="Success"){
       this.disk_list = res.data.result || []
-      this.total = res.data.page_info.count || 0
+      this.total = res.data.page_info.count || 0;
+      let list = res.data.result.filter(item=>copy_mount_id.includes(item.disk_id))
+      if(list.length>0){
+        this.$nextTick(()=>{
+          list.forEach(row => {
+            (this.$refs.disk_table as Table).toggleRowSelection(row);
+          });
+        });
+        
+      } 
     }
+    this.FnSetTimer()
+  }
+  private FnSetTimer() {
+    this.clear = setTimeout(() => {
+      this.getDiskList(false)
+    }, 1000 *5)
   }
   private search(data:any={}){
     this.current = 1;
@@ -204,6 +241,8 @@ export default class extends Vue {
       this.unInstall()
     }else if(obj.label==="delete"){
       this.del_disk()
+    }else if(obj.label==="restore"){
+      this.restore('restore')
     }else if(obj.label==="destroy"){
       this.restore('destroy')
     }else if(obj.label==="capacity"){
@@ -365,12 +404,14 @@ export default class extends Vue {
       return obj.status==="running" && obj.disk_type==="data"
     }else if(label==="delete"){
       return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data"
+    }else if(label==="restore"){
+      return obj.status==="deleted" && obj.is_follow_delete===false
     }else if(label==="destroy"){
       return obj.status==="deleted" && obj.is_follow_delete===false
     }else if(label==="capacity"){
       return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting"
     }else if(label==="edit_attr"){
-      return obj.status==="running"
+      return obj.status==="running" && obj.disk_type==="data"
     }
   }
   private close_disk(val){
@@ -384,6 +425,7 @@ export default class extends Vue {
   }
   private handleSelectionChange(data){
     this.mount_id = data
+    
   }
   private toggleSelection() {
     const table = this.$refs.disk_table as Table
@@ -394,6 +436,7 @@ export default class extends Vue {
     this.current = 1
     this.getDiskList()
   }
+   
   
 }
 </script>

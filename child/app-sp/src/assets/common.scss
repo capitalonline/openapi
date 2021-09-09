@@ -16,6 +16,9 @@
 .deleting,
 .updating,
 .destroying,
+.waiting,
+.mounting,
+.unmounting,
 .recovering {
   color:#4984E7;
 }
@@ -28,9 +31,10 @@
 }
 .shutdown,
 .error,
-.failed {
+.failed,.build_fail {
   color:#DA3B18;
 }
+
 .m-left10 {
   margin-left: 10px;
 }

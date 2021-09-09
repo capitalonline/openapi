@@ -49,7 +49,7 @@ export default class EditAttr extends Vue{
             is_follow_delete:this.checked ? '1' : '0'
         })
         if (res.code == 'Success') {
-            this.$message.success("修改成功")
+            this.$message.success("修改云盘属性任务下发成功！")
         }
         this.back("1")
     }

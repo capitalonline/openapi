@@ -60,7 +60,7 @@ export default class MountDisk extends Vue{
         return;
       }
       if (res.code == 'Success') {
-          this.$message.success(`${this.title}成功`)
+          this.$message.success(`云盘${this.title}任务下发成功！`)
       }
       this.back("1")
     }

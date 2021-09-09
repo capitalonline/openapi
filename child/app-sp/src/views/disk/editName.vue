@@ -39,7 +39,7 @@ export default class EditName extends Vue{
             disk_name:this.new_name
         })
         if (res.code == 'Success') {
-            this.$message.success("修改成功")
+            this.$message.success("修改云盘名称任务下发成功！")
             
         }
         this.back("1")

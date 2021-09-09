@@ -115,7 +115,7 @@ export default class Capacity extends Vue{
             expansion_info:temp
         })
         if (res.code == 'Success') {
-            this.$message.success("扩容成功")
+            this.$message.success("云盘扩容任务下发成功！")
             
         }
         this.$router.push('/disk')

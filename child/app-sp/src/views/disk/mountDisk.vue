@@ -130,7 +130,7 @@ export default class MountDisk extends Vue{
               is_follow_delete:this.form_data.del_set ? '1' : '0'
             })
             if (res.code == 'Success') {
-                this.$message.success("挂载成功")
+                this.$message.success("云盘挂载任务下发成功！")
                 
             }
             this.back("1")
