@@ -6,7 +6,11 @@
             <el-table-column prop="os_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type_value" label="操作系统"></el-table-column>
             <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column prop="disk_size" label="容量"></el-table-column>
+            <el-table-column prop="disk_size" label="容量">
+                <template slot-scope="scope">
+                    <span>{{scope.row.disk_size}}GB</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
             <el-table-column prop="processing" label="创建进度"></el-table-column>
             <!-- <el-table-column label="操作">

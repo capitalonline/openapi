@@ -109,7 +109,7 @@
                             prop="disk_name"
                             label="云盘名称"
                         >
-                            <el-input v-model="inn.disk_name" minlength="2" maxlength="60" show-word-limit />
+                            <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                             <div class="remark">{{disk_validate_msg}}</div>
                         </el-form-item>
                         <div class="card_inline">
