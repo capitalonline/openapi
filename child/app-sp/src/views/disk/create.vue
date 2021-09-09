@@ -374,10 +374,11 @@ export default class CreateDisk extends Vue{
             this.mounted_disk= disk.data_disk_conf ? disk.data_disk_conf.length : 0;
             this.ecs_specifications = [ecs_rule.name,`${ecs_rule.cpu_num}${ecs_rule.cpu_unit}${ecs_rule.ram}${ecs_rule.ram_unit}`,ecs_name]
             this.disk_total = 16 - this.mounted_disk
-            if(this.disk_total<2){
+            if(this.disk_total<1){
                 this.$message.warning('该实例云盘已挂满！')
                 this.form_data={...this.form_data,ecs_id:''}
                 this.disk_total = 16
+                this.ecs_specifications = []
                 this.get_instance_list(this.form_data.ecs_id)
             }
             const {form_data:{disk_list}}=this
