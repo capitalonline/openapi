@@ -10,18 +10,26 @@ module.exports = {
       'Access-Control-Allow-Origin': '*'
     },
     proxy: {
+      '/ecs_business': {
+        // target: '10.131.165.157:8001',
+        target:'http://ecs-business.gic.test',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api/v1/metric': {
+        target: 'http://cloudos-metricsapi.gic.test',
+        ws: true,
+        changeOrigin: true,
+        // pathRewite: {
+          
+        // }
+      },
       '/api': {
         target: 'http://10.128.22.18:9000',
         // target:'http://10.131.162.69:8001',
         ws: true,
         changeOrigin: true
       },
-      '/ecs_business': {
-        // target: '10.131.165.157:8001',
-        target:'http://ecs-business.gic.test',
-        ws: true,
-        changeOrigin: true
-      }
     }
   },
   configureWebpack: {

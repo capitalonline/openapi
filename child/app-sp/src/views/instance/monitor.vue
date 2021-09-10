@@ -76,7 +76,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import BackHeader from '../../components/backHeader.vue';
 import TimeGroup from '../../components/search/timeGroup.vue';
 import LineEchart from '../../components/chart/list.vue';
-import Service from '../../https/instance/record_detail';
+import DetailService from '../../https/instance/record_detail';
+import Service from '../../https/monitor/index';
+import moment from 'moment'
 
 @Component({
   components: {
@@ -109,10 +111,10 @@ export default class Monitor extends Vue{
   
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
-    console.log('timer', timer)
+    this.FnGetCpu()
   }
   private async FnGetDetail() {
-    const resData: any = await Service.get_detail({
+    const resData: any = await DetailService.get_detail({
       ecs_id: this.$route.params.id
     })
     if ( resData.code === 'Success' ) {
@@ -120,16 +122,29 @@ export default class Monitor extends Vue{
       this.detail_info.ecs_name.value = data.ecs_name;
       this.detail_info.ecs_id.value = data.ecs_id;
       this.detail_info.ecs_rule.value = 
-        `${data.ecs_rule.cpu_name}${data.ecs_rule.cpu_unit}${data.ecs_rule.ram}${data.ecs_rule.ram_unit}`;
+        `${data.ecs_rule.cpu_num}${data.ecs_rule.cpu_unit}${data.ecs_rule.ram}${data.ecs_rule.ram_unit}`;
       this.detail_info.az_name.value = data.az_name;
       this.detail_info.system_disk_conf.value = 
         `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       this.detail_info.os_info.value = data.os_info.system;
       this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
       this.detail_info.status.value = data.status_display;
+      this.FnGetCpu();
     }
   }
-
+  private async FnGetCpu() {
+    if (!this.detail_info.ecs_id.value) {
+      return
+    }
+    let resData: any = await Service.get_cpu({
+      id: this.detail_info.ecs_id.value,
+      ip: this.detail_info.private_net_ip.value,
+      instanceType: 'vm',
+      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
+      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      queryType: 'use_total'
+    })
+  }
   private created() {
     this.FnGetDetail();
     this.default_tab = Object.keys(this.tab_list)[0];

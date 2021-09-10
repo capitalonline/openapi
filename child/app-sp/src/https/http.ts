@@ -46,7 +46,7 @@ instance.interceptors.response.use(
       } else if (response.data.code === 'Success')  {
         return response.data
       } else {
-        Message({ message: response.data.message, type: 'error' })
+        Message({ message: response.data.message || response.data.msg, type: 'error' })
         return response.data
       }
     }
