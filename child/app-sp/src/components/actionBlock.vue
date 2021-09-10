@@ -27,7 +27,10 @@
           </el-date-picker>
         </div>
         
-        <div><el-button type="primary" @click="FnSearch">查 询</el-button></div>
+        <div>
+          <el-button type="primary" @click="FnSearch">查 询</el-button>
+          <el-button type="default" @click="FnClear">清空</el-button>
+        </div>
       </div>
       <slot>
         <el-button type="primary" @click="FnShowCreate" v-if="create_btn" :disabled="disabled">{{ create_btn }}</el-button>
@@ -57,6 +60,16 @@ export default class ActionBlock extends Vue {
   }
   @Emit('fn-create')
   private FnShowCreate() {
+  }
+  private FnClear(){
+    for(let i in this.search_option){
+      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
+          this.time=[new Date(),new Date()]
+      }else{
+        this.search_value[i]=""
+      }
+    }
+    this.FnSearch()
   }
   created() {
     for(let i in this.search_option){
