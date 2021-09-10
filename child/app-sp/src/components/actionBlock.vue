@@ -58,27 +58,20 @@ export default class ActionBlock extends Vue {
     this.search_value[this.date_key]=this.time
     return this.search_value
   }
+  @Watch("search_value",{immediate:true,deep:true})
+  private watch_search_value(newval,oldval){
+    console.log("watch_search_value",newval,oldval)
+  }
   @Emit('fn-create')
   private FnShowCreate() {
   }
   private FnClear(){
-    for(let i in this.search_option){
-      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
-          this.time=[new Date(),new Date()]
-      }else{
-        this.search_value[i]=""
-      }
-    }
+    this.set_time([new Date(),new Date()])
+    this.search_value={}
     this.FnSearch()
   }
   created() {
-    for(let i in this.search_option){
-      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
-        this.time = this.search_option[i].defaultTime;
-        this.day = (this.search_option[i].dis_day - 1) || 0
-        this.date_key = i;
-      }
-    }
+    this.set_time()
   }
   private dis_date(cur){
     const {day}=this
@@ -92,6 +85,15 @@ export default class ActionBlock extends Vue {
   }
   private onPicker({ maxDate, minDate }){
     this.min_date = minDate.getTime()
+  }
+  private set_time(time:any=null){
+    for(let i in this.search_option){
+      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
+          this.time=time ? time : this.search_option[i].defaultTime;
+          this.day = (this.search_option[i].dis_day - 1) || 0
+          this.date_key = i;
+      }
+    }
   }
   changeTime(key){
     this.date_key=key

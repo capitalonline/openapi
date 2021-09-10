@@ -38,8 +38,7 @@
                             <el-form-item
                                 prop="area"
                                 :label="form_data.isMounted==='1' ? 'ECS实例' : '地域及可用区'"
-                                :rules="[{ required: area_list.length>0, message:'请选择地区',trigger: 'blur'}
-                                ]"
+                                :rules="[{ required: area_list.length>0, message:'请选择地区',trigger: 'blur'}]"
                             >
                                 <Area :list="area_list" @get_area_id="get_area_id" :area="form_data.area" />
                             </el-form-item>
@@ -58,13 +57,10 @@
                             <el-form-item
                                 prop="ecs_id"
                                 label=""
-                                :rules="[
-                                    { required: ECS_instance_list.length>0,message:'请选择实例', trigger: 'blur' }
-                                ]"
                             >
                                 <el-select 
                                     v-model="form_data.ecs_id"                                      
-                                    placeholder="请选择ECS实例名称（实例ID)"
+                                    placeholder="请选择或输入实例名称（实例ID)"
                                     filterable
                                     :filter-method="get_instance_list"
                                 >
@@ -76,6 +72,7 @@
                                         :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==form_data.customer_id"
                                     ></el-option>
                                 </el-select>
+                                <div class="ecs-error" v-if="form_data.ecs_id==='' && judge_ecs">请输入实例</div>
                             </el-form-item>
                             </template>
                         </div>
@@ -128,7 +125,7 @@
                                 prop="disk_size"
                                 label=""
                             >
-                                <el-input-number v-model="inn.disk_size" :step="128" :min="128" :max="2048" @change="change_capacity"></el-input-number>&nbsp;GB
+                                <el-input-number step-strictly v-model="inn.disk_size" :step="128" :min="128" :max="2048" @change="change_capacity"></el-input-number>&nbsp;GB
                             </el-form-item>
                         </div>
                         <el-form-item
@@ -285,7 +282,8 @@ export default class CreateDisk extends Vue{
     private ECS_instance_list:any=[]
     private area_list=[]
     private disk_type_list=[];
-    private detail_visible:Boolean = false
+    private detail_visible:Boolean = false;
+    private judge_ecs:Boolean=false
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
         if(value.length>6){
             return callback()
@@ -309,7 +307,8 @@ export default class CreateDisk extends Vue{
         if(!newVal){
             return;
         }
-      this.get_mounted_num()
+        this.judge_ecs = false
+        this.get_mounted_num()
     }
     //监听可用区ID
     @Watch("form_data.az")
@@ -424,7 +423,10 @@ export default class CreateDisk extends Vue{
                 }
             })
         })
-        this.form_data={...this.form_data,area:val,az:this.az_list[0].az_id}
+        this.form_data={...this.form_data,area:val,az:this.az_list[0].az_id,ecs_id:''}
+        if(this.form_data.isMounted==='1'){
+            this.get_instance_list('')
+        }
     }
     //新增云盘配置
     private add(){
@@ -500,6 +502,10 @@ export default class CreateDisk extends Vue{
     //创建、
     private async create(){
         const form = this.$refs.form as Form
+        if(this.form_data.ecs_id===""){
+            this.judge_ecs=true
+            return;
+        }
         form.validate(async(valid)=>{
             if(valid){
                 const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
@@ -530,6 +536,13 @@ export default class CreateDisk extends Vue{
             flex: 1;
             .card_inline{
                 display: flex;
+                .ecs-error{
+                    font-size: 12px;
+                    color: #F56C6C;
+                    position: absolute;
+                    top: 28px;
+                    left: 2px ;
+                }
             }
             .area{
                 margin-right: 50px;

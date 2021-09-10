@@ -29,7 +29,7 @@
                 <el-table-column prop="status_name" label="状态"></el-table-column>
                 <el-table-column prop="size" label="扩容后容量">
                     <template slot-scope="scope">
-                        <el-input-number size="small" v-model="scope.row.size" :step="scope.row.disk_type==='data' ? 128 : 8" :max="scope.row.disk_type==='data' ? 2048 : 504" :min="Number(scope.row.capacity_size)"></el-input-number>
+                        <el-input-number size="small" step-strictly v-model="scope.row.size" :step="scope.row.disk_type==='data' ? 128 : 8" :max="scope.row.disk_type==='data' ? 2048 : 504" :min="Number(scope.row.capacity_size)"></el-input-number>
                     </template>
                 </el-table-column>
                 <el-table-column prop="bill_way" label="计费方式"></el-table-column>
