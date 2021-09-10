@@ -73,7 +73,11 @@ export default class updateOs extends Vue{
       az_id: this.az_id});
     if (resData.code == 'Success') {
       this.os_list = resData.data;
-      this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
+      if (this.default_os_template_type.os_template_type === Object.keys(this.os_list)[0]) {
+        this.FnChangeOsTemType(this.default_os_template_type.os_template_type)
+      } else {
+        this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
+      }
     }
   }
 
