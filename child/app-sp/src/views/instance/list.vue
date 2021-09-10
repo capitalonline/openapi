@@ -54,7 +54,7 @@
         <template #default="scope">
           <el-button type="text" @click="FnToRecord(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('instance_record')">操作记录</el-button>
-            <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)">监控</el-button>
+            <!-- <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)">监控</el-button> -->
             <el-button type="text" :disabled="scope.row.status !== 'running'" @click="FnToVnc(scope.row.ecs_id)">远程连接</el-button>
         </template>
       </el-table-column>
