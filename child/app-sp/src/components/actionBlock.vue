@@ -27,7 +27,7 @@
           </el-date-picker>
         </div>
         
-        <div>
+        <div class="m-bottom20">
           <el-button type="primary" @click="FnSearch">查 询</el-button>
           <el-button type="default" @click="FnClear">清空</el-button>
         </div>
