@@ -108,6 +108,7 @@
                         >
                             <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                             <div class="remark">{{disk_validate_msg}}</div>
+                            <div class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</div>
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
@@ -506,6 +507,9 @@ export default class CreateDisk extends Vue{
             this.judge_ecs=true
             return;
         }
+        if(!this.form_data.disk_list.every(item=>item.disk_name.length===0 || item.disk_name.length>=2)){
+            return;
+        }
         form.validate(async(valid)=>{
             if(valid){
                 const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
@@ -576,6 +580,14 @@ export default class CreateDisk extends Vue{
             .remark{
                 font-size: 12px;
                 color: #666;
+            }
+            
+            .name-error{
+                font-size: 12px;
+                color: #F56C6C;
+                position: absolute;
+                top: 0;
+                left: 440px;
             }
             .el-input{
                 width: 420px !important;
