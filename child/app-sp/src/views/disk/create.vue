@@ -72,7 +72,7 @@
                                         :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==form_data.customer_id"
                                     ></el-option>
                                 </el-select>
-                                <div class="ecs-error" v-if="form_data.ecs_id==='' && judge_ecs">请输入实例</div>
+                                <div class="ecs-error" v-if="form_data.ecs_id==='' && judge_ecs">请选择或输入实例</div>
                             </el-form-item>
                             </template>
                         </div>
@@ -108,7 +108,7 @@
                         >
                             <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                             <div class="remark">{{disk_validate_msg}}</div>
-                            <div class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</div>
+                            <span class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</span>
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
@@ -503,7 +503,8 @@ export default class CreateDisk extends Vue{
     //创建、
     private async create(){
         const form = this.$refs.form as Form
-        if(this.form_data.ecs_id===""){
+        if(this.form_data.ecs_id==="" && this.form_data.isMounted==="1"){
+            console.log("aaa")
             this.judge_ecs=true
             return;
         }
