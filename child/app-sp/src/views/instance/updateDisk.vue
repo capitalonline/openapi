@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item>
         <el-input-number v-model="data.system_size" 
-          :min="Number(data.default_system_info.disk_min)" 
+          :min="Number(data.system_disk_min)" 
           :max="Number(data.default_system_info.disk_max)" 
           :step="Number(data.default_system_info.disk_step)"
           @change="FnSysEmit"
@@ -83,6 +83,7 @@ export default class updateDisk extends Vue {
       disk_max: 500,
       disk_step: 10
     },
+    system_disk_min: 0,
     system_size: 0
   }
   private async FnGetDiskInfo() {
@@ -175,7 +176,9 @@ export default class updateDisk extends Vue {
     (this.$refs['resetForm'] as any).resetFields();
   }
   public FnSystemMinSize() {
-    return Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
+    this.data.system_disk_min = Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
+    console.log(this.data.default_system_info.disk_min, this.os_disk_size)
+    return this.data.system_disk_min
   }
 
   private created() {
