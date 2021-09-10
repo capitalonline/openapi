@@ -44,7 +44,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
 import moment from 'moment';
 import Service from '../../https/alarm/list'
 @Component({

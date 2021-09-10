@@ -15,7 +15,11 @@ export async function getUserInfo() {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
     store.commit('SET_AUTH_INFO', {
       ...resData.data.permission_dict,
-      mirror_list:[],
+      mirror_list: [],
+      alarm_info:['alarm_strategy_create'],
+      alarm_strategy:[],
+      alarm_contact:[]
+
     });
   }
 }

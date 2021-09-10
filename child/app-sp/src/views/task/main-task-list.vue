@@ -103,7 +103,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import draggerTask from '../../components/draggerTask.vue';
-import actionBlock from '../../components/actionBlock.vue';
+import actionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/task/main-task';
 import SubService from '../../https/task/sub-task';
 

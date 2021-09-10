@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from "../../components/actionBlock.vue"
+import ActionBlock from "../../components/search/actionBlock.vue"
 import service from '../../https/event/detail'
 import backHeader from '../../components/backHeader.vue';
 import moment from 'moment'

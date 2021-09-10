@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
 import moment from 'moment';
 
 @Component({

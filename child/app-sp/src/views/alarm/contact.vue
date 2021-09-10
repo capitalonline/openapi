@@ -10,7 +10,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue'
+import ActionBlock from '../../components/search/actionBlock.vue'
 import List from './contact_list.vue';
 import GroupList from './contact_group_list.vue'
 @Component({

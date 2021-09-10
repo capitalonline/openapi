@@ -191,7 +191,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
 import LabelBlock from '../../components/labelBlock.vue';
 import Params from '../../components/params/index.vue';
 import Item from '../../components/params/item.vue'

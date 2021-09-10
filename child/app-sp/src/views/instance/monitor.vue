@@ -17,26 +17,8 @@
       <el-tabs v-model="default_tab" type="card">
         <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>
       </el-tabs>
-      <div class="time-box">
-        <el-radio-group v-model="default_time" @change="FnChangeTime" class="m-right20">
-          <el-radio-button 
-            v-for="(value, key) in time_list" 
-            :key="key" 
-            :label="key">
-            {{ value.label }}
-          </el-radio-button>
-        </el-radio-group>
 
-        <span class="m-left20 m-right10">选择时间范围:</span>
-        <el-date-picker
-          v-model="default_date_timer"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          @change="FnChangeDateTimer">
-        </el-date-picker>
-      </div>
+      <time-group @fn-emit="FnGetTimer"></time-group>
 
       <div class="chart-box" v-if="default_tab === 'instance'">
         <line-echart 
@@ -92,12 +74,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import BackHeader from '../../components/backHeader.vue';
+import TimeGroup from '../../components/search/timeGroup.vue';
 import LineEchart from '../../components/chart/list.vue';
 import Service from '../../https/instance/record_detail';
 
 @Component({
   components: {
     BackHeader,
+    TimeGroup,
     LineEchart
   }
 })
@@ -121,18 +105,12 @@ export default class Monitor extends Vue{
     disk: '磁盘',
     gpu: 'GPU'
   }
-  private time_list = {
-    hour: {label: '1小时', time: 1000 * 60 * 60},
-    '6_hour': {label: '6小时', time: 1000 * 60 * 60 * 6},
-    '12_hour': {label: '12小时', time: 1000 * 60 * 60 * 12},
-    day: {label: '1天', time: 1000 * 60 * 60 * 24},
-    '3_day': {label: '3天', time: 1000 * 60 * 60 * 24 * 3},
-    week: {label: '7天', time: 1000 * 60 * 60* 24 * 7},
-    '14_day': {label: '14天', time: 1000 * 60 * 60* 24 * 14}
-  };
-  private default_time = '';
   private default_date_timer = [];
-
+  
+  private FnGetTimer(timer) {
+    this.default_date_timer = timer;
+    console.log('timer', timer)
+  }
   private async FnGetDetail() {
     const resData: any = await Service.get_detail({
       ecs_id: this.$route.params.id
@@ -151,27 +129,10 @@ export default class Monitor extends Vue{
       this.detail_info.status.value = data.status_display;
     }
   }
-  private FnChangeTime() {
-    let time = this.time_list[this.default_time].time;
-    let now = new Date().getTime();
-    this.default_date_timer = [new Date(now), new Date(now + time)]
-  }
-  private FnChangeDateTimer() {
-    this.default_time = '';
-    let time = this.default_date_timer[1].getTime() - this.default_date_timer[0].getTime();
-    for (let key in this.time_list) {
-      if (this.time_list[key].time === time) {
-        this.default_time = key;
-      }
-    }
-  }
 
   private created() {
     this.FnGetDetail();
     this.default_tab = Object.keys(this.tab_list)[0];
-    this.default_time = Object.keys(this.time_list)[0];
-    this.FnChangeTime();
-    console.log('default_tab', this.time_list)
   }
 }
 </script>
@@ -195,13 +156,6 @@ export default class Monitor extends Vue{
 }
 .el-tabs {
   background: #fff;
-}
-.time-box {
-  display: flex;
-  align-items: center;
-}
-.el-range-editor.el-input__inner{
-  padding: 0px 10px !important;
 }
 .chart-box {
   display: flex;

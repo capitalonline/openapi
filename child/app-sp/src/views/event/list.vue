@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from "../../components/actionBlock.vue";
+import ActionBlock from "../../components/search/actionBlock.vue";
 import service from '../../https/event/list';
 import moment from 'moment';
 @Component({

@@ -55,7 +55,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue'
+import ActionBlock from '../../components/search/actionBlock.vue'
 import AddGroup from './add_group.vue'
 @Component({
     components:{

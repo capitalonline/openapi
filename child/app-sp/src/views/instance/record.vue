@@ -65,7 +65,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/instance/record_detail';
 import moment from 'moment';
 

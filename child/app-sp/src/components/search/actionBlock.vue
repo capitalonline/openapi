@@ -10,24 +10,15 @@
               <el-option v-for="item in value.list" :key="item.type" :label="item.label" :value="item.type"></el-option>
             </el-select>
           </el-input>
-          <el-date-picker
-            v-if="value.type==='datetimerange'|| value.type==='daterange'"
-            v-model="time"
-            :type="value.type"
-            :editable="false"
-            range-separator="至"
-            :picker-options="{
-              disabledDate:dis_date,
-              onPick:onPicker
-              }"
-            :clearable="value.clearable"
-            @change="changeTime(key)"
-            :start-placeholder="value.placeholder[0]"
-            :end-placeholder="value.placeholder[1]">
-          </el-date-picker>
+          <template v-if="value.type==='datetimerange'|| value.type==='daterange'" >
+            <date-picker ref="datepicker"
+              :time_option="search_option[key]" 
+              @fn-emit="FnGetTime($event, key)">
+            </date-picker>
+          </template>
         </div>
         
-        <div>
+        <div class="m-bottom20">
           <el-button type="primary" @click="FnSearch">查 询</el-button>
           <el-button type="default" @click="FnClear">清空</el-button>
         </div>
@@ -40,18 +31,27 @@
 
 <script lang="ts">
 import { Component, Prop, Emit, Vue, Watch } from 'vue-property-decorator';
+import DatePicker from './DatePicker.vue'
 import moment from 'moment'
-@Component
+
+@Component({
+  components: {
+    DatePicker
+  }
+})
 export default class ActionBlock extends Vue {
   @Prop({ default: {} }) private search_option!: Object;
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
 
   private search_value = {};
-  private time:any=null
-  private date_key:string = ""
-  private min_date:any = ""
-  private day:number=0
+  private time: any = null;
+  private date_key: string = "";
+  
+  private FnGetTime(time, key) {
+    this.time = time;
+    this.date_key = key;
+  }
 
   @Emit('fn-search')
   private FnSearch() {
@@ -63,40 +63,14 @@ export default class ActionBlock extends Vue {
   }
   private FnClear(){
     for(let i in this.search_option){
-      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
-          this.time=[new Date(),new Date()]
-      }else{
+      if(["datetimerange", "daterange"].includes(this.search_option[i].type)) {
+        (this.$refs.datepicker as any)[0].FnClear();
+      } else {
         this.search_value[i]=""
       }
     }
     this.FnSearch()
   }
-  created() {
-    for(let i in this.search_option){
-      if(["datetimerange", "daterange"].includes(this.search_option[i].type)){
-        this.time = this.search_option[i].defaultTime;
-        this.day = (this.search_option[i].dis_day - 1) || 0
-        this.date_key = i;
-      }
-    }
-  }
-  private dis_date(cur){
-    const {day}=this
-    if(day===0) return;
-    let date = new Date()
-    if(!this.min_date || this.min_date===""){
-      return cur.getTime() > date.getTime()+1000*60*60*24*day
-    }
-    return cur.getTime() > this.min_date+1000*60*60*24*day || cur.getTime() < this.min_date-1000*60*60*24*day
-
-  }
-  private onPicker({ maxDate, minDate }){
-    this.min_date = minDate.getTime()
-  }
-  changeTime(key){
-    this.date_key=key
-  }
-
 }
 </script>
 

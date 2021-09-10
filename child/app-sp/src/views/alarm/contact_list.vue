@@ -40,7 +40,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue'
+import ActionBlock from '../../components/search/actionBlock.vue'
 import AddContact from './add_contact.vue'
 import AddToGroup from './add_to_group.vue'
 import Service from '../../https/alarm/list'
