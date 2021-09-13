@@ -19,9 +19,6 @@
 
         <el-card>
           <label-block label="可用区" :is_required="true">
-            <!-- <el-select v-model="default_region" value-key="region_id" class="m-right20">
-              <el-option v-for="region in region_list" :key="region.region_id" :value="region" :label="region.region_name"></el-option>
-            </el-select> -->
             <div class="region-box">
               <Area :list="region_list" @get_area_id="FnGetRegionId" :area="default_region.region_id" class="m-right20" />
               <el-select v-model="default_az" value-key="az_id">
