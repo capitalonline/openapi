@@ -24,8 +24,8 @@ module.exports = {
           
         // }
       },
-      '/api': {
-        target: 'http://10.128.22.18:9000',
+      '/api/v1': {
+        target: ' http://cloudos-metricsalarm.gic.test',
         // target:'http://10.131.162.69:8001',
         ws: true,
         changeOrigin: true
