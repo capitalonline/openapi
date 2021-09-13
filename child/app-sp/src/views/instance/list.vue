@@ -103,7 +103,7 @@
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
-            <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
+            <reset-pwd ref="reset_pwd" label="新密码" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
           </template>
         </div>
       </div>
