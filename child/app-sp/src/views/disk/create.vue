@@ -70,7 +70,11 @@
                                         :label="`${item.ecs_id} / ${item.ecs_name}`" 
                                         :value="item.ecs_id"
                                         :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==form_data.customer_id"
-                                    ></el-option>
+                                    >
+                                    <el-tooltip class="item" effect="dark" :content="transEcsStatus(item.status)" placement="right" v-if="item.status!=='running' && item.status!=='shutdown'">
+                                        <span>{{`${item.ecs_id} / ${item.ecs_name}`}}</span>
+                                    </el-tooltip>
+                                    </el-option>
                                 </el-select>
                                 <div class="ecs-error" v-if="form_data.ecs_id==='' && judge_ecs">请选择或输入实例</div>
                             </el-form-item>
@@ -232,6 +236,7 @@ import ServiceList from '../../https/instance/list';
 import disk_service from '../../https/disk/create'
 import detail_service from '../../https/instance/record_detail'
 import Detail from '../instance/detail.vue'
+import {getEcsStatus} from '../../utils/getStatusInfo'
 import { Form } from "element-ui";
 // import scrollDirective from '../../utils/select-directive';
 import moment from 'moment'
@@ -318,7 +323,7 @@ export default class CreateDisk extends Vue{
     @Watch("form_data.az")
     private watch_az(newVal){
         console.log("form_data.az",newVal)
-        // this.get_instance_list("")
+        this.get_instance_list("")
     }
     //监听云盘名称
     @Watch("form_data.disk_list",{ immediate: true, deep: true })
@@ -330,7 +335,6 @@ export default class CreateDisk extends Vue{
         if (resData.code == 'Success') {
             this.form_data={...this.form_data,customer_name:resData.data.customer_name}
             this.get_area_list();
-            this.get_instance_list("")
             this.get_disk_type()
         }
     }
@@ -347,9 +351,11 @@ export default class CreateDisk extends Vue{
             page_index:1,
             page_size:20,
             keyword:val,
+            customer_id:this.form_data.customer_id,
+
         });
         if (resData.code == 'Success') {
-            this.ECS_instance_list = resData.data.ecs_list;
+            this.ECS_instance_list = resData.data.ecs_list.filter(item=>item.az_id===this.form_data.az);
         }
     }
     
@@ -428,9 +434,10 @@ export default class CreateDisk extends Vue{
             })
         })
         this.form_data={...this.form_data,area:val,az:this.az_list[0].az_id,ecs_id:''}
-        if(this.form_data.isMounted==='1'){
-            this.get_instance_list('')
-        }
+        
+        // if(this.form_data.isMounted==='1'){
+        //     this.watch_az(this.az_list[0].az_id)
+        // }
     }
     //新增云盘配置
     private add(){
@@ -502,6 +509,10 @@ export default class CreateDisk extends Vue{
     }
     //监听容量改变
     private change_capacity(val){
+    }
+    //将状态码转变成状态内容
+    transEcsStatus(type){
+        return `状态${getEcsStatus(type)}不可挂载`
     }
     //创建、
     private async create(){

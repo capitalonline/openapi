@@ -43,9 +43,14 @@
                   :label="`${item.ecs_id} / ${item.ecs_name}`" 
                   :value="item.ecs_id"
                   :disabled="mount_id.length===0 || item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==mount_id[0].customer_id"
-                ></el-option>
-
+                >
+                  <el-tooltip class="item" effect="dark" :content="transEcsStatus(item.status)" placement="right" v-if="item.status!=='running' && item.status!=='shutdown'">
+                    <span>{{`${item.ecs_id} / ${item.ecs_name}`}}</span>
+                  </el-tooltip>
+                </el-option>
               </el-select>
+              <div class="ecs-error" v-if="form_data.instance_id==='' && judge_ecs">请选择或输入实例</div>
+
             </el-form-item>
             <el-form-item
               prop="del_set"
@@ -67,6 +72,7 @@ import {Form} from 'element-ui';
 import Service from '../../https/disk/list'
 import ServiceList from '../../https/instance/list';
 import detail_service from '../../https/instance/record_detail'
+import {getEcsStatus} from '../../utils/getStatusInfo'
 @Component({})
 export default class MountDisk extends Vue{
   $message;
@@ -76,7 +82,7 @@ export default class MountDisk extends Vue{
       instance_id:'',
       del_set:false,
     }
-    
+    private judge_ecs:Boolean=false
     private instance_list:any=[]
 
     created() {
@@ -88,6 +94,7 @@ export default class MountDisk extends Vue{
       if(newVal==="" || !newVal){
         return;
       }
+      this.judge_ecs = false
       this.get_mounted_num(newVal)
     }
     //获取实例列表
@@ -96,9 +103,10 @@ export default class MountDisk extends Vue{
             page_index:1,
             page_size:20,
             keyword:val,
+            customer_id:this.mount_id[0].customer_id,
         });
         if (resData.code == 'Success') {
-            this.instance_list = resData.data.ecs_list || [];
+            this.instance_list = resData.data.ecs_list.filter(item=>item.az_id===this.mount_id[0].az_id) || [];
         }
     }
     //获取实例挂载数据盘数量
@@ -116,8 +124,16 @@ export default class MountDisk extends Vue{
           }
         }
     }
+    //将状态码转变成状态内容
+    transEcsStatus(type){
+        return `状态${getEcsStatus(type)}不可挂载`
+    }
     private confirm(){
       const form = this.$refs.form as Form
+      if(this.form_data.instance_id===""){
+            this.judge_ecs=true
+            return;
+        }
       form.validate(async (valid:boolean)=>{
         if(valid){
             const temp:Array<string> = []
@@ -160,7 +176,13 @@ export default class MountDisk extends Vue{
     width: 100%;
     text-align: center;
   }
- 
+ .ecs-error{
+    font-size: 12px;
+    color: #F56C6C;
+    position: absolute;
+    top: 28px;
+    left: 2px ;
+  }
   
   
   

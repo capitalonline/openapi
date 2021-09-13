@@ -13,7 +13,7 @@ const status = {
   updating: '更新中',
   error: '错误',
   recovering: '恢复中',
-  failed: '失败'
+  failed: '创建失败'
 }
 
 // {操作：[主机状态]}
@@ -33,5 +33,8 @@ export default {
   getInsOperateAuth(type) {
     return auth[type]
   }
+}
+export const getEcsStatus=(type)=>{
+  return status[type]
 }
 

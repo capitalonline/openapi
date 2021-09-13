@@ -66,7 +66,7 @@ export default class ActionBlock extends Vue {
   private FnShowCreate() {
   }
   private FnClear(){
-    this.set_time([new Date(),new Date()])
+    this.set_time()
     this.search_value={}
     this.FnSearch()
   }
