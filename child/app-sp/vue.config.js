@@ -16,20 +16,26 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
-      '/api/v1/metric': {
+      '/monitor/api': {
         target: 'http://cloudos-metricsapi.gic.test',
-        ws: true,
         changeOrigin: true,
-        // pathRewite: {
-          
-        // }
+        pathRewrite: {
+          '^/monitor/api': '/api'
+        }
       },
-      '/api/v1': {
+      '/alarm/api': {
         target: ' http://cloudos-metricsalarm.gic.test',
         // target:'http://10.131.162.69:8001',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/alarm/api': '/api'
+        }
+      },
+      '/api': {
+        target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
-      },
+      }
     }
   },
   configureWebpack: {

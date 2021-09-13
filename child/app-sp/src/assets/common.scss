@@ -1,4 +1,15 @@
-  
+.prompt_message {
+  font-size: 12px;
+  color: #666;
+}
+.warning_message {
+  font-size: 12px;
+  color: #e6a23c;
+}
+.num_message {
+  color: #455cc6;
+}
+
 .building,
 .restarting,
 .shutting_down,

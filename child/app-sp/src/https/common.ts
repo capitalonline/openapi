@@ -1,7 +1,7 @@
 import qs from 'qs';
 const BASE = "/ecs_business/v1";
-const MONITOR_BASE = "/api/v1/metric";
-const ALARM_BASE = '/api/v1'
+const MONITOR_BASE = "/monitor/api/v1/metric";
+const ALARM_BASE = '/alarm/api/v1'
 function getOptions(base_url: string, met:('GET'|'POST'|'PUT'|'DELETE'), url: string, data: any = null) {
     if (met === "GET" || met === "DELETE"){
         return {
