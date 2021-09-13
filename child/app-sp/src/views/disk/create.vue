@@ -106,9 +106,12 @@
                             prop="disk_name"
                             label="云盘名称"
                         >
-                            <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
+                            <div class="disk-name">
+                                <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
+                                <span class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</span>
+                            </div>
                             <div class="remark">{{disk_validate_msg}}</div>
-                            <span class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</span>
+                            
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
@@ -504,7 +507,6 @@ export default class CreateDisk extends Vue{
     private async create(){
         const form = this.$refs.form as Form
         if(this.form_data.ecs_id==="" && this.form_data.isMounted==="1"){
-            console.log("aaa")
             this.judge_ecs=true
             return;
         }
@@ -582,14 +584,17 @@ export default class CreateDisk extends Vue{
                 font-size: 12px;
                 color: #666;
             }
-            
-            .name-error{
-                font-size: 12px;
-                color: #F56C6C;
-                position: absolute;
-                top: 0;
-                left: 440px;
+            .disk-name{
+                display: flex;
+                .name-error{
+                    font-size: 12px;
+                    color: #F56C6C;
+                    margin-left: 20px;
+                    line-height: 20px;
+                    margin-top: 8px;
+                }
             }
+            
             .el-input{
                 width: 420px !important;
             }
