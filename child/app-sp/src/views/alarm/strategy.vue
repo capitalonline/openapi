@@ -19,8 +19,20 @@
                     <span>{{scope.row.name}} / {{scope.row.id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="clientName" label="被应用过的产品"></el-table-column>
-            <el-table-column prop="disk_id" label="策略状态"></el-table-column>
+            <el-table-column prop="instances" label="被应用过的产品">
+                <template slot-scope="scope">
+                    <div class="used-products">
+                        <span class="app"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0]};${scope.row.instances[1]};...` : scope.row.instances.join(';') : ''}}</span>
+                        <i class="el-icon-document" v-if="scope.row.instances"></i>
+                    </div>
+                    
+                </template>
+            </el-table-column>
+            <el-table-column prop="enable" label="策略状态">
+                <template slot-scope="scope">
+                    <span>{{scope.row.enable ? '已启用' :'未启用'}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间">
                 <template slot-scope="scope">
                     <span>{{scope.row.createTime ? moment(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
@@ -79,7 +91,7 @@ export default class Strategy extends Vue{
     private total:number = 0
     private moment:any = moment
     created() {
-        // this.fn_search()
+        this.fn_search()
     }
     private fn_search(data:any={}){
         this.current =1
@@ -120,3 +132,17 @@ export default class Strategy extends Vue{
     }
 }
 </script>
+<style lang="scss" scoped>
+.used-products{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    i.el-icon-document{
+        cursor: pointer;
+    }
+    .el-icon-document:before {
+        content: "\e785";
+        color: #455cc6;
+    }
+}
+</style>

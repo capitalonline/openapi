@@ -206,6 +206,7 @@ import { Form } from "element-ui";
 import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/data'
 @Component({})
 export default class RuleConfig extends Vue{
+    @Prop({default:()=>[]})strategy_data!:any
     private tab_key:string="0"
     private edit_key:string="";
     private selected_product_id:String="";
@@ -244,6 +245,25 @@ export default class RuleConfig extends Vue{
         productList.forEach(item=>{
             this.product_list.push({...item,visible:false,rule_list:[]})
         })
+    }
+    @Watch("strategy_data",{immediate:true,deep:true})
+    private watch_strategy_data(newVal){
+        console.log("watch_strategy_data",newVal)
+        this.selected_products=[]
+        if(newVal.length>0){
+                const fil = this.selected_products.filter(element=>element.id===newVal.id)
+                if(fil.length===0){
+                    this.selected_products.push({
+                        id:newVal.id,
+                        name:newVal.name,
+                        rule_list:newVal.ruleRecords,
+                        visible:false
+
+                    })
+                }else{
+                    fil[0].rule_list=[...fil[0].rule_list,...newVal.ruleRecords]
+                }
+        }
     }
     private add_product(e){
         if(this.selected_products.filter(item=>item.id===e).length>0){
