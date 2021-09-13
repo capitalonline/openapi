@@ -24,25 +24,19 @@
         <line-echart 
           chart_id="cpu_chart"
           title="CPU使用率（%）"
-          :time_frame="default_date_timer"
+          :data="cpu_used"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="ram_chart"
           title="内存使用率（%）"
-          :time_frame="default_date_timer"
+          :data="memory_used"
           class="item"
         ></line-echart>
         <line-echart 
-          chart_id="sur_ram_chart"
-          title="剩余百分比使用率（%）"
-          :time_frame="default_date_timer"
-          class="item">
-        </line-echart>
-        <line-echart 
           chart_id="system_chart"
           title="系统平均负载（%）"
-          :time_frame="default_date_timer"
+          :data="system_load"
           class="item">
         </line-echart>
       </div>
@@ -51,12 +45,12 @@
         <line-echart 
           chart_id="disk_chart"
           title="磁盘使用率（%）"
-          :time_frame="default_date_timer"
+          :data="disk_used"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="disk_through_chart"
-          title="内存吞吐量（Kbps）"
+          title="磁盘吞吐量（Kbps）"
           :time_frame="default_date_timer"
           class="item"
         ></line-echart>
@@ -100,6 +94,39 @@ export default class Monitor extends Vue{
     private_net_ip: {label: '私网IP', value: ''},
     status: {label: '运行状态', value: ''}
   }
+  private cpu_used = {
+    xTime: [],
+    yValue: [],
+    resize: 0
+  };
+  private memory_used = {
+    xTime: [],
+    yValue: [],
+    resize: 0
+  };
+  private system_load = {
+    xTime: [],
+    yValue: [],
+    resize: 0
+  };
+  private disk_used = {
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  };
+  private disk_iops = {
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  };
+  private disk_bytes = {
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  }
   private default_tab = '';
   private tab_list = {
     instance: '主机',
@@ -111,7 +138,10 @@ export default class Monitor extends Vue{
   
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
-    this.FnGetCpu()
+    this.FnGetCpu();
+    this.FnGetMemory();
+    this.FnGetDiskInfo();
+    this.FnGetLoad();
   }
   private async FnGetDetail() {
     const resData: any = await DetailService.get_detail({
@@ -130,6 +160,8 @@ export default class Monitor extends Vue{
       this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
       this.detail_info.status.value = data.status_display;
       this.FnGetCpu();
+      this.FnGetMemory();
+      this.FnGetDiskInfo();
     }
   }
   private async FnGetCpu() {
@@ -138,12 +170,99 @@ export default class Monitor extends Vue{
     }
     let resData: any = await Service.get_cpu({
       id: this.detail_info.ecs_id.value,
-      ip: this.detail_info.private_net_ip.value,
+      // ip: this.detail_info.private_net_ip.value,
+      ip: '10.0.0.36',
       instanceType: 'vm',
+      // start: this.default_date_timer[0],
+      // end: this.default_date_timer[1],
       start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
       end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
       queryType: 'use_total'
     })
+    if (resData.code === 0) {
+      this.cpu_used.xTime = resData.data.xTime;
+      this.cpu_used.yValue = resData.data.yValues;
+    }
+    this.cpu_used.resize++;
+  }
+  private async FnGetMemory() {
+    if (!this.detail_info.ecs_id.value) {
+      return
+    }
+    let resData: any = await Service.get_memory({
+      id: this.detail_info.ecs_id.value,
+      // ip: this.detail_info.private_net_ip.value,
+      ip: '10.0.0.36',
+      instanceType: 'vm',
+      // start: this.default_date_timer[0],
+      // end: this.default_date_timer[1],
+      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
+      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      queryType: 'used'
+    })
+    if (resData.code === 0) {
+      this.memory_used.xTime = resData.data.xTime;
+      this.memory_used.yValue = resData.data.yValues;
+    }
+    this.memory_used.resize++;
+  }
+  private async FnGetLoad() {
+    if (!this.detail_info.ecs_id.value) {
+      return
+    }
+    let resData: any = await Service.get_load({
+      id: this.detail_info.ecs_id.value,
+      // ip: this.detail_info.private_net_ip.value,
+      ip: '10.0.0.36',
+      instanceType: 'vm',
+      // start: this.default_date_timer[0],
+      // end: this.default_date_timer[1],
+      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
+      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      queryType: '1m'
+    })
+    if (resData.code === 0) {
+      this.system_load.xTime = resData.data.xTime;
+      this.system_load.yValue = resData.data.yValues;
+    }
+    this.system_load.resize++;
+  }
+  private FnGetDiskInfo() {
+    this.FnGetDiskData('use').then(res => {
+      this.disk_used = JSON.parse(JSON.stringify(res));
+    });
+    this.FnGetDiskData('readbytes').then(res => {
+      
+    });
+    this.FnGetDiskData('writebytes').then(res => {
+      
+    });
+  }
+  private async FnGetDiskData(type) {
+    if (!this.detail_info.ecs_id.value) {
+      return
+    }
+    let resData: any = await Service.get_disk({
+      id: this.detail_info.ecs_id.value,
+      // ip: this.detail_info.private_net_ip.value,
+      ip: '10.0.0.36',
+      instanceType: 'vm',
+      // start: this.default_date_timer[0],
+      // end: this.default_date_timer[1],
+      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
+      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      queryType: 'use'
+    })
+    if (resData.code === 0) {
+      // this.disk_list = resData.data.metricInfo;
+    }
+    let resize = this.disk_used.resize++;
+    return {
+      xTime: resData.data.xTime,
+      yValue: resData.data.yValues,
+      resize: resize,
+      legend: resData.data.metricInfo
+    }
   }
   private created() {
     this.FnGetDetail();

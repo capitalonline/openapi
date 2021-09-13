@@ -1,8 +1,8 @@
 <template>
   <el-card>
     <div :id="chart_id" :key="chart_id" class="chart"></div>
-    <el-select v-model="selected_legend" @change="FnChangeSelected">
-      <el-option v-for="item in legend_list" :key="item" :value="item" :label="item"></el-option>
+    <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="data.legend && data.legend.length > 0" clearable>
+      <el-option v-for="item in data.legend" :key="item" :value="item" :label="item"></el-option>
     </el-select>
   </el-card>
 </template>
@@ -48,12 +48,17 @@ import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 
 @Component
-export default class LineEchart extends Vue{
+export default class LineEchart extends Vue {
   @Prop({default: 'id'}) private chart_id!: string;
   @Prop({default: ''}) private title!: string;
-  @Prop({default: []}) private time_frame!: Array<string>;
+  @Prop({default: () => {
+    return {
+      xTime: [],
+      yValue: [],
+      resize: 0
+    }
+  }}) private data!: any;
   private instance = null;
-  private legend_list = [];
   private selected_legend = '';
   private 
   private option: ECOption = {
@@ -81,25 +86,13 @@ export default class LineEchart extends Vue{
       text: this.title
     }
     this.FnGetxAxis();
-    this.instance.setOption(this.option)
+    console.log('option', this.option)
+    if(this.instance) {
+      this.instance.setOption(this.option)
+    }
   }
 
   private FnGetxAxis() {
-    let start_time = new Date(this.time_frame[0]).getTime();
-    let end_time = new Date(this.time_frame[1]).getTime();
-    let x_data = [];
-    let y_data_0 = [];
-    let y_data_1 = [];
-    let y_data_2 = [];
-    let y_data_3 = [];
-    let minute = 1000 * 60;
-    for(let i = 0; i < Math.floor((end_time - start_time)/minute); i++) {
-      x_data.push(moment(new Date(start_time + i*minute)).format('MM-DD hh:mm'))
-      y_data_0.push(Math.random()*100)
-      y_data_1.push(Math.random()*100)
-      y_data_2.push(Math.random()*100)
-      y_data_3.push(Math.random()*100)
-    }
     this.option.legend = {
         type: 'scroll',
         orient: 'vertical',
@@ -111,31 +104,27 @@ export default class LineEchart extends Vue{
     this.option.xAxis = {
       type: 'category',
       boundaryGap: false,
-      data: x_data
+      data: this.data.xTime,
     };
-    this.option.series = [{
-      name: '1',
-      data: y_data_0,
-      type: 'line',
-      smooth: true
-    },{
-      name: '2',
-      data: y_data_1,
-      type: 'line',
-      smooth: true
-    },{
-      name: '3',
-      data: y_data_2,
-      type: 'line',
-      smooth: true
-    },{
-      name: '4',
-      data: y_data_3,
-      type: 'line',
-      smooth: true
-    }]
-    this.legend_list = ['0','1','2','3','4'];
-    this.selected_legend = '0';
+    this.option.series = [];
+    if (!this.data.legend || this.data.legend.length === 0) {
+      this.option.series.push({
+        name: this.title,
+        data: this.data.yValue,
+        type: 'line',
+        smooth: true
+      })
+      return
+    }
+    for(let i = 0; i < this.data.legend.length; i++) {
+      let item  = this.data.yValue[i];
+      this.option.series.push({
+        name: this.data.legend[i],
+        data: item,
+        type: 'line',
+        smooth: true
+      })
+    }
   }
 
   private mounted() {
@@ -148,10 +137,10 @@ export default class LineEchart extends Vue{
   }
 
   private FnChangeSelected() {
-    if (this.selected_legend === '0') {
+    if (!this.selected_legend) {
       this.instance.dispatchAction({type: 'legendAllSelect'})
     } else {
-      this.legend_list.forEach(item => {
+      this.data.legend.forEach(item => {
         if (item === this.selected_legend) {
           this.instance.dispatchAction({type: 'legendSelect', name: item})
         } else {
@@ -164,10 +153,15 @@ export default class LineEchart extends Vue{
   @Watch('chart_id')
   private FnChangeChartId(newVal) {
     this.$nextTick(() => {
-      console.log('chart_id', this.chart_id, document.querySelector(`#${this.chart_id}`))
       this.instance = echarts.init(document.querySelector(`#${this.chart_id}`));
       this.FnSetOption();
     })
+  }
+
+  @Watch('data.resize')
+  private FnChangeChart(newVal) {
+    console.log('newVal', newVal)
+    this.FnSetOption();
   }
 }
 
