@@ -23,7 +23,7 @@
     </div>
     <template v-if="data_disk">
       <div v-for="(disk, index) in data_disk_list" :key="index" class="inline-form">
-        <el-form-item class="short-select">
+        <el-form-item class="short-select" :label="index===0?'数据盘':''">
           <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
           <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20">
             <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
@@ -45,7 +45,7 @@
           <el-checkbox v-model="disk.del" @change="FnDataEmit">随实例删除</el-checkbox>
         </el-form-item>
       </div>
-      <el-form-item label="数据盘">
+      <el-form-item :label="data_disk_list.length===0?'数据盘':''">
         <div class="disk-btn">
           <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘， 

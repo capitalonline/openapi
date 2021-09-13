@@ -9,7 +9,7 @@
     <el-form-item label="用户名">
       {{ username }}
     </el-form-item>
-    <el-form-item label="新密码" prop="password">
+    <el-form-item :label="label" prop="password">
       <div class="long-input"><el-input type="password" v-model="data.password"></el-input></div>
       <div class="prompt_message"> 8-30个字符，且同时包含三项（大写字母、小写字母、数字、()`~!@#$%^&*-+=_|{}[]:;,.?/中的特殊字符）</div>
     </el-form-item>
@@ -26,6 +26,7 @@ import { checkPwd } from '../../utils/checkPwd';
 @Component
 export default class resetPwd extends Vue{
   @Prop({default: 'root/administrator'}) private username!: string;
+  @Prop({default: '密码'}) readonly label!: string;
   private data = {
     password: '',
     confirm_password: ''
