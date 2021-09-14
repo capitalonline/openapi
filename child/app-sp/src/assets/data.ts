@@ -102,6 +102,7 @@ export const mock = {
             "ruleRecords": [
                 //一个阈值指标项
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -117,6 +118,7 @@ export const mock = {
               },
               //一个阈值指标项
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["email","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -139,6 +141,7 @@ export const mock = {
             "productType": "ecs",//产品类型
             "ruleRecords": [
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -161,6 +164,7 @@ export const mock = {
             "productType": "gpu",//产品类型
             "ruleRecords": [
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "event",//阈值报警还是事件报警
                 "eventName": ["crash","oom"],//事件名称
@@ -356,7 +360,7 @@ export const alarm_type=[
         title:'普通',
     },
 ]
-export const notice_list = ["邮箱","短信","微信"]
+export const notice_list = [{id:'email',name:"邮箱"},{id:'phone',name:"短信"},{id:'wx',name:"微信"}]
 export const event_type=[
     {
         id:'abnormal_event',

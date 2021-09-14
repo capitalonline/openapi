@@ -1,0 +1,101 @@
+
+export const area_list = [
+    {
+        "region_group_id":"408fd19e-fa78-11e6-bd9a-30b49e091019",
+        "region_group_name":"中国大陆",
+        "region_list":[
+            {
+                "region_id":"bj",
+                "region_name":"北京",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5f",
+                        "az_name":"北京A"
+                    }
+                ]
+                
+            },
+            {
+                "region_id":"sh",
+                "region_name":"上海",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5d",
+                        "az_name":"上海A"
+                    }
+                ]
+                
+            },
+            {
+                "region_id":"wx",
+                "region_name":"无锡",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d54",
+                        "az_name":"上海A"
+                    }
+                ]
+                
+            },
+            {
+                "region_id":"wh",
+                "region_name":"武汉",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5g",
+                        "az_name":"上海A"
+                    }
+                ]
+                
+            },
+            {
+                "region_id":"gz",
+                "region_name":"广州",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5h",
+                        "az_name":"上海A"
+                    }
+                ]
+                
+            },
+            {
+                "region_id":"hz",
+                "region_name":"杭州",
+                "az_list":[
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5d",
+                        "az_name":"上海A"
+                    }
+                ]
+                
+            }
+        ]
+    },
+    {
+        "region_group_id":"498cc42c-b89d-11eb-b74e-1e00e202ff80",
+        "region_group_name":"南美地区",
+        "region_list":[
+            {
+                "region_id":"sbl",
+                "region_name":"圣保罗",
+                "az_list":[
+                    {
+                        "az_id":"f9755192-b89d-11eb-b74e-1e00e202ff80",
+                        "az_name":"圣保罗A"
+                    }
+                ]
+            },
+            {
+                "region_id":"xby",
+                "region_name":"西班牙",
+                "az_list":[
+                    {
+                        "az_id":"f9755192-b89d-11eb-b74e-1e00e202ff85",
+                        "az_name":"圣保罗b"
+                    }
+                ]
+            }
+        ]
+    }
+]

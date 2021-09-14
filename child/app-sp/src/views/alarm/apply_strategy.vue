@@ -1,37 +1,31 @@
 <template>
     <el-drawer
         title="应用策略"
-        :visible.sync="drawer"
+        :visible.sync="drawer_sync"
     >
         <div class="drawer">
             <el-form :model="form_data" ref="form" label-width="150px" class="demo-dynamic">
                 <el-form-item
                     prop="customer_id"
-                    label="客户ID："
+                    label="客户ID"
+                    :rules="[
+                        {required:true,message:'请输入客户ID',trigger:'blur'},
+                        { required: true, trigger: 'blur', validator: validate_customer }
+                    ]"
                 >
-                    <el-select v-model="form_data.customer_id" placeholder="请选择客户ID">
-                        <el-option
-                            v-for="item in list"
-                            :key="item.id"
-                            :label="item.title"
-                            :value="item.id"
-                        >
-                        </el-option>
-                    </el-select>
+                    <el-input v-model="form_data.customer_id" />
+                </el-form-item>
+                <el-form-item
+                    prop="customer_name"
+                    label="客户名称"
+                >
+                    <div>{{form_data.customer_name}}</div>
                 </el-form-item>
                 <el-form-item
                     prop="area"
                     label="地域："
                 >
-                    <el-select v-model="form_data.area" placeholder="请选择地域">
-                        <el-option
-                            v-for="item in list"
-                            :key="item.id"
-                            :label="item.title"
-                            :value="item.id"
-                        >
-                        </el-option>
-                    </el-select>
+                    <Region :region_id="form_data.area" />
                 </el-form-item>
                 <el-form-item
                     prop="use_area"
@@ -105,16 +99,28 @@
                     </el-select>
                 </el-form-item>
             </el-form>
+            <div class="foot-btn">
+                <el-button type="primary" @click="confirm">确认应用</el-button>
+                <el-button @click="close">取消</el-button>
+            </div>
         </div>
     </el-drawer>
 </template>
 <script lang="ts">
-import {Vue,Prop,Component} from 'vue-property-decorator'
-@Component({})
+import {Vue,PropSync,Component,Emit,Watch} from 'vue-property-decorator'
+import { Form } from "element-ui";
+import Service from '../../https/instance/create';
+import Region from '../../components/alarm/region.vue'
+@Component({
+    components:{
+        Region
+    }
+})
 export default class ApplyStrategy extends Vue{
-    @Prop() drawer!:Boolean;
+    @PropSync("drawer") drawer_sync!:Boolean;
     private form_data:any={
         customer_id:'',
+        customer_name:'',
         area:'',
         use_area:'',
         cycle:'',
@@ -129,10 +135,52 @@ export default class ApplyStrategy extends Vue{
         {id:3,title:'测试3'},
         {id:4,title:'测试4'},
     ]
+    private validate_customer:any = (rule:any, value:string, callback:any)=>{
+        if(value.length>6){
+            return callback()
+        }else{
+            return callback(new Error("请输入正确的客户ID"))
+        }
+    }
+    //监听客户ID
+    @Watch("form_data.customer_id")
+    private watch_customer_id(newVal){
+        const form = this.$refs.form as Form
+        form.validateField(['customer_id'],(err:string)=>{
+            if(!err){
+                this.get_customer_name()
+            }
+        })
+            
+        
+    }
+    //获取客户名称
+    private async get_customer_name(){
+        const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
+        if (resData.code == 'Success') {
+            this.form_data={...this.form_data,customer_name:resData.data.customer_name}
+            // this.get_area_list();
+            // this.get_instance_list("")
+            // this.get_disk_type()
+        }
+    }
+    private confirm(){
+        this.drawer_sync=false
+    }
+    private close(){
+    this.drawer_sync=false
+    }
 }
 </script>
 <style lang="scss" scope>
 .drawer{
     padding: 0 20px 20px 20px;
+    .foot-btn{
+        position: absolute;
+        bottom: 50px;
+        right: 20px;
+        width: 100%;
+        text-align: right;
+    }
 }
 </style>

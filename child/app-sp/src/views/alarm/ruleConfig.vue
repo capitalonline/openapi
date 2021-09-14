@@ -37,12 +37,12 @@
                                     <el-input v-model="rule_data.name" placeholder="请输入规则名称" />
                                 </el-form-item>
                                 <el-form-item
-                                    prop="level_name"
+                                    prop="metricID"
                                     label="指标名称"
                                     :rules="[{ required: true, message: '请选择指标名称', trigger: 'blur' }]"
                                 >
                                     <el-cascader
-                                        v-model="rule_data.level_name"
+                                        v-model="rule_data.metricID"
                                         :options="static_list.level_list"
                                         :show-all-levels="false"
                                         :props="{ expandTrigger: 'hover' }"
@@ -96,7 +96,7 @@
                                             <div class="check">
                                                 <span>通知：</span>
                                                 <el-checkbox-group v-model="inn.notice">
-                                                    <el-checkbox v-for="notice in static_list.notice_list" :key="notice" :label="notice"></el-checkbox>
+                                                    <el-checkbox v-for="notice in static_list.notice_list" :key="notice.id" :label="notice.id">{{notice.name}}</el-checkbox>
                                                 </el-checkbox-group>
                                             </div>
                                             <div class="level-btn" v-if="index===rule_data.level.length-1">
@@ -117,7 +117,7 @@
                                     label="规则名称"
                                     :rules="[{ required: true, message: '请输入规则名称', trigger: 'blur' }]"
                                 >
-                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称" />
+                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称" maxlength="50" show-word-limit />
                                 </el-form-item>
                                 <el-form-item
                                     prop="event_type"
@@ -172,7 +172,7 @@
                                     <div class="check">
                                         <span>通知：</span>
                                         <el-checkbox-group v-model="rule_data.notice">
-                                            <el-checkbox v-for="notice in static_list.notice_list" :key="notice" :label="notice"></el-checkbox>
+                                            <el-checkbox v-for="notice in static_list.notice_list" :key="notice.id" :label="notice.id">{{notice.name}}</el-checkbox>
                                         </el-checkbox-group>
                                     </div>
                                 </el-form-item>
@@ -211,10 +211,10 @@ export default class RuleConfig extends Vue{
     private edit_key:string="";
     private selected_product_id:String="";
     private edit_rule_id:string=""
-
+    
     private rule_data:any={
         name:'',
-        level_name:'',
+        metricID:'',
         event_type:'',
         event_name:'',
         alram_type:'',
@@ -225,7 +225,7 @@ export default class RuleConfig extends Vue{
             cycle_time:'1',
             cycle_num:'1',
             alram_type:'2',
-            notice:["邮箱"],
+            notice:["email"],
         }]
     }
 
@@ -246,30 +246,69 @@ export default class RuleConfig extends Vue{
             this.product_list.push({...item,visible:false,rule_list:[]})
         })
     }
+    
     @Watch("strategy_data",{immediate:true,deep:true})
     private watch_strategy_data(newVal){
         console.log("watch_strategy_data",newVal)
-        this.selected_products=[]
-        if(newVal.length>0){
-                const fil = this.selected_products.filter(element=>element.id===newVal.id)
-                if(fil.length===0){
-                    this.selected_products.push({
-                        id:newVal.id,
-                        name:newVal.name,
-                        rule_list:newVal.ruleRecords,
-                        visible:false
-
-                    })
-                }else{
-                    fil[0].rule_list=[...fil[0].rule_list,...newVal.ruleRecords]
-                }
+        if(Object.keys(newVal).length===0){
+            return;
         }
+        this.selected_products=[]
+        newVal.rules.forEach(element=>{
+            const list=[]
+            element.ruleRecords.forEach(item=>{
+                list.push({
+                    range:item.metricCondition,
+                    num:item.metricValue,
+                    cycle_time:item.metricPeriodNum.toString(),
+                    cycle_num:item.metricPeriod.toString(),
+                    alram_type:item.alarmType==="event" ? '' : item.level.toString(),
+                    notice:item.alarmType==="event" ? [] : item.alarmMethod
+                })
+            })
+            const obj = {//相当于rule_data
+                id:element.id,
+                tab_key:element.ruleRecords[0].alarmType==="event" ? '1' : '0',
+                name:element.name,
+                metricID:element.ruleRecords[0].metricID,
+                event_type:element.ruleRecords[0].eventType,
+                event_name:element.ruleRecords[0].eventName,
+                alram_type:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].level.toString() : '',
+                notice:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].alarmMethod : [],
+                level:list,
+                desc:element.ruleRecords[0].alarmType==="event" ?
+                [`${this.trans_arr(element.ruleRecords[0].level.toString(),alarm_type)} | ${this.trans_arr(element.ruleRecords[0].eventName,event_name)}`] 
+                
+                    :
+                    list.map(inn=>{
+                    return `${element.name} ${inn.range} ${inn.num}% ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                })
+            }
+            const fil:any = this.selected_products.filter(item=>item.id===element.productType)
+            if(fil.length>0){
+                this.selected_products.map(item=>{
+                    if(item.id===element.productType){
+                        item.rule_list = [...item.rule_list,obj]
+                    }
+                    return item;
+                })
+            }else{
+                this.selected_products.push({
+                    id : element.productType,
+                    name : element.productType,
+                    visible : false,
+                    rule_list : [obj],
+                })
+            }
+        })
+        console.log("this.selected_products",this.selected_products)
     }
     private add_product(e){
         if(this.selected_products.filter(item=>item.id===e).length>0){
             return;
         }
         this.selected_products=[...this.selected_products,...this.product_list.filter(item=>item.id===e)]
+        console.log("this.selected_products",this.selected_products)
     }
     private del_product(id:String){
         this.selected_products = this.selected_products.filter(item=>item.id!==id)
@@ -299,7 +338,7 @@ export default class RuleConfig extends Vue{
             cycle_time:'1',
             cycle_num:'1',
             alram_type:'2',
-            notice:["邮箱"],
+            notice:["email"],
         }
         this.rule_data = {...this.rule_data,level:[...this.rule_data.level,obj]}
     }
@@ -382,7 +421,7 @@ export default class RuleConfig extends Vue{
                 cycle_time:'1',
                 cycle_num:'1',
                 alram_type:'2',
-                notice:["邮箱"],
+                notice:["email"],
             }
         ]
     }
@@ -438,7 +477,7 @@ export default class RuleConfig extends Vue{
             margin: 10px 0 ;
         }
         .add-rule{
-            width: 1200px;
+            max-width: 1200px;
             position: absolute;
             top: 30px;
             transform-origin: left center;

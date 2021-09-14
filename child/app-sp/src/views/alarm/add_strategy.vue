@@ -26,7 +26,7 @@
                         </el-select>
                     </el-form-item>
                 </el-form>
-                <RuleConfig :strategy_data="strategy_data" />
+                <RuleConfig :strategy_data="strategy_data" ref="rule_config" />
             </el-card>
             <div class="button_box">
                 <el-card class="box-card">
@@ -56,10 +56,11 @@ export default class Index extends Vue{
         stategy:''
     };
     private strategy_list:any=[]
-    private strategy_data:any=[]
+    private strategy_data:any={}
     created() {
         this.getStrategyList()
-        this.strategy_list = [{id:'',name:'全部'},...create_obj.data]
+        // this.strategy_list = [{id:'',name:'全部'},{id:'1',name:'hhh'}]
+        // this.strategy_list = [{id:'',name:'全部'},...create_obj.data]
     }
     private async getStrategyList(){
         let res:any = await Service.get_strategy_list({
@@ -80,7 +81,53 @@ export default class Index extends Vue{
         
     }
     private create(){
+        const form = this.$refs.form as Form
+        const rule_config = this.$refs.rule_config as any
+        
+        form.validate(valid=>{
+            if(valid){
+                const selected_products = rule_config.selected_products
+                const list=[]
+                selected_products.forEach(item=>{
+                    item.rule_list.forEach(inn=>{
+                        const temp=[]
+                        inn.level.map(lev=>{
+                            const temp_obj={
+                                metricID:inn.metricID,
+                                metricCondition:lev.range,
+                                metricValue:parseInt(lev.num),
+                                metricPeriod:parseInt(lev.cycle_time),
+                                metricPeriodNum:parseInt(lev.cycle_num),
+                                level:parseInt(lev.alram_type),
+                                alarmType:inn.tab_key==="0" ?'metric' : 'event',
+                                alarmMethod:lev.notice ? lev.notice : []
+                            }
+                            temp.push(temp_obj)
+                        })
+                        const obj = {
+                            name:inn.name,
+                            productType:item.id,
+                            ruleRecords:inn.tab_key==="0" ? temp : [{
+                                metricID:inn.metricID,
+                                alarmType:inn.tab_key==="0" ?'metric' : 'event',
+                                alarmMethod:inn.notice ? inn.notice : [],
+                                eventName:inn.event_name,
+                                eventType:inn.event_type,
+                                level:parseInt(inn.alram_type),
 
+                            }]
+                        }
+                        list.push(obj)
+                    })
+                })
+                console.log("######",list)
+                const req={
+                    name:this.form_data.name,
+                    rules:list
+                }
+
+            }
+        })
     }
    
     

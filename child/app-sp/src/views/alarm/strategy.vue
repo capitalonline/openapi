@@ -61,9 +61,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
-        <template v-if="drawer">
-            <ApplyStrategy :drawer="drawer" />
-        </template>
+        <ApplyStrategy :drawer.sync="drawer" />
     </div>
 </template>
 <script lang="ts">
@@ -130,6 +128,7 @@ export default class Strategy extends Vue{
         this.drawer=true
         console.log("this.drawer",this.drawer)
     }
+    
 }
 </script>
 <style lang="scss" scoped>
