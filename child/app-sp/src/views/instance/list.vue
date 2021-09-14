@@ -81,11 +81,34 @@
           :closable = "false"
           center>
         </el-alert>
-        <el-table :data="multiple_selection" border>
-          <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-          <el-table-column prop="customer_name" label="客户名称"></el-table-column>
-          <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-          <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
+        <el-table :data="multiple_selection" border class="operate-table">
+          <el-table-column label="客户名称/客户ID">
+            <template #default="scope">
+              <div>{{ scope.row.customer_name }}</div>
+              <div>{{ scope.row.customer_id }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="云服务器名称/云服务器ID">
+            <template #default="scope">
+              <div>{{ scope.row.ecs_name }}</div>
+              <div>{{ scope.row.ecs_id }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="云服务器规格">
+            <template #default="scope">
+              <div>{{ scope.row.ecs_goods_name }} {{scope.row.cpu_size}}核 {{scope.row.ram_size}}GiB</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="系统盘" v-if="default_operate_type === 'update_system'">
+            <template #default="scope">
+              <div>{{ scope.row.ecs_goods_name }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作系统" v-if="default_operate_type === 'update_system'">
+            <template #default="scope">
+              <div>{{ scope.row.os_type }} {{scope.row.os_version}}</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="status" label="状态">
             <template #default="scope">
               <span :class="scope.row.status">{{ scope.row.status_display }}</span>
@@ -162,9 +185,9 @@ export default class App extends Vue {
       placeholder: ['开始时间', '结束时间'], 
       type: 'daterange', 
       width: '360', 
-      clearable: false,
-      dis_day: 31,
-      defaultTime: [new Date(), new Date()] },
+      clearable: true,
+      dis_day: 1,
+      defaultTime: [] },
     customer_id: { placeholder: '请输入客户ID' },
     customer_name: { placeholder: '请输入客户名称' },
     os_type: { placeholder: '请选择操作系统', list: [] },
@@ -200,8 +223,8 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_type: data.os_type,
       private_net: data.private_net,
-      start_time: data.create_time ? moment(data.create_time[0]).format('YYYY-MM-DD') : undefined,
-      end_time: data.create_time ? moment(data.create_time[1]).format('YYYY-MM-DD') : undefined
+      start_time: data.create_time && data.create_time[0] ? moment(data.create_time[0]).format('YYYY-MM-DD') : undefined,
+      end_time: data.create_time && data.create_time[1] ? moment(data.create_time[1]).format('YYYY-MM-DD') : undefined
     };
     this.page_info.page_index = 1;
     this.FnGetList()
@@ -425,7 +448,13 @@ export default class App extends Vue {
   private FnClose() {
     this.show_operate_dialog = false;
     if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
-      (this.$refs[this.default_operate_type] as any).FnResetForm()
+      if (this.default_operate_type === 'update_system') {
+        (this.$refs.update_os as any).FnResetForm();
+        (this.$refs.update_disk as any).FnResetForm();
+        (this.$refs.reset_pwd as any).FnResetForm();
+      } else {
+        (this.$refs[this.default_operate_type] as any).FnResetForm();
+      }
     }
     this.FnGetList();
   }
@@ -501,5 +530,9 @@ export default class App extends Vue {
 }
 .time-box {
   width: 70px;
+}
+.operate-table {
+  max-height: 300px;
+  overflow: auto;
 }
 </style>
