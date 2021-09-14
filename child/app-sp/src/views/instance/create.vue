@@ -97,7 +97,7 @@
           </div>
           <div class="right-row">
             <div>计算规格</div>
-            <div>{{ ecs_spec_info.cpu_size }}核{{ ecs_spec_info.ram_size }}G</div>
+            <div>{{ ecs_spec_info.cpu_size }}核{{ ecs_spec_info.ram_size }}GiB</div>
           </div>
           <div class="right-row">
             <div>系统盘({{ system_info.disk_name }})</div>

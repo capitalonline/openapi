@@ -162,7 +162,7 @@ export default class updateDisk extends Vue {
     return this.data_disk_list
   }
 
-  private FnSubmit() {
+  public FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
       flag = valid;
@@ -172,12 +172,12 @@ export default class updateDisk extends Vue {
       system_disk: this.FnSysEmit()
     }
   }
-  private FnResetForm(formName) {
+  public FnResetForm(formName) {
     (this.$refs['resetForm'] as any).resetFields();
+    this.data.default_system_info = this.system_disk_info[0];
   }
   public FnSystemMinSize() {
     this.data.system_disk_min = Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
-    console.log(this.data.default_system_info.disk_min, this.os_disk_size)
     return this.data.system_disk_min
   }
 

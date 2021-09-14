@@ -13,12 +13,12 @@
       </el-radio-group>
     </el-form-item>
     <div class="inline-form">
-      <el-form-item label="" class="m-right20" prop="default_os_type">
+      <el-form-item class="m-right20" prop="default_os_type">
         <el-select v-model="data.default_os_type">
           <el-option v-for="os_type in default_os_template_type.os_types" :key="os_type" :value="os_type" :label="os_type"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="" prop="default_os_version">
+      <el-form-item prop="default_os_version">
         <el-select v-model="data.default_os_version" value-key="os_id" @change="FnEmit">
           <el-option 
             v-for="version in default_os_template_type.os_versions[data.default_os_type]" 
@@ -73,11 +73,14 @@ export default class updateOs extends Vue{
       az_id: this.az_id});
     if (resData.code == 'Success') {
       this.os_list = resData.data;
-      if (this.default_os_template_type.os_template_type === Object.keys(this.os_list)[0]) {
-        this.FnChangeOsTemType(this.default_os_template_type.os_template_type)
-      } else {
-        this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
-      }
+      this.FnHandleInitData();
+    }
+  }
+  private FnHandleInitData() {
+    if (this.default_os_template_type.os_template_type === Object.keys(this.os_list)[0]) {
+      this.FnChangeOsTemType(this.default_os_template_type.os_template_type)
+    } else {
+      this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
     }
   }
 
@@ -101,8 +104,8 @@ export default class updateOs extends Vue{
       os_info: this.FnEmit()
     }
   }
-  private FnResetForm(formName) {
-    (this.$refs['resetForm'] as any).resetFields();
+  private FnResetForm() {
+    this.FnHandleInitData();
   }
 
   private created() {

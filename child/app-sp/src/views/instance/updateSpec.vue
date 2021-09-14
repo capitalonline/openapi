@@ -80,8 +80,9 @@ export default class updateSpec extends Vue{
       spec_info: this.FnEmit()
     }
   }
-  public FnResetForm(formName) {
-    (this.$refs['resetForm'] as any).resetFields();
+  public FnResetForm() {
+    this.data.default_spec = this.default_calc.ecs_spec_list[0];
+    this.FnChangeSpec(this.data.default_spec.cpu_size);
   }
   private created() {
     this.FnGetSpecList()
