@@ -22,7 +22,14 @@
         </el-table-column>
         <el-table-column label="恢复后新IP">
           <template #default="scope">
-            <el-input v-model="new_ip_address[scope.row.ecs_id]"></el-input>
+            <el-select v-model="new_ip_address[scope.row.ecs_id]" filterable clearable placeholder="请选择IP">
+              <el-option
+                v-for="item in ip_available_list[scope.row.ecs_id]"
+                :key="item"
+                :label="item"
+                :value="item">
+              </el-option>
+            </el-select>
           </template>
         </el-table-column>
       </el-table>
@@ -40,6 +47,7 @@ export default class Recover extends Vue {
   $message;
   $set;
   private ip_usage = {};
+  private ip_available_list = {};
   private new_ip_address = {};
   private async FnGetIpUsage() {
     let reqData = {
@@ -56,6 +64,7 @@ export default class Recover extends Vue {
           ip_address: item.ip_address,
           is_used: item.is_used,
         }
+        this.ip_available_list[item.ecs_id] = item.ip_list;
       })
       this.$set(this.ip_usage)
     }
