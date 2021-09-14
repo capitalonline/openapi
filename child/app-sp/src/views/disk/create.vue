@@ -63,7 +63,7 @@
                                     placeholder="请选择或输入实例名称（实例ID)"
                                     filterable
                                     :filter-method="get_instance_list"
-                                >
+                                    @visible-change="change_ecs">
                                     <el-option 
                                         v-for="item in ECS_instance_list" 
                                         :key="item.ecs_id" 
@@ -293,6 +293,7 @@ export default class CreateDisk extends Vue{
     private disk_type_list=[];
     private detail_visible:Boolean = false;
     private judge_ecs:Boolean=false
+    private keyword:string=""
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
         if(value.length>6){
             return callback()
@@ -313,6 +314,7 @@ export default class CreateDisk extends Vue{
     //监听实例ID
     @Watch("form_data.ecs_id")
     private watch_ecs_id(newVal){
+        console.log("form_data.ecs_id",this.form_data.ecs_id)
         if(!newVal){
             return;
         }
@@ -345,8 +347,16 @@ export default class CreateDisk extends Vue{
             this.area_list = resData.data;
         }
     }
+    private change_ecs(val){
+        if(!val){
+            this.get_instance_list("")
+        }
+        
+    }
     //获取实例列表
     private async get_instance_list(val){
+        console.log("val",val)
+        this.keyword = val
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
             page_size:20,
