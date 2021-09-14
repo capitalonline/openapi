@@ -17,7 +17,7 @@
         <el-button type="primary" @click="FnOperate('destroy_ecs')"
          :disabled="!operate_auth.includes('destroy')">销 毁</el-button>
         <el-button type="primary" @click="FnOperate('update_spec')">更换实例规格</el-button>
-        <el-button type="primary" @click="FnOperate('update_system')">更换系统盘</el-button>
+        <el-button type="primary" @click="FnOperate('update_system')">更换操作系统</el-button>
         <el-button type="primary" @click="FnOperate('reset_pwd')">重置密码</el-button>
       </template>
     </action-block>

@@ -25,7 +25,7 @@ const auth = {
   recover_ecs: {auth: ['deleted'], msg: '已选实例状态需为已删除！', label: '恢 复'},
   destroy_ecs: {auth: ['deleted'], msg: '已选实例状态需为已删除！', label: '销 毁'},
   update_spec: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换实例规格'},
-  update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换系统盘'},
+  update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换操作系统'},
   reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'}
 }
 
