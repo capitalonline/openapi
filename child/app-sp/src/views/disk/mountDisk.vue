@@ -36,6 +36,7 @@
                 filterable
                 :filter-method="get_instance_list" 
                 placeholder="请选择目标实例"
+                @visible-change="change_ecs"
               >
                 <el-option 
                   v-for="item in instance_list"
@@ -96,6 +97,13 @@ export default class MountDisk extends Vue{
       }
       this.judge_ecs = false
       this.get_mounted_num(newVal)
+    }
+    //关闭面板时重新获取实例列表
+    private change_ecs(val){
+        if(!val){
+            this.get_instance_list("")
+        }
+        
     }
     //获取实例列表
     private async get_instance_list(val){
