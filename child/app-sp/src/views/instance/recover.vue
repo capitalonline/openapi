@@ -70,6 +70,17 @@ export default class Recover extends Vue {
     }
   }
   private async FnRecover() {
+    let new_ip_address = Object.values(this.new_ip_address);
+    let new_ip_address_repeat = [];
+    new_ip_address.forEach(item => {
+      if (new_ip_address_repeat.indexOf(item) < 0 || !item) {
+        new_ip_address_repeat.push(item)
+      }
+    })
+    if (new_ip_address.length > new_ip_address_repeat.length) {
+      this.$message.warning('恢复后新IP重复！')
+      return
+    }
     let reqData = {
       customer_id: this.customer_id,
       ecs_list: this.multiple_selection.map((item :any) => {

@@ -447,15 +447,16 @@ export default class App extends Vue {
   }
   private FnClose() {
     this.show_operate_dialog = false;
-    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
-      if (this.default_operate_type === 'update_system') {
-        (this.$refs.update_os as any).FnResetForm();
-        (this.$refs.update_disk as any).FnResetForm();
-        (this.$refs.reset_pwd as any).FnResetForm();
-      } else {
-        (this.$refs[this.default_operate_type] as any).FnResetForm();
-      }
-    }
+    this.default_operate_type = '';
+    // if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
+    //   if (this.default_operate_type === 'update_system') {
+    //     (this.$refs.update_os as any).FnResetForm();
+    //     (this.$refs.update_disk as any).FnResetForm();
+    //     (this.$refs.reset_pwd as any).FnResetForm();
+    //   } else {
+    //     (this.$refs[this.default_operate_type] as any).FnResetForm();
+    //   }
+    // }
     this.FnGetList();
   }
   private FnToDetail(id) {
