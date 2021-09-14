@@ -314,7 +314,6 @@ export default class CreateDisk extends Vue{
     //监听实例ID
     @Watch("form_data.ecs_id")
     private watch_ecs_id(newVal){
-        console.log("form_data.ecs_id",this.form_data.ecs_id)
         if(!newVal){
             return;
         }
@@ -347,6 +346,7 @@ export default class CreateDisk extends Vue{
             this.area_list = resData.data;
         }
     }
+    //关闭面板时重新获取实例列表
     private change_ecs(val){
         if(!val){
             this.get_instance_list("")
@@ -355,7 +355,6 @@ export default class CreateDisk extends Vue{
     }
     //获取实例列表
     private async get_instance_list(val){
-        console.log("val",val)
         this.keyword = val
         const resData: any = await ServiceList.get_instance_list({
             page_index:1,
