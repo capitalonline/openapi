@@ -72,7 +72,7 @@ import TimeGroup from '../../components/search/timeGroup.vue';
 import LineEchart from '../../components/chart/list.vue';
 import DetailService from '../../https/instance/record_detail';
 import Service from '../../https/monitor/index';
-import moment from 'moment'
+import moment from 'moment';
 
 @Component({
   components: {
@@ -135,6 +135,9 @@ export default class Monitor extends Vue{
     gpu: 'GPU'
   }
   private default_date_timer = [];
+  private FnHandleTime(time) {
+     
+  }
   
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
@@ -173,10 +176,8 @@ export default class Monitor extends Vue{
       // ip: this.detail_info.private_net_ip.value,
       ip: '10.0.0.36',
       instanceType: 'vm',
-      // start: this.default_date_timer[0],
-      // end: this.default_date_timer[1],
-      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
-      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
       queryType: 'use_total'
     })
     if (resData.code === 0) {
@@ -194,10 +195,8 @@ export default class Monitor extends Vue{
       // ip: this.detail_info.private_net_ip.value,
       ip: '10.0.0.36',
       instanceType: 'vm',
-      // start: this.default_date_timer[0],
-      // end: this.default_date_timer[1],
-      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
-      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
       queryType: 'used'
     })
     if (resData.code === 0) {
@@ -215,10 +214,8 @@ export default class Monitor extends Vue{
       // ip: this.detail_info.private_net_ip.value,
       ip: '10.0.0.36',
       instanceType: 'vm',
-      // start: this.default_date_timer[0],
-      // end: this.default_date_timer[1],
-      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
-      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
       queryType: '1m'
     })
     if (resData.code === 0) {
@@ -247,10 +244,8 @@ export default class Monitor extends Vue{
       // ip: this.detail_info.private_net_ip.value,
       ip: '10.0.0.36',
       instanceType: 'vm',
-      // start: this.default_date_timer[0],
-      // end: this.default_date_timer[1],
-      start: moment(this.default_date_timer[0]).format("YYYY-MM-DD HH:mm:ss"),
-      end: moment(this.default_date_timer[1]).format("YYYY-MM-DD HH:mm:ss"),
+      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
       queryType: 'use'
     })
     if (resData.code === 0) {
@@ -307,16 +302,5 @@ export default class Monitor extends Vue{
 <style lang="scss">
 .tab-card .el-card__body {
   // padding: 0;
-}
-.tab-card {
-  .el-radio-button__inner {
-    width: 60px;
-    margin-right: -1px;
-    border-radius: 0;
-  }
-  .el-radio-button:last-child .el-radio-button__inner,
-  .el-radio-button:first-child .el-radio-button__inner {
-    border-radius: 0;
-  }
 }
 </style>

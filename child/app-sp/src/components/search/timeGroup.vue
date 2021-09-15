@@ -73,8 +73,22 @@ export default class TimeGroup extends Vue {
 .time-box {
   display: flex;
   align-items: center;
+  font-size: 12px;
 }
 .el-range-editor.el-input__inner{
   padding: 0px 10px !important;
+}
+</style>
+<style lang="scss">
+.time-box {
+  .el-radio-button__inner {
+    width: 60px;
+    margin-right: -1px;
+    border-radius: 0;
+  }
+  .el-radio-button:last-child .el-radio-button__inner,
+  .el-radio-button:first-child .el-radio-button__inner {
+    border-radius: 0;
+  }
 }
 </style>
