@@ -14,7 +14,7 @@
             @selection-change="handleSelectionChange"
         >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="customer_id" label="策略名称/ID">
+            <el-table-column prop="id" label="策略名称/ID">
                 <template slot-scope="scope">
                     <span>{{scope.row.name}} / {{scope.row.id}}</span>
                 </template>
@@ -45,10 +45,10 @@
             </el-table-column>
             <el-table-column label="操作栏">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="operateRecord(scope.row.disk_id)">修改</el-button>
+                    <el-button type="text" @click="edit(scope.row.id)">修改</el-button>
                     <el-button type="text" @click="apply">应用</el-button>
                     <el-button type="text" @click="operateRecord(scope.row.disk_id)">停用</el-button>
-                    <el-button type="text" @click="operateRecord(scope.row.disk_id)">删除</el-button>
+                    <el-button type="text" @click="del(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -120,6 +120,12 @@ export default class Strategy extends Vue{
     }
     private create(){
         this.$router.push('/alarmStrategy/create')
+    }
+    private edit(id:string){
+        this.$router.push({path:'/alarmStrategy/create',query:{id}})
+    }
+    private del(id:string){
+        // delete_strategy
     }
     private operate(str:string){
 

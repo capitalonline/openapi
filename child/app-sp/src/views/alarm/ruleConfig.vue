@@ -43,10 +43,16 @@
                                 >
                                     <el-cascader
                                         v-model="rule_data.metricID"
-                                        :options="static_list.level_list"
+                                        :options="index_list"
                                         :show-all-levels="false"
                                         :props="{ expandTrigger: 'hover' }"
                                     >
+                                    <template slot-scope="{ node, data }">
+                                        <el-tooltip class="item" effect="dark" :content="data.description" placement="right" v-if="node.isLeaf">
+                                            <span>{{data.label}}</span>
+                                        </el-tooltip>
+                                        <span v-else>{{ data.label }}</span>
+                                    </template>
                                     </el-cascader>
                                 </el-form-item>
                                 <el-form-item
@@ -64,7 +70,7 @@
                                             >
                                             </el-option>
                                         </el-select>
-                                        <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> %&nbsp;&nbsp;
+                                        <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> {{rule_data.metricUnit}}&nbsp;
                                         <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
                                                 v-for="item in static_list.cycle_time"
@@ -203,7 +209,8 @@
 <script lang="ts">
 import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator';
 import { Form } from "element-ui";
-import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/data'
+import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/data';
+import Service from '../../https/alarm/list'
 @Component({})
 export default class RuleConfig extends Vue{
     @Prop({default:()=>[]})strategy_data!:any
@@ -211,13 +218,14 @@ export default class RuleConfig extends Vue{
     private edit_key:string="";
     private selected_product_id:String="";
     private edit_rule_id:string=""
-    
+    private index_list:any=[]
     private rule_data:any={
         name:'',
         metricID:'',
         event_type:'',
         event_name:'',
         alram_type:'',
+        metricUnit:'',
         notice:[],
         level:[{
             range:'>=',
@@ -245,8 +253,41 @@ export default class RuleConfig extends Vue{
         productList.forEach(item=>{
             this.product_list.push({...item,visible:false,rule_list:[]})
         })
+        this.get_index_list()
     }
-    
+    @Watch("rule_data.metricID")
+    private watch_metricID(newVal){
+        console.log("rule_data.metricID",newVal)
+        this.index_list.forEach(item=>{
+            item.children.forEach(inn=>{
+                if(inn.value===newVal[1]){
+                    this.rule_data.metricUnit = inn.unit
+                }
+            })
+        })
+    }
+    //获取指标项列表
+    private async get_index_list(){
+        let res:any = await Service.get_index_list({})
+        if(res.code===0){
+            res.data && res.data.forEach(element => {
+                let temp=[]
+                element.metric_infos.forEach(item=>{
+                    temp.push({
+                        value:item.metric,
+                        label:item.metric,
+                        unit:item.unit,
+                        description:item.description,
+                    })
+                })
+                this.index_list.push({
+                    value:element.name,
+                    label:element.name,
+                    children:temp
+                })
+            });
+        }
+    }
     @Watch("strategy_data",{immediate:true,deep:true})
     private watch_strategy_data(newVal){
         console.log("watch_strategy_data",newVal)
@@ -273,6 +314,7 @@ export default class RuleConfig extends Vue{
                 metricID:element.ruleRecords[0].metricID,
                 event_type:element.ruleRecords[0].eventType,
                 event_name:element.ruleRecords[0].eventName,
+                metricUnit:element.ruleRecords[0].alarmType==="event" ? '' : element.ruleRecords[0].metricUnit,
                 alram_type:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].level.toString() : '',
                 notice:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].alarmMethod : [],
                 level:list,

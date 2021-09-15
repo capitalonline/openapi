@@ -11,7 +11,7 @@
             <div v-for="item in area_list" :key="item.region_group_id">
                 <el-divider content-position="left" class="divider">{{item.region_group_name}}</el-divider>
                 <el-checkbox :indeterminate="item.isIndeterminate_group" v-model="item.check" @change="handleCheckGroupChange($event,item.region_group_id)" class="group-all">全选</el-checkbox>
-                <el-checkbox-group v-model="region" @change="handleCheckedRegionChange" class="group">
+                <el-checkbox-group v-model="region" @change="handleCheckedRegionChange($event,item.region_group_id)" class="group">
                     <el-checkbox v-for="area in item.region_list" :label="area.region_id" :key="area.region_id">{{area.region_name}}</el-checkbox>
                 </el-checkbox-group>
                 
@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import {area_list} from './data'
 import { Form } from "element-ui";
 import moment from 'moment';
@@ -51,37 +51,78 @@ export default class Region extends Vue{
   })
   private checkAll:boolean=false;
   private isIndeterminate:boolean=false
-  private region:Array<string>=[]
+  private region:Array<string>=[];
+  private check_obj:any={}
   private handleCheckAllChange(val){
-      if(val){
-          this.isIndeterminate = false
-      }else{
-          if(this.area_list.every(item=>item.check)){
-              this.isIndeterminate = false
-          }
-      }
-      this.check_area(val,'')
+      this.area_list.map(item=>{
+          this.handleCheckGroupChange(val,item.id)
+          return item;
+      })
   }
   private handleCheckGroupChange(check:boolean,id:string){
-      this.check_area(check,id)
-  }
-  private handleCheckedRegionChange(val){
-      console.log("handleCheckedRegionChange",val)
       this.area_list.map(item=>{
-          const ids = this.get_ids(item.region_list,'region_id')
-          let flag:boolean=false
-          this.region.forEach(e=>{
-              if(ids.includes(e)){
-                  flag=true
+          if(item.region_group_id === id){
+              item.check = check
+              const ids = this.get_ids(item.region_list,'region_id')
+              if(check){
+                  this.region =  [...new Set([...ids,...this.region])]
+              }else{
+                  const fil = this.region.filter(id=>!ids.includes(id))
+                  this.region = fil
               }
-          })
-          if(flag){//有重复的
-                item.isIndeterminate_group=true
-                this.isIndeterminate = true
-          }else{
-                item.isIndeterminate_group=false
           }
+          return item;
       })
+      if(this.area_list.every(item=>item.check) || this.area_list.every(item=>!item.check)){
+          this.isIndeterminate = false
+          this.checkAll = this.area_list[0].check
+      }else{
+          this.isIndeterminate = true
+      }
+  }
+  private handleCheckedRegionChange(list:any,id:string){
+      this.area_list.map(item=>{
+        const ids = this.get_ids(item.region_list,'region_id')
+        this.region.map(inn=>{
+            if(ids.includes(inn)){
+                if(this.check_obj[id]){
+                    console.log("this.check_obj",this.check_obj,inn)
+                    this.check_obj={[id]:[...this.check_obj[id],inn]}
+                }else{
+                    this.check_obj=Object.assign({},this.check_obj,{[id]:[inn]})
+                }
+            }
+        })
+        if(!this.check_obj[id] || this.check_obj[id].length===0){
+            item.check = false
+            item.isIndeterminate_group = false
+        }
+        if(this.check_obj[id].length>0){
+            item.isIndeterminate_group = true
+        }
+        if(this.check_obj[id].length===ids.length){
+            item.isIndeterminate_group = false
+            item.check=true
+        }
+      })
+      
+      console.log("check_obj",this.check_obj)
+      if(this.region.length===0){
+          this.checkAll = false
+          this.isIndeterminate = false
+      }
+      if(this.region.length>0){
+          this.isIndeterminate = true
+      }
+      let len:number = 0;
+      this.area_list.map(item=>{
+          len +=this.get_ids(item.region_list,'region_id').length
+      })
+      if(this.region.length===len){
+          this.checkAll=true
+          this.isIndeterminate = false
+      }
+
   }
   private check_area(check:boolean,id:string=""){
     this.area_list.map(item=>{

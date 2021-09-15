@@ -1,6 +1,6 @@
 <template>
     <div class="create-stategy">
-        <back-header title="创建报警策略" back_url="/alarmStrategy"></back-header>
+        <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
         <div class="main_box">
             <el-card class="create">
                 <el-form :model="form_data" ref="form" label-width="100px" class="demo-dynamic">
@@ -15,12 +15,13 @@
                         prop="stategy"
                         label="选择已有策略"
                     >
-                        <el-select v-model="form_data.stategy" placeholder="请选择已有策略" @change="change_stategy">
+                        <el-select v-model="form_data.stategy" placeholder="请选择已有策略">
                             <el-option
                                 v-for="item in strategy_list"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id"
+                                :disabled="edit_id!==''"
                             >
                             </el-option>
                         </el-select>
@@ -51,13 +52,18 @@ import Service from '../../https/alarm/list'
     }
 })
 export default class Index extends Vue{
+    $message;
+    $router;
+    $route;
     private form_data:any={
         name:'',
         stategy:''
     };
+    private edit_id:string=""
     private strategy_list:any=[]
     private strategy_data:any={}
     created() {
+        this.edit_id = this.$route.query.id ? this.$route.query.id : ''
         this.getStrategyList()
         // this.strategy_list = [{id:'',name:'全部'},{id:'1',name:'hhh'}]
         // this.strategy_list = [{id:'',name:'全部'},...create_obj.data]
@@ -68,15 +74,20 @@ export default class Index extends Vue{
         })
         if(res.code===0){
             this.strategy_list = res.data.datas || []
+            if(this.edit_id!==""){
+                this.form_data.stategy = this.edit_id
+            }
         }
 
     }
+    @Watch("form_data.stategy")
     private async change_stategy(value){
         const res:any = await Service.get_strategy_detail({
             id:value
         })
         if(res.code===0){
             this.strategy_data = res.data
+            this.form_data.name = res.data.name
         }
         
     }
@@ -84,7 +95,7 @@ export default class Index extends Vue{
         const form = this.$refs.form as Form
         const rule_config = this.$refs.rule_config as any
         
-        form.validate(valid=>{
+        form.validate(async (valid)=>{
             if(valid){
                 const selected_products = rule_config.selected_products
                 const list=[]
@@ -93,14 +104,15 @@ export default class Index extends Vue{
                         const temp=[]
                         inn.level.map(lev=>{
                             const temp_obj={
-                                metricID:inn.metricID,
+                                metricID:inn.metricID[1],
                                 metricCondition:lev.range,
                                 metricValue:parseInt(lev.num),
                                 metricPeriod:parseInt(lev.cycle_time),
                                 metricPeriodNum:parseInt(lev.cycle_num),
                                 level:parseInt(lev.alram_type),
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
-                                alarmMethod:lev.notice ? lev.notice : []
+                                alarmMethod:lev.notice ? lev.notice : [],
+                                metricUnit:item.metricUnit
                             }
                             temp.push(temp_obj)
                         })
@@ -115,16 +127,47 @@ export default class Index extends Vue{
                                 eventType:inn.event_type,
                                 level:parseInt(inn.alram_type),
 
-                            }]
+                            }],
+                            
                         }
                         list.push(obj)
                     })
                 })
-                console.log("######",list)
-                const req={
-                    name:this.form_data.name,
-                    rules:list
+                if(this.edit_id===""){
+                    let res:any =await Service.add_strategy({
+                        name:this.form_data.name,
+                        rules:list
+                    })
+                    if(res.code===0){
+                        this.$message.success("创建策略任务下发成功")
+                        this.$router.push('/alarmStrategy')
+                    }
+                }else{
+                    const {az,callbackURL,effectEndTime,effectStartTime,enable,id,regions,contactGroupIDs}=this.strategy_data
+                    let res:any =await Service.update_strategy({
+                        name:this.form_data.name,
+                        rules:list.map(item=>{
+                            item=Object.assign({},item,{strategyID:this.edit_id})
+                            return item;
+                        }),
+                        az,
+                        callbackURL,
+                        contactGroupID:contactGroupIDs,
+                        effectEndTime,
+                        effectStartTime,
+                        enable,
+                        id,
+                        regions,
+                        
+                    })
+                    if(res.code===0){
+                        this.$message.success("编辑策略任务下发成功")
+                        this.$router.push('/alarmStrategy')
+                    }
                 }
+                
+
+                
 
             }
         })
