@@ -288,7 +288,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
-| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  | 
+| PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  |
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 
 
@@ -4948,7 +4948,7 @@ def update_bms_order(id, renewal):
 | Message | string | Success                                  | 提示信息          |
 | Data    | object | {}                                       | 返回数据          |
 | BareMetalIds | list | ["27f262ec-92fd-4a77-ba78-6f682b7533e3"] | 裸金属服务器的编号id |
-| Status | string | succeed / init                            | 任务状态: succeed（完成）, init(进行中)   | 
+| Status | string | succeed / init                            | 任务状态: succeed（完成）, init(进行中)   |
 
 **错误码：**
 
@@ -5116,7 +5116,7 @@ def create_disk():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 ### 2.AttachDisk
 
 **Action: AttachDisk**
@@ -5180,7 +5180,7 @@ def attack_disk():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 ### 3.DetachDisk
 
 **Action: DetachDisk**
@@ -5242,7 +5242,7 @@ def detack_disk():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 ### 4.DeleteDisk
 
 **Action: DeleteDisk**
@@ -5304,7 +5304,7 @@ def delete_disk():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 ### 5.DescribeDisks
 
@@ -5398,7 +5398,7 @@ def describe_disks():
    }
    url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
    res = requests.get(url)
-```
+ ```
 
 ### 6.DescribeDiskUsage
 
@@ -5424,7 +5424,7 @@ def describe_disks():
 | Code        | string | Success                            | 返回状态码: Success: 成功 |
 | Message     | string | null                               | 返回信息 |
 | Data        | object | {}                                 | 返回数据            |
-| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |     
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |
 | Use          | int    | 200                                                           | 磁盘已使用大小；单位G                                                      |
 | Size          | int    | 500                                                           | 磁盘总容量；单位G                                                     |
 | Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
@@ -5463,7 +5463,7 @@ def describe_diskUsage():
    }
    url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
    res = requests.get(url)
-```
+ ```
 
 ### 7.DescribePoolUsage
 
@@ -5490,7 +5490,7 @@ def describe_diskUsage():
 | Code        | string | Success                            | 返回状态码: Success: 成功 |
 | Message     | string | null                               | 返回信息 |
 | Data        | object | {}                                 | 返回数据            |
-| PoolName  | string | nvme_pool                         | 存储池名字                                                     |     
+| PoolName  | string | nvme_pool                         | 存储池名字                                                     |
 | Use          | int    | 200                                                           | 存储池已使用大小；单位G                                                      |
 | Size          | int    | 500                                                           | 存储池总容量；单位G                                                     |
 | Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
@@ -5530,7 +5530,7 @@ def describe_poolUsage():
    }
    url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
    res = requests.get(url)
-```
+ ```
 
 ### 8.ChangeIops
 
@@ -5591,7 +5591,7 @@ def change_iops():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 ### 9.ChangeBandwidth
 
@@ -5652,7 +5652,7 @@ def change_bandwidth():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 
 ### 10.ExpansionSize
@@ -5714,7 +5714,7 @@ def describe_diskUsage():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 ### 11.CreateSnapshot
 
@@ -5776,7 +5776,7 @@ def create_snapshot():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 
 ### 12.CloneSnapshot
@@ -5839,7 +5839,7 @@ def clone_snapshot():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 ### 13.DeleteSnapshot
 
@@ -5898,7 +5898,7 @@ def delete_snapshot():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 
 ### 14.RollbackSnapshot
@@ -5958,7 +5958,7 @@ def rollback_snapshot():
    url = get_signature(action, AK, AccessKeySecret, method, BMS_DISK_URL)
    res = requests.post(url, json=param)
    result = json.loads(res.content)
-```
+ ```
 
 ### 15.DescribeGoodsId
 
@@ -6021,7 +6021,7 @@ def describe_goodsId():
    }
    url = get_signature(action=action, ak=AK, access_key_secret=AccessKeySecret, method=method, url=BMS_DISK_URL, param=param)
    res = requests.get(url)
-```
+ ```
 
 
 ## 账单相关
@@ -6665,6 +6665,9 @@ def get_status(task_id):
 | 华东BGP        | Bandwidth_East_China_BGP            |
 | 华北BGP        | Bandwidth_North_China_BGP            |
 | 东南亚优化BGP        | Bandwidth_SoutheastAsia_Optimization_BGP     |
+| 标准BGP | Bandwidth_Standard_BGP |
+| BGP(多线) | Bandwidth_Multi_ISP_BGP |
+| BGP(经济型多线) | Bandwidth_Multi_ISP_Economy_BGP |
 
 ## 附件四
 
