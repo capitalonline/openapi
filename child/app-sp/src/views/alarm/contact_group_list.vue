@@ -7,48 +7,36 @@
         </template>
     </action-block>
     <el-collapse accordion>
-        <el-collapse-item v-for="item in group_arr" :key="item.id">
+        <el-collapse-item v-for="item in group_list" :key="item.id">
             <template slot="title">
                 <el-checkbox v-model="item.check" @change="sel_users(item.id,$event)">{{item.name}}</el-checkbox>
                 <el-button type="text" @click.stop="edit(item.id)" class="edit">编辑</el-button>
             </template>
             <div class="table-box">
-                <el-table :data="list" border class="event-table">
-                    <el-table-column prop="event_id" label="事件ID">
+                <el-table :data="item.members" border class="event-table">
+                    <el-table-column prop="name" label="姓名"></el-table-column>
+                    <el-table-column prop="email" label="邮箱"></el-table-column>
+                    <el-table-column prop="phone" label="电话号码"></el-table-column>
+                    <el-table-column prop="groupName" label="所属报警组"></el-table-column>
+                    <el-table-column label="操作">
                         <template slot-scope="scope">
-                        <span class="event-id">{{scope.row.event_id}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-                    <el-table-column prop="customer" label="客户名称"></el-table-column>
-                    <el-table-column prop="event_name" label="事件名称"></el-table-column>
-                    <el-table-column prop="event_state_name" label="事件状态">
-                        <template slot-scope="scope">
-                        <span :class="[scope.row.status === 'fail'|| scope.row.status === 'portion_fail' ? 'err' : '']">{{scope.row.event_state_name}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="implementation_name" label="任务执行情况"></el-table-column>
-                    <el-table-column prop="op_user" label="操作用户"></el-table-column>
-                    <el-table-column prop="create_time" label="创建时间">
-                        <template slot-scope="scope">
-                        <span>{{scope.row.create_time ? moment(scope.row.create_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="update_time" label="完成时间">
-                        <template slot-scope="scope">
-                        <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="任务">
-                        <template slot-scope="scope">
-                        <el-button type="text" @click="view(scope.row.event_id,scope.row.event_name)">查看</el-button>
+                        <el-button type="text" @click="remove(scope.row.id)">移除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
         </el-collapse-item>
     </el-collapse>
-    <template v-if="group_title">
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="current"
+        :page-sizes="[20, 50, 100]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+    </el-pagination>
+    <template v-if="group_visible">
         <AddGroup :title="group_title" :id="group_id" :visible="group_visible" @close = "close_group" />
     </template>
   </div>
@@ -56,7 +44,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue'
-import AddGroup from './add_group.vue'
+import AddGroup from './add_group.vue';
+import Service from '../../https/alarm/list'
 @Component({
     components:{
         ActionBlock,
@@ -65,50 +54,84 @@ import AddGroup from './add_group.vue'
 })
 export default class ContactList extends Vue{
     private search={
-        content:{placeholder:'请输入组名后查询'}
+        name:{placeholder:'请输入组名后查询'}
     }
+    private search_data:any={}
     private list = [{name:1}]
     private current:number=1
-    private size:number=3
+    private size:number=20
     private total:number=0
-    private group_arr=[{id:'group1',name:'group1',check:false},{id:'group2',name:'group2',check:false},{id:'group3',name:'group3',check:false}]
+    private group_list=[]
     private group_title:String = "新建联系人组"
     private group_visible:Boolean=false
     private group_id:String=""
+    private group_rows:any=[]
 
     created() {
         this.fn_search()
     }
     private fn_search(data:any={}){
+        this.search_data = data
+        this.getContactGroupList()
+    }
+    // private async getContactList(){
+    //     let res:any = await Service.get_contact_list({
+    //         page:this.current,
+    //         pageSize:this.size,
+    //     })
+    //     if(res.code===0){
+    //         this.list = res.data.datas || []
+    //         this.total = res.data.total || 0
+    //     }
+    // }
+    private async getContactGroupList(){
+        let res:any = await Service.get_contact_group_list({
+            name:this.search_data.name
+        })
+        if(res.code===0){
+            this.group_list = res.data.datas.map(item=>{
+                item = Object.assign({},item,{check:false})
+                return item;
+            })
+            this.total = res.data.total || 0
+        }
+    }
+    private handleSizeChange(size){
+        this.size=size
+        this.getContactGroupList()
+    }
+    private handleCurrentChange(cur){
+        this.current = cur
+        this.getContactGroupList()
+    }
+    private handleSelectionChange(val){
+        this.group_rows = val
 
     }
-    private close_group(){
+    private close_group(val){
         this.group_visible=false
         this.group_id=""
+        val==='1' && this.getContactGroupList()
     }
     private add(){
         this.group_title="新建联系人组"
         this.group_visible=true
     }
     private edit(id:string){
+        console.log("id",id)
         this.group_id=id
         this.group_title="编辑联系人组"
         this.group_visible=true
     }
-    private del(id:string = ''){
+    private sel_users(){
         
+    }
+    private del(id:string = ''){
+        const fil = this.group_list.filter(item=>item.check)
+        console.log("fil",fil)
     }
     private addToWarnGroup(){
         
-    }
-    private handleSizeChange(size){
-        this.size=size
-    }
-    private handleCurrentChange(cur){
-        this.current = cur
-    }
-    private sel_users(id,e){
-        console.log("####",id,e)
     }
 }
 </script>

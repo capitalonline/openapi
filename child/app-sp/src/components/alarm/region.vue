@@ -86,8 +86,7 @@ export default class Region extends Vue{
         this.region.map(inn=>{
             if(ids.includes(inn)){
                 if(this.check_obj[id]){
-                    console.log("this.check_obj",this.check_obj,inn)
-                    this.check_obj={[id]:[...this.check_obj[id],inn]}
+                    this.check_obj={[id]:[...new Set([...this.check_obj[id],inn])]}
                 }else{
                     this.check_obj=Object.assign({},this.check_obj,{[id]:[inn]})
                 }
@@ -106,7 +105,6 @@ export default class Region extends Vue{
         }
       })
       
-      console.log("check_obj",this.check_obj)
       if(this.region.length===0){
           this.checkAll = false
           this.isIndeterminate = false

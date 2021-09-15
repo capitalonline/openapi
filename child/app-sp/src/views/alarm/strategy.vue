@@ -3,7 +3,7 @@
         <action-block :search_option="search" @fn-search="fn_search">
             <template #default>
                 <el-button type="primary" @click="create">创建策略</el-button>
-                <el-button type="primary" @click="operate('del')">删除</el-button>
+                <el-button type="primary" @click="del">删除</el-button>
                 <el-button type="primary" @click="apply">应用</el-button>
                 <el-button type="primary" @click="operate('stop')">停用</el-button>
             </template>
@@ -48,7 +48,7 @@
                     <el-button type="text" @click="edit(scope.row.id)">修改</el-button>
                     <el-button type="text" @click="apply">应用</el-button>
                     <el-button type="text" @click="operateRecord(scope.row.disk_id)">停用</el-button>
-                    <el-button type="text" @click="del(scope.row.id)">删除</el-button>
+                    <el-button type="text" @click="del(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -62,6 +62,24 @@
             :total="total">
         </el-pagination>
         <ApplyStrategy :drawer.sync="drawer" />
+        <el-dialog
+            title="删除策略"
+            :visible.sync="del_visible"
+            width="960px"
+            :destroy-on-close="true"
+            @close="cancel"
+        >
+            <div class="mount">
+                确认删除
+                <span v-for="(item,index) in strategy_rows" :key="item.id">{{item.name}}
+                    <span v-if="index===strategy_rows.length-1">,</span>
+                </span>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="confirm">确认</el-button>
+                <el-button @click="cancel">取消</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script lang="ts">
@@ -87,7 +105,9 @@ export default class Strategy extends Vue{
     private current:number = 1
     private size:number = 20
     private total:number = 0
-    private moment:any = moment
+    private moment:any = moment;
+    private del_visible:boolean=false;
+    private strategy_rows:any=[]
     created() {
         this.fn_search()
     }
@@ -115,8 +135,8 @@ export default class Strategy extends Vue{
         this.current = cur
         this.getStrategyList()
     }
-    private handleSelectionChange(){
-
+    private handleSelectionChange(val){
+        this.strategy_rows = val
     }
     private create(){
         this.$router.push('/alarmStrategy/create')
@@ -124,8 +144,27 @@ export default class Strategy extends Vue{
     private edit(id:string){
         this.$router.push({path:'/alarmStrategy/create',query:{id}})
     }
-    private del(id:string){
-        // delete_strategy
+    private del(ids:any={}){
+        if(ids){
+            this.strategy_rows=[ids]
+        }
+        this.del_visible=true
+    }
+    private cancel(){
+        this.strategy_rows=[]
+        this.del_visible=false
+    }
+    private confirm(){
+        const ids = this.strategy_rows.map(item=>item.id)
+        let res:any=Service.delete_strategy({
+            ids
+        })
+        if(res.code===0){
+            this.$message.success('删除策略任务下发成功！');
+            console.log("aaa")
+            this.cancel()
+            this.getStrategyList()
+        }
     }
     private operate(str:string){
 

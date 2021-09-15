@@ -1,10 +1,15 @@
 <template>
   <el-tabs v-model="activeName" @tab-click="handleClick">
     <el-tab-pane label="报警联系人" name="0">
-        <List />
+        <template v-if="activeName==='0'">
+            <List />
+        </template>
+        
     </el-tab-pane>
     <el-tab-pane label="报警联系组" name="1">
-        <GroupList />
+        <template v-if="activeName==='1'">
+            <GroupList />
+        </template>
     </el-tab-pane>
   </el-tabs>
 </template>

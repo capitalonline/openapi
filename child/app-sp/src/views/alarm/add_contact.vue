@@ -30,18 +30,11 @@
             >
                 <el-input v-model="form_data.phone" />
             </el-form-item>
-            <el-form-item
-                prop="wxOpenID"
-                label="微信号"
-                :rules="[{required:true,message:'请输入微信号',trigger:'blur'}]"
-            >
-                <el-input v-model="form_data.wxOpenID" />
-            </el-form-item>
         </el-form>
         <el-divider />
         <div class="foot-btn">
             <el-button type="primary" @click="confirm">确定</el-button>
-            <el-button type="default" @click="back">取消</el-button>
+            <el-button type="default" @click="back('0')">取消</el-button>
         </div>
         
       </div>
@@ -51,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import { Form } from "element-ui";
 import moment from 'moment';
@@ -71,27 +64,65 @@ export default class InsDetail extends Vue{
       name:'',
       email:'',
       phone:'',
-      wxOpenID:''
 
   }
   created() {
+    if(this.id!==""){
+      this.get_contact_detail()
+    }
+  }
+  // @Watch("id")
+  // private watch_id(newVal){
+    
+  // }
+  private async get_contact_detail(){
+    let res:any = await Service.get_contact_detail({
+        id:this.id,
+      })
+      if(res.code===0){
+        const {name,email,phone}=res.data
+          this.form_data={
+            name,
+            email,
+            phone
+          }
+      }else{
+        
+      }
   }
   private confirm(){
       const form = this.$refs.form as Form
       form.validate(async (valid:boolean)=>{
           if(valid){
-            let res:any = await Service.add_contact({
-              ...this.form_data
-            })
-            if(res.code===0){
-              this.$message.success("新建成功")
+            if(this.id===""){
+              let res:any = await Service.add_contact({
+                ...this.form_data
+              })
+              if(res.code===0){
+                this.$message.success("新建联系人任务下发成功")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
+            }else{
+              let res:any = await Service.update_contact({
+                ...this.form_data,
+                id:this.id
+              })
+              if(res.code===0){
+                this.$message.success("编辑联系人任务下发成功")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
             }
-            this.back()
+            
+            
           }
       })
   }
   @Emit("close")
-  private back(){
+  private back(val){
     const form = this.$refs.form as Form
     form.resetFields()
   }

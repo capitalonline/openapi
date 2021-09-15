@@ -116,7 +116,7 @@ export default class Contact extends Vue{
             name:''
         })
         if(res.code===0){
-            this.search.contact.list = trans(res.data,'name','id','label','type') 
+            this.search.contact.list = trans(res.data.datas,'name','id','label','type') 
             // this.search.contact.list = trans_index(res.data.datas,['id','name'],['type',';label']) || []
         }
     }
