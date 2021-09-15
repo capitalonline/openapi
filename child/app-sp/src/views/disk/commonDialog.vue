@@ -21,7 +21,7 @@
                 <el-table-column prop="customer_name" label="客户名称"></el-table-column>
                 <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
                 <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
-                <el-table-column prop="status" label="状态"></el-table-column>
+                <el-table-column prop="status_name" label="状态"></el-table-column>
             </el-table>
         </div>
         <span slot="footer" class="dialog-footer">
