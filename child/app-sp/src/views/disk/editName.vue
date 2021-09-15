@@ -2,7 +2,7 @@
     <el-dialog
       title="修改云盘名称"
       :visible.sync="visible"
-      width="600px"
+      width="700px"
       :destroy-on-close="true"
       @close="back"
     >
@@ -14,7 +14,8 @@
         </el-alert>
         <div class="content">
             <div class="label">云盘名称:</div>
-            <el-input v-model="new_name" placeholder="请输入新的名称"></el-input>
+            <el-input v-model="new_name" placeholder="请输入新的名称" minlength="2" maxlength="40" show-word-limit></el-input>
+            <span class="name-error" v-if="new_name.length===1">云盘名称长度最少为2</span>
         </div>
         <div class="remark">长度限制为2-40个字符</div>
         <span slot="footer" class="dialog-footer">
@@ -34,9 +35,12 @@ export default class EditName extends Vue{
     private new_name:string = this.name.disk_name
     private async confirm(){
         console.log("checked",this.new_name)
+        if(this.new_name.length===1){
+            return;
+        }
         let res:any = Service.edit_disk_name({
             disk_id:this.name.disk_id,
-            disk_name:this.new_name
+            disk_name:this.new_name==="" ? this.name.disk_name : this.new_name
         })
         if (res.code == 'Success') {
             this.$message.success("修改云盘名称任务下发成功！")
@@ -60,15 +64,21 @@ export default class EditName extends Vue{
         display: flex;
         padding: 10px 20px;
         align-items: center;
+        .name-error{
+            font-size: 12px;
+            color: #F56C6C;
+            margin-left: 20px;
+            line-height: 20px;
+        }
         .label{
-            width: 150px;
+            width: 80px;
             text-align: right;
             margin-right: 15px;
         }
         
     }
     .remark{
-        padding-left: 150px;
+        padding-left: 115px;
         font-size: 12px;
         color: #666;
         margin-top: -5px;
@@ -76,5 +86,8 @@ export default class EditName extends Vue{
     .btn{
         text-align: center;
         margin-top: 30px;
+    }
+    .el-input{
+        width: 380px !important;
     }
 </style>
