@@ -17,7 +17,7 @@
         <el-button type="primary" @click="FnOperate('destroy_ecs')"
          :disabled="!operate_auth.includes('destroy')">销 毁</el-button>
         <el-button type="primary" @click="FnOperate('update_spec')">更换实例规格</el-button>
-        <el-button type="primary" @click="FnOperate('update_system')">更换系统盘</el-button>
+        <el-button type="primary" @click="FnOperate('update_system')">更换操作系统</el-button>
         <el-button type="primary" @click="FnOperate('reset_pwd')">重置密码</el-button>
       </template>
     </action-block>
@@ -101,12 +101,12 @@
           </el-table-column>
           <el-table-column label="系统盘" v-if="default_operate_type === 'update_system'">
             <template #default="scope">
-              <div>{{ scope.row.ecs_goods_name }}</div>
+              <div>{{ scope.row.system_disk_type }} {{ scope.row.system_disk_size }}GB</div>
             </template>
           </el-table-column>
           <el-table-column label="操作系统" v-if="default_operate_type === 'update_system'">
             <template #default="scope">
-              <div>{{ scope.row.os_type }} {{scope.row.os_version}}</div>
+              <div>{{ scope.row.os_type }} {{scope.row.os_version}} {{scope.row.os_bit}}位</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态">
@@ -447,15 +447,16 @@ export default class App extends Vue {
   }
   private FnClose() {
     this.show_operate_dialog = false;
-    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
-      if (this.default_operate_type === 'update_system') {
-        (this.$refs.update_os as any).FnResetForm();
-        (this.$refs.update_disk as any).FnResetForm();
-        (this.$refs.reset_pwd as any).FnResetForm();
-      } else {
-        (this.$refs[this.default_operate_type] as any).FnResetForm();
-      }
-    }
+    this.default_operate_type = '';
+    // if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
+    //   if (this.default_operate_type === 'update_system') {
+    //     (this.$refs.update_os as any).FnResetForm();
+    //     (this.$refs.update_disk as any).FnResetForm();
+    //     (this.$refs.reset_pwd as any).FnResetForm();
+    //   } else {
+    //     (this.$refs[this.default_operate_type] as any).FnResetForm();
+    //   }
+    // }
     this.FnGetList();
   }
   private FnToDetail(id) {
