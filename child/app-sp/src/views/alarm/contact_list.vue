@@ -38,10 +38,10 @@
         <AddContact :title="user_title" :id="user_id" :visible="user_visible" @close = "close" />
     </template>
     <template v-if="group_visible">
-        <AddToGroup :visible="group_visible" @close = "close" />
+        <AddToGroup :visible="group_visible" @close = "close" :contact_rows="contact_rows" />
     </template>
     <template v-if="del_visible">
-        <common-dialog :visible="del_visible" :title="'删除联系人'" :contact_rows="contact_rows" @close = "close" />
+        <common-dialog :visible.sync="del_visible" :title="'删除联系人'" :contact_rows="contact_rows" @close = "close" />
     </template>
   </div>
 </template>
@@ -157,10 +157,11 @@ export default class ContactList extends Vue{
         val==='1'&& this.getContactList()
 
     }
-    private close_group(){
-        this.group_visible=false
-    }
     private addToWarnGroup(){
+        if(this.contact_rows.length===0){
+            this.$message.warning("请先勾选联系人！");
+            return;
+        }
         this.group_visible=true
     }
     

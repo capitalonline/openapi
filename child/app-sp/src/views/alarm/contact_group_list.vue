@@ -20,7 +20,7 @@
                     <el-table-column prop="groupName" label="所属报警组"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                        <el-button type="text" @click="remove(scope.row.id)">移除</el-button>
+                        <el-button type="text" @click="remove(scope.row.id,item.id,item.name)">移除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -37,7 +37,10 @@
         :total="total">
     </el-pagination>
     <template v-if="group_visible">
-        <AddGroup :title="group_title" :id="group_id" :visible="group_visible" @close = "close_group" />
+        <AddGroup :title="group_title" :id="group_id" :visible.sync="group_visible" @close = "close_group" />
+    </template>
+     <template v-if="del_visible">
+        <common-dialog :visible="del_visible" :title="'删除联系人组'" :contact_rows="group_rows" @close = "close_group" />
     </template>
   </div>
 </template>
@@ -46,10 +49,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue'
 import AddGroup from './add_group.vue';
 import Service from '../../https/alarm/list'
+import CommonDialog from './commonDialog.vue'
 @Component({
     components:{
         ActionBlock,
-        AddGroup
+        AddGroup,
+        CommonDialog
     }
 })
 export default class ContactList extends Vue{
@@ -64,6 +69,7 @@ export default class ContactList extends Vue{
     private group_list=[]
     private group_title:String = "新建联系人组"
     private group_visible:Boolean=false
+    private del_visible:Boolean=false
     private group_id:String=""
     private group_rows:any=[]
 
@@ -106,11 +112,42 @@ export default class ContactList extends Vue{
     }
     private handleSelectionChange(val){
         this.group_rows = val
-
+    }
+    private async remove(memberId,groupId,groupName){
+        const memberIds:any = this.group_list.filter(item=>item.id===groupId)[0].members
+        this.$confirm(`确定将此用户从${groupName}中移去吗， 是否继续?`, '联系人移除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+            let res:any = await Service.update_contact_group({
+                id:groupId,
+                name:groupName,
+                contactIDs:memberIds.map(item=>{
+                    if(item.id!==memberId){
+                        return item.id
+                    }
+                })
+            })
+            if(res.code===0){
+                this.$message.success("移除联系人任务下发成功！")
+                this.getContactGroupList()
+            }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消移除'
+          });          
+        });
+        
+        
     }
     private close_group(val){
         this.group_visible=false
+        this.del_visible=false
+        this.group_rows=[]
         this.group_id=""
+        console.log("close_group",val)
         val==='1' && this.getContactGroupList()
     }
     private add(){
@@ -126,9 +163,13 @@ export default class ContactList extends Vue{
     private sel_users(){
         
     }
-    private del(id:string = ''){
-        const fil = this.group_list.filter(item=>item.check)
-        console.log("fil",fil)
+    private del(){
+        this.group_rows = this.group_list.filter(item=>item.check)
+        if(this.group_rows.length===0){
+            this.$message.warning("请先勾选联系人组!");
+            return;
+        }
+        this.del_visible=true
     }
     private addToWarnGroup(){
         

@@ -1,7 +1,7 @@
 <template>
     <el-dialog
       :title="title"
-      :visible.sync="visible"
+      :visible.sync="visible_sync"
       width="960px"
       :destroy-on-close="true"
       @close="back"
@@ -18,7 +18,7 @@
                 border
             >
                 <el-table-column prop="name" label="姓名"></el-table-column>
-                <el-table-column prop="email" label="邮箱"></el-table-column>
+                <el-table-column prop="email" label="邮箱" v-if="title==='删除联系人'"></el-table-column>
             </el-table>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -33,7 +33,7 @@ import Service from '../../https/alarm/list'
 @Component({})
 export default class DelContact extends Vue{
     $message;
-    @Prop(Boolean) visible!:Boolean;
+    @PropSync('visible') visible_sync!:Boolean;
     @Prop({default:()=>[]}) contact_rows!:any
     @Prop(String) title!:string;
     private alert_title:string = '确认删除以下联系人吗？删除后报警信息将无法通知到该联系人，且无法恢复'
@@ -42,8 +42,10 @@ export default class DelContact extends Vue{
         this.contact_rows.forEach(ele=>{
             temp.push(ele.id)
       })
-      let res:any = await Service.delete_contact({
-        id:temp[0]
+      let res:any =this.title==='删除联系人' ? await Service.delete_contact({
+        ids:temp
+      }) : await Service.delete_contact_group({
+        ids:temp
       })
       if (res.code == 0) {
           this.$message.success(`${this.title}任务下发成功！`)

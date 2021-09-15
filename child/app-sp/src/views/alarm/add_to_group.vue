@@ -14,7 +14,7 @@
         </div>
         
         <el-checkbox-group v-model="check_group" size="small">
-            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.label" border></el-checkbox>
+            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.name" border></el-checkbox>
         </el-checkbox-group>
         <div class="warn" v-show="warn_flag">请选择报警联系组</div>
         <el-divider />
@@ -33,7 +33,7 @@
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import moment from 'moment';
-
+import Service from '../../https/alarm/list'
 @Component({
   components:{
     ActionBlock
@@ -42,24 +42,38 @@ import moment from 'moment';
 export default class InsDetail extends Vue{
   $message;
   @Prop(Boolean) visible!:Boolean;
-
+  @Prop({default:()=>[]}) contact_rows!:any
   private searchVal:string='';
   private check_group:Array<String>=[]
-  private group_list:any=[
-      {id:'1',label:'group1'},
-      {id:'2',label:'group2'},
-      {id:'3',label:'group3'},
-  ]
+  private group_list:any=[]
   private warn_flag:Boolean=false
   created() {
+    this.getContactGroupList()
   }
   private search(e){
       console.log("search",e)
   }
-  private confirm(){
+  private async getContactGroupList(){
+    let res:any = await Service.get_contact_group_list({})
+    if(res.code===0){
+        this.group_list = res.data.datas
+    }
+  }
+  private async confirm(){
       if(this.check_group.length===0){
           this.warn_flag=true;
           return;
+      }
+      let res:any = await Service.update_contact_group({
+        // id:this.id,
+        // name:this.form_data.name,
+        // contactIDs:this.form_data.contact
+      })
+      if(res.code===0){
+        this.$message.success("编辑联系人组任务下发成功！")
+        this.back('1')
+      }else{
+        this.back('0')
       }
   }
   @Watch("check_group")
@@ -72,7 +86,7 @@ export default class InsDetail extends Vue{
       }
   }
   @Emit("close")
-  private back(){
+  private back(val){
     
   }
   
