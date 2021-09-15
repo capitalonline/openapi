@@ -107,7 +107,8 @@ export default class Monitor extends Vue{
   private system_load = {
     xTime: [],
     yValue: [],
-    resize: 0
+    resize: 0,
+    legend: ['1m', '5m', '15m']
   };
   private disk_used = {
     xTime: [],
@@ -165,6 +166,7 @@ export default class Monitor extends Vue{
       this.FnGetCpu();
       this.FnGetMemory();
       this.FnGetDiskInfo();
+      this.FnGetLoad();
     }
   }
   private async FnGetCpu() {
@@ -174,7 +176,7 @@ export default class Monitor extends Vue{
     let resData: any = await Service.get_cpu({
       id: this.detail_info.ecs_id.value,
       // ip: this.detail_info.private_net_ip.value,
-      ip: '10.0.0.36',
+      ip: '10.4.0.146',
       instanceType: 'vm',
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
@@ -193,7 +195,7 @@ export default class Monitor extends Vue{
     let resData: any = await Service.get_memory({
       id: this.detail_info.ecs_id.value,
       // ip: this.detail_info.private_net_ip.value,
-      ip: '10.0.0.36',
+      ip: '10.4.0.146',
       instanceType: 'vm',
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
@@ -209,31 +211,40 @@ export default class Monitor extends Vue{
     if (!this.detail_info.ecs_id.value) {
       return
     }
-    let resData: any = await Service.get_load({
+    let reqData = {
       id: this.detail_info.ecs_id.value,
       // ip: this.detail_info.private_net_ip.value,
-      ip: '10.0.0.36',
+      ip: '10.4.0.146',
       instanceType: 'vm',
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
-      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
-      queryType: '1m'
-    })
-    if (resData.code === 0) {
-      this.system_load.xTime = resData.data.xTime;
-      this.system_load.yValue = resData.data.yValues;
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
-    this.system_load.resize++;
+    this.system_load.yValue = [];
+    let legend = this.system_load.legend;
+    Promise.all([Service.get_load(Object.assign({}, reqData, {queryType: legend[0]})), 
+      Service.get_load(Object.assign({}, reqData, {queryType: legend[1]})), 
+      Service.get_load(Object.assign({}, reqData, {queryType: legend[2]}))]).then(resData => {
+        let index = 0;
+        resData.forEach((item: any) => {
+          if (item.code === 0) {
+            if (index === 0) this.system_load.xTime = item.data.xTime;
+            this.system_load.yValue.push(item.data.yValues);
+          }
+          index++;
+        })
+        this.system_load.resize++;
+    })
   }
   private FnGetDiskInfo() {
     this.FnGetDiskData('use').then(res => {
-      this.disk_used = JSON.parse(JSON.stringify(res));
+      if (res) this.disk_used = JSON.parse(JSON.stringify(res));
     });
-    this.FnGetDiskData('readbytes').then(res => {
+    // this.FnGetDiskData('readbytes').then(res => {
       
-    });
-    this.FnGetDiskData('writebytes').then(res => {
+    // });
+    // this.FnGetDiskData('writebytes').then(res => {
       
-    });
+    // });
   }
   private async FnGetDiskData(type) {
     if (!this.detail_info.ecs_id.value) {
@@ -242,11 +253,11 @@ export default class Monitor extends Vue{
     let resData: any = await Service.get_disk({
       id: this.detail_info.ecs_id.value,
       // ip: this.detail_info.private_net_ip.value,
-      ip: '10.0.0.36',
+      ip: '10.4.0.146',
       instanceType: 'vm',
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
-      queryType: 'use'
+      queryType: type
     })
     if (resData.code === 0) {
       // this.disk_list = resData.data.metricInfo;

@@ -62,11 +62,6 @@ export default class resetPwd extends Vue{
   public FnResetForm() {
     (this.$refs['resetForm'] as any).resetFields();
   }
-  
-  @Watch('username')
-  private Fnaa(newVal) {
-    console.log('username00', newVal)
-  }
 
 }
 </script>

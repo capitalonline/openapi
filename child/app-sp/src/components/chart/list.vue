@@ -86,7 +86,6 @@ export default class LineEchart extends Vue {
       text: this.title
     }
     this.FnGetxAxis();
-    console.log('option', this.option)
     if(this.instance) {
       this.instance.setOption(this.option)
     }
@@ -104,7 +103,9 @@ export default class LineEchart extends Vue {
     this.option.xAxis = {
       type: 'category',
       boundaryGap: false,
-      data: this.data.xTime,
+      data: this.data.xTime.map(item => {
+        return moment(new Date(moment.utc(item).format())).format('YYYY-MM-DD HH:mm:ss')
+      }),
     };
     this.option.series = [];
     if (!this.data.legend || this.data.legend.length === 0) {
@@ -160,7 +161,6 @@ export default class LineEchart extends Vue {
 
   @Watch('data.resize')
   private FnChangeChart(newVal) {
-    console.log('newVal', newVal)
     this.FnSetOption();
   }
 }
