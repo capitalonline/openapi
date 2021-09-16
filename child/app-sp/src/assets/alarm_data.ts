@@ -188,22 +188,22 @@ export const productList = [
         id:'ecs',
         name:'云服务器ECS'
     },
-    {
-        id:'gpu',
-        name:'GPU'
-    },
-    {
-        id:'slb',
-        name:'负载均衡'
-    },
-    {
-        id:'vpc',
-        name:'私有网络VPC'
-    },
-    {
-        id:'safe',
-        name:'安全组'
-    },
+    // {
+    //     id:'gpu',
+    //     name:'GPU'
+    // },
+    // {
+    //     id:'slb',
+    //     name:'负载均衡'
+    // },
+    // {
+    //     id:'vpc',
+    //     name:'私有网络VPC'
+    // },
+    // {
+    //     id:'safe',
+    //     name:'安全组'
+    // },
 ]
 export const level_list=[
     {
@@ -395,5 +395,36 @@ export const event_name=[
     {
         id:'kernelError',
         title:'内核异常',
+    },
+]
+//应用策略通道沉默周期
+export const cycle_period=[
+    {
+        id:'900',
+        title:'15分钟'
+    },
+    {
+        id:'1800',
+        title:'30分钟'
+    },
+    {
+        id:'3600',
+        title:'60分钟'
+    },
+    {
+        id:'10800',
+        title:'3小时'
+    },
+    {
+        id:'21600',
+        title:'6小时'
+    },
+    {
+        id:'43200',
+        title:'12小时'
+    },
+    {
+        id:'86400',
+        title:'24小时'
     },
 ]

@@ -4,8 +4,8 @@
             <template #default>
                 <el-button type="primary" @click="create">创建策略</el-button>
                 <el-button type="primary" @click="del">删除</el-button>
-                <el-button type="primary" @click="apply">应用</el-button>
-                <el-button type="primary" @click="operate('stop')">停用</el-button>
+                <el-button type="primary" @click="apply(true)">应用</el-button>
+                <el-button type="primary" @click="apply(false)">停用</el-button>
             </template>
         </action-block>
         <el-table
@@ -46,8 +46,8 @@
             <el-table-column label="操作栏">
                 <template slot-scope="scope">
                     <el-button type="text" @click="edit(scope.row.id)">修改</el-button>
-                    <el-button type="text" @click="apply">应用</el-button>
-                    <el-button type="text" @click="operateRecord(scope.row.disk_id)">停用</el-button>
+                    <el-button type="text" @click="apply(true)" :disabled="scope.row.enable">应用</el-button>
+                    <el-button type="text" @click="apply(false,scope.row)" :disabled="!scope.row.enable">停用</el-button>
                     <el-button type="text" @click="del(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -61,7 +61,7 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
-        <ApplyStrategy :drawer.sync="drawer" />
+        <ApplyStrategy :drawer.sync="drawer" :list = "strategy_rows" :enable="enable" @close="close_apply" />
         <el-dialog
             title="删除策略"
             :visible.sync="del_visible"
@@ -108,6 +108,7 @@ export default class Strategy extends Vue{
     private moment:any = moment;
     private del_visible:boolean=false;
     private strategy_rows:any=[]
+    private enable:Boolean=true
     created() {
         this.fn_search()
     }
@@ -144,7 +145,11 @@ export default class Strategy extends Vue{
     private edit(id:string){
         this.$router.push({path:'/alarmStrategy/create',query:{id}})
     }
-    private del(ids:any={}){
+    private del(ids){
+        if(!ids && this.strategy_rows.length===0){
+            this.$message.warning("请先勾选策略！")
+            return;
+        }
         if(ids){
             this.strategy_rows=[ids]
         }
@@ -169,9 +174,21 @@ export default class Strategy extends Vue{
     private operate(str:string){
 
     }
-    private apply(){
+    private apply(enable:Boolean,row:any){
+        if(row) this.strategy_rows=[row];
+        if(!row && this.strategy_rows.length===0){
+            this.$message.warning("请先勾选策略！")
+            return;
+        }
+        if(!this.strategy_rows.every(item=>item.enable===!enable)){
+            this.$message.warning(`只允许对${enable ? '未应用' :'已应用'}的策略执行批量操作！`)
+            return;
+        }
         this.drawer=true
-        console.log("this.drawer",this.drawer)
+        this.enable = enable
+    }
+    private close_apply(val){
+        val==='1' && this.getStrategyList()
     }
     
 }

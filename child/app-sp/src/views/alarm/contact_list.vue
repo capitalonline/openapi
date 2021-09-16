@@ -11,6 +11,7 @@
         :data="list" 
         border 
         class="event-table"
+        ref="contact_list"
         @selection-change="handleSelectionChange"
     >
         <el-table-column type="selection"></el-table-column>
@@ -52,6 +53,7 @@ import AddContact from './add_contact.vue'
 import AddToGroup from './add_to_group.vue'
 import Service from '../../https/alarm/list'
 import CommonDialog from './commonDialog.vue'
+import {Table} from'element-ui'
 @Component({
     components:{
         ActionBlock,
@@ -155,6 +157,8 @@ export default class ContactList extends Vue{
         this.contact_rows=[]
         this.user_id=""
         val==='1'&& this.getContactList()
+        const table = this.$refs.contact_list as Table
+        table.clearSelection()
 
     }
     private addToWarnGroup(){

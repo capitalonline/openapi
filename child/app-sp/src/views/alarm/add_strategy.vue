@@ -14,6 +14,7 @@
                     <el-form-item
                         prop="stategy"
                         label="选择已有策略"
+                        v-if="edit_id===''"
                     >
                         <el-select v-model="form_data.stategy" placeholder="请选择已有策略">
                             <el-option
@@ -43,7 +44,6 @@ import { Component, Vue,Prop, Watch } from 'vue-property-decorator';
 import { Form } from "element-ui";
 import RuleConfig from './ruleConfig.vue'
 import BackHeader from '../../components/backHeader.vue';
-import {mock,create_obj}from '../../assets/data'
 import Service from '../../https/alarm/list'
 @Component({
     components:{
@@ -62,6 +62,7 @@ export default class Index extends Vue{
     private edit_id:string=""
     private strategy_list:any=[]
     private strategy_data:any={}
+    
     created() {
         this.edit_id = this.$route.query.id ? this.$route.query.id : ''
         this.getStrategyList()
@@ -120,7 +121,7 @@ export default class Index extends Vue{
                             name:inn.name,
                             productType:item.id,
                             ruleRecords:inn.tab_key==="0" ? temp : [{
-                                metricID:inn.metricID,
+                                metricID:'',
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
                                 alarmMethod:inn.notice ? inn.notice : [],
                                 eventName:inn.event_name,

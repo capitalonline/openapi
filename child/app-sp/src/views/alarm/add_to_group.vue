@@ -14,7 +14,7 @@
         </div>
         
         <el-checkbox-group v-model="check_group" size="small">
-            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.name" border></el-checkbox>
+            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.id" border>{{item.name}}</el-checkbox>
         </el-checkbox-group>
         <div class="warn" v-show="warn_flag">请选择报警联系组</div>
         <el-divider />
@@ -64,13 +64,14 @@ export default class InsDetail extends Vue{
           this.warn_flag=true;
           return;
       }
-      let res:any = await Service.update_contact_group({
-        // id:this.id,
-        // name:this.form_data.name,
-        // contactIDs:this.form_data.contact
+      console.log('###',{contactIDs:this.contact_rows.map(item=>item.id),
+        contactGroupIDs:this.check_group})
+      let res:any = await Service.add_contact_to_group({
+        contactIDs:this.contact_rows.map(item=>item.id),
+        contactGroupIDs:this.check_group
       })
       if(res.code===0){
-        this.$message.success("编辑联系人组任务下发成功！")
+        this.$message.success("添加联系人至联系人组任务下发成功！")
         this.back('1')
       }else{
         this.back('0')

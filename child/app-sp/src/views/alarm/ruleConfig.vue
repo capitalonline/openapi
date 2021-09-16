@@ -209,7 +209,7 @@
 <script lang="ts">
 import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator';
 import { Form } from "element-ui";
-import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/data';
+import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/alarm_data';
 import Service from '../../https/alarm/list'
 @Component({})
 export default class RuleConfig extends Vue{

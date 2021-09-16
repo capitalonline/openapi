@@ -1,5 +1,5 @@
 
-export const area_list = [
+export const usble_area_list = [
     {
         "region_group_id":"408fd19e-fa78-11e6-bd9a-30b49e091019",
         "region_group_name":"中国大陆",
