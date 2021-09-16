@@ -200,7 +200,7 @@ export default class App extends Vue {
   private async FnGetCustomerName() {
     const resData: any = await Service.get_customer_name({customer_id: this.customer_id_input});
     if (resData.code == 'Success') {
-      this.customer_id = this.customer_id_input;
+      this.customer_id = resData.data.customer_id;
       this.customer_name = resData.data.customer_name;
       this.error_msg.customer_id.show = false;
       this.FnGetRegionAzList();
