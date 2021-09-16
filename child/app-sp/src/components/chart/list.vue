@@ -4,6 +4,9 @@
     <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="data.legend && data.legend.length > 0" clearable>
       <el-option v-for="item in data.legend" :key="item" :value="item" :label="item"></el-option>
     </el-select>
+    <div class="empty-box" v-if="!data.xTime || data.xTime.length === 0">
+      <el-empty description="暂无数据"></el-empty>
+    </div>
   </el-card>
 </template>
 
@@ -50,9 +53,10 @@ import moment from 'moment';
 @Component
 export default class LineEchart extends Vue {
   @Prop({default: 'id'}) private chart_id!: string;
-  @Prop({default: ''}) private title!: string;
   @Prop({default: () => {
     return {
+      title: '',
+      unit: '',
       xTime: [],
       yValue: [],
       resize: 0
@@ -75,18 +79,19 @@ export default class LineEchart extends Vue {
         end: 10
       }
     ],
-    tooltip: {
-      formatter: '{b0}<br />'+ this.title + ': {c0}'
-    },
     series: []
   }
 
   private FnSetOption() {
     this.option.title = {
-      text: this.title
-    }
+      text: this.data.title + '(' + this.data.unit + ')'
+    };
+    this.option.tooltip = {
+      formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
+    };
     this.FnGetxAxis();
     if(this.instance) {
+      console.log('option', this.option)
       this.instance.setOption(this.option)
     }
   }
@@ -100,6 +105,9 @@ export default class LineEchart extends Vue {
         bottom: 20,
         show: false
     };
+    if (!this.data.xTime) {
+      return
+    }
     this.option.xAxis = {
       type: 'category',
       boundaryGap: false,
@@ -110,7 +118,7 @@ export default class LineEchart extends Vue {
     this.option.series = [];
     if (!this.data.legend || this.data.legend.length === 0) {
       this.option.series.push({
-        name: this.title,
+        name: this.data.title,
         data: this.data.yValue,
         type: 'line',
         smooth: true
@@ -181,6 +189,14 @@ export default class LineEchart extends Vue {
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+  .empty-box {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    top: 20%;
+    left: 0;
+    background: #fff;
   }
 }
 </style>

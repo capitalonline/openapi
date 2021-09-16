@@ -23,41 +23,48 @@
       <div class="chart-box" v-if="default_tab === 'instance'">
         <line-echart 
           chart_id="cpu_chart"
-          title="CPU使用率（%）"
           :data="cpu_used"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="ram_chart"
-          title="内存使用率（%）"
           :data="memory_used"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="system_chart"
-          title="系统平均负载（%）"
           :data="system_load"
           class="item">
         </line-echart>
       </div>
 
+      <div class="chart-box" v-if="default_tab === 'net'">
+        <line-echart 
+          chart_id="net_chart"
+          :data="net_in_out"
+          class="item"
+        ></line-echart>
+        <line-echart 
+          chart_id="net_rate_chart"
+          :data="net_rate"
+          class="item"
+        ></line-echart>
+      </div>
+
       <div class="chart-box" v-if="default_tab === 'disk'">
         <line-echart 
           chart_id="disk_chart"
-          title="磁盘使用率（%）"
           :data="disk_used"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="disk_through_chart"
-          title="磁盘吞吐量（Kbps）"
-          :time_frame="default_date_timer"
+          :data="disk_bytes"
           class="item"
         ></line-echart>
         <line-echart 
           chart_id="disk_iops_chart"
-          title="磁盘IOPS（%）"
-          :time_frame="default_date_timer"
+          :data="disk_iops"
           class="item">
         </line-echart>
       </div>
@@ -66,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
 import BackHeader from '../../components/backHeader.vue';
 import TimeGroup from '../../components/search/timeGroup.vue';
 import LineEchart from '../../components/chart/list.vue';
@@ -95,38 +102,68 @@ export default class Monitor extends Vue{
     status: {label: '运行状态', value: ''}
   }
   private cpu_used = {
+    title: 'CPU使用率',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0
   };
   private memory_used = {
+    title: '内存使用率',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0
   };
   private system_load = {
+    title: '系统平均负载',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0,
     legend: ['1m', '5m', '15m']
   };
+  private net_in_out = {
+    title: '网络流量',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: ['出网流量', '入网流量']
+  };
+  private net_rate = {
+    title: '网络吞吐量',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: ['出网流量速率', '入网流量速率']
+  };
   private disk_used = {
+    title: '磁盘使用率',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0,
     legend: []
   };
   private disk_iops = {
+    title: '磁盘IOPS',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: []
+    legend: [],
+    type: 'double_line'
   };
   private disk_bytes = {
+    title: '磁盘吞吐量',
+    unit: '',
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: []
+    legend: [],
+    type: 'double_line'
   }
   private default_tab = '';
   private tab_list = {
@@ -142,10 +179,29 @@ export default class Monitor extends Vue{
   
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
-    this.FnGetCpu();
-    this.FnGetMemory();
-    this.FnGetDiskInfo();
-    this.FnGetLoad();
+    this.FnGetChartData();
+  }
+  private FnGetChartData() {
+    if (!this.detail_info.ecs_id.value) {
+      return
+    }
+    let reqData = {
+      id: this.detail_info.ecs_id.value,
+      // ip: this.detail_info.private_net_ip.value,
+      ip: '10.4.0.146',
+      instanceType: 'vm',
+      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
+    }
+    if (this.default_tab === 'instance') {
+      this.FnGetCpu(reqData);
+      this.FnGetMemory(reqData);
+      this.FnGetLoad(reqData);
+    } else if (this.default_tab === 'disk') {
+      this.FnGetDiskInfo(reqData);
+    } else if (this.default_tab === 'net') {
+      this.FnGetNetInfo(reqData);
+    }
   }
   private async FnGetDetail() {
     const resData: any = await DetailService.get_detail({
@@ -163,116 +219,119 @@ export default class Monitor extends Vue{
       this.detail_info.os_info.value = data.os_info.system;
       this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
       this.detail_info.status.value = data.status_display;
-      this.FnGetCpu();
-      this.FnGetMemory();
-      this.FnGetDiskInfo();
-      this.FnGetLoad();
+      this.FnGetChartData();
     }
   }
-  private async FnGetCpu() {
-    if (!this.detail_info.ecs_id.value) {
-      return
-    }
-    let resData: any = await Service.get_cpu({
-      id: this.detail_info.ecs_id.value,
-      // ip: this.detail_info.private_net_ip.value,
-      ip: '10.4.0.146',
-      instanceType: 'vm',
-      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
-      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
-      queryType: 'use_total'
-    })
+  private async FnGetCpu(reqData) {
+    let resData: any = await Service.get_cpu(Object.assign(
+      { queryType: 'use_total' },
+      reqData
+    ))
+    this.FnHandleSingleData('cpu_used', resData);
+  }
+  private async FnGetMemory(reqData) {
+    let resData: any = await Service.get_memory(Object.assign(
+      { queryType: 'used' },
+      reqData
+    ))
+    this.FnHandleSingleData('memory_used', resData);
+  }
+  private FnHandleSingleData(type, resData) { // 处理cpu，内存
     if (resData.code === 0) {
-      this.cpu_used.xTime = resData.data.xTime;
-      this.cpu_used.yValue = resData.data.yValues;
+      this[type].xTime = resData.data.xTime;
+      this[type].yValue = resData.data.yValues;
+      this[type].unit = resData.data.unit;
     }
-    this.cpu_used.resize++;
+    this[type].resize++;
   }
-  private async FnGetMemory() {
-    if (!this.detail_info.ecs_id.value) {
-      return
-    }
-    let resData: any = await Service.get_memory({
-      id: this.detail_info.ecs_id.value,
-      // ip: this.detail_info.private_net_ip.value,
-      ip: '10.4.0.146',
-      instanceType: 'vm',
-      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
-      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
-      queryType: 'used'
-    })
-    if (resData.code === 0) {
-      this.memory_used.xTime = resData.data.xTime;
-      this.memory_used.yValue = resData.data.yValues;
-    }
-    this.memory_used.resize++;
-  }
-  private async FnGetLoad() {
-    if (!this.detail_info.ecs_id.value) {
-      return
-    }
-    let reqData = {
-      id: this.detail_info.ecs_id.value,
-      // ip: this.detail_info.private_net_ip.value,
-      ip: '10.4.0.146',
-      instanceType: 'vm',
-      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
-      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
-    }
+  private async FnGetLoad(reqData) {
     this.system_load.yValue = [];
     let legend = this.system_load.legend;
-    Promise.all([Service.get_load(Object.assign({}, reqData, {queryType: legend[0]})), 
-      Service.get_load(Object.assign({}, reqData, {queryType: legend[1]})), 
-      Service.get_load(Object.assign({}, reqData, {queryType: legend[2]}))]).then(resData => {
-        let index = 0;
-        resData.forEach((item: any) => {
-          if (item.code === 0) {
-            if (index === 0) this.system_load.xTime = item.data.xTime;
-            this.system_load.yValue.push(item.data.yValues);
+    Promise.all([Service.get_load(Object.assign({queryType: legend[0]}, reqData)), 
+      Service.get_load(Object.assign({queryType: legend[1]}, reqData)), 
+      Service.get_load(Object.assign({queryType: legend[2]}, reqData))
+    ]).then(resData => {
+      this.FnHandleMoreData('system_load', resData)
+    })
+  }
+  private FnHandleMoreData(type, resData) { // 处理负载，网络
+    let index = 0;
+    resData.forEach((item: any) => {
+      if (item.code === 0) {
+        if (index === 0) {
+          this[type].xTime = item.data.xTime;
+          this[type].unit = item.data.unit;
+        }
+        this[type].yValue.push(item.data.yValues);
+      }
+      index++;
+    })
+    this[type].resize++;
+  }
+  private FnGetDiskInfo(reqData) {
+    Service.get_disk(Object.assign({ queryType: 'use' }, reqData)).then((resData: any) => {
+      if (resData.code === 0) {      
+        this.disk_used.xTime = resData.data.xTime;
+        this.disk_used.yValue = resData.data.yValues;
+        this.disk_used.legend = resData.data.metricInfo;
+        this.disk_used.unit = resData.data.unit;
+      }
+      let resize = this.disk_used.resize++;
+    })
+    this.disk_bytes.yValue = [];
+    Promise.all([Service.get_disk(Object.assign({ queryType: 'readbytes' }, reqData)),
+      Service.get_disk(Object.assign({ queryType: 'readbytes' }, reqData))
+    ]).then(resData => {
+      this.FnHandleDubleData('disk_bytes', resData)
+    })
+    this.disk_iops.yValue = [];
+    Promise.all([Service.get_disk(Object.assign({ queryType: 'readiops' }, reqData)),
+      Service.get_disk(Object.assign({ queryType: 'writeiops' }, reqData))
+    ]).then(resData => {
+      this.FnHandleDubleData('disk_iops', resData)
+    })
+  }
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量
+    let index = 0;
+      resData.forEach((item: any) => {
+        if (item.code === 0) {
+          if (index === 0) {
+            this[type].xTime = item.data.xTime;
+            this[type].legend = item.data.metricInfo;
+            this[type].unit = item.data.unit; 
+          } else {
+            item.data.metricInfo.forEach(metric => {
+              this[type].legend.push(metric + this.disk_iops.type);
+            });
           }
-          index++;
-        })
-        this.system_load.resize++;
-    })
+          this[type].yValue.push(...item.data.yValues);
+        }
+        index++;
+      })
+      this[type].resize++;
   }
-  private FnGetDiskInfo() {
-    this.FnGetDiskData('use').then(res => {
-      if (res) this.disk_used = JSON.parse(JSON.stringify(res));
-    });
-    // this.FnGetDiskData('readbytes').then(res => {
-      
-    // });
-    // this.FnGetDiskData('writebytes').then(res => {
-      
-    // });
-  }
-  private async FnGetDiskData(type) {
-    if (!this.detail_info.ecs_id.value) {
-      return
-    }
-    let resData: any = await Service.get_disk({
-      id: this.detail_info.ecs_id.value,
-      // ip: this.detail_info.private_net_ip.value,
-      ip: '10.4.0.146',
-      instanceType: 'vm',
-      start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
-      end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
-      queryType: type
+  private FnGetNetInfo(reqData) {
+    this.net_in_out.yValue = [];
+    Promise.all([Service.get_network(Object.assign({queryType: 'networkout'}, reqData)), 
+      Service.get_network(Object.assign({queryType: 'networkin'}, reqData))
+    ]).then(resData => {
+      this.FnHandleMoreData('net_in_out', resData)
     })
-    if (resData.code === 0) {
-      // this.disk_list = resData.data.metricInfo;
-    }
-    let resize = this.disk_used.resize++;
-    return {
-      xTime: resData.data.xTime,
-      yValue: resData.data.yValues,
-      resize: resize,
-      legend: resData.data.metricInfo
-    }
+    this.net_rate.yValue = [];
+    Promise.all([Service.get_network(Object.assign({queryType: 'networkout_rate'}, reqData)), 
+      Service.get_network(Object.assign({queryType: 'networkin_rate'}, reqData))
+    ]).then(resData => {
+      this.FnHandleMoreData('net_rate', resData)
+    })
   }
   private created() {
     this.FnGetDetail();
     this.default_tab = Object.keys(this.tab_list)[0];
+  }
+
+  @Watch('default_tab')
+  private FnChangeTab() {
+    this.FnGetChartData();
   }
 }
 </script>
