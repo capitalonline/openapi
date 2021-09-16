@@ -64,7 +64,7 @@
               <el-dropdown-item :command="{label:'destroy',value:scope.row}" :disabled="!limit_disk_operate('destroy',scope.row)">销毁</el-dropdown-item>
               <el-dropdown-item :command="{label:'capacity',value:scope.row}" :disabled="!limit_disk_operate('capacity',scope.row)">扩容</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
-              <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!auth_list.includes('edit_name')">修改云盘名称</el-dropdown-item>
+              <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
         </template>
@@ -415,6 +415,8 @@ export default class extends Vue {
       return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting" && this.auth_list.includes('disk_capacity')
     }else if(label==="edit_attr"){
       return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
+    }else if(label==="edit_name"){
+      return (obj.status==="running" || obj.status==="waiting" || obj.status==="deleted") && this.auth_list.includes(label)
     }
   }
   private close_disk(val){

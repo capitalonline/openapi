@@ -113,6 +113,7 @@
                             <div class="disk-name">
                                 <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                                 <span class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</span>
+                                <span class="name-error" v-if="inn.disk_name.length!==1 && inn.disk_name.includes(' ')">云盘名称不能包含空格</span>
                             </div>
                             <div class="remark">{{disk_validate_msg}}</div>
                             
@@ -531,6 +532,9 @@ export default class CreateDisk extends Vue{
             return;
         }
         if(!this.form_data.disk_list.every(item=>item.disk_name.length===0 || item.disk_name.length>=2)){
+            return;
+        }
+        if(this.form_data.disk_list.some(item=>item.disk_name.includes(" "))){
             return;
         }
         form.validate(async(valid)=>{
