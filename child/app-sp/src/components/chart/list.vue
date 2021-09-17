@@ -1,8 +1,8 @@
 <template>
   <el-card>
     <div :id="chart_id" :key="chart_id" class="chart"></div>
-    <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="data.legend && data.legend.length > 0" clearable>
-      <el-option v-for="item in data.legend" :key="item" :value="item" :label="item"></el-option>
+    <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="legend && legend.length > 0" clearable>
+      <el-option v-for="item in legend" :key="item" :value="item" :label="item"></el-option>
     </el-select>
     <div class="empty-box" v-if="!data.xTime || data.xTime.length === 0">
       <el-empty description="暂无数据"></el-empty>
@@ -63,8 +63,9 @@ export default class LineEchart extends Vue {
     }
   }}) private data!: any;
   private instance = null;
+  private legend = [];
+  private legend_relation = {};
   private selected_legend = '';
-  private 
   private option: ECOption = {
     yAxis: {
       type: 'value'
@@ -87,11 +88,11 @@ export default class LineEchart extends Vue {
       text: this.data.title + '(' + this.data.unit + ')'
     };
     this.option.tooltip = {
-      formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
+      trigger: 'axis',
+      // formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
     };
     this.FnGetxAxis();
     if(this.instance) {
-      console.log('option', this.option)
       this.instance.setOption(this.option)
     }
   }
@@ -116,6 +117,7 @@ export default class LineEchart extends Vue {
       }),
     };
     this.option.series = [];
+    this.legend_relation = {};
     if (!this.data.legend || this.data.legend.length === 0) {
       this.option.series.push({
         name: this.data.title,
@@ -125,8 +127,28 @@ export default class LineEchart extends Vue {
       })
       return
     }
-    for(let i = 0; i < this.data.legend.length; i++) {
+    if (this.data.type) {
+      this.legend = this.data.legend.filter(item => item.indexOf(this.data.type) < 0);
+    } else {
+      this.legend = this.data.legend;
+    }
+    for(let i = 0; i < this.data.legend.length; i++) { // 一个legend对应两条线
       let item  = this.data.yValue[i];
+      if (this.data.type) {
+        if (this.data.legend[i].indexOf(this.data.type) < 0) {
+          let legend = this.data.legend[i];
+          this.data.legend[i]+= this.data.line_name[0];
+          this.legend_relation[legend] = [this.data.legend[i]];
+          console.log('data00', legend, this.legend_relation)
+        } else {
+          let legend = this.data.legend[i].replace(this.data.type, '');
+          this.data.legend[i] = legend + this.data.line_name[1];
+          console.log('data', legend, this.legend_relation)
+          this.legend_relation[legend].push(this.data.legend[i]);
+        }
+      } else {
+        this.legend_relation[this.data.legend[i]] = [this.data.legend[i]];
+      }
       this.option.series.push({
         name: this.data.legend[i],
         data: item,
@@ -149,8 +171,9 @@ export default class LineEchart extends Vue {
     if (!this.selected_legend) {
       this.instance.dispatchAction({type: 'legendAllSelect'})
     } else {
+      console.log(this.data.legend, this.legend_relation)
       this.data.legend.forEach(item => {
-        if (item === this.selected_legend) {
+        if (this.legend_relation[this.selected_legend].includes(item)) {
           this.instance.dispatchAction({type: 'legendSelect', name: item})
         } else {
           this.instance.dispatchAction({type: 'legendUnSelect', name: item})
