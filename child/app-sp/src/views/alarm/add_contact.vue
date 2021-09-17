@@ -79,7 +79,7 @@ export default class InsDetail extends Vue{
     let res:any = await Service.get_contact_detail({
         id:this.id,
       })
-      if(res.code===0){
+      if(res.code==='Success'){
         const {name,email,phone}=res.data
           this.form_data={
             name,
@@ -98,7 +98,7 @@ export default class InsDetail extends Vue{
               let res:any = await Service.add_contact({
                 ...this.form_data
               })
-              if(res.code===0){
+              if(res.code==='Success'){
                 this.$message.success("新建联系人任务下发成功")
                 this.back('1')
               }else{
@@ -109,7 +109,7 @@ export default class InsDetail extends Vue{
                 ...this.form_data,
                 id:this.id
               })
-              if(res.code===0){
+              if(res.code==='Success'){
                 this.$message.success("编辑联系人任务下发成功")
                 this.back('1')
               }else{

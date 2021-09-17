@@ -70,7 +70,8 @@
                                             >
                                             </el-option>
                                         </el-select>
-                                        <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> {{rule_data.metricUnit}}&nbsp;
+                                        <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> 
+                                        <span class="unit">{{rule_data.metricUnit}}</span>
                                         <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
                                                 v-for="item in static_list.cycle_time"
@@ -209,7 +210,7 @@
 <script lang="ts">
 import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator';
 import { Form } from "element-ui";
-import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/data';
+import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/alarm_data';
 import Service from '../../https/alarm/list'
 @Component({})
 export default class RuleConfig extends Vue{
@@ -269,7 +270,7 @@ export default class RuleConfig extends Vue{
     //获取指标项列表
     private async get_index_list(){
         let res:any = await Service.get_index_list({})
-        if(res.code===0){
+        if(res.code==='Success'){
             res.data && res.data.forEach(element => {
                 let temp=[]
                 element.metric_infos.forEach(item=>{
@@ -301,8 +302,8 @@ export default class RuleConfig extends Vue{
                 list.push({
                     range:item.metricCondition,
                     num:item.metricValue,
-                    cycle_time:item.metricPeriodNum.toString(),
-                    cycle_num:item.metricPeriod.toString(),
+                    cycle_time:item.metricPeriod.toString(),
+                    cycle_num:item.metricPeriodNum.toString(),
                     alram_type:item.alarmType==="event" ? '' : item.level.toString(),
                     notice:item.alarmType==="event" ? [] : item.alarmMethod
                 })
@@ -475,6 +476,7 @@ export default class RuleConfig extends Vue{
         const fil:any = this.selected_products.filter(item=>item.id === pro_id)
         const fil_rule:any = fil[0].rule_list.filter(item=>item.id===id)
         this.rule_data = JSON.parse(JSON.stringify(fil_rule[0])) 
+        console.log("rule_data",this.rule_data)
     }
     private change_rule_notice(val){
     }
@@ -520,6 +522,7 @@ export default class RuleConfig extends Vue{
         }
         .add-rule{
             max-width: 1200px;
+            width: 100%;
             position: absolute;
             top: 30px;
             transform-origin: left center;
@@ -558,6 +561,9 @@ export default class RuleConfig extends Vue{
         background: #f5f6fa;
         margin-bottom: 10px;
         padding: 10px 5px 0 5px;
+        .unit{
+            margin: 0 5px;
+        }
         .notice{
             display: flex;
             justify-content: space-between;

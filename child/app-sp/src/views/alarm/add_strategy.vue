@@ -3,7 +3,7 @@
         <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
         <div class="main_box">
             <el-card class="create">
-                <el-form :model="form_data" ref="form" label-width="100px" class="demo-dynamic">
+                <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic">
                     <el-form-item
                         prop="name"
                         label="策略名称"
@@ -14,6 +14,7 @@
                     <el-form-item
                         prop="stategy"
                         label="选择已有策略"
+                        v-if="edit_id===''"
                     >
                         <el-select v-model="form_data.stategy" placeholder="请选择已有策略">
                             <el-option
@@ -43,7 +44,6 @@ import { Component, Vue,Prop, Watch } from 'vue-property-decorator';
 import { Form } from "element-ui";
 import RuleConfig from './ruleConfig.vue'
 import BackHeader from '../../components/backHeader.vue';
-import {mock,create_obj}from '../../assets/data'
 import Service from '../../https/alarm/list'
 @Component({
     components:{
@@ -62,17 +62,16 @@ export default class Index extends Vue{
     private edit_id:string=""
     private strategy_list:any=[]
     private strategy_data:any={}
+    
     created() {
         this.edit_id = this.$route.query.id ? this.$route.query.id : ''
         this.getStrategyList()
-        // this.strategy_list = [{id:'',name:'全部'},{id:'1',name:'hhh'}]
-        // this.strategy_list = [{id:'',name:'全部'},...create_obj.data]
     }
     private async getStrategyList(){
         let res:any = await Service.get_strategy_list({
             name:'',
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.strategy_list = res.data.datas || []
             if(this.edit_id!==""){
                 this.form_data.stategy = this.edit_id
@@ -85,9 +84,12 @@ export default class Index extends Vue{
         const res:any = await Service.get_strategy_detail({
             id:value
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.strategy_data = res.data
-            this.form_data.name = res.data.name
+            if(this.edit_id!==""){
+                this.form_data.name = res.data.name
+            }
+            
         }
         
     }
@@ -99,12 +101,13 @@ export default class Index extends Vue{
             if(valid){
                 const selected_products = rule_config.selected_products
                 const list=[]
-                selected_products.forEach(item=>{
-                    item.rule_list.forEach(inn=>{
+                selected_products.forEach(item=>{//最外层产品
+                    console.log("item",item)
+                    item.rule_list.forEach(inn=>{//第二层规则
                         const temp=[]
-                        inn.level.map(lev=>{
+                        inn.level.map(lev=>{//第三层阈值及报警级别指标项
                             const temp_obj={
-                                metricID:inn.metricID[1],
+                                metricID:Array.isArray(inn.metricID)  ? inn.metricID[1] : inn.metricID,
                                 metricCondition:lev.range,
                                 metricValue:parseInt(lev.num),
                                 metricPeriod:parseInt(lev.cycle_time),
@@ -112,7 +115,7 @@ export default class Index extends Vue{
                                 level:parseInt(lev.alram_type),
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
                                 alarmMethod:lev.notice ? lev.notice : [],
-                                metricUnit:item.metricUnit
+                                metricUnit:inn.metricUnit
                             }
                             temp.push(temp_obj)
                         })
@@ -120,7 +123,7 @@ export default class Index extends Vue{
                             name:inn.name,
                             productType:item.id,
                             ruleRecords:inn.tab_key==="0" ? temp : [{
-                                metricID:inn.metricID,
+                                metricID:'',
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
                                 alarmMethod:inn.notice ? inn.notice : [],
                                 eventName:inn.event_name,
@@ -138,7 +141,7 @@ export default class Index extends Vue{
                         name:this.form_data.name,
                         rules:list
                     })
-                    if(res.code===0){
+                    if(res.code==='Success'){
                         this.$message.success("创建策略任务下发成功")
                         this.$router.push('/alarmStrategy')
                     }
@@ -160,7 +163,7 @@ export default class Index extends Vue{
                         regions,
                         
                     })
-                    if(res.code===0){
+                    if(res.code==='Success'){
                         this.$message.success("编辑策略任务下发成功")
                         this.$router.push('/alarmStrategy')
                     }

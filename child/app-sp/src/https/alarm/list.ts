@@ -13,10 +13,6 @@ export default{
     get_strategy_detail(req){
         return service(getAlarmOptions('GET','/strategy',req))
     },
-    //获取联系人详情
-    get_contact_detail(req){
-        return service(getAlarmOptions('GET','/contact',req))
-    },
     //获取创建策略时指标项列表
     get_index_list(req){
         return service(getAlarmOptions('GET','/metrics/info',req))
@@ -29,9 +25,9 @@ export default{
     update_strategy(req){
         return service(getAlarmOptions('PUT','/strategy',req))
     },
-    //编辑联系人
-    update_contact(req){
-        return service(getAlarmOptions('PUT','/contact',req))
+    //应用策略
+    apply_strategy(req){
+        return service(getAlarmOptions('PUT','/strategy/apply',req))
     },
     //删除策略
     delete_strategy(req){
@@ -50,6 +46,14 @@ export default{
     add_contact(req){
         return service(getAlarmOptions('POST','/contact',req))
     },
+    //获取联系人详情
+    get_contact_detail(req){
+        return service(getAlarmOptions('GET','/contact',req))
+    },
+    //编辑联系人
+    update_contact(req){
+        return service(getAlarmOptions('PUT','/contact',req))
+    },
     
     //删除联系人
     delete_contact(req){
@@ -59,23 +63,27 @@ export default{
             data: req
           })
     },
+    //添加联系人至联系人组
+    add_contact_to_group(req){
+        return service(getAlarmOptions('PUT','/contact_group/relation',req))
+    },
     //获取联系人组列表
     get_contact_group_list(req){
         return service(getAlarmOptions('GET','/contact_group/list',req))
     },
-    //获取联系人详情
+    //获取联系人组详情
     get_contact_group_detail(req){
         return service(getAlarmOptions('GET','/contact_group',req))
     },
-    //新建联系人
+    //新建联系人组
     add_contact_group(req){
         return service(getAlarmOptions('POST','/contact_group',req))
     },
-    //编辑联系人
+    //编辑联系人组
     update_contact_group(req){
         return service(getAlarmOptions('PUT','/contact_group',req))
     },
-    //删除联系人
+    //删除联系人组
     delete_contact_group(req){
         return service({
             method: 'DELETE',

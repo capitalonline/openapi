@@ -2,7 +2,7 @@
     <el-dialog
       :title="title"
       :visible.sync="visible_sync"
-      width="960px"
+      width="760px"
       :destroy-on-close="true"
       @close="back"
     >
@@ -47,7 +47,7 @@ export default class DelContact extends Vue{
       }) : await Service.delete_contact_group({
         ids:temp
       })
-      if (res.code == 0) {
+      if (res.code==='Success') {
           this.$message.success(`${this.title}任务下发成功！`)
           this.back("1")
       }else{

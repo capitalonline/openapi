@@ -39,9 +39,9 @@
     <template v-if="group_visible">
         <AddGroup :title="group_title" :id="group_id" :visible.sync="group_visible" @close = "close_group" />
     </template>
-     <template v-if="del_visible">
-        <common-dialog :visible="del_visible" :title="'删除联系人组'" :contact_rows="group_rows" @close = "close_group" />
-    </template>
+     <!-- <template v-if="del_visible">
+        <common-del :visible.sync="del_visible" :title="'删除联系人组'" :rows="group_rows" @close = "close_group" />
+    </template> -->
   </div>
 </template>
 <script lang="ts">
@@ -49,12 +49,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue'
 import AddGroup from './add_group.vue';
 import Service from '../../https/alarm/list'
-import CommonDialog from './commonDialog.vue'
+import CommonDel from './commonDel.vue'
 @Component({
     components:{
         ActionBlock,
         AddGroup,
-        CommonDialog
+        CommonDel
     }
 })
 export default class ContactList extends Vue{
@@ -80,21 +80,11 @@ export default class ContactList extends Vue{
         this.search_data = data
         this.getContactGroupList()
     }
-    // private async getContactList(){
-    //     let res:any = await Service.get_contact_list({
-    //         page:this.current,
-    //         pageSize:this.size,
-    //     })
-    //     if(res.code===0){
-    //         this.list = res.data.datas || []
-    //         this.total = res.data.total || 0
-    //     }
-    // }
     private async getContactGroupList(){
         let res:any = await Service.get_contact_group_list({
             name:this.search_data.name
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.group_list = res.data.datas.map(item=>{
                 item = Object.assign({},item,{check:false})
                 return item;
@@ -129,7 +119,7 @@ export default class ContactList extends Vue{
                     }
                 })
             })
-            if(res.code===0){
+            if(res.code==='Success'){
                 this.$message.success("移除联系人任务下发成功！")
                 this.getContactGroupList()
             }
@@ -169,7 +159,63 @@ export default class ContactList extends Vue{
             this.$message.warning("请先勾选联系人组!");
             return;
         }
-        this.del_visible=true
+        const names = this.group_rows.map(item=>item.name)
+        const ids = this.group_rows.map(item=>item.id)
+        const h = this.$createElement;
+        // this.$msgbox({
+        //   title: '提示',
+        //   message: h('p', null, [
+        //     h('span', null, '确定删除 '),
+        //     h('i', { style: 'color: teal' }, `${names.join(',')}`),
+        //     h('span', null, '  吗, 是否继续?'),
+        //   ]),
+        //   showCancelButton: true,
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   beforeClose: async(action, instance, done) => {
+        //     if (action === 'confirm') {
+        //       let res:any = await Service.delete_contact_group({
+        //         ids
+        //     })
+        //     if (res.code==='Success') {
+        //         this.$message.success(`删除联系人组任务下发成功！`)
+        //         this.getContactGroupList()
+        //     }
+        //     } else {
+        //         this.$message({
+        //             type: 'info',
+        //             message: '已取消删除'
+        //         });
+        //     }
+        //   }
+        // }).then(async(action) => {
+        //     let res:any = await Service.delete_contact_group({
+        //         ids
+        //     })
+        //     if (res.code==='Success') {
+        //         this.$message.success(`删除联系人组任务下发成功！`)
+        //         this.getContactGroupList()
+        //     }
+        // });
+        // this.$confirm(`确定删除  ${names.join(',')}  吗, 是否继续?`, '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   type: 'warning'
+        // }).then(async() => {
+        //     let res:any = await Service.delete_contact_group({
+        //         ids
+        //     })
+        //     if (res.code==='Success') {
+        //         this.$message.success(`删除联系人组任务下发成功！`)
+        //         this.getContactGroupList()
+        //     }
+        // }).catch(() => {
+        //   this.$message({
+        //     type: 'info',
+        //     message: '已取消删除'
+        //   });          
+        // });
+        // this.del_visible=true
     }
     private addToWarnGroup(){
         
