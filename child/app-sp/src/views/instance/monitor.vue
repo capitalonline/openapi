@@ -154,6 +154,7 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0,
     legend: [],
+    line_name: ['读', '写'],
     type: 'double_line'
   };
   private disk_bytes = {
@@ -163,6 +164,7 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0,
     legend: [],
+    line_name: ['读', '写'],
     type: 'double_line'
   }
   private default_tab = '';
@@ -237,7 +239,7 @@ export default class Monitor extends Vue{
     this.FnHandleSingleData('memory_used', resData);
   }
   private FnHandleSingleData(type, resData) { // 处理cpu，内存
-    if (resData.code === 0) {
+    if (resData.code === 'Success') {
       this[type].xTime = resData.data.xTime;
       this[type].yValue = resData.data.yValues;
       this[type].unit = resData.data.unit;
@@ -257,7 +259,7 @@ export default class Monitor extends Vue{
   private FnHandleMoreData(type, resData) { // 处理负载，网络
     let index = 0;
     resData.forEach((item: any) => {
-      if (item.code === 0) {
+      if (item.code === 'Success') {
         if (index === 0) {
           this[type].xTime = item.data.xTime;
           this[type].unit = item.data.unit;
@@ -270,7 +272,7 @@ export default class Monitor extends Vue{
   }
   private FnGetDiskInfo(reqData) {
     Service.get_disk(Object.assign({ queryType: 'use' }, reqData)).then((resData: any) => {
-      if (resData.code === 0) {      
+      if (resData.code === 'Success') {      
         this.disk_used.xTime = resData.data.xTime;
         this.disk_used.yValue = resData.data.yValues;
         this.disk_used.legend = resData.data.metricInfo;
@@ -280,7 +282,7 @@ export default class Monitor extends Vue{
     })
     this.disk_bytes.yValue = [];
     Promise.all([Service.get_disk(Object.assign({ queryType: 'readbytes' }, reqData)),
-      Service.get_disk(Object.assign({ queryType: 'readbytes' }, reqData))
+      Service.get_disk(Object.assign({ queryType: 'writebytes' }, reqData))
     ]).then(resData => {
       this.FnHandleDubleData('disk_bytes', resData)
     })
@@ -294,17 +296,21 @@ export default class Monitor extends Vue{
   private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量
     let index = 0;
       resData.forEach((item: any) => {
-        if (item.code === 0) {
+        if (item.code === 'Success') {
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
             this[type].unit = item.data.unit; 
           } else {
-            item.data.metricInfo.forEach(metric => {
-              this[type].legend.push(metric + this.disk_iops.type);
-            });
+            if (item.data.metricInfo) {
+              item.data.metricInfo.forEach(metric => {
+                this[type].legend.push(metric + this.disk_iops.type);
+              });
+            }
           }
-          this[type].yValue.push(...item.data.yValues);
+          if (item.data.yValues) {
+            this[type].yValue.push(...item.data.yValues);
+          }
         }
         index++;
       })
