@@ -78,7 +78,7 @@ export default class InsDetail extends Vue{
   }
   private async getContactList(){
     let res:any = await Service.get_contact_list({})
-    if(res.code===0){
+    if(res.code==='Success'){
         this.contact_list = trans(res.data.datas,"name",'id','label','key')
     }
   }
@@ -86,7 +86,7 @@ export default class InsDetail extends Vue{
     let res:any=await Service.get_contact_group_detail({
       id:this.id
     })
-    if(res.code===0){
+    if(res.code==='Success'){
       const {name,members}=res.data
       this.form_data={
         name,
@@ -94,12 +94,9 @@ export default class InsDetail extends Vue{
       }
     }
   }
-  private filterMethod(val){
-    // console.log("val",val)
-    const fil = this.contact_list.filter(item=>item.label.includes(val))
-    // console.log("fil",fil)
-    return fil
-  }
+  private filterMethod(query, item) {
+      return item.label.indexOf(query) > -1;
+    }
   private confirm(){
       const form = this.$refs.form as Form
       form.validate(async(valid:boolean)=>{
@@ -109,7 +106,7 @@ export default class InsDetail extends Vue{
                   name:this.form_data.name,
                   contactIDs:this.form_data.contact
               })
-              if(res.code===0){
+              if(res.code==='Success'){
                 this.$message.success("新建联系人组任务下发成功！")
                 this.back('1')
               }else{
@@ -121,7 +118,7 @@ export default class InsDetail extends Vue{
                   name:this.form_data.name,
                   contactIDs:this.form_data.contact
               })
-              if(res.code===0){
+              if(res.code==='Success'){
                 this.$message.success("编辑联系人组任务下发成功！")
                 this.back('1')
               }else{

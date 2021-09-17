@@ -3,7 +3,7 @@
         <action-block :search_option="search" @fn-search="fn_search">
             <template #default>
                 <el-button type="primary" @click="create">创建策略</el-button>
-                <el-button type="primary" @click="del">删除</el-button>
+                <el-button type="primary" @click="del(false)">删除</el-button>
                 <el-button type="primary" @click="apply(true)">应用</el-button>
                 <el-button type="primary" @click="apply(false)">停用</el-button>
             </template>
@@ -22,7 +22,7 @@
             <el-table-column prop="instances" label="被应用过的产品">
                 <template slot-scope="scope">
                     <div class="used-products">
-                        <span class="app"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0]};${scope.row.instances[1]};...` : scope.row.instances.join(';') : ''}}</span>
+                        <span class="app"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0]};${scope.row.instances[1]};...` : scope.row.instances.join(';') : '--'}}</span>
                         <i class="el-icon-document" v-if="scope.row.instances"></i>
                     </div>
                     
@@ -46,7 +46,7 @@
             <el-table-column label="操作栏">
                 <template slot-scope="scope">
                     <el-button type="text" @click="edit(scope.row.id)">修改</el-button>
-                    <el-button type="text" @click="apply(true)" :disabled="scope.row.enable">应用</el-button>
+                    <el-button type="text" @click="apply(true,scope.row)" :disabled="scope.row.enable">应用</el-button>
                     <el-button type="text" @click="apply(false,scope.row)" :disabled="!scope.row.enable">停用</el-button>
                     <el-button type="text" @click="del(scope.row)">删除</el-button>
                 </template>
@@ -61,25 +61,14 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
-        <ApplyStrategy :drawer.sync="drawer" :list = "strategy_rows" :enable="enable" @close="close_apply" />
-        <el-dialog
-            title="删除策略"
-            :visible.sync="del_visible"
-            width="960px"
-            :destroy-on-close="true"
-            @close="cancel"
-        >
-            <div class="mount">
-                确认删除
-                <span v-for="(item,index) in strategy_rows" :key="item.id">{{item.name}}
-                    <span v-if="index===strategy_rows.length-1">,</span>
-                </span>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="confirm">确认</el-button>
-                <el-button @click="cancel">取消</el-button>
-            </span>
-        </el-dialog>
+        <template v-if="drawer">
+            <ApplyStrategy :drawer.sync="drawer" :list = "strategy_rows" :enable="enable" @close="close_apply" />
+        </template>
+        <template v-if="del_visible">
+            <common-del :visible.sync="del_visible" :title="'删除策略'" :rows="strategy_rows" @close ="close_apply" />
+
+        </template>
+        
     </div>
 </template>
 <script lang="ts">
@@ -87,11 +76,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import ApplyStrategy from './apply_strategy.vue'
 import Service from '../../https/alarm/list'
+import CommonDel from './commonDel.vue'
 import moment from 'moment'
 @Component({
     components:{
         ActionBlock,
-        ApplyStrategy
+        ApplyStrategy,
+        CommonDel
     }
 })
 export default class Strategy extends Vue{
@@ -122,7 +113,7 @@ export default class Strategy extends Vue{
         let res:any = await Service.get_strategy_list({
             name,
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.list = res.data.datas || []
             this.total = res.data.total || 0
         }
@@ -155,26 +146,8 @@ export default class Strategy extends Vue{
         }
         this.del_visible=true
     }
-    private cancel(){
-        this.strategy_rows=[]
-        this.del_visible=false
-    }
-    private confirm(){
-        const ids = this.strategy_rows.map(item=>item.id)
-        let res:any=Service.delete_strategy({
-            ids
-        })
-        if(res.code===0){
-            this.$message.success('删除策略任务下发成功！');
-            console.log("aaa")
-            this.cancel()
-            this.getStrategyList()
-        }
-    }
-    private operate(str:string){
-
-    }
     private apply(enable:Boolean,row:any){
+        console.log("row",row)
         if(row) this.strategy_rows=[row];
         if(!row && this.strategy_rows.length===0){
             this.$message.warning("请先勾选策略！")
@@ -188,6 +161,7 @@ export default class Strategy extends Vue{
         this.enable = enable
     }
     private close_apply(val){
+        this.strategy_rows=[]
         val==='1' && this.getStrategyList()
     }
     

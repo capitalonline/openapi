@@ -160,7 +160,7 @@ export default class ApplyStrategy extends Vue{
         let res:any = await ServiceStrategy.get_contact_group_list({
             name
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.contact_group_list = res.data.datas
         }
     }
@@ -221,35 +221,39 @@ export default class ApplyStrategy extends Vue{
         const {region_info,region_key} = val
         this.form_data={...this.form_data,az:region_key}
     }
-    private async confirm(){
-        // this.drawer_sync=false;
+    private confirm(){
         const {customer_id,area,az,cycle,address,start_time,end_time,notice_user}=this.form_data
-        console.log("list",this.list)
-        const temp:any=[]
-        this.list.map(item=>{
-            let obj={
-                az:az,
-                callbackURL : address,
-                contactGroupIDs : notice_user,
-                customerID : customer_id,
-                regions : area,
-                silentPeriod : parseInt(cycle),
-                effectStartTime : start_time,
-                effectEndTime : end_time,
-                enable:item.enable,
-                id:item.id,
-                name:item.name
+        const form = this.$refs.form as Form
+        form.validate(async(valid)=>{
+            if(valid){
+                const temp:any=[]
+                this.list.map(item=>{
+                    let obj={
+                        az:az,
+                        callbackURL : address,
+                        contactGroupIDs : notice_user,
+                        customerID : customer_id,
+                        regions : area,
+                        silentPeriod : parseInt(cycle),
+                        effectStartTime : start_time,
+                        effectEndTime : end_time,
+                        enable:this.enable,
+                        id:item.id,
+                        name:item.name
+                    }
+                    temp.push(obj)
+                    return item;
+                })
+                let res:any = await ServiceStrategy.apply_strategy({
+                    data:temp
+                })
+                if(res.code==='Success'){
+                    this.$message.warning("应用策略任务下发成功！")
+                    this.close('1')
+                }
             }
-            temp.push(obj)
-            return item;
         })
-        let res:any = await ServiceStrategy.apply_strategy({
-            data:temp
-        })
-        if(res.code===0){
-            this.$message.warning("应用策略任务下发成功！")
-            this.close('1')
-        }
+        
     }
     
     @Emit("close")

@@ -7,7 +7,7 @@
         v-model="visible"
     >
         <div>
-            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange" v-if="area_list.length>0">全选</el-checkbox>
             <div v-for="item in area_list" :key="item.region_group_id">
                 <el-divider content-position="left" class="divider">{{item.region_group_name}}</el-divider>
                 <el-checkbox :indeterminate="item.isIndeterminate_group" v-model="item.check" @change="handleCheckGroupChange($event,item.region_group_id)" class="group-all">全选</el-checkbox>
@@ -15,14 +15,15 @@
                     <el-checkbox v-for="area in item.region_list" :label="area.region_id" :key="area.region_id">{{area.region_name}}</el-checkbox>
                 </el-checkbox-group>
             </div>
+            <div v-if="area_list.length===0" class="no-data">暂无数据</div>
         </div>
         <el-select
             v-model="selected_key"
             :disabled="disabled"
             multiple
-            filterable
             allow-create
-            ref="select"
+            ref="region-select"
+            class="region"
             slot="reference"
             popper-class="select-area"
         >
@@ -154,8 +155,12 @@ export default class Region extends Vue{
         display: flex;
     }
     
+    
 }
-
+.no-data{
+    text-align: center;
+    color: #666;
+}
 </style>
 <style lang="scss">
 .el-select-dropdown.el-popper.select-area{
@@ -170,6 +175,11 @@ label.el-checkbox.group-all{
 .divider.el-divider.el-divider--horizontal{
     .el-divider__text.is-left{
         color: #828899 !important;
+    }
+}
+.el-select.region.el-popover__reference{
+    .el-tag.el-tag--info .el-tag__close{
+        display: none !important;
     }
 }
 </style>

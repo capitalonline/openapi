@@ -5,25 +5,28 @@
       :visible.sync="visible"
       width="400px"
       :destroy-on-close="true"
+      custom-class="add-to-group"
       @close="back"
     >
       <div>
-        <div class="search">
-            <el-input v-model="searchVal" placeholder="请输入组名查询" @change="search"></el-input>
-            <el-button type="primary" @click="search">查询</el-button>
-        </div>
-        
+        <el-input
+          size="small"
+          placeholder="请输入组名查询"
+          suffix-icon="el-icon-search"
+          v-model="searchVal"
+          @change="search"
+        />        
         <el-checkbox-group v-model="check_group" size="small">
             <el-checkbox v-for="item in group_list" :key="item.id" :label="item.id" border>{{item.name}}</el-checkbox>
         </el-checkbox-group>
         <div class="warn" v-show="warn_flag">请选择报警联系组</div>
-        <el-divider />
-        <div class="foot-btn">
+      </div>
+        <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确定</el-button>
             <el-button type="default" @click="back">取消</el-button>
-        </div>
+        </span>
         
-      </div>
+      
       
     </el-dialog>
   </div>
@@ -50,12 +53,14 @@ export default class InsDetail extends Vue{
   created() {
     this.getContactGroupList()
   }
-  private search(e){
-      console.log("search",e)
+  private search(){
+    this.getContactGroupList()
   }
   private async getContactGroupList(){
-    let res:any = await Service.get_contact_group_list({})
-    if(res.code===0){
+    let res:any = await Service.get_contact_group_list({
+      name:this.searchVal
+    })
+    if(res.code==='Success'){
         this.group_list = res.data.datas
     }
   }
@@ -70,7 +75,7 @@ export default class InsDetail extends Vue{
         contactIDs:this.contact_rows.map(item=>item.id),
         contactGroupIDs:this.check_group
       })
-      if(res.code===0){
+      if(res.code==='Success'){
         this.$message.success("添加联系人至联系人组任务下发成功！")
         this.back('1')
       }else{
@@ -117,5 +122,13 @@ label.el-checkbox.el-checkbox--small.is-bordered{
     .el-button--primary{
         margin-left: 10px;
     }
+}
+</style>
+<style lang="scss">
+.el-dialog.add-to-group{
+    .el-dialog__body{
+        border-top: 1px solid #DCDFE6;;
+    }
+    
 }
 </style>

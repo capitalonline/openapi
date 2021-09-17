@@ -106,7 +106,7 @@ export default class ContactList extends Vue{
             pageSize:this.size,
             [this.search_data.typesub ? this.search_data.typesub : 'name']:this.search_data.type
         })
-        if(res.code===0){
+        if(res.code==='Success'){
             this.list = res.data.datas || []
             this.total = res.data.total || 0
         }
