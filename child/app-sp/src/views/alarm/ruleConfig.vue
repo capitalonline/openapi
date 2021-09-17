@@ -23,7 +23,7 @@
             </el-table-column>
         </el-table>
         <div class="rule-box">
-            <el-button type="text" @click="show_rule_box(pro.id)"><i class="el-icon-circle-plus"></i>&nbsp;添加规则</el-button>
+            <el-button type="text" @click="show_rule_box(pro.id,'add')"><i class="el-icon-circle-plus"></i>&nbsp;添加规则</el-button>
             <div class="add-rule" v-show="pro.visible">
                 <el-tabs v-model="tab_key" type="card" @tab-click="changeTab">
                     <el-tab-pane label="阈值报警" title="0" :disabled="edit_key==='1'">
@@ -361,12 +361,15 @@ export default class RuleConfig extends Vue{
             this.selected_product_id=""
         }
     }
-    private show_rule_box(id:string=""){
+    private show_rule_box(id:string="",val:String="add"){
         this.selected_products.map(item=>{
             if(item.id===id){
                 item.visible = !item.visible
                 if(this.edit_key==="" && item.visible){
                     this.clear()
+                }
+                if(val==="edit" && !item.visible){
+                    this.edit_key=""
                 }
                 
             }else{
@@ -476,7 +479,7 @@ export default class RuleConfig extends Vue{
         this.tab_key = key
         this.edit_key = key
         this.edit_rule_id=id
-        this.show_rule_box(pro_id)
+        this.show_rule_box(pro_id,'edit')
         const fil:any = this.selected_products.filter(item=>item.id === pro_id)
         const fil_rule:any = fil[0].rule_list.filter(item=>item.id===id)
         this.rule_data = JSON.parse(JSON.stringify(fil_rule[0])) 
