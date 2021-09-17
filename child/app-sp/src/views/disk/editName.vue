@@ -16,6 +16,7 @@
             <div class="label">云盘名称:</div>
             <el-input v-model="new_name" placeholder="请输入新的名称" minlength="2" maxlength="40" show-word-limit></el-input>
             <span class="name-error" v-if="new_name.length===1">云盘名称长度最少为2</span>
+            <span class="name-error" v-if="new_name.length!==1 && new_name.includes(' ')">云盘名称不能包含空格</span>
         </div>
         <div class="remark">长度限制为2-40个字符</div>
         <span slot="footer" class="dialog-footer">
@@ -34,8 +35,10 @@ export default class EditName extends Vue{
     @Prop({default:()=>{}}) name!:any;
     private new_name:string = this.name.disk_name
     private async confirm(){
-        console.log("checked",this.new_name)
         if(this.new_name.length===1){
+            return;
+        }
+        if(this.new_name.includes(' ')){
             return;
         }
         let res:any = Service.edit_disk_name({
