@@ -3,7 +3,7 @@
     <div class="product_box" v-for="pro in selected_products" :key="pro.id">
         <div class="title">
             <span>{{pro.name}}</span>
-            <el-button type="text" @click="del_product(pro.id)">删除</el-button>
+            <el-button type="text" @click="del_product(pro.id)" v-if="selected_products.length > 1">删除</el-button>
         </div>
         <el-table :data="pro.rule_list" class="event-table">
             <el-table-column prop="name" label="规则名称"></el-table-column>
@@ -18,12 +18,12 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" @click="edit_rules(pro.id,scope.row.id,scope.row.tab_key)" style="margin:0 10px 0 0">编辑</el-button>
-                    <el-button type="text" @click="del_rule(pro.id,scope.row.id)">删除</el-button>
+                    <el-button type="text" @click="del_rule(pro.id,scope.row.id)" v-if="!(selected_products.length === 1 && selected_products[0].rule_list.length===1)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <div class="rule-box">
-            <el-button type="text" @click="show_rule_box(pro.id)">添加规则</el-button>
+            <el-button type="text" @click="show_rule_box(pro.id)"><i class="el-icon-circle-plus"></i>&nbsp;添加规则</el-button>
             <div class="add-rule" v-show="pro.visible">
                 <el-tabs v-model="tab_key" type="card" @tab-click="changeTab">
                     <el-tab-pane label="阈值报警" title="0" :disabled="edit_key==='1'">
@@ -350,7 +350,9 @@ export default class RuleConfig extends Vue{
         if(this.selected_products.filter(item=>item.id===e).length>0){
             return;
         }
-        this.selected_products=[...this.selected_products,...this.product_list.filter(item=>item.id===e)]
+        const fil = this.product_list.filter(item=>item.id===e)
+        fil[0].rule_list = []
+        this.selected_products=[...this.selected_products,...fil ]
         console.log("this.selected_products",this.selected_products)
     }
     private del_product(id:String){
@@ -444,6 +446,7 @@ export default class RuleConfig extends Vue{
     }
     private del_rule(pro_id:string,id:string){
         console.log("pro_id",pro_id,id,this.selected_products)
+        
         this.selected_products.map(item=>{
             if(item.id===pro_id){
                 item.rule_list = item.rule_list.filter(inn=>inn.id!==id)
@@ -457,6 +460,7 @@ export default class RuleConfig extends Vue{
         const event_form = this.$refs.event_form[0] as Form
         rules_form.resetFields()
         event_form.resetFields()
+        this.rule_data.metricID=""
         this.rule_data.level=[
             {
                 range:'>=',

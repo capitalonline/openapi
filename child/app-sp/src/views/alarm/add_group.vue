@@ -3,7 +3,7 @@
     <el-dialog
       :title="title"
       :visible.sync="visible"
-      width="40%"
+      width="800px"
       :destroy-on-close="true"
       @close="back"
     >

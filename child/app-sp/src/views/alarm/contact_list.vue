@@ -146,7 +146,11 @@ export default class ContactList extends Vue{
         if(Object.keys(id).length>0){
             this.contact_rows=[id]
         }
-        console.log("this.contact_rows",this.contact_rows)
+        if(this.contact_rows.length===0){
+            this.$message.warning("请勾选联系人！")
+            return;
+        }
+        
         this.del_visible = true
 
     }

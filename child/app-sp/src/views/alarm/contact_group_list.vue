@@ -145,7 +145,6 @@ export default class ContactList extends Vue{
         this.group_visible=true
     }
     private edit(id:string){
-        console.log("id",id)
         this.group_id=id
         this.group_title="编辑联系人组"
         this.group_visible=true
@@ -162,60 +161,31 @@ export default class ContactList extends Vue{
         const names = this.group_rows.map(item=>item.name)
         const ids = this.group_rows.map(item=>item.id)
         const h = this.$createElement;
-        // this.$msgbox({
-        //   title: '提示',
-        //   message: h('p', null, [
-        //     h('span', null, '确定删除 '),
-        //     h('i', { style: 'color: teal' }, `${names.join(',')}`),
-        //     h('span', null, '  吗, 是否继续?'),
-        //   ]),
-        //   showCancelButton: true,
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   beforeClose: async(action, instance, done) => {
-        //     if (action === 'confirm') {
-        //       let res:any = await Service.delete_contact_group({
-        //         ids
-        //     })
-        //     if (res.code==='Success') {
-        //         this.$message.success(`删除联系人组任务下发成功！`)
-        //         this.getContactGroupList()
-        //     }
-        //     } else {
-        //         this.$message({
-        //             type: 'info',
-        //             message: '已取消删除'
-        //         });
-        //     }
-        //   }
-        // }).then(async(action) => {
-        //     let res:any = await Service.delete_contact_group({
-        //         ids
-        //     })
-        //     if (res.code==='Success') {
-        //         this.$message.success(`删除联系人组任务下发成功！`)
-        //         this.getContactGroupList()
-        //     }
-        // });
-        // this.$confirm(`确定删除  ${names.join(',')}  吗, 是否继续?`, '提示', {
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   type: 'warning'
-        // }).then(async() => {
-        //     let res:any = await Service.delete_contact_group({
-        //         ids
-        //     })
-        //     if (res.code==='Success') {
-        //         this.$message.success(`删除联系人组任务下发成功！`)
-        //         this.getContactGroupList()
-        //     }
-        // }).catch(() => {
-        //   this.$message({
-        //     type: 'info',
-        //     message: '已取消删除'
-        //   });          
-        // });
-        // this.del_visible=true
+        this.$msgbox({
+          title: '提示',
+          message: h('p', null, [
+            h('span', null, '确定删除 '),
+            h('i', { style: 'color: #455cc6' }, `${names.join(',')}`),
+            h('span', null, '  吗, 是否继续?'),
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          iconClass: 'el-icon-warning',
+        }).then(async() => {
+            let res:any = await Service.delete_contact_group({
+                ids
+            })
+            if (res.code==='Success') {
+                this.$message.success(`删除联系人组任务下发成功！`)
+                this.getContactGroupList()
+            }
+        }).catch(()=>{
+            this.$message({
+                type: 'info',
+                message: '已取消删除'
+            }); 
+        })
     }
     private addToWarnGroup(){
         

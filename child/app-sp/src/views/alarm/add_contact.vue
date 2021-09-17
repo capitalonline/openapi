@@ -19,14 +19,20 @@
             <el-form-item
                 prop="email"
                 label="邮箱"
-                :rules="[{required:true,message:'请输入邮箱',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入邮箱',trigger:'blur'},
+                  { required: true, trigger: 'blur', validator: validate_eamil }
+                ]"
             >
                 <el-input v-model="form_data.email" />
             </el-form-item>
             <el-form-item
                 prop="phone"
                 label="电话号码"
-                :rules="[{required:true,message:'请输入电话号码',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入电话号码',trigger:'blur'},
+                  { required: true, trigger: 'blur', validator: validate_phone }
+                ]"
             >
                 <el-input v-model="form_data.phone" />
             </el-form-item>
@@ -71,10 +77,20 @@ export default class InsDetail extends Vue{
       this.get_contact_detail()
     }
   }
-  // @Watch("id")
-  // private watch_id(newVal){
-    
-  // }
+  private validate_eamil:any = (rule:any, value:string, callback:any)=>{
+        if(value.length>0 && value.indexOf('@')>0 && value.indexOf('@')<value.length-1){
+            return callback()
+        }else{
+            return callback(new Error("请输入正确的邮箱"))
+        }
+  }
+  private validate_phone:any = (rule:any, value:string, callback:any)=>{
+        if(value.length===11){
+            return callback()
+        }else{
+            return callback(new Error("请输入正确的手机号码"))
+        }
+    }
   private async get_contact_detail(){
     let res:any = await Service.get_contact_detail({
         id:this.id,

@@ -19,9 +19,14 @@
                 prop="dealStatus" 
                 label="处理结果" 
                 :filters="fil_list"
+                :filter-multiple="false"
                 filter-placement="bottom-end"
                 column-key='dealStatus'
-            ></el-table-column>
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.dealStatus ? '已解决' : '未解决'}}</span>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -62,11 +67,11 @@ export default class Contact extends Vue{
     private fil_list = [
         {
             text:'已处理',
-            value:'1'
+            value:'dealed'
         },
         {
             text:'未处理',
-            value:'2'
+            value:'undealed'
         },
     ]
     
@@ -97,7 +102,7 @@ export default class Contact extends Vue{
             contactGroupName:search_data.contact,
             startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
             endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            dealStatus:this.dealStatus,
+            dealStatus:this.dealStatus.length===0 ? "all" : this.dealStatus[0],
             page:this.current,
             pageSize:this.size
         })
@@ -126,6 +131,7 @@ export default class Contact extends Vue{
         this.getAlarmList()
     }
     private fil_info(obj){
+        console.log("fil_info",obj)
         this.dealStatus = obj.dealStatus
         this.current = 1
         this.getAlarmList()

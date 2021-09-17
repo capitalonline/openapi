@@ -100,6 +100,14 @@ export default class Index extends Vue{
         form.validate(async (valid)=>{
             if(valid){
                 const selected_products = rule_config.selected_products
+                if(selected_products.length===0){
+                    this.$message.warning("请添加产品！")
+                    return;
+                }
+                if(selected_products[0].rule_list.length===0){
+                    this.$message.warning("请添加规则！")
+                    return;
+                }
                 const list=[]
                 selected_products.forEach(item=>{//最外层产品
                     console.log("item",item)
@@ -195,6 +203,10 @@ export default class Index extends Vue{
             overflow-y: auto;
             .el-input{
                 width: 420px !important;
+            }
+            .name-error{
+                color: #F56C6C;
+                margin: 5px 0 0 2px;
             }
         }
         .button_box{

@@ -186,24 +186,24 @@ export const mock = {
 export const productList = [
     {
         id:'ecs',
-        name:'云服务器ECS'
+        name:'ecs'
     },
-    // {
-    //     id:'gpu',
-    //     name:'GPU'
-    // },
-    // {
-    //     id:'slb',
-    //     name:'负载均衡'
-    // },
-    // {
-    //     id:'vpc',
-    //     name:'私有网络VPC'
-    // },
-    // {
-    //     id:'safe',
-    //     name:'安全组'
-    // },
+    {
+        id:'gpu',
+        name:'GPU'
+    },
+    {
+        id:'slb',
+        name:'负载均衡'
+    },
+    {
+        id:'vpc',
+        name:'私有网络VPC'
+    },
+    {
+        id:'safe',
+        name:'安全组'
+    },
 ]
 export const level_list=[
     {
