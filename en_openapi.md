@@ -1,136 +1,136 @@
 # CONTENTS
 
-- [CDS](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E9%A6%96%E4%BA%91%E5%85%AC%E5%BC%80api%E6%96%87%E6%A1%A3) Global Cloud Open API
-  - [Authentication](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%AE%A4%E8%AF%81%E6%96%B9%E5%BC%8F)
-    - [1.General](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0) Request
-    - [2.Signature](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6)
-      - [String](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E6%AD%A5%E9%AA%A4%E4%B8%80%E6%9E%84%E9%80%A0%E8%A7%84%E8%8C%83%E5%8C%96%E8%AF%B7%E6%B1%82%E5%AD%97%E7%AC%A6%E4%B8%B2) rules
-      - [String](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E6%AD%A5%E9%AA%A4%E4%BA%8C%E6%9E%84%E9%80%A0%E7%AD%BE%E5%90%8D%E5%AD%97%E7%AC%A6%E4%B8%B2) create
-    - [3.Signature](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2%E8%8E%B7%E5%8F%96%E7%AD%BE%E5%90%8D%E4%BB%A3%E7%A0%81) code
-  - [Domain](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%AE%BF%E9%97%AE%E5%9C%B0%E5%9D%80) Name
-  - [Instance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%AE%9E%E4%BE%8B%E7%9B%B8%E5%85%B3)
-    - [1.CreateInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1createinstance)
-    - [2.DeleteInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2deleteinstance)
-    - [3.StopInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3stopinstance)
-    - [4.RebootInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4rebootinstance)
-    - [5.ModifyInstanceChargeType](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5modifyinstancechargetype)
-    - [6.ModifyInstanceSpec](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6modifyinstancespec)
-    - [7.CreateDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7createdisk)
-    - [8.ResizeDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8resizedisk)
-    - [9.DeleteDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#9deletedisk)
-    - [10.ResetImage](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#10resetimage)
-    - [11.DescribeInstances](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#11describeinstances)
-    - [12.ConnectNetworkInterface](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#12connectnetworkinterface)
-    - [13.DisconnectNetworkInterface](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#13disconnectnetworkinterface)
-    - [14.ModifyIpAddress](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#14modifyipaddress)
-    - [15.DescribeInstanceMonitor](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#15describeinstancemonitor)
-    - [16.StartInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#16startinstance)
-    - [17.ModifyInstanceName](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#17modifyinstancename)
-    - [18.DescribeTags](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#18describetags)
-    - [19.CreateTag](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#19createtag)
-    - [20.DeleteTag](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#20deletetag)
-    - [21.AddInstancesTags](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#21addinstancestags)
-    - [22.DeleteInstancesTags](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#22deleteinstancestags)
-    - [23.DescribeInstanceType](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#23DescribeInstanceType)
-    - [24.DescribePublicIp](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#24DescribePublicIp)
-    - [25.DescribePrivateIp](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#25DescribePrivateIp)
-    - [26.ResetInstancesPassword](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#26ResetInstancesPassword)
-    - [27.CreateInstanceHtmlConsoleURL](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#27CreateInstanceHtmlConsoleURL)
-    - [28.ExtendSystemDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#28ExtendSystemDisk)
-    - [29.DescribeInstancePrice](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#29DescribeInstancePrice)
-    - [30.StopInstances](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#30StopInstances)
-    - [31.StartInstances](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#31StartInstances)
-    - [32.RebootInstances](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#32RebootInstances)
-    - [33.BatchAddNetworkInterfaces](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#33BatchAddNetworkInterfaces)
-    - [34.BatchDeleteNetworkInterfaces](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#34BatchDeleteNetworkInterfaces)
-  - [Security](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%AE%89%E5%85%A8%E7%BB%84%E7%9B%B8%E5%85%B3)
-    - [1.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1createsecuritygroup)
-    - [2.DeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2deletesecuritygroup)
-    - [3.ForceDeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3forcedeletesecuritygroup)
-    - [4.DescribeSecurityGroupAttribute](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4describesecuritygroupattribute)
-    - [5.ModifySecurityGroupAttribute](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5modifysecuritygroupattribute)
-    - [6.DescribeSecurityGroups](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6describesecuritygroups)
-    - [7.AddSecurityGroupRule](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7addsecuritygrouprule)
-    - [8.RemoveSecurityGroupRule](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8removesecuritygrouprule)
-    - [9.ModifySecurityGroupRule](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#9modifysecuritygrouprule)
-    - [10.JoinSecurityGroup](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#10joinsecuritygroup)
-    - [11.LeaveSecurityGroup](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#11leavesecuritygroup)
-    - [12.ModifySecurityGroupRulePriority](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#12modifysecuritygrouprulepriority)
-  - [Template](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E6%A8%A1%E6%9D%BF%E7%9B%B8%E5%85%B3)
-    - [1.CreateTemplate](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1createtemplate)
-    - [2.DeleteTemplate](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2deletetemplate)
-    - [3.SyncTemplate](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3synctemplate)
-    - [4.DescribeTemplateInfo](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4describetemplateinfo)
-  - [Virtual](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E7%9B%B8%E5%85%B3) Data Center Service
-    - [1.DescribeVdc](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1describevdc)
-    - [2.CreateVdc](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2createvdc)
-    - [3.DeleteVdc](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3deletevdc)
-    - [4.CreatePublicNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4createpublicnetwork)
-    - [5.CreatePrivateNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5createprivatenetwork)
-    - [6.ModifyPublicNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6modifypublicnetwork)
-    - [7.AddPublicIp](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7addpublicip)
-    - [8.DeletePublicIp](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8deletepublicip)
-    - [9.DeletePublicNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#9deletepublicnetwork)
-    - [10.DeletePrivateNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#10deleteprivatenetwork)
-    - [11.RenewPublicNetwork](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#11renewpublicnetwork)
-    - [12.DescribeBandwidthTraffic](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#12describebandwidthtraffic)
-    - [13.DescribeGPN](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#13describegpn)
-    - [14.AddAccessPoint](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#14addaccesspoint)
-    - [15.DeleteAccessPoint](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#15deleteaccesspoint)
-    - [16.DescribeAccessInfo](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#16describeaccessinfo)
-    - [17.CreateGPN](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#17creategpn)
-    - [18.DeleteGPN](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#18deletegpn)
-    - [19.ModifyVdcName](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#19modifyvdcname)
-  - [Bare](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%A3%B8%E9%87%91%E5%B1%9E%E7%9B%B8%E5%85%B3) Metal Service
-    - [1.DescribeBmsGoods](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1describebmsgoods)
-    - [2.DescribeBmsGoodsPrice](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2describebmsgoodsprice)
-    - [3.DescribeBmsImage](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3describebmsimage)
-    - [4.CreateBmsInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4createbmsinstance)
-    - [5.DescribeBms](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5describebms)
-    - [6.DescribeBmsDetail](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6describebmsdetail)
-    - [7.OperateBmsPower](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7operatebmspower)
-    - [8.ReinstallBms](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8ReinstallBms)
-    - [9.DescribeBmsVNC](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#9describebmsvnc)
-    - [10.ModifyBmsOrder](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#10modifybmsorder)
-    - [11.DescribeBmsTask](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#11describebmstask)
-    - [12.DeleteBmsInstance](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#12describebmstask)
-  - [Storage](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%A3%B8%E9%87%91%E5%B1%9E%E4%BA%91%E7%9B%98%E7%9B%B8%E5%85%B3) Service
-    - [1.CreateDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1createDisk)
-    - [2.AttachDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2attachDisk)
-    - [3.DetachDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3detachDisk)
-    - [4.DeleteDisk](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4deleteDisk)
-    - [5.DescribeDisks](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5describeDisks)
-    - [6.DescribeDiskUsage](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6describeDiskUsage)
-    - [7.DescribePoolUsage](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7describePoolUsage)
-    - [8.ChangeIops](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8changeIops)
-    - [9.ChangeBandwidth](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#9changeBandwidth)
-    - [10.ExpansionSize](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#10expansionSize)
-    - [11.CreateSnapshot](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#11createSnapshot)
-    - [12.CloneSnapshot](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#12cloneSnapshot)
-    - [13.DeleteSnapshot](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#13deleteSnapshot)
-    - [14.RollbackSnapshot](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#14rollbackSnapshot)
-    - [15.DescribeGoodsId](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#15describeGoodsId)
-  - [Billing](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E8%B4%A6%E5%8D%95%E7%9B%B8%E5%85%B3)
-    - [1.DescribeBill](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1describebill)
-    - [2.DescribeBillInfo](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2describebillinfo)
-  - [Glacier](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%86%B7%E4%BA%91%E8%AE%A1%E9%87%8F%E7%9B%B8%E5%85%B3) Storage Pools
-    - [1.GetMetering](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1GetMetering)
-  - [Others](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%85%B6%E4%BB%96%E5%85%AC%E5%85%B1%E6%8E%A5%E5%8F%A3)
-    - [1.DescribeAvailableResource](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1describeavailableresource)
-    - [2.DescribeTask](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2describetask)
-  - [Available](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%8F%AF%E7%94%A8%E5%8C%BA%E5%90%8D%E7%A7%B0) Zones
-  - [VMs](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E4%B8%BB%E6%9C%BA%E7%B1%BB%E5%9E%8B) Types
-  - [Bandwidth](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%B8%A6%E5%AE%BD%E7%B1%BB%E5%9E%8B)
-  - [Operating](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E5%85%AC%E5%85%B1%E6%A8%A1%E6%9D%BF) Systems
-  - [Reference](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#%E7%A4%BA%E4%BE%8B)
-    - [1.URL](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#1%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82url)
-    - [2.VDC](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#2%E8%8E%B7%E5%8F%96%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E5%85%AC%E7%BD%91%E4%BF%A1%E6%81%AF)
-    - [3.VMs](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#3%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%99%A8%E4%BF%A1%E6%81%AF)
-    - [4.Instances](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#4%E5%88%9B%E5%BB%BA%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%9E%E4%BE%8B)
-    - [5.Bandwidth](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#5%E4%BF%AE%E6%94%B9%E5%85%AC%E7%BD%91%E5%B8%A6%E5%AE%BD)
-    - [6.Billing](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#6%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%9E%E4%BE%8B%E8%AE%A1%E8%B4%B9%E7%B1%BB%E5%9E%8B)
-    - [7.Task](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#7%E8%8E%B7%E5%8F%96%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81)
-    - [8.Template](https://github.com/capitalonline/openapi/blob/english/en_openapi.md#8%E5%AE%9A%E5%88%B6%E6%A8%A1%E6%9D%BF)
+- [CDS](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%A6%96%E4%BA%91%E5%85%AC%E5%BC%80api%E6%96%87%E6%A1%A3) Global Cloud Open API
+  - [Authentication](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%AE%A4%E8%AF%81%E6%96%B9%E5%BC%8F)
+    - [1.General](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1%E5%85%AC%E5%85%B1%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0) Request
+    - [2.Signature](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6)
+      - [String](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E6%AD%A5%E9%AA%A4%E4%B8%80%E6%9E%84%E9%80%A0%E8%A7%84%E8%8C%83%E5%8C%96%E8%AF%B7%E6%B1%82%E5%AD%97%E7%AC%A6%E4%B8%B2) rules
+      - [String](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E6%AD%A5%E9%AA%A4%E4%BA%8C%E6%9E%84%E9%80%A0%E7%AD%BE%E5%90%8D%E5%AD%97%E7%AC%A6%E4%B8%B2) create
+    - [3.Signature](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2%E8%8E%B7%E5%8F%96%E7%AD%BE%E5%90%8D%E4%BB%A3%E7%A0%81) code
+  - [Domain](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%AE%BF%E9%97%AE%E5%9C%B0%E5%9D%80) Name
+  - [Instance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%AE%9E%E4%BE%8B%E7%9B%B8%E5%85%B3)
+    - [1.CreateInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createinstance)
+    - [2.DeleteInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deleteinstance)
+    - [3.StopInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3stopinstance)
+    - [4.RebootInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4rebootinstance)
+    - [5.ModifyInstanceChargeType](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5modifyinstancechargetype)
+    - [6.ModifyInstanceSpec](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6modifyinstancespec)
+    - [7.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7createdisk)
+    - [8.ResizeDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8resizedisk)
+    - [9.DeleteDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9deletedisk)
+    - [10.ResetImage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10resetimage)
+    - [11.DescribeInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11describeinstances)
+    - [12.ConnectNetworkInterface](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12connectnetworkinterface)
+    - [13.DisconnectNetworkInterface](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#13disconnectnetworkinterface)
+    - [14.ModifyIpAddress](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#14modifyipaddress)
+    - [15.DescribeInstanceMonitor](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#15describeinstancemonitor)
+    - [16.StartInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#16startinstance)
+    - [17.ModifyInstanceName](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#17modifyinstancename)
+    - [18.DescribeTags](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#18describetags)
+    - [19.CreateTag](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#19createtag)
+    - [20.DeleteTag](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#20deletetag)
+    - [21.AddInstancesTags](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#21addinstancestags)
+    - [22.DeleteInstancesTags](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#22deleteinstancestags)
+    - [23.DescribeInstanceType](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#23DescribeInstanceType)
+    - [24.DescribePublicIp](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#24DescribePublicIp)
+    - [25.DescribePrivateIp](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#25DescribePrivateIp)
+    - [26.ResetInstancesPassword](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#26ResetInstancesPassword)
+    - [27.CreateInstanceHtmlConsoleURL](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#27CreateInstanceHtmlConsoleURL)
+    - [28.ExtendSystemDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#28ExtendSystemDisk)
+    - [29.DescribeInstancePrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#29DescribeInstancePrice)
+    - [30.StopInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#30StopInstances)
+    - [31.StartInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#31StartInstances)
+    - [32.RebootInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#32RebootInstances)
+    - [33.BatchAddNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#33BatchAddNetworkInterfaces)
+    - [34.BatchDeleteNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#34BatchDeleteNetworkInterfaces)
+  - [Security](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%AE%89%E5%85%A8%E7%BB%84%E7%9B%B8%E5%85%B3)
+    - [1.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createsecuritygroup)
+    - [2.DeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletesecuritygroup)
+    - [3.ForceDeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3forcedeletesecuritygroup)
+    - [4.DescribeSecurityGroupAttribute](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4describesecuritygroupattribute)
+    - [5.ModifySecurityGroupAttribute](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5modifysecuritygroupattribute)
+    - [6.DescribeSecurityGroups](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6describesecuritygroups)
+    - [7.AddSecurityGroupRule](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7addsecuritygrouprule)
+    - [8.RemoveSecurityGroupRule](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8removesecuritygrouprule)
+    - [9.ModifySecurityGroupRule](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9modifysecuritygrouprule)
+    - [10.JoinSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10joinsecuritygroup)
+    - [11.LeaveSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11leavesecuritygroup)
+    - [12.ModifySecurityGroupRulePriority](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12modifysecuritygrouprulepriority)
+  - [Template](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E6%A8%A1%E6%9D%BF%E7%9B%B8%E5%85%B3)
+    - [1.CreateTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createtemplate)
+    - [2.DeleteTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletetemplate)
+    - [3.SyncTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3synctemplate)
+    - [4.DescribeTemplateInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4describetemplateinfo)
+  - [Virtual](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E7%9B%B8%E5%85%B3) Data Center Service
+    - [1.DescribeVdc](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describevdc)
+    - [2.CreateVdc](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2createvdc)
+    - [3.DeleteVdc](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3deletevdc)
+    - [4.CreatePublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4createpublicnetwork)
+    - [5.CreatePrivateNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5createprivatenetwork)
+    - [6.ModifyPublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6modifypublicnetwork)
+    - [7.AddPublicIp](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7addpublicip)
+    - [8.DeletePublicIp](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8deletepublicip)
+    - [9.DeletePublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9deletepublicnetwork)
+    - [10.DeletePrivateNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10deleteprivatenetwork)
+    - [11.RenewPublicNetwork](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11renewpublicnetwork)
+    - [12.DescribeBandwidthTraffic](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12describebandwidthtraffic)
+    - [13.DescribeGPN](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#13describegpn)
+    - [14.AddAccessPoint](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#14addaccesspoint)
+    - [15.DeleteAccessPoint](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#15deleteaccesspoint)
+    - [16.DescribeAccessInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#16describeaccessinfo)
+    - [17.CreateGPN](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#17creategpn)
+    - [18.DeleteGPN](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#18deletegpn)
+    - [19.ModifyVdcName](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#19modifyvdcname)
+  - [Bare](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%A3%B8%E9%87%91%E5%B1%9E%E7%9B%B8%E5%85%B3) Metal Service
+    - [1.DescribeBmsGoods](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebmsgoods)
+    - [2.DescribeBmsGoodsPrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebmsgoodsprice)
+    - [3.DescribeBmsImage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3describebmsimage)
+    - [4.CreateBmsInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4createbmsinstance)
+    - [5.DescribeBms](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5describebms)
+    - [6.DescribeBmsDetail](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6describebmsdetail)
+    - [7.OperateBmsPower](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7operatebmspower)
+    - [8.ReinstallBms](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8ReinstallBms)
+    - [9.DescribeBmsVNC](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9describebmsvnc)
+    - [10.ModifyBmsOrder](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10modifybmsorder)
+    - [11.DescribeBmsTask](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11describebmstask)
+    - [12.DeleteBmsInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12describebmstask)
+  - [Storage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%A3%B8%E9%87%91%E5%B1%9E%E4%BA%91%E7%9B%98%E7%9B%B8%E5%85%B3) Service
+    - [1.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createDisk)
+    - [2.AttachDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2attachDisk)
+    - [3.DetachDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3detachDisk)
+    - [4.DeleteDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4deleteDisk)
+    - [5.DescribeDisks](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5describeDisks)
+    - [6.DescribeDiskUsage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6describeDiskUsage)
+    - [7.DescribePoolUsage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7describePoolUsage)
+    - [8.ChangeIops](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8changeIops)
+    - [9.ChangeBandwidth](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9changeBandwidth)
+    - [10.ExpansionSize](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10expansionSize)
+    - [11.CreateSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11createSnapshot)
+    - [12.CloneSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12cloneSnapshot)
+    - [13.DeleteSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#13deleteSnapshot)
+    - [14.RollbackSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#14rollbackSnapshot)
+    - [15.DescribeGoodsId](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#15describeGoodsId)
+  - [Billing](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E8%B4%A6%E5%8D%95%E7%9B%B8%E5%85%B3)
+    - [1.DescribeBill](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebill)
+    - [2.DescribeBillInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebillinfo)
+  - [Glacier](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%86%B7%E4%BA%91%E8%AE%A1%E9%87%8F%E7%9B%B8%E5%85%B3) Storage Pools
+    - [1.GetMetering](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1GetMetering)
+  - [Others](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%85%B6%E4%BB%96%E5%85%AC%E5%85%B1%E6%8E%A5%E5%8F%A3)
+    - [1.DescribeAvailableResource](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describeavailableresource)
+    - [2.DescribeTask](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describetask)
+  - [Available](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%8F%AF%E7%94%A8%E5%8C%BA%E5%90%8D%E7%A7%B0) Zones
+  - [VMs](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E4%B8%BB%E6%9C%BA%E7%B1%BB%E5%9E%8B) Types
+  - [Bandwidth](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%B8%A6%E5%AE%BD%E7%B1%BB%E5%9E%8B)
+  - [Operating](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%85%AC%E5%85%B1%E6%A8%A1%E6%9D%BF) Systems
+  - [Reference](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E7%A4%BA%E4%BE%8B)
+    - [1.URL](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82url)
+    - [2.VDC](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2%E8%8E%B7%E5%8F%96%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E5%85%AC%E7%BD%91%E4%BF%A1%E6%81%AF)
+    - [3.VMs](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3%E8%8E%B7%E5%8F%96%E6%9C%BA%E5%99%A8%E4%BF%A1%E6%81%AF)
+    - [4.Instances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4%E5%88%9B%E5%BB%BA%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%9E%E4%BE%8B)
+    - [5.Bandwidth](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5%E4%BF%AE%E6%94%B9%E5%85%AC%E7%BD%91%E5%B8%A6%E5%AE%BD)
+    - [6.Billing](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6%E4%BF%AE%E6%94%B9%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%9E%E4%BE%8B%E8%AE%A1%E8%B4%B9%E7%B1%BB%E5%9E%8B)
+    - [7.Task](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7%E8%8E%B7%E5%8F%96%E4%BB%BB%E5%8A%A1%E7%8A%B6%E6%80%81)
+    - [8.Template](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8%E5%AE%9A%E5%88%B6%E6%A8%A1%E6%9D%BF)
 
 ##
 
@@ -142,7 +142,6 @@
 | **Option**       | **String** | **Default** | **Description**                   |
 | ---------------- | ---------- | ----------- | --------------------------------- |
 | Action           | String     | Yes         | API action name                   |
-| ---              | ---        | ---         | ---                               |
 | AccessKeyId      | String     | Yes         | Access Key ID                     |
 | Signature        | String     | Yes         | The Signature                     |
 | SignatureMethod  | String     | Yes         | Signature Method: HMAC-SHA1       |
@@ -179,11 +178,11 @@ If you use java.net.URLEncoder in the Java standard library, use percentEncode t
 1.Specify StringToSign. You can also use percentEncode to encode the canonicalized query string constructed in the previous step. The following Reference shows how to create a string-to-sign:
 
   ```python
-canstring = ''
-for k, v in sortedD:
-     canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
-stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
-   ```
+   	canstring = ''
+     for k, v in sortedD:
+         canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
+     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
+  ```
 
 ```
 ```
@@ -199,9 +198,9 @@ stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
 
 **Note**  When you calculate the signature, the key value specified by RFC 2104 is your AccessKeySecret value with an ampersand ( &amp;) which has an ASCII value of 38.
 
-### 3. Encode the Signature parameter
+### 2.获取签名代码
 
-###
+
 ```python
 def percentEncode(str):
     res = urllib.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
@@ -211,8 +210,6 @@ def percentEncode(str):
     return res
 
 def get_signature(action, ak, access_key_secret, method, url, param={}):
-    """
-    """
     timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     D = {
         'Action': action,
@@ -242,28 +239,26 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | **Regions**     | **Domain**                    |
 | --------------- | ----------------------------- |
 | China           | cdsapi.capitalonline.net      |
-| ---             | ---                           |
 | APAC            | cdsapi-asia.capitalonline.net |
 | EU and Americas | cdsapi-us.capitalonline.net   |
 
-**Instance**
+## Instance 
 
-**1.CreateInstance**
+### 1.CreateInstance 
 
-  **Action**** ： ****CreateInstance**
+  **Action** ： **CreateInstance**
 
   **Description: Create VMs by on-Demond or Monthly/Annually.**
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
-  **Request by**** ： ****POST**
+  **Request by** ：**POST**
 
   **Configuration Options:**
 
 | **Option**         | **Type** | **Default** | **Reference**  | **Description**      |
 | ------------------ | -------- | ----------- | -------------- | -------------------- |
 | RegionId           | String   | Yes         | CN\_Beijing\_A | Region ID            |
-| ---                | ---      | ---         | ---            | ---                  |
 | VdcId              | String   | Yes         |                |                      |
 | VDC ID             |          |             |                |                      |
 | Password           | string   | No          | EcsV587!       | Password             |
@@ -285,20 +280,18 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PrivateIp | list | No | [{&quot;PrivateId&quot;: &quot;6a3ce526-287f-11e6-b7c1-0050569b4d9c&quot;, &quot;IP&quot;: [&quot;10.0.0.2&quot;, &quot;10.0.0&quot;] | Private IP address |
 | UTC | Bool | No | true | UTC |
 
-**Return**** :**
+**Return** :
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-**Error Code**** :**
+**Error Code** :
 
 | **httpcode** | **Error ID**                          | **Error description**                                        |
 | ------------ | ------------------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInstanceType.ValueUnauthorized | The specified InstanceType is not authorized.                |
-| ---          | ---                                   | ---                                                          |
 | 400          | InvalidInstanceName.Malformed         | The specified parameter &quot;Instance&quot; is not valid.   |
 | 400          | InvalidPassword.Malformed             | The specified parameter &quot;Password&quot; is not valid.   |
 | 400          | InvalidDataDiskSize.ValueNotSupported | The specified DataDisk.n.Size beyond the permitted range, or the capacity of snapshot exceeds the size limit of the specified disk category. |
@@ -313,7 +306,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | 403          | InvalidIp.IpAssigned                  | %s                                                           |
 | 403          | InvalidIp.Address                     | %s                                                           |
 
-**Exaple**** :**
+**Exaple** :
 
 
 ```json
@@ -327,8 +320,6 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
 ```python
 def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
-    """
-    """
     action = "CreateInstance"
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL, param={})
@@ -356,37 +347,35 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
     return result.get("TaskId")
 ```
 
-**2.DeleteInstance**
 
-  **Action**** ：** DeleteInstance
+### 2.DeleteInstance
+
+  **Action** ： DeleteInstance
 
   **Description: Delete Instance**
 
-  **URL**** :** api.capitalonline.net/ccs
+  **URL** : api.capitalonline.net/ccs
 
-  **Request by**** ： ****POST**
+  **Request by** ： **POST**
 
   **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                                      | **Description**       |
 | ----------- | -------- | ----------- | -------------------------------------------------- | --------------------- |
 | InstanceIds | list     | Yes         | [&quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0&quot;] | Describe Instances ID |
-| ---         | ---      | ---         | ---                                                | ---                   |
 
-  **Return Result**** ：**
+  **Return Result** 
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error Code**** ：**
+  **Error Code**：
 
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -403,8 +392,6 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
   **Reference Code:**
 ```python
 def delete_instance(vm_ids):
-    """
-    """
     action = "DeleteInstance"
     method = "POST"
     body = {
@@ -419,37 +406,34 @@ def delete_instance(vm_ids):
     return True
 ```
 
-**3.StopInstance**
+### 3.StopInstance
 
   **Action:StopInstance**
 
-  **Description**** :** Terminal Instance
+  **Description** : Terminal Instance
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL**: cdsapi.capitalonline.net/ccs
 
-  **Request by**** ： ****GET**
+  **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---        | ---      | ---         | ---                                  | ---                   |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -462,37 +446,35 @@ def delete_instance(vm_ids):
 }
 ```
 
-**4.RebootInstance**
+### 4.RebootInstance
 
-  **Action**** ： ****RebootInstance**
+  **Action** ： **RebootInstance**
 
- **Description**** ：** Reboot Instance
+ **Description** ：Reboot Instance
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
-  **Request by**** ： ****GET**
+  **Request by** ： **GET**
 
   **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---        | ---      | ---         | ---                                  | ---                   |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
-| 403          | IncorrectInstanceStatus     | The current Status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
+| 403          | IncorrectInstanceStatus     | The current Status of the resource does not support this operatio |
+|              |                             |                                                              |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceId.Malformed | The specified parameter &quot;InstanceId&quot; is not valid. |
 
@@ -506,40 +488,37 @@ def delete_instance(vm_ids):
 }
 ```
 
-**5.ModifyInstanceChargeType**
+### 5.ModifyInstanceChargeType
 
-  **Action**** ： ****ModifyInstanceChargeType**
+  **Action** ： **ModifyInstanceChargeType**
 
-  **Description**** ：** Modify Instance Charge Type
+  **Description** ： Modify Instance Charge Type
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
-Request By **：**** POST**
+Request By **：** POST
 
   **Configuration Options:**
 
 | **Defination**     | **Type** | **Default** | **Reference**                        | **Description**       |
 | ------------------ | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId         | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---                | ---      | ---         | ---                                  | ---                   |
 | InstanceChargeType | string   | Yes         | PostPaid                             | Instance Charge Type  |
 | AutoRenew          | interger | No          | 1                                    | Auto Renew            |
 | PrepaidMonth       | interger | No          | 0                                    | Prepaid Months        |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current Status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceId.Malformed | The specified parameter &quot;InstanceId&quot; is not valid. |
 
@@ -551,41 +530,37 @@ Request By **：**** POST**
 }
 ```
 
+### 6.ModifyInstanceSpec
 
-**6.ModifyInstanceSpec**
+  **Action** ： **ModifyInstanceSpec**
 
-  **Action**** ： ****ModifyInstanceSpec**
+  **Description** ： Modify Instance Specifications
 
-  **Description**** ：** Modify Instance Specifications
+  **URL** : cdsapi.capitalonline.net/ccs
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
-
-  **Request by**** ： ****POST**
+  **Request by** ： **POST**
 
   **Configuration Options:**
 
 | **Option**   | **Type** | **Default** | **Reference**                        | **Description**       |
 | ------------ | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId   | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---          | ---      | ---         | ---                                  | ---                   |
 | Cpu          | int      | Yes         | 4                                    | CPUs                  |
 | Ram          | int      | No          | 8                                    | Memory                |
 | InstanceType | string   | No          | Standard                             | Instance Type         |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**                        | **Description**                                              |
 | ------------ | ------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus               | The current status of the resource does not support this operation. |
-| ---          | ---                                   | ---                                                          |
 | 400          | InstanceNotFound                      | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed           | The specified parameter &quot;InstanceID&quot; is not valid. |
 | 400          | InvalidInstanceType.ValueUnauthorized | The specified InstanceType is not authorized.                |
@@ -617,41 +592,39 @@ def update_vm(vm_id):
     print result
 ```
 
-**7.CreateDisk**
 
-  **Action**** ： ****CreateDisk**
+### 7.CreateDisk
 
-  **Description**** ：** add Disks
+  **Action** ： **CreateDisk**
 
-  **RUL**** :** cdsapi.capitalonline.net/ccs
+  **Description** ： add Disks
 
-  **Request by**** ： ****POST**
+  **RUL** :cdsapi.capitalonline.net/ccs
+
+  **Request by** ： **POST**
 
   **Configuration Options:**
 
 | **Option**                                                   | **Type**           | **Default** | **Reference**                        | **Description**       |
 | ------------------------------------------------------------ | ------------------ | ----------- | ------------------------------------ | --------------------- |
 | InstanceId                                                   | string             | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---                                                          | ---                | ---         | ---                                  | ---                   |
 | DataDisks                                                    | string             | No          | [                                    |                       |
 | { &quot;Size&quot;: 100, &quot;Type&quot;: &quot;ssd\_disk&quot; }, |                    |             |                                      |                       |
 | { &quot;Size&quot;: 200, &quot;Type&quot;: &quot;high\_disk&quot; } |                    |             |                                      |                       |
 | ],                                                           | Disk Size and Type |             |                                      |                       |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskID     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**                            | **Description**                                              |
 | ------------ | ----------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus                   | The current status of the resource does not support this operation. |
-| ---          | ---                                       | ---                                                          |
 | 400          | InstanceNotFound                          | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed               | The specified parameter &quot;InstanceID&quot; is not valid. |
 | 400          | InvalidInstanceTypeDisk.ValueUnauthorized | The specified Instance DiskType is not authorized.           |
@@ -680,39 +653,37 @@ def add_disk(vm_id):
     result = json.loads(res.content)
 ```
 
-**8.ResizeDisk**
 
-  **Action**** ： ****ResizeDisk**
+### 8.ResizeDisk
 
- **Description**** ：** Resize the Disk
+  **Action** ： **ResizeDisk**
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+ **Description** ：Resize the Disk
 
-  **Request by**** ： ****POST**
+  **URL** :cdsapi.capitalonline.net/ccs
+
+  **Request by** ： **POST**
 
   **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---        | ---      | ---         | ---                                  | ---                   |
 | DiskId     | string   | Yes         | a67644ba-873f-11e9-bf49-0242ac1104e7 | Disk ID               |
 | DataSize   | int      | Yes         | 100                                  | Disk Size             |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code** ：
 
 | **httpcode** | **Error code**                            | **Description**                                              |
 | ------------ | ----------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus                   | The current status of the resource does not support this operation. |
-| ---          | ---                                       | ---                                                          |
 | 400          | InstanceNotFound                          | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed               | The specified parameter &quot;InstanceID&quot; is not valid. |
 | 400          | InvalidInstanceID.Malformed               | The specified parameter &quot;InstanceID&quot; is not valid. |
@@ -728,38 +699,35 @@ def add_disk(vm_id):
 "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
 }
 ```
-**9.DeleteDisk**
+### 9.DeleteDisk
 
-  **Action**** ： ****DeleteDisk**
+  **Action** ： **DeleteDisk**
 
-  **Description**** ：** Delete Disk
+  **Description** ： Delete Disk
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                                | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Describe Instances ID |
-| ---        | ---      | ---         | ---                                                          | ---                   |
 | DiskIds    | List     | Yes         | [&quot;a67644ba-873f-11e9-bf49-0242ac1104e7&quot;,&quot;f9053ea8-fc23-4032-8a7f-01def77bq312&quot;] | Disk IDs              |
 
-  **Return**** ：**
+  **Return** ：
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
-  **Error code**** ：**
+  **Error code**：
 
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -772,22 +740,21 @@ def add_disk(vm_id):
 }
 ```
 
-**10.ResetImage**
+###  10.ResetImage
 
-  **Action**** ： ****ResetImage**
+  **Action** ： **ResetImage**
 
   **Description:**  Reset Operating System
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---        | ---      | ---         | ---                                  | ---                   |
 | ImageId    | string   | Yes         | bbf63749-0186-4c68-8adc-9bf584bc1376 | Image Id              |
 | Password   | string   | No          | EcsV587!                             | Password              |
 | PublicKey  | string   | No          |                                      |                       |
@@ -798,7 +765,6 @@ def add_disk(vm_id):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
 Error Code:
@@ -806,7 +772,6 @@ Error Code:
 | **httpcode** | **Error code**                        | **Description**                                              |
 | ------------ | ------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus               | The current Status of the resource does not support this operation. |
-| ---          | ---                                   | ---                                                          |
 | 400          | InstanceNotFound                      | the Instance has deleted                                     |
 | 400          | InvalidInstanceId.Malformed           | The specified parameter &quot;InstanceId&quot; is not valid. |
 | 404          | InvalidLaunchTemplateVersion.NotFound | %s                                                           |
@@ -836,22 +801,21 @@ def reset_os(vm_id, os_id):
     print result
 ```
 
-**11.DescribeInstances**
+### 11.DescribeInstances
 
-  **Action**** ： ****DescribeInstances**
+  **Action** ： **DescribeInstances**
 
   **Description:**  Instances Description
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** :cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                    | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------------------ | --------------------- |
 | PageNumber | Integer  | No          | 1                                                | VDClist               |
-| ---        | ---      | ---         | ---                                              | ---                   |
 | VdcId      | string   | No          | &quot;773f14c2-c8bc-4f66-acd7-ec34d3bfde7d&quot; | VDC ID                |
 | InstanceId | string   | No          | &quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0&quot; | Describe Instances ID |
 | PublicIp   | array    | No          | [&quot;101.251.1.1&quot;]                        | Public IP             |
@@ -862,7 +826,6 @@ def reset_os(vm_id, os_id):
 | **Option**                | **Type** | **Reference**                                                | **Description**        |
 | ------------------------- | -------- | ------------------------------------------------------------ | ---------------------- |
 | Code                      | Interger | Success                                                      | Error code             |
-| ---                       | ---      | ---                                                          | ---                    |
 | Data                      | list     | []                                                           | Data                   |
 | PageNumber                | interger | 1                                                            | Page Number            |
 | PageCount                 | interger | 10                                                           | Totally Pages          |
@@ -889,7 +852,6 @@ Error Code:
 | **httpcode** | **Error code**                        | **Description**                                              |
 | ------------ | ------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus               | The current status of the resource does not support this operation. |
-| ---          | ---                                   | ---                                                          |
 | 400          | InstanceNotFound                      | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed           | The specified parameter &quot;InstanceID&quot; is not valid. |
 | 404          | InvalidLaunchTemplateVersion.NotFound | %s                                                           |
@@ -972,22 +934,21 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
         return None
     return result.get("Data")
 ```
-**12.ConnectNetworkInterface**
+### 12.ConnectNetworkInterface
 
-  **Action**** ： ****ConnectNetworkInterface**
+  **Action** ： **ConnectNetworkInterface**
 
   **Description:**  Connect NIC
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description**       |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InterfaceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---         | ---      | ---         | ---                                  | ---                   |
 | InstanceId  | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Instance ID           |
 
   **Return:**
@@ -995,7 +956,6 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task Id         |
 
 Error Code:
@@ -1003,7 +963,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus      | The current status of the resource does not support this operation. |
-| ---          | ---                          | ---                                                          |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
 
   **Reference:**
@@ -1039,20 +998,19 @@ def up_card(InterfaceId, InstanceId):
     return task_id
 ```
 
-**13.DisconnectNetworkInterface**
+### 13.DisconnectNetworkInterface
 
-  **Action**** ： ****DisconnectNetworkInterface**
+  **Action** ： **DisconnectNetworkInterface**
 
   **Description:**  Disconnect NIC
 
- **Request by**** ： ****POST**
+ **Request by** ：**POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                        |
 | ----------- | -------- | ----------- | ------------------------------------ |
 | InterfaceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 |
-| ---         | ---      | ---         | ---                                  |
 | InstanceId  | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 |
 
   **Return:**
@@ -1060,7 +1018,6 @@ def up_card(InterfaceId, InstanceId):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1068,7 +1025,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus      | The current status of the resource does not support this operation. |
-| ---          | ---                          | ---                                                          |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
 
   **Reference:**
@@ -1104,22 +1060,21 @@ def down_card(InterfaceId, InstanceId):
     return task_id
 ```
 
-**14.ModifyIpAddress**
+### 14.ModifyIpAddress
 
-  **Action**** ： ****ModifyIpAddress**
+  **Action** ： **ModifyIpAddress**
 
   **Description:**  Modify IP address
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** :cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description**       |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId  | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def773dw22 | Describe Instances ID |
-| ---         | ---      | ---         | ---                                  | ---                   |
 | InterfaceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Interface ID          |
 | Address     | string   | Yes         | 101.251.2.29                         | Modify IP Address     |
 
@@ -1128,7 +1083,6 @@ def down_card(InterfaceId, InstanceId):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1136,7 +1090,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus      | The current status of the resource does not support this operation. |
-| ---          | ---                          | ---                                                          |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
 
   **Reference:**
@@ -1148,22 +1101,21 @@ Error Code:
 }
 ```
 
-**15.DescribeInstanceMonitor**
+### 15.DescribeInstanceMonitor
 
-  **Action**** ： ****DescribeInstanceMonitor**
+  **Action** ： **DescribeInstanceMonitor**
 
   **Description:**  Describe Instance Monitor
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                                                | **Description**                          |
 | ----------- | -------- | ----------- | ------------------------------------------------------------ | ---------------------------------------- |
 | InstanceId  | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def773dw22                         | Describe Instances ID                    |
-| ---         | ---      | ---         | ---                                                          | ---                                      |
 | MetricName  | string   | Yes         | CPUUtilization、RAMUtilization、DiskWriteIOPS、DiskReadIOPS、DiskWriteBPS、DiskReadBPS、InterfaceInRate、InterfaceOutRate | Metric:CPU,RAM,IOPS,THROUGHPUT,BAND,RATE |
 | Period      | int      | Yes         | 60、900、3600                                                | Period                                   |
 | StartTime   | string   | Yes         | 2019-10-09 15:30:00                                          | Start Time                               |
@@ -1176,7 +1128,7 @@ Error Code:
 | **Option** | **Type** | **Reference**                        | **Description**                         |
 | ---------- | -------- | ------------------------------------ | --------------------------------------- |
 | Code       | Interger | Success                              | Error Code                              |
-| ---        | ---      | ---                                  | ---                                     |
+
 | Data       | Dict     | {}                                   | data                                    |
 | InstanceId | String   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID                   |
 | Period     | String   | 60                                   | Period                                  |
@@ -1189,7 +1141,6 @@ Error Code:
 | **httpcode** | **Error Code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 
@@ -1221,29 +1172,27 @@ Error Code:
     "Message": "Success."
 }
 ```
-**16.StartInstance**
+### 16.StartInstance
 
   **Action:StartInstance**
 
   **Description:**  Start Instance
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---        | ---      | ---         | ---                                  | ---                   |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1251,7 +1200,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -1264,22 +1212,21 @@ Error Code:
 }
 ```
 
-**17.ModifyInstanceName**
+### 17.ModifyInstanceName
 
 **Action:ModifyInstanceName**
 
 **Description:**  Modify Instance Name
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**   | **Type** | **Default** | **Reference**                        | **Description**       |
 | ------------ | -------- | ----------- | ------------------------------------ | --------------------- |
 | InstanceId   | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances ID |
-| ---          | ---      | ---         | ---                                  | ---                   |
 | InstanceName | string   | Yes         | shouduzaixhost                       | Instance Name         |
 
 **Return:**
@@ -1287,15 +1234,13 @@ Error Code:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**                        | **Description**                                              |
 | ------------ | ------------------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus               | The current status of the resource does not support this operation. |
-| ---          | ---                                   | ---                                                          |
 | 400          | InstanceNotFound                      | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed           | The specified parameter &quot;InstanceID&quot; is not valid. |
 | 400          | InvalidInstanceType.ValueUnauthorized | The specified InstanceType is not authorized.                |
@@ -1311,15 +1256,15 @@ Error Code:
 }
 ```
 
-**18.DescribeTags**
+### 18.DescribeTags
 
 **Action:DescribeTags**
 
 **Description:**  Describe Tags
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** :** cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
@@ -1330,15 +1275,14 @@ No Option to be configured.
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
+
 
 | **httpcode** | **Error Code**          | **Description**                                              |
 | ------------ | ----------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus | The current status of the resource does not support this operation. |
-| ---          | ---                     | ---                                                          |
 
 **Reference:**
 
@@ -1363,29 +1307,27 @@ No Option to be configured.
 }
 ```
 
-**19.CreateTag**
+### 19.CreateTag
 
 **Action: CreateTag**
 
 **Description:**  Creat Tag
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL :** cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference** | **Description** |
 | ---------- | -------- | ----------- | ------------- | --------------- |
 | TagName    | string   | Yes         | abcd          | Tag Name        |
-| ---        | ---      | ---         | ---           | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 **Reference:**
@@ -1399,15 +1341,15 @@ No Option to be configured.
 }
 ```
 
-**20.DeleteTag**
+### 20.DeleteTag
 
 **Action: DeleteTag**
 
 **Description:**  Delete Tag
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** :cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
@@ -1415,22 +1357,19 @@ No Option to be configured.
 | ---------- | -------- | ----------- | ------------- | --------------- |
 | TagId      | string   | Yes         |               |                 |
 | Tag ID     |          |             |               |                 |
-| ---        | ---      | ---         | ---           | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code** | **Description**        |
 | ------------ | -------------- | ---------------------- |
 | 400          | 20101          | Tag ID of instance xxx |
-| ---          | ---            | ---                    |
 
 **Reference:**
 
@@ -1444,22 +1383,21 @@ No Option to be configured.
 }
 ```
 
-**21.AddInstancesTags**
+### 21.AddInstancesTags
 
 **Action: AddInstancesTags**
 
 **Description:**  Add Instance Tags
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                                                | **Description**       |
 | ----------- | -------- | ----------- | ------------------------------------------------------------ | --------------------- |
 | InstanceIds | string   | Yes         | &quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7&quot; | Describe Instances ID |
-| ---         | ---      | ---         | ---                                                          | ---                   |
 | AddTagIds   | string   | No          | &quot;123,456&quot;                                          | Add Tag IDs           |
 
 **Return:**
@@ -1467,7 +1405,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 **Reference:**
@@ -1481,22 +1418,21 @@ No Option to be configured.
 }
 ```
 
-**22.DeleteInstancesTags**
+### 22.DeleteInstancesTags
 
 **Action: DeleteInstancesTags**
 
 **Description:**  Delete Instance Tags
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                                                | **Description**       |
 | ----------- | -------- | ----------- | ------------------------------------------------------------ | --------------------- |
 | InstanceIds | string   | Yes         | &quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0,a67644ba-873f-11e9-bf49-0242ac1104e7&quot; | Describe Instances ID |
-| ---         | ---      | ---         | ---                                                          | ---                   |
 | DelTagIds   | string   | No          | &quot;123,456&quot;                                          | Delete Tag IDs        |
 
 **Return:**
@@ -1504,7 +1440,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 **Reference:**
@@ -1518,22 +1453,21 @@ No Option to be configured.
 }
 ```
 
-**23.DescribeInstanceType**
+### 23.DescribeInstanceType
 
 **Action: DescribeInstanceType**
 
 **Description:**  Describe Instance Type
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**         | **Type** | **Default** | **Reference**        | **Description**      |
 | ------------------ | -------- | ----------- | -------------------- | -------------------- |
 | RegionId           | string   | Yes         | CN\_Beijing\_A       | Region ID            |
-| ---                | ---      | ---         | ---                  | ---                  |
 | InstanceType       | string   | Yes         | &quot;Standard&quot; | Instance Type        |
 | InstanceChargeType | string   | No          | &quot;PostPaid&quot; | Instance Charge Type |
 
@@ -1542,7 +1476,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 
@@ -1567,22 +1500,21 @@ No Option to be configured.
 }
 ```
 
-**24.DescribePublicIp**
+###  24.DescribePublicIp
 
 **Action: DescribePublicIp**
 
 **Description:**  Describe Public IP
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                                | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------------------------------ | --------------- |
 | VdcId      | string   | Yes         | &quot;f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7&quot; | VDC ID          |
-| ---        | ---      | ---         | ---                                                          | ---             |
 | PublicId   | string   | Yes         | &quot;123443ea8-fcxxxxx01defxxx104e7&quot;                   | Public ID       |
 
 **Return:**
@@ -1590,7 +1522,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -1621,22 +1552,21 @@ No Option to be configured.
 
 ```
 
-**25.DescribePrivateIp**
+### 25.DescribePrivateIp
 
 **Action: DescribePrivateIp**
 
 **Description:**  Describe Private IP
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                                | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------------------------------ | --------------- |
 | VdcId      | string   | Yes         | &quot;f9053ea8-fcxxxxx01def77b4cc0,a67644baxxxx42ac1104e7&quot; | VDC ID          |
-| ---        | ---      | ---         | ---                                                          | ---             |
 | PrivateId  | string   | Yes         | &quot;123443ea8-fcxxxxx01defxxx104e7&quot;                   | Private ID      |
 
 **Return:**
@@ -1644,7 +1574,7 @@ No Option to be configured.
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
+
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -1675,15 +1605,15 @@ No Option to be configured.
 
 ```
 
-**26.ResetInstancesPassword**
+### 26.ResetInstancesPassword
 
 **Action: ResetInstancesPassword**
 
 **Description:**  Reset Instance Password
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
@@ -1719,29 +1649,27 @@ No Option to be configured.
 }
 ```
 
-**27.CreateInstanceHtmlConsoleURL**
+### 27.CreateInstanceHtmlConsoleURL
 
 **Action: CreateInstanceHtmlConsoleURL**
 
 **Description:**  Create Instance Html console URL
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                    | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | &quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0&quot; | Describe Instances ID |
-| ---        | ---      | ---         | ---                                              | ---                   |
 
 **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -1761,22 +1689,20 @@ No Option to be configured.
 ```
 
 
-**28.ExtendSystemDisk**
-
+### 28.ExtendSystemDisk
 **Action: ExtendSystemDisk**
 
 **Description:**  Extend System Disk
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                                    | **Description**       |
 | ---------- | -------- | ----------- | ------------------------------------------------ | --------------------- |
 | InstanceId | string   | Yes         | &quot;f9053ea8-fc23-4032-8a7f-01def77b4cc0&quot; | Describe Instances ID |
-| ---        | ---      | ---         | ---                                              | ---                   |
 | Size       | int      | No          | 200                                              | Disk Size             |
 | IOPS       | int      | No          | 5                                                | IOPS                  |
 
@@ -1785,7 +1711,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -1804,22 +1729,21 @@ No Option to be configured.
 ```
 
 
-**29.DescribeInstancePrice**
+### 29.DescribeInstancePrice       
 
 **Action: DescribeInstancePrice**
 
 **Description:**  Instance Price
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**         | **Type** | **Default** | **Reference**  | **Description**      |
 | ------------------ | -------- | ----------- | -------------- | -------------------- |
 | RegionId           | String   | Yes         | CN\_Beijing\_A | Region ID            |
-| ---                | ---      | ---         | ---            | ---                  |
 | InstanceChargeType | string   | No          | PostPaid       | Instance Charge Type |
 | AutoRenew          | interger | No          | 1              | Auto Renew           |
 | PrepaidMonth       | interger | No          | 0              | Prepaid Months       |
@@ -1838,7 +1762,6 @@ No Option to be configured.
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 
@@ -1854,29 +1777,27 @@ No Option to be configured.
 ```
 
 
-**30.StopInstances**
+### 30.StopInstances
 
   **Action:StopInstances**
 
   **Description:**  Terminal Instances
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                                                | **Description**        |
 | ----------- | -------- | ----------- | ------------------------------------------------------------ | ---------------------- |
 | InstanceIds | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0,bbf63749-0186-4c68-8adc-9bf584bc1376 | Describe Instances IDs |
-| ---         | ---      | ---         | ---                                                          | ---                    |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1884,7 +1805,6 @@ Error Code:
 | **httpcode** | **Error Code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -1897,29 +1817,27 @@ Error Code:
 ```
 
 
-**31.StartInstances**
+### 31.StartInstances
 
   **Action:StartInstances**
 
   **Description:**  Start Instances
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description**        |
 | ----------- | -------- | ----------- | ------------------------------------ | ---------------------- |
 | InstanceIds | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances IDs |
-| ---         | ---      | ---         | ---                                  | ---                    |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1927,7 +1845,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -1941,29 +1858,27 @@ Error Code:
 ```
 
 
-**32.RebootInstances**
+### 32.RebootInstances
 
-  **Action**** ： ****RebootInstances**
+  **Action** ： **RebootInstances**
 
   **Description:**  Reboot Instances
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description**        |
 | ----------- | -------- | ----------- | ------------------------------------ | ---------------------- |
 | InstanceIds | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Describe Instances IDs |
-| ---         | ---      | ---         | ---                                  | ---                    |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -1971,7 +1886,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current Status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceId.Malformed | The specified parameter &quot;InstanceId&quot; is not valid. |
 
@@ -1985,22 +1899,20 @@ Error Code:
 ```
 
 
-**33.BatchAddNetworkInterfaces**
-
-  **Action**** ： ****BatchAddNetworkInterfaces**
+### 33.BatchAddNetworkInterfaces
+  **Action** ： **BatchAddNetworkInterfaces**
 
   **Description:**  Add NICs by batch
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**         | **Type** | **Default** | **Reference**                                                | **Description**        |
 | ------------------ | -------- | ----------- | ------------------------------------------------------------ | ---------------------- |
 | InstanceIds        | list     | Yes         | [&quot;76571028-e2a3-11e9-b&quot;,&quot;80-de55f62159fe&quot;] | Describe Instances IDs |
-| ---                | ---      | ---         | ---                                                          | ---                    |
 | PrivateId/PublicId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe                         | Private ID/Public ID   |
 | VdcId              | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | VDC ID                 |
 | Password           | string   | No          | xxxx                                                         | Password               |
@@ -2010,7 +1922,6 @@ Error Code:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 **Reference:**
@@ -2024,22 +1935,20 @@ Error Code:
 }
 ```
 
-**34.BatchDeleteNetworkInterfaces**
-
-  **Action**** ： ****BatchDeleteNetworkInterfaces**
+### 34.BatchDeleteNetworkInterfaces
+  **Action** ： **BatchDeleteNetworkInterfaces**
 
   **Description:**  Delete NICs by batch
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**         | **Type** | **Default** | **Reference**                                                | **Description**        |
 | ------------------ | -------- | ----------- | ------------------------------------------------------------ | ---------------------- |
 | InstanceIds        | list     | Yes         | [&quot;76571028-e2a3-11e9-b&quot;,&quot;80-de55f62159fe&quot;] | Describe Instances IDs |
-| ---                | ---      | ---         | ---                                                          | ---                    |
 | PrivateId/PublicId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe                         | Private ID/public ID   |
 | VdcId              | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | VDC ID                 |
 
@@ -2048,7 +1957,6 @@ Error Code:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 **Reference:**
@@ -2062,24 +1970,23 @@ Error Code:
 }
 ```
 
-**Security**
+ ## Security
 
-**1.CreateSecurityGroup**
+### 1.CreateSecurityGroup
 
-  **Action**** ： ****CreateSecurityGroup**
+  **Action** ： **CreateSecurityGroup**
 
   **Description:**  Create Security Group
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**        | **Type** | **Default** | **Reference** | **Description**                     |
 | ----------------- | -------- | ----------- | ------------- | ----------------------------------- |
 | SecurityGroupName | String   | Yes         | Test          | Security Group Name                 |
-| ---               | ---      | ---         | ---           | ---                                 |
 | Description       | String   | Yes         |               |                                     |
 | Description       |          |             |               |                                     |
 | SecurityGroupType | String   | Yes         | public        | Security Group Type(public/private) |
@@ -2089,7 +1996,6 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -2100,7 +2006,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
  **Reference:**
 
@@ -2113,29 +2018,27 @@ Error Code:
 }
 ```
 
-**2.DeleteSecurityGroup**
+### 2.DeleteSecurityGroup
 
-  **Action**** ： ****DeleteSecurityGroup**
+  **Action** ： **DeleteSecurityGroup**
 
   **Description:**  Delete Security Group
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 
   **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -2146,7 +2049,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
  **Reference:**
 ```json
@@ -2159,29 +2061,27 @@ Error Code:
 ```
 
 
-**3.ForceDeleteSecurityGroup**
+### 3.ForceDeleteSecurityGroup
 
-  **Action**** ： ****ForceDeleteSecurityGroup**
+  **Action** ： **ForceDeleteSecurityGroup**
 
   **Description:**  Force Delete Security Group
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ： **GET**
 
  **Configuration Options:**
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 
   **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688881       | Task ID         |
@@ -2191,7 +2091,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 
@@ -2204,22 +2103,21 @@ Error Code:
 }
 ```
 
-**4.DescribeSecurityGroupAttribute**
+### 4.DescribeSecurityGroupAttribute
 
-  **Action**** ： ****DescribeSecurityGroupAttribute**
+  **Action** ： **DescribeSecurityGroupAttribute**
 
   **Description:**  Security Group Attribute
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****GET**
+ **Request by** ：**GET**
 
  **Configuration Options:**
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 | RuleId          | String   | No          | 50971028-e2a3-11e9-b380-de55f62159fe | Rule ID           |
 
   **Return:**
@@ -2227,7 +2125,6 @@ Error Code:
 | **Option**             | **Type** | **Reference**       | **Description**           |
 | ---------------------- | -------- | ------------------- | ------------------------- |
 | Code                   | String   | Success             | Error Code                |
-| ---                    | ---      | ---                 | ---                       |
 | Message                | String   | Success             | Message                   |
 | TaskId                 | String   |                     |                           |
 | Task ID                |          |                     |                           |
@@ -2254,7 +2151,6 @@ Error Code:
 | **httpcode** | **Error Code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 
@@ -2301,22 +2197,21 @@ Error Code:
 }
 ```
 
-**5.ModifySecurityGroupAttribute**
+### 5.ModifySecurityGroupAttribute
 
-  **Action**** ： ****ModifySecurityGroupAttribute**
+  **Action** ： **ModifySecurityGroupAttribute**
 
   **Description:**  Modify Security Group Attribute
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**          | **Type** | **Default** | **Reference**                        | **Description**   |
 | ------------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId     | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---                 | ---      | ---         | ---                                  | ---               |
 | Description         | String   | Yes         |                                      |                   |
 | Description         |          |             |                                      |                   |
 | SecurityGroupName   | String   | Yes         |                                      |                   |
@@ -2327,7 +2222,6 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -2338,7 +2232,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2351,22 +2244,21 @@ Error Code:
 ```
 
 
-**6.DescribeSecurityGroups**
+### 6.DescribeSecurityGroups
 
-  **Action**** ： ****DescribeSecurityGroups**
+  **Action** ： **DescribeSecurityGroups**
 
   **Description:**  Describe Security Groups
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**        | **Type** | **Default** | **Reference** | **Description**                      |
 | ----------------- | -------- | ----------- | ------------- | ------------------------------------ |
 | SecurityGroupType | String   | No          | public        | Security Group Type(public/private), |
-| ---               | ---      | ---         | ---           | ---                                  |
 | Keyword           | String   | No          | test          | Keyword                              |
 | SecurityGroupId   | String   | No          | xxxx          | Security Group ID                    |
 
@@ -2375,7 +2267,6 @@ Error Code:
 | **Option**         | **Type** | **Reference**       | **Description**      |
 | ------------------ | -------- | ------------------- | -------------------- |
 | Code               | String   | 0000                | Error Code           |
-| ---                | ---      | ---                 | ---                  |
 | Message            | String   |                     |                      |
 | Message            |          |                     |                      |
 | TaskId             | String   |                     |                      |
@@ -2397,7 +2288,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2435,22 +2325,21 @@ Error Code:
 }
 ```
 
-**7.AddSecurityGroupRule**
+### 7.AddSecurityGroupRule
 
-  **Action**** ： ****AddSecurityGroupRule**
+  **Action** ： **AddSecurityGroupRule**
 
   **Description:**  Add Security Group Rule
 
-  **URL**** :** cdsapi.capitalonline.net/ccs
+  **URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 | Action          | String   | Yes         | 1                                    | Action            |
 | Description     | String   | Yes         |                                      |                   |
 | Description     |          |             |                                      |                   |
@@ -2467,7 +2356,6 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688348       | Task ID         |
@@ -2477,7 +2365,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2490,22 +2377,21 @@ Error Code:
 ```
 
 
-**8.RemoveSecurityGroupRule**
+### 8.RemoveSecurityGroupRule
 
-  **Action**** ： ****RemoveSecurityGroupRule**
+  **Action** ： **RemoveSecurityGroupRule**
 
   **Description:**  Remove Security Group Rule
 
-**URL**** :** cdsapi.capitalonline.net/ccs
+**URL** : cdsapi.capitalonline.net/ccs
 
- **Request by**** ： ****POST**
+ **Request by** ： **POST**
 
  **Configuration Options:**
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 | RuleIds         | Array    | Yes         | [&quot;xxx&quot;, &quot;xxx&quot;]   | Rule ID           |
 
   **Return:**
@@ -2513,7 +2399,6 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688411       | Task ID         |
@@ -2523,7 +2408,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2536,22 +2420,21 @@ Error Code:
 ```
 
 
-**9.ModifySecurityGroupRule**
+### 9.ModifySecurityGroupRule
 
-  **Action**** ： ****ModifySecurityGroupRule**
+  **Action** ： **ModifySecurityGroupRule**
 
   **Description:**  Modify Security Group Rule
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**      | **Type** | **Default** | **Reference**                        | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Security Group ID |
-| ---             | ---      | ---         | ---                                  | ---               |
 | RuleId          | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe | Rule ID           |
 | Description     | String   | Yes         |                                      |                   |
 | Description     |          |             |                                      |                   |
@@ -2561,7 +2444,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   |               |                 |
@@ -2572,7 +2454,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2585,22 +2466,21 @@ Error Code:
 ```
 
 
-**10.JoinSecurityGroup**
+### 10.JoinSecurityGroup
 
-  **Action**** ： ****JoinSecurityGroup**
+  **Action** ： **JoinSecurityGroup**
 
   **Description:**  Jion Security Group
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**      | **Type** | **Default** | **Reference**                                                | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe                         | Security Group ID |
-| ---             | ---      | ---         | ---                                                          | ---               |
 | BindData        | String   | Yes         | [{&quot;InstanceId&quot;:&quot;xxx&quot;, &quot;PrivateId&quot;:&quot;xxx&quot;}] | Bind Data         |
 | InstanceId      | String   | Yes         | 76571028-e2a3-11e9-b380-de55f62159fe                         | Instance ID       |
 | PrivateId       | String   | No          | 50971028-e2a3-11e9-b380-de55f62159fe                         | Private ID        |
@@ -2611,7 +2491,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688564       | Task ID         |
@@ -2621,7 +2500,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2634,22 +2512,21 @@ Error Code:
 ```
 
 
-**11.LeaveSecurityGroup**
+### 11.LeaveSecurityGroup
 
-  **Action**** ： ****LeaveSecurityGroup**
+  **Action**： **LeaveSecurityGroup**
 
   **Description:**  Leave Security Group
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**      | **Type** | **Default** | **Reference**                                                | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe                         | Security Group ID |
-| ---             | ---      | ---         | ---                                                          | ---               |
 | BindData        | String   | Yes         | [{&quot;InstanceId&quot;:&quot;xxx&quot;, &quot;PrivateId&quot;:&quot;xxx&quot;}] | Bind Data         |
 | InstanceId      | String   | Yes         | 76571028-e2a3-11e9-b380-de55f62159fe                         | Instance ID       |
 | PrivateId       | String   | No          | 50971028-e2a3-11e9-b380-de55f62159fe                         | Private ID        |
@@ -2660,7 +2537,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688573       | Task ID         |
@@ -2670,7 +2546,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
 ```json
@@ -2683,22 +2558,21 @@ Error Code:
 ```
 
 
-**12.ModifySecurityGroupRulePriority**
+### 12.ModifySecurityGroupRulePriority
 
-  **Action**** ： ****ModifySecurityGroupRulePriority**
+  **Action** ： **ModifySecurityGroupRulePriority**
 
   **Description:** Modify Security Group Rule Priority
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**      | **Type** | **Default** | **Reference**                                                | **Description**   |
 | --------------- | -------- | ----------- | ------------------------------------------------------------ | ----------------- |
 | SecurityGroupId | String   | Yes         | 50971028-e2a3-11e9-b380-de55f62159fe                         | Security Group ID |
-| ---             | ---      | ---         | ---                                                          | ---               |
 | BindData        | String   | Yes         | [{&quot;RuleId&quot;:&quot;xxx&quot;, &quot;Priority&quot;:&quot;xxx&quot;}] | Bind Data         |
 | RuleId          | String   | Yes         | 76571028-e2a3-11e9-b380-de55f62159fe                         | Rule ID           |
 | Priority        | Int      | No          | 1                                                            | Priority          |
@@ -2708,7 +2582,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688573       | Task ID         |
@@ -2718,7 +2591,6 @@ Error Code:
 | **httpcode** | **Error code**               | **Description**                                              |
 | ------------ | ---------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidInterfaceID.Malformed | The specified parameter &quot;InterfaceID&quot; is not valid. |
-| ---          | ---                          | ---                                                          |
 
   **Reference:**
   ```json
@@ -2728,28 +2600,27 @@ Error Code:
 "Data":{},
 "TaskId":"7688573"
 }
-```
+  ```
 
 
 
-**Template**
+## Template
 
-**1.CreateTemplate**
+### 1.CreateTemplate
 
-  **Action**** ：** CreateTemplate
+  **Action** ： CreateTemplate
 
   **Description:**  Create Template
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**       | **Type** | **Default** | **Reference** | **Description**       |
 | ---------------- | -------- | ----------- | ------------- | --------------------- |
 | InstanceId       | String   | Yes         | Test          | Describe Instances ID |
-| ---              | ---      | ---         | ---           | ---                   |
 | DisplayName      | String   | Yes         |               |                       |
 | Templet Name     |          |             |               |                       |
 | PowerOn          | Bool     | Yes         | True          | Power On or not       |
@@ -2762,7 +2633,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688573       | Task ID         |
@@ -2772,7 +2642,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -2787,22 +2656,21 @@ Error Code:
 ```
 
 
-**2.DeleteTemplate**
+### 2.DeleteTemplate
 
-  **Action**** ：** DeleteTemplate
+  **Action** ： DeleteTemplate
 
   **Description:**  Delete Template
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**  | **Description** |
 | ---------- | -------- | ----------- | -------------- | --------------- |
 | TemplateId | String   | Yes         | xxx            | Template ID     |
-| ---        | ---      | ---         | ---            | ---             |
 | RegionId   | String   | Yes         | CN\_Beijing\_A | Region ID       |
 
   **Return:**
@@ -2810,7 +2678,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688573       | Task ID         |
@@ -2820,7 +2687,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -2835,22 +2701,21 @@ Error Code:
 ```
 
 
-**3.SyncTemplate**
+### 3.SyncTemplate
 
-  **Action**** ：** SyncTemplate
+  **Action** ： SyncTemplate
 
   **Description:** Synchronize Template
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**  | **Description** |
 | ---------- | -------- | ----------- | -------------- | --------------- |
 | TemplateId | String   | Yes         | xxx            | TemplateID      |
-| ---        | ---      | ---         | ---            | ---             |
 | RegionId   | String   | Yes         | CN\_Beijing\_A | Region ID       |
 
   **Return:**
@@ -2858,7 +2723,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Object   | {}            | Data            |
 | TaskId     | String   | 7688573       | Task ID         |
@@ -2868,7 +2732,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -2882,22 +2745,21 @@ Error Code:
 }
 ```
 
-**4.DescribeTemplateInfo**
+### 4.DescribeTemplateInfo
 
-  **Action**** ：** DescribeTemplateInfo
+  **Action** ：DescribeTemplateInfo
 
   **Description:**  Describe Template Infomation
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference** | **Description** |
 | ---------- | -------- | ----------- | ------------- | --------------- |
 | PageNumber | Int      | Yes         | 1             | Page Number     |
-| ---        | ---      | ---         | ---           | ---             |
 | PageSize   | Int      | Yes         | 10            | Page Size       |
 | Keyword    | String   | No          | test          | Keyword         |
 
@@ -2906,7 +2768,6 @@ Configuration Options:
 | **Option**   | **Type** | **Reference**       | **Description** |
 | ------------ | -------- | ------------------- | --------------- |
 | Code         | String   | Success             | Error Code      |
-| ---          | ---      | ---                 | ---             |
 | Message      | String   | Success             | Message         |
 | Data         | Object   | {}                  | Data            |
 | TemplateList | List     | []                  | Template List   |
@@ -2926,7 +2787,6 @@ Error Code:
 | **httpcode** | **Error code**              | **Description**                                              |
 | ------------ | --------------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectInstanceStatus     | The current status of the resource does not support this operation. |
-| ---          | ---                         | ---                                                          |
 | 400          | InstanceNotFound            | the Instance has deleted                                     |
 | 400          | InvalidInstanceID.Malformed | The specified parameter &quot;InstanceID&quot; is not valid. |
 
@@ -2969,24 +2829,23 @@ Error Code:
 ```
 
 
-**VDC**
+## VDC
 
-**1.DescribeVdc**
+### 1.DescribeVdc
 
-  **Action**** ：** DescribeVdc
+  **Action** ： DescribeVdc
 
   **Description:**  Describe VDC
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | RegionId   | string   | No          | CN\_Beijing\_A                       | rEGION id       |
-| ---        | ---      | ---         | ---                                  | ---             |
 | VdcId      | string   | No          | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | VDC ID          |
 | PageNumber | Integer  | No          | 1                                    | Page Number     |
 | Keyword    | string   | No          | Beijing                              | Keyword         |
@@ -3026,12 +2885,11 @@ Configuration Options:
 | ,Status,Type,                                                |                       |                                      |                 |
 | Qos,IP)                                                      |                       |                                      |                 |
 
-**Error Code**** :**
+**Error Code** :
 
 | **httpcode** | **Error code**            | **Description**                                            |
 | ------------ | ------------------------- | ---------------------------------------------------------- |
 | 400          | InvalidRegionID.Malformed | The specified parameter &quot;RegionId&quot; is not valid. |
-| ---          | ---                       | ---                                                        |
 | 400          | VDCNotFound               | the VDC has deleted.                                       |
 | 400          | InvalidVDCID.Malformed    | The specified parameter &quot;VdcId&quot; is not valid.    |
 
@@ -3102,15 +2960,14 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
     return data
 ```
 
-**2.CreateVdc**
-
+### 2.CreateVdc
   **Action:CreateVdc**
 
   **Description:**  Create VDC
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
@@ -3181,15 +3038,15 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 ```
 
 
-**3.DeleteVdc**
+### 3.DeleteVdc
 
-  **Action**** ： ****DeleteVdc**
+  **Action** ： **DeleteVdc**
 
   **Description:**  Delete VDC
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
@@ -3209,7 +3066,6 @@ Error Code:
 | **httpcode** | **Error code**         | **Description**                                              |
 | ------------ | ---------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectVdcStatus     | The current Status of the resource does not support this operation. |
-| ---          | ---                    | ---                                                          |
 | 400          | VdcNotFound            | the Vdc has deleted                                          |
 | 400          | InvalidVdcId.Malformed | The specified parameter &quot;VdcId&quot; is not valid.      |
 
@@ -3223,7 +3079,7 @@ Error Code:
 ```
 
 
-**4.CreatePublicNetwork**
+### 4.CreatePublicNetwork
 
   **Action:CreatePublicNetwork**
 
@@ -3231,14 +3087,13 @@ Error Code:
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option**                | **Type** | **Default** | **Reference**                        | **Description**               |
 | ------------------------- | -------- | ----------- | ------------------------------------ | ----------------------------- |
 | VdcId                     | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | VDC ID                        |
-| ---                       | ---      | ---         | ---                                  | ---                           |
 | Name                      | string   | No          | NET1                                 | Net Name                      |
 | Type                      | string   | Yes         | BGP\_4                               | BGP\_4, ChinaTelecom,AntiDDOS |
 | BillingMethod             | string   | Yes         | Bandwidth                            | Bandwidth Method:Traffic,     |
@@ -3258,7 +3113,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3266,7 +3120,6 @@ Error Code:
 | **httpcode** | **Error code**                                | **Description**                                              |
 | ------------ | --------------------------------------------- | ------------------------------------------------------------ |
 | 400          | Account.Arrearage                             | Your account has been in arrears.                            |
-| ---          | ---                                           | ---                                                          |
 | 400          | InvalidVdcId.Malformed                        | The specified parameter &quot;VdcId&quot; is not valid.      |
 | 400          | InvalidPublicNetwork. Type.Malformed          | The specified parameter &quot;PbulicNetwork.Type&quot; is not valid. |
 | 400          | InvalidPublicNetwork. BillingMethod.Malformed | The specified parameter &quot;PbulicNetwork.BillingMethod&quot; is not valid. |
@@ -3282,22 +3135,20 @@ Error Code:
 }
 ```
 
-**5.CreatePrivateNetwork**
-
+### 5.CreatePrivateNetwork
   **Action:CreatePrivateNetwork**
 
   **Description:**  Create Private Network
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** POST**
+  **Request by:** POST
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**                                 |
 | ---------- | -------- | ----------- | ------------------------------------ | ----------------------------------------------- |
 | VdcId      | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | VDC ID                                          |
-| ---        | ---      | ---         | ---                                  | ---                                             |
 | Name       | string   | No          | siwang1                              | Net Name                                        |
 | Type       | string   | No          | manual                               | Private Network Type(auto/manual)，Default auto |
 | Address    | string   | No          | 192.168.0.0                          | IP Address                                      |
@@ -3308,7 +3159,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3316,7 +3166,6 @@ Error Code:
 | **httpcode** | **Error code**             | **Description**                                         |
 | ------------ | -------------------------- | ------------------------------------------------------- |
 | 400          | InvalidVDCID.Malformed     | The specified parameter &quot;VDCID&quot; is not valid. |
-| ---          | ---                        | ---                                                     |
 | 400          | QuotaExceed.PrivateNetwork | The maximum number of PrivateNetwork is exceeded        |
 
   **Reference:**
@@ -3328,7 +3177,7 @@ Error Code:
 ```
 
 
-  **Reference Code:**** :**
+  **Reference Code:** :
 
 ```python
 def create_private(vdc_id):
@@ -3343,7 +3192,7 @@ def create_private(vdc_id):
     result = json.loads(res.content)
 ```
 
-**6.ModifyPublicNetwork**
+### 6.ModifyPublicNetwork
 
   **Action:ModifyPublicNetwork**
 
@@ -3351,14 +3200,13 @@ def create_private(vdc_id):
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**   |
 | ---------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | PublicId   | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Public Network ID |
-| ---        | ---      | ---         | ---                                  | ---               |
 | Qos        | string   | Yes         | 100                                  | QOS               |
 
   **Return:**
@@ -3366,7 +3214,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3374,7 +3221,6 @@ Error Code:
 | **httpcode** | **Error code**                   | **Description**                                              |
 | ------------ | -------------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidPublicNetworkID.Malformed | The specified parameter &quot;PublicNetworkID&quot; is not valid. |
-| ---          | ---                              | ---                                                          |
 
   **Reference:**
 
@@ -3385,7 +3231,7 @@ Error Code:
 }
 ```
 
-  **Reference Code:**** :**
+  **Reference Code:** :
 ```python
 def modify_public_qos(publicId, qos):
     action = "ModifyPublicNetwork"
@@ -3404,22 +3250,20 @@ def modify_public_qos(publicId, qos):
 ```
 
 
-**7.AddPublicIp**
-
+### 7.AddPublicIp
   **Action:AddPublicIp**
 
   **Description:**  Add Public IP
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**                  |
 | ---------- | -------- | ----------- | ------------------------------------ | -------------------------------- |
 | PublicId   | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Public Network ID                |
-| ---        | ---      | ---         | ---                                  | ---                              |
 | Number     | Interger | Yes         | 8                                    | IP Adrress Number:{4,8,16,32,64} |
 
   **Return:**
@@ -3427,7 +3271,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3435,7 +3278,6 @@ Error Code:
 | **httpcode** | **Error code**                    | **Description**                                              |
 | ------------ | --------------------------------- | ------------------------------------------------------------ |
 | 400          | InvalidPublicNetwork.IP.Malformed | The specified parameter &quot;PbulicNetwork.IP&quot; is not valid. |
-| ---          | ---                               | ---                                                          |
 
   **Reference:**
 ```json
@@ -3446,31 +3288,28 @@ Error Code:
 ```
 
 
-  **Reference Code:**** :**
+  **Reference Code:** :
 
-**8.DeletePublicIp**
-
+### 8.DeletePublicIp
   **Action:DeletePublicIp**
 
   **Description:**  Delete Public IP
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | SegmentId  | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | IP Segement ID  |
-| ---        | ---      | ---         | ---                                  | ---             |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3478,7 +3317,6 @@ Error Code:
 | **httpcode** | **Error Code**        | **Description**                                        |
 | ------------ | --------------------- | ------------------------------------------------------ |
 | 400          | InvalidIpId.Malformed | The specified parameter &quot;IpId&quot; is not valid. |
-| ---          | ---                   | ---                                                    |
 
   **Reference:**
 
@@ -3489,29 +3327,26 @@ Error Code:
 }
 ```
 
-**9.DeletePublicNetwork**
-
+### 9.DeletePublicNetwork
   **Action:DeletePublicNetwork**
 
   **Description:**  Delete Public Network
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**   |
 | ---------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | PublicId   | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Public Network ID |
-| ---        | ---      | ---         | ---                                  | ---               |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3519,7 +3354,6 @@ Error Code:
 | **httpcode** | **Error code**            | **Description**                                            |
 | ------------ | ------------------------- | ---------------------------------------------------------- |
 | 400          | InvalidPublicID.Malformed | The specified parameter &quot;PublicID&quot; is not valid. |
-| ---          | ---                       | ---                                                        |
 
   **Reference:**
 
@@ -3530,29 +3364,26 @@ Error Code:
 }
 ```
 
-**10.DeletePrivateNetwork**
-
+### 10.DeletePrivateNetwork
   **Action:DeletePrivateNetwork**
 
   **Description:**  Delete Private Network
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**    |
 | ---------- | -------- | ----------- | ------------------------------------ | ------------------ |
 | PrivateId  | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Private Network ID |
-| ---        | ---      | ---         | ---                                  | ---                |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3560,7 +3391,6 @@ Error Code:
 | **httpcode** | **Error code**             | **Description**                                             |
 | ------------ | -------------------------- | ----------------------------------------------------------- |
 | 400          | InvalidPrivateId.Malformed | The specified parameter &quot;PrivateID&quot; is not valid. |
-| ---          | ---                        | ---                                                         |
 
   **Reference:**
 
@@ -3572,22 +3402,20 @@ Error Code:
 }
 ```
 
-**11.RenewPublicNetwork**
-
+### 11.RenewPublicNetwork
   **Action:RenewPublicNetwork**
 
   **Description:**  Renew Public Network
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**   |
 | ---------- | -------- | ----------- | ------------------------------------ | ----------------- |
 | PublicId   | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Public Network ID |
-| ---        | ---      | ---         | ---                                  | ---               |
 | AutoRenew  | Interger | Yes         | 1                                    | Auto Renew        |
 
   **Return:**
@@ -3595,7 +3423,6 @@ Configuration Options:
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
 Error Code:
@@ -3603,7 +3430,6 @@ Error Code:
 | **httpcode** | **Error code**            | **Description**                                             |
 | ------------ | ------------------------- | ----------------------------------------------------------- |
 | 400          | InvalidPublicId.Malformed | The specified parameter &quot;PrivateID&quot; is not valid. |
-| ---          | ---                       | ---                                                         |
 
   **Reference:**
 
@@ -3614,7 +3440,7 @@ Error Code:
 }
 ```
 
-**12.DescribeBandwidthTraffic**
+### 12.DescribeBandwidthTraffic
 
   **Action:DescribeBandwidthTraffic**
 
@@ -3622,21 +3448,19 @@ Error Code:
 
   **URL:** cdsapi.capitalonline.net/network
 
-  **Request by:**** GET**
+  **Request by:** GET
 
 Configuration Options:
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | NetworkId  | string   | Yes         | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | Network ID      |
-| ---        | ---      | ---         | ---                                  | ---             |
 
   **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | Interger | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Data       | string   | {}            | Data            |
 
 Error Code:
@@ -3644,7 +3468,6 @@ Error Code:
 | **httpcode** | **Error code**            | **Description**                                            |
 | ------------ | ------------------------- | ---------------------------------------------------------- |
 | 400          | InvalidPublicId.Malformed | The specified parameter &quot;PublicId&quot; is not valid. |
-| ---          | ---                       | ---                                                        |
 
   **Reference:**
 ```json
@@ -3660,8 +3483,7 @@ Error Code:
     "Message": "Success."
 }
 ```
-**13.DescribeGPN**
-
+### 13.DescribeGPN
 **Action:**  DescribeGPN
 
 **Description:**  Describe GPN
@@ -3675,7 +3497,6 @@ Configuration Options:
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | GpnId      | String   | No          | 55271ebc-135d-11eb-97aa-0242ac110002 | GPN ID          |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Key        | String   | No          |                                      |                 |
 | Keyword    |          |             |                                      |                 |
 
@@ -3684,7 +3505,6 @@ Configuration Options:
 | **Option**                                                   | **Type**                      | **Reference**                        | **Description** |
 | ------------------------------------------------------------ | ----------------------------- | ------------------------------------ | --------------- |
 | Code                                                         | String                        | Success                              | Code            |
-| ---                                                          | ---                           | ---                                  | ---             |
 | Data                                                         | List                          | []                                   | Data            |
 | GpnId                                                        | String                        | c20a8424-26be-11ea-8333-0242ac110002 | GPN ID          |
 | Qos                                                          | Int                           | 300                                  | QOS             |
@@ -3730,7 +3550,7 @@ Configuration Options:
 | CityId,PopName,                                              |                               |                                      |                 |
 | Qos                                                          |                               |                                      |                 |
 
-**Error Code**** :**
+**Error Code** :
 
 | **httpcode** | **Error code** | **Description** |
 | ------------ | -------------- | --------------- |
@@ -3800,8 +3620,7 @@ Configuration Options:
 }
 ```
 
-**14.AddAccessPoint**
-
+### 14.AddAccessPoint
 **Action:**  AddAccessPoint
 
 **Description:** Add Access Point
@@ -3815,7 +3634,6 @@ Configuration Options:
 | **Option**                                                   | **Type**     | **Default** | **Reference**                        | **Description** |
 | ------------------------------------------------------------ | ------------ | ----------- | ------------------------------------ | --------------- |
 | GpnId                                                        | String       | Yes         | c20a8424-26be-11ea-8333-0242ac110002 | GPN ID          |
-| ---                                                          | ---          | ---         | ---                                  | ---             |
 | VdcAdd                                                       | list         | No          | [{                                   |                 |
 | &quot;VdcId&quot;: &quot;c20a8769-26be-11ea-8333-0242ac110002&quot;, |              |             |                                      |                 |
 | &quot;PointType&quot;:&quot;VDC&quot;,                       |              |             |                                      |                 |
@@ -3833,15 +3651,13 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Code            |
-| ---        | ---      | ---           | ---             |
 | Data       | Dict     | {}            | Data            |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**         | **Description**                                         |
 | ------------ | ---------------------- | ------------------------------------------------------- |
 | 400          | InvalidGpnID.Malformed | The specified parameter &quot;GpnId&quot; is not valid. |
-| ---          | ---                    | ---                                                     |
 | 400          | InvalidVdcID.Malformed | The specified parameter &quot;VdcId&quot; is not valid. |
 
 **Reference:**
@@ -3856,7 +3672,7 @@ Configuration Options:
 }
 ```
 
-**15.DeleteAccessPoint**
+### 15.DeleteAccessPoint
 
 **Action:**  DeleteAccessPoint
 
@@ -3871,7 +3687,6 @@ Configuration Options:
 | **Option**                                       | **Type**      | **Default** | **Reference**                                      | **Description** |
 | ------------------------------------------------ | ------------- | ----------- | -------------------------------------------------- | --------------- |
 | GpnId                                            | String        | Yes         | c20a8424-26be-11ea-8333-0242ac110002               | GPN ID          |
-| ---                                              | ---           | ---         | ---                                                | ---             |
 | DelPoints                                        | Array         | Yes         | [&quot;c20a8424-26be-11ea-8333-0242ac110002&quot;, |                 |
 | &quot;c20a8424-26be-11ea-8333-0242ac110002&quot; |               |             |                                                    |                 |
 | ]                                                | Delete Points |             |                                                    |                 |
@@ -3881,17 +3696,15 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Code            |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Dict     | {}            | Data            |
 | TaskId     | String   | 111           | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**         | **Description**                                         |
 | ------------ | ---------------------- | ------------------------------------------------------- |
 | 400          | InvalidGpnID.Malformed | The specified parameter &quot;GpnId&quot; is not valid. |
-| ---          | ---                    | ---                                                     |
 
 **Reference:**
 
@@ -3904,7 +3717,8 @@ Configuration Options:
 }
 ```
 
-**16.DescribeAccessInfo**
+### 16.DescribeAccessInfo
+
 
 **Action:**  DescribeAccessInfo
 
@@ -3919,14 +3733,12 @@ Configuration Options:
 | **Option** | **Type** | **Default** | **Reference** | **Description**      |
 | ---------- | -------- | ----------- | ------------- | -------------------- |
 | Type       | String   | Yes         | vdc           | Access Type(vdc/pop) |
-| ---        | ---      | ---         | ---           | ---                  |
 
 **Return:**
 
 | **Option**                                    | **Type**    | **Reference**                                                | **Description** |
 | --------------------------------------------- | ----------- | ------------------------------------------------------------ | --------------- |
 | Code                                          | String      | Success                                                      | Code            |
-| ---                                           | ---         | ---                                                          | ---             |
 | Message                                       | String      | Success                                                      | Message         |
 | Data                                          | Dict        | {}                                                           | Data            |
 | PrivateNetwork                                | list        | [{&quot;PrivateId&quot;: &quot;928ce33c-22f3-11ea-a1a1-0242ac11001a&quot;, |                 |
@@ -3982,8 +3794,7 @@ Configuration Options:
 }
 ```
 
-**17.CreateGpn**
-
+### 17.CreateGpn
 **Action:**  CreateGPN
 
 **Description:**  Create GPN
@@ -3997,7 +3808,6 @@ Configuration Options:
 | **Option**                                   | **Type**                 | **Default** | **Reference**                                  | **Description**   |
 | -------------------------------------------- | ------------------------ | ----------- | ---------------------------------------------- | ----------------- |
 | Name                                         | String                   | Yes         | gpn                                            | Access Point Name |
-| ---                                          | ---                      | ---         | ---                                            | ---               |
 | Qos                                          | Int                      | Yes         | 5                                              | GPN QOS           |
 | AccessPoint                                  | list                     | Yes         | [{&quot;VdcId&quot;:&quot;&quot;,              |                   |
 | &quot;AccessPointType&quot;:&quot;vdc&quot;, |                          |             |                                                |                   |
@@ -4011,12 +3821,11 @@ Configuration Options:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Code            |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Dict     | {}            | Data            |
 | TaskId     | String   | 111           | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code** | **Description** |
 | ------------ | -------------- | --------------- |
@@ -4064,8 +3873,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     return result.get("TaskId")
 ```
 
-**18.DeleteGpn**
-
+### 18.DeleteGpn
 **Action:**  DeleteGpn
 
 **Description:**  Delete GPN
@@ -4079,19 +3887,17 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | **Option** | **Type** | **Default** | **Reference**         | **Description** |
 | ---------- | -------- | ----------- | --------------------- | --------------- |
 | GpnId      | String   | Yes         | fjdgh90-98fhd78-kh487 | GPN ID          |
-| ---        | ---      | ---         | ---                   | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | String   | Success       | Code            |
-| ---        | ---      | ---           | ---             |
 | Message    | String   | Success       | Message         |
 | Data       | Dict     | {}            | Data            |
 | TaskId     | String   | 111           | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code** | **Description** |
 | ------------ | -------------- | --------------- |
@@ -4107,22 +3913,20 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 }
 ```
 
-**19.ModifyVdceName**
-
-**Action**** ： ****ModifyVdcName**
+### 19.ModifyVdceName
+**Action** ： **ModifyVdcName**
 
 **Description:**  Modify VDC Name
 
 **URL:** cdsapi.capitalonline.net/network
 
-**Request by:**** POST**
+**Request by:** POST
 
 **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | VdcId      | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | VDC ID          |
-| ---        | ---      | ---         | ---                                  | ---             |
 | VdcName    | string   | Yes         | shouduzaixhost                       | VDC Name        |
 
 **Return:**
@@ -4130,15 +3934,13 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | Interger | Success                              | Error Code      |
-| ---        | ---      | ---                                  | ---             |
 | TaskId     | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error Code**         | **Description**                                              |
 | ------------ | ---------------------- | ------------------------------------------------------------ |
 | 403          | IncorrectVdcStatus     | The current Status of the resource does not support this operation. |
-| ---          | ---                    | ---                                                          |
 | 400          | VdcNotFound            | the Vdc has deleted                                          |
 | 400          | InvalidVdcId.Malformed | The specified parameter &quot;VdcId&quot; is not valid.      |
 
@@ -4153,10 +3955,9 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 }
 ```
 
-**Bare Metal Service**
+## Bare Metal Service
 
-**1.DescribeBmsGoods**
-
+### 1.DescribeBmsGoods
 **Action: DescribeBmsGoods**
 
 **Description:**  Describe Bare Metal Service
@@ -4170,14 +3971,12 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | **Option** | **Type** | **Default** | **Reference**  | **Description** |
 | ---------- | -------- | ----------- | -------------- | --------------- |
 | RegionId   | string   | Yes         | CN\_Beijing\_F | Region ID       |
-| ---        | ---      | ---         | ---            | ---             |
 
 Return:
 
 | **Option**     | **Type** | **Reference**                        | **Description** |
 | -------------- | -------- | ------------------------------------ | --------------- |
 | Code           | string   | Success                              | Code            |
-| ---            | ---      | ---                                  | ---             |
 | Message        | string   | null                                 | Message         |
 | Data           | object   | {}                                   | Data            |
 | PrePaid        | list     | []                                   | Prepaid         |
@@ -4196,12 +3995,11 @@ Return:
 | Capacity       | int      | 480                                  | Capacity        |
 | Count          | int      | 1                                    | Amount          |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                     |
 | ------------ | ---------------- | --------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;RegionId&quot; is required.     |
-| ---          | ---              | ---                                                 |
 | 400          | ParameterIsEmpty | The parameter &quot;RegionId&quot; cannot be empty. |
 
 **Reference:**
@@ -4276,8 +4074,7 @@ def describe_bms_goods(RegionId):
  ```
 
 
-**2.DescribeBmsGoodsPrice**
-
+### 2.DescribeBmsGoodsPrice
 **Action: DescribeBmsGoodsPrice**
 
 **Description:**  describe Bare Metal Price
@@ -4291,7 +4088,6 @@ def describe_bms_goods(RegionId):
 | **Option**         | **Type** | **Default** | **Reference**                        | **Description**    |
 | ------------------ | -------- | ----------- | ------------------------------------ | ------------------ |
 | RegionId           | string   | Yes         | CN\_Beijing\_F                       | Region ID          |
-| ---                | ---      | ---         | ---                                  | ---                |
 | GoodsId            | int      | Yes         | 7955                                 | Goods ID           |
 | ComputeId          | string   | Yes         | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469 | Computer ID        |
 | InstanceChargeType | string   | Yes         | PrePaid                              | Instance Pait Type |
@@ -4303,14 +4099,13 @@ def describe_bms_goods(RegionId):
 | **Option**  | **Type** | **Reference** | **Description** |
 | ----------- | -------- | ------------- | --------------- |
 | Code        | string   | Success       | Code            |
-| ---         | ---      | ---           | ---             |
 | Message     | string   | Success       | Message         |
 | Data        | object   | {}            | Data            |
 | TradeAmount | string   | 6660.00       | Amount          |
 | UnitPrice   | string   | 666.00        | Uint Price      |
 | Currency    | string   | CN            | Currency        |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                     |
 | ------------ | ---------------- | --------------------------------------------------- |
@@ -4351,7 +4146,7 @@ def describe_bms_price():
     result = json.loads(res.content)
  ```
 
-**3.DescribeBmsImage**
+### 3.DescribeBmsImage
 
 **Action: DescribeBmsImage**
 
@@ -4366,7 +4161,6 @@ def describe_bms_price():
 | **Option** | **Type** | **Default** | **Reference** | **Description** |
 | ---------- | -------- | ----------- | ------------- | --------------- |
 | ImageType  | string   | No          | private       | Image Type      |
-| ---        | ---      | ---         | ---           | ---             |
 | OsType     | string   | No          | centos        | Oss Type        |
 
 **Return:**
@@ -4374,19 +4168,17 @@ def describe_bms_price():
 | **Option** | **Type** | **Reference**   | **Description** |
 | ---------- | -------- | --------------- | --------------- |
 | Code       | string   | Success         | Code            |
-| ---        | ---      | ---             | ---             |
 | Message    | string   | null            | Message         |
 | Data       | object   | {}              | Data            |
 | Id         | string   | 8               | Image ID        |
 | Name       | string   | ubuntu14.04\_64 | Image Nmae      |
 | Type       | string   | public          | Image Type      |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                      |
 | ------------ | ---------------- | ---------------------------------------------------- |
 | 400          | ParameterIsEmpty | The parameter &quot;ImageType&quot; cannot be empty. |
-| ---          | ---              | ---                                                  |
 
 **Reference:**
 
@@ -4446,7 +4238,7 @@ def describe_bms_images():
     result = json.loads(res.content)
  ```
 
-**4.CreateBmsInstance**
+### 4.CreateBmsInstance
 
 **Action: CreateBmsInstance**
 
@@ -4461,7 +4253,6 @@ def describe_bms_images():
 | **Option**          | **Type** | **Default** | **Reference**                                       | **Description**       |
 | ------------------- | -------- | ----------- | --------------------------------------------------- | --------------------- |
 | RegionId            | string   | Yes         | CN\_Beijing\_F                                      | Region ID             |
-| ---                 | ---      | ---         | ---                                                 | ---                   |
 | VdcId               | string   | Yes         | f4a1ec63-a2c3-4979-a4bf-86f546054e6f                | VDC ID                |
 | Password            | string   | Yes         | MengYou&amp;&amp;Cds-2019                           | Password              |
 | InstanceName        | string   | Yes         | shouduzaixbms                                       | Instance Name         |
@@ -4484,17 +4275,15 @@ def describe_bms_images():
 | **Option** | **Type** | **Reference**                                      | **Description** |
 | ---------- | -------- | -------------------------------------------------- | --------------- |
 | Code       | string   | Success                                            | Code            |
-| ---        | ---      | ---                                                | ---             |
 | Message    | string   | xxxxxx                                             | Message         |
 | Data       | object   | {}                                                 | Data            |
 | TaskId     | list     | [&quot;f232d398-a77c-11e9-9d43-0242ac110003&quot;] | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**      | **Description**                                              |
 | ------------ | ------------------- | ------------------------------------------------------------ |
 | 400          | ParameterInvalid    | The parameter &quot;RegionId&quot; is required.              |
-| ---          | ---                 | ---                                                          |
 | 400          | ParameterIsEmpty    | The parameter &quot;RegionId&quot; cannot be empty.          |
 | 400          | ImageNotFound       | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470] |
 | 400          | OrderGoodsConfEmpty | Order goods config is empty                                  |
@@ -4548,7 +4337,8 @@ def create_bms_instance():
     res = requests.post(url, json=param)
     result = json.loads(res.content)
  ```
-**5.DescribeBms**
+### 5.DescribeBms
+
 
 **Action: DescribeBms**
 
@@ -4563,7 +4353,6 @@ def create_bms_instance():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | VdcId      | string   | No          | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | VDC ID          |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Name       | string   | No          | bms003                               | BMS Name        |
 | PageNumber | string   | No          | 1                                    | Bms Page list   |
 | PageSize   | string   | No          | 10                                   | Page size       |
@@ -4573,7 +4362,6 @@ def create_bms_instance():
 | **Option**         | **Type** | **Reference**                        | **Description**        |
 | ------------------ | -------- | ------------------------------------ | ---------------------- |
 | Code               | string   | Success                              | Error Code             |
-| ---                | ---      | ---                                  | ---                    |
 | Message            | string   | null                                 | Message                |
 | Data               | object   | {}                                   | Data                   |
 | Baremetals         | list     | []                                   | BMS list               |
@@ -4673,7 +4461,7 @@ def describe_bms_list():
  ```
 
 
-**6.DescribeBmsDetail**
+### 6.DescribeBmsDetail
 
 **Action: DescribeBmsDetail**
 
@@ -4688,14 +4476,12 @@ def describe_bms_list():
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description** |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------- |
 | BaremetalId | string   | Yes         | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | BMS ID          |
-| ---         | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option**         | **Type** | **Reference**                                                | **Description**        |
 | ------------------ | -------- | ------------------------------------------------------------ | ---------------------- |
 | Code               | string   | Success                                                      | Error Code             |
-| ---                | ---      | ---                                                          | ---                    |
 | Message            | string   | null                                                         | Message                |
 | Data               | object   | {}                                                           | Data                   |
 | BaremetalId        | string   | a0492924-1dc1-462e-9cbb-622dc1ec49a3                         | BMS ID                 |
@@ -4744,7 +4530,6 @@ def describe_bms_list():
 | **httpcode** | **Error code**   | **Description**                                              |
 | ------------ | ---------------- | ------------------------------------------------------------ |
 | 400          | ParameterInvalid | The parameter &quot;BaremetalId&quot; is required.           |
-| ---          | ---              | ---                                                          |
 | 400          | ParameterIsEmpty | The parameter &quot;BaremetalId&quot; cannot be empty.       |
 | 400          | InstanceNotFound | the Instance has deleted or The specified parameter InstanceID is not valid. |
 
@@ -4825,7 +4610,7 @@ def describe_bms_detail(id):
     result = json.loads(res.content)
  ```
 
-**7.OperateBmsPower**
+### 7.OperateBmsPower
 
 **Action: OperateBmsPower**
 
@@ -4841,7 +4626,6 @@ def describe_bms_detail(id):
 | ------------ | -------- | ----------- | -------------------------------------------------- | ------------------- |
 | Operate      | string   | Yes         | start                                              | Operate(start,stop, |
 | reset)       |          |             |                                                    |                     |
-| ---          | ---      | ---         | ---                                                | ---                 |
 | BaremetalIds | list     | Yes         | [&quot;2df3f6b4-26ed-4c93-943d-a81a39ced124&quot;] | BMS ID List         |
 
 **Return:**
@@ -4849,7 +4633,6 @@ def describe_bms_detail(id):
 | **Option**   | **Type** | **Reference**                                      | **Description** |
 | ------------ | -------- | -------------------------------------------------- | --------------- |
 | Code         | string   | Success                                            | Code            |
-| ---          | ---      | ---                                                | ---             |
 | Message      | string   | Success                                            | Message         |
 | Data         | object   | {}                                                 | Data            |
 | TaskId       | list     | [&quot;72dc0cae-a867-11e9-8184-0242ac110003&quot;] | Task ID List    |
@@ -4860,7 +4643,6 @@ def describe_bms_detail(id):
 | **httpcode** | **Error code**   | **Description**                                              |
 | ------------ | ---------------- | ------------------------------------------------------------ |
 | 400          | ParameterInvalid | The parameter &quot;Operate&quot; is required.               |
-| ---          | ---              | ---                                                          |
 | 400          | ParameterIsEmpty | The parameter &quot;Operate&quot; cannot be empty.           |
 | 400          | InstanceError    | The Instance is not allowed to operate or The specified parameter BaremetalId is not valid. |
 | 400          | TaskToCoreFaild  | Push task to core failed                                     |
@@ -4898,8 +4680,7 @@ def operat_bms_power(id, state):
     result = json.loads(res.content)
  ```
 
-**8.ReinstallBms**
-
+### 8.ReinstallBms
 **Action: ReinstallBms**
 
 **Description:** ReInstall BMS
@@ -4913,7 +4694,6 @@ def operat_bms_power(id, state):
 | **Option**          | **Type** | **Default** | **Reference**                                      | **Description**        |
 | ------------------- | -------- | ----------- | -------------------------------------------------- | ---------------------- |
 | BaremetalId         | string   | Yes         | d226f190-f942-4257-8f3e-9cce8dfc0f2b               | BMS ID                 |
-| ---                 | ---      | ---         | ---                                                | ---                    |
 | ImageId             | string   | Yes         | d6012cd8-b672-11e9-9265-525400b97470               | Image ID               |
 | Password            | string   | Yes         | capitalonline                                      | Password               |
 | Raid                | string   | No          | 1                                                  | Raid tYPE: 0, 1, 5, 10 |
@@ -4925,7 +4705,6 @@ def operat_bms_power(id, state):
 | **Option** | **Type** | **Reference**                                      | **Description** |
 | ---------- | -------- | -------------------------------------------------- | --------------- |
 | Code       | string   | Success                                            | Code            |
-| ---        | ---      | ---                                                | ---             |
 | Message    | string   | Success                                            | Message         |
 | Data       | object   | {}                                                 | Data            |
 | TaskIds    | list     | [&quot;72dc0cae-a867-11e9-8184-0242ac110003&quot;] | Task ID         |
@@ -4935,7 +4714,6 @@ def operat_bms_power(id, state):
 | **httpcode** | **Error code**   | **Description**                                              |
 | ------------ | ---------------- | ------------------------------------------------------------ |
 | 400          | ParameterInvalid | The parameter &quot;BaremetalId&quot; is required.           |
-| ---          | ---              | ---                                                          |
 | 400          | ParameterIsEmpty | The parameter &quot;BaremetalId&quot; cannot be empty.       |
 | 400          | ImageNotFound    | Image cannot be found by id[d6012cd8-b672-11e9-9265-525400b97470] |
 | 400          | RebuildFailed    | Compute state is not correct                                 |
@@ -4972,8 +4750,8 @@ def operat_bms_reinstall(id, image_id, passwd):
     result = json.loads(res.content)
  ```
 
-**9.DescribeBmsVNC**
 
+### 9.DescribeBmsVNC
 **Action: DescribeBmsVNC**
 
 **Description:**  Describe BMS VNC
@@ -4987,24 +4765,21 @@ def operat_bms_reinstall(id, image_id, passwd):
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description** |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------- |
 | BaremetalId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | BMS ID          |
-| ---         | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                                                | **Description** |
 | ---------- | -------- | ------------------------------------------------------------ | --------------- |
 | Code       | string   | Success                                                      | Error Code      |
-| ---        | ---      | ---                                                          | ---             |
 | Message    | string   | Success                                                      | Message         |
 | Data       | object   | {}                                                           | Data            |
 | Url        | string   | [http://114.112.35.22/vnc/?authId=&amp;token=](http://114.112.35.22/vnc/?authId=&amp;token=) | BMS VNC URL     |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                        |
 | ------------ | ---------------- | ------------------------------------------------------ |
 | 400          | ParameterInvalid | The parameter &quot;BaremetalId&quot; is required.     |
-| ---          | ---              | ---                                                    |
 | 400          | ParameterIsEmpty | The parameter &quot;BaremetalId&quot; cannot be empty. |
 | 400          | DataNotExists    | Please check that the parameters are correct.          |
 
@@ -5034,8 +4809,7 @@ def describe_bms_vnc(BaremetalId):
     result = json.loads(res.content)
  ```
 
-**10.ModifyBmsOrder**
-
+### 10.ModifyBmsOrder
 **Action: ModifyBmsOrder**
 
 **Description:**  Modify BMS Order
@@ -5049,7 +4823,6 @@ def describe_bms_vnc(BaremetalId):
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description** |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------- |
 | BaremetalId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | BMS ID          |
-| ---         | ---      | ---         | ---                                  | ---             |
 | AutoRenewal | int      | Yes         | 1                                    | Auto Renew      |
 | BillMethod  | string   | No          | 1                                    | Billing Method  |
 | Duration    | int      | No          | 1                                    | Duration        |
@@ -5060,12 +4833,11 @@ def describe_bms_vnc(BaremetalId):
 | **Option**  | **Type** | **Reference**                                      | **Description** |
 | ----------- | -------- | -------------------------------------------------- | --------------- |
 | Code        | string   | Success                                            | Error Code      |
-| ---         | ---      | ---                                                | ---             |
 | Message     | string   | Automatic renewal of order has been opened         | Message         |
 | Data        | list     | []                                                 | Data            |
 | SuborderIds | list     | [&quot;697cb2d8-93ca-41bc-89f2-bde77fb71e6b&quot;] | Sub Order ID    |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**     | **Description**                                              |
 | ------------ | ------------------ | ------------------------------------------------------------ |
@@ -5107,8 +4879,7 @@ def update_bms_order(id, renewal):
     result = json.loads(res.content)
  ```
 
-**11.DescribeBmsTask**
-
+### 11.DescribeBmsTask
 **Action: DescribeBmsTask**
 
 **Description:**  Describe BMS Task
@@ -5122,25 +4893,22 @@ def update_bms_order(id, renewal):
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | TaskId     | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Task ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option**   | **Type** | **Reference**                                      | **Description** |
 | ------------ | -------- | -------------------------------------------------- | --------------- |
 | Code         | string   | Success                                            | Error Code      |
-| ---          | ---      | ---                                                | ---             |
 | Message      | string   | Success                                            | Message         |
 | Data         | object   | {}                                                 | Data            |
 | BareMetalIds | list     | [&quot;27f262ec-92fd-4a77-ba78-6f682b7533e3&quot;] | BMS ID          |
 | Status       | string   | succeed / init                                     | Statues         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;TaskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;TaskId&quot; cannot be empty. |
 | 400          | DataNotExists    | Please check that the parameters are correct.     |
 
@@ -5171,7 +4939,7 @@ def describe_bms_task(TaskId):
     result = json.loads(res.content)
  ```
 
-**12.DeleteBmsInstance**
+### 12.DeleteBmsInstance
 
 **Action: DeleteBmsInstance**
 
@@ -5186,23 +4954,20 @@ def describe_bms_task(TaskId):
 | **Option**  | **Type** | **Default** | **Reference**                        | **Description** |
 | ----------- | -------- | ----------- | ------------------------------------ | --------------- |
 | BaremetalId | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | BMS ID          |
-| ---         | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | string   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | string   | Success       | Message         |
 | Data       | object   | {}            | Data            |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                        |
 | ------------ | ---------------- | ------------------------------------------------------ |
 | 400          | ParameterInvalid | The parameter &quot;BaremetalId&quot; is required.     |
-| ---          | ---              | ---                                                    |
 | 400          | ParameterIsEmpty | The parameter &quot;BaremetalId&quot; cannot be empty. |
 | 400          | LogicError       | Logic Error                                            |
 
@@ -5229,9 +4994,9 @@ def delete_bms_instance(BaremetalId):
     result = json.loads(res.content)
  ```
 
-**BMS Storage**
+## BMS Storage
 
-**1.CreateDisk**
+### 1.CreateDisk
 
 **Action: CreateDisk**
 
@@ -5246,7 +5011,6 @@ def delete_bms_instance(BaremetalId):
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | RegionId   | string   | Yes         | 35304122-8504-400c-a61c-56ba244c5dda | Region ID       |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Name       | string   | Yes         | disk-hk-A                            | Disk Name       |
 | Size       | int      | Yes         | 200                                  | Disk Size       |
 | Num        | int      | Yes         | 1                                    | Disk Number     |
@@ -5257,19 +5021,17 @@ def delete_bms_instance(BaremetalId):
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Data            |
 | Data       | object   | {}                                   | Data            |
 | DiskInfo   | list     | []                                   | Disk ID,Task ID |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 | DiskId     | string   | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                     |
 | ------------ | ---------------- | --------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;RegionId&quot; is required.     |
-| ---          | ---              | ---                                                 |
 | 400          | ParameterIsEmpty | The parameter &quot;RegionId&quot; cannot be empty. |
 
 **Reference:**
@@ -5307,7 +5069,7 @@ def create_disk():
    result = json.loads(res.content)
  ```
 
-**2.AttachDisk**
+### 2.AttachDisk
 
 **Action: AttachDisk**
 
@@ -5322,7 +5084,6 @@ def create_disk():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | InstanceId | string   | Yes         | d95423a8-f3fb-11ea-800c-f0d4e2e923e0 | Instance ID     |
-| ---        | ---      | ---         | ---                                  | ---             |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
 
 **Return:**
@@ -5330,17 +5091,15 @@ def create_disk():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Data            |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                       |
 | ------------ | ---------------- | ----------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;InstanceId&quot; is required.     |
-| ---          | ---              | ---                                                   |
 | 400          | ParameterIsEmpty | The parameter &quot;InstanceId&quot; cannot be empty. |
 
 **Reference:**
@@ -5373,8 +5132,8 @@ def attack_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
  ```
+### 3.DetachDisk
 
-**3.DetachDisk**
 
 **Action: DetachDisk**
 
@@ -5389,24 +5148,21 @@ def attack_disk():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5438,7 +5194,7 @@ def detack_disk():
    result = json.loads(res.content)
  ```
 
-**4.DeleteDisk**
+### 4.DeleteDisk
 
 **Action: DeleteDisk**
 
@@ -5453,24 +5209,21 @@ def detack_disk():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5503,7 +5256,7 @@ def delete_disk():
    result = json.loads(res.content)
  ```
 
-**5.DescribeDisks**
+### 5.DescribeDisks
 
 **Action: DescribeDisks**
 
@@ -5518,7 +5271,6 @@ def delete_disk():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**  |
 | ---------- | -------- | ----------- | ------------------------------------ | ---------------- |
 | RegionId   | string   | No          | 35304122-8504-400c-a61c-56ba244c5dda | Region ID        |
-| ---        | ---      | ---         | ---                                  | ---              |
 | DiskId     | string   | No          | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID          |
 | InstanceId | string   | No          | d95423a8-f3fb-11ea-800c-f0d4e2e923e0 | Instance ID      |
 | Name       | string   | No          | test1                                | Disk Name        |
@@ -5530,7 +5282,6 @@ def delete_disk():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Data            |
 | Data       | object   | {}                                   | Data            |
 | Total      | int      | 20                                   | Total Data      |
@@ -5547,12 +5298,11 @@ def delete_disk():
 | UserId     | string   | C001                                 | USER ID         |
 | CreateTime | string   | 2020-08-13 07:20:00                  | Create Time     |
 
-**Error Code**** ：**
+**Error Code**：
 
 | **httpcode** | **Error code**    | **Description**                                     |
 | ------------ | ----------------- | --------------------------------------------------- |
 | 400          | ParametersIsEmpty | The parameter &quot;RegionId&quot; cannot be empty. |
-| ---          | ---               | ---                                                 |
 
 **Reference:**
 
@@ -5598,7 +5348,7 @@ def describe_disks():
    res = requests.get(url)
  ```
 
-**6.DescribeDiskUsage**
+### 6.DescribeDiskUsage
 
 **Action: DescribeDiskUsage**
 
@@ -5613,14 +5363,12 @@ def describe_disks():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | DiskId     | string   | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
@@ -5628,12 +5376,11 @@ def describe_disks():
 | Size       | int      | 500                                  | Disk Size       |
 | Ratio      | string   | 40%                                  | Usage Ratio     |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5664,7 +5411,9 @@ def describe_diskUsage():
    res = requests.get(url)
  ```
 
-**7.DescribePoolUsage**
+
+
+### 7.DescribePoolUsage
 
 **Action: DescribePoolUsage**
 
@@ -5679,7 +5428,6 @@ def describe_diskUsage():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | RegionId   | string   | Yes         | 35304122-8504-400c-a61c-56ba244c5dda | Region ID       |
-| ---        | ---      | ---         | ---                                  | ---             |
 | PoolName   | string   | Yes         | nvme\_pool                           | Pool Name       |
 
 **Return:**
@@ -5687,7 +5435,6 @@ def describe_diskUsage():
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | string   | Success       | Code            |
-| ---        | ---      | ---           | ---             |
 | Message    | string   | null          | Message         |
 | Data       | object   | {}            | Data            |
 | PoolName   | string   | nvme\_pool    | Pool Name       |
@@ -5695,12 +5442,11 @@ def describe_diskUsage():
 | Size       | int      | 500           | Total Pool Size |
 | Ratio      | string   | 40%           | Used Ratio      |
 
-**Error Code**** ：**
+**Error Code：** 
 
 | **httpcode** | **Error code**   | **Description**                                     |
 | ------------ | ---------------- | --------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;RegionId&quot; is required.     |
-| ---          | ---              | ---                                                 |
 | 400          | ParameterIsEmpty | The parameter &quot;RegionId&quot; cannot be empty. |
 
 **Reference:**
@@ -5732,7 +5478,7 @@ def describe_poolUsage():
    res = requests.get(url)
  ```
 
-**8.ChangeIops**
+### 8.ChangeIops
 
 **Action: ChangeIops**
 
@@ -5747,7 +5493,6 @@ def describe_poolUsage():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Iops       | int      | Yes         | 1000                                 | iops            |
 
 **Return:**
@@ -5755,12 +5500,11 @@ def describe_poolUsage():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
@@ -5794,7 +5538,7 @@ def change_iops():
    result = json.loads(res.content)
  ```
 
-**9.ChangeBandwidth**
+### 9.ChangeBandwidth
 
 **Action: ChangeBandwidth**
 
@@ -5809,7 +5553,6 @@ def change_iops():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Bw         | int      | Yes         | 1000                                 | Add iops        |
 
 **Return:**
@@ -5817,17 +5560,15 @@ def change_iops():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5857,7 +5598,7 @@ def change_bandwidth():
    result = json.loads(res.content)
  ```
 
-**10.ExpansionSize**
+### 10.ExpansionSize
 
 **Action: ExpansionSize**
 
@@ -5872,7 +5613,6 @@ def change_bandwidth():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId     | string   | No          | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Size       | int      | Yes         | 500                                  | Add Size        |
 
 **Return:**
@@ -5880,17 +5620,15 @@ def change_bandwidth():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5920,8 +5658,7 @@ def describe_diskUsage():
    result = json.loads(res.content)
  ```
 
-**11.CreateSnapshot**
-
+### 11.CreateSnapshot
 **Action: CreateSnapshot**
 
 **Description:**  Create Snapshot
@@ -5935,7 +5672,6 @@ def describe_diskUsage():
 | **Option**   | **Type** | **Default** | **Reference**                        | **Description** |
 | ------------ | -------- | ----------- | ------------------------------------ | --------------- |
 | DiskId       | string   | Yes         | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | Disk ID         |
-| ---          | ---      | ---         | ---                                  | ---             |
 | SnapshotName | string   | Yes         | disk-hk-A-snap1                      | Snapshot Name   |
 
 **Return:**
@@ -5943,18 +5679,16 @@ def describe_diskUsage():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 | SnapshotId | string   | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | Snapshot ID     |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                   |
 | ------------ | ---------------- | ------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;DiskId&quot; is required.     |
-| ---          | ---              | ---                                               |
 | 400          | ParameterIsEmpty | The parameter &quot;DiskId&quot; cannot be empty. |
 
 **Reference:**
@@ -5985,8 +5719,7 @@ def create_snapshot():
    result = json.loads(res.content)
  ```
 
-
-**12.CloneSnapshot**
+### 12.CloneSnapshot
 
 **Action: CloneSnapshot**
 
@@ -6001,7 +5734,6 @@ def create_snapshot():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | Name       | string   | Yes         | dish-hk-B                            | Snapshot Name   |
-| ---        | ---      | ---         | ---                                  | ---             |
 | SnapshotId | string   | Yes         | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | Snapshot ID     |
 
 **Return:**
@@ -6009,18 +5741,16 @@ def create_snapshot():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 | DiskId     | string   | d4965bac-f405-11ea-800c-f0d4e2e923e0 | Colone Disk ID  |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                       |
 | ------------ | ---------------- | ----------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;SnapshotId&quot; is required.     |
-| ---          | ---              | ---                                                   |
 | 400          | ParameterIsEmpty | The parameter &quot;SnapshotId&quot; cannot be empty. |
 
 **Reference:**
@@ -6051,7 +5781,7 @@ def clone_snapshot():
    result = json.loads(res.content)
  ```
 
-**13.DeleteSnapshot**
+### 13.DeleteSnapshot
 
 **Action: DeleteSnapshot**
 
@@ -6066,24 +5796,21 @@ def clone_snapshot():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | SnapshotId | string   | Yes         | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | Snapshot ID     |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                       |
 | ------------ | ---------------- | ----------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;SnapshotId&quot; is required.     |
-| ---          | ---              | ---                                                   |
 | 400          | ParameterIsEmpty | The parameter &quot;SnapshotId&quot; cannot be empty. |
 
 **Reference:**
@@ -6112,7 +5839,7 @@ def delete_snapshot():
    result = json.loads(res.content)
  ```
 
-**14.RollbackSnapshot**
+### 14.RollbackSnapshot
 
 **Action: RollbackSnapshot**
 
@@ -6127,24 +5854,21 @@ def delete_snapshot():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | SnapshotId | string   | Yes         | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | Snapshot ID     |
-| ---        | ---      | ---         | ---                                  | ---             |
 
 **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Message         |
 | Data       | object   | {}                                   | Data            |
 | TaskId     | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Task ID         |
 
-**Error Code**** ：**
+**Error Code***：
 
 | **httpcode** | **Error code**   | **Description**                                       |
 | ------------ | ---------------- | ----------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;SnapshotId&quot; is required.     |
-| ---          | ---              | ---                                                   |
 | 400          | ParameterIsEmpty | The parameter &quot;SnapshotId&quot; cannot be empty. |
 
 **Reference:**
@@ -6173,7 +5897,7 @@ def rollback_snapshot():
    result = json.loads(res.content)
  ```
 
-**15.DescribeGoodsId**
+### 15.DescribeGoodsId
 
 **Action: DescribeGoodsId**
 
@@ -6188,7 +5912,6 @@ def rollback_snapshot():
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | RegionId   | string   | Yes         | 35304122-8504-400c-a61c-56ba244c5dda | Region ID       |
-| ---        | ---      | ---         | ---                                  | ---             |
 | Bw         | int      | Yes         | 2000                                 | Bandwidth       |
 | Iops       | int      | Yes         | 8000                                 | iops            |
 | Type       | string   | Yes         | ssd                                  | Disk Type       |
@@ -6198,17 +5921,15 @@ def rollback_snapshot():
 | **Option** | **Type** | **Reference**                        | **Description** |
 | ---------- | -------- | ------------------------------------ | --------------- |
 | Code       | string   | Success                              | Code            |
-| ---        | ---      | ---                                  | ---             |
 | Message    | string   | null                                 | Data            |
 | Data       | object   | {}                                   | Data            |
 | GoodsId    | string   | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | Goods ID        |
 
-**Error Code**** ：**
+**Error Code** ：
 
 | **httpcode** | **Error code**   | **Description**                                     |
 | ------------ | ---------------- | --------------------------------------------------- |
 | 400          | ParameterInvalid | The parameter &quot;RegionId&quot; is required.     |
-| ---          | ---              | ---                                                 |
 | 400          | ParameterIsEmpty | The parameter &quot;RegionId&quot; cannot be empty. |
 
 **Reference:**
@@ -6239,9 +5960,9 @@ def describe_goodsId():
    res = requests.get(url)
  ```
 
-**Billing**
+## Billing
 
-**1.DescribeBill**
+### 1.DescribeBill
 
 **Action: DescribeBill**
 
@@ -6249,14 +5970,13 @@ def describe_goodsId():
 
 **URL:** cdsapi.capitalonline.net/billing
 
-**Request by:**** GET**
+**Request by:** GET
 
 **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**           | **Description** |
 | ---------- | -------- | ----------- | ----------------------- | --------------- |
 | DateFromTo | string   | Yes         | 2019.09.02 - 2019.09.03 | Data start date |
-| ---        | ---      | ---         | ---                     | ---             |
 | Currency   | string   | Yes         | CN/US                   | Currency        |
 
 **Return:**
@@ -6264,11 +5984,10 @@ def describe_goodsId():
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | Interger | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Data       | string   |               |                 |
  |
  |
-| TotalenglishCost | Float | 10.90 | english Account Cost |
+| TotalMasterCost | Float | 10.90 | Master Account Cost |
 | TotalViceCost | Float | 11.92 | Sub Account Cost |
 | BillInfo | List | [] | Billing Information |
 | RegionId | String | CN\_Beijing\_E | Region ID |
@@ -6282,12 +6001,11 @@ def describe_goodsId():
 | DeleteTime | String |
  | Delete Time |
 
-Error Code:
+**Error Code:**
 
 | **httpcode** | **Error code**            | **Description**                                             |
 | ------------ | ------------------------- | ----------------------------------------------------------- |
 | 400          | InvalidPublicId.Malformed | The specified parameter &quot;PrivateID&quot; is not valid. |
-| ---          | ---                       | ---                                                         |
 
   **Reference:**
 
@@ -6385,7 +6103,7 @@ Error Code:
                 "VdcName": ""
             }
         ],
-        "TotalenglishCost": 0,
+        "TotalMasterCost": 0,
         "TotalViceCost": 76.97
     },
     "Message": "bill day query success",
@@ -6393,7 +6111,7 @@ Error Code:
 }
 ```
 
-**2.DescribeBillInfo**
+### 2.DescribeBillInfo
 
 **Action: DescribeBillInfo**
 
@@ -6401,14 +6119,13 @@ Error Code:
 
 **URL:** cdsapi.capitalonline.net/billing
 
-**Request by:**** GET**
+**Request by:** GET
 
 **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description**    |
 | ---------- | -------- | ----------- | ------------------------------------ | ------------------ |
 | DateFrom   | string   | Yes         | 2019.09.02                           | Billing Start Date |
-| ---        | ---      | ---         | ---                                  | ---                |
 | DateTo     | String   | Yes         | 2019.09.03                           | Billing End Date   |
 | ResourceId | String   | Yes         | 2e579aa0-f54f-11e9-814d-f6de00b3aa12 | Resource ID        |
 | Currency   | string   | No          | CN/US                                | Currency           |
@@ -6418,7 +6135,6 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | Interger | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Data       | string   |               |                 |
  |
  |
@@ -6476,9 +6192,9 @@ Error Code:
 }
 ```
 
-**Glacier Storage**
+## Glacier Storage
 
-**1.GetMetering**
+### 1.GetMetering
 
 **Action: GetMetering**
 
@@ -6486,14 +6202,13 @@ Error Code:
 
 **URL:** cdsapi.capitalonline.net/ccs-product
 
-**Request by:**** GET**
+**Request by:** GET
 
 **Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**        | **Description**          |
 | ---------- | -------- | ----------- | -------------------- | ------------------------ |
 | EndTime    | string   | Yes         | &quot;20191101&quot; | EndTime                  |
-| ---        | ---      | ---         | ---                  | ---                      |
 | Uid        | string   | No          | &quot;1001&quot;     | Storage Pool Information |
 
 **Return:**
@@ -6501,16 +6216,14 @@ Error Code:
 | **Option** | **Type** | **Reference** | **Description** |
 | ---------- | -------- | ------------- | --------------- |
 | Code       | string   | Success       | Error Code      |
-| ---        | ---      | ---           | ---             |
 | Message    | string   | uid           | Message         |
 | Data       | string   | []            | Data            |
 
-Error Code:
+**Error Code:**
 
 | **httpcode** | **Error code**          | **Description** |
 | ------------ | ----------------------- | --------------- |
 | 400          | InvalidParamater        | CustomerId      |
-| ---          | ---                     | ---             |
 | 400          | InvalidParamater        | Uid             |
 | 400          | InvalidParameter.IsNull | Parameter Null  |
 
@@ -6552,19 +6265,19 @@ def get_metering(end_time, uid=None):
     print(result)
     return result.get("Data")
 ```
-**Others**
+## Others
 
-**1.DescribeAvailableResource**
+### 1.DescribeAvailableResource
 
-  **Action**** ： ****DescribeAvailableResource**
+  **Action** ： **DescribeAvailableResource**
 
   **Description:**  Describe Available Resource
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** GET**
+  **Request by:** GET
 
-Configuration Options:
+**Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**  | **Description** |
 | ---------- | -------- | ----------- | -------------- | --------------- |
@@ -6579,12 +6292,11 @@ Configuration Options:
  |
  |
 
-Error Code:
+**Error Code:**
 
 | **httpcode** | **Error code**            | **Description**                                            |
 | ------------ | ------------------------- | ---------------------------------------------------------- |
 | 400          | InvalidRegionID.Malformed | The specified parameter &quot;RegionID&quot; is not valid. |
-| ---          | ---                       | ---                                                        |
 
   **Reference:**
 
@@ -6689,42 +6401,38 @@ def get_region_goods(site_code):
     vm_goods = data.get("InstanceGoods")
     return wan_goods, vm_goods
 ```
+### 2.DescribeTask
 
-**2.DescribeTask**
-
-  **Action**** ： ****DescribeTask**
+  **Action** ： **DescribeTask**
 
   **Description:**  Describe Task
 
   **URL:** cdsapi.capitalonline.net/ccs
 
-  **Request by:**** GET**
+  **Request by:** GET
 
-Configuration Options:
+**Configuration Options:**
 
 | **Option** | **Type** | **Default** | **Reference**                        | **Description** |
 | ---------- | -------- | ----------- | ------------------------------------ | --------------- |
 | TaskId     | string   | Yes         | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Task ID         |
-| ---        | ---      | ---         | ---                                  | ---             |
 
   **Return:**
 
 | **Option** | **Type** | **Reference**                        | **Description**                 |
 | ---------- | -------- | ------------------------------------ | ------------------------------- |
 | Code       | Interger | Success                              | Error Code                      |
-| ---        | ---      | ---                                  | ---                             |
 | Message    | string   |                                      |                                 |
 | Message    |          |                                      |                                 |
 | ResourceId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | Resource ID                     |
 | TaskId     | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Task ID                         |
 | Status     | string   | finish                               | Statues[NEW,DOING,FINISH,ERROR] |
 
-Error Code:
+**Error Code:**
 
 | **httpcode** | **Error code**          | **Description**                                          |
 | ------------ | ----------------------- | -------------------------------------------------------- |
 | 400          | InvalidTaskID.Malformed | The specified parameter &quot;TaskID&quot; is not valid. |
-| ---          | ---                     | ---                                                      |
 
   **Reference:**
 ```json
@@ -6757,14 +6465,13 @@ def get_status(task_id):
     return result.get("Data")
 ```
 
-**Appendix 1**
+## Appendix 1
 
-**Available Resource**
+#### Available Resource
 
 | **Region Name** | **Region ID**       | **Support BMS** | **Zone**       |
 | --------------- | ------------------- | --------------- | -------------- |
 | BEIJINGA        | CN\_Beijing\_A      | No              | CHINA          |
-| ---             | ---                 | ---             | ---            |
 | BEIJINGB        | CN\_Beijing\_B      | No              | CHINA          |
 | BEIJINGC        | CN\_Beijing\_C      | No              | CHINA          |
 | BEIJINGE        | CN\_Beijing\_E      | No              | CHINA          |
@@ -6806,14 +6513,13 @@ def get_status(task_id):
 | MUNBAIC         | APAC\_Mumbai\_C     | Yes             | APAC           |
 | VIRGINIAA       | US\_Virginia\_A     | Yes             | NORTH AMERICAN |
 
-**Appendix 2**
+## Appendix 2
 
-**Instance Type**
+#### Instance Type
 
 | **Instance Name** | **Instance**  **ID** |
 | ----------------- | -------------------- |
 | IO Enhance        | IO                   |
-| ---               | ---                  |
 | High Performace   | High                 |
 | Standard          | Standard             |
 | General           | General              |
@@ -6858,14 +6564,13 @@ def get_status(task_id):
 | General G1V2      | CCS.G1V2             |
 | Memory R1V2       | CCS.R1V2             |
 
-**Appendix 3**
+## Appendix 3
 
-**Bandwidth Type**
+#### Bandwidth Type
 
 | **Bandwidth Type** | **Bandwidth**  **ID**                       |
 | ------------------ | ------------------------------------------- |
 | CM                 | Bandwidth\_CMCC                             |
-| ---                | ---                                         |
 | CU                 | Bandwidth\_China\_Unicom                    |
 | Phillipe           | Southeast\_Asia\_Optimizes\_Bandwidth       |
 | IPv6               | Test\_Ipv6                                  |
@@ -6887,14 +6592,13 @@ def get_status(task_id):
 | BGP Multi          | Bandwidth\_Multi\_ISP\_BGP                  |
 | BGP Economy        | Bandwidth\_Multi\_ISP\_Economy\_BGP         |
 
-**Appendix 4**
+## Appendix 4
 
-**Operating Systems**
+#### Operating Systems
 
 | **OS Type** | **Version**     |
 | ----------- | --------------- |
 | Centos      | Centos\_8.2\_64 |
-| ---         | ---             |
 |
  | Centos\_8.1\_64 |
 |
@@ -6970,9 +6674,10 @@ def get_status(task_id):
 |
  | Windows\_2008\_R2\_Enterprise\_64\_CN |
 
-**Reference**
 
-**1.**** login **** url**
+### 1.login url
+
+**Reference Code:**
 
 ```python
 def percentEncode(str):
@@ -7014,7 +6719,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 http://cdsapi.capitalonline.net/ccs/?SignatureVersion=1.0&Timestamp=2019-09-22T05%3A37%3A47Z&AccessKeyId=AccessKeyId&SignatureMethod=HMAC-SHA1&Version=2019-08-08&Signature=****&Action=CreateInstance&SignatureNonce=1c276ff3-dcfb-11e9-bcd1-1c36bbed2c63
 ```
 
-**2.**** Access VDC**
+### 2.获 Access VDC
+
+**Reference Code:**
 
 ```python
 def descrive_public_qos(vdc_id):
@@ -7058,7 +6765,9 @@ def descrive_public_qos(vdc_id):
 ]
 ```
 
-**3.**** Access VM**
+### 3.Access VM
+
+**Reference Code:**
 
 ```python
 def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
@@ -7125,7 +6834,9 @@ def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
 }
 ```
 
-**4.**** Create Instance**
+### 4. Create Instance
+
+**Reference Code:**
 
 ```python
 def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
@@ -7168,9 +6879,9 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
 }
 ```
 
+### 5.MODIFY BANDWIDTH
 
-
-**5.**** mODIFY bANDWIDTH**
+**Reference Code:**
 
 ```python
 def modify_public_qos(publicId, qos):
@@ -7201,10 +6912,9 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
+### 6. Modify Instance Pay Type
 
-**6.**** Modify Instance Pay Type**
-
-
+**Reference Code:**
 
 ```python
 def modify_vm_charge_type(vm_id, ):
@@ -7236,8 +6946,9 @@ def modify_vm_charge_type(vm_id, ):
 }
 ```
 
-**7.**** Describe State**
+### 7. Describe State
 
+**Reference Code:**
 ```python
 def get_status(task_id):
     action = "DescribeTask"
@@ -7269,8 +6980,9 @@ def get_status(task_id):
 }
 ```
 
-**8.Create**  **Tempate**
+### 8.Create
 
+**Reference Code:**
 
 ```python
 def create_template(vm_id):
@@ -7287,7 +6999,7 @@ def create_template(vm_id):
     print result
 ```
 
-​	**返回示例**
+​	**Reference:**
 
 ```json
 {
