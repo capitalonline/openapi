@@ -179,10 +179,10 @@ If you use java.net.URLEncoder in the Java standard library, use percentEncode t
 1.Specify StringToSign. You can also use percentEncode to encode the canonicalized query string constructed in the previous step. The following Reference shows how to create a string-to-sign:
 
   ```python
-   	canstring = ''
-     for k, v in sortedD:
-         canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
-     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
+canstring = ''
+for k, v in sortedD:
+     canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
+stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
    ```
 
 ```
