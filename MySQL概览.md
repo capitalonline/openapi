@@ -309,42 +309,6 @@ def get_mysql_zones():
 | :------- | :--- | :----- | -------- |
 | RegionId | 是   | string | 站点编号 |
 
-**返回参数：**
-
-| 参数名           | 类型   | 说明                                                         |
-| :--------------- | :----- | ------------------------------------------------------------ |
-| Message          | string | 信息描述                                                     |
-| Code             | string | 状态码                                                       |
-| TaskId           | string | 任务Id                                                       |
-| Data             | dict   | 数据                                                         |
-| Products         | list   | 该类产品支持的产品列表                                       |
-| ProductName      | string | 产品名称                                                     |
-| SubProductName   | string | 子产品名称                                                   |
-| Version          | string | 产品支持的版本                                               |
-| Architectures    | string | 产品支持的架构                                               |
-| ArchitectureName | string | 架构名称                                                     |
-| NetworkLinks     | list   | 此架构支持的链路类型                                         |
-| DescDetail       | string | 链路类型描述                                                 |
-| LinkType         | string | 链路类型“英文”                                               |
-| Name             | string | 链路类型“中文”                                               |
-| ComputeRoles     | list   | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
-| Standards        | dict   | 该类型支持的规格                                             |
-| CpuRam           | list   | 支持的规格列表                                               |
-| CPU              | int    | 规格CPU大小                                                  |
-| RAM              | int    | 规格RAM大小                                                  |
-| Name             | string | 规格名称                                                     |
-| PaasGoodsId      | int    | 具体的产品编号，根据产品编号确定购买哪一种规格               |
-| AttachDisk       | list   | 该类型规格能够添加的磁盘类型列表                             |
-| DiskMax          | int    | 单次支持最大规格的磁盘                                       |
-| DiskValue        | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
-| BasicIops        | string | 基础的磁盘的iops                                             |
-| DiskUnit         | string | 磁盘规格单位                                                 |
-| DiskName         | string | 磁盘类型名称                                                 |
-| DiskMaxExpand    | string | 磁盘最大可扩容大小                                           |
-| DiskMin          | string | 磁盘最小大小                                                 |
-| DiskStep         | string | 磁盘扩容大小                                                 |
-| EnginesType      | string | 引擎类型                                                     |
-
 **请求示例：**
 
 ```python
@@ -364,6 +328,86 @@ def get_mysql_spec_info():
     print(result)
 ```
 
+**返回参数：**
+
+| 参数名  | 类型                | 说明                                                   |
+| :------ | :------------------ | ------------------------------------------------------ |
+| Code    | string              | 状态码                                                 |
+| Data    | [DataObj](#DataObj) | 可购买的MySQL产品类型以及规格数据对象                  |
+| Message | string              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+| TaskId  | string              | 任务Id, 暂时不支持根据任务查询任务状态                 |
+
+#### DataObj
+
+| 参数名      | 类型                              | 说明                   |
+| :---------- | :-------------------------------- | ---------------------- |
+| ProductName | string                            | 产品名称,比如mysql     |
+| Products    | list of [ProductObj](#ProductObj) | 该类产品支持的产品列表 |
+| RegionId    | string                            | 站点编号               |
+
+#### ProductObj
+
+| 参数名        | 类型                                        | 说明               |
+| :------------ | :------------------------------------------ | ------------------ |
+| Architectures | list of [ArchitectureObj](#ArchitectureObj) | 产品支持的架构列表 |
+| Version       | string                                      | 产品支持的版本     |
+
+#### ArchitectureObj
+
+| 参数名           | 类型                                      | 说明                                                         |
+| :--------------- | :---------------------------------------- | ------------------------------------------------------------ |
+| ArchitectureName | string                                    | 架构名称                                                     |
+| ArchitectureType | int                                       | 架构类型：<br/>0-基础版<br/>1-主从版                         |
+| ComputeRoles     | list of [ComputeRoleObj](#ComputeRoleObj) | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
+| EnginesType      | string                                    | 引擎类型                                                     |
+| NetworkLinks     | list of [NetworkLinkObj](#NetworkLinkObj) | 此架构支持的链路类型                                         |
+| SubProductName   | string                                    | 子产品名称，比如：MySQL 高可用版、MySQL 基础版               |
+
+#### ComputeRoleObj
+
+| 参数名      | 类型                        | 说明                                                       |
+| :---------- | :-------------------------- | ---------------------------------------------------------- |
+| ComputeName | string                      | 计算类型名称， 比如：通用型                                |
+| ComputeType | int                         | 支持的计算类型(目前仅支持通用型计算类型)：<br>0-通用型<br> |
+| Standards   | [StandardObj](#StandardObj) | 该类型支持的规格                                           |
+
+#### StandardObj
+
+| 参数名     | 类型                                    | 说明                             |
+| :--------- | :-------------------------------------- | -------------------------------- |
+| AttachDisk | list of [AttachDiskObj](#AttachDiskObj) | 该类型规格能够添加的磁盘类型列表 |
+| CpuRam     | list of [CpuRamObj](#CpuRamObj)         | 支持的规格列表                   |
+
+#### AttachDiskObj
+
+| 参数名        | 类型   | 说明                                                         |
+| :------------ | :----- | ------------------------------------------------------------ |
+| BasicIops     | string | 基础的磁盘的iops                                             |
+| DiskMax       | int    | 单次支持扩容到最大磁盘容量为2000                             |
+| DiskMaxExpand | string | 磁盘最大可扩容大小                                           |
+| DiskMin       | string | 磁盘容量支持的最小值，起步为100                              |
+| DiskName      | string | 磁盘类型名称，包含SSD和性能型<br />SSD：SSD磁盘，磁盘IOPS默认为5000，可购买IOPS性能包<br />性能型：普通SSD盘，磁盘IOPS限定在3000 |
+| DiskStep      | string | 磁盘扩容步长，步长大小=100                                   |
+| DiskUnit      | string | 磁盘容量单位：GB                                             |
+| DiskValue     | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
+
+#### CpuRamObj
+
+| 参数名      | 类型   | 说明                                           |
+| :---------- | :----- | ---------------------------------------------- |
+| CPU         | int    | 核心数量，单位：个                             |
+| Name        | string | 规格名称                                       |
+| PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
+| RAM         | int    | 内存大小，单位：GB                             |
+
+#### NetworkLinkOb
+
+| 参数名     | 类型   | 说明           |
+| :--------- | :----- | -------------- |
+| DescDetail | string | 链路类型描述   |
+| LinkType   | string | 链路类型“英文” |
+| Name       | string | 链路类型“中文” |
+
 **返回示例：**
 
 ```json
@@ -371,134 +415,62 @@ def get_mysql_spec_info():
     "Code": "Success",
     "Data": {
         "ProductName": "mysql",
-        "Products": [{
-            "Architectures": [{
-                "ArchitectureName": "集群",
-                "ComputeRoles": [{
-                    "ComputeName": "高性能型",
-                    "Standards": {
-                        "AttachDisk": [{
-                            "BasicIops": "3000",
-                            "DiskMax": 2000,
-                            "DiskMaxExpand": 2000,
-                            "DiskMin": 100,
-                            "DiskName": "性能型",
-                            "DiskStep": 100,
-                            "DiskUnit": "G",
-                            "DiskValue": "high_disk"
-                        }],
-                        "CpuRam": [{
-                            "CPU": 2,
-                            "Name": "2C4G",
-                            "PaasGoodsId": 6002,
-                            "RAM": 4
-                        }, {
-                            "CPU": 4,
-                            "Name": "4C8G",
-                            "PaasGoodsId": 6005,
-                            "RAM": 8
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C16G",
-                            "PaasGoodsId": 6008,
-                            "RAM": 16
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C32G",
-                            "PaasGoodsId": 6014,
-                            "RAM": 32
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C64G",
-                            "PaasGoodsId": 6473,
-                            "RAM": 64
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C24G",
-                            "PaasGoodsId": 6011,
-                            "RAM": 24
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C48G",
-                            "PaasGoodsId": 6470,
-                            "RAM": 48
-                        }, {
-                            "CPU": 10,
-                            "Name": "10C96G",
-                            "PaasGoodsId": 6476,
-                            "RAM": 96
-                        }, {
-                            "CPU": 10,
-                            "Name": "10C128G",
-                            "PaasGoodsId": 6479,
-                            "RAM": 128
-                        }]
+        "Products": [
+            {
+                "Architectures": [
+                    {
+                        "ArchitectureName": "主从",
+                        "ArchitectureType": 1,
+                        "ComputeRoles": [
+                            {
+                                "ComputeName": "通用型",
+                                "ComputeType": 0,
+                                "Standards": {
+                                    "AttachDisk": [
+                                        {
+                                            "BasicIops": "",
+                                            "DiskMax": 2000,
+                                            "DiskMaxExpand": 2000,
+                                            "DiskMin": 100,
+                                            "DiskName": "SSD",
+                                            "DiskStep": 100,
+                                            "DiskUnit": "G",
+                                            "DiskValue": "ssd_disk"
+                                        }
+                                    ],
+                                    "CpuRam": [
+                                        {
+                                            "CPU": 1,
+                                            "Name": "1C2G",
+                                            "PaasGoodsId": 17060,
+                                            "RAM": 2
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "EnginesType": [],
+                        "NetworkLinks": [
+                            {
+                                "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
+                                "LinkType": "default_link",
+                                "Name": "默认链路"
+                            }
+                        ],
+                        "SubProductName": "MySQL高可用版"
                     }
-                }],
-                "EnginesType": [],
-                "NetworkLinks": [{
-                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
-                    "LinkType": "default_link",
-                    "Name": "默认链路"
-                }],
-                "SubProductName": "MySQL 集群版"
-            }],
-            "Version": "5.6.35"
-        }, {
-            "Architectures": [{
-                "ArchitectureName": "主从",
-                "ComputeRoles": [{
-                    "ComputeName": "高性能型",
-                    "Standards": {
-                        "AttachDisk": [{
-                            "BasicIops": "3000",
-                            "DiskMax": 2000,
-                            "DiskMaxExpand": 2000,
-                            "DiskMin": 100,
-                            "DiskName": "性能型",
-                            "DiskStep": 100,
-                            "DiskUnit": "G",
-                            "DiskValue": "high_disk"
-                        }],
-                        "CpuRam": [{
-                            "CPU": 2,
-                            "Name": "2C4G",
-                            "PaasGoodsId": 6704,
-                            "RAM": 4
-                        }, {
-                            "CPU": 4,
-                            "Name": "4C8G",
-                            "PaasGoodsId": 6707,
-                            "RAM": 8
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C16G",
-                            "PaasGoodsId": 6710,
-                            "RAM": 16
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C32G",
-                            "PaasGoodsId": 6716,
-                            "RAM": 32
-                        }]
-                    }
-                }],
-                "EnginesType": [],
-                "NetworkLinks": [{
-                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
-                    "LinkType": "default_link",
-                    "Name": "默认链路"
-                }],
-                "SubProductName": "MySQL 高可用版\n"
-            }],
-            "Version": "5.7.24"
-        }],
+                ],
+                "Version": "8.0"
+            }
+        ],
         "RegionId": "*******"
     },
-    "Message": "Success.",
+    "Message": "success",
     "TaskId": ""
 }
 ```
+
+
 
 ### 3.CreateDBInstance
 
