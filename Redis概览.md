@@ -8,6 +8,14 @@ Redis 公开API目录
     - [访问地址](#访问地址)
     - [1.DescribeRegins](#1describeregins)
     - [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+      - [DataObj](#dataobj)
+      - [ProductObj](#productobj)
+      - [ArchitectureObj](#architectureobj)
+      - [ComputeRoleObj](#computeroleobj)
+      - [StandardObj](#standardobj)
+      - [AttachDiskObj](#attachdiskobj)
+      - [CpuRamObj](#cpuramobj)
+      - [NetworkLinkOb](#networklinkob)
     - [3.CreateDBInstance](#3createdbinstance)
     - [4.DescribeDBInstances](#4describedbinstances)
     - [5.DeleteDBInstance](#5deletedbinstance)
@@ -257,29 +265,6 @@ def get_redis_Zones():
 | :------- | :--- | :----- | -------- |
 | RegionId | 是   | string | 站点编号 |
 
-**返回参数**：
-
-| 参数名           | 类型   | 说明                                                         |
-| :--------------- | :----- | ------------------------------------------------------------ |
-| Message          | string | 信息描述                                                     |
-| Code             | string | 状态码                                                       |
-| Data             | dict   | 数据                                                         |
-| Products         | list   | 该类产品支持的产品列表                                       |
-| Version          | string | 产品支持的版本                                               |
-| Architectures    | string | 产品支持的架构                                               |
-| ArchitectureName | string | 架构名称                                                     |
-| NetworkLinks     | list   | 该架构支持的链路类型                                         |
-| ComputeRoles     | list   | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
-| Standards        | dict   | 该类型支持的规格                                             |
-| CpuRam           | list   | 支持的规格列表                                               |
-| PaasGoodsId      | int    | 具体的产品编号，根据产品编号确定购买哪一种规格               |
-| AttachDisk       | list   | 该类型规格能够添加的磁盘类型                                 |
-| DiskMax          | int    | 单次支持添加的最大规格磁盘                                   |
-| DiskValue        | string | 磁盘类型,用于创建服务实例指定磁盘类型                        |
-| BasicIops        | string | 基础的磁盘的iops                                             |
-| DiskUnit         | string | 磁盘规格                                                     |
-| DiskName         | string | 磁盘类型名称                                                 |
-
 **请求示例：**
 
 ```python
@@ -298,6 +283,86 @@ def get_redis_config():
     print(result)
 ```
 
+**返回参数**：
+
+| 参数名  | 类型                | 说明                                                   |
+| :------ | :------------------ | ------------------------------------------------------ |
+| Code    | string              | 状态码                                                 |
+| Data    | [DataObj](#DataObj) | 可购买的redis产品类型以及规格数据对象                  |
+| Message | string              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+| TaskId  | string              | 任务Id, 暂时不支持根据任务查询任务状态                 |
+
+#### DataObj
+
+| 参数名      | 类型                              | 说明                   |
+| :---------- | :-------------------------------- | ---------------------- |
+| ProductName | string                            | 产品名称,比如redis     |
+| Products    | list of [ProductObj](#ProductObj) | 该类产品支持的产品列表 |
+| RegionId    | string                            | 站点编号               |
+
+#### ProductObj
+
+| 参数名        | 类型                                        | 说明               |
+| :------------ | :------------------------------------------ | ------------------ |
+| Architectures | list of [ArchitectureObj](#ArchitectureObj) | 产品支持的架构列表 |
+| Version       | string                                      | 产品支持的版本     |
+
+#### ArchitectureObj
+
+| 参数名           | 类型                                      | 说明                                                         |
+| :--------------- | :---------------------------------------- | ------------------------------------------------------------ |
+| ArchitectureName | string                                    | 架构名称                                                     |
+| ArchitectureType | int                                       | 架构类型：<br/>1-主从版<br/>2-集群版<br/>3-经济型主从版      |
+| ComputeRoles     | list of [ComputeRoleObj](#ComputeRoleObj) | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
+| EnginesType      | string                                    | 引擎类型                                                     |
+| NetworkLinks     | list of [NetworkLinkObj](#NetworkLinkObj) | 此架构支持的链路类型                                         |
+| SubProductName   | string                                    | 子产品名称，比如：Redis 经济型主从、Redis 主从版、Redis 集群版 |
+
+#### ComputeRoleObj
+
+| 参数名      | 类型                        | 说明                                                       |
+| :---------- | :-------------------------- | ---------------------------------------------------------- |
+| ComputeName | string                      | 计算类型名称， 比如：通用型                                |
+| ComputeType | int                         | 支持的计算类型(目前仅支持通用型计算类型)：<br>0-通用型<br> |
+| Standards   | [StandardObj](#StandardObj) | 该类型支持的规格                                           |
+
+#### StandardObj
+
+| 参数名     | 类型                                    | 说明                             |
+| :--------- | :-------------------------------------- | -------------------------------- |
+| AttachDisk | list of [AttachDiskObj](#AttachDiskObj) | 该类型规格能够添加的磁盘类型列表 |
+| CpuRam     | list of [CpuRamObj](#CpuRamObj)         | 支持的规格列表                   |
+
+#### AttachDiskObj
+
+| 参数名        | 类型   | 说明                                                         |
+| :------------ | :----- | ------------------------------------------------------------ |
+| BasicIops     | string | 基础的磁盘的iops                                             |
+| DiskMax       | int    | 单次支持扩容到最大磁盘容量为2000                             |
+| DiskMaxExpand | string | 磁盘最大可扩容大小                                           |
+| DiskMin       | string | 磁盘容量支持的最小值，起步为100                              |
+| DiskName      | string | 磁盘类型名称，包含SSD和性能型<br />SSD：SSD磁盘，磁盘IOPS默认为5000，可购买IOPS性能包<br />性能型：普通SSD盘，磁盘IOPS限定在3000 |
+| DiskStep      | string | 磁盘扩容步长，步长大小=100                                   |
+| DiskUnit      | string | 磁盘容量单位：GB                                             |
+| DiskValue     | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
+
+#### CpuRamObj
+
+| 参数名      | 类型   | 说明                                           |
+| :---------- | :----- | ---------------------------------------------- |
+| CPU         | int    | 核心数量，单位：个                             |
+| Name        | string | 规格名称                                       |
+| PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
+| RAM         | int    | 内存大小，单位：GB                             |
+
+#### NetworkLinkOb
+
+| 参数名     | 类型   | 说明           |
+| :--------- | :----- | -------------- |
+| DescDetail | string | 链路类型描述   |
+| LinkType   | string | 链路类型“英文” |
+| Name       | string | 链路类型“中文” |
+
 **返回示例：**
 
 ```json
@@ -307,113 +372,25 @@ def get_redis_config():
         "ProductName": "redis",
         "Products": [{
             "Architectures": [{
-                "ArchitectureName": "读写分离",
+                "ArchitectureName": "经济型主从",
                 "ComputeRoles": [{
-                    "ComputeName": "高性能型",
+                    "ComputeName": "通用型",
                     "Standards": {
                         "AttachDisk": [{
-                            "BasicIops": "3000",
+                            "BasicIops": "",
                             "DiskMax": 2000,
                             "DiskMaxExpand": 2000,
                             "DiskMin": 100,
-                            "DiskName": "性能型",
-                            "DiskStep": 100,
-                            "DiskUnit": "G",
-                            "DiskValue": "high_disk"
-                        }],
-                        "CpuRam": [{
-                            "CPU": 0,
-                            "Name": "1G",
-                            "PaasGoodsId": 5765,
-                            "RAM": 1
-                        }, {
-                            "CPU": 0,
-                            "Name": "2G",
-                            "PaasGoodsId": 5768,
-                            "RAM": 2
-                        }, {
-                            "CPU": 0,
-                            "Name": "4G",
-                            "PaasGoodsId": 5771,
-                            "RAM": 4
-                        }, {
-                            "CPU": 0,
-                            "Name": "8G",
-                            "PaasGoodsId": 5774,
-                            "RAM": 8
-                        }, {
-                            "CPU": 0,
-                            "Name": "16G",
-                            "PaasGoodsId": 5777,
-                            "RAM": 16
-                        }, {
-                            "CPU": 0,
-                            "Name": "32G",
-                            "PaasGoodsId": 8012,
-                            "RAM": 32
-                        }, {
-                            "CPU": 0,
-                            "Name": "64G",
-                            "PaasGoodsId": 8021,
-                            "RAM": 64
-                        }]
-                    }
-                }],
-                "EnginesType": [],
-                "NetworkLinks": [{
-                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
-                    "LinkType": "default_link",
-                    "Name": "默认链路"
-                }],
-                "SubProductName": "Redis 读写分离版"
-            }],
-            "Version": "2.8.19"
-        }, {
-            "Architectures": [{
-                "ArchitectureName": "集群",
-                "ComputeRoles": [{
-                    "ComputeName": "高I/O型",
-                    "Standards": {
-                        "AttachDisk": [{
-                            "BasicIops": "5000",
-                            "DiskMax": 2000,
-                            "DiskMaxExpand": 2000,
-                            "DiskMin": 100,
-                            "DiskName": "超高性能型",
+                            "DiskName": "SSD",
                             "DiskStep": 100,
                             "DiskUnit": "G",
                             "DiskValue": "ssd_disk"
                         }],
                         "CpuRam": [{
                             "CPU": 0,
-                            "Name": "8G",
-                            "PaasGoodsId": 8063,
-                            "RAM": 8
-                        }, {
-                            "CPU": 0,
-                            "Name": "12G",
-                            "PaasGoodsId": 8069,
-                            "RAM": 12
-                        }, {
-                            "CPU": 0,
-                            "Name": "20G",
-                            "PaasGoodsId": 8075,
-                            "RAM": 20
-                        }, {
-                            "CPU": 0,
-                            "Name": "32G",
-                            "PaasGoodsId": 8081,
-                            "RAM": 32
-                        }, {
-                            "CPU": 0,
-                            "Name": "64G",
-                            "PaasGoodsId": 8087,
-                            "RAM": 64
-                        }, {
-                            "CPU": 0,
-                            "Name": "128G",
-                            "PaasGoodsId": 8093,
-                            "RAM": 128
+                            "Name": "1G",
+                            "PaasGoodsId": 12188,
+                            "RAM": 1
                         }]
                     }
                 }],
@@ -423,13 +400,13 @@ def get_redis_config():
                     "LinkType": "default_link",
                     "Name": "默认链路"
                 }],
-                "SubProductName": "Redis 集群版"
+                "SubProductName": "Redis 经济型主从"
             }],
-            "Version": "5.0"
+            "Version": "2.8"
         }],
-        "RegionId": "CN_Hongkong_A"
+        "RegionId": "*******"
     },
-    "Message": "Success.",
+    "Message": "success",
     "TaskId": ""
 }
 ```
