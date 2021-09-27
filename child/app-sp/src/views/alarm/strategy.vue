@@ -90,7 +90,7 @@ export default class Strategy extends Vue{
     private search:any={
         name:{placeholder:'请输入策略名称'}
     }
-    private list=[{customer_id:1}]
+    private list=[{id:1,enable:false,name:1}]
     private drawer:Boolean=false
     private search_data:any={}
     private current:number = 1
@@ -101,7 +101,7 @@ export default class Strategy extends Vue{
     private strategy_rows:any=[]
     private enable:Boolean=true
     created() {
-        this.fn_search()
+        // this.fn_search()
     }
     private fn_search(data:any={}){
         this.current =1

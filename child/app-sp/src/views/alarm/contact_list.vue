@@ -93,7 +93,7 @@ export default class ContactList extends Vue{
     private search_data:any={}
     
     created() {
-        this.fn_search()
+        // this.fn_search()
     }
     private fn_search(data:any={}){
         this.current = 1

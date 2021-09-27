@@ -13,7 +13,7 @@
                 <el-button type="text" @click.stop="edit(item.id)" class="edit">编辑</el-button>
             </template>
             <div class="table-box">
-                <el-table :data="item.members" border class="event-table">
+                <el-table :data="item.members" border class="event-table" max-height="396">
                     <el-table-column prop="name" label="姓名"></el-table-column>
                     <el-table-column prop="email" label="邮箱"></el-table-column>
                     <el-table-column prop="phone" label="电话号码"></el-table-column>
@@ -66,7 +66,39 @@ export default class ContactList extends Vue{
     private current:number=1
     private size:number=20
     private total:number=0
-    private group_list=[]
+    private group_list=[{
+        id:'1',
+        check:false,
+        name:'group',
+        members:[
+            {name:'1'},
+            {name:'12'},
+            {name:'13'},
+            {name:'14'},
+            {name:'15'},
+            {name:'16'},
+            {name:'17'},
+            {name:'18'},
+            {name:'19'},
+            {name:'10'},
+            {name:'11'},
+
+        ]
+    },{
+        id:'2',
+        check:false,
+        name:'group2',
+        members:[
+            {name:'1'},
+            {name:'12'},
+            {name:'13'},
+            {name:'14'},
+            {name:'15'},
+            {name:'16'},
+
+        ]
+    }
+    ]
     private group_title:String = "新建联系人组"
     private group_visible:Boolean=false
     private del_visible:Boolean=false
@@ -74,7 +106,7 @@ export default class ContactList extends Vue{
     private group_rows:any=[]
 
     created() {
-        this.fn_search()
+        // this.fn_search()
     }
     private fn_search(data:any={}){
         this.search_data = data

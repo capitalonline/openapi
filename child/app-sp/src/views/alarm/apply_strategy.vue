@@ -152,8 +152,8 @@ export default class ApplyStrategy extends Vue{
     private contact_group_list:any=[]
     private cycle_list = cycle_period
     created() {
-        this.get_area_list();
-        this.getContactGroupList('')
+        // this.get_area_list();
+        // this.getContactGroupList('')
     }
     //获取联系人组列表
      private async getContactGroupList(name){
