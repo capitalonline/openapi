@@ -294,7 +294,8 @@ export default class CreateDisk extends Vue{
     private disk_type_list=[];
     private detail_visible:Boolean = false;
     private judge_ecs:Boolean=false
-    private keyword:string=""
+    private keyword:string="";
+    private customerID:string=""
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
         if(value.length>6){
             return callback()
@@ -336,6 +337,7 @@ export default class CreateDisk extends Vue{
         const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
         if (resData.code == 'Success') {
             this.form_data={...this.form_data,customer_name:resData.data.customer_name}
+            this.customerID = resData.data.customer_id
             this.get_area_list();
             this.get_disk_type()
         }
@@ -539,9 +541,9 @@ export default class CreateDisk extends Vue{
         }
         form.validate(async(valid)=>{
             if(valid){
-                const {form_data:{customer_id,ecs_id,del_set,az,disk_list}} = this
+                const {form_data:{ecs_id,del_set,az,disk_list}} = this
                 let res:any = await disk_service.create({
-                    customer_id,
+                    customer_id:this.customerID,
                     ecs_id,
                     is_follow_delete:del_set ? '1' : '0',
                     az_id:az,
