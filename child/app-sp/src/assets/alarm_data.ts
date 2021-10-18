@@ -205,97 +205,7 @@ export const productList = [
         name:'安全组'
     },
 ]
-export const level_list=[
-    {
-        value:'host',
-        label:'主机',
-        children:[
-            {
-                value:'Host.cpu.total',
-                label:'Host.cpu.total'
-            },
-            {
-                value:'Host.cpu.idle',
-                label:'Host.cpu.idle'
-            },
-            {
-                value:'Host.mem.usedutilization',
-                label:'Host.mem.usedutilization'
-            },
-            {
-                value:'Host.mem.freeutilization',
-                label:'Host.mem.freeutilization'
-            },
-        ]
 
-    },
-    {
-        value:'net',
-        label:'网络',
-        children:[
-            {
-                value:'net.cpu.total',
-                label:'net.cpu.total'
-            },
-            {
-                value:'net.cpu.idle',
-                label:'net.cpu.idle'
-            },
-            {
-                value:'net.mem.usedutilization',
-                label:'net.mem.usedutilization'
-            },
-            {
-                value:'net.mem.freeutilization',
-                label:'net.mem.freeutilization'
-            },
-        ]
-    },
-    {
-        value:'disk',
-        label:'磁盘',
-        children:[
-            {
-                value:'disk.cpu.total',
-                label:'disk.cpu.total'
-            },
-            {
-                value:'disk.cpu.idle',
-                label:'disk.cpu.idle'
-            },
-            {
-                value:'disk.mem.usedutilization',
-                label:'disk.mem.usedutilization'
-            },
-            {
-                value:'disk.mem.freeutilization',
-                label:'disk.mem.freeutilization'
-            },
-        ]
-    },
-    {
-        value:'gpu',
-        label:'GPU',
-        children:[
-            {
-                value:'gpu.cpu.total',
-                label:'gpu.cpu.total'
-            },
-            {
-                value:'gpu.cpu.idle',
-                label:'gpu.cpu.idle'
-            },
-            {
-                value:'gpu.mem.usedutilization',
-                label:'gpu.mem.usedutilization'
-            },
-            {
-                value:'gpu.mem.freeutilization',
-                label:'gpu.mem.freeutilization'
-            },
-        ]
-    },
-]
 export const range_list=[
     {id:'>=',title:'>='},
     {id:'<=',title:'<='},
@@ -360,7 +270,7 @@ export const alarm_type=[
         title:'普通',
     },
 ]
-export const notice_list = [{id:'email',name:"邮箱"},{id:'phone',name:"短信"},{id:'wx',name:"微信"}]
+export const notice_list = [{id:'email',name:"邮箱"},{id:'phone',name:"短信"}]
 export const event_type=[
     {
         id:'abnormal_event',

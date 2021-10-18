@@ -75,7 +75,7 @@ export default class Contact extends Vue{
         },
     ]
     
-    private list=[{productType:'1',dealStatus:'未处理'},{productType:'2',dealStatus:'已处理'}]
+    private list=[]
     private current:number = 1
     private size:number = 20
     private total:number = 0

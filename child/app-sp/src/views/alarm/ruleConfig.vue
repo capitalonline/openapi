@@ -71,7 +71,7 @@
                                             </el-option>
                                         </el-select>
                                         <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> 
-                                        <span class="unit">{{rule_data.metricUnit}}</span>
+                                        <span class="unit">{{inn.metricUnit}}</span>
                                         <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
                                                 v-for="item in static_list.cycle_time"
@@ -222,11 +222,10 @@ export default class RuleConfig extends Vue{
     private index_list:any=[]
     private rule_data:any={
         name:'',
-        metricID:'',
+        metricID:[],
         event_type:'',
-        event_name:'',
+        event_name:[],
         alram_type:'',
-        metricUnit:'',
         notice:[],
         level:[{
             range:'>=',
@@ -235,6 +234,7 @@ export default class RuleConfig extends Vue{
             cycle_num:'1',
             alram_type:'2',
             notice:["email"],
+            metricUnit:''
         }]
     }
 
@@ -259,13 +259,16 @@ export default class RuleConfig extends Vue{
     @Watch("rule_data.metricID")
     private watch_metricID(newVal){
         console.log("rule_data.metricID",newVal)
+        let unit:string=""
         this.index_list.forEach(item=>{
             item.children.forEach(inn=>{
                 if(inn.value===newVal[1]){
-                    this.rule_data.metricUnit = inn.unit
+                    unit = inn.unit
                 }
             })
         })
+        this.rule_data.level.map(item=>item.metricUnit = unit)
+        console.log("this.rule_data",this.rule_data)
     }
     //获取指标项列表
     private async get_index_list(){
@@ -289,6 +292,7 @@ export default class RuleConfig extends Vue{
             });
         }
     }
+    //编辑或者选中某个已有的规则
     @Watch("strategy_data",{immediate:true,deep:true})
     private watch_strategy_data(newVal){
         console.log("watch_strategy_data",newVal)
@@ -387,6 +391,7 @@ export default class RuleConfig extends Vue{
             cycle_num:'1',
             alram_type:'2',
             notice:["email"],
+            metricUnit:this.rule_data.level[0].metricUnit
         }
         this.rule_data = {...this.rule_data,level:[...this.rule_data.level,obj]}
     }
@@ -394,7 +399,12 @@ export default class RuleConfig extends Vue{
         const {level}=this.rule_data
         this.rule_data = {...this.rule_data,level:level.filter((item,index)=>index<level.length-1)}
     }
-    private add_rule(){
+    //getDesc
+    private getDesc(obj,type){
+        return type==="0" ? `${this.rule_data.name} ${obj.range} ${obj.num}${obj.metricUnit} ${this.trans_arr(obj.alram_type,alarm_type)} 持续${obj.cycle_num}次就报警` :
+                           [`${this.trans_arr(this.rule_data.alram_type,alarm_type)} | ${this.trans_arr(this.rule_data.event_name,event_name)}`] 
+    }
+    private add_rule(){//确定添加规则或者编辑规则
         const {alarm_type,event_name} = this.static_list
         const form = this.tab_key==="0" ? this.$refs.rules_form[0] as Form : this.$refs.event_form[0] as Form
         form.validate(async (valid)=>{
@@ -402,16 +412,16 @@ export default class RuleConfig extends Vue{
                 const {selected_products,tab_key,edit_key,edit_rule_id} = this
                 selected_products.map(item=>{
                     if(item.visible){
-                        if(edit_key===""){
+                        if(edit_key===""){//新增
                             const obj = {...this.rule_data,tab_key,id:item.id+Math.floor((Math.random()*9+1)*1000000)}
-                            if(tab_key==="0"){
+                            if(tab_key==="0"){//阈值报警
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:this.rule_data.level.map(inn=>{
-                                        return `${this.rule_data.name} ${inn.range} ${inn.num}% ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                                        return `${this.rule_data.name} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
                                     })
                                 }]
-                            }else{
+                            }else{//事件报警
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:[`${this.trans_arr(this.rule_data.alram_type,alarm_type)} | ${this.trans_arr(this.rule_data.event_name,event_name)}`]
@@ -422,7 +432,7 @@ export default class RuleConfig extends Vue{
                                 if(inn.id === edit_rule_id){
                                     inn = {...inn,...this.rule_data}
                                     inn.desc = inn.tab_key==="0" ? inn.level.map(inner=>{
-                                        return `${inn.name} ${inner.range} ${inner.num}% ${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
+                                        return `${inn.name} ${inner.range} ${inner.num}${inn.metricUnit}${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
                                     }) : [`${this.trans_arr(inn.alram_type,alarm_type)} | ${this.trans_arr(inn.event_name,event_name)}`]
                                 }
                                 return inn;
@@ -463,7 +473,7 @@ export default class RuleConfig extends Vue{
         const event_form = this.$refs.event_form[0] as Form
         rules_form.resetFields()
         event_form.resetFields()
-        this.rule_data.metricID=""
+        // this.rule_data.metricID=[]
         this.rule_data.level=[
             {
                 range:'>=',
@@ -472,6 +482,7 @@ export default class RuleConfig extends Vue{
                 cycle_num:'1',
                 alram_type:'2',
                 notice:["email"],
+                metricUnit:''
             }
         ]
     }
