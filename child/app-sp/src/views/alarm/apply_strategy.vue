@@ -152,8 +152,17 @@ export default class ApplyStrategy extends Vue{
     private contact_group_list:any=[]
     private cycle_list = cycle_period
     created() {
-        // this.get_area_list();
-        // this.getContactGroupList('')
+        this.get_area_list();
+        this.getContactGroupList('')
+    }
+    private valid(name){
+        this.$nextTick(()=>{
+            const form = this.$refs[name] as Form
+            form && form.validate(async (valid)=>{
+            
+            })  
+        })
+        
     }
     //获取联系人组列表
      private async getContactGroupList(name){
@@ -180,6 +189,10 @@ export default class ApplyStrategy extends Vue{
                 this.get_customer_name()
             }
         }) 
+    }
+    @Watch("form_data.notice_user")
+    private watch_notice_user(newVal){
+        this.valid('form')
     }
     //获取客户名称
     private async get_customer_name(){
@@ -258,6 +271,7 @@ export default class ApplyStrategy extends Vue{
     
     @Emit("close")
     private close(val){
+        console.log("close",val)
         this.drawer_sync=false
     }
 }

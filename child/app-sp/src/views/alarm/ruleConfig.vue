@@ -28,7 +28,7 @@
                 <el-tabs v-model="tab_key" type="card" @tab-click="changeTab">
                     <el-tab-pane label="阈值报警" title="0" :disabled="edit_key==='1'">
                         <div class="rule-warn">
-                            <el-form :model="rule_data" ref="rules_form" label-width="150px" class="demo-dynamic">
+                            <el-form :model="rule_data" ref="rules_form" key="rules_form" label-width="150px" class="demo-dynamic">
                                 <el-form-item
                                     prop="name"
                                     label="规则名称"
@@ -70,9 +70,14 @@
                                             >
                                             </el-option>
                                         </el-select>
-                                        <el-input-number size="small" v-model="inn.num" controls-position="right" :min="1" :max="100"></el-input-number> 
-                                        <span class="unit">{{rule_data.metricUnit}}</span>
-                                        <el-select v-model="inn.cycle_time" size="small">
+                                        <el-input
+                                            size="small"
+                                            v-model.number="inn.num">
+                                            <span slot="suffix">{{inn.metricUnit}}</span>
+                                        </el-input>
+                                        <span class="error_message remark" v-if="inn.num==='' || !Number.isInteger(inn.num)">{{inn.num==='' ? '请输入指标项值' : '指标项值需为数字'}}</span>
+                                        
+                                     <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
                                                 v-for="item in static_list.cycle_time"
                                                 :key="item.id"
@@ -118,7 +123,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="事件报警" title="1" :disabled="edit_key==='0'">
                         <div class="rule-warn">
-                            <el-form :model="rule_data" ref="event_form" label-width="150px" class="demo-dynamic">
+                            <el-form :model="rule_data" ref="event_form" key="event_form" label-width="150px" class="demo-dynamic">
                                 <el-form-item
                                     prop="name"
                                     label="规则名称"
@@ -188,7 +193,7 @@
                     </el-tab-pane>
                 </el-tabs>
                 <div class="btn">
-                    <el-button type="primary" @click="add_rule">确定</el-button>
+                    <el-button type="primary" @click="add_rule()">确定</el-button>
                     <el-button type="cancel" @click="cancel">取消</el-button>
                 </div>
             </div>
@@ -210,7 +215,7 @@
 <script lang="ts">
 import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator';
 import { Form } from "element-ui";
-import {level_list,range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/alarm_data';
+import {range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/alarm_data';
 import Service from '../../https/alarm/list'
 @Component({})
 export default class RuleConfig extends Vue{
@@ -222,24 +227,22 @@ export default class RuleConfig extends Vue{
     private index_list:any=[]
     private rule_data:any={
         name:'',
-        metricID:'',
+        metricID:[],
         event_type:'',
-        event_name:'',
+        event_name:[],
         alram_type:'',
-        metricUnit:'',
         notice:[],
         level:[{
             range:'>=',
-            num:1,
+            num:'',
             cycle_time:'1',
             cycle_num:'1',
             alram_type:'2',
             notice:["email"],
+            metricUnit:''
         }]
     }
-
     private static_list={
-        level_list,
         range_list,
         notice_list,
         alarm_type,
@@ -256,16 +259,51 @@ export default class RuleConfig extends Vue{
         })
         this.get_index_list()
     }
+    private valid(name){
+        this.$nextTick(()=>{
+            const form = this.$refs[name] as Form
+            form && form[0].validate(async (valid)=>{
+            
+            })  
+        })
+        
+    }
+    private get event(){
+        const {event_type,event_name,alram_type,notice}=this.rule_data
+        return {
+            event_type,
+            event_name,
+            alram_type,
+            notice,
+        }
+    }
+    @Watch('event',{immediate:true,deep:true})
+    private watch_event(newVal){
+        this.valid('event_form')
+    }
     @Watch("rule_data.metricID")
     private watch_metricID(newVal){
-        console.log("rule_data.metricID",newVal)
+        this.valid('rules_form')
+        let unit:string=""
         this.index_list.forEach(item=>{
             item.children.forEach(inn=>{
                 if(inn.value===newVal[1]){
-                    this.rule_data.metricUnit = inn.unit
+                    unit = inn.unit
                 }
             })
         })
+        this.rule_data.level.map(item=>item.metricUnit = unit)
+    }
+    private get_index_list_by_value(value){
+        let arr = []
+        this.index_list.forEach(item=>{
+            item.children.forEach(inn=>{
+                if(inn.value===value){
+                    arr=[item.value,value]
+                }
+            })
+        })
+        return arr;
     }
     //获取指标项列表
     private async get_index_list(){
@@ -289,9 +327,9 @@ export default class RuleConfig extends Vue{
             });
         }
     }
+    //编辑或者选中某个已有的规则
     @Watch("strategy_data",{immediate:true,deep:true})
     private watch_strategy_data(newVal){
-        console.log("watch_strategy_data",newVal)
         if(Object.keys(newVal).length===0){
             return;
         }
@@ -305,14 +343,15 @@ export default class RuleConfig extends Vue{
                     cycle_time:item.metricPeriod.toString(),
                     cycle_num:item.metricPeriodNum.toString(),
                     alram_type:item.alarmType==="event" ? '' : item.level.toString(),
-                    notice:item.alarmType==="event" ? [] : item.alarmMethod
+                    notice:item.alarmType==="event" ? [] : item.alarmMethod,
+                    metricUnit:item.metricUnit
                 })
             })
             const obj = {//相当于rule_data
                 id:element.id,
                 tab_key:element.ruleRecords[0].alarmType==="event" ? '1' : '0',
                 name:element.name,
-                metricID:element.ruleRecords[0].metricID,
+                metricID:this.get_index_list_by_value(element.ruleRecords[0].metricID),
                 event_type:element.ruleRecords[0].eventType,
                 event_name:element.ruleRecords[0].eventName,
                 metricUnit:element.ruleRecords[0].alarmType==="event" ? '' : element.ruleRecords[0].metricUnit,
@@ -324,7 +363,7 @@ export default class RuleConfig extends Vue{
                 
                     :
                     list.map(inn=>{
-                    return `${element.name} ${inn.range} ${inn.num}% ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                    return `${element.name} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
                 })
             }
             const fil:any = this.selected_products.filter(item=>item.id===element.productType)
@@ -353,7 +392,6 @@ export default class RuleConfig extends Vue{
         const fil = this.product_list.filter(item=>item.id===e)
         fil[0].rule_list = []
         this.selected_products=[...this.selected_products,...fil ]
-        console.log("this.selected_products",this.selected_products)
     }
     private del_product(id:String){
         this.selected_products = this.selected_products.filter(item=>item.id!==id)
@@ -382,11 +420,12 @@ export default class RuleConfig extends Vue{
         let len:number = this.rule_data.level.length
         const obj={
             range:'>=',
-            num:1,
+            num:'',
             cycle_time:'1',
             cycle_num:'1',
             alram_type:'2',
             notice:["email"],
+            metricUnit:this.rule_data.level[0].metricUnit
         }
         this.rule_data = {...this.rule_data,level:[...this.rule_data.level,obj]}
     }
@@ -394,24 +433,27 @@ export default class RuleConfig extends Vue{
         const {level}=this.rule_data
         this.rule_data = {...this.rule_data,level:level.filter((item,index)=>index<level.length-1)}
     }
-    private add_rule(){
-        const {alarm_type,event_name} = this.static_list
+    private add_rule(){//确定添加规则或者编辑规则
         const form = this.tab_key==="0" ? this.$refs.rules_form[0] as Form : this.$refs.event_form[0] as Form
         form.validate(async (valid)=>{
             if(valid){
+                if(this.tab_key==="0" && this.rule_data.level.some(item=>item.num==="" || !Number.isInteger(item.num))){
+                    return;
+                }
                 const {selected_products,tab_key,edit_key,edit_rule_id} = this
                 selected_products.map(item=>{
                     if(item.visible){
-                        if(edit_key===""){
+                        
+                        if(edit_key===""){//新增
                             const obj = {...this.rule_data,tab_key,id:item.id+Math.floor((Math.random()*9+1)*1000000)}
-                            if(tab_key==="0"){
+                            if(tab_key==="0"){//阈值报警
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:this.rule_data.level.map(inn=>{
-                                        return `${this.rule_data.name} ${inn.range} ${inn.num}% ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                                        return `${this.rule_data.name} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
                                     })
                                 }]
-                            }else{
+                            }else{//事件报警
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:[`${this.trans_arr(this.rule_data.alram_type,alarm_type)} | ${this.trans_arr(this.rule_data.event_name,event_name)}`]
@@ -422,7 +464,7 @@ export default class RuleConfig extends Vue{
                                 if(inn.id === edit_rule_id){
                                     inn = {...inn,...this.rule_data}
                                     inn.desc = inn.tab_key==="0" ? inn.level.map(inner=>{
-                                        return `${inn.name} ${inner.range} ${inner.num}% ${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
+                                        return `${inn.name} ${inner.range} ${inner.num}${inner.metricUnit}${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
                                     }) : [`${this.trans_arr(inn.alram_type,alarm_type)} | ${this.trans_arr(inn.event_name,event_name)}`]
                                 }
                                 return inn;
@@ -447,9 +489,7 @@ export default class RuleConfig extends Vue{
         this.show_rule_box()
         
     }
-    private del_rule(pro_id:string,id:string){
-        console.log("pro_id",pro_id,id,this.selected_products)
-        
+    private del_rule(pro_id:string,id:string){        
         this.selected_products.map(item=>{
             if(item.id===pro_id){
                 item.rule_list = item.rule_list.filter(inn=>inn.id!==id)
@@ -463,15 +503,15 @@ export default class RuleConfig extends Vue{
         const event_form = this.$refs.event_form[0] as Form
         rules_form.resetFields()
         event_form.resetFields()
-        this.rule_data.metricID=""
         this.rule_data.level=[
             {
                 range:'>=',
-                num:1,
+                num:'',
                 cycle_time:'1',
                 cycle_num:'1',
                 alram_type:'2',
                 notice:["email"],
+                metricUnit:''
             }
         ]
     }
@@ -568,13 +608,13 @@ export default class RuleConfig extends Vue{
         background: #f5f6fa;
         margin-bottom: 10px;
         padding: 10px 5px 0 5px;
+        position: relative;
         .unit{
             margin: 0 5px;
         }
         .notice{
             display: flex;
             justify-content: space-between;
-            
             .level-btn{
                 text-align: right;
                 .el-icon-circle-plus:before,.el-icon-remove:before{
@@ -586,6 +626,31 @@ export default class RuleConfig extends Vue{
                 }
             }
         }
+        // .index-value{
+        //     width: 193px;
+        //     margin-right: 3px;
+        //     position: relative;
+        //     display: inline-block;
+        //     padding-bottom: 12px;
+        //     span{
+        //         position: absolute;
+        //         width: 100%;
+        //         left: 0;
+        //         bottom: -15px;
+
+        //     }
+            
+        // }
+        .remark{
+            position: absolute;
+            top: 35px;
+            left: 208px;
+        }
+        .el-input.el-input--small.el-input--suffix{
+                width: 193px;
+                margin-right: 5px;
+            }
+        
     }
     .check{
         display: flex;
@@ -600,9 +665,7 @@ export default class RuleConfig extends Vue{
         
         .el-select.el-select--small {
             margin-right: 5px !important;
-        }
-        .el-input-number.el-input-number--small.is-controls-right{
-            margin-right: 5px !important;
+            margin-bottom: 10px !important;
         }
     }
 </style>

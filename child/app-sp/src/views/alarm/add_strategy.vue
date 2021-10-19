@@ -3,13 +3,13 @@
         <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
         <div class="main_box">
             <el-card class="create">
-                <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic">
+                <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                     <el-form-item
                         prop="name"
                         label="策略名称"
-                        :rules="[{required:true,message:'请输入策略名称',trigger:'blur'}]"
                     >
-                        <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="请输入策略名称" />
+                        <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="2-60个字符" />
+                        <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
                     </el-form-item>
                     <el-form-item
                         prop="stategy"
@@ -62,7 +62,12 @@ export default class Index extends Vue{
     private edit_id:string=""
     private strategy_list:any=[]
     private strategy_data:any={}
-    
+    private rules={
+        name:[
+                {required:true,message:'请输入策略名称',trigger:'blur'},
+                { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'请输入正确的策略名称',trigger:'blur' }
+        ]
+    }
     created() {
         this.edit_id = this.$route.query.id ? this.$route.query.id : ''
         this.getStrategyList()
@@ -115,7 +120,7 @@ export default class Index extends Vue{
                         const temp=[]
                         inn.level.map(lev=>{//第三层阈值及报警级别指标项
                             const temp_obj={
-                                metricID:Array.isArray(inn.metricID)  ? inn.metricID[1] : inn.metricID,
+                                metricID:inn.metricID[1],
                                 metricCondition:lev.range,
                                 metricValue:parseInt(lev.num),
                                 metricPeriod:parseInt(lev.cycle_time),
@@ -123,7 +128,7 @@ export default class Index extends Vue{
                                 level:parseInt(lev.alram_type),
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
                                 alarmMethod:lev.notice ? lev.notice : [],
-                                metricUnit:inn.metricUnit
+                                metricUnit:lev.metricUnit
                             }
                             temp.push(temp_obj)
                         })

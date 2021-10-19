@@ -85,11 +85,12 @@ export default class InsDetail extends Vue{
         }
   }
   private validate_phone:any = (rule:any, value:string, callback:any)=>{
-        if(value.length===11){
-            return callback()
-        }else{
-            return callback(new Error("请输入正确的手机号码"))
-        }
+      let reg = /^1[0-9]{10}$/
+      if(reg.test(value)){
+          return callback()
+      }else{
+          return callback(new Error("请输入正确的手机号码"))
+      }
     }
   private async get_contact_detail(){
     let res:any = await Service.get_contact_detail({
@@ -108,6 +109,7 @@ export default class InsDetail extends Vue{
   }
   private confirm(){
       const form = this.$refs.form as Form
+      console.log("form",form)
       form.validate(async (valid:boolean)=>{
           if(valid){
             if(this.id===""){

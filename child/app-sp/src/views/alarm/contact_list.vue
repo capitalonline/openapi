@@ -2,9 +2,9 @@
   <div>
     <action-block :search_option="search" @fn-search="fn_search">
         <template #default>
-            <el-button type="primary" @click="add">新建联系人</el-button>
-            <el-button type="primary" @click="del({})">删除联系人</el-button>
-            <el-button type="primary" @click="addToWarnGroup">添加至报警联系组</el-button>
+            <el-button type="primary" @click="add" :disabled="!auth_list.includes('add_contact')">新建联系人</el-button>
+            <el-button type="primary" @click="del({})" :disabled="!auth_list.includes('delete_contact')">删除联系人</el-button>
+            <el-button type="primary" @click="addToWarnGroup" :disabled="!auth_list.includes('add_to_group')">添加至报警联系组</el-button>
         </template>
     </action-block>
     <el-table 
@@ -21,8 +21,8 @@
         <el-table-column prop="groupName" label="所属报警组"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row.id)">编辑</el-button>
-            <el-button type="text" @click="del(scope.row)">删除</el-button>
+            <el-button type="text" @click="edit(scope.row.id)" :disabled="!auth_list.includes('edit_contact')">编辑</el-button>
+            <el-button type="text" @click="del(scope.row)" :disabled="!auth_list.includes('delete_contact')">删除</el-button>
           </template>
         </el-table-column>
     </el-table>
@@ -30,7 +30,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="current"
-        :page-sizes="[20, 50, 100]"
+        :page-sizes="[2,20, 50, 100]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -63,6 +63,7 @@ import {Table} from'element-ui'
     }
 })
 export default class ContactList extends Vue{
+    $route;
     private type_list=[
         {
             type:'name',
@@ -91,9 +92,10 @@ export default class ContactList extends Vue{
     private del_visible:Boolean=false
     private contact_rows:any=[]
     private search_data:any={}
-    
+    private auth_list:any=[]
     created() {
-        // this.fn_search()
+        this.fn_search()
+        this.auth_list=this.$store.state.auth_info[this.$route.name]
     }
     private fn_search(data:any={}){
         this.current = 1
@@ -107,7 +109,12 @@ export default class ContactList extends Vue{
             [this.search_data.typesub ? this.search_data.typesub : 'name']:this.search_data.type
         })
         if(res.code==='Success'){
-            this.list = res.data.datas || []
+            this.list = res.data.datas
+            this.list.map(item=>{
+                let arr = item.groups.map(inn=>inn.name)
+                item.groupName = arr.join(',')
+                return item;
+            })
             this.total = res.data.total || 0
         }
     }
