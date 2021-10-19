@@ -2,10 +2,10 @@
     <div>
         <action-block :search_option="search" @fn-search="fn_search">
             <template #default>
-                <el-button type="primary" @click="create">创建策略</el-button>
-                <el-button type="primary" @click="del(false)">删除</el-button>
-                <el-button type="primary" @click="apply(true)">应用</el-button>
-                <el-button type="primary" @click="apply(false)">停用</el-button>
+                <el-button type="primary" @click="create" :disabled="!auth_list.includes('alarm_strategy_create')">创建策略</el-button>
+                <el-button type="primary" @click="del(false)" :disabled="!auth_list.includes('delete')">删除</el-button>
+                <el-button type="primary" @click="apply(true)" :disabled="!auth_list.includes('apply')">应用</el-button>
+                <el-button type="primary" @click="apply(false)" :disabled="!auth_list.includes('stop')">停用</el-button>
             </template>
         </action-block>
         <el-table
@@ -45,10 +45,10 @@
             </el-table-column>
             <el-table-column label="操作栏">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="edit(scope.row.id)">修改</el-button>
-                    <el-button type="text" @click="apply(true,scope.row)" :disabled="scope.row.enable">应用</el-button>
-                    <el-button type="text" @click="apply(false,scope.row)" :disabled="!scope.row.enable">停用</el-button>
-                    <el-button type="text" @click="del(scope.row)">删除</el-button>
+                    <el-button type="text" @click="edit(scope.row.id)" :disabled="!auth_list.includes('edit')">修改</el-button>
+                    <el-button type="text" @click="apply(true,scope.row)" :disabled="scope.row.enable || !auth_list.includes('apply')">应用</el-button>
+                    <el-button type="text" @click="apply(false,scope.row)" :disabled="!scope.row.enable || !auth_list.includes('stop')">停用</el-button>
+                    <el-button type="text" @click="del(scope.row)" :disabled="!auth_list.includes('delete')">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -56,7 +56,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="current"
-            :page-sizes="[20, 50, 100]"
+            :page-sizes="[2,20, 50, 100]"
             :page-size="size"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
@@ -74,7 +74,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue,Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import ApplyStrategy from './apply_strategy.vue'
 import Service from '../../https/alarm/list'
@@ -91,6 +91,7 @@ import moment from 'moment'
 })
 export default class Strategy extends Vue{
     $router;
+    $route;
     private search:any={
         name:{placeholder:'请输入策略名称'}
     }
@@ -104,9 +105,17 @@ export default class Strategy extends Vue{
     private del_visible:boolean=false;
     private detail_visible:Boolean=false
     private strategy_rows:any=[]
-    private enable:Boolean=true
+    private enable:Boolean=true;
+    private auth_list:any=[]
     created() {
         this.fn_search()
+        this.auth_list=this.$store.state.auth_info[this.$route.name]
+    }
+    @Watch("drawer")
+    private watch_drawer(newVal){
+        if(!newVal){
+            this.strategy_rows=[]
+        }
     }
     private fn_search(data:any={}){
         this.current =1
@@ -117,6 +126,8 @@ export default class Strategy extends Vue{
         const {search_data:{name}} = this
         let res:any = await Service.get_strategy_list({
             name,
+            page:this.current,
+            pageSize:this.size,
         })
         if(res.code==='Success'){
             this.list = res.data.datas || []
@@ -156,7 +167,6 @@ export default class Strategy extends Vue{
         this.del_visible=true
     }
     private apply(enable:Boolean,row:any){
-        console.log("row",row)
         if(row) this.strategy_rows=[row];
         if(!row && this.strategy_rows.length===0){
             this.$message.warning("请先勾选策略！")
@@ -171,7 +181,6 @@ export default class Strategy extends Vue{
     }
     private close_apply(val){
         this.strategy_rows=[]
-        console.log("this.close_apply",this.strategy_rows)
         val==='1' && this.getStrategyList()
     }
     
