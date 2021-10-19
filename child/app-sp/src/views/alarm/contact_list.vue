@@ -30,7 +30,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="current"
-        :page-sizes="[20, 50, 100]"
+        :page-sizes="[2,20, 50, 100]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -93,7 +93,7 @@ export default class ContactList extends Vue{
     private search_data:any={}
     
     created() {
-        // this.fn_search()
+        this.fn_search()
     }
     private fn_search(data:any={}){
         this.current = 1
@@ -107,7 +107,12 @@ export default class ContactList extends Vue{
             [this.search_data.typesub ? this.search_data.typesub : 'name']:this.search_data.type
         })
         if(res.code==='Success'){
-            this.list = res.data.datas || []
+            this.list = res.data.datas
+            this.list.map(item=>{
+                let arr = item.groups.map(inn=>inn.name)
+                item.groupName = arr.join(',')
+                return item;
+            })
             this.total = res.data.total || 0
         }
     }

@@ -28,7 +28,6 @@ import GroupList from './contact_group_list.vue'
 export default class Contact extends Vue{
     private activeName:string="0"
     private handleClick(){
-
     }
 }
 </script>

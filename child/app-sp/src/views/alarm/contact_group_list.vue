@@ -31,7 +31,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="current"
-        :page-sizes="[20, 50, 100]"
+        :page-sizes="[2,20, 50, 100]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -62,43 +62,11 @@ export default class ContactList extends Vue{
         name:{placeholder:'请输入组名后查询'}
     }
     private search_data:any={}
-    private list = [{name:1}]
+    private list = []
     private current:number=1
     private size:number=20
     private total:number=0
-    private group_list=[{
-        id:'1',
-        check:false,
-        name:'group',
-        members:[
-            {name:'1'},
-            {name:'12'},
-            {name:'13'},
-            {name:'14'},
-            {name:'15'},
-            {name:'16'},
-            {name:'17'},
-            {name:'18'},
-            {name:'19'},
-            {name:'10'},
-            {name:'11'},
-
-        ]
-    },{
-        id:'2',
-        check:false,
-        name:'group2',
-        members:[
-            {name:'1'},
-            {name:'12'},
-            {name:'13'},
-            {name:'14'},
-            {name:'15'},
-            {name:'16'},
-
-        ]
-    }
-    ]
+    private group_list=[]
     private group_title:String = "新建联系人组"
     private group_visible:Boolean=false
     private del_visible:Boolean=false
@@ -106,7 +74,7 @@ export default class ContactList extends Vue{
     private group_rows:any=[]
 
     created() {
-        // this.fn_search()
+        this.fn_search()
     }
     private fn_search(data:any={}){
         this.search_data = data
@@ -114,7 +82,9 @@ export default class ContactList extends Vue{
     }
     private async getContactGroupList(){
         let res:any = await Service.get_contact_group_list({
-            name:this.search_data.name
+            name:this.search_data.name,
+            page:this.current,
+            pageSize:this.size,
         })
         if(res.code==='Success'){
             this.group_list = res.data.datas.map(item=>{

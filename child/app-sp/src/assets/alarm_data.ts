@@ -188,22 +188,22 @@ export const productList = [
         id:'ecs',
         name:'ecs'
     },
-    {
-        id:'gpu',
-        name:'GPU'
-    },
-    {
-        id:'slb',
-        name:'负载均衡'
-    },
-    {
-        id:'vpc',
-        name:'私有网络VPC'
-    },
-    {
-        id:'safe',
-        name:'安全组'
-    },
+    // {
+    //     id:'gpu',
+    //     name:'GPU'
+    // },
+    // {
+    //     id:'slb',
+    //     name:'负载均衡'
+    // },
+    // {
+    //     id:'vpc',
+    //     name:'私有网络VPC'
+    // },
+    // {
+    //     id:'safe',
+    //     name:'安全组'
+    // },
 ]
 
 export const range_list=[

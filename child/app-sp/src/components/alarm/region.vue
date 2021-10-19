@@ -59,7 +59,6 @@ export default class Region extends Vue{
 
   @Watch("area_list",{immediate:true,deep:true})
   private watch_area_list(newVal){
-      console.log("newVal",newVal)
       this.selected_key=[]
       let region_info:any={}
       let region_key:any=[]

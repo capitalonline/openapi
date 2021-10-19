@@ -23,7 +23,7 @@
                 <template slot-scope="scope">
                     <div class="used-products">
                         <span class="app"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0]};${scope.row.instances[1]};...` : scope.row.instances.join(';') : '--'}}</span>
-                        <i class="el-icon-document" v-if="scope.row.instances"></i>
+                        <i class="el-icon-document" v-if="scope.row.instances" @click="go_detail"></i>
                     </div>
                     
                 </template>
@@ -66,7 +66,9 @@
         </template>
         <template v-if="del_visible">
             <common-del :visible.sync="del_visible" :title="'删除策略'" :rows="strategy_rows" @close ="close_apply" />
-
+        </template>
+        <template v-if="detail_visible">
+            <apply-detail :visible.sync="detail_visible" @close="close_apply" />
         </template>
         
     </div>
@@ -76,13 +78,15 @@ import { Component, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import ApplyStrategy from './apply_strategy.vue'
 import Service from '../../https/alarm/list'
-import CommonDel from './commonDel.vue'
+import CommonDel from './commonDel.vue';
+import ApplyDetail from './apply_product_detail.vue'
 import moment from 'moment'
 @Component({
     components:{
         ActionBlock,
         ApplyStrategy,
-        CommonDel
+        CommonDel,
+        ApplyDetail,
     }
 })
 export default class Strategy extends Vue{
@@ -98,6 +102,7 @@ export default class Strategy extends Vue{
     private total:number = 0
     private moment:any = moment;
     private del_visible:boolean=false;
+    private detail_visible:Boolean=false
     private strategy_rows:any=[]
     private enable:Boolean=true
     created() {
@@ -133,10 +138,14 @@ export default class Strategy extends Vue{
     private create(){
         this.$router.push('/alarmStrategy/create')
     }
+    private go_detail(){
+        this.detail_visible=true
+    }
     private edit(id:string){
         this.$router.push({path:'/alarmStrategy/create',query:{id}})
     }
     private del(ids){
+        console.log("del",ids,this.strategy_rows)
         if(!ids && this.strategy_rows.length===0){
             this.$message.warning("请先勾选策略！")
             return;
@@ -162,6 +171,7 @@ export default class Strategy extends Vue{
     }
     private close_apply(val){
         this.strategy_rows=[]
+        console.log("this.close_apply",this.strategy_rows)
         val==='1' && this.getStrategyList()
     }
     
