@@ -11,7 +11,7 @@
             <div v-for="item in area_list" :key="item.region_group_id">
                 <el-divider content-position="left" class="divider">{{item.region_group_name}}</el-divider>
                 <el-checkbox :indeterminate="item.isIndeterminate_group" v-model="item.check" @change="handleCheckGroupChange($event,item.region_group_id)" class="group-all">全选</el-checkbox>
-                <el-checkbox-group v-model="item.region" @change="handleCheckedRegionChange($event,item.region_group_id)" class="group">
+                <el-checkbox-group v-model="item.region" @change="handleCheckedRegionChange" class="group">
                     <el-checkbox v-for="area in item.region_list" :label="area.region_id" :key="area.region_id">{{area.region_name}}</el-checkbox>
                 </el-checkbox-group>
             </div>
@@ -19,7 +19,6 @@
         </div>
         <el-select
             v-model="selected_key"
-            :disabled="disabled"
             multiple
             allow-create
             ref="region-select"
@@ -40,38 +39,70 @@ import moment from 'moment';
 
 @Component({})
 export default class Region extends Vue{
-  @Prop({default:()=>{}}) list!:any
-  @Prop(Boolean) disabled!:Boolean
+  @Prop({default:()=>{}}) list!:any;
+  @Prop({default:()=>[]}) region_id!:any
+  @Prop(String) value!:String;
   private visible:boolean=false
   private selected_key:Array<string>=[];
   private area_list:any = []
   private checkAll:boolean=false;
-  private isIndeterminate:boolean=false
+  private isIndeterminate:boolean=false;
   created() {
-  }
-  @Watch("list",{immediate:true,deep:true})
-  private watch_list(newVal){
-      this.area_list = newVal.map(item=>{
-        item = Object.assign({},item,{check:false,isIndeterminate_group:false,region:[]})
-        return item;
-    })
+    
   }
 
+  //获取list的旧值
+    private get new_list(){
+        return JSON.parse(JSON.stringify(this.list))
+    }
+  @Watch("new_list",{immediate:true,deep:true})
+  private watch_new_list(nv,ov){
+      this.area_list=nv.length>0 ? nv.map(item=>{
+        let arr=[]
+        item.region_list.map(inn=>{
+            if(this.region_id.includes(inn.region_id)){
+                arr.push(inn.region_id)
+            }
+            return inn;
+        })
+        
+        let check1 = arr.length===item.region_list.length ? true : false;
+        let isIndeterminate_group1 = arr.length===0 || arr.length===item.region_list.length ? false : true;
+        item = Object.assign({},item,{check:check1,isIndeterminate_group:isIndeterminate_group1,region:arr})
+        return item;
+    }) : []
+     this.judge()
+  }
   @Watch("area_list",{immediate:true,deep:true})
   private watch_area_list(newVal){
       this.selected_key=[]
       let region_info:any={}
       let region_key:any=[]
-      newVal.map(item=>{
+      newVal && newVal.map(item=>{
           region_key=[...region_key,...item.region]
           region_info={...region_info,[item.region_group_id]:item.region}
           this.selected_key = [...this.selected_key,...this.trans(item.region,item.region_group_id)]
       })
+      
+      
       this.get_area_id({region_info,region_key})
+  }
+  private judge(){
+    if(this.area_list.every(item=>item.check)){
+          this.isIndeterminate = false
+          this.checkAll = true
+      }else{
+          if(this.area_list.every(item=>!item.isIndeterminate_group && !item.check)){
+              this.isIndeterminate = false
+              this.checkAll=false
+          }else{
+              this.isIndeterminate = true
+              this.checkAll=false
+          }
+      }
   }
   @Emit("get_area_id")
   private get_area_id(val:any){
-
   }
   private handleCheckAllChange(val){
       this.area_list.map(item=>{
@@ -87,14 +118,16 @@ export default class Region extends Vue{
               item.check = check
           }
       })
-      if(this.area_list.every(item=>item.check) || this.area_list.every(item=>!item.check)){
-          this.isIndeterminate = false
-          this.checkAll = this.area_list[0].check
-      }else{
-          this.isIndeterminate = true
-      }
+    //   if(this.area_list.every(item=>item.check) || this.area_list.every(item=>!item.check)){
+    //       this.isIndeterminate = false
+    //       this.checkAll = this.area_list[0].check
+    //   }else{
+    //       this.isIndeterminate = true
+    //   }
+      this.judge()
+   
   }
-  private handleCheckedRegionChange(list:any,id:string){
+  private handleCheckedRegionChange(){
       this.area_list.map(item=>{
           if(item.region.length===0){
               item.isIndeterminate_group = false

@@ -11,6 +11,10 @@ export const usble_area_list = [
                     {
                         "az_id":"a18d6c6a-9619-418a-8526-2878f2653d5f",
                         "az_name":"北京A"
+                    },
+                    {
+                        "az_id":"a18d6c6a-9619-418a-8526-2878f2653d54",
+                        "az_name":"北京B"
                     }
                 ]
                 

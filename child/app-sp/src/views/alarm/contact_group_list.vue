@@ -80,6 +80,7 @@ export default class ContactList extends Vue{
     }
     private fn_search(data:any={}){
         this.search_data = data
+        this.current=1
         this.getContactGroupList()
     }
     private async getContactGroupList(){

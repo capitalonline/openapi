@@ -13,7 +13,7 @@
                         { required: false, trigger: 'blur', validator: validate_customer }
                     ]"
                 >
-                    <el-input v-model="form_data.customer_id" :disabled="!enable" />
+                    <el-input v-model="form_data.customer_id" />
                 </el-form-item>
                 <el-form-item
                     prop="customer_name"
@@ -25,20 +25,20 @@
                     prop="area"
                     label="地域："
                 >
-                    <Region :region_id="form_data.area" :list="area_list" @get_area_id="get_area_id" :disabled="!enable" />
+                    <Region :value="'region'" :region_id="region_az_id.regions" :list="area_list" @get_area_id="get_area_id" />
                 </el-form-item>
                 <el-form-item
                     prop="az"
                     label="可用区:"
                 >
-                    <Region :region_id="form_data.az" :list="az_list" @get_area_id="get_az_id" :disabled="!enable" />
+                    <Region :value="'az'" :region_id="region_az_id.az" :list="az_list" @get_area_id="get_az_id" />
                 </el-form-item>
                 <el-form-item
                     prop="cycle"
                     label="通道沉默周期:"
 
                 >
-                    <el-select v-model="form_data.cycle" placeholder="请选择通道沉默周期" :disabled="!enable">
+                    <el-select v-model="form_data.cycle" placeholder="请选择通道沉默周期">
                         <el-option
                             v-for="item in cycle_list"
                             :key="item.id"
@@ -55,7 +55,6 @@
                 <div class="time">
                     <el-time-select
                         v-model="form_data.start_time"
-                        :disabled="!enable"
                         :clearable="false"
                         :editable="false"
                         :picker-options="{
@@ -70,7 +69,6 @@
                         v-model="form_data.end_time"
                         :clearable="false"
                         :editable="false"
-                        :disabled="!enable"
                         :picker-options="{
                             format: 'HH:mm',
                             start: '00:59',
@@ -85,7 +83,7 @@
                     prop="address"
                     label="报警回调:"
                 >
-                    <el-input v-model="form_data.address" :disabled="!enable" placeholder="请输入报警回调地址" />
+                    <el-input v-model="form_data.address" placeholder="请输入报警回调地址" />
                 </el-form-item>
                 
                 <el-form-item
@@ -97,7 +95,6 @@
                         v-model="form_data.notice_user" 
                         multiple 
                         placeholder="请选择通知对象"
-                        :disabled="!enable"
                         filterable
                         :filter-method="getContactGroupList"
                     >
@@ -125,7 +122,8 @@ import {trans} from '../../utils/transIndex'
 import Service from '../../https/instance/create';
 import ServiceStrategy from '../../https/alarm/list'
 import Region from '../../components/alarm/region.vue';
-import {cycle_period} from '../../assets/alarm_data'
+import {cycle_period} from '../../assets/alarm_data';
+import {usble_area_list} from '../../components/alarm/data'
 @Component({
     components:{
         Region
@@ -135,22 +133,25 @@ export default class ApplyStrategy extends Vue{
     @PropSync("drawer") drawer_sync!:Boolean;
     @Prop({default:()=>{}})list!:any;
     @Prop(Boolean)enable!:Boolean
-    private form_data:any={
-        customer_id:'',
+    private form_data:any= {
+        customer_id:this.list.length===1 ? this.list[0].customerID : '',
         customer_name:'',
-        area:[],
-        az:[],
-        cycle:'86400',
-        address:'',
-        start_time:'00:00',
-        end_time:'23:59',
-        notice_user:[]
-
+        area:this.list.length===1 ? this.list[0].regions : [],
+        az:this.list.length===1 ? this.list[0].az : [],
+        cycle:this.list.length===1 ? this.list[0].silentPeriod.toString() : '86400',
+        address:this.list.length===1 ? this.list[0].callbackURL : '',
+        start_time:this.list.length===1 ? this.list[0].effectStartTime : '00:00',
+        end_time:this.list.length===1 ? this.list[0].effectEndTime :'23:59',
+        notice_user:this.list.length===1 ? this.list[0].contactGroupIDs:[]
     }
     private area_list:any=[]
     private az_list:any=[]
     private contact_group_list:any=[]
-    private cycle_list = cycle_period
+    private cycle_list = cycle_period;
+    private region_az_id={
+        regions:this.list.length>1 ? [] : this.list[0].regions,
+        az:this.list.length>1 ? [] : this.list[0].az
+    }
     created() {
         this.get_area_list();
         this.getContactGroupList('')
@@ -171,6 +172,7 @@ export default class ApplyStrategy extends Vue{
         })
         if(res.code==='Success'){
             this.contact_group_list = res.data.datas
+            
         }
     }
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
@@ -184,9 +186,14 @@ export default class ApplyStrategy extends Vue{
     @Watch("form_data.customer_id")
     private watch_customer_id(newVal){
         const form = this.$refs.form as Form
-        form.validateField(['customer_id'],(err:string)=>{
+        form && form.validateField(['customer_id'],(err:string)=>{
             if(!err){
-                this.get_customer_name()
+                if(newVal===''){
+                    this.form_data.customer_name=""
+                    this.get_area_list()
+                }else{
+                    this.get_customer_name()
+                }
             }
         }) 
     }
@@ -207,6 +214,8 @@ export default class ApplyStrategy extends Vue{
         const resData: any = await Service.get_region_az_list({customer_id: this.form_data.customer_id});
         if (resData.code == 'Success') {
             this.area_list = resData.data;
+            // this.area_list = usble_area_list
+            
             
         }
     }
@@ -227,12 +236,36 @@ export default class ApplyStrategy extends Vue{
             })
             
         })
-        this.az_list = temp_az
+        this.az_list=temp_az
     }
     //设置可用区ID
     private get_az_id(val){
         const {region_info,region_key} = val
         this.form_data={...this.form_data,az:region_key}
+    }
+    @Watch("az_list.length",{immediate:true})
+    private Watch_az_list(nv,ov){
+        if(nv===0 && ov>0){
+            this.region_az_id={regions:[],az:[]}
+        }
+    }
+    private get_all_ids(list){
+        let arr=[]
+        list.map(item=>{
+            item.region_list.map(inn=>{
+                arr.push(inn.region_id)
+            })
+        })
+        return arr
+    }
+    private get_all_az_id(){
+        let arr = []
+        this.area_list.map(item=>{
+            item.region_list.map(inn=>{
+                inn.az_list.map(az=>arr.push(az.az_id))
+            })
+        })
+        return arr
     }
     private confirm(){
         const {customer_id,area,az,cycle,address,start_time,end_time,notice_user}=this.form_data
@@ -242,11 +275,11 @@ export default class ApplyStrategy extends Vue{
                 const temp:any=[]
                 this.list.map(item=>{
                     let obj={
-                        az:az,
+                        az:area.length===0 ? this.get_all_az_id() : az.length===0 ? this.get_all_ids(this.az_list):az,
                         callbackURL : address,
                         contactGroupIDs : notice_user,
                         customerID : customer_id,
-                        regions : area,
+                        regions : area.length===0 ? this.get_all_ids(this.area_list):area,
                         silentPeriod : parseInt(cycle),
                         effectStartTime : start_time,
                         effectEndTime : end_time,
@@ -271,7 +304,6 @@ export default class ApplyStrategy extends Vue{
     
     @Emit("close")
     private close(val){
-        console.log("close",val)
         this.drawer_sync=false
     }
 }

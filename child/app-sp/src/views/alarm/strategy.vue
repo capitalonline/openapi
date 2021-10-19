@@ -166,6 +166,34 @@ export default class Strategy extends Vue{
         }
         this.del_visible=true
     }
+    private async stop(){
+        const temp:any=[]
+        this.strategy_rows.map(item=>{
+            const {az,callbackURL,contactGroupIDs,customerID,regions,silentPeriod,effectStartTime,effectEndTime,enable,id,name} =item
+            let obj={
+                az,
+                callbackURL,
+                contactGroupIDs,
+                customerID,
+                regions,
+                silentPeriod,
+                effectStartTime,
+                effectEndTime,
+                enable:!enable,
+                id,
+                name
+            }
+            temp.push(obj)
+            return item;
+        })
+        let res:any = await Service.apply_strategy({
+            data:temp
+        })
+        if(res.code==='Success'){
+            this.$message.warning("停用策略任务下发成功！")
+            this.getStrategyList()
+        }
+    }
     private apply(enable:Boolean,row:any){
         if(row) this.strategy_rows=[row];
         if(!row && this.strategy_rows.length===0){
@@ -176,8 +204,33 @@ export default class Strategy extends Vue{
             this.$message.warning(`只允许对${enable ? '未应用' :'已应用'}的策略执行批量操作！`)
             return;
         }
-        this.drawer=true
-        this.enable = enable
+        if(!enable){
+            const names = this.strategy_rows.map(item=>item.name);
+            const h = this.$createElement;
+            this.$msgbox({
+                title: '提示',
+                message: h('p', null, [
+                    h('span', null, '确定停用 '),
+                    h('i', { style: 'color: #455cc6' }, `${names.join(',')}`),
+                    h('span', null, '  这些策略吗, 是否继续?'),
+                ]),
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                iconClass: 'el-icon-warning',
+                }).then(() => {
+                    this.stop()
+                }).catch(()=>{
+                    this.$message({
+                        type: 'info',
+                        message: '已取消停用'
+                    }); 
+            })
+        }else{
+            this.drawer=true
+            this.enable = enable
+        }
+        
     }
     private close_apply(val){
         this.strategy_rows=[]
