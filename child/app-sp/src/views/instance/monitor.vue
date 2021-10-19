@@ -90,6 +90,11 @@ import moment from 'moment';
 })
 export default class Monitor extends Vue{
   $route;
+  private ecs_info = {
+    region_id: '',
+    az_id: '',
+    private_net_ip: ''
+  };
   private detail_info = {
     ecs_name: {label: '实例名称', value: ''},
     ecs_id: {label: '实例ID', value: ''},
@@ -129,7 +134,9 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: ['出网流量', '入网流量']
+    legend: [],
+    line_name: ['出网流量', '入网流量'],
+    type: 'double_line'
   };
   private net_rate = {
     title: '网络吞吐量',
@@ -137,7 +144,9 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: ['出网流量速率', '入网流量速率']
+    legend: [],
+    line_name: ['出网流量速率', '入网流量速率'],
+    type: 'double_line'
   };
   private disk_used = {
     title: '磁盘使用率',
@@ -189,8 +198,12 @@ export default class Monitor extends Vue{
     }
     let reqData = {
       id: this.detail_info.ecs_id.value,
-      // ip: this.detail_info.private_net_ip.value,
-      ip: '10.4.0.146',
+      // region: this.ecs_info.region_id,
+      // replica: this.ecs_info.az_id,
+      ip: this.ecs_info.private_net_ip,
+      region: 'cn-bj',
+      replica: 'A',
+      // ip: '10.1.2.4',
       instanceType: 'vm',
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
@@ -211,6 +224,11 @@ export default class Monitor extends Vue{
     })
     if ( resData.code === 'Success' ) {
       let data = resData.data;
+      this.ecs_info = {
+        region_id: data.region_id,
+        az_id: data.az_id,
+        private_net_ip: data.pipe.private_net_ip[0]
+      }
       this.detail_info.ecs_name.value = data.ecs_name;
       this.detail_info.ecs_id.value = data.ecs_id;
       this.detail_info.ecs_rule.value = 
@@ -256,7 +274,7 @@ export default class Monitor extends Vue{
       this.FnHandleMoreData('system_load', resData)
     })
   }
-  private FnHandleMoreData(type, resData) { // 处理负载，网络
+  private FnHandleMoreData(type, resData) { // 处理负载
     let index = 0;
     resData.forEach((item: any) => {
       if (item.code === 'Success') {
@@ -293,10 +311,11 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
-  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络
     let index = 0;
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
+          item.data.metricInfo = item.data.metricInfo || item.data.device;
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
@@ -321,13 +340,14 @@ export default class Monitor extends Vue{
     Promise.all([Service.get_network(Object.assign({queryType: 'networkout'}, reqData)), 
       Service.get_network(Object.assign({queryType: 'networkin'}, reqData))
     ]).then(resData => {
-      this.FnHandleMoreData('net_in_out', resData)
+      this.FnHandleDubleData('net_in_out', resData)
+      console.log(this.net_in_out)
     })
     this.net_rate.yValue = [];
     Promise.all([Service.get_network(Object.assign({queryType: 'networkout_rate'}, reqData)), 
       Service.get_network(Object.assign({queryType: 'networkin_rate'}, reqData))
     ]).then(resData => {
-      this.FnHandleMoreData('net_rate', resData)
+      this.FnHandleDubleData('net_rate', resData)
     })
   }
   private created() {
