@@ -19,7 +19,6 @@
             <el-form-item
                 prop="contact"
                 label="选择联系人"
-                :rules="[{required:true,message:'请选择联系人',trigger:'blur'}]"
             >
                 <el-transfer
                     filterable
