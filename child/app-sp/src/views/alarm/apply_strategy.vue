@@ -38,6 +38,12 @@
                     label="通道沉默周期:"
 
                 >
+                <span slot="label">
+                    <span>通道沉默周期:</span>
+                    <el-tooltip placement="bottom" effect="light" content="报警发生后未恢复正常，间隔多久重复发送一次报警通知">
+                        <i class="el-icon-question"></i>
+                    </el-tooltip>
+                </span>
                     <el-select v-model="form_data.cycle" placeholder="请选择通道沉默周期">
                         <el-option
                             v-for="item in cycle_list"
