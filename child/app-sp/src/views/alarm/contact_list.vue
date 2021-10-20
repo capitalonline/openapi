@@ -2,22 +2,27 @@
   <div>
     <action-block :search_option="search" @fn-search="fn_search">
         <template #default>
-            <el-button type="primary" @click="add">新建联系人</el-button>
-            <el-button type="primary" @click="del">删除联系人</el-button>
-            <el-button type="primary" @click="addToWarnGroup">添加至报警联系组</el-button>
+            <el-button type="primary" @click="add" :disabled="!auth_list.includes('add_contact')">新建联系人</el-button>
+            <el-button type="primary" @click="del({})" :disabled="!auth_list.includes('delete_contact')">删除联系人</el-button>
+            <el-button type="primary" @click="addToWarnGroup" :disabled="!auth_list.includes('add_to_group')">添加至报警联系组</el-button>
         </template>
     </action-block>
-    <el-table :data="list" border class="event-table">
+    <el-table 
+        :data="list" 
+        border 
+        class="event-table"
+        ref="contact_list"
+        @selection-change="handleSelectionChange"
+    >
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="phone" label="电话号码"></el-table-column>
-        <el-table-column prop="wxOpenID" label="微信号"></el-table-column>
         <el-table-column prop="groupName" label="所属报警组"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row.task_id)">编辑</el-button>
-            <el-button type="text" @click="del(scope.row.task_id)">删除</el-button>
+            <el-button type="text" @click="edit(scope.row.id)" :disabled="!auth_list.includes('edit_contact')">编辑</el-button>
+            <el-button type="text" @click="del(scope.row)" :disabled="!auth_list.includes('delete_contact')">删除</el-button>
           </template>
         </el-table-column>
     </el-table>
@@ -25,33 +30,40 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="current"
-        :page-sizes="[3,5,10, 20, 50, 100]"
+        :page-sizes="[2,20, 50, 100]"
         :page-size="size"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
     </el-pagination>
     <template v-if="user_visible">
-        <AddContact :title="user_title" :id="user_id" :visible="user_visible" @close = "close_user" />
+        <AddContact :title="user_title" :id="user_id" :visible="user_visible" @close = "close" />
     </template>
     <template v-if="group_visible">
-        <AddToGroup :visible="group_visible" @close = "close_group" />
+        <AddToGroup :visible="group_visible" @close = "close" :contact_rows="contact_rows" />
+    </template>
+    <template v-if="del_visible">
+        <common-dialog :visible.sync="del_visible" :title="'删除联系人'" :contact_rows="contact_rows" @close = "close" />
     </template>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue'
+import ActionBlock from '../../components/search/actionBlock.vue'
 import AddContact from './add_contact.vue'
 import AddToGroup from './add_to_group.vue'
 import Service from '../../https/alarm/list'
+import CommonDialog from './commonDialog.vue'
+import {Table} from'element-ui'
 @Component({
     components:{
         ActionBlock,
         AddContact,
-        AddToGroup
+        AddToGroup,
+        CommonDialog
     }
 })
 export default class ContactList extends Vue{
+    $route;
     private type_list=[
         {
             type:'name',
@@ -65,25 +77,25 @@ export default class ContactList extends Vue{
             type:'phone',
             label:'电话号码'
         },
-        {
-            type:'wxOpenID',
-            label:'微信'
-        },
     ]
     private search={
         type:{placeholder:'请输入后查询',list:this.type_list,type:'composite',width:340},
     }
-    private list = [{name:1}]
+    private list = []
     private current:number=1
-    private size:number=3
+    private size:number=20
     private total:number=0
     private user_visible:Boolean=false
     private user_id:String=""
     private user_title:String="新建联系人"
     private group_visible:Boolean=false;
+    private del_visible:Boolean=false
+    private contact_rows:any=[]
     private search_data:any={}
+    private auth_list:any=[]
     created() {
         this.fn_search()
+        this.auth_list=this.$store.state.auth_info[this.$route.name]
     }
     private fn_search(data:any={}){
         this.current = 1
@@ -91,17 +103,18 @@ export default class ContactList extends Vue{
         this.getContactList()
     }
     private async getContactList(){
-        let obj = {
-            page:this.current,
-            pageSize:this.size
-        }
         let res:any = await Service.get_contact_list({
             page:this.current,
             pageSize:this.size,
             [this.search_data.typesub ? this.search_data.typesub : 'name']:this.search_data.type
         })
-        if(res.code===0){
-            this.list = res.data.datas || []
+        if(res.code==='Success'){
+            this.list = res.data.datas
+            this.list.map(item=>{
+                let arr = item.groups.map(inn=>inn.name)
+                item.groupName = arr.join(',')
+                return item;
+            })
             this.total = res.data.total || 0
         }
     }
@@ -113,26 +126,57 @@ export default class ContactList extends Vue{
         this.current = cur
         this.getContactList()
     }
+    private handleSelectionChange(val){
+        this.contact_rows = val
+
+    }
     private add(){
         this.user_title="新建联系人"
         this.user_visible=true
     }
-    private edit(id:string){
+    private async edit(id:string){
         this.user_id=id
         this.user_title="编辑联系人"
         this.user_visible=true
+        // let res:any = await Service.get_contact_detail({
+        //     id,
+        // })
+        // if(res.code===0){
+        //     console.log("aqaa");
+        //     this.user_visible=true
+        // }else{
+            
+        // }
     }
-    private del(id:string = ''){
+    private del(id){
+        console.log("id",id,this.contact_rows)
+        if(Object.keys(id).length>0){
+            this.contact_rows=[id]
+        }
+        if(this.contact_rows.length===0){
+            this.$message.warning("请勾选联系人！")
+            return;
+        }
         
+        this.del_visible = true
+
     }
-    private close_user(){
+    private close(val){
         this.user_visible=false
-        this.user_id=""
-    }
-    private close_group(){
         this.group_visible=false
+        this.del_visible=false
+        this.contact_rows=[]
+        this.user_id=""
+        val==='1'&& this.getContactList()
+        const table = this.$refs.contact_list as Table
+        table.clearSelection()
+
     }
     private addToWarnGroup(){
+        if(this.contact_rows.length===0){
+            this.$message.warning("请先勾选联系人！");
+            return;
+        }
         this.group_visible=true
     }
     

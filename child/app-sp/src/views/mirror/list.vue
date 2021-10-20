@@ -26,7 +26,7 @@
 </template>
 <script lang="ts">
 import {Vue,Component} from 'vue-property-decorator'
-import ActionBlock from '../../components/actionBlock.vue'
+import ActionBlock from '../../components/search/actionBlock.vue'
 import Common from './common.vue'
 @Component({
     components:{

@@ -3,7 +3,7 @@
     <el-dialog
       :title="title"
       :visible.sync="visible"
-      width="40%"
+      width="800px"
       :destroy-on-close="true"
       @close="back"
     >
@@ -19,7 +19,6 @@
             <el-form-item
                 prop="contact"
                 label="选择联系人"
-                :rules="[{required:true,message:'请选择联系人',trigger:'blur'}]"
             >
                 <el-transfer
                     filterable
@@ -35,7 +34,7 @@
         <el-divider />
         <div class="foot-btn">
             <el-button type="primary" @click="confirm">确定</el-button>
-            <el-button type="default" @click="back">取消</el-button>
+            <el-button type="default" @click="back('0')">取消</el-button>
         </div>
         
       </div>
@@ -46,7 +45,9 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
+import Service from '../../https/alarm/list'
+import {trans} from '../../utils/transIndex'
 import { Form } from "element-ui";
 import moment from 'moment';
 
@@ -66,27 +67,69 @@ export default class InsDetail extends Vue{
       contact:[]
 
   }
-  private contact_list:any=[
-      {key:'zhangsan',label:'张三'},
-      {key:'lisi',label:'李四'},
-      {key:'wanger',label:'王二'},
-      {key:'zhaowu',label:'赵五'},
-  ]
+  private contact_list:any=[]
   created() {
+    this.getContactList()
+    console.log("created",this.id)
+    if(this.id!==""){
+      this.get_contact_group_detail()
+    }
   }
-  private filterMethod(){
-      return this.contact_list
+  private async getContactList(){
+    let res:any = await Service.get_contact_list({})
+    if(res.code==='Success'){
+        this.contact_list = trans(res.data.datas,"name",'id','label','key')
+    }
   }
+  private async get_contact_group_detail(){
+    let res:any=await Service.get_contact_group_detail({
+      id:this.id
+    })
+    if(res.code==='Success'){
+      const {name,members}=res.data
+      this.form_data={
+        name,
+        contact:members.map(item=>item.id)
+      }
+    }
+  }
+  private filterMethod(query, item) {
+      return item.label.indexOf(query) > -1;
+    }
   private confirm(){
       const form = this.$refs.form as Form
-      form.validate((valid:boolean)=>{
+      form.validate(async(valid:boolean)=>{
           if(valid){
-
+            if(this.id===""){
+                let res:any = await Service.add_contact_group({
+                  name:this.form_data.name,
+                  contactIDs:this.form_data.contact
+              })
+              if(res.code==='Success'){
+                this.$message.success("新建联系人组任务下发成功！")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
+            }else{
+              let res:any = await Service.update_contact_group({
+                  id:this.id,
+                  name:this.form_data.name,
+                  contactIDs:this.form_data.contact
+              })
+              if(res.code==='Success'){
+                this.$message.success("编辑联系人组任务下发成功！")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
+            }
+            
           }
       })
   }
   @Emit("close")
-  private back(){
+  private back(val){
     const form = this.$refs.form as Form
     form.resetFields()
   }

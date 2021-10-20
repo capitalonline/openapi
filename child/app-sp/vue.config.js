@@ -10,15 +10,29 @@ module.exports = {
       'Access-Control-Allow-Origin': '*'
     },
     proxy: {
-      '/api': {
-        target: 'http://10.212.0.3:9000',
-        // target:'http://10.131.162.69:8001',
-        ws: true,
-        changeOrigin: true
-      },
       '/ecs_business': {
         // target: '10.131.165.157:8001',
         target:'http://ecs-business.gic.test',
+        ws: true,
+        changeOrigin: true
+      },
+      '/monitor/api': {
+        target: 'http://cloudos-metricsapi.gic.test',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/monitor/api': '/api'
+        }
+      },
+      '/alarm/api': {
+        target: ' http://cloudos-metricsalarm.gic.test',
+        // target:'http://10.131.162.69:8001',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/alarm/api': '/api'
+        }
+      },
+      '/api': {
+        target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
       }

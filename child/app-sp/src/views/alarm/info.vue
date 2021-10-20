@@ -1,16 +1,8 @@
 <template>
     <div>
         <action-block :search_option="search" @fn-search="fn_search"></action-block>
-        <div class="time_btns">
-            <el-button 
-                class="time_operate"
-                v-for="item in tab_list" 
-                :key="item.label" 
-                :type="item.label===activityKey ? 'primary' : 'default'" 
-                @click="changeTime(item.label)"
-            >{{item.name}}</el-button>
-        </div>
-        <el-table :data="list" border class="event-table">
+        <time-group @fn-emit="getTabTime" />
+        <el-table :data="list" border class="event-table" @filter-change="fil_info">
             <el-table-column prop="productType" label="产品类型"></el-table-column>
             <el-table-column prop="instanceID" label="故障资源ID"></el-table-column>
             <el-table-column prop="createTime" label="发生时间">
@@ -27,9 +19,14 @@
                 prop="dealStatus" 
                 label="处理结果" 
                 :filters="fil_list"
-                :filter-method="fil_info"
+                :filter-multiple="false"
                 filter-placement="bottom-end"
-            ></el-table-column>
+                column-key='dealStatus'
+            >
+                <template slot-scope="scope">
+                    <span>{{scope.row.dealStatus ? '已解决' : '未解决'}}</span>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -44,12 +41,15 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import ActionBlock from '../../components/search/actionBlock.vue';
+import TimeGroup from '../../components/search/timeGroup.vue'
 import moment from 'moment';
 import Service from '../../https/alarm/list'
+import {trans} from '../../utils/transIndex'
 @Component({
     components:{
-        ActionBlock
+        ActionBlock,
+        TimeGroup
     }
 })
 export default class Contact extends Vue{
@@ -58,80 +58,56 @@ export default class Contact extends Vue{
         {type:'metric',label:'指标报警'},
         {type:'event',label:'事件报警'},
     ]
-    private contact_list:any = [
-        {type:'0',label:'全部'},
-        {type:'1',label:'group1'},
-        {type:'2',label:'group2'},
-    ]
     private search:any = {
         ruleName:{placeholder:'请输入规则名称'},
         instanceID:{placeholder:'请输入资源ID'},
         type:{placeholder:'报警类型',list:this.type_list},
-        contact:{placeholder:'报警联系人组',list:this.contact_list},
-        time:{
-            type:'datetimerange',
-            placeholder:['开始时间','结束时间'],
-            clearable:false,
-            width:360,
-            dis_day:31,
-            defaultTime:[moment(new Date()).format("YYYY-MM-DD 00:00:00"),moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
-        },
+        contact:{placeholder:'报警联系人组',list:[]},
     }
-    private tab_list = [
-        {label:'1',name:'1小时'},
-        {label:'3',name:'3小时'},
-        {label:'6',name:'6小时'},
-        {label:'12',name:'12小时'},
-        {label:'24',name:'1天'},
-        {label:'72',name:'3天'},
-        {label:'168',name:'7天'},
-    ]
     private fil_list = [
         {
             text:'已处理',
-            value:'1'
+            value:'dealed'
         },
         {
             text:'未处理',
-            value:'2'
+            value:'undealed'
         },
     ]
     
-    private list=[{productType:'1',dealStatus:'未处理'},{productType:'2',dealStatus:'已处理'}]
+    private list=[]
     private current:number = 1
     private size:number = 20
     private total:number = 0
     private moment =moment
-    private min_date:any = ""
     private search_data:any = {}
-    private activityKey:string = ""
-    private dealStatus = 0
+    private dealStatus:Array<string> = []
 
     created() {
-        // this.getContactGroupList()
+        this.getContactGroupList()
         // this.getAlarmList()
     }
     private async getContactGroupList(){
         let res:any=await Service.get_contact_group_list({})
-        if(res.code===0){
-            this.contact_list = res.data || []
+        if(res.code==='Success'){
+            this.search.contact.list = trans(res.data.datas,'name','id','label','type') 
         }
     }
     private async getAlarmList(){
         const {search_data} = this
         let res:any=await Service.get_alarm_list({
             ruleName:search_data.ruleName,
-            instanceID:search_data.instanceID,
+            // instanceID:search_data.instanceID,
             alarmType:search_data.type,
             contactGroupName:search_data.contact,
-            createStartTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-            createEndTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            dealStatus:this.dealStatus,
+            startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+            endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+            dealStatus:this.dealStatus.length===0 ? "all" : this.dealStatus[0],
             page:this.current,
             pageSize:this.size
         })
         
-        if(res.code===0){
+        if(res.code==='Success'){
             this.list = res.data.datas || []
             this.total = res.data.total || 0
         }
@@ -139,7 +115,7 @@ export default class Contact extends Vue{
     private fn_search(data:any={}){
         this.current = 1
         this.search_data = data
-        this.activityKey = ""
+        // this.activityKey = ""
         this.getAlarmList()
     }
     private handleSizeChange(size){
@@ -150,17 +126,13 @@ export default class Contact extends Vue{
         this.current = cur
         this.getAlarmList()
     }
-    private changeTime(val:string){
-        this.activityKey = val
-        const date:any = new Date()
-        const time:any =  date - parseInt(val)*60*60*1000
-        this.search_data = {...this.search_data,time:[time,new Date()]}
+    private getTabTime(val){
+        this.search_data.time=val
         this.getAlarmList()
     }
-    
-    private fil_info(val,row){
-        console.log("fil",val,row)
-        this.dealStatus = val
+    private fil_info(obj){
+        console.log("fil_info",obj)
+        this.dealStatus = obj.dealStatus
         this.current = 1
         this.getAlarmList()
 
@@ -171,6 +143,9 @@ export default class Contact extends Vue{
 .time_btns{
     margin-bottom: 20px;
     
+}
+.event-table{
+    margin-top: 20px;
 }
 button.el-button.time_operate {
     border-radius: 0;

@@ -19,29 +19,28 @@
             <el-form-item
                 prop="email"
                 label="邮箱"
-                :rules="[{required:true,message:'请输入邮箱',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入邮箱',trigger:'blur'},
+                  { required: true, trigger: 'blur', validator: validate_eamil }
+                ]"
             >
                 <el-input v-model="form_data.email" />
             </el-form-item>
             <el-form-item
                 prop="phone"
                 label="电话号码"
-                :rules="[{required:true,message:'请输入电话号码',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入电话号码',trigger:'blur'},
+                  { required: true, trigger: 'blur', validator: validate_phone }
+                ]"
             >
                 <el-input v-model="form_data.phone" />
-            </el-form-item>
-            <el-form-item
-                prop="wxOpenID"
-                label="微信号"
-                :rules="[{required:true,message:'请输入微信号',trigger:'blur'}]"
-            >
-                <el-input v-model="form_data.wxOpenID" />
             </el-form-item>
         </el-form>
         <el-divider />
         <div class="foot-btn">
             <el-button type="primary" @click="confirm">确定</el-button>
-            <el-button type="default" @click="back">取消</el-button>
+            <el-button type="default" @click="back('0')">取消</el-button>
         </div>
         
       </div>
@@ -51,8 +50,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/actionBlock.vue';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+import ActionBlock from '../../components/search/actionBlock.vue';
 import { Form } from "element-ui";
 import moment from 'moment';
 import Service from '../../https/alarm/list'
@@ -71,27 +70,77 @@ export default class InsDetail extends Vue{
       name:'',
       email:'',
       phone:'',
-      wxOpenID:''
 
   }
   created() {
+    if(this.id!==""){
+      this.get_contact_detail()
+    }
+  }
+  private validate_eamil:any = (rule:any, value:string, callback:any)=>{
+        if(value.length>0 && value.indexOf('@')>0 && value.indexOf('@')<value.length-1){
+            return callback()
+        }else{
+            return callback(new Error("请输入正确的邮箱"))
+        }
+  }
+  private validate_phone:any = (rule:any, value:string, callback:any)=>{
+      let reg = /^1[0-9]{10}$/
+      if(reg.test(value)){
+          return callback()
+      }else{
+          return callback(new Error("请输入正确的手机号码"))
+      }
+    }
+  private async get_contact_detail(){
+    let res:any = await Service.get_contact_detail({
+        id:this.id,
+      })
+      if(res.code==='Success'){
+        const {name,email,phone}=res.data
+          this.form_data={
+            name,
+            email,
+            phone
+          }
+      }else{
+        
+      }
   }
   private confirm(){
       const form = this.$refs.form as Form
+      console.log("form",form)
       form.validate(async (valid:boolean)=>{
           if(valid){
-            let res:any = await Service.add_contact({
-              ...this.form_data
-            })
-            if(res.code===0){
-              this.$message.success("新建成功")
+            if(this.id===""){
+              let res:any = await Service.add_contact({
+                ...this.form_data
+              })
+              if(res.code==='Success'){
+                this.$message.success("新建联系人任务下发成功")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
+            }else{
+              let res:any = await Service.update_contact({
+                ...this.form_data,
+                id:this.id
+              })
+              if(res.code==='Success'){
+                this.$message.success("编辑联系人任务下发成功")
+                this.back('1')
+              }else{
+                this.back('0')
+              }
             }
-            this.back()
+            
+            
           }
       })
   }
   @Emit("close")
-  private back(){
+  private back(val){
     const form = this.$refs.form as Form
     form.resetFields()
   }

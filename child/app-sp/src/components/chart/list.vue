@@ -1,9 +1,12 @@
 <template>
   <el-card>
     <div :id="chart_id" :key="chart_id" class="chart"></div>
-    <el-select v-model="selected_legend" @change="FnChangeSelected">
-      <el-option v-for="item in legend_list" :key="item" :value="item" :label="item"></el-option>
+    <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="legend && legend.length > 0" clearable>
+      <el-option v-for="item in legend" :key="item" :value="item" :label="item"></el-option>
     </el-select>
+    <div class="empty-box" v-if="!data.xTime || data.xTime.length === 0">
+      <el-empty description="暂无数据"></el-empty>
+    </div>
   </el-card>
 </template>
 
@@ -48,14 +51,21 @@ import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 
 @Component
-export default class LineEchart extends Vue{
+export default class LineEchart extends Vue {
   @Prop({default: 'id'}) private chart_id!: string;
-  @Prop({default: ''}) private title!: string;
-  @Prop({default: []}) private time_frame!: Array<string>;
+  @Prop({default: () => {
+    return {
+      title: '',
+      unit: '',
+      xTime: [],
+      yValue: [],
+      resize: 0
+    }
+  }}) private data!: any;
   private instance = null;
-  private legend_list = [];
+  private legend = [];
+  private legend_relation = {};
   private selected_legend = '';
-  private 
   private option: ECOption = {
     yAxis: {
       type: 'value'
@@ -70,36 +80,24 @@ export default class LineEchart extends Vue{
         end: 10
       }
     ],
-    tooltip: {
-      formatter: '{b0}<br />'+ this.title + ': {c0}'
-    },
     series: []
   }
 
   private FnSetOption() {
     this.option.title = {
-      text: this.title
-    }
+      text: this.data.title + '(' + this.data.unit + ')'
+    };
+    this.option.tooltip = {
+      trigger: 'axis',
+      // formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
+    };
     this.FnGetxAxis();
-    this.instance.setOption(this.option)
+    if(this.instance) {
+      this.instance.setOption(this.option)
+    }
   }
 
   private FnGetxAxis() {
-    let start_time = new Date(this.time_frame[0]).getTime();
-    let end_time = new Date(this.time_frame[1]).getTime();
-    let x_data = [];
-    let y_data_0 = [];
-    let y_data_1 = [];
-    let y_data_2 = [];
-    let y_data_3 = [];
-    let minute = 1000 * 60;
-    for(let i = 0; i < Math.floor((end_time - start_time)/minute); i++) {
-      x_data.push(moment(new Date(start_time + i*minute)).format('MM-DD hh:mm'))
-      y_data_0.push(Math.random()*100)
-      y_data_1.push(Math.random()*100)
-      y_data_2.push(Math.random()*100)
-      y_data_3.push(Math.random()*100)
-    }
     this.option.legend = {
         type: 'scroll',
         orient: 'vertical',
@@ -108,34 +106,56 @@ export default class LineEchart extends Vue{
         bottom: 20,
         show: false
     };
+    if (!this.data.xTime) {
+      return
+    }
     this.option.xAxis = {
       type: 'category',
       boundaryGap: false,
-      data: x_data
+      data: this.data.xTime.map(item => {
+        return moment(new Date(moment.utc(item).format())).format('YYYY-MM-DD HH:mm:ss')
+      }),
     };
-    this.option.series = [{
-      name: '1',
-      data: y_data_0,
-      type: 'line',
-      smooth: true
-    },{
-      name: '2',
-      data: y_data_1,
-      type: 'line',
-      smooth: true
-    },{
-      name: '3',
-      data: y_data_2,
-      type: 'line',
-      smooth: true
-    },{
-      name: '4',
-      data: y_data_3,
-      type: 'line',
-      smooth: true
-    }]
-    this.legend_list = ['0','1','2','3','4'];
-    this.selected_legend = '0';
+    this.option.series = [];
+    this.legend_relation = {};
+    if (!this.data.legend || this.data.legend.length === 0) {
+      this.option.series.push({
+        name: this.data.title,
+        data: this.data.yValue,
+        type: 'line',
+        smooth: true
+      })
+      return
+    }
+    if (this.data.type) {
+      this.legend = this.data.legend.filter(item => item.indexOf(this.data.type) < 0);
+    } else {
+      this.legend = this.data.legend;
+    }
+    for(let i = 0; i < this.data.legend.length; i++) { // 一个legend对应两条线
+      let item  = this.data.yValue[i];
+      if (this.data.type) {
+        if (this.data.legend[i].indexOf(this.data.type) < 0) {
+          let legend = this.data.legend[i];
+          this.data.legend[i]+= this.data.line_name[0];
+          this.legend_relation[legend] = [this.data.legend[i]];
+          console.log('data00', legend, this.legend_relation)
+        } else {
+          let legend = this.data.legend[i].replace(this.data.type, '');
+          this.data.legend[i] = legend + this.data.line_name[1];
+          console.log('data', legend, this.legend_relation)
+          this.legend_relation[legend].push(this.data.legend[i]);
+        }
+      } else {
+        this.legend_relation[this.data.legend[i]] = [this.data.legend[i]];
+      }
+      this.option.series.push({
+        name: this.data.legend[i],
+        data: item,
+        type: 'line',
+        smooth: true
+      })
+    }
   }
 
   private mounted() {
@@ -148,11 +168,12 @@ export default class LineEchart extends Vue{
   }
 
   private FnChangeSelected() {
-    if (this.selected_legend === '0') {
+    if (!this.selected_legend) {
       this.instance.dispatchAction({type: 'legendAllSelect'})
     } else {
-      this.legend_list.forEach(item => {
-        if (item === this.selected_legend) {
+      console.log(this.data.legend, this.legend_relation)
+      this.data.legend.forEach(item => {
+        if (this.legend_relation[this.selected_legend].includes(item)) {
           this.instance.dispatchAction({type: 'legendSelect', name: item})
         } else {
           this.instance.dispatchAction({type: 'legendUnSelect', name: item})
@@ -164,10 +185,14 @@ export default class LineEchart extends Vue{
   @Watch('chart_id')
   private FnChangeChartId(newVal) {
     this.$nextTick(() => {
-      console.log('chart_id', this.chart_id, document.querySelector(`#${this.chart_id}`))
       this.instance = echarts.init(document.querySelector(`#${this.chart_id}`));
       this.FnSetOption();
     })
+  }
+
+  @Watch('data.resize')
+  private FnChangeChart(newVal) {
+    this.FnSetOption();
   }
 }
 
@@ -187,6 +212,14 @@ export default class LineEchart extends Vue{
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+  .empty-box {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    top: 20%;
+    left: 0;
+    background: #fff;
   }
 }
 </style>

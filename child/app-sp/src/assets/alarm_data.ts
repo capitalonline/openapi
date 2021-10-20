@@ -102,6 +102,7 @@ export const mock = {
             "ruleRecords": [
                 //一个阈值指标项
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -117,6 +118,7 @@ export const mock = {
               },
               //一个阈值指标项
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["email","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -139,6 +141,7 @@ export const mock = {
             "productType": "ecs",//产品类型
             "ruleRecords": [
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "metric",//阈值报警还是事件报警
                 "eventName": "",//事件名称
@@ -161,6 +164,7 @@ export const mock = {
             "productType": "gpu",//产品类型
             "ruleRecords": [
               {
+                "id":'ecs'+Math.floor((Math.random()*9+1)*1000000),
                 "alarmMethod": ["phone","wx"], //告警方式
                 "alarmType": "event",//阈值报警还是事件报警
                 "eventName": ["crash","oom"],//事件名称
@@ -182,116 +186,26 @@ export const mock = {
 export const productList = [
     {
         id:'ecs',
-        name:'云服务器ECS'
+        name:'ecs'
     },
-    {
-        id:'gpu',
-        name:'GPU'
-    },
-    {
-        id:'slb',
-        name:'负载均衡'
-    },
-    {
-        id:'vpc',
-        name:'私有网络VPC'
-    },
-    {
-        id:'safe',
-        name:'安全组'
-    },
+    // {
+    //     id:'gpu',
+    //     name:'GPU'
+    // },
+    // {
+    //     id:'slb',
+    //     name:'负载均衡'
+    // },
+    // {
+    //     id:'vpc',
+    //     name:'私有网络VPC'
+    // },
+    // {
+    //     id:'safe',
+    //     name:'安全组'
+    // },
 ]
-export const level_list=[
-    {
-        value:'host',
-        label:'主机',
-        children:[
-            {
-                value:'Host.cpu.total',
-                label:'Host.cpu.total'
-            },
-            {
-                value:'Host.cpu.idle',
-                label:'Host.cpu.idle'
-            },
-            {
-                value:'Host.mem.usedutilization',
-                label:'Host.mem.usedutilization'
-            },
-            {
-                value:'Host.mem.freeutilization',
-                label:'Host.mem.freeutilization'
-            },
-        ]
 
-    },
-    {
-        value:'net',
-        label:'网络',
-        children:[
-            {
-                value:'net.cpu.total',
-                label:'net.cpu.total'
-            },
-            {
-                value:'net.cpu.idle',
-                label:'net.cpu.idle'
-            },
-            {
-                value:'net.mem.usedutilization',
-                label:'net.mem.usedutilization'
-            },
-            {
-                value:'net.mem.freeutilization',
-                label:'net.mem.freeutilization'
-            },
-        ]
-    },
-    {
-        value:'disk',
-        label:'磁盘',
-        children:[
-            {
-                value:'disk.cpu.total',
-                label:'disk.cpu.total'
-            },
-            {
-                value:'disk.cpu.idle',
-                label:'disk.cpu.idle'
-            },
-            {
-                value:'disk.mem.usedutilization',
-                label:'disk.mem.usedutilization'
-            },
-            {
-                value:'disk.mem.freeutilization',
-                label:'disk.mem.freeutilization'
-            },
-        ]
-    },
-    {
-        value:'gpu',
-        label:'GPU',
-        children:[
-            {
-                value:'gpu.cpu.total',
-                label:'gpu.cpu.total'
-            },
-            {
-                value:'gpu.cpu.idle',
-                label:'gpu.cpu.idle'
-            },
-            {
-                value:'gpu.mem.usedutilization',
-                label:'gpu.mem.usedutilization'
-            },
-            {
-                value:'gpu.mem.freeutilization',
-                label:'gpu.mem.freeutilization'
-            },
-        ]
-    },
-]
 export const range_list=[
     {id:'>=',title:'>='},
     {id:'<=',title:'<='},
@@ -356,7 +270,7 @@ export const alarm_type=[
         title:'普通',
     },
 ]
-export const notice_list = ["邮箱","短信","微信"]
+export const notice_list = [{id:'email',name:"邮箱"},{id:'phone',name:"短信"}]
 export const event_type=[
     {
         id:'abnormal_event',
@@ -391,5 +305,36 @@ export const event_name=[
     {
         id:'kernelError',
         title:'内核异常',
+    },
+]
+//应用策略通道沉默周期
+export const cycle_period=[
+    {
+        id:'900',
+        title:'15分钟'
+    },
+    {
+        id:'1800',
+        title:'30分钟'
+    },
+    {
+        id:'3600',
+        title:'60分钟'
+    },
+    {
+        id:'10800',
+        title:'3小时'
+    },
+    {
+        id:'21600',
+        title:'6小时'
+    },
+    {
+        id:'43200',
+        title:'12小时'
+    },
+    {
+        id:'86400',
+        title:'24小时'
     },
 ]

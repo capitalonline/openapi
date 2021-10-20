@@ -15,7 +15,11 @@ export async function getUserInfo() {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
     store.commit('SET_AUTH_INFO', {
       ...resData.data.permission_dict,
-      mirror_list:[],
+      // mirror_list: [],
+      // alarm_info:[],
+      // alarm_strategy:['alarm_strategy_create','delete','apply','stop','edit'],
+      // alarm_contact:['add_contact','delete_contact','add_to_group','edit_contact','add_contact_group','delete_contact_group','edit_contact_group','remove_contact']
+
     });
   }
 }
