@@ -6586,7 +6586,11 @@ def get_status(task_id):
 | 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
-| 弗吉尼亚A   | US_Virginia_A     | 是          | 北美地区 |
+| 弗吉尼亚A   | US_Virginia_A     | 是             | 北美地区 |
+| 德国C       | EUR_Germany_C    | 是              | 欧洲地区|
+| 达拉斯L    | US_Dallas_L       | 是               | 北美地区 |
+| 新加坡E    | APAC_Singapore_E  | 是               | 亚太地区 |
+| 呼和浩特A      | CN_Huhehaote_A     | 是          | 中国大陆 |
 
 ## 附件二
 
