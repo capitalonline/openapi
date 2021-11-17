@@ -4,6 +4,7 @@
       :visible.sync="visible"
       width="600px"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
         <el-alert
@@ -14,7 +15,7 @@
         </el-alert>
         <div class="content">
             <div class="label">云盘ID/名称:</div>
-            <div>{{attr.disk_id}} / {{attr.disk_name}}</div>
+            <div><pre>{{attr.disk_id}} / {{attr.disk_name}}</pre></div>
         </div>
         <div class="content">
             <div class="label">云盘种类:</div>

@@ -22,7 +22,11 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
-      <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
+      <el-table-column prop="disk_name" label="云盘名称">
+        <template slot-scope="scope">
+          <pre>{{scope.row.disk_name}}</pre>
+        </template>
+      </el-table-column>
       <el-table-column prop="status" label="云盘状态">
         <template slot-scope="scope">
           <span :class="scope.row.status">{{scope.row.status_name}}</span>
@@ -39,14 +43,25 @@
             <span>{{scope.row.region_name}}&nbsp;&nbsp;{{scope.row.az_name}}</span>
           </template>
       </el-table-column>
-      <el-table-column prop="disk_type" label="属性" :filters="diskAttribute" column-key="disk_type">
+      <el-table-column prop="disk_type" label="属性" :filter-multiple="false" :filters="diskAttribute" column-key="disk_type">
         <template slot-scope="scope">
           <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="ecs_id" label="实例名称/ID">
         <template slot-scope="scope">
-          <span>{{scope.row.ecs_id ? `${scope.row.ecs_name} / ${scope.row.ecs_id}` : ''}}</span>
+          <pre>{{scope.row.ecs_id ? `${scope.row.ecs_name} / ${scope.row.ecs_id}` : ''}}</pre>
+        </template>
+      </el-table-column>
+      <el-table-column prop="is_follow_delete" label="删除设置">
+        <template slot-scope="scope">
+          <span>{{scope.row.ecs_id==="" ? '-' : scope.row.is_follow_delete ? '随实例删除' :'不随实例删除'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="create_time" label="创建时间"></el-table-column>
+      <el-table-column prop="op_source" label="创建来源" :filter-multiple="false" :filters="op_source_fil" column-key="op_source">
+        <template slot-scope="scope">
+          <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作栏">
@@ -144,7 +159,8 @@ export default class extends Vue {
   private visible:Boolean = false;
   private operate_type:string=""
   private mount_id:any = [];
-  private disk_property:Array<String>=[]
+  private disk_property:string=""
+  private op_source:string=""
   private clear = null
 
   private common_operate:any = {
@@ -163,6 +179,16 @@ export default class extends Vue {
       value:'system'
     },
   ]
+  private op_source_fil=[
+    {
+      text:'运维后台',
+      value:'cloud_op'
+    },
+    {
+      text:'GIC',
+      value:'gic'
+    },
+  ]
   created() {
     this.get_disk_state();
     this.getDiskList()
@@ -170,7 +196,7 @@ export default class extends Vue {
   }
 
   beforeDestroy() {
-    clearInterval(this.clear)
+    this.FnClearTimer()
   }
   //获取云盘状态列表
   private async get_disk_state(){
@@ -181,9 +207,7 @@ export default class extends Vue {
   }
   private async getDiskList(loading:boolean = true){
     let copy_mount_id=[]
-    if(this.clear){
-      clearInterval(this.clear)
-    }
+    
     if(!loading){
       this.$store.commit('SET_LOADING', false);
       copy_mount_id =this.mount_id.map(item=>{
@@ -197,7 +221,8 @@ export default class extends Vue {
       status:req_data.status || '',
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
-      disk_property:this.disk_property ,
+      disk_property:this.disk_property,
+      op_source:this.op_source,
       page_index:this.current,
       page_size:this.size,
     })
@@ -208,7 +233,7 @@ export default class extends Vue {
       if(list.length>0){
         this.$nextTick(()=>{
           list.forEach(row => {
-            (this.$refs.disk_table as Table).toggleRowSelection(row);
+            (this.$refs.disk_table as any).toggleRowSelection(row);
           });
         });
         
@@ -217,9 +242,17 @@ export default class extends Vue {
     this.FnSetTimer()
   }
   private FnSetTimer() {
+    if(this.clear){
+      this.FnClearTimer();
+    }
     this.clear = setTimeout(() => {
       this.getDiskList(false)
     }, 1000 *5)
+  }
+  private FnClearTimer() {
+    if(this.clear){
+      clearTimeout(this.clear)
+    }
   }
   private search(data:any={}){
     this.current = 1;
@@ -235,7 +268,7 @@ export default class extends Vue {
     this.getDiskList()
   }
   private handleOperate(obj){
-    console.log("$event",obj)
+    this.FnClearTimer();
     this.mount_id=[obj.value]
     this.operate_type =obj.label 
     if(obj.label==="mount"){
@@ -260,6 +293,7 @@ export default class extends Vue {
     this.$router.push('/disk/create')
   }
   private operateRecord(obj:any){
+    this.FnClearTimer();
     this.mount_id=[obj]
     this.visible=true
     this.operate_type = "record"
@@ -282,6 +316,7 @@ export default class extends Vue {
       this.$message.warning('只允许对同一可用区的云盘进行批量操作！')
       return;
     }
+    this.FnClearTimer();
     this.operate_type="mount"
     this.visible=true
   }
@@ -308,6 +343,7 @@ export default class extends Vue {
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
+      this.FnClearTimer();
       this.operate_type="unInstall"
       this.visible=true
     }).catch(() => {
@@ -341,6 +377,7 @@ export default class extends Vue {
       this.$message.warning('只允许对数据盘进行批量操作！')
       return;
     }
+    this.FnClearTimer();
     this.operate_type="delete"
     this.visible = true
   }
@@ -361,6 +398,7 @@ export default class extends Vue {
       this.$message.warning('只允许对已删除且不随实例删除的云盘进行批量操作！')
       return;
     }
+    this.FnClearTimer();
     this.operate_type=str
     this.visible = true
   }
@@ -425,7 +463,7 @@ export default class extends Vue {
     this.operate_type = ''
     this.toggleSelection()
     this.current =1;
-    val==="1" && this.getDiskList()
+    this.getDiskList()
     
   }
   private handleSelectionChange(data){
@@ -437,7 +475,9 @@ export default class extends Vue {
     table.clearSelection()
   }
   private filterAttribute(obj:any){
-    this.disk_property = obj["disk_type"]
+    console.log("filterAttribute",obj)
+    this.disk_property = obj["disk_type"] ? obj["disk_type"][0] : ''
+    this.op_source = obj["op_source"] ? obj["op_source"][0] : ''
     this.current = 1
     this.getDiskList()
   }

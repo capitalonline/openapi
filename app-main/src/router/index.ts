@@ -6,7 +6,8 @@ console.log(import('../views/Home.vue'))
 const routes: RouteConfig[] = [
   {
     path: '/',
-    redirect: '/child/app-sp/instance'
+    name: 'Home',
+    redirect: '/under-app-sp/instance'
   }
 ];
 

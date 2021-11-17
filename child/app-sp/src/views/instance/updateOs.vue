@@ -21,10 +21,10 @@
       <el-form-item prop="default_os_version">
         <el-select v-model="data.default_os_version" value-key="os_id" @change="FnEmit">
           <el-option 
-            v-for="version in default_os_template_type.os_versions[data.default_os_type]" 
+            v-for="version in default_os_version_list" 
             :key="version.os_id" 
             :value="version" 
-            :label="version.name+'('+version.os_version+')'"></el-option>
+            :label="version.os_type+' '+version.os_version+' '+version.os_bit+'位'"></el-option>
         </el-select>
       </el-form-item>
     </div>
@@ -39,12 +39,14 @@ import Service from '../../https/instance/create';
 export default class updateOs extends Vue{
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
+  @Prop({default: 0}) private is_gpu!: 0|1;
   private os_list = {};
   private default_os_template_type = {
     os_template_type: '',
     os_types: [],
     os_versions: {},
   };
+  private default_os_version_list = [];
   private data = {
     default_os_type: '',
     default_os_version: {
@@ -83,14 +85,28 @@ export default class updateOs extends Vue{
       this.default_os_template_type.os_template_type = Object.keys(this.os_list)[0];
     }
   }
+  private FnHandleOsList(list) {
+    if (!list || list.length === 0) {
+      return []
+    }
+    return list.filter(item => {
+      if (this.is_gpu) {
+        return item.support_type.includes('gpu')
+      } else {
+        return item.support_type.includes('kvm')
+      }
+    })
+  }
 
   @Emit('fn-os')
   private FnEmit() {
+    const fil = this.default_os_version_list.filter(item=>item.os_id === this.data.default_os_version.os_id)
     return {
       os_id: this.data.default_os_version.os_id,
       os_type: this.data.default_os_version.os_type,
       username: this.data.default_os_version.username,
-      disk_size: this.data.default_os_version.disk_size
+      disk_size: this.data.default_os_version.disk_size,
+      os_label:fil.length>0 ? fil[0].os_type+' '+fil[0].os_version+' '+fil[0].os_bit+'位' : ''
     }
   }
 
@@ -125,8 +141,9 @@ export default class updateOs extends Vue{
 
   @Watch('data.default_os_type')
   private FnChangeOsType(newVal) {
-    if (newVal) {
-      this.data.default_os_version = this.default_os_template_type.os_versions[newVal][0];
+    this.default_os_version_list = this.FnHandleOsList(this.default_os_template_type.os_versions[newVal]);
+    if (this.default_os_version_list.length > 0) {
+      this.data.default_os_version = this.default_os_version_list[0];
     } else {
       this.data.default_os_version = {
         os_id: '',
@@ -145,6 +162,10 @@ export default class updateOs extends Vue{
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {
     this.FnGetOsList();
+  }
+  @Watch('is_gpu')
+  private FnChangeGpu(newVal) {
+    this.FnChangeOsType(this.data.default_os_type)
   }
 }
 </script>

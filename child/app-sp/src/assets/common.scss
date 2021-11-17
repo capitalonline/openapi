@@ -9,6 +9,10 @@
 .num_message {
   color: #455cc6;
 }
+.clickble{
+  cursor: pointer;
+  color: #455cc6;
+}
 .error_message{
   font-size: 12px;
   color: #f56c6c;
@@ -43,12 +47,19 @@
 .m-left10 {
   margin-left: 10px;
 }
+.m-top10{
+  margin-top: 10px;
+}
+.m-top20{
+  margin-top: 20px;
+}
 .m-right10 {
   margin-right: 10px;
 }
 .m-bottom10 {
   margin-bottom: 10px;
 }
+
 .m-left20 {
   margin-left: 20px;
 }
@@ -57,6 +68,19 @@
 }
 .m-bottom20 {
   margin-bottom: 20px;
+}
+.flex-around{
+  display: flex;
+  justify-content: space-around;
+}
+.flex-between{
+  display: flex;
+  justify-content: space-between;
+}
+.fixed-top{
+  position: fixed;
+  right: 20px;
+  width: 316px;
 }
 /* loading */
 .loading > .el-loading-spinner {
@@ -87,4 +111,30 @@
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+}
+/* 表格里面名称和id显示 */
+pre{
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
+.name-cell {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+.id-cell {
+  display: inline-block;
+  max-width: calc(100% - 24px);
+  margin-right: 6px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+/*限制tooltip的宽度 */
+.tooltip-width{
+  max-width: 200px;
 }

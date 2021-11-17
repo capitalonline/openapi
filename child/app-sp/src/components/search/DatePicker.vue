@@ -7,7 +7,7 @@
     :picker-options="{
       disabledDate: dis_date,
       onPick: onPicker
-      }"
+    }"
     :clearable="time_option.clearable"
     @change="FnEmit"
     :start-placeholder="time_option.placeholder[0]"
@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+import { min } from 'moment';
 import { Component, Prop, Emit, Watch, Vue } from 'vue-property-decorator';
 
 @Component
@@ -27,6 +28,7 @@ export default class DatePicker extends Vue {
       width: '360', 
       clearable: false,
       dis_day: 31,
+      min_date: '',
       defaultTime: [new Date(), new Date()]}
   } }) private time_option;
   @Prop({default: false}) readonly clear!: boolean;
@@ -36,15 +38,18 @@ export default class DatePicker extends Vue {
   private dis_date(cur){
     const {day} = this
     if(day===0) return;
-    let date = new Date()
-    if(!this.min_date || this.min_date===""){
-      return cur.getTime() > date.getTime()+1000*60*60*24*day
+    let one_day = 1000*60*60*24;
+    let date = new Date().getTime();
+    let min_date = new Date().getTime();
+    let max_date = new Date().getTime();
+    if (this.time_option.min_date) {
+      min_date = new Date(this.time_option.min_date).getTime();
+      return cur.getTime() > max_date || cur.getTime() < min_date - one_day
     }
-    return cur.getTime() > this.min_date+1000*60*60*24*day || cur.getTime() < this.min_date-1000*60*60*24*day
-
+    return cur.getTime() > max_date ||  cur.getTime() > (this.min_date || date)  + one_day * day  || cur.getTime() < this.min_date - one_day * day
   }
   private onPicker({ maxDate, minDate }){
-    this.min_date = minDate.getTime()
+    this.min_date = minDate.getTime();
   }
   private created() {
     this.day = (this.time_option.dis_day - 1) || 0;
@@ -57,7 +62,7 @@ export default class DatePicker extends Vue {
   private FnChangeDefaultTime(newVal) {
     if (newVal) {
       this.time = newVal;
-      this.FnEmit()
+      // this.FnEmit()
     }
   }
   @Emit('fn-emit')

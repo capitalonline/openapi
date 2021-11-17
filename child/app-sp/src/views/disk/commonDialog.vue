@@ -4,6 +4,7 @@
       :visible.sync="visible"
       width="960px"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
         <div class="mount">
@@ -20,7 +21,11 @@
                 <el-table-column prop="customer_id" label="客户ID"></el-table-column>
                 <el-table-column prop="customer_name" label="客户名称"></el-table-column>
                 <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
-                <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
+                <el-table-column prop="disk_name" label="云盘名称">
+                  <template slot-scope="scope">
+                    <pre>{{scope.row.disk_name}}</pre>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="status_name" label="状态"></el-table-column>
             </el-table>
         </div>

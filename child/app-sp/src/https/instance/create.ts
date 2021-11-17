@@ -11,8 +11,14 @@ export default {
   get_net_list(reqData) {
     return service(getEcsOptions('POST', '/ecs/net_info/', reqData))
   },
-  get_spec_list(reqData) {
-    return service(getEcsOptions('POST', '/ecs/ecs_spec_info/', reqData))
+  get_all_cpu_ram() {
+    return service(getEcsOptions('GET', '/ecs/ram_cpu_list/'))
+  },
+  get_category_list(reqData) {
+    return service(getEcsOptions('GET', '/ecs/ecs_category_list/', reqData))
+  },
+  ecs_family_info(reqData) {
+    return service(getEcsOptions('GET', '/ecs/ecs_family_info/', reqData))
   },
   get_os_list(reqData) {
     return service(getEcsOptions('POST', '/img/image_info/', reqData))

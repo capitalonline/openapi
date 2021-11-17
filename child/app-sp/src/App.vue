@@ -28,6 +28,11 @@ export default class App extends Vue {
   get key(){
     return this.$route.path+  Math.random()
   }
+  created() {
+    window.onerror = (error) => {
+      console.log('错误信息：', error)
+    }
+  }
 }
 </script>
 

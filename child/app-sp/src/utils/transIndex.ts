@@ -6,7 +6,19 @@ export function trans(list:any,oldLable:string,oldValue:string,newLable:string,n
     return arr;
    
 }
-
+export function deal_list(list,label_list,key_list,other={}){//[{disk_size:disk_size}]
+    let temp=[]
+    list.map(item=>{
+        let obj={}
+        label_list.map((inn,index)=>{
+            obj[inn] =item[key_list[index]]
+        })
+        temp.push({...obj,...other})
+        
+        
+    })
+    return temp
+}
 // export function trans_index(list:any,oldLabel:Array<string>,newLabel:Array<string>):any{
 //     if(list.length===0 || !list){
 //         return [];
@@ -19,3 +31,6 @@ export function trans(list:any,oldLable:string,oldValue:string,newLable:string,n
 //     })
 //     return list
 // }
+export function get_featrues(list,id){
+    return list.map(item=>item[id])
+}

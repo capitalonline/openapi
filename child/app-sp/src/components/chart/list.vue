@@ -70,6 +70,9 @@ export default class LineEchart extends Vue {
     yAxis: {
       type: 'value'
     },
+    grid: {
+      bottom: 80
+    },
     dataZoom: [
       {
         type: 'inside',
@@ -113,7 +116,7 @@ export default class LineEchart extends Vue {
       type: 'category',
       boundaryGap: false,
       data: this.data.xTime.map(item => {
-        return moment(new Date(moment.utc(item).format())).format('YYYY-MM-DD HH:mm:ss')
+        return moment(new Date(moment.utc(item).format())).format('MM/DD HH:mm:ss').replace(' ', '\n')
       }),
     };
     this.option.series = [];
@@ -139,11 +142,9 @@ export default class LineEchart extends Vue {
           let legend = this.data.legend[i];
           this.data.legend[i]+= this.data.line_name[0];
           this.legend_relation[legend] = [this.data.legend[i]];
-          console.log('data00', legend, this.legend_relation)
         } else {
           let legend = this.data.legend[i].replace(this.data.type, '');
           this.data.legend[i] = legend + this.data.line_name[1];
-          console.log('data', legend, this.legend_relation)
           this.legend_relation[legend].push(this.data.legend[i]);
         }
       } else {
@@ -171,7 +172,6 @@ export default class LineEchart extends Vue {
     if (!this.selected_legend) {
       this.instance.dispatchAction({type: 'legendAllSelect'})
     } else {
-      console.log(this.data.legend, this.legend_relation)
       this.data.legend.forEach(item => {
         if (this.legend_relation[this.selected_legend].includes(item)) {
           this.instance.dispatchAction({type: 'legendSelect', name: item})
@@ -184,6 +184,7 @@ export default class LineEchart extends Vue {
 
   @Watch('chart_id')
   private FnChangeChartId(newVal) {
+    this.selected_legend = '';
     this.$nextTick(() => {
       this.instance = echarts.init(document.querySelector(`#${this.chart_id}`));
       this.FnSetOption();

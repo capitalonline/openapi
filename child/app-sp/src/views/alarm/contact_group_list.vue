@@ -17,10 +17,14 @@
                     <el-table-column prop="name" label="姓名"></el-table-column>
                     <el-table-column prop="email" label="邮箱"></el-table-column>
                     <el-table-column prop="phone" label="电话号码"></el-table-column>
-                    <el-table-column prop="groupName" label="所属报警组"></el-table-column>
+                    <el-table-column prop="groups" label="所属报警组">
+                        <template slot-scope="scope">
+                            <span v-for="(item,index) in scope.row.groups" :key="item.id">{{index===scope.row.groups.length-1 ? `${item.name}` : `${item.name},`}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                        <el-button type="text" @click="remove(scope.row.id,item.id,item.name)" :disabled="!auth_list.includes('remove_contact')">移除</el-button>
+                            <el-button type="text" @click="remove(scope.row.id,item.id,item.name)" :disabled="!auth_list.includes('remove_contact')">移除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -170,13 +174,14 @@ export default class ContactList extends Vue{
           title: '提示',
           message: h('p', null, [
             h('span', null, '确定删除 '),
-            h('i', { style: 'color: #455cc6' }, `${names.join(',')}`),
+            h('i', { style: 'color: #455cc6'}, `${names.join(',')}`),
             h('span', null, '  吗, 是否继续?'),
           ]),
           showCancelButton: true,
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           iconClass: 'el-icon-warning',
+          customClass:'message-box'
         }).then(async() => {
             let res:any = await Service.delete_contact_group({
                 ids
@@ -190,6 +195,7 @@ export default class ContactList extends Vue{
                 type: 'info',
                 message: '已取消删除'
             }); 
+            this.getContactGroupList()
         })
     }
     private addToWarnGroup(){
@@ -205,6 +211,12 @@ label.el-checkbox{
 .edit{
     position: absolute;
     right: 30px;
+}
+.el-message-box.message-box{
+    i{
+        word-wrap:break-word
+    }
+    
 }
 </style>
 <style lang="scss">

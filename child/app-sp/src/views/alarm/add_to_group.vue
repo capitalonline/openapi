@@ -3,12 +3,13 @@
     <el-dialog
       title="添加至报警联系组"
       :visible.sync="visible"
-      width="400px"
+      width="450px"
       :destroy-on-close="true"
       custom-class="add-to-group"
+      :close-on-click-modal="false"
       @close="back"
     >
-      <div>
+      <div class="addToGroup">
         <el-input
           size="small"
           placeholder="请输入组名查询"
@@ -16,8 +17,16 @@
           v-model="searchVal"
           @change="search"
         />        
-        <el-checkbox-group v-model="check_group" size="small">
-            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.id" border>{{item.name}}</el-checkbox>
+        <el-checkbox-group v-model="check_group" size="small" class="group">
+            <el-checkbox v-for="item in group_list" :key="item.id" :label="item.id" border>
+              <el-tooltip 
+                placement="right" 
+                popper-class="tooltip-width"
+                :content="item.name"
+                effect="light">
+                <div class="tool-tip">{{item.name}}</div>
+              </el-tooltip>
+            </el-checkbox>
         </el-checkbox-group>
         <div class="warn" v-show="warn_flag">请选择报警联系组</div>
       </div>
@@ -100,10 +109,18 @@ export default class InsDetail extends Vue{
 </script>
 <style lang="scss" scoped>
 label.el-checkbox.el-checkbox--small.is-bordered{
-    display: block;
+    display: flex;
+    align-items: center;
     margin: 0;
     margin-top: 20px;
-    width: 87px;
+    width: 200px;
+}
+.tool-tip{
+  width: 100%;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .foot-btn{
     width:100%;
@@ -123,6 +140,10 @@ label.el-checkbox.el-checkbox--small.is-bordered{
         margin-left: 10px;
     }
 }
+.el-checkbox-group.group {
+    max-height: 300px;
+    overflow-y: auto;
+}
 </style>
 <style lang="scss">
 .el-dialog.add-to-group{
@@ -130,5 +151,10 @@ label.el-checkbox.el-checkbox--small.is-bordered{
         border-top: 1px solid #DCDFE6;;
     }
     
+}
+.addToGroup{
+  .el-checkbox.is-bordered.el-checkbox--small .el-checkbox__label{
+    width: calc(100% - 15px) !important;
+  }
 }
 </style>

@@ -69,11 +69,7 @@
                                         :key="item.ecs_id" 
                                         :label="`${item.ecs_id} / ${item.ecs_name}`" 
                                         :value="item.ecs_id"
-                                        :disabled="item.az_id!==form_data.az || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==form_data.customer_id"
                                     >
-                                    <el-tooltip class="item" effect="dark" :content="transEcsStatus(item.status)" placement="right" v-if="item.status!=='running' && item.status!=='shutdown'">
-                                        <span>{{`${item.ecs_id} / ${item.ecs_name}`}}</span>
-                                    </el-tooltip>
                                     </el-option>
                                 </el-select>
                                 <div class="ecs-error" v-if="form_data.ecs_id==='' && judge_ecs">请选择或输入实例</div>
@@ -112,8 +108,7 @@
                         >
                             <div class="disk-name">
                                 <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
-                                <span class="name-error" v-if="inn.disk_name.length===1">云盘名称长度最少为2</span>
-                                <span class="name-error" v-if="inn.disk_name.length!==1 && inn.disk_name.includes(' ')">云盘名称不能包含空格</span>
+                                <span class="name-error" v-if="inn.disk_name.trim().length===1">云盘名称长度不能为1</span>
                             </div>
                             <div class="remark">{{disk_validate_msg}}</div>
                             
@@ -126,7 +121,7 @@
                                     { required: disk_type_list.length>0 && (!inn.ecs_goods_id || inn.ecs_goods_id===''),message:'请选择类型', trigger: 'blur' }
                                 ]"
                             >
-                                <el-select v-model="inn.ecs_goods_id">
+                                <el-select v-model="inn.ecs_goods_id" @change="change_type($event,index)">
                                     <el-option v-for="item in disk_type_list" :key="item.ecs_goods_id" :label="item.disk_value" :value="item.ecs_goods_id"></el-option>
                                 </el-select>
                             </el-form-item>
@@ -134,17 +129,23 @@
                                 prop="disk_size"
                                 label=""
                             >
-                                <el-input-number step-strictly v-model="inn.disk_size" :step="128" :min="128" :max="2048" @change="change_capacity"></el-input-number>&nbsp;GB
+                                <el-input-number step-strictly v-model.number="inn.disk_size" :step="get_step_max(inn.ecs_goods_id).step" :min="get_step_max(inn.ecs_goods_id).min" :max="get_step_max(inn.ecs_goods_id).max" @blur="change_capacity(inn.disk_size,inn.ecs_goods_id,index)"></el-input-number>&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
                             </el-form-item>
                         </div>
                         <el-form-item
                             prop="amount"
                             label="数量"
-                            :rules="[
-                                { required: disk_type_list.length>0 && (!inn.amount || inn.amount===0),message:'请输入数量', trigger: 'blur' }
-                            ]"
+                            
                         >
-                            <el-input-number v-model="inn.amount" :step="1" :min="1" :max="dis_change ? inn.amount : disk_total" @change="changeNum(index,$event)"></el-input-number>&nbsp;块
+                            <el-input-number 
+                                v-model="inn.amount" 
+                                :step="1" 
+                                :min="1" 
+                                :max="dis_change ? inn.amount : disk_total" 
+                                @blur="changeNum(index,inn.amount)"
+                                @change="changeNum(index,inn.amount)"
+                            >
+                            </el-input-number>&nbsp;块
                         </el-form-item>
                         <template v-if="index===form_data.disk_list.length-1">
                             <el-form-item
@@ -152,8 +153,8 @@
                                 label=""
                             >
                                 <div class="operate_btns">
-                                    <i class="el-icon-circle-plus" type="primary" @click="add" v-if="!dis_change"></i>
-                                    <i class="el-icon-remove" @click="del(index)" v-if="form_data.disk_list.length>1"></i>
+                                    <i class="el-icon-circle-plus" type="primary" @click="add" v-if="!dis_change && disk_type_list.length>0"></i>
+                                    <i class="el-icon-remove" @click="del(index)" v-if="form_data.disk_list.length>1 && disk_type_list.length>0"></i>
                                     <span class="disk-num">您已选择&nbsp;<span class="num">{{total}}</span>&nbsp;块盘， 还可以添加&nbsp;<span class="num">{{disk_total - total}}</span>&nbsp;块盘</span>
                                 </div>
                             </el-form-item>
@@ -175,7 +176,7 @@
                     
                     
             </div>
-            <div class="detail_box">
+            <div class="detail_box fixed-top">
                 <el-card class="box-card">
                     <div slot="header" class="clearfix">
                         <span>当前配置信息</span>
@@ -239,6 +240,8 @@ import detail_service from '../../https/instance/record_detail'
 import Detail from '../instance/detail.vue'
 import {getEcsStatus} from '../../utils/getStatusInfo'
 import { Form } from "element-ui";
+import getIops from '../../utils/getIops';
+import { deal_list } from '../../utils/transIndex';
 // import scrollDirective from '../../utils/select-directive';
 import moment from 'moment'
 interface Page {
@@ -276,13 +279,17 @@ export default class CreateDisk extends Vue{
             {
                 disk_name:'',
                 ecs_goods_id:'',
-                disk_size:128,
+                disk_size:0,
                 amount:1,
+                iops:2824,
+                throughput:96,
+                disk_feature:''
             }
         ],
         fee:''
         
     }
+    private data_disk_info:any=null
     private disk_total:number=16;//云盘限制数量
     private total:number=1;//已选择云盘数量
     private mounted_disk:number=1;//实例已挂载云盘数量
@@ -325,21 +332,17 @@ export default class CreateDisk extends Vue{
     //监听可用区ID
     @Watch("form_data.az")
     private watch_az(newVal){
-        console.log("form_data.az",newVal)
         this.get_instance_list("")
-    }
-    //监听云盘名称
-    @Watch("form_data.disk_list",{ immediate: true, deep: true })
-    private watch_disk_name(newVal){
     }
     //获取客户名称
     private async get_customer_name(){
         const resData: any = await Service.get_customer_name({customer_id: this.form_data.customer_id});
         if (resData.code == 'Success') {
             this.form_data={...this.form_data,customer_name:resData.data.customer_name}
+            this.mount(this.form_data.isMounted)
             this.customerID = resData.data.customer_id
             this.get_area_list();
-            this.get_disk_type()
+            this.get_disk_type();
         }
     }
     //获取地区列表
@@ -364,10 +367,10 @@ export default class CreateDisk extends Vue{
             page_size:20,
             keyword:val,
             customer_id:this.form_data.customer_id,
-
+            az_id:this.form_data.az
         });
         if (resData.code == 'Success') {
-            this.ECS_instance_list = resData.data.ecs_list.filter(item=>item.az_id===this.form_data.az);
+            this.ECS_instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu);
         }
     }
     
@@ -378,9 +381,14 @@ export default class CreateDisk extends Vue{
             customer_id:this.form_data.customer_id
         });
         if (resData.code == 'Success') {
-            this.disk_type_list = resData.data.system_disk;
-            this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map(item=>{
+            this.disk_type_list = resData.data.data_disk.filter(item=>item.disk_feature==="HDD" || item.disk_feature==="SSD");
+            this.disk_type_list.map(item=>{
+                this.data_disk_info = Object.assign({},this.data_disk_info,{[item.ecs_goods_id]:item});
+            })
+            this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
                 item.ecs_goods_id = this.disk_type_list[0].ecs_goods_id;
+                item.disk_feature = this.disk_type_list[0].disk_feature;
+                this.change_type(item.ecs_goods_id,index)
                 return item;
             })}
         }
@@ -418,20 +426,21 @@ export default class CreateDisk extends Vue{
     
     //设置挂载
     private mount(value:string){
-        this.disk_total=value==="1" ? 16 - this.mounted_disk : 50
+        this.disk_total=value==="1" ? 16 : 50
         
         const {form_data:{isMounted,disk_list}}=this
         if(value==="1" && isMounted==='0'){
-            this.dis_change=false
-            this.total=0
+            // this.dis_change=false
+            // this.total=0
             this.form_data={...this.form_data,disk_list:disk_list.map(item=>{
                 item.amount=1
                 return item
             })}
-            this.form_data = {...this.form_data,ecs_id:''}
-            this.ecs_specifications=[]
+            
         }
-        this.form_data={...this.form_data,isMounted:value}
+        this.ecs_specifications=[]
+        this.form_data={...this.form_data,isMounted:value,ecs_id:''}
+        this.form_data.del_set=false
         this.get_disk_quantity()
     }
     private dis_change=false//判断挂载总数是否达到16
@@ -459,8 +468,11 @@ export default class CreateDisk extends Vue{
         this.form_data={...this.form_data,disk_list:[...this.form_data.disk_list,{
             disk_name:'',
             ecs_goods_id:this.disk_type_list.length>1 ? this.disk_type_list[0].ecs_goods_id : '',
-            disk_size:128,
-            amount:1
+            disk_size:this.disk_type_list[0].disk_min,
+            iops:this.disk_type_list[0].min_iops,
+            throughput:this.disk_type_list[0].min_throughput,
+            amount:1,
+            disk_feature:this.disk_type_list[0].disk_feature
         }]}
         this.get_disk_quantity()
     }
@@ -475,7 +487,21 @@ export default class CreateDisk extends Vue{
     }
     //修改云盘挂在实例数量
     private changeNum(index,current){
+        if(!current){
+            this.form_data.disk_list.map((item,ind)=>{
+                if(ind===index){
+                    item.amount = 1
+                }
+                return item;
+            })
+            // this.form_data.disk_list[index].amount = 1
+        }
         this.get_disk_quantity()
+        const sum:number = this.form_data.isMounted==='0' ? 50 : this.disk_total
+        if(this.total>sum){
+            this.form_data.disk_list[index].amount = this.form_data.disk_list[index].amount - (this.total - sum)
+            this.total = sum
+        }
     }
     //跳转至云服务器详情
     private goToDetail(){
@@ -519,13 +545,40 @@ export default class CreateDisk extends Vue{
         
         
     }
+    private get_step_max(id){
+        return this.data_disk_info ? {
+            step:this.data_disk_info[id].disk_step,
+            max:this.data_disk_info[id].disk_max,
+            min:this.data_disk_info[id].disk_min
+        }:{
+            step:1,
+            max:1,
+            min:1
+        }
+    }
+    //监听类型改变
+    private change_type(id,index){
+        this.form_data.disk_list[index].iops = getIops(this.data_disk_info[id]).iops
+        this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id]).throughput
+        this.form_data.disk_list[index].disk_size = this.data_disk_info[id].disk_min;
+        this.form_data.disk_list[index].disk_feature = this.data_disk_info[id].disk_feature;
+    }
     //监听容量改变
-    private change_capacity(val){
+    private change_capacity(origin_size,id,index){
+        let size = origin_size ? origin_size : this.get_step_max(id).min
+        // this.form_data.disk_list[index].disk_size = size
+        if(!origin_size){
+            this.form_data.disk_list.map((item,ind)=>{
+                if(ind===index){
+                    item.disk_size = size
+                }
+                return item;
+            })
+        }
+        this.form_data.disk_list[index].iops = getIops(this.data_disk_info[id],size).iops;
+        this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id],size).throughput;
     }
-    //将状态码转变成状态内容
-    transEcsStatus(type){
-        return `状态${getEcsStatus(type)}不可挂载`
-    }
+    
     //创建、
     private async create(){
         const form = this.$refs.form as Form
@@ -533,21 +586,22 @@ export default class CreateDisk extends Vue{
             this.judge_ecs=true
             return;
         }
-        if(!this.form_data.disk_list.every(item=>item.disk_name.length===0 || item.disk_name.length>=2)){
+        if(this.form_data.disk_list.some(item=>item.disk_name.trim().length===1)){
             return;
         }
-        if(this.form_data.disk_list.some(item=>item.disk_name.includes(" "))){
-            return;
-        }
+        const label_list = ['ebs_goods_id','disk_size','disk_iops','amount','band_mbps','disk_feature', 'disk_name'];
+        const key_list=['ecs_goods_id','disk_size','iops','amount','throughput','disk_feature', 'disk_name']
+        let temp_disk = deal_list(this.form_data.disk_list,label_list,key_list)
+        console.log('temp_disk', temp_disk)
         form.validate(async(valid)=>{
             if(valid){
-                const {form_data:{ecs_id,del_set,az,disk_list}} = this
+                const {form_data:{ecs_id,del_set,az}} = this
                 let res:any = await disk_service.create({
                     customer_id:this.customerID,
                     ecs_id,
                     is_follow_delete:del_set ? '1' : '0',
                     az_id:az,
-                    disk_list
+                    disk_list: temp_disk
                 })
                 if (res.code == 'Success') {
                     this.$message.success("云盘创建任务下发成功！")
@@ -566,7 +620,8 @@ export default class CreateDisk extends Vue{
     .main_box{
         display: flex;
         .form_box{
-            flex: 1;
+            // flex: 1;
+            width: calc(100% - 326px);
             .card_inline{
                 display: flex;
                 .ecs-error{
@@ -634,7 +689,7 @@ export default class CreateDisk extends Vue{
             }
         }
         .detail_box{
-            width: 380px;
+            width: 316px;
             padding-left: 20px;
             .config-info{
                 line-height: 36px;
@@ -651,7 +706,7 @@ export default class CreateDisk extends Vue{
             position: fixed;
             bottom: 0;
             padding: 20px 0 20px 20px;
-            width: 380px;
+            width: 316px;
             right: 30px;
             .el-button{
                 width: 100%;

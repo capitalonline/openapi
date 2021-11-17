@@ -46,6 +46,20 @@ html, body {
 }
 
 /* 弹窗 */
+.el-dialog__header {
+  padding: 15px 20px;
+  background: $--color-primary;
+  .el-dialog__title {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
 .el-dialog__footer {
   text-align: center;
 }

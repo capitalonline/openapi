@@ -3,9 +3,12 @@
       <div class="search-box">
         <div v-for="(value, key) in search_option" :key="key" class="search-input" :style="value.width ? {width:`${value.width}px`} : {}">
           <el-select v-model="search_value[key]" v-if="value.list && !value.type" :placeholder="value.placeholder" clearable>
-            <el-option v-for="item in value.list" :key="item.type" :label="item.label" :value="item.type"></el-option>
+            <el-option v-for="(item,id) in value.list" :key="Array.isArray(value.list) ? item.type : id" :label="Array.isArray(value.list) ? item.label : item" :value="Array.isArray(value.list) ? item.type : id"></el-option>
           </el-select>
-          <el-input v-model="search_value[key]" :placeholder="value.placeholder" v-if="(!value.list && !value.type) || value.type==='composite'" clearable class="composite" :style="value.width ? {width:`${value.width}px`} : {}">
+          <el-input 
+            v-model="search_value[key]" 
+            :placeholder="value.placeholder" 
+            v-if="(!value.list && !value.type) || value.type==='composite'" clearable class="composite" :style="value.width ? {width:`${value.width}px`} : {}">
             <el-select v-model="search_value[key+'sub']" slot="prepend" placeholder="请选择" v-if="value.type==='composite'">
               <el-option v-for="item in value.list" :key="item.type" :label="item.label" :value="item.type"></el-option>
             </el-select>
@@ -20,7 +23,7 @@
         
         <div class="m-bottom20">
           <el-button type="primary" @click="FnSearch">查 询</el-button>
-          <el-button type="default" @click="FnClear">清空</el-button>
+          <el-button type="default" @click="FnClear">清 空</el-button>
         </div>
       </div>
       <slot>
@@ -52,7 +55,7 @@ export default class ActionBlock extends Vue {
     this.time = time;
     this.date_key = key;
   }
-
+ 
   @Emit('fn-search')
   private FnSearch() {
     this.search_value[this.date_key]=this.time
@@ -60,7 +63,7 @@ export default class ActionBlock extends Vue {
   }
   @Watch("search_value",{immediate:true,deep:true})
   private watch_search_value(newval,oldval){
-    console.log("watch_search_value",newval,oldval)
+      
   }
   @Emit('fn-create')
   private FnShowCreate() {
@@ -70,10 +73,22 @@ export default class ActionBlock extends Vue {
       if(["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
       } else {
-        this.search_value[i]=""
+        this.search_value={}
       }
     }
     this.FnSearch()
+  }
+  private mounted() {
+    let flag = 0;
+    for (let key in this.search_option) {
+      if (this.search_option[key].default_value) {
+        this.$set(this.search_value, key, this.search_option[key].default_value)
+        flag++
+      }
+    }
+    if (flag > 0) {
+      this.FnSearch()
+    }
   }
 }
 </script>
@@ -96,8 +111,10 @@ export default class ActionBlock extends Vue {
       width: 100% !important;
       padding: 0px 10px !important;
     }
-  };
-  
+  }
+  .el-select {
+    width: 100%;
+  }
 }
 
 
