@@ -19,7 +19,13 @@ const routes: RouteConfig[] = [
     path: '/instance/monitor/:id',
     name: 'instance_monitor',
     component: () => import('../views/instance/monitor.vue'),
-    meta: {menu: 'instance_list', no_auth: true}
+    meta: {menu: 'instance_list'}
+  },
+  {
+    path: '/instance/gpu/monitor/',
+    name: 'monitor',
+    component: () => import('../views/instance/monitor.vue'),
+    meta: {menu: 'monitor'}
   },
   {
     path:'/alarmInfo',
@@ -56,6 +62,18 @@ const routes: RouteConfig[] = [
     name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
     meta:{menu:'disk_list'}
+  },
+  {
+    path:'/physical',
+    name:'physical_list',
+    component:()=>import('../views/physical/list.vue'),
+    meta:{menu:'physical_list'}
+  },
+  {
+    path:'/physical/detail',
+    name:'physical_detail',
+    component:()=>import('../views/physical/detail.vue'),
+    meta:{menu:'physical_list'}
   },
   {
     path:'/disk/capacity',
@@ -104,6 +122,12 @@ const routes: RouteConfig[] = [
     name: 'project_list',
     component: () => import('../views/project/list.vue'),
     meta: {menu: 'project_list'}
+  },
+  {
+    path: '/pod',
+    name: 'pod_list',
+    component: () => import('../views/pod/list.vue'),
+    meta: {meta: 'pod_list'}
   },
   {
     path: '/404',

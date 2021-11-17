@@ -186,7 +186,7 @@ export const mock = {
 export const productList = [
     {
         id:'ecs',
-        name:'ecs'
+        name:'云服务器'
     },
     // {
     //     id:'gpu',

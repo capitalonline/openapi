@@ -5,11 +5,11 @@ import { getEcsOptions } from '../common';
 export default{
     //获取云盘列表
     get_disk_list(req){
-        return service(getEcsOptions('POST','/ebs/get_disk_list/',req))
+        return service(getEcsOptions('GET','/ebs/get_disk_list/',req))
     },
     //云盘状态列表获取
     get_disk_state(req){
-        return service(getEcsOptions('POST','/ebs/disk_status/',req))
+        return service(getEcsOptions('GET','/ebs/disk_status/',req))
     },
     //修改云盘名称接口
     edit_disk_name(req){

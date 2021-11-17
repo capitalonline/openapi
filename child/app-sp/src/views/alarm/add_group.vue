@@ -5,21 +5,27 @@
       :visible.sync="visible"
       width="800px"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
-      <div>
+      <div class="add-group">
         <el-form :model="form_data" ref="form" label-width="100px" class="demo-dynamic">
             <el-form-item
                 prop="name"
                 label="组名"
-                :rules="[{required:true,message:'请输入组名',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入组名',trigger:'blur'},
+                  { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
+                ]"
             >
-                <el-input v-model="form_data.name" />
+                <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
+                <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
             </el-form-item>
             <el-form-item
                 prop="contact"
                 label="选择联系人"
             >
+              <div class="transfer">
                 <el-transfer
                     filterable
                     :titles="['联系人','已选择']"
@@ -28,7 +34,18 @@
                     v-model="form_data.contact"
                     :data="contact_list"
                 >
+                <span slot-scope="{ option }">
+                  <el-tooltip 
+                      placement="right" 
+                      popper-class="tooltip-width"
+                      :content="option.label"
+                      effect="light">
+                      <div class="tool-tip">{{option.label}}</div>
+                  </el-tooltip>
+                </span>
                 </el-transfer>
+              </div>
+                
             </el-form-item>
         </el-form>
         <el-divider />
@@ -68,17 +85,23 @@ export default class InsDetail extends Vue{
 
   }
   private contact_list:any=[]
+  
   created() {
-    this.getContactList()
+    this.getContactList('')
     console.log("created",this.id)
     if(this.id!==""){
       this.get_contact_group_detail()
     }
   }
-  private async getContactList(){
-    let res:any = await Service.get_contact_list({})
+  private async getContactList(name){
+    let res:any = await Service.get_contact_list({
+      page:1,
+      pageSize:100,
+      name
+    })
     if(res.code==='Success'){
         this.contact_list = trans(res.data.datas,"name",'id','label','key')
+        console.log("this.contact_list",this.contact_list.length)
     }
   }
   private async get_contact_group_detail(){
@@ -94,6 +117,8 @@ export default class InsDetail extends Vue{
     }
   }
   private filterMethod(query, item) {
+      // console.log("query",query,item)
+      // this.getContactList(query)
       return item.label.indexOf(query) > -1;
     }
   private confirm(){
@@ -144,4 +169,12 @@ export default class InsDetail extends Vue{
         margin-right: 10px;
     }
 }
+.tool-tip{
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 </style>

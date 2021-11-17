@@ -4,6 +4,7 @@
         :visible.sync="visible"
         width="600px"
         :destroy-on-close="true"
+        :close-on-click-modal="false"
         @close="back"
     >
         <el-alert
@@ -18,7 +19,7 @@
                 max-height="161"
                 border
             >
-                <el-table-column prop="disk_id" label="待挂载云盘ID"></el-table-column>
+                <el-table-column prop="disk_id" label="待卸载云盘ID"></el-table-column>
                 <el-table-column prop="ecs_id" label="源实例ID"></el-table-column>
                 <el-table-column prop="az_name" label="地域及可用区"></el-table-column>
             </el-table>

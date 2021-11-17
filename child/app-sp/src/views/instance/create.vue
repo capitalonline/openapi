@@ -49,13 +49,14 @@
         </el-card>
 
         <el-card>
-          <update-os :az_id="default_az.az_id" :customer_id="customer_id" @fn-os="FnGetOs"></update-os>
+          <update-os :az_id="default_az.az_id" :is_gpu="ecs_spec_info.is_gpu" :customer_id="customer_id" @fn-os="FnGetOs"></update-os>
         </el-card>
 
         <el-card class="disk-box">
           <update-disk :az_id="default_az.az_id" :customer_id="customer_id" 
             :system_disk="true" 
             :data_disk="true"
+            :is_gpu="ecs_spec_info.is_gpu"
             :os_disk_size="os_info.disk_size"
             @fn-system-disk="FnGetSystemDisk" 
             @fn-data-disk="FnGetDataDisk">
@@ -64,7 +65,7 @@
 
         <el-card>
           <label-block label="购买数量">
-            <el-input-number v-model="num_info.num" :min="num_info.min" :max="num_info.max"></el-input-number>
+            <el-input-number v-model="num_info.num" :min="num_info.min" :max="num_info.max" @blur="FnCheckNum"></el-input-number>
             <span class="prompt_message m-left10">一次最多创建20台</span>
           </label-block>
         </el-card>
@@ -82,22 +83,28 @@
           <update-pwd ref="update_pwd" :username="os_info.username"></update-pwd>
         </el-card>
       </div>
-      <div class="right-box">
+      <div class="right-box fixed-top">
         <el-card>
           <div slot="header"> 
             当前配置信息
           </div>
           <div class="right-row">
             <div>可用区</div>
-            <div>{{ default_region.region_name }} -- {{ default_az.az_name }}</div>
+            <div>{{ default_region.region_name }} | {{ default_az.az_name }}</div>
           </div>
           <div class="right-row">
             <div>网络</div>
-            <div>{{ default_vpc.vpc_name }} -- {{ default_subnet.subnet_name }}</div>
+            <div>{{ default_vpc.vpc_name }} | {{ default_subnet.subnet_name }}</div>
           </div>
           <div class="right-row">
             <div>计算规格</div>
-            <div>{{ ecs_spec_info.cpu_size }}核{{ ecs_spec_info.ram_size }}GiB</div>
+            <div>{{ ecs_spec_info.ecs_goods_name }} | {{ ecs_spec_info.cpu }}vCPU | {{ ecs_spec_info.ram }}GiB
+              <span v-if="ecs_spec_info.is_gpu">| {{ ecs_spec_info.gpu }}GPU</span>
+            </div>
+          </div>
+          <div class="right-row">
+            <div>镜像</div>
+            <div>{{os_info.os_label}}</div>
           </div>
           <div class="right-row">
             <div>系统盘({{ system_info.disk_name }})</div>
@@ -268,7 +275,8 @@ export default class App extends Vue {
       os_id: data.os_id,
       os_type: data.os_type,
       username: data.username,
-      disk_size: Number(data.disk_size)
+      disk_size: Number(data.disk_size),
+      os_label:data.os_label
     }
   }
   private FnGetSystemDisk(data): void {
@@ -276,6 +284,12 @@ export default class App extends Vue {
   }
   private FnGetDataDisk(data): void {
     this.data_disk_list = data;
+  }
+  // 数量输入框失焦时判断是否为空，为空则填充最小值
+  private FnCheckNum() {
+    if (!this.num_info.num) {
+      this.num_info.num = this.num_info.min;
+    }
   }
   private async FnCreate() {
     if (!this.customer_id) {
@@ -299,12 +313,23 @@ export default class App extends Vue {
     let data_list = [];
     this.data_disk_list.forEach((item: any) => {
       let data = {
-        ecs_goods_id: item.default_disk_info.ecs_goods_id,
+        ebs_goods_id: item.default_disk_info.ecs_goods_id,
         goods_name: item.default_disk_info.disk_name,
         disk_feature: item.default_disk_info.disk_feature,
         disk_type: item.default_disk_info.disk_type,
         disk_size: item.disk_size,
         is_follow_delete: item.del
+      }
+      if (!this.ecs_spec_info.is_gpu) {
+        data['storage_space'] = item.disk_size;
+        data['iops'] = item.iops;
+        data['handling_capacity'] = item.handling_capacity;
+      } else {
+        data.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
+        data.is_follow_delete = 1;
+        data['local_disk-space'] = item.disk_size;
+        data['local_disk-IOPS'] = item.iops;
+        data['local_disk-throughput'] = item.handling_capacity;
       }
       for (let i = 0; i < item.num; i++) {
         data_list.push(data)
@@ -312,7 +337,9 @@ export default class App extends Vue {
     })
     const reqData = {
       customer_id: this.customer_id,
+      region_id: this.default_region.region_id,
       az_id: this.default_az.az_id,
+      is_gpu: this.ecs_spec_info.is_gpu,
       net_info: {
         vpc_id: this.default_vpc.vpc_id,
         vpc_segment_id: this.default_vpc.vpc_segment_id,
@@ -330,18 +357,28 @@ export default class App extends Vue {
       os_type: this.os_info.os_type,
       disk_info: {
         system_disk: {
-          ecs_goods_id: this.system_info.ecs_goods_id,
+          ebs_goods_id: this.system_info.ecs_goods_id,
           goods_name: this.system_info.disk_name,
           disk_feature: this.system_info.disk_feature,
           disk_type: this.system_info.disk_type,
-          disk_size: this.system_info.disk_size
+          disk_size: this.system_info.disk_size,
+          is_follow_delete: this.system_info.is_follow_delete,
+          storage_space: this.system_info.storage_space,
+          iops: this.system_info.iops,
+          handling_capacity: this.system_info.handling_capacity,
         },
         data_disks: data_list
       },
-      num: this.num_info.num,
+      num: this.num_info.num ? this.num_info.num :1,
       ecs_name: this.ecs_name_info.ecs_name,
       username: this.os_info.username || 'root',
       password: this.ecs_name_info.password
+    }
+    if (this.ecs_spec_info.is_gpu) {
+      reqData.disk_info.system_disk.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
+      reqData.disk_info.system_disk['local_disk-IOPS'] = this.system_info.iops;
+      reqData.disk_info.system_disk['local_disk-space'] = this.system_info.storage_space;
+      reqData.disk_info.system_disk['local_disk-throughput'] = this.system_info.handling_capacity;
     }
     const resData: any = await Service.create_instance(reqData);
     if (resData.code == 'Success') {
@@ -388,10 +425,11 @@ export default class App extends Vue {
 .create-box {
   display: flex;
   .left-box {
-    flex: 1;
+    // flex: 1;
+    width: calc(100% - 316px);
   }
   .right-box {
-    width: 360px;
+    width: 316px;
     padding-left: 20px;
     .right-row {
       display: flex;
@@ -404,7 +442,7 @@ export default class App extends Vue {
     position: fixed;
     bottom: 0;
     right: 30px;
-    width: 360px;
+    width: 316px;
   }
 }
 .el-card {

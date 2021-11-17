@@ -22,14 +22,15 @@
         </el-table-column>
         <el-table-column label="恢复后新IP">
           <template #default="scope">
-            <el-select v-model="new_ip_address[scope.row.ecs_id]" filterable clearable placeholder="请选择IP">
+            <!-- <el-select v-model="new_ip_address[scope.row.ecs_id]" filterable clearable placeholder="请选择IP">
               <el-option
                 v-for="item in ip_available_list[scope.row.ecs_id]"
                 :key="item"
                 :label="item"
                 :value="item">
               </el-option>
-            </el-select>
+            </el-select> -->
+            <el-input v-model="new_ip_address[scope.row.ecs_id]" placeholder="请输入自定义IP"></el-input>
           </template>
         </el-table-column>
       </el-table>
@@ -64,7 +65,7 @@ export default class Recover extends Vue {
           ip_address: item.ip_address,
           is_used: item.is_used,
         }
-        this.ip_available_list[item.ecs_id] = item.ip_list;
+        // this.ip_available_list[item.ecs_id] = item.ip_list;
       })
       this.$set(this.ip_usage)
     }
@@ -72,11 +73,16 @@ export default class Recover extends Vue {
   private async FnRecover() {
     let new_ip_address = Object.values(this.new_ip_address);
     let new_ip_address_repeat = [];
-    new_ip_address.forEach(item => {
+    for (let id in this.new_ip_address) {
+      let item = this.new_ip_address[id];
+      if (this.ip_usage[id].is_used && this.ip_usage[id].ip_address === item) {
+        this.$message.warning('恢复后新IP已被占用！')
+        return
+      }
       if (new_ip_address_repeat.indexOf(item) < 0 || !item) {
         new_ip_address_repeat.push(item)
       }
-    })
+    }
     if (new_ip_address.length > new_ip_address_repeat.length) {
       this.$message.warning('恢复后新IP重复！')
       return

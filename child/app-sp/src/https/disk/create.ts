@@ -9,6 +9,6 @@ export default{
     },
     //获取云盘类型信息
     get_disk_type(req){
-        return service(getEcsOptions('POST','/ebs/disk_info/',req))
+        return service(getEcsOptions('GET','/ebs/disk_info/',req))
     }
 }

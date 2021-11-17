@@ -4,6 +4,7 @@
       :visible.sync="visible_sync"
       width="760px"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
         <div class="mount">
@@ -16,6 +17,7 @@
             <el-table
                 :data="contact_rows"
                 border
+                max-height="300"
             >
                 <el-table-column prop="name" label="姓名"></el-table-column>
                 <el-table-column prop="email" label="邮箱" v-if="title==='删除联系人'"></el-table-column>

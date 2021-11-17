@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import DatePicker from './DatePicker.vue';
 
 @Component({
@@ -24,12 +24,14 @@ import DatePicker from './DatePicker.vue';
   }
 })
 export default class TimeGroup extends Vue {
+  @Prop({default: ''}) private start_time!: string;
   private time_option = {
     placeholder: ['开始时间', '结束时间'], 
     type: 'datetimerange', 
     width: '360', 
     clearable: false,
     dis_day: 31,
+    min_date: this.start_time,
     defaultTime: []
   };
   private time_list = {
@@ -45,7 +47,12 @@ export default class TimeGroup extends Vue {
   private FnChangeTime() {
     let time = this.time_list[this.default_time].time;
     let now = new Date().getTime();
-    this.time_option.defaultTime = [new Date(now - time), new Date(now)]
+    let start_time = new Date(now - time);
+    if (this.start_time && new Date(this.start_time) > start_time) {
+      start_time = new Date(this.start_time)
+    }
+    this.time_option.defaultTime = [start_time, new Date(now)];
+    this.FnEmit(this.time_option.defaultTime)
   }
   private FnChangeDateTimer(default_date_timer) {
     this.default_time = '';

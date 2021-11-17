@@ -10,11 +10,30 @@
                     <span>{{scope.row.createTime ? moment(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="durationTime" label="持续时间"></el-table-column>
+            <el-table-column prop="durationTime" label="持续时间">
+                <template slot-scope="scope">
+                    <span class="m-right10">{{scope.row.metricPeriodNum ? `${scope.row.metricPeriodNum}个周期` :'-'}}</span>
+                    <span>{{scope.row.metricPeriod ? scope.row.metricPeriod===60 ? '1小时1周期' :`${scope.row.metricPeriod}分钟1周期` :'-'}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="ruleName" label="规则名称"></el-table-column>
-            <el-table-column prop="alarmType" label="报警类型"></el-table-column>
-            <el-table-column prop="contactGroupName" label="通知对象"></el-table-column>
-            <el-table-column prop="alarmMethod" label="通知方式"></el-table-column>
+            <el-table-column prop="alarmType" label="报警类型">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.alarmType!==''">{{scope.row.alarmType==='metric' ? '指标报警' :'事件报警'}}</span>
+                    <span v-else>--</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="contactGroup" label="通知对象">
+                <template slot-scope="scope">
+                    <span>{{scope.row.contactGroup.join(',')}}</span>
+                    <i class="el-icon-document" @click="view_contact(scope.row.notyfyList)"></i>
+                </template>
+            </el-table-column>
+            <el-table-column prop="alarmMethod" label="通知方式">
+                <template slot-scope="scope">
+                    <span>{{scope.row.alarmMethod.length===2 ? '邮箱+短信' : notice[scope.row.alarmMethod[0]]}}</span>
+                </template>
+            </el-table-column>
             <el-table-column 
                 prop="dealStatus" 
                 label="处理结果" 
@@ -24,7 +43,7 @@
                 column-key='dealStatus'
             >
                 <template slot-scope="scope">
-                    <span>{{scope.row.dealStatus ? '已解决' : '未解决'}}</span>
+                    <span>{{scope.row.dealStatus ? '已处理' : '未处理'}}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -37,6 +56,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
+        <template v-if="visible">
+            <notice-contact :visible.sync="visible" :list="notice_list" />
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -45,16 +67,22 @@ import ActionBlock from '../../components/search/actionBlock.vue';
 import TimeGroup from '../../components/search/timeGroup.vue'
 import moment from 'moment';
 import Service from '../../https/alarm/list'
-import {trans} from '../../utils/transIndex'
+import {trans} from '../../utils/transIndex';
+import NoticeContact from './notice_contact.vue'
 @Component({
     components:{
         ActionBlock,
-        TimeGroup
+        TimeGroup,
+        NoticeContact
     }
 })
 export default class Contact extends Vue{
+    private notice={
+        email:'邮箱',
+        phone:'短信'
+
+    }
     private type_list:any = [
-        {type:'',label:'全部'},
         {type:'metric',label:'指标报警'},
         {type:'event',label:'事件报警'},
     ]
@@ -67,11 +95,11 @@ export default class Contact extends Vue{
     private fil_list = [
         {
             text:'已处理',
-            value:'dealed'
+            value:'1'
         },
         {
             text:'未处理',
-            value:'undealed'
+            value:'0'
         },
     ]
     
@@ -81,8 +109,9 @@ export default class Contact extends Vue{
     private total:number = 0
     private moment =moment
     private search_data:any = {}
-    private dealStatus:Array<string> = []
-
+    private dealStatus:Array<string> = [];
+    private visible:boolean= false
+    private notice_list:any=[]
     created() {
         this.getContactGroupList()
         // this.getAlarmList()
@@ -95,14 +124,15 @@ export default class Contact extends Vue{
     }
     private async getAlarmList(){
         const {search_data} = this
+        
         let res:any=await Service.get_alarm_list({
-            ruleName:search_data.ruleName,
-            // instanceID:search_data.instanceID,
+            ruleName:search_data.ruleName,//输入这个字段可以进行规则名称或者资源ID进行搜索
+            instanceID:search_data.instanceID,
             alarmType:search_data.type,
             contactGroupName:search_data.contact,
             startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
             endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            dealStatus:this.dealStatus.length===0 ? "all" : this.dealStatus[0],
+            dealStatus:this.dealStatus.length===0 ? "" : this.dealStatus[0],
             page:this.current,
             pageSize:this.size
         })
@@ -112,9 +142,13 @@ export default class Contact extends Vue{
             this.total = res.data.total || 0
         }
     }
+    private view_contact(list){
+        this.visible = true
+        this.notice_list = list
+    }
     private fn_search(data:any={}){
         this.current = 1
-        this.search_data = data
+        this.search_data = {...this.search_data,...data}
         // this.activityKey = ""
         this.getAlarmList()
     }
@@ -158,5 +192,13 @@ button.el-button.time_operate {
 }
 button.el-button.time_operate:last-child{
     border: 1px solid #DCDFE6;
+}
+i.el-icon-document{
+    cursor: pointer;
+    margin-left: 15px;
+}
+.el-icon-document:before {
+    content: "\e785";
+    color: #455cc6;
 }
 </style>

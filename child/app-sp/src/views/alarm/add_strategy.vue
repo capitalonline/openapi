@@ -1,40 +1,42 @@
 <template>
     <div class="create-stategy">
         <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
-        <div class="main_box">
-            <el-card class="create">
-                <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
-                    <el-form-item
-                        prop="name"
-                        label="策略名称"
+        <el-card class="main_box">
+            <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
+                <el-form-item
+                    prop="name"
+                    label="策略名称"
+                >
+                    <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
+                    <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
+                </el-form-item>
+                <el-form-item
+                    prop="stategy"
+                    label="选择已有策略"
+                    v-if="edit_id===''"
+                >
+                    <el-select 
+                        v-model="form_data.stategy" 
+                        placeholder="请选择已有策略"
+                        filterable 
+                        :filter-method="getStrategyList"
+                        @visible-change="change_strategy"
                     >
-                        <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="2-60个字符" />
-                        <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
-                    </el-form-item>
-                    <el-form-item
-                        prop="stategy"
-                        label="选择已有策略"
-                        v-if="edit_id===''"
-                    >
-                        <el-select v-model="form_data.stategy" placeholder="请选择已有策略">
-                            <el-option
-                                v-for="item in strategy_list"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                                :disabled="edit_id!==''"
-                            >
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-form>
-                <RuleConfig :strategy_data="strategy_data" ref="rule_config" />
-            </el-card>
-            <div class="button_box">
-                <el-card class="box-card">
-                    <el-button type="primary" @click="create">创建</el-button>
-                </el-card>
-            </div>
+                        <el-option
+                            v-for="item in strategy_list"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                            :disabled="edit_id!==''"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <RuleConfig :strategy_data="strategy_data" ref="rule_config" />
+        </el-card>
+        <div class="button_box">
+            <el-button type="primary" @click="create">{{edit_id==="" ? '创建' : '确定'}}</el-button>
         </div>
     </div>
     
@@ -65,16 +67,26 @@ export default class Index extends Vue{
     private rules={
         name:[
                 {required:true,message:'请输入策略名称',trigger:'blur'},
-                { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'请输入正确的策略名称',trigger:'blur' }
+                { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
         ]
     }
     created() {
         this.edit_id = this.$route.query.id ? this.$route.query.id : ''
         this.getStrategyList()
     }
-    private async getStrategyList(){
+    //关闭面板时重新获取策略列表
+    private change_strategy(val){
+        if(!val){
+            this.getStrategyList()
+        }
+        
+    }
+    private async getStrategyList(name:string=''){
+        console.log("getStrategyList")
         let res:any = await Service.get_strategy_list({
-            name:'',
+            name,
+            page: 1,
+            pageSize: 20
         })
         if(res.code==='Success'){
             this.strategy_list = res.data.datas || []
@@ -197,36 +209,34 @@ export default class Index extends Vue{
 </script>
 <style lang="scss" scoped>
 .create-stategy{
-    height: 100%;
+    height: calc(100% - 131px);
     .main_box{
-        display: flex;
-        height: calc(100% - 58px);
         padding-bottom: 20px;
-        .create{
-            width: calc(100% - 400px);
-            height: 100%;
-            overflow-y: auto;
-            .el-input{
-                width: 420px !important;
-            }
-            .name-error{
-                color: #F56C6C;
-                margin: 5px 0 0 2px;
-            }
+        height: 100%;
+        overflow-y: auto;
+        .el-input{
+            width: 420px !important;
         }
-        .button_box{
-            position: fixed;
-            bottom: 0;
-            padding: 20px 0 20px 20px;
-            width: 380px;
-            right: 20px;
-            .el-button{
-                width: 100%;
-                text-align: center;
-            }
+        .name-error{
+            color: #F56C6C;
+            margin: 5px 0 0 2px;
+        }
+        
+    }
+    .button_box{
+        position: fixed;
+        bottom: 0;
+        padding: 10px 20px;
+        box-shadow: 0 2px 12px 0 rgba(0,0,0, 0.1); ;
+        width: calc(100% - 256px);
+        background: #fff;
+        left: 200px;
+        text-align: right;
+        .el-button{
+            width: 160px;
+            text-align: center;
         }
     }
-
 }
 
 

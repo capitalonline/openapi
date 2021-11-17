@@ -4,6 +4,7 @@
       :visible.sync="visible"
       width="600px"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
         <div class="mount">
@@ -22,6 +23,11 @@
                 border
               >
                 <el-table-column prop="disk_id" label="待挂载云盘ID"></el-table-column>
+                <el-table-column prop="az_name" label="地域及可用区">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.region_name}}&nbsp;&nbsp;{{scope.row.az_name}}</span>
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
             <el-form-item 
@@ -43,11 +49,7 @@
                   :key="item.ecs_id" 
                   :label="`${item.ecs_id} / ${item.ecs_name}`" 
                   :value="item.ecs_id"
-                  :disabled="mount_id.length===0 || item.az_id!==mount_id[0].az_id || (item.status!=='running' && item.status!=='shutdown') || item.customer_id!==mount_id[0].customer_id"
                 >
-                  <el-tooltip class="item" effect="dark" :content="transEcsStatus(item.status)" placement="right" v-if="item.status!=='running' && item.status!=='shutdown'">
-                    <span>{{`${item.ecs_id} / ${item.ecs_name}`}}</span>
-                  </el-tooltip>
                 </el-option>
               </el-select>
               <div class="ecs-error" v-if="form_data.instance_id==='' && judge_ecs">请选择或输入实例</div>
@@ -112,9 +114,10 @@ export default class MountDisk extends Vue{
             page_size:20,
             keyword:val,
             customer_id:this.mount_id[0].customer_id,
+            az_id:this.mount_id[0].az_id
         });
         if (resData.code == 'Success') {
-            this.instance_list = resData.data.ecs_list.filter(item=>item.az_id===this.mount_id[0].az_id) || [];
+            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu) || [];
         }
     }
     //获取实例挂载数据盘数量

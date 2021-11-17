@@ -5,6 +5,7 @@
       :visible.sync="visible"
       width="60%"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
       <div>
@@ -21,7 +22,12 @@
         </el-dialog>
       </div>
       <div>
-        <action-block :search_option="search" @fn-search="fn_search"></action-block>
+        <action-block :search_option="type==='physical' ?{...search,...physical_option} :search" @fn-search="fn_search"></action-block>
+        <div class="icon m-bottom10" v-if="type==='physical'">
+          <el-tooltip content="刷新" placement="bottom" effect="light">
+            <el-button type="text" @click="getOperateRecordList"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+          </el-tooltip>
+        </div>
         <el-table :data="record_list" border class="record-table">
           <el-table-column prop="oper_time" label="操作时间">
             <template slot-scope="scope">
@@ -42,7 +48,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="oper_user" label="用户名"></el-table-column>
-          <el-table-column prop="flag_display" label="操作标识"></el-table-column>
+          <el-table-column prop="flag_display" label="操作标识" v-if="type!=='physical'"></el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
@@ -67,11 +73,14 @@
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/instance/record_detail';
+import p_service from '../../https/physical/list'
 import moment from 'moment';
-
+import {deal_list} from '../../utils/transIndex';
+import SvgIcon from '../../components/svgIcon/index.vue'
 @Component({
   components:{
-    ActionBlock
+    ActionBlock,
+    SvgIcon
   }
 })
 export default class InsDetail extends Vue{
@@ -101,23 +110,16 @@ export default class InsDetail extends Vue{
     state:{list:this.state_list,placeholder:'请选择状态'},
     content:{placeholder:'请输入操作内容'},
   }
-  private CODE_STATE={
-    creat_ecs:'创建云服务器',
-    start_up_ecs:'启动云服务器',
-    shutdown_ecs:'停止云服务器',
-    restart_ecs:'重启云服务器',
-    delete_ecs:'逻辑删除云服务器',
-    recover_ecs:'恢复云服务器',
-    destroy_ecs:'销毁云服务器',
+  private physical_option:any={
+    time:{
+      type:'datetimerange',
+      placeholder:['开始时间','结束时间'],
+      clearable:false,
+      width:360,
+      dis_day:31,
+      defaultTime:[moment(new Date()).format("YYYY-MM-DD 00:00:00"),moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
+    },
   }
-private CODE_RESPONSE={
-  init:'初始化',
-  doing:'进行中',
-  finish:'成功',
-  error:'错误',
-  failed:'失败',
-  part_fail:'部分失败',
-}
   private record_list:any = []
   private current:number = 1
   private size:number = 20
@@ -130,23 +132,52 @@ private CODE_RESPONSE={
     this.fn_search()
   }
   private fn_search(data:any={}){
+    console.log("fn_search",data)
     this.current = 1;
     this.search_data = data
     this.getOperateRecordList()
   }
   private async getOperateRecordList() {
     // this.loading = true
+    let res:any
     const {search_data:data}=this
-    let res:any = await Service.get_operate_record_list({
+    let temp=this.type!=='physical' ? {
+      task_type:data.content,
       cloud_id:this.record_id,
-      cloud_type: this.type ? this.type :'ecs',
+    }:{
+      content:data.content,
+      cloud_id:this.record_id,
+      cloud_type:'host'
+    }
+    let req={
       status:data.state || '',
-      task_type:data.content || '',
       page_size:this.size,                                                                         
-      page_index:this.current
-    })
+      page_index:this.current,
+      ...temp
+    }
+    if(this.type!=='physical'){
+        res = await Service.get_operate_record_list({
+          cloud_type: this.type ? this.type :'ecs',
+          ...req
+        })
+    }else{
+        res = await p_service.record({
+          start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+          end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+          ...req
+        })
+    }
     if(res.code==="Success"){
-      this.record_list = res.data?.history_record || []
+      if(this.type!=="physical"){
+        this.record_list = res.data?.history_record || []
+      }else{
+        let key_list =['create_time','content','status_name','response','update_time','op_user']
+        let label_list =['oper_time','oper_type_display','status_display','response','finish_time','oper_user']
+        this.record_list = deal_list(res.data.operation_list,label_list,key_list)
+        console.log("this.record_list",this.record_list)
+        
+      }
+      
       this.total = res.data?.page_info?.count || 0
     }
   }
@@ -185,5 +216,8 @@ private CODE_RESPONSE={
   margin-top: 10px !important;
   text-align: right !important;
 }
-
+.icon{
+  width:100%;
+  text-align: right;
+}
 </style>

@@ -28,7 +28,18 @@ const auth = {
   update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换操作系统'},
   reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'}
 }
-
+const host_status={
+  start_up_host:{power:['shutdown'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'开机'},
+  shutdown_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'关机'},
+  restart_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'重启'},
+  online_maintenance:{power:[],host:['online'],msg:'已选主机需为在线状态',label:'在线维护'},
+  offline_maintenance:{power:[],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态',label:'离线维护'},
+  finish:{power:[],host:['online_maintenance','offline_maintenance'],msg:'已选主机需为在线维护中或离线维护中',label:'完成维护'},
+  shelves:{power:[],host:[],vm:1,msg:'已选主机上不能有虚拟机运行',label:'下架'},
+  disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
+  out_of_band:{power:[],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'进入带外管理'},
+  migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
+}
 export default {
   getInsOperateAuth(type) {
     return auth[type]
@@ -36,5 +47,8 @@ export default {
 }
 export const getEcsStatus=(type)=>{
   return status[type]
+}
+export const getHostStatus=(type)=>{
+  return host_status[type]
 }
 

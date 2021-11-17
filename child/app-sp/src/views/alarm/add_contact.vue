@@ -5,6 +5,7 @@
       :visible.sync="visible"
       width="40%"
       :destroy-on-close="true"
+      :close-on-click-modal="false"
       @close="back"
     >
       <div>
@@ -12,9 +13,14 @@
             <el-form-item
                 prop="name"
                 label="姓名"
-                :rules="[{required:true,message:'请输入姓名',trigger:'blur'}]"
+                :rules="[
+                  {required:true,message:'请输入姓名',trigger:'blur'},
+                  { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
+
+                ]"
             >
-                <el-input v-model="form_data.name" />
+                <el-input v-model="form_data.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
+                <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
             </el-form-item>
             <el-form-item
                 prop="email"
@@ -72,6 +78,7 @@ export default class InsDetail extends Vue{
       phone:'',
 
   }
+
   created() {
     if(this.id!==""){
       this.get_contact_detail()

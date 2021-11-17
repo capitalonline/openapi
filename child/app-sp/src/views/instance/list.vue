@@ -26,6 +26,7 @@
       ref="multipleTable"
       :data="instance_list"
       @selection-change="handleSelectionChange"
+      @filter-change="handleFilterChange"
       border>
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
@@ -50,12 +51,22 @@
           <div class="time-box">{{ scope.row.create_time }}</div>
         </template>
       </el-table-column>
+      <el-table-column 
+        prop="op_source" 
+        label="创建来源" 
+        :filters="[{text: '运维后台', value: 'cloud_op'}, {text: 'GIC', value: 'gic'}]"
+        column-key="op_source"
+        :filter-multiple="false">
+        <template #default="scope">
+          <div>{{ scope.row.op_source==='cloud_op'?'运维后台':'GIC' }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button type="text" @click="FnToRecord(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('instance_record')">操作记录</el-button>
-            <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)">监控</el-button>
-            <el-button type="text" :disabled="scope.row.status !== 'running'" @click="FnToVnc(scope.row.ecs_id)">远程连接</el-button>
+            <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)" :disabled="!operate_auth.includes('monitor')">监控</el-button>
+            <el-button type="text" :disabled="scope.row.status !== 'running' || !operate_auth.includes('vnc')" @click="FnToVnc(scope.row.ecs_id)">远程连接</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +107,10 @@
           </el-table-column>
           <el-table-column label="云服务器规格">
             <template #default="scope">
-              <div>{{ scope.row.ecs_goods_name }} {{scope.row.cpu_size}}核 {{scope.row.ram_size}}GiB</div>
+              <div>
+                {{ scope.row.ecs_goods_name }} {{scope.row.cpu_size}}vCPU {{scope.row.ram_size}}GiB
+                <span v-if="is_gpu">{{ scope.row.gpu_size }}GPU</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="系统盘" v-if="default_operate_type === 'update_system'">
@@ -117,12 +131,12 @@
         </el-table>
         <div class="component-box">
           <template v-if="default_operate_type === 'update_spec'">
-            <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id"></update-spec>
+            <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id" type="batch_update" :default_is_gpu="is_gpu"></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
-            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" @fn-os="FnGetOsInfo"></update-os>
-            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" 
-              :os_disk_size="Number(os_info.disk_size)"></update-disk>
+            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu" @fn-os="FnGetOsInfo"></update-os>
+            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu"
+              :os_disk_size="Number(os_info.disk_size)" :origin_disk_size="origin_disk_size"></update-disk>
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
@@ -191,12 +205,16 @@ export default class App extends Vue {
     customer_id: { placeholder: '请输入客户ID' },
     customer_name: { placeholder: '请输入客户名称' },
     os_type: { placeholder: '请选择操作系统', list: [] },
-    private_net: { placeholder: '请输入私网IP' }
+    private_net: { placeholder: '请输入私网IP' },
+    host_id: { placeholder: '请输入物理机ID', default_value: '' }
   };
   private search_reqData = {};
+  private search_op_source = '';
   private instance_list: Array<Object> = [];
   private customer_id: string = '';
   private az_id: string = '';
+  private is_gpu: number = 0;
+  private origin_disk_size: number = 0;
   private multiple_selection: Array<Object> = [];
   private operate_auth = [];
   private show_operate_dialog: boolean = false;
@@ -214,7 +232,7 @@ export default class App extends Vue {
   }
   private timer = null;
   private os_info = {};
-  private FnSearch(data) {
+  private FnSearch(data: any = {}) {
     this.search_reqData = {
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
@@ -223,17 +241,20 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_type: data.os_type,
       private_net: data.private_net,
+      host_id: data.host_id,
       start_time: data.create_time && data.create_time[0] ? moment(data.create_time[0]).format('YYYY-MM-DD') : undefined,
       end_time: data.create_time && data.create_time[1] ? moment(data.create_time[1]).format('YYYY-MM-DD') : undefined
     };
     this.page_info.page_index = 1;
     this.FnGetList()
   }
+  // 筛选实例来源
+  private handleFilterChange(val) {
+    this.search_op_source = val.op_source[0];
+    this.FnGetList();
+  }
   private async FnGetList(loading: boolean = true) {
     let multiple_selection = [];
-    if (this.timer) {
-      clearInterval(this.timer)
-    }
     if (!loading) {
       this.$store.commit('SET_LOADING', false);
       multiple_selection = this.multiple_selection.map((row: any) => {
@@ -241,6 +262,7 @@ export default class App extends Vue {
       });
     }
     const resData: any = await Service.get_instance_list(Object.assign({
+      op_source: this.search_op_source,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size
     }, this.search_reqData));
@@ -274,29 +296,35 @@ export default class App extends Vue {
     }
     const operate_info = getInsStatus.getInsOperateAuth(type);
     if (['reset_pwd', 'update_spec', 'update_system'].indexOf(type) >= 0) {
-      if(!this.FnJudegCustomerAz(operate_info)) {
+      if(!this.FnJudegCustomerAz(operate_info, type)) {
         return
       }
     } else {
-      if(!this.FnJudgeCustomer(operate_info)) {
+      if(!this.FnJudgeCustomer(operate_info, type)) {
         return
       }
     }
     this.operate_title = operate_info.label;
     this.show_operate_dialog = true;
     this.default_operate_type = type;
-    clearTimeout(this.timer);
+    this.FnClearTimer()
   }
-  private FnJudgeCustomer(operate_info): boolean {
+  private FnJudgeCustomer(operate_info, type): boolean {
     this.customer_id = '';
     let flag = true;
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
+        this.is_gpu = Number(item.is_gpu);
       }
       if (item.customer_id !== this.customer_id) {
         this.$message.warning('只允许对同一客户的实例进行批量操作！')
+        flag = false;
+        break;
+      }
+      if (['delete_ecs', 'recover_ecs', 'destroy_ecs'].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
+        this.$message.warning(`只允许对同一类型实例进行批量${operate_info.label}操作！`)
         flag = false;
         break;
       }
@@ -308,18 +336,25 @@ export default class App extends Vue {
     }
     return flag
   }
-  private FnJudegCustomerAz(operate_info): boolean {
+  private FnJudegCustomerAz(operate_info, type): boolean {
     this.customer_id = '';
     this.az_id = '';
+    this.origin_disk_size = 0;
     let flag = true;
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
         this.az_id = item.az_id;
+        this.is_gpu = Number(item.is_gpu)
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
+        flag = false;
+        break;
+      }
+      if (['update_spec', 'update_system'].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
+        this.$message.warning(`只允许对同一类型实例进行批量${operate_info.label}操作！`)
         flag = false;
         break;
       }
@@ -328,6 +363,7 @@ export default class App extends Vue {
         flag = false;
         break;
       }
+      this.origin_disk_size = Math.max(this.origin_disk_size, item.system_disk_size)
     }
     return flag
   }
@@ -339,6 +375,7 @@ export default class App extends Vue {
     const reqData = {
       op_type: this.default_operate_type,
       customer_id: this.customer_id,
+      az_id: this.az_id,
       ecs_ids: this.multiple_selection.map((item: any) => {
         return item.ecs_id
       })
@@ -370,14 +407,18 @@ export default class App extends Vue {
     }
   }
   private async FnDelete(reqData) {
-    const resData: any = await Service.delete_instance(reqData);
+    const resData: any = await Service.delete_instance(Object.assign({
+        is_gpu: this.is_gpu,
+    }, reqData));
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
       this.FnClose();
     }
   }
   private async FnDestroy(reqData) {
-    const resData: any = await Service.destroy_instance(reqData);
+    const resData: any = await Service.destroy_instance(Object.assign({
+        is_gpu: this.is_gpu,
+    }, reqData));
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
       this.page_info.page_index = 1;
@@ -400,8 +441,8 @@ export default class App extends Vue {
     if( data.flag ) {
       reqData.ecs_goods_id = data.spec_info.ecs_goods_id;
       reqData.goods_name = data.spec_info.goods_name;
-      reqData.cpu_size = data.spec_info.cpu_size;
-      reqData.ram_size = data.spec_info.ram_size;
+      reqData.cpu_size = data.spec_info.cpu;
+      reqData.ram_size = data.spec_info.ram;
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === 'Success') {
         this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
@@ -423,10 +464,16 @@ export default class App extends Vue {
       reqData.disk_info = {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
+          ebs_goods_id: disk_data.system_disk.ecs_goods_id,
           goods_name: disk_data.system_disk.disk_name,
           disk_feature: disk_data.system_disk.disk_feature,
           disk_type: disk_data.system_disk.disk_type,
-          disk_size: disk_data.system_disk.disk_size
+          disk_size: disk_data.system_disk.disk_size,
+          storage_space: disk_data.system_disk.disk_size,
+          handling_capacity: disk_data.system_disk.handling_capacity,
+          iops: disk_data.system_disk.iops,
+          is_follow_delete: disk_data.system_disk.is_follow_delete,
+          origin_disk_size: this.origin_disk_size
         },
       }
       reqData.password = pwd_data.password;
@@ -448,15 +495,6 @@ export default class App extends Vue {
   private FnClose() {
     this.show_operate_dialog = false;
     this.default_operate_type = '';
-    // if (['reset_pwd', 'update_spec', 'update_system'].indexOf(this.default_operate_type) >= 0) {
-    //   if (this.default_operate_type === 'update_system') {
-    //     (this.$refs.update_os as any).FnResetForm();
-    //     (this.$refs.update_disk as any).FnResetForm();
-    //     (this.$refs.reset_pwd as any).FnResetForm();
-    //   } else {
-    //     (this.$refs[this.default_operate_type] as any).FnResetForm();
-    //   }
-    // }
     this.FnGetList();
   }
   private FnToDetail(id) {
@@ -479,9 +517,17 @@ export default class App extends Vue {
     this.detail_visible = false
   }
   private FnSetTimer() {
+    if (this.timer) {
+      this.FnClearTimer();
+    }
     this.timer = setTimeout(() => {
       this.FnGetList(false)
-    }, 1000 *5)
+    }, 1000*5)
+  }
+  private FnClearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
   }
   private async FnGetStatus() {
     if (this.$store.state.status_list.length > 0) {
@@ -501,7 +547,7 @@ export default class App extends Vue {
     }
   }
 
-  private mounted() {
+  private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
     this.search_con.os_type.list = [{
@@ -514,12 +560,14 @@ export default class App extends Vue {
       label: "windows",
       type: "windows"
     }];
-    this.FnSearch({
-      create_time: this.search_con.create_time.defaultTime
-    });
+    if(this.$route.query.host_id) {
+      this.search_con.host_id.default_value = this.$route.query.host_id;
+    } else {
+      this.FnSearch()
+    }
   }
   private beforeDestroy() {
-    clearInterval(this.timer)
+    this.FnClearTimer()
   }
 }
 </script>

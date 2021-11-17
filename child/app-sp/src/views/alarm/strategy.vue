@@ -11,6 +11,7 @@
         <el-table
             :data="list"
             border
+            ref="strategy_table"
             @selection-change="handleSelectionChange"
         >
             <el-table-column type="selection"></el-table-column>
@@ -22,8 +23,12 @@
             <el-table-column prop="instances" label="被应用过的产品">
                 <template slot-scope="scope">
                     <div class="used-products">
-                        <span class="app"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0]};${scope.row.instances[1]};...` : scope.row.instances.join(';') : '--'}}</span>
-                        <i class="el-icon-document" v-if="scope.row.instances" @click="go_detail"></i>
+                        <span class="app" v-if="scope.row.instances && scope.row.instances.length>2"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0].instance_name};${scope.row.instances[1].instance_name};...` : scope.row.instances.join(';') : '--'}}</span>
+                        <template v-else-if="scope.row.instances.length>0 && scope.row.instances.length<=2">
+                            <span v-for="(item,index) in scope.row.instances" :key="index">{{item.instance_name}}<span v-if="index!==scope.row.instances.length-1">;</span></span>
+                        </template>
+                        <span v-else>--</span>
+                        <i class="el-icon-document" v-if="scope.row.instances" @click="go_detail(scope.row)"></i>
                     </div>
                     
                 </template>
@@ -45,10 +50,11 @@
             </el-table-column>
             <el-table-column label="操作栏">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="edit(scope.row.id)" :disabled="!auth_list.includes('edit')">修改</el-button>
-                    <el-button type="text" @click="apply(true,scope.row)" :disabled="scope.row.enable || !auth_list.includes('apply')">应用</el-button>
+                    <el-button type="text" @click="edit(scope.row.id)" :disabled="!auth_list.includes('edit') || scope.row.enable">修改</el-button>
+                    <el-button type="text" @click="detail(scope.row)" :disabled="!auth_list.includes('detail')">详情</el-button>
+                    <el-button type="text" @click="apply(true,scope.row)" :disabled="!auth_list.includes('apply')">{{scope.row.enable ? '应用详情' :'应用'}}</el-button>
                     <el-button type="text" @click="apply(false,scope.row)" :disabled="!scope.row.enable || !auth_list.includes('stop')">停用</el-button>
-                    <el-button type="text" @click="del(scope.row)" :disabled="!auth_list.includes('delete')">删除</el-button>
+                    <el-button type="text" @click="del(scope.row)" :disabled="!auth_list.includes('delete') || scope.row.enable">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -68,7 +74,10 @@
             <common-del :visible.sync="del_visible" :title="'删除策略'" :rows="strategy_rows" @close ="close_apply" />
         </template>
         <template v-if="detail_visible">
-            <apply-detail :visible.sync="detail_visible" @close="close_apply" />
+            <apply-detail :visible.sync="detail_visible" :rows="strategy_rows" @close="close_apply" />
+        </template>
+        <template v-if="strategy_detail">
+            <Detail :visible.sync="strategy_detail" :rows="strategy_rows" @close="close_apply" />
         </template>
         
     </div>
@@ -76,17 +85,20 @@
 <script lang="ts">
 import { Component, Vue,Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
-import ApplyStrategy from './apply_strategy.vue'
+import ApplyStrategy from './apply_strategy.vue';
+import Detail from './strategy_detail.vue'
 import Service from '../../https/alarm/list'
 import CommonDel from './commonDel.vue';
 import ApplyDetail from './apply_product_detail.vue'
-import moment from 'moment'
+import moment from 'moment';
+import {Table} from 'element-ui'
 @Component({
     components:{
         ActionBlock,
         ApplyStrategy,
         CommonDel,
         ApplyDetail,
+        Detail
     }
 })
 export default class Strategy extends Vue{
@@ -104,6 +116,7 @@ export default class Strategy extends Vue{
     private moment:any = moment;
     private del_visible:boolean=false;
     private detail_visible:Boolean=false
+    private strategy_detail:Boolean=false
     private strategy_rows:any=[]
     private enable:Boolean=true;
     private auth_list:any=[]
@@ -113,9 +126,25 @@ export default class Strategy extends Vue{
     }
     @Watch("drawer")
     private watch_drawer(newVal){
+        this.clear_info(newVal)
+    }
+    @Watch("del_visible")
+    private watch_del_visible(newVal){
+        this.clear_info(newVal)
+    }
+    @Watch("strategy_detail")
+    private watch_strategy_detail(newVal){
+        this.clear_info(newVal)
+    }
+    private clear_info(newVal){
         if(!newVal){
             this.strategy_rows=[]
+            this.toggleSelection()
         }
+    }
+    private toggleSelection() {
+        const table = this.$refs.strategy_table as Table
+        table.clearSelection()
     }
     private fn_search(data:any={}){
         this.current =1
@@ -149,16 +178,24 @@ export default class Strategy extends Vue{
     private create(){
         this.$router.push('/alarmStrategy/create')
     }
-    private go_detail(){
+    private go_detail(row){
+        this.strategy_rows=[row]
         this.detail_visible=true
     }
     private edit(id:string){
         this.$router.push({path:'/alarmStrategy/create',query:{id}})
     }
+    private detail(row){
+        this.strategy_rows=[row]
+        this.strategy_detail=true
+    }
     private del(ids){
-        console.log("del",ids,this.strategy_rows)
         if(!ids && this.strategy_rows.length===0){
             this.$message.warning("请先勾选策略！")
+            return;
+        }
+        if(!this.strategy_rows.every(item=>!item.enable)){
+            this.$message.warning("已启用的策略不能被删除！")
             return;
         }
         if(ids){
@@ -191,6 +228,7 @@ export default class Strategy extends Vue{
         })
         if(res.code==='Success'){
             this.$message.warning("停用策略任务下发成功！")
+            this.strategy_rows=[]
             this.getStrategyList()
         }
     }
@@ -200,7 +238,7 @@ export default class Strategy extends Vue{
             this.$message.warning("请先勾选策略！")
             return;
         }
-        if(!this.strategy_rows.every(item=>item.enable===!enable)){
+        if(!row && !this.strategy_rows.every(item=>item.enable===!enable)){
             this.$message.warning(`只允许对${enable ? '未应用' :'已应用'}的策略执行批量操作！`)
             return;
         }
@@ -225,6 +263,9 @@ export default class Strategy extends Vue{
                         type: 'info',
                         message: '已取消停用'
                     }); 
+                    this.strategy_rows=[]
+                    this.toggleSelection()
+
             })
         }else{
             this.drawer=true

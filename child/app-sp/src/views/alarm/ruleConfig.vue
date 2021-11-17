@@ -32,9 +32,13 @@
                                 <el-form-item
                                     prop="name"
                                     label="规则名称"
-                                    :rules="[{ required: true, message: '请输入规则名称', trigger: 'blur' }]"
+                                    :rules="[
+                                        { required: true, message: '请输入规则名称', trigger: 'blur' },
+                                        { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
+                                    ]"
                                 >
-                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称" />
+                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称,2-60个字符" minlength=2 maxlength=60 show-word-limit />
+                                    <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
                                 </el-form-item>
                                 <el-form-item
                                     prop="metricID"
@@ -127,9 +131,13 @@
                                 <el-form-item
                                     prop="name"
                                     label="规则名称"
-                                    :rules="[{ required: true, message: '请输入规则名称', trigger: 'blur' }]"
+                                    :rules="[
+                                        { required: true, message: '请输入规则名称', trigger: 'blur' },
+                                        { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
+                                    ]"
                                 >
-                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称" maxlength="50" show-word-limit />
+                                    <el-input v-model="rule_data.name" placeholder="请输入规则名称,2-60个字符" minlength=2 maxlength=60 show-word-limit />
+                                    <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
                                 </el-form-item>
                                 <el-form-item
                                     prop="event_type"
@@ -200,7 +208,15 @@
         </div>
         
     </div>
-    <el-select v-model="selected_product_id" placeholder="添加产品" @change="add_product">
+    <el-dropdown @command="handle" class="m-top10">
+        <el-button type="primary">
+            添加产品<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="item in product_list" :command="item.id" :key="item.id">{{item.name}}</el-dropdown-item>
+        </el-dropdown-menu>
+    </el-dropdown>
+    <!-- <el-select v-model="selected_product_id" placeholder="添加产品" @change="add_product">
         <el-option
             v-for="item in product_list"
             :key="item.id"
@@ -208,7 +224,7 @@
             :value="item.id"
         >
         </el-option>
-    </el-select>
+    </el-select> -->
      
 </div>   
 </template>
@@ -363,7 +379,7 @@ export default class RuleConfig extends Vue{
                 
                     :
                     list.map(inn=>{
-                    return `${element.name} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                    return `${this.getDescription(element.ruleRecords[0].metricID)} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
                 })
             }
             const fil:any = this.selected_products.filter(item=>item.id===element.productType)
@@ -384,6 +400,20 @@ export default class RuleConfig extends Vue{
             }
         })
         console.log("this.selected_products",this.selected_products)
+    }
+    private getDescription(id){
+        let name=""
+        this.index_list.forEach(item=>{
+            item.children.forEach(inn=>{
+                if(inn.value===id){
+                    name = inn.description
+                }
+            })
+        })
+        return name
+    }
+    private handle(obj){
+        this.add_product(obj)
     }
     private add_product(e){
         if(this.selected_products.filter(item=>item.id===e).length>0){
@@ -450,7 +480,7 @@ export default class RuleConfig extends Vue{
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:this.rule_data.level.map(inn=>{
-                                        return `${this.rule_data.name} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
                                     })
                                 }]
                             }else{//事件报警
@@ -464,7 +494,7 @@ export default class RuleConfig extends Vue{
                                 if(inn.id === edit_rule_id){
                                     inn = {...inn,...this.rule_data}
                                     inn.desc = inn.tab_key==="0" ? inn.level.map(inner=>{
-                                        return `${inn.name} ${inner.range} ${inner.num}${inner.metricUnit}${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
+                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inner.range} ${inner.num}${inner.metricUnit}${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
                                     }) : [`${this.trans_arr(inn.alram_type,alarm_type)} | ${this.trans_arr(inn.event_name,event_name)}`]
                                 }
                                 return inn;

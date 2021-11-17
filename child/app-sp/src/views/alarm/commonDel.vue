@@ -5,6 +5,7 @@
         width="600px"
         custom-class="del"
         :destroy-on-close="true"
+        :close-on-click-modal="false"
         @close="cancel"
     >
         <div class="box">

@@ -16,7 +16,8 @@
           :min="Number(data.system_disk_min)" 
           :max="Number(data.default_system_info.disk_max)" 
           :step="Number(data.default_system_info.disk_step)"
-          @change="FnSysEmit"
+          @blur="FnCheckSystemSize"
+          @change="FnChangeSystemSize"
           step-strictly></el-input-number> 
         {{ data.default_system_info.disk_unit }}
       </el-form-item>
@@ -34,15 +35,24 @@
             :min="Number(disk.default_disk_info.disk_min)" 
             :max="Number(disk.default_disk_info.disk_max)" 
             :step="Number(disk.default_disk_info.disk_step)"
-            @change="FnDataEmit"
+            @blur="FnCheckDataSize(disk)"
+            @change="FnChangeDataSize(disk)"
             step-strictly></el-input-number> 
           {{ disk.default_disk_info.disk_unit }}
         </el-form-item>
         <el-form-item>
-          <el-input-number v-model="disk.num" :min="disk.min" :max="FnGetSurplus + disk.num" :step="1" class="m-left10 m-right10" @change="FnDataEmit"></el-input-number> 
+          <el-input-number 
+            v-model="disk.num" 
+            :min="disk.min" 
+            :max="FnGetSurplus + disk.num" 
+            :step="1" 
+            class="m-left10 m-right10" 
+            @blur="FnCheckDataNum(disk)" 
+            @change="FnChangeDataNum(disk)">
+          </el-input-number> 
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="disk.del" @change="FnDataEmit">随实例删除</el-checkbox>
+          <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
         </el-form-item>
       </div>
       <el-form-item :label="data_disk_list.length===0?'数据盘':''">
@@ -58,8 +68,8 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
-import Service from '../../https/instance/create';
 import diskService from '../../https/disk/create';
+import getIops from '../../utils/getIops';
 
 @Component
 export default class updateDisk extends Vue {
@@ -68,7 +78,13 @@ export default class updateDisk extends Vue {
   @Prop({default: false}) private system_disk!: boolean;
   @Prop({default: false}) private data_disk!: boolean;
   @Prop({default: 0}) private os_disk_size!: number;
+  @Prop({default: 0}) private origin_disk_size!: number;
+  @Prop({default: 0}) private is_gpu!: 1 | 0;
   $message;
+  private all_disk_info = {
+    system_disk: [],
+    data_disk: []
+  };
   private system_disk_info = [];
   private data_disk_info = [];
   private data_disk_list = [];
@@ -81,7 +97,15 @@ export default class updateDisk extends Vue {
       disk_type: '',
       disk_min: 0,
       disk_max: 500,
-      disk_step: 10
+      disk_step: 10,
+      min_iops: 0,
+      max_iops: 0,
+      min_throughput: 0,
+      throughput_step: 0,
+      throughput_unit: '',
+      max_throughput: 0,
+      iops_step: 0,
+      iops_unit: '',
     },
     system_disk_min: 0,
     system_size: 0
@@ -90,15 +114,28 @@ export default class updateDisk extends Vue {
     if (!this.az_id) {
       return
     }
-    let resData: any = await diskService.get_disk_type({
+    const resData: any = await diskService.get_disk_type({
       az_id: this.az_id,
       customer_id: this.customer_id
     });
     if (resData.code == 'Success') {
-      this.system_disk_info = resData.data.system_disk;
-      this.data.default_system_info = this.system_disk_info[0];
-      this.data_disk_info = resData.data.data_disk;
+      this.all_disk_info = {
+        system_disk: resData.data.system_disk,
+        data_disk: resData.data.data_disk
+      };
+      this.FnFilterDisk();
     }
+  }
+  private FnFilterDisk(): void {
+    let disk_type_list = [];
+    if (this.is_gpu) {
+      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');  
+      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature === 'local');
+    } else {
+      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature !== 'local');
+      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature !== 'local');
+    }
+    this.data.default_system_info = this.system_disk_info[0];
   }
   private get FnGetDiskNum(): number {
     if (this.data_disk_list.length > 0) {
@@ -112,6 +149,9 @@ export default class updateDisk extends Vue {
 
   private get FnGetSurplus() {
     return 16 - this.FnGetDiskNum
+  }
+  private get FnGetSystemIops() {
+    return getIops(this.data.default_system_info, this.data.system_size)
   }
   private FnAddDataDisk() {
     if (this.FnGetSurplus == 0) {
@@ -137,6 +177,7 @@ export default class updateDisk extends Vue {
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
+    this.FnGetDataIops(data);
     this.data_disk_list.push(data);
     this.FnDataEmit();
   }
@@ -144,7 +185,28 @@ export default class updateDisk extends Vue {
     this.data_disk_list.splice(index, 1);
     this.FnDataEmit();
   }
-
+  private FnGetDataIops(disk) {
+    let info = getIops(disk.default_disk_info, disk.disk_size);
+    disk.iops = info.iops;
+    disk.iops_show = info.iops_show;
+    disk.handling_capacity = info.throughput;
+    disk.throughput_show = info.throughput_show;
+    disk.storage_space = disk.disk_size;
+  }
+  // 当容量输入框失焦时判断是否为空，为空则填充最小值
+  private FnCheckSystemSize() {
+    if (!this.data.system_size) {
+      this.data.system_size = this.data.system_disk_min;
+      this.FnSysEmit()
+    }
+  }
+  // 当系统盘容量改变时
+  private FnChangeSystemSize() {
+    if (!this.data.system_size) {
+      return
+    }
+    this.FnSysEmit()
+  }
   @Emit('fn-system-disk')
   private FnSysEmit() {
     return {
@@ -153,10 +215,42 @@ export default class updateDisk extends Vue {
       disk_feature: this.data.default_system_info.disk_feature,
       disk_type: this.data.default_system_info.disk_type,
       disk_size: this.data.system_size,
-      disk_unit: this.data.default_system_info.disk_unit
+      disk_unit: this.data.default_system_info.disk_unit,
+      iops: this.FnGetSystemIops.iops,
+      handling_capacity: this.FnGetSystemIops.throughput,
+      storage_space: this.data.system_size,
+      is_follow_delete: 1
     }
   }
 
+  // 当容量输入框失焦时判断是否为空，为空则填充最小值
+  private FnCheckDataSize(disk) {
+    if (!disk.disk_size) {
+      disk.disk_size = disk.default_disk_info.disk_min;
+      this.FnGetDataIops(disk)
+      this.FnDataEmit()
+    }
+  }
+  // 当数据盘容量改变时
+  private FnChangeDataSize(disk) {
+    if (!disk.disk_size) {
+      return
+    }
+    this.FnGetDataIops(disk)
+    this.FnDataEmit()
+  }
+  private FnCheckDataNum(disk) {
+    if (!disk.num) {
+      disk.num = disk.min;
+      this.FnDataEmit()
+    }
+  }
+  private FnChangeDataNum(disk) {
+    if (!disk.num) {
+      return
+    }
+    this.FnDataEmit()
+  }
   @Emit('fn-data-disk')
   private FnDataEmit() {
     return this.data_disk_list
@@ -177,12 +271,8 @@ export default class updateDisk extends Vue {
     this.data.default_system_info = this.system_disk_info[0];
   }
   public FnSystemMinSize() {
-    this.data.system_disk_min = Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size)
+    this.data.system_disk_min = Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size, this.origin_disk_size)
     return this.data.system_disk_min
-  }
-
-  private created() {
-    this.FnGetDiskInfo();
   }
 
   @Watch('data.default_system_info.ecs_goods_id')
@@ -190,9 +280,15 @@ export default class updateDisk extends Vue {
     this.data.system_size = this.FnSystemMinSize();
     this.FnSysEmit();
   }
-  @Watch('az_id') 
+  @Watch('az_id', {immediate: true}) 
   private FnChangeAz(newVal, oldVal) {
     this.FnGetDiskInfo();
+  }
+  @Watch('is_gpu')
+  private FnChangeGpu(newVal) {
+    this.data_disk_list = [];
+    this.FnFilterDisk();
+    this.FnDataEmit()
   }
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {

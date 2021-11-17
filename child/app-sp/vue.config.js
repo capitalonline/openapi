@@ -17,10 +17,17 @@ module.exports = {
         changeOrigin: true
       },
       '/monitor/api': {
-        target: 'http://cloudos-metricsapi.gic.test',
+        target: 'http://cloudos-op-metricsapi.gic.test',
         changeOrigin: true,
         pathRewrite: {
           '^/monitor/api': '/api'
+        }
+      },
+      '/gpu_monitor/api': {
+        target: 'http://106.3.146.195:8080',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/gpu_monitor/api': '/api'
         }
       },
       '/alarm/api': {

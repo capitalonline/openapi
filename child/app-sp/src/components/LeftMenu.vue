@@ -45,8 +45,34 @@ export default class LeftMenu extends Vue {
   private active_name: string = ''
   private all_menu = [
     {
-      name: "instance_list",
-      label: "云服务器"
+      name: "monitor",
+      label: "监控"
+    },
+    {
+      name: "pod_list",
+      label: "POD管理"
+    },
+    {
+      name: "physical_list",
+      label: "物理机管理"
+    },
+    {
+      name: 'produce',
+      label: '产品管理',
+      children: [
+        {
+          name: "instance_list",
+          label: "云服务器"
+        },
+        {
+          name: "disk_list",
+          label: "云盘"
+        },
+        {
+          name: "mirror_list",
+          label: "公共镜像列表"
+        }
+      ]
     },
     {
       name:'alarm_manage',
@@ -56,14 +82,6 @@ export default class LeftMenu extends Vue {
         {name:'alarm_strategy',label:'报警策略'},
         {name:'alarm_contact',label:'报警联系人'},
       ]
-    },
-    {
-      name: "disk_list",
-      label: "云盘"
-    },
-    {
-      name: "mirror_list",
-      label: "公共镜像列表"
     },
     {
       name: "task",

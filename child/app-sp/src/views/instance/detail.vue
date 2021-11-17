@@ -39,7 +39,11 @@
           <el-col :span="20" v-if="detail && detail.ecs_rule && detail.ecs_rule.conf_name">
             <span class="label">{{detail && detail.ecs_rule && detail.ecs_rule.conf_name}}:</span>
             <span>{{detail && detail.ecs_rule && detail.ecs_rule.name}}</span>
-            <span v-if="detail && detail.ecs_rule && detail.ecs_rule.cpu_num">&nbsp;&nbsp;{{detail && detail.ecs_rule && detail.ecs_rule.cpu_num}}{{detail && detail.ecs_rule && detail.ecs_rule.cpu_unit}}<span>{{detail && detail.ecs_rule && detail.ecs_rule.ram}}{{detail && detail.ecs_rule && detail.ecs_rule.ram_unit}}</span></span>
+            <span v-if="detail && detail.ecs_rule && detail.ecs_rule.cpu_num">&nbsp;&nbsp;
+              {{detail && detail.ecs_rule && detail.ecs_rule.cpu_num}}vCPU
+              <span>{{detail && detail.ecs_rule && detail.ecs_rule.ram}}GiB</span>
+              <span v-if="detail && detail.is_gpu">{{detail && detail.ecs_rule && detail.ecs_rule.gpu}}GPU</span>
+            </span>
           </el-col>
         </el-row>
         <div class="title">操作系统</div>
@@ -128,7 +132,6 @@ export default class InsDetail extends Vue{
       this.detail = res.data
     }else{
       this.loading=false
-      this.$message.error(res.msg || '操作错误')
     }
   }
   @Emit("close-detail")
