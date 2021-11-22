@@ -4296,6 +4296,7 @@ def describe_bms_images():
 | Raid               | string | 否       | 1                                           | 数据盘自定义Raid,支持 0, 1, 5, 10                             |
 | CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
 | CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
+| SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
 
 
 **返回数据：**
@@ -4305,7 +4306,7 @@ def describe_bms_images():
 | Code    | string | Success                                  | 返回状态码: Success: 成功 |
 | Message | string | 订单创建成功，任务已下发，请等待......   | 返回信息                  |
 | Data    | object | {}                                       | 返回数据                  |
-| TaskId | list   | ["f232d398-a77c-11e9-9d43-0242ac110003"] | 返回任务Id                |
+| taskId |  string | "f232d398-a77c-11e9-9d43-0242ac110003" | 返回主任务Id                |
 
 
 
