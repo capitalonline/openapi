@@ -284,8 +284,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
-| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
+| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
+| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] |      ssd支持IOPS,默认: "IOPS": 0                                                        |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 | PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  |
@@ -629,7 +629,7 @@ def update_vm(vm_id):
 | 名称       | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
 | ---------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| DataDisks  | string | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk" },<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数： |
+| DataDisks  | string | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
 
 ​	**返回参数：**
 
@@ -690,6 +690,7 @@ def add_disk(vm_id):
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | DiskId     | string | 是       | a67644ba-873f-11e9-bf49-0242ac1104e7 | 硬盘编号                                     |
 | DataSize   | int    | 是       | 100                                  | 硬盘扩容后的大小                             |
+| IOPS	     | int    |	否	| 5	                               | IOPS预置性能包个数，默认为0，ssd类型可选                          |
 
 ​	**返回参数：**
 
