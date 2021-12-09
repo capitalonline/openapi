@@ -13,6 +13,14 @@ MySQL 公开API目录
     - [访问地址](#访问地址)
     - [1.DescribeRegions](#1describeregions)
     - [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+      - [DataObj](#dataobj)
+      - [ProductObj](#productobj)
+      - [ArchitectureObj](#architectureobj)
+      - [ComputeRoleObj](#computeroleobj)
+      - [StandardObj](#standardobj)
+      - [AttachDiskObj](#attachdiskobj)
+      - [CpuRamObj](#cpuramobj)
+      - [NetworkLinkOb](#networklinkob)
     - [3.CreateDBInstance](#3createdbinstance)
     - [4.DescribeDBInstances](#4describedbinstances)
     - [5.CreatePrivilegedAccount](#5createprivilegedaccount)
@@ -666,7 +674,7 @@ def get_mysql_instances_list():
 
 **Action：CreatePrivilegedAccount**
 
-**描述：** 创建高权限账号
+**描述：** 创建用户账号
 
 **请求地址：cdsapi.capitalonline.net/mysql**
 
@@ -679,7 +687,7 @@ def get_mysql_instances_list():
 | InstanceUuid | 是   | string | 要初始化的实例编号                                           |
 | AccountName  | 是   | string | 账户名称                                                     |
 | Password     | 是   | string | 账户密码                                                     |
-| AccountType  | 是   | string | 账户类型，目前只支持创建高权限用户，值为 "Super"，注意：一个实例只能有一个高权限账号 |
+| AccountType  | 是   | string | 账户类型，支持创建高权限用户与普通用户。取值范围：</br>高权限用户："Super"</br>普通用户："Normal"</br>注意：一个实例只能有一个高权限账号 |
 | Description  | 否   | string | 账户描述，不传默认为空                                       |
 
 **返回参数：**
