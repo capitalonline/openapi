@@ -4297,6 +4297,7 @@ def describe_bms_images():
 | CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
 | CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
 | SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
+| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     | 
 
 
 **返回数据：**
