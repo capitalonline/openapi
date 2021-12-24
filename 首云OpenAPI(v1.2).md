@@ -4299,7 +4299,8 @@ def describe_bms_images():
 | CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
 | SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
 | IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     | 
-| PortMode            | string | 否      | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上
+| PortMode            | string | 否      | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上|
+
 **返回数据：**
 
 | 名称    | 类型   | 示例                                     | 描述                      |
