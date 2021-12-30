@@ -32,13 +32,7 @@ MySQL 公开API目录
     - [12.DescribeBackups](#12describebackups)
     - [13.DeleteBackup](#13deletebackup)
     - [14.DownloadBackup](#14downloadbackup)
-    - [15.StartBatchRollback](#15startbatchrollback)
-    - [16.DescribeRollbackRangeTime](#16describerollbackrangetime)
-    - [17.StartBatchRollbackToTemporaryDBInstance](#17startbatchrollbacktotemporarydbinstance)
-    - [18.DescribeTemporaryDBInstances](#18describetemporarydbinstances)
-    - [19.RegularizeTemporaryDBInstances](#19regularizetemporarydbinstances)
-    - [20.DeleteTemporaryDBInstances](#20deletetemporarydbinstances)
-    - [21.DescribeDBInstancePerformance](#21describedbinstanceperformance)
+    - [15.DescribeDBInstancePerformance](#15describedbinstanceperformance)
 
 ### API概览
 
@@ -1415,7 +1409,7 @@ def get_backup_describe(instance_uuid, backupid):
 
 ### 15.DescribeDBInstancePerformance
 
-**Action：**DescribeDBInstancePerformance
+**Action：DescribeDBInstancePerformance**
 
 **描述：** 获取云数据库MySQL监控指标
 
