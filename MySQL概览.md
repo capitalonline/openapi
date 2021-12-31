@@ -563,7 +563,6 @@ def create_mysql():
 | Data            | list   | 数据                             |
 | RelationService | dict   | 相关联的服务实例                 |
 | DisplayName     | string | 站点名称                         |
-| CloneServices   | list   | 克隆的临时实例列表               |
 | VdcName         | string | 数据中心名称                     |
 | IP              | string | 数据库的连接的IP                 |
 | Port            | int    | 连接的端口                       |
@@ -609,7 +608,6 @@ def get_mysql_instances_list():
 {
     "Code": "Success",
     "Data": [{
-        "CloneServices": [],
         "Cpu": 4,
         "CreatedTime": "2020-05-03 22:16:22",
         "Disks": 200,
