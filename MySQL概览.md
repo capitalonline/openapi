@@ -19,7 +19,7 @@ MySQL 公开API目录
       - [StandardObj](#standardobj)
       - [AttachDiskObj](#attachdiskobj)
       - [CpuRamObj](#cpuramobj)
-      - [NetworkLinkOb](#networklinkob)
+      - [NetworkLinkObj](#networklinkobj)
     - [3.CreateDBInstance](#3createdbinstance)
     - [4.DescribeDBInstances](#4describedbinstances)
     - [5.CreatePrivilegedAccount](#5createprivilegedaccount)
@@ -390,7 +390,7 @@ def get_mysql_spec_info():
 | PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
 | RAM         | int    | 内存大小，单位：GB                             |
 
-#### NetworkLinkOb
+#### NetworkLinkObj
 
 | 参数名     | 类型   | 说明           |
 | :--------- | :----- | -------------- |
