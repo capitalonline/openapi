@@ -798,11 +798,10 @@ def get_redis_backups_download(instance_uuid,backup_id):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                                      |
-| :----------- | :--- | :----- | --------------------------------------------------------- |
-| InstanceUuid | 是   | string | 实例编号                                                  |
-| BackupType   | 否   | string | 备份类型（目前只支持物理全备份,默认为full-backup,可以不传 |
-| Desc         | 否   | string | 备份的描述,不传默认为空字符串                             |
+| 参数名       | 必选 | 类型   | 说明                          |
+| :----------- | :--- | :----- | ----------------------------- |
+| InstanceUuid | 是   | string | 实例编号                      |
+| Desc         | 否   | string | 备份的描述,不传默认为空字符串 |
 
 **返回参数**：
 
@@ -827,7 +826,6 @@ def create_redis_backup(instance_uuid):
     url = get_signature(action, AK, AccessKeySecret, method, REDIS_URL, param=param)
     body = {
         "InstanceUuid": instance_uuid,
-        "BackupType": "full-backup",  # 目前只支持物理全备份,默认为full-backup
         "Desc": "测试Redis备份"
     }
     res = requests.post(url, json=body)
@@ -904,5 +902,4 @@ def delete_redis_backup(instance_uuid, backup_id):
     "TaskId": "*************"
 }
 ```
-
 
