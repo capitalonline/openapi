@@ -8,8 +8,8 @@ import ElementUI from 'element-ui';
 import './assets/reset.scss';
 import './assets/common.scss';
 import { getUserInfo } from '../src/init';
-import * as Sentry from "@sentry/vue";
-import { Integrations } from "@sentry/tracing";
+import * as Sentry from '@sentry/vue';
+import { Integrations } from '@sentry/tracing';
 
 Vue.use(ElementUI)
 
@@ -19,20 +19,18 @@ let router = null;
 let instance: any;
 interface prop {
   [propName: string]: any
-};
+}
 
-function render(props: prop = {}) {
+function render (props: prop = {}) {
   const { container } = props;
-  let routes = [];
-  for (let item of all_routes) {
+  const routes = [];
+  for (const item of all_routes) {
     if (store.state.auth_info[item.name]) {
       routes.push(item)
-    } 
-    else if (item.meta.no_auth) {
+    } else if (item.meta.no_auth) {
       routes.push(item)
-    }
-    else {
-      for (let key in store.state.auth_info) {
+    } else {
+      for (const key in store.state.auth_info) {
         if (store.state.auth_info[key].includes(item.name)) {
           routes.push(item)
         }
@@ -42,7 +40,7 @@ function render(props: prop = {}) {
   router = new VueRouter({
     mode: 'history',
     base: window.__POWERED_BY_QIANKUN__ ? '/under-app-sp' : '/child/app-sp',
-    routes,
+    routes
   })
   router.beforeEach((to, from, next) => {
     if (!to.name) {
@@ -53,45 +51,44 @@ function render(props: prop = {}) {
   })
   Sentry.init({
     Vue,
-    dsn: "http://807ce19725244499a99480d12cef58be@sentry.yun-paas.net:9000/14",
+    dsn: 'http://807ce19725244499a99480d12cef58be@sentry.yun-paas.net:9000/14',
     integrations: [
       new Integrations.BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-        tracingOrigins: ["localhost", "http://cloudos-sp-front.gic.test/", /^\//],
-      }),
+        tracingOrigins: ['http://cloudos-sp-front.gic.test/', /^\//]
+      })
     ],
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
     // We recommend adjusting this value in production
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 1.0
   });
-  // Sentry.captureException("test");
   instance = new Vue({
     router,
     store,
-    render: (h) => h(App),
+    render: (h) => h(App)
   }).$mount(container ? container.querySelector('#app') : '#app');
 }
 
 // 独立运行时
-if(!window.__POWERED_BY_QIANKUN__) {
+if (!window.__POWERED_BY_QIANKUN__) {
   getUserInfo().then(() => {
     render();
   })
 }
 
-export async function bootstrap() {
-  console.log("bootstrap")
+export async function bootstrap () {
+  console.log('bootstrap')
 }
 
-export async function mount(props: any) {
+export async function mount (props: any) {
   console.log('mount', props)
   await getUserInfo()
   render(props)
 }
 
-export async function unmount() {
+export async function unmount () {
   instance.$destroy();
-  instance.$el.innerHTML = "";
+  instance.$el.innerHTML = '';
   instance = null;
 }

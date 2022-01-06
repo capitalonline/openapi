@@ -21,17 +21,11 @@ import LeftMenu from './components/LeftMenu.vue';
   components: {
     Header,
     LeftMenu
-  },
+  }
 })
 export default class App extends Vue {
-  $route;
-  get key(){
-    return this.$route.path+  Math.random()
-  }
-  created() {
-    window.onerror = (error) => {
-      console.log('错误信息：', error)
-    }
+  get key (): string {
+    return this.$route.path + Math.random()
   }
 }
 </script>

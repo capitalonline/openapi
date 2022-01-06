@@ -1,9 +1,9 @@
 <template>
   <div class="time-box">
     <el-radio-group v-model="default_time" @change="FnChangeTime" class="m-right20">
-      <el-radio-button 
-        v-for="(value, key) in time_list" 
-        :key="key" 
+      <el-radio-button
+        v-for="(value, key) in time_list"
+        :key="key"
         :label="key">
         {{ value.label }}
       </el-radio-button>
@@ -26,9 +26,9 @@ import DatePicker from './DatePicker.vue';
 export default class TimeGroup extends Vue {
   @Prop({default: ''}) private start_time!: string;
   private time_option = {
-    placeholder: ['开始时间', '结束时间'], 
-    type: 'datetimerange', 
-    width: '360', 
+    placeholder: ['开始时间', '结束时间'],
+    type: 'datetimerange',
+    width: '360',
     clearable: false,
     dis_day: 31,
     min_date: this.start_time,
@@ -45,6 +45,7 @@ export default class TimeGroup extends Vue {
   };
   private default_time = '';
   private FnChangeTime() {
+    console.log('start_time', this.start_time)
     let time = this.time_list[this.default_time].time;
     let now = new Date().getTime();
     let start_time = new Date(now - time);

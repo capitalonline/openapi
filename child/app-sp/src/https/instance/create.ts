@@ -23,6 +23,9 @@ export default {
   get_os_list(reqData) {
     return service(getEcsOptions('POST', '/img/image_info/', reqData))
   },
+  get_price(reqData) {
+    return service(getEcsOptions('POST', '/ecs/get_price/', reqData))
+  },
   create_instance(reqData) {
     return service(getEcsOptions('POST', '/ecs/create_ecs/', reqData))
   }

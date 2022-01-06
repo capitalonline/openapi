@@ -36,13 +36,15 @@ export default class EditName extends Vue{
     private new_name:string = this.name.disk_name
     private async confirm(){
         if(this.new_name.trim().length<2){
+            console.log("this.new_name.trim()",this.new_name.trim())
             return;
         }
-        let res:any = Service.edit_disk_name({
+        let res:any =await Service.edit_disk_name({
+            customer_id:this.name.customer_id,
             disk_id:this.name.disk_id,
             disk_name:this.new_name==="" ? this.name.disk_name : this.new_name
         })
-        if (res.code == 'Success') {
+        if (res.code === 'Success') {
             this.$message.success("修改云盘名称任务下发成功！")
             this.back("1")
         }else{

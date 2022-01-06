@@ -53,7 +53,7 @@ export default class MountDisk extends Vue{
             customer_id:this.mount_id[0].customer_id,
             disk_ids:temp,
         })
-        if (res.code == 'Success') {
+        if (res.code === 'Success') {
             this.$message.success("云盘卸载任务下发成功！")
             this.back("1")
         }else{

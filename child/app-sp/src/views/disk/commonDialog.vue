@@ -27,6 +27,11 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="status_name" label="状态"></el-table-column>
+                <el-table-column prop="fee" label="费用" v-if="title==='开启计费'">
+                  <template slot-scope="scope">
+                    <span class="num_message">{{scope.row.fee}}</span>
+                  </template>
+                </el-table-column>
             </el-table>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -44,7 +49,29 @@ export default class MountDisk extends Vue{
     @Prop(Boolean) visible!:Boolean;
     @Prop({default:()=>[]}) mount_id!:any
     @Prop(String) title!:string;
-    private alert_title:string = `是否确定要对以下云盘执行 ${this.title} 操作`
+    private alert_title:string = `是否确定要对以下云盘执行 ${this.title} 操作`;
+    created() {
+      this.title==='开启计费' && this.getFee()
+    }
+    private async getFee(){
+      let resource_ids = this.mount_id.map(item=>item.disk_id)
+      let res = await Service.get_fee({
+          customer_id:this.mount_id[0].customer_id,
+          az_id:this.mount_id[0].az_id,
+          resource_ids,
+          billing_method:'0',
+          resource_type:'ebs'
+      })
+      if(res.code === 'Success'){
+        await this.$nextTick(()=>{
+          this.mount_id.map(item=>{
+            let fee:string=Object.keys(res.data.total_price).length>0 ? `${res.data.price_symbol}${res.data.total_price[item.disk_id].toFixed(2)}/${res.data.price_unit}` : '￥0.00/天';
+            this.$set(item, 'fee', fee);
+            return item;
+          })
+        });
+      }
+    }
     private async confirm(){
       let res:any;
       const temp:Array<string> = []
@@ -61,10 +88,18 @@ export default class MountDisk extends Vue{
         res = await Service.recover({...req_data})
       }else if(this.title==="销毁"){
         res = await Service.destroy({...req_data})
+      }else if(this.title==="开启计费"){
+        let resource_ids = this.mount_id.map(item=>item.disk_id)
+        res =await Service.open_bill({
+          customer_id:this.mount_id[0].customer_id,
+          resource_ids,
+          billing_method:'0',
+          resource_type:'ebs'
+        })
       }else{
         return;
       }
-      if (res.code == 'Success') {
+      if (res.code === 'Success') {
           this.$message.success(`云盘${this.title}任务下发成功！`)
           this.back("1")
       }else{

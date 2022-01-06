@@ -14,29 +14,30 @@
         </div>
       </el-card>
     </div>
-    
+
     <el-card class="tab-card">
       <el-tabs v-model="default_tab" type="card">
         <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>
       </el-tabs>
 
-      <time-group 
-        :start_time="ecs_info.create_finish_time" 
+      <time-group
+        :start_time="ecs_info.create_finish_time"
+        v-if="ecs_info.create_finish_time"
         @fn-emit="FnGetTimer">
       </time-group>
 
       <div class="chart-box" v-if="default_tab === 'instance'">
-        <line-echart 
+        <line-echart
           chart_id="cpu_chart"
           :data="cpu_used"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="ram_chart"
           :data="memory_used"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="system_chart"
           :data="system_load"
           class="item"
@@ -45,12 +46,12 @@
       </div>
 
       <div class="chart-box" v-if="default_tab === 'net'">
-        <line-echart 
+        <line-echart
           chart_id="net_chart"
           :data="net_in_out"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="net_rate_chart"
           :data="net_rate"
           class="item"
@@ -58,17 +59,17 @@
       </div>
 
       <div class="chart-box" v-if="default_tab === 'disk'">
-        <line-echart 
+        <line-echart
           chart_id="disk_chart"
           :data="disk_used"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="disk_through_chart"
           :data="disk_bytes"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="disk_iops_chart"
           :data="disk_iops"
           class="item">
@@ -76,12 +77,12 @@
       </div>
 
       <div class="chart-box" v-if="default_tab === 'gpu'">
-        <line-echart 
+        <line-echart
           chart_id="gpu_chart"
           :data="gpu_used"
           class="item"
         ></line-echart>
-        <line-echart 
+        <line-echart
           chart_id="gpu_memory_chart"
           :data="gpu_memory_used"
           class="item"
@@ -220,7 +221,7 @@ export default class Monitor extends Vue{
     resize: 0
   };
   private default_date_timer = [];
-  
+
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
     this.FnGetChartData();
@@ -283,18 +284,20 @@ export default class Monitor extends Vue{
         az_id: data.az_id,
         private_net_ip: data.pipe.private_net_ip[0],
         os_system: data.os_info.system,
-        create_finish_time: moment(new Date(data.create_finish_time).getTime() + 60 * 1000).format() // 由于监控采集时间需要在开机后1s~15s, 故暂时将create_finish_time延迟一分钟
+        create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
+      console.log('create_finish_time', this.ecs_info.create_finish_time)
       this.detail_info.ecs_name.value = data.ecs_name;
       this.detail_info.ecs_id.value = data.ecs_id;
-      this.detail_info.ecs_rule.value = 
-        `${data.ecs_rule.name} ${data.ecs_rule.cpu_num}vCPU ${data.ecs_rule.ram}GiB` + (data.is_gpu ? `${data.ecs_rule.gpu}GPU`: '');
+      this.detail_info.ecs_rule.value =
+        `${data.ecs_rule.name} ${data.ecs_rule.cpu_num}vCPU ${data.ecs_rule.ram}GiB` + (data.is_gpu ? `${data.ecs_rule.gpu}*${data.card_name}`: '');
       this.detail_info.az_name.value = data.az_name;
-      this.detail_info.system_disk_conf.value = 
+      this.detail_info.system_disk_conf.value =
         `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
       this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
       this.detail_info.status.value = data.status_display;
+      this.detail_info.public_net_ip.value = data.pipe.pub_net?.public_net_ip;
       if (!data.is_gpu) {
         delete this.tab_list.gpu
       }
@@ -326,8 +329,8 @@ export default class Monitor extends Vue{
   private async FnGetLoad(type, reqData) {
     this.system_load.yValue = [];
     let legend = this.system_load.legend;
-    Promise.all([Service.get_load(type, Object.assign({queryType: legend[0]}, reqData)), 
-      Service.get_load(type, Object.assign({queryType: legend[1]}, reqData)), 
+    Promise.all([Service.get_load(type, Object.assign({queryType: legend[0]}, reqData)),
+      Service.get_load(type, Object.assign({queryType: legend[1]}, reqData)),
       Service.get_load(type, Object.assign({queryType: legend[2]}, reqData))
     ]).then(resData => {
       this.FnHandleMoreData('system_load', resData)
@@ -349,7 +352,7 @@ export default class Monitor extends Vue{
   }
   private FnGetDiskInfo(type, reqData) {
     Service.get_disk(type, Object.assign({ queryType: 'use' }, reqData)).then((resData: any) => {
-      if (resData.code === 'Success') {      
+      if (resData.code === 'Success') {
         this.disk_used.xTime = resData.data.xTime;
         this.disk_used.yValue = resData.data.yValues;
         this.disk_used.legend = resData.data.metricInfo;
@@ -378,7 +381,7 @@ export default class Monitor extends Vue{
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
-            this[type].unit = item.data.unit; 
+            this[type].unit = item.data.unit;
           } else {
             if (item.data.metricInfo) {
               item.data.metricInfo.forEach(metric => {
@@ -396,13 +399,13 @@ export default class Monitor extends Vue{
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
-    Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout'}, reqData)), 
+    Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout'}, reqData)),
       Service.get_network(type, Object.assign({queryType: 'networkin'}, reqData))
     ]).then(resData => {
       this.FnHandleDubleData('net_in_out', resData)
     })
     this.net_rate.yValue = [];
-    Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout_rate'}, reqData)), 
+    Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout_rate'}, reqData)),
       Service.get_network(type, Object.assign({queryType: 'networkin_rate'}, reqData))
     ]).then(resData => {
       this.FnHandleDubleData('net_rate', resData)

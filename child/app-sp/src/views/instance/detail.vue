@@ -21,7 +21,7 @@
         <el-row :gutter="20">
           <el-col :span="10">
             <span class="label">云服务器名称:</span>
-            <span>{{detail && detail.ecs_name}}</span>
+            <span><pre>{{detail && detail.ecs_name}}</pre></span>
           </el-col>
           <el-col :span="10">
             <span class="label">可用区:</span>
@@ -42,7 +42,7 @@
             <span v-if="detail && detail.ecs_rule && detail.ecs_rule.cpu_num">&nbsp;&nbsp;
               {{detail && detail.ecs_rule && detail.ecs_rule.cpu_num}}vCPU
               <span>{{detail && detail.ecs_rule && detail.ecs_rule.ram}}GiB</span>
-              <span v-if="detail && detail.is_gpu">{{detail && detail.ecs_rule && detail.ecs_rule.gpu}}GPU</span>
+              <span v-if="detail && detail.is_gpu">{{detail && detail.ecs_rule && detail.ecs_rule.gpu}}*{{detail && detail.card_name}}</span>
             </span>
           </el-col>
         </el-row>
@@ -54,7 +54,7 @@
           <span class="data-disk" v-if="detail && detail.disk && detail.disk.system_disk_conf" >{{detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.disk_name}}</span>
           <span class="data-disk-unit" v-if="detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.size">{{detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.size}}{{detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.unit}}</span>
           <span class="id_name" v-if="detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.id">({{detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.id}} / {{detail && detail.disk && detail.disk.system_disk_conf && detail.disk.system_disk_conf.name}})</span>
-          
+
         </div>
         <div class="content data_disk">
           <span class="label">数据盘：</span>
@@ -66,7 +66,7 @@
               <span>{{item.is_follow_delete ? '随实例删除' :'不随实例删除'}}</span>
             </div>
           </div>
-          
+
         </div>
         <div class="title">网络</div>
         <div class="content">
@@ -138,7 +138,7 @@ export default class InsDetail extends Vue{
   private back(){
 
   }
-  
+
   created() {
     this.getDetail()
   }
@@ -165,7 +165,7 @@ export default class InsDetail extends Vue{
   span:first-child{
     margin-right: 8px;
   }
-  
+
 }
 // .label{
 //   width: 100px;

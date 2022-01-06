@@ -5,11 +5,39 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
     },
     proxy: {
-      '/api': {
-        target: 'http://10.128.22.12:9000',
+      '/ecs_business': {
+        // target: '10.131.165.157:8001',
+        target:'http://ecs-business.gic.test',
         ws: true,
         changeOrigin: true
       },
+      '/monitor/api': {
+        target: 'http://cloudos-op-metricsapi.gic.test',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/monitor/api': '/api'
+        }
+      },
+      '/gpu_monitor/api': {
+        target: 'http://106.3.146.195:8080',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/gpu_monitor/api': '/api'
+        }
+      },
+      '/alarm/api': {
+        target: ' http://cloudos-metricsalarm.gic.test',
+        // target:'http://10.131.162.69:8001',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/alarm/api': '/api'
+        }
+      },
+      '/api': {
+        target: 'http://10.128.22.18:9000',
+        ws: true,
+        changeOrigin: true
+      }
     }
   },
 }

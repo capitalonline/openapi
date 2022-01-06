@@ -3,6 +3,7 @@
   <div class="box">
     <div>{{ title }}</div>
     <div>
+      <slot></slot>
       <el-button type="primary" plain @click="FnBack">返回</el-button>
     </div>
     

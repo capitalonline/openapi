@@ -1,24 +1,24 @@
 <template>
-  <el-form 
+  <el-form
     :model="data"
     ref="resetForm"
-    label-position="left" 
-    label-width="120px" 
+    label-position="left"
+    label-width="120px"
     class="pwd-form">
     <div class="inline-form" v-if="system_disk">
       <el-form-item label="系统盘" prop="system_disk" class="m-right20">
-        <el-select v-model="data.default_system_info" value-key="ecs_goods_id">
+        <el-select v-model="data.default_system_info" value-key="ecs_goods_id" @change="FnChangeSystemType">
           <el-option v-for="item in system_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input-number v-model="data.system_size" 
-          :min="Number(data.system_disk_min)" 
-          :max="Number(data.default_system_info.disk_max)" 
+        <el-input-number v-model="data.system_size"
+          :min="Number(data.system_disk_min)"
+          :max="Number(data.default_system_info.disk_max)"
           :step="Number(data.default_system_info.disk_step)"
           @blur="FnCheckSystemSize"
           @change="FnChangeSystemSize"
-          step-strictly></el-input-number> 
+          step-strictly></el-input-number>
         {{ data.default_system_info.disk_unit }}
       </el-form-item>
     </div>
@@ -26,30 +26,30 @@
       <div v-for="(disk, index) in data_disk_list" :key="index" class="inline-form">
         <el-form-item class="short-select" :label="index===0?'数据盘':''">
           <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
-          <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20">
+          <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20" @change="FnDataEmit">
             <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input-number v-model="disk.disk_size" 
-            :min="Number(disk.default_disk_info.disk_min)" 
-            :max="Number(disk.default_disk_info.disk_max)" 
+          <el-input-number v-model="disk.disk_size"
+            :min="Number(disk.default_disk_info.disk_min)"
+            :max="Number(disk.default_disk_info.disk_max)"
             :step="Number(disk.default_disk_info.disk_step)"
             @blur="FnCheckDataSize(disk)"
             @change="FnChangeDataSize(disk)"
-            step-strictly></el-input-number> 
+            step-strictly></el-input-number>
           {{ disk.default_disk_info.disk_unit }}
         </el-form-item>
         <el-form-item>
-          <el-input-number 
-            v-model="disk.num" 
-            :min="disk.min" 
-            :max="FnGetSurplus + disk.num" 
-            :step="1" 
-            class="m-left10 m-right10" 
-            @blur="FnCheckDataNum(disk)" 
+          <el-input-number
+            v-model="disk.num"
+            :min="disk.min"
+            :max="FnGetSurplus + disk.num"
+            :step="1"
+            class="m-left10 m-right10"
+            @blur="FnCheckDataNum(disk)"
             @change="FnChangeDataNum(disk)">
-          </el-input-number> 
+          </el-input-number>
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
@@ -58,7 +58,7 @@
       <el-form-item :label="data_disk_list.length===0?'数据盘':''">
         <div class="disk-btn">
           <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
-          <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘， 
+          <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
           还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
         </div>
       </el-form-item>
@@ -70,11 +70,13 @@
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import diskService from '../../https/disk/create';
 import getIops from '../../utils/getIops';
+import { deal_fee_info } from '../../utils/transIndex';
 
 @Component
 export default class updateDisk extends Vue {
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
+  @Prop({default: '0'}) private billing_method!: string;
   @Prop({default: false}) private system_disk!: boolean;
   @Prop({default: false}) private data_disk!: boolean;
   @Prop({default: 0}) private os_disk_size!: number;
@@ -116,26 +118,38 @@ export default class updateDisk extends Vue {
     }
     const resData: any = await diskService.get_disk_type({
       az_id: this.az_id,
-      customer_id: this.customer_id
+      customer_id: this.customer_id,
+      billing_method: this.billing_method
     });
     if (resData.code == 'Success') {
       this.all_disk_info = {
         system_disk: resData.data.system_disk,
         data_disk: resData.data.data_disk
       };
+      this.FnBillingInfo(deal_fee_info(resData.data.billing_info, true))
       this.FnFilterDisk();
     }
   }
   private FnFilterDisk(): void {
     let disk_type_list = [];
     if (this.is_gpu) {
-      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');  
-      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature === 'local');
+      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');
     } else {
       this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature !== 'local');
       this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature !== 'local');
     }
     this.data.default_system_info = this.system_disk_info[0];
+    this.FnChangeSystemType()
+  }
+  private FnChangeSystemType(): void {
+    this.data_disk_list = [];
+    if (this.data.default_system_info.disk_feature === 'local') {
+      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature === 'local');
+    } else {
+      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature !== 'local');
+    }
+    this.data.system_size = this.FnSystemMinSize();
+    this.FnSysEmit()
   }
   private get FnGetDiskNum(): number {
     if (this.data_disk_list.length > 0) {
@@ -173,7 +187,7 @@ export default class updateDisk extends Vue {
     data.default_disk_info = this.data_disk_info[0] || {};
     if ( !data.default_disk_info.disk_name ) {
       this.$message.warning('请输入客户ID');
-      
+
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
@@ -256,6 +270,11 @@ export default class updateDisk extends Vue {
     return this.data_disk_list
   }
 
+  @Emit('fn-billing-info')
+  private FnBillingInfo(val) {
+    return val
+  }
+
   public FnSubmit() {
     let flag = false;
     (this.$refs['resetForm'] as any).validate((valid) => {
@@ -278,9 +297,8 @@ export default class updateDisk extends Vue {
   @Watch('data.default_system_info.ecs_goods_id')
   private FnChangeSystem() {
     this.data.system_size = this.FnSystemMinSize();
-    this.FnSysEmit();
   }
-  @Watch('az_id', {immediate: true}) 
+  @Watch('az_id', {immediate: true})
   private FnChangeAz(newVal, oldVal) {
     this.FnGetDiskInfo();
   }
@@ -288,7 +306,6 @@ export default class updateDisk extends Vue {
   private FnChangeGpu(newVal) {
     this.data_disk_list = [];
     this.FnFilterDisk();
-    this.FnDataEmit()
   }
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {
@@ -296,8 +313,11 @@ export default class updateDisk extends Vue {
   }
   @Watch('os_disk_size')
   private FnChangeOs(newVal) {
-    this.data.system_size = this.FnSystemMinSize();
-    this.FnSysEmit();
+    let system_size = this.FnSystemMinSize();
+    if (system_size !== this.data.system_size && this.data.system_size) {
+      this.data.system_size = system_size;
+      this.FnSysEmit();
+    }
   }
 }
 </script>

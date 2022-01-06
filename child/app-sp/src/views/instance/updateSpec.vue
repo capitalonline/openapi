@@ -1,8 +1,8 @@
 <template>
-  <el-form 
+  <el-form
     :model="data"
     ref="resetForm"
-    label-position="left"  
+    label-position="left"
     class="spec-form">
     <div class="inline-form">
       <el-form-item class="m-right20">
@@ -33,8 +33,17 @@
           <el-table-column prop="ecs_family_name" label="规格族"></el-table-column>
           <el-table-column prop="cpu" label="vCPU"></el-table-column>
           <el-table-column prop="ram" label="内存"></el-table-column>
-          <el-table-column prop="gpu" label="GPU" v-if="is_gpu"></el-table-column>
+          <el-table-column prop="gpu" label="GPU" v-if="is_gpu">
+            <template #default="scope">
+              {{ scope.row.gpu }}*{{ scope.row.gpu_show_type }}
+            </template>
+          </el-table-column>
           <el-table-column prop="cpu_name" label="处理器型号" width="200"></el-table-column>
+          <el-table-column label="参考价格">
+            <template #default="scope">
+              <span>{{ cpu_ram_gpu_price[FnJoinGoodCpuRamGpu(scope.row)] }}</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </el-form-item>
@@ -44,11 +53,13 @@
 <script lang="ts">
 import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import Service from '../../https/instance/create';
+import { deal_fee_info } from '../../utils/transIndex';
 
 @Component
 export default class updateSpec extends Vue{
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
+  @Prop({default: '0'}) private billing_method!: string;
   @Prop({default: ''}) type!: '' | 'batch_update'; //批量修改
   @Prop({default: 0}) private default_is_gpu!: 0 | 1;
   private cpu_ram_size_list = [];
@@ -59,12 +70,14 @@ export default class updateSpec extends Vue{
   private category_list = [];
   private family_list = [];
   private is_gpu: 0 | 1 = 0;
+  private billing_info = {};
+  private cpu_ram_gpu_price = {};
   private data = {
     category_id: '',
     cpu_ram_gpu: ''
   };
   private async FnGetAllCpuRam() {
-    let resData: any = await Service.get_all_cpu_ram();
+    let resData = await Service.get_all_cpu_ram();
     if (resData.code == 'Success') {
       this.cpu_ram_size_list = resData.data;
       let arr = [];
@@ -82,14 +95,15 @@ export default class updateSpec extends Vue{
       return
     }
     this.family_list = [];
-    let resData: any = await Service.get_category_list({
+    let resData = await Service.get_category_list({
       az_id: this.az_id,
       customer_id: this.customer_id,
+      biiling_method: this.billing_method,
       cpu: String(this.default_cpu_size),
       ram: String(this.default_ram_size)
     });
     if (resData.code == 'Success') {
-      this.category_list = this.type === 'batch_update' ? 
+      this.category_list = this.type === 'batch_update' ?
                           resData.data.category_list.filter(item => item.is_gpu == this.default_is_gpu) : resData.data.category_list
       if (this.data.category_id === this.category_list[0].category_id) {
         this.FnChangeCate(this.data.category_id)
@@ -102,16 +116,19 @@ export default class updateSpec extends Vue{
     if (!this.az_id) {
       return
     }
-    let resData: any = await Service.ecs_family_info({
+    let resData = await Service.ecs_family_info({
       az_id: this.az_id,
       customer_id: this.customer_id,
+      billing_method: this.billing_method,
       category_id: this.data.category_id,
       cpu: String(this.default_cpu_size),
       ram: String(this.default_ram_size)
     });
     if (resData.code == 'Success') {
       this.family_list = resData.data.ecs_family_info;
+      this.billing_info = deal_fee_info(resData.data.billing_info, true);
       this.data.cpu_ram_gpu = this.FnJoinGoodCpuRamGpu(this.family_list[0]);
+      this.FnGetPrice()
       this.FnEmit()
     }
   }
@@ -119,9 +136,28 @@ export default class updateSpec extends Vue{
     row.gpu = row.gpu || 0;
     return row.ecs_goods_id + '_' + row.cpu + '_' + row.ram + '_' + row.gpu
   }
-   private FnGetDefaultFamily(cpu_ram_gpu: string) {
-    let row = this.family_list.filter(item => this.FnJoinGoodCpuRamGpu(item) === cpu_ram_gpu)[0];
-    return row
+  private FnGetDefaultFamily(cpu_ram_gpu: string) {
+    return this.family_list.find(item => this.FnJoinGoodCpuRamGpu(item) === cpu_ram_gpu)
+  }
+  private async FnGetPrice() {
+    const reqData = {
+      customer_id: this.customer_id,
+      az_id: this.az_id,
+      is_gpu: this.is_gpu,
+      batch: 1,
+      billing_method: this.billing_method,
+      ecs_info: {
+        billing_info: this.billing_info,
+        ecs_goods_info: this.family_list
+      },
+      number: 1,
+    }
+    const resData = await Service.get_price(reqData);
+    if (resData.code === 'Success') {
+      resData.data.ecs.forEach(value => {
+        this.$set(this.cpu_ram_gpu_price, this.FnJoinGoodCpuRamGpu(value), resData.data.price_symbol + Number(value.price).toFixed(2) + '/' + resData.data.price_unit)
+      })
+    }
   }
   @Emit('fn-spec')
   private FnEmit() {
@@ -132,7 +168,10 @@ export default class updateSpec extends Vue{
       cpu: row.cpu,
       ram: row.ram,
       gpu: row.gpu,
-      is_gpu: this.is_gpu
+      gpu_id: row.gpu_type_id,
+      card_name: row.gpu_show_type,
+      is_gpu: this.is_gpu,
+      billing_info: this.billing_info
     }
   }
   public FnSubmit() {
@@ -145,16 +184,12 @@ export default class updateSpec extends Vue{
       spec_info: this.FnEmit()
     }
   }
-  public FnResetForm() {
-    // this.data.default_spec = this.default_calc.ecs_spec_list[0];
-    // this.FnChangeSpec(this.data.default_spec.cpu_size);
-  }
   private created() {
     this.FnGetAllCpuRam()
   }
-  
+
   @Watch('default_cpu_size')
-  private FnChangeCpuSize(newVal) {
+  private FnChangeCpuSize (newVal) {
     this.default_ram_size = '';
     if (newVal) {
       this.ram_size_list = this.cpu_ram_size_list[Number(newVal)];
@@ -171,10 +206,10 @@ export default class updateSpec extends Vue{
   private FnChangeCate(newVal) {
     if (newVal) {
       this.FnGetFamilyList()
-      this.is_gpu = this.category_list.filter(item => item.category_id === newVal)[0].is_gpu ? 1 : 0;
+      this.is_gpu = this.category_list.find(item => item.category_id === newVal).is_gpu ? 1 : 0;
     }
   }
-  @Watch('az_id') 
+  @Watch('az_id')
   private FnChangeAz(newVal, oldVal) {
     this.FnGetCategoryList();
   }

@@ -150,7 +150,7 @@ export default class ApplyStrategy extends Vue{
     @Prop(Boolean)enable!:Boolean
     private form_data:any=this.list.length===1 ? {
         customer_id:this.list[0].customerID.length>6 ? this.list[0].customerID : '',
-        customer_name:'',
+        customer_name:this.list[0].customer_name,
         area:!this.list[0].regions ? [] : this.list[0].regions,
         az:!this.list[0].az ? [] : this.list[0].az,
         cycle:this.list[0].silentPeriod===0 ? '86400' : this.list[0].silentPeriod.toString(),
@@ -226,6 +226,8 @@ export default class ApplyStrategy extends Vue{
                 }else{
                     this.get_customer_name()
                 }
+            }else{
+                this.form_data.customer_name=""
             }
         }) 
     }
@@ -287,7 +289,7 @@ export default class ApplyStrategy extends Vue{
         return arr
     }
     private confirm(){
-        const {customer_id,area,az,cycle,address,start_time,end_time,notice_user}=this.form_data
+        const {customer_id,area,az,cycle,address,start_time,end_time,notice_user,customer_name}=this.form_data
         const form = this.$refs.form as Form
         form.validate(async(valid)=>{
             if(valid){
@@ -298,6 +300,7 @@ export default class ApplyStrategy extends Vue{
                         callbackURL : address,
                         contactGroupIDs : notice_user,
                         customerID : customer_id,
+                        customerName:customer_name,
                         regions : area.length===0 ? this.get_all_ids(this.area_list):area,
                         silentPeriod : parseInt(cycle),
                         effectStartTime : start_time,

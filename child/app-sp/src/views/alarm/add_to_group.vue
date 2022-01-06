@@ -17,7 +17,7 @@
           v-model="searchVal"
           @change="search"
         />        
-        <el-checkbox-group v-model="check_group" size="small" class="group">
+        <el-checkbox-group v-model="check_group" size="small" class="contact-group">
             <el-checkbox v-for="item in group_list" :key="item.id" :label="item.id" border>
               <el-tooltip 
                 placement="right" 
@@ -140,7 +140,7 @@ label.el-checkbox.el-checkbox--small.is-bordered{
         margin-left: 10px;
     }
 }
-.el-checkbox-group.group {
+.el-checkbox-group.contact-group {
     max-height: 300px;
     overflow-y: auto;
 }
