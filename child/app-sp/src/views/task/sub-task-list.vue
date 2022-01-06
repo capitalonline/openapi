@@ -109,7 +109,7 @@
         </label-block>
         <label-block label="子任务超时时间">
           <template #default>
-            <el-input-number v-model="sub_config.timeout" :min="1" :max="10800"></el-input-number> 秒
+            <el-input-number v-model="sub_config.timeout" :min="1" :max="86400"></el-input-number> 秒
           </template>
         </label-block>
         <label-block label="周期性任务" class="switch-box">
