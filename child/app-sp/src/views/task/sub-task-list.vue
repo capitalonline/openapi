@@ -1,8 +1,8 @@
 <template>
   <div>
-    <action-block :search_option="search_con" 
-      create_btn="新建子任务配置" 
-      @fn-search="FnGetList" 
+    <action-block :search_option="search_con"
+      create_btn="新建子任务配置"
+      @fn-search="FnGetList"
       @fn-create="FnShowCreate"
       :disabled="!operate_auth.includes('create')">
     </action-block>
@@ -47,7 +47,7 @@
         <template #default="scope">
           <el-button type="text" @click="FnShowUpdate(scope.row)"
             :disabled="!operate_auth.includes('edit')">编辑</el-button>
-          <el-button type="text" 
+          <el-button type="text"
             @click="FnShowDel(scope.row.id, scope.row.subtask_name)"
             :disabled="!operate_auth.includes('delete')">删除</el-button>
         </template>
@@ -109,7 +109,7 @@
         </label-block>
         <label-block label="子任务超时时间">
           <template #default>
-            <el-input-number v-model="sub_config.timeout" :min="1" :max="600"></el-input-number> 秒
+            <el-input-number v-model="sub_config.timeout" :min="1" :max="10800"></el-input-number> 秒
           </template>
         </label-block>
         <label-block label="周期性任务" class="switch-box">
@@ -144,7 +144,7 @@
             </el-switch>
             <label-block label="调度参数" v-if="sub_config.need_schedule">
               <template #default>
-                <Item :params="default_schedule_output_params" type="key" @fn-change="FnGetSchedule"></Item>  
+                <Item :params="default_schedule_output_params" type="key" @fn-change="FnGetSchedule"></Item>
               </template>
             </label-block>
           </template>
