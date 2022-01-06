@@ -11,7 +11,7 @@
     >
         <div class="upload">
             <div class="m-bottom10">请选择需要导入的可用区</div>
-            <el-select v-model="az" filterable :filter-method="getPodList" placeholder="请选择">
+            <el-select v-model="az" filterable :filter-method="getPodList" @visible-change="change_pod" placeholder="请选择">
                 <el-option
                     v-for="item in az_list"
                     :key="item.pod_id"
@@ -65,6 +65,13 @@ export default class Upload extends Vue{
   created() {
     this.getPodList()
   }
+  //关闭面板时重新获取实例列表
+    private change_pod(val){
+        if(!val){
+            this.getPodList()
+        }
+        
+    }
   private async getPodList(val:string=""){
     let res:any=await Service.get_pod_list({
       page_index:1,
@@ -72,7 +79,7 @@ export default class Upload extends Vue{
       search_info:val
     })
     if(res.code==="Success"){
-      this.az_list=res.data.pod_list
+      this.az_list=res.data.pod_list.filter(item=>item.status)
       // this.az=this.az_list[0].pod_id
     }
   }
@@ -81,12 +88,11 @@ export default class Upload extends Vue{
     
   }
   private FnSuccess(response, file, fileList){
-    console.log("FnSuccess",response, file, fileList)
     if(response.code==="Success"){
       this.$message.success(response.message)
       this.back("1")
     }else{
-      this.$message.warning(response.message)
+      this.$message.error(JSON.stringify(response.message))
       this.back("0")
     }
   }

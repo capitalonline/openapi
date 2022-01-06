@@ -1,7 +1,8 @@
 const path = require('path');
+const publicPath = '/child/app-sp/';
 
 module.exports = {
-  publicPath: '/child/app-sp/',
+  publicPath: publicPath,
   devServer: {
     // 监听端口
     port: 50000,
@@ -45,6 +46,17 @@ module.exports = {
       }
     }
   },
+  configureWebpack: config => {
+    config.module.rules.filter(rule => {
+      return rule.test.toString().indexOf("scss") !== -1;
+    })
+    .forEach(rule => {
+      rule.oneOf.forEach(oneOfRule => {
+        oneOfRule.use.splice(oneOfRule.use.indexOf(require.resolve('sass-loader')), 0,
+          { loader: require.resolve("css-unicode-loader")})
+      })
+    })
+  },
   configureWebpack: {
     output: {
       // 微应用的包名，这里与主应用中注册的微应用名称一致
@@ -54,5 +66,22 @@ module.exports = {
       // 按需加载相关，设置为 webpackJsonp_VueMicroApp 即可
       jsonpFunction: `webpackJsonp_AppSp`,
     }
+  },
+  chainWebpack: (config) => {
+    config.module
+    .rule('fonts')
+    .use('url-loader')
+    .loader('url-loader')
+    .options({
+      limit: 4096, // 小于4kb将会被打包成 base64
+      fallback: {
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[hash:8].[ext]',
+          publicPath,
+        },
+      },
+    })
+    .end();
   }
 }

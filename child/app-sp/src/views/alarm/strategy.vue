@@ -24,10 +24,7 @@
                 <template slot-scope="scope">
                     <div class="used-products">
                         <span class="app" v-if="scope.row.instances && scope.row.instances.length>2"> {{scope.row.instances ? scope.row.instances.length>2 ? `${scope.row.instances[0].instance_name};${scope.row.instances[1].instance_name};...` : scope.row.instances.join(';') : '--'}}</span>
-                        <template v-else-if="scope.row.instances.length>0 && scope.row.instances.length<=2">
-                            <span v-for="(item,index) in scope.row.instances" :key="index">{{item.instance_name}}<span v-if="index!==scope.row.instances.length-1">;</span></span>
-                        </template>
-                        <span v-else>--</span>
+                        <span v-else>{{scope.row.instances_name.join(';')}}</span>
                         <i class="el-icon-document" v-if="scope.row.instances" @click="go_detail(scope.row)"></i>
                     </div>
                     
@@ -160,6 +157,10 @@ export default class Strategy extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.datas || []
+            this.list.map(item=>{
+                item = Object.assign(item,{instances_name:item.instances.map(inn=>inn.instance_name)})
+                return item
+            })
             this.total = res.data.total || 0
         }
 
@@ -206,12 +207,13 @@ export default class Strategy extends Vue{
     private async stop(){
         const temp:any=[]
         this.strategy_rows.map(item=>{
-            const {az,callbackURL,contactGroupIDs,customerID,regions,silentPeriod,effectStartTime,effectEndTime,enable,id,name} =item
+            const {az,callbackURL,contactGroupIDs,customerID,customer_name,regions,silentPeriod,effectStartTime,effectEndTime,enable,id,name} =item
             let obj={
                 az,
                 callbackURL,
                 contactGroupIDs,
                 customerID,
+                customer_name,
                 regions,
                 silentPeriod,
                 effectStartTime,

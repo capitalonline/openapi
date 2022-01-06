@@ -32,6 +32,17 @@
                     <span>容量：{{item.total}}</span>
                 </div>
             </div>
+            <div class="bar m-top50">
+                <div class="mark">
+                    <el-tooltip content='已分配的核数/总核数(cpu个数*物理cpu核数*2)' placement='bottom' effect="light">
+                        <div class="m-bottom10">已分配CPU核数：<span class="destroy">{{detail_info.vcpu_allot}}</span> / {{detail_info.cpu_cores_total}}</div>
+                    </el-tooltip>
+                    <el-tooltip content='已分配的内存容量/该物理机总容量' placement='bottom' effect="light">
+                        <div>已分配内存容量：<span class="destroy">{{detail_info.memory_allot}}</span> / {{detail_info.memory_total}}</div>
+                    </el-tooltip>
+                </div>
+                
+            </div>
         </div>
         
     </div>
@@ -40,8 +51,12 @@
 import { Component, Emit, Vue ,Prop} from 'vue-property-decorator';
 import Service from '../../https/physical/list';
 import moment from 'moment';
-
-@Component({})
+import MarkTip from '../../components/markTip.vue'
+@Component({
+    components:{
+        MarkTip
+    }
+})
 export default class Info extends Vue{
     $route;
     $router;
@@ -83,9 +98,8 @@ export default class Info extends Vue{
             for(let i in this.base_info){
                 this.base_info[i].value = res.data[i]
             }
-            console.log("this.detail_info",this.detail_info.start_time,moment(new Date()).diff(moment("2021-10-28 05:36:37"), 'days'))
-            this.base_info.start_time.value=moment(new Date()).diff(moment(this.detail_info.start_time), 'days')<=0 ? moment(new Date()).diff(moment(this.detail_info.start_time), 'hours')+'小时' :
-                                            moment(new Date()).diff(moment(this.detail_info.start_time), 'days')+'天'
+            this.base_info.start_time.value=this.detail_info.start_time ? moment(new Date()).diff(moment(this.detail_info.start_time), 'days')<=0 ? moment(new Date()).diff(moment(this.detail_info.start_time), 'hours')+'小时' :
+                                            moment(new Date()).diff(moment(this.detail_info.start_time), 'days')+'天' : '无'
             this.base_info.SRIOV.value =this.base_info.SRIOV.value  ? '支持' :'不支持';
             this.progress_info.cpu = {
                 ...this.progress_info.cpu,
@@ -95,9 +109,9 @@ export default class Info extends Vue{
             }
             this.progress_info.memory = {
                 ...this.progress_info.memory,
-                used:this.detail_info.memory_allot+'GB',
+                used:(this.detail_info.memory_total - this.detail_info.memory_free)+'GB',
                 remain:this.detail_info.memory_free+'GB',
-                total:(this.detail_info.memory_allot + this.detail_info.memory_free)+'GB',
+                total:this.detail_info.memory_total+'GB',
                 percentage:this.detail_info.memory_usage
             }
             this.progress_info.storage = {
@@ -139,8 +153,13 @@ export default class Info extends Vue{
             width: 100%;
             margin: auto;
             margin-bottom: 20px;
+            .mark{
+                max-width: 200px;
+                
+            }
 
         }
+        
     }
     .check-group{
         .el-checkbox-group{
@@ -153,6 +172,9 @@ export default class Info extends Vue{
     }
     .m-top5{
         margin-top: 5px;
+    }
+    .m-top50{
+        margin-top: 50px !important;
     }
 }
 

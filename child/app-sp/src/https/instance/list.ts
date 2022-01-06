@@ -34,5 +34,18 @@ export default {
   },
   get_vnc_url(reqData) {
     return service(getEcsOptions('GET', '/ecs/vnc_info/', reqData))
+  },
+  start_charge(reqData) {
+    return service(getEcsOptions('POST', '/resource/start_charge/', reqData))
+  },
+  change_config_price(reqData) {
+    return service(getEcsOptions('POST', '/ecs/change_config_price/', reqData))
+  },
+  change_system_price(reqData) {
+    return service(getEcsOptions('POST', '/ecs/change_system_price/', reqData))
+  },
+  // 开启计费获取价格
+  each_resource_price(reqData) {
+    return service(getEcsOptions('POST', '/ecs/each_resource_price/', reqData))
   }
 }

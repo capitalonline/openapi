@@ -43,13 +43,12 @@ export default class EditAttr extends Vue{
     created() {
         console.log("attr",this.attr)
     }
-    private confirm(){
-        console.log("checked",this.checked)
-        let res:any = Service.edit_disk_attr({
+    private async confirm(){
+        let res:any =await Service.edit_disk_attr({
             disk_id:this.attr.disk_id,
             is_follow_delete:this.checked ? '1' : '0'
         })
-        if (res.code == 'Success') {
+        if (res.code === 'Success') {
             this.$message.success("修改云盘属性任务下发成功！")
             this.back("1")
         }else{

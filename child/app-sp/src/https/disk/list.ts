@@ -43,5 +43,12 @@ export default{
     expansion(req){
         return service(getEcsOptions('POST','/ebs/expansion/',req))
     },
-
+    //获取开启计费费用
+    get_fee(req){
+        return service(getEcsOptions('POST', '/ecs/each_resource_price/', req))
+    },
+    //开启计费
+    open_bill(req){
+        return service(getEcsOptions('POST', '/resource/start_charge/', req))
+    }
 }

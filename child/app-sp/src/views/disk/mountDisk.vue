@@ -93,7 +93,6 @@ export default class MountDisk extends Vue{
     }
     @Watch("form_data.instance_id")
     private watch_instance_id(newVal){
-      console.log("watch_instance_id",newVal)
       if(newVal==="" || !newVal){
         return;
       }
@@ -117,7 +116,7 @@ export default class MountDisk extends Vue{
             az_id:this.mount_id[0].az_id
         });
         if (resData.code == 'Success') {
-            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu) || [];
+            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===this.mount_id[0].is_charge) || [];
         }
     }
     //获取实例挂载数据盘数量
@@ -127,7 +126,6 @@ export default class MountDisk extends Vue{
         });
         if (resData.code == 'Success') {
           const {data:{disk}}=resData
-          console.log("data_disk_conf",disk.data_disk_conf.length,this.mount_id.length,disk.data_disk_conf.length<this.mount_id.length)
           if(16 - disk.data_disk_conf.length<this.mount_id.length){
             this.$message.warning("该实例可挂载云盘数量不足!")
             this.form_data.instance_id="";
@@ -157,7 +155,7 @@ export default class MountDisk extends Vue{
               ecs_id:this.form_data.instance_id,
               is_follow_delete:this.form_data.del_set ? '1' : '0'
             })
-            if (res.code == 'Success') {
+            if (res.code === 'Success') {
                 this.$message.success("云盘挂载任务下发成功！")
                 this.back("1")
             }else{

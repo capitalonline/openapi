@@ -10,11 +10,11 @@ html, body {
 
 
 /* 表格 */
-.el-table th, .el-table td {
+.el-table .el-table__cell {
   padding: 6px 0;
   font-size: 12px;
 }
-.el-table th {
+.el-table th.el-table__cell {
   background-color: #eef1f6;
 }
 
@@ -92,4 +92,9 @@ html, body {
 /* 表单 */
 .el-form-item__label {
   color: #333;
+}
+
+/* 下拉框 */
+.el-select-dropdown {
+  max-width: 500px;
 }

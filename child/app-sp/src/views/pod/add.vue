@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="syncVisible" :title="title">
+  <el-dialog :visible.sync="syncVisible" :title="title" :close-on-click-modal="false" @close="FnClose">
     <el-form
       ref="resetForm"
       :model="data"
@@ -14,18 +14,18 @@
       </el-form-item>
       <el-form-item label="区域">{{ region }}</el-form-item>
       <el-form-item label="可用区">{{ az_name }}</el-form-item>
-      <el-form-item label="管理IP">
+      <el-form-item label="管理IP"  prop="ip_address">
         <el-input v-model="data.ip_address"></el-input>
       </el-form-item>
-      <el-form-item label="机房名称">
+      <el-form-item label="机房名称" prop="zoom_name">
         <el-input v-model="data.zoom_name"></el-input>
       </el-form-item>
-      <el-form-item label="状态">
+      <el-form-item label="状态" prop="status">
         <el-select v-model="data.status">
           <el-option v-for="(value, key) in status_list" :key="key" :value="key" :label="value">{{ value }}</el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="备注">
+      <el-form-item label="备注" prop="remark">
         <el-input type="textarea" v-model="data.remark"></el-input>
       </el-form-item>
     </el-form>
@@ -37,6 +37,7 @@
 </template>
 
 <script lang="ts">
+import { ElForm } from 'element-ui/types/form';
 import { Component, Prop, PropSync, Emit, Watch, Vue } from 'vue-property-decorator';
 import Service from '../../https/pod/index';
 
@@ -81,7 +82,9 @@ export default class AddPod extends Vue {
   }
   private rules = {
     pod_name: [{ required: true, validator: this.FnCheckPodName, trigger: 'blur' }],
-    az_id: [{ required: true, validator: this.FnCheckAzId, trigger: 'blur' }]
+    az_id: [{ required: true, validator: this.FnCheckAzId, trigger: 'blur' }],
+    ip_address: [{ required: true, trigger: 'blur', message: '请输入管理IP' }],
+    zoom_name: [{ required: true, trigger: 'blur', message: '请输入机房名称' }]
   }
   private async FnGetAzName() {
     this.region = '';
@@ -99,7 +102,7 @@ export default class AddPod extends Vue {
     return this.region
   }
   private FnConfirm() {
-    (this.$refs['resetForm'] as any).validate((valid) => {
+    (this.$refs['resetForm'] as ElForm).validate((valid) => {
       if (!valid) {
         return
       }
@@ -121,7 +124,7 @@ export default class AddPod extends Vue {
     })
     if (resData.code === 'Success') {
       this.$message.success('添加POD成功！')
-      this.syncVisible = false;
+      this.FnClose()
       this.FnEmit()
     }
   }
@@ -137,19 +140,24 @@ export default class AddPod extends Vue {
     })
     if (resData.code === 'Success') {
       this.$message.success('修改POD成功！')
-      this.syncVisible = false;
+      this.FnClose()
       this.FnEmit()
     }
   }
   private FnClose() {
-    (this.$refs['resetForm'] as any).resetFields();
     this.syncVisible = false;
+    (this.$refs['resetForm'] as ElForm).resetFields();
+    this.region = '';
+    this.az_name = '';
   }
   @Emit('fn-refresh')
   public FnEmit(){}
 
-  @Watch('row.pod_id')
-  private FnGetRow() {
+  @Watch('syncVisible')
+  private FnGetRow(newVal) {
+    if (!newVal) {
+      return
+    }
     this.data.pod_name = this.row['pod_name'];
     this.data.az_id = this.row['az_id'];
     this.data.ip_address = this.row['manager_ip'];

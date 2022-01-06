@@ -2,9 +2,9 @@
   <div>
     <action-block :search_option="search_con" @fn-search="FnSearch">
       <template #default>
-        <el-button type="primary" @click="FnToCreate" 
+        <el-button type="primary" @click="FnToCreate"
           :disabled="!operate_auth.includes('instance_create')">创建实例</el-button>
-        <el-button type="primary" @click="FnOperate('start_up_ecs')" 
+        <el-button type="primary" @click="FnOperate('start_up_ecs')"
           :disabled="!operate_auth.includes('start_up')">开 机</el-button>
         <el-button type="primary" @click="FnOperate('shutdown_ecs')"
           :disabled="!operate_auth.includes('shutdown')">关 机</el-button>
@@ -16,13 +16,17 @@
          :disabled="!operate_auth.includes('recover')">恢 复</el-button>
         <el-button type="primary" @click="FnOperate('destroy_ecs')"
          :disabled="!operate_auth.includes('destroy')">销 毁</el-button>
-        <el-button type="primary" @click="FnOperate('update_spec')">更换实例规格</el-button>
-        <el-button type="primary" @click="FnOperate('update_system')">更换操作系统</el-button>
-        <el-button type="primary" @click="FnOperate('reset_pwd')">重置密码</el-button>
+        <el-button type="primary" @click="FnOperate('update_spec')"
+         :disabled="!operate_auth.includes('update_spec')">更换实例规格</el-button>
+        <el-button type="primary" @click="FnOperate('update_system')"
+         :disabled="!operate_auth.includes('update_system')">更换操作系统</el-button>
+        <el-button type="primary" @click="FnOperate('reset_pwd')"
+         :disabled="!operate_auth.includes('reset_pwd')">重置密码</el-button>
+        <el-button type="primary" @click="FnOperate('open_bill')"
+         :disabled="!operate_auth.includes('open_bill')">开启计费</el-button>
       </template>
     </action-block>
-
-    <el-table 
+    <el-table
       ref="multipleTable"
       :data="instance_list"
       @selection-change="handleSelectionChange"
@@ -32,7 +36,11 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-      <el-table-column prop="ecs_name" label="云服务器名称"></el-table-column>
+      <el-table-column prop="ecs_name" label="云服务器名称">
+        <template #default="scope">
+          <pre>{{ scope.row.ecs_name }}</pre>
+        </template>
+      </el-table-column>
       <el-table-column prop="az_name" label="可用区"></el-table-column>
       <el-table-column prop="status" label="状态" width="90">
         <template #default="scope">
@@ -41,7 +49,7 @@
       </el-table-column>
       <el-table-column label="配置详情" width="90">
         <template #default="scope">
-            <el-button type="text" @click="FnToDetail(scope.row.ecs_id)" 
+            <el-button type="text" @click="FnToDetail(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
         </template>
       </el-table-column>
@@ -51,9 +59,19 @@
           <div class="time-box">{{ scope.row.create_time }}</div>
         </template>
       </el-table-column>
-      <el-table-column 
-        prop="op_source" 
-        label="创建来源" 
+      <el-table-column
+        prop="billing_method"
+        label="计费方式"
+        :filters="billing_method_list"
+        column-key="billing_method"
+        :filter-multiple="false">
+        <template #default="scope">
+          <div>{{ scope.row.is_charge ? billing_method_relation[scope.row.billing_method]:'不计费' }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="op_source"
+        label="创建来源"
         :filters="[{text: '运维后台', value: 'cloud_op'}, {text: 'GIC', value: 'gic'}]"
         column-key="op_source"
         :filter-multiple="false">
@@ -67,6 +85,9 @@
             :disabled="!operate_auth.includes('instance_record')">操作记录</el-button>
             <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)" :disabled="!operate_auth.includes('monitor')">监控</el-button>
             <el-button type="text" :disabled="scope.row.status !== 'running' || !operate_auth.includes('vnc')" @click="FnToVnc(scope.row.ecs_id)">远程连接</el-button>
+            <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
+              :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
+            开启计费</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +102,7 @@
       :total="page_info.total">
     </el-pagination>
 
-    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false">
+    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false" @close="FnClose">
       <template v-if="default_operate_type === 'recover_ecs'">
         <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" @fn-close="FnClose"></Recover>
       </template>
@@ -101,7 +122,7 @@
           </el-table-column>
           <el-table-column label="云服务器名称/云服务器ID">
             <template #default="scope">
-              <div>{{ scope.row.ecs_name }}</div>
+              <div><pre>{{ scope.row.ecs_name }}</pre></div>
               <div>{{ scope.row.ecs_id }}</div>
             </template>
           </el-table-column>
@@ -109,7 +130,7 @@
             <template #default="scope">
               <div>
                 {{ scope.row.ecs_goods_name }} {{scope.row.cpu_size}}vCPU {{scope.row.ram_size}}GiB
-                <span v-if="is_gpu">{{ scope.row.gpu_size }}GPU</span>
+                <span v-if="is_gpu">{{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span>
               </div>
             </template>
           </el-table-column>
@@ -128,21 +149,34 @@
               <span :class="scope.row.status">{{ scope.row.status_display }}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="" label="价格" v-if="default_operate_type === 'open_bill'">
+            <template #default="scope">
+              <span>{{ ecs_list_price[scope.row.ecs_id] }}</span>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="component-box">
           <template v-if="default_operate_type === 'update_spec'">
-            <update-spec ref="update_spec" :customer_id="customer_id" :az_id="az_id" type="batch_update" :default_is_gpu="is_gpu"></update-spec>
+            <update-spec
+              ref="update_spec"
+              :customer_id="customer_id"
+              :az_id="az_id"
+              type="batch_update"
+              :default_is_gpu="is_gpu"
+              @fn-spec="FnChangeSpec"></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
             <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu" @fn-os="FnGetOsInfo"></update-os>
             <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu"
-              :os_disk_size="Number(os_info.disk_size)" :origin_disk_size="origin_disk_size"></update-disk>
+              :os_disk_size="Number(os_info.disk_size)" :origin_disk_size="origin_disk_size"
+              @fn-billing-info="FnGetDiskBillingInfo" @fn-system-disk="FnChangeSystem"></update-disk>
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
             <reset-pwd ref="reset_pwd" label="新密码" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
           </template>
         </div>
+        <div class="text-right m-right20" v-if="total_price">变更后总价：<span class="num_message">{{ total_price }}</span></div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -178,8 +212,8 @@ import moment from 'moment';
     actionBlock,
     Record,
     Detail,
-    resetPwd, 
-    updateSpec, 
+    resetPwd,
+    updateSpec,
     updateOs,
     updateDisk,
     Recover
@@ -195,10 +229,10 @@ export default class App extends Vue {
     ecs_id: { placeholder: '请输入云服务器ID' },
     ecs_name: { placeholder: '请输入云服务器名称' },
     status: { placeholder: '请选择云服务器状态', list: [] },
-    create_time: { 
-      placeholder: ['开始时间', '结束时间'], 
-      type: 'daterange', 
-      width: '360', 
+    create_time: {
+      placeholder: ['开始时间', '结束时间'],
+      type: 'daterange',
+      width: '360',
       clearable: true,
       dis_day: 1,
       defaultTime: [] },
@@ -209,13 +243,16 @@ export default class App extends Vue {
     host_id: { placeholder: '请输入物理机ID', default_value: '' }
   };
   private search_reqData = {};
+  private search_billing_method = 'all';
   private search_op_source = '';
   private instance_list: Array<Object> = [];
   private customer_id: string = '';
   private az_id: string = '';
   private is_gpu: number = 0;
   private origin_disk_size: number = 0;
+  private billing_method: string = '0';
   private multiple_selection: Array<Object> = [];
+  private multiple_selection_id: Array<string> = [];
   private operate_auth = [];
   private show_operate_dialog: boolean = false;
   private operate_title: string = '';
@@ -230,8 +267,17 @@ export default class App extends Vue {
     page_index: 1,
     total: 0
   }
+  private billing_method_relation = {
+    '': '不计费',
+    0: '按需计费',
+    1: '包年包月',
+  }
+  private billing_method_list = [];
   private timer = null;
   private os_info = {};
+  private disk_billing_info = {};
+  private total_price = '';
+  private ecs_list_price = {};
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       ecs_id: data.ecs_id,
@@ -250,18 +296,24 @@ export default class App extends Vue {
   }
   // 筛选实例来源
   private handleFilterChange(val) {
-    this.search_op_source = val.op_source[0];
+    if (val.op_source) {
+      this.search_op_source = val.op_source[0];
+    }
+    if (val.billing_method) {
+      this.search_billing_method = val.billing_method.length>0?val.billing_method[0]:'all';
+    }
     this.FnGetList();
   }
   private async FnGetList(loading: boolean = true) {
-    let multiple_selection = [];
+    this.multiple_selection_id = [];
     if (!loading) {
       this.$store.commit('SET_LOADING', false);
-      multiple_selection = this.multiple_selection.map((row: any) => {
+      this.multiple_selection_id = this.multiple_selection.map((row: any) => {
         return row.ecs_id;
       });
     }
     const resData: any = await Service.get_instance_list(Object.assign({
+      billing_method: this.search_billing_method==''?'no':this.search_billing_method,
       op_source: this.search_op_source,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size
@@ -269,8 +321,8 @@ export default class App extends Vue {
     if (resData.code === 'Success') {
       this.instance_list = resData.data.ecs_list;
       var rows = [];
-      if (multiple_selection.length > 0) {
-        rows = resData.data.ecs_list.filter(row => multiple_selection.includes(row.ecs_id));
+      if (this.multiple_selection_id.length > 0) {
+        rows = resData.data.ecs_list.filter(row => this.multiple_selection_id.includes(row.ecs_id));
       }
       if (rows && rows.length > 0) {
         this.$nextTick(() => {
@@ -295,9 +347,12 @@ export default class App extends Vue {
       return
     }
     const operate_info = getInsStatus.getInsOperateAuth(type);
-    if (['reset_pwd', 'update_spec', 'update_system'].indexOf(type) >= 0) {
+    if (['reset_pwd', 'update_spec', 'update_system', 'open_bill'].indexOf(type) >= 0) {
       if(!this.FnJudegCustomerAz(operate_info, type)) {
         return
+      }
+      if (type === 'open_bill') {
+        this.FnGetEcsPrice()
       }
     } else {
       if(!this.FnJudgeCustomer(operate_info, type)) {
@@ -312,8 +367,10 @@ export default class App extends Vue {
   private FnJudgeCustomer(operate_info, type): boolean {
     this.customer_id = '';
     let flag = true;
+    this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
+      this.multiple_selection_id.push(item.ecs_id);
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
         this.is_gpu = Number(item.is_gpu);
@@ -339,22 +396,32 @@ export default class App extends Vue {
   private FnJudegCustomerAz(operate_info, type): boolean {
     this.customer_id = '';
     this.az_id = '';
+    this.billing_method = '0';
     this.origin_disk_size = 0;
     let flag = true;
+    this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
+      this.multiple_selection_id.push(item.ecs_id);
       if ( index === 0 ) {
         this.customer_id = item.customer_id;
         this.az_id = item.az_id;
-        this.is_gpu = Number(item.is_gpu)
+        this.billing_method = item.billing_method;
+        this.is_gpu = Number(item.is_gpu);
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
         flag = false;
         break;
       }
-      if (['update_spec', 'update_system'].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
-        this.$message.warning(`只允许对同一类型实例进行批量${operate_info.label}操作！`)
+      if (['update_spec', 'update_system'].indexOf(type) >= 0 &&
+        (item.is_gpu != this.is_gpu || item.billing_method !== this.billing_method)) {
+        this.$message.warning(`只允许对同一类型同一计费方式实例进行批量${operate_info.label}操作！`)
+        flag = false;
+        break;
+      }
+      if (type === 'open_bill' && item.is_charge) {
+        this.$message.warning('只允许对未开启计费的实例开启计费！')
         flag = false;
         break;
       }
@@ -376,9 +443,7 @@ export default class App extends Vue {
       op_type: this.default_operate_type,
       customer_id: this.customer_id,
       az_id: this.az_id,
-      ecs_ids: this.multiple_selection.map((item: any) => {
-        return item.ecs_id
-      })
+      ecs_ids: this.multiple_selection_id,
     };
     if(['start_up_ecs', 'shutdown_ecs', 'restart_ecs'].indexOf(this.default_operate_type) >= 0) {
       this.FnPowerOperate(reqData);
@@ -397,6 +462,9 @@ export default class App extends Vue {
     }
     else if ( this.default_operate_type === 'update_system' ) {
       this.FnUpdateSystem(reqData);
+    }
+    else if ( this.default_operate_type === 'open_bill' ) {
+      this.FnOpenBill(Object.assign({billing_method: this.billing_method}, reqData));
     }
   }
   private async FnPowerOperate(reqData) {
@@ -436,13 +504,40 @@ export default class App extends Vue {
       this.FnClose();
     }
   }
+  private async FnChangeSpec(data) {
+    if (this.billing_method === '') {
+      return
+    }
+    let reqData = {
+      customer_id: this.customer_id,
+      az_id: this.az_id,
+      billing_method: this.billing_method || '0',
+      ecs_ids: this.multiple_selection_id,
+      ecs_goods_info: {
+        cpu: data.cpu,
+        ram: data.ram,
+        gpu: data.gpu
+      },
+      billing_info: data.billing_info[data.ecs_goods_id]
+    }
+    const resData = await Service.change_config_price(reqData)
+    if (resData.code === 'Success') {
+      this.total_price = resData.data.price_symbol + resData.data.total_price.toFixed(2) + '/' + resData.data.price_unit;
+    }
+  }
   private async FnUpdateSpec(reqData) {
     let data = (this.$refs.update_spec as any).FnSubmit();
     if( data.flag ) {
-      reqData.ecs_goods_id = data.spec_info.ecs_goods_id;
-      reqData.goods_name = data.spec_info.goods_name;
-      reqData.cpu_size = data.spec_info.cpu;
-      reqData.ram_size = data.spec_info.ram;
+      reqData.billing_info = data.spec_info.billing_info[data.spec_info.ecs_goods_id];
+      reqData.ecs_info = {
+        ecs_goods_info: {
+          ecs_goods_id: data.spec_info.ecs_goods_id,
+          gic_goods_id: reqData.billing_info.gic_goods_id,
+          cpu: data.spec_info.cpu,
+          ram: data.spec_info.ram,
+          gpu: data.spec_info.gpu
+        }
+      }
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === 'Success') {
         this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
@@ -452,6 +547,36 @@ export default class App extends Vue {
   }
   private FnGetOsInfo(data) {
     this.os_info = data;
+  }
+  private FnGetDiskBillingInfo(data) {
+    this.disk_billing_info = data;
+  }
+  private async FnChangeSystem(data) {
+    if (this.billing_method === '') {
+      return
+    }
+    let reqData = {
+      customer_id: this.customer_id,
+      az_id: this.az_id,
+      billing_method: this.billing_method || '0',
+      is_gpu: this.is_gpu,
+      ecs_ids: this.multiple_selection_id,
+      ebs_goods_info: {
+        handling_capacity: data.handling_capacity,
+        iops: data.iops,
+        storage_space: data.storage_space
+      },
+      billing_info: this.disk_billing_info[data.ecs_goods_id]
+    }
+    if (this.is_gpu) {
+      reqData['local_disk-IOPS'] = data.iops;
+      reqData['local_disk-space'] = data.storage_space;
+      reqData['local_disk-throughput'] = data.handling_capacity;
+    }
+    const resData = await Service.change_system_price(reqData)
+    if (resData.code === 'Success') {
+      this.total_price = resData.data.price_symbol + resData.data.total_price.toFixed(2) + '/' + resData.data.price_unit;
+    }
   }
   private async FnUpdateSystem(reqData) {
     let os_data = (this.$refs.update_os as any).FnSubmit();
@@ -465,6 +590,7 @@ export default class App extends Vue {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
           ebs_goods_id: disk_data.system_disk.ecs_goods_id,
+          gic_goods_id: this.disk_billing_info[disk_data.system_disk.ecs_goods_id].gic_goods_id,
           goods_name: disk_data.system_disk.disk_name,
           disk_feature: disk_data.system_disk.disk_feature,
           disk_type: disk_data.system_disk.disk_type,
@@ -473,16 +599,45 @@ export default class App extends Vue {
           handling_capacity: disk_data.system_disk.handling_capacity,
           iops: disk_data.system_disk.iops,
           is_follow_delete: disk_data.system_disk.is_follow_delete,
-          origin_disk_size: this.origin_disk_size
+          origin_disk_size: this.origin_disk_size,
         },
       }
       reqData.password = pwd_data.password;
+      reqData.billing_info = this.disk_billing_info;
       let resData: any = await Service.update_system(reqData);
       if (resData.code === 'Success') {
         this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
       }
       this.FnClose();
     }
+  }
+  private async FnGetEcsPrice() {
+    this.ecs_list_price = {};
+    const resData = await Service.each_resource_price({
+      customer_id: this.customer_id,
+      az_id: this.az_id,
+      billing_method: '0',
+      resource_ids: this.multiple_selection_id,
+      resource_type: 'ecs'
+    })
+    if (resData.code === 'Success') {
+      for (let item in resData.data.total_price) {
+        this.$set(this.ecs_list_price, item, resData.data.price_symbol + resData.data.total_price[item].toFixed(2) + '/' + resData.data.price_unit)
+      }
+    }
+  }
+  private async FnOpenBill(row) {
+    let reqData = {
+      resource_ids: row.ecs_ids,
+      customer_id: row.customer_id,
+      billing_method: row.billing_method || '0',
+      resource_type: 'ecs'
+    }
+    const resData = await Service.start_charge(reqData)
+    if (resData.code === 'Success') {
+      this.$message.success(`成功开启计费！`);
+    }
+    this.FnClose();
   }
   private async FnToVnc(id) {
     let resData: any = await Service.get_vnc_url({
@@ -495,6 +650,7 @@ export default class App extends Vue {
   private FnClose() {
     this.show_operate_dialog = false;
     this.default_operate_type = '';
+    this.total_price = '';
     this.FnGetList();
   }
   private FnToDetail(id) {
@@ -560,6 +716,9 @@ export default class App extends Vue {
       label: "windows",
       type: "windows"
     }];
+    for (let key in this.billing_method_relation) {
+      this.billing_method_list.push({ value: key, text: this.billing_method_relation[key]})
+    }
     if(this.$route.query.host_id) {
       this.search_con.host_id.default_value = this.$route.query.host_id;
     } else {
@@ -574,7 +733,7 @@ export default class App extends Vue {
 
 <style lang="scss" scoped>
 .component-box {
-  width: 550px;
+  width: 650px;
   margin: 20px auto;
 }
 .time-box {

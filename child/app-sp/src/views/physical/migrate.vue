@@ -139,7 +139,7 @@ export default class Migrate extends Vue{
             page_size:20,
         })
         if(res.code==="Success"){
-            this.physical_list = res.data.host_list.filter(item=>item.host_id!==this.rows[0].host_id);
+            this.physical_list = res.data.host_list.filter(item=>item.host_id!==this.rows[0].host_id && item.machine_status==="online");
             
         }
     }

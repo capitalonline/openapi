@@ -23,17 +23,18 @@ const auth = {
   restart_ecs: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '重 启'},
   delete_ecs: {auth: ['running', 'shutdown', 'error'], msg: '已选实例状态需为已关机或运行中或错误！', label: '逻辑删除'},
   recover_ecs: {auth: ['deleted'], msg: '已选实例状态需为已删除！', label: '恢 复'},
-  destroy_ecs: {auth: ['deleted'], msg: '已选实例状态需为已删除！', label: '销 毁'},
+  destroy_ecs: {auth: ['deleted', 'failed'], msg: '已选实例状态需为已删除或创建失败！', label: '销 毁'},
   update_spec: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换实例规格'},
   update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换操作系统'},
-  reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'}
+  reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'},
+  open_bill: {auth: ['running', 'shutdown'], msg: '已选实例状态需为运行中或已关机！', label: '开启计费'}
 }
 const host_status={
   start_up_host:{power:['shutdown'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'开机'},
   shutdown_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'关机'},
   restart_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'重启'},
   online_maintenance:{power:[],host:['online'],msg:'已选主机需为在线状态',label:'在线维护'},
-  offline_maintenance:{power:[],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态',label:'离线维护'},
+  offline_maintenance:{power:[],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',label:'离线维护'},
   finish:{power:[],host:['online_maintenance','offline_maintenance'],msg:'已选主机需为在线维护中或离线维护中',label:'完成维护'},
   shelves:{power:[],host:[],vm:1,msg:'已选主机上不能有虚拟机运行',label:'下架'},
   disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
