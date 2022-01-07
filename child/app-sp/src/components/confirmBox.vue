@@ -7,7 +7,7 @@
             width="400px"
             >
             <i class="el-icon-success"></i>
-            <span class="m-left10">请确认订单并开始执行创建任务，创建成功后计费资源将开始计费</span>
+            <span class="m-left10">请确认订单并开始执行创建任务</span>
             <!-- <span class="m-left10">确定开启计费吗？开启后将不支持关闭计费</span> -->
             <div class="text-right m-top10">
                 <el-button @click="visible_sync=false">取消</el-button>
@@ -22,15 +22,15 @@ import { Component, PropSync, Emit, Vue } from 'vue-property-decorator';
 @Component
 export default class createBuy extends Vue {
     @PropSync('visible') visible_sync:Boolean;
-    
-    
+
+
     private confirm(){
         this.visible_sync=false;
         this.create()
     }
     @Emit('fn-create')
     private create(){
-        
+
     }
 }
 </script>
