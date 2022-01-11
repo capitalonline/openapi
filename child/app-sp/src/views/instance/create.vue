@@ -349,19 +349,20 @@ export default class App extends Vue {
         disk_type: item.default_disk_info.disk_type,
         disk_size: item.disk_size,
         ebs_number: 1,
-        gic_goods_id: this.disk_billing_info[item.default_disk_info.ecs_goods_id].gic_goods_id,
         is_follow_delete: Number(item.del)
       }
       if (!this.ecs_spec_info.is_gpu) {
         row['storage_space'] = item.disk_size;
         row['iops'] = item.iops;
         row['handling_capacity'] = item.handling_capacity;
+        row['gic_goods_id'] = this.disk_billing_info[item.default_disk_info.ecs_goods_id].gic_goods_id;
       } else {
         row.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
         row.is_follow_delete = 1;
         row['local_disk-space'] = item.disk_size;
         row['local_disk-IOPS'] = item.iops;
         row['local_disk-throughput'] = item.handling_capacity;
+        row['gic_goods_id'] = this.ecs_spec_info.billing_info[row.ebs_goods_id].gic_goods_id;
       }
       for (let i = 0; i < item.num; i++) {
         this.data_disk_list.push(row)
