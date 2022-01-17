@@ -350,6 +350,7 @@ def get_mongodb_spec_info(RegionId):
 | DiskType     | 是   | string | 磁盘类型                                       |
 | DiskValue    | 是   | int    | 磁盘大小                                       |
 | Password     | 是   | string | Mongodb 最高权限数据库密码                     |
+| Version      | 否   | string | 实例的版本，默认4.0.3，参数范围["4.0.3","3.6.7","3.2.21"]                     |
 
 **请求示例：**
 
@@ -370,6 +371,7 @@ def create_mongodb():
         "PaasGoodsId": "******",
         "DiskType": "high_disk",
         "DiskValue": 100,
+        "Version":"4.0.3",
         "Password": "******",
     }
 
@@ -383,7 +385,9 @@ def create_mongodb():
 ```json
 {
     "Code": "Success",
-    "Data": {},
+    "Data": {
+        "InstanceUuid":"****************"
+    },
     "Message": "Success.",
     "TaskId": ""
 }
@@ -395,6 +399,7 @@ def create_mongodb():
 | :------ | :----- | -------- |
 | Code    | string | 状态码   |
 | Data    | dict   | 数据     |
+| InstanceUuid    | string   | 实例的编码     |
 | Message | string | 信息描述 |
 | TaskId  | string | 任务id   |
 
