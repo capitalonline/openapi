@@ -340,17 +340,17 @@ def get_mongodb_spec_info(RegionId):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                           |
-| :----------- | :--- | :----- | ---------------------------------------------- |
-| RegionID     | 是   | string | 站点编号                                       |
-| VdcID        | 是   | string | 数据中心的编号                                 |
-| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配id |
-| InstanceName | 是   | string | 实例名称                                       |
-| PaasGoodsId  | 是   | int    | 产品的规格编号，注意：对比旧版使用Integer类型  |
-| DiskType     | 是   | string | 磁盘类型                                       |
-| DiskValue    | 是   | int    | 磁盘大小                                       |
-| Password     | 是   | string | Mongodb 最高权限数据库密码                     |
-| Version      | 否   | string | 实例的版本，默认4.0.3，参数范围["4.0.3","3.6.7","3.2.21"]                     |
+| 参数名       | 必选 | 类型   | 说明                                                      |
+| :----------- | :--- | :----- | --------------------------------------------------------- |
+| RegionId     | 是   | string | 站点编号                                                  |
+| VdcId        | 是   | string | 数据中心的编号                                            |
+| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配id            |
+| InstanceName | 是   | string | 实例名称                                                  |
+| PaasGoodsId  | 是   | int    | 产品的规格编号，注意：对比旧版使用Integer类型             |
+| DiskType     | 是   | string | 磁盘类型                                                  |
+| DiskValue    | 是   | int    | 磁盘大小                                                  |
+| Password     | 是   | string | Mongodb 最高权限数据库密码                                |
+| Version      | 否   | string | 实例的版本，默认4.0.3，参数范围["4.0.3","3.6.7","3.2.21"] |
 
 **请求示例：**
 
