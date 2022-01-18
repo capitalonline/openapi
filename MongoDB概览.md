@@ -398,8 +398,8 @@ def get_mongodb_spec_info(RegionId):
 
 | 参数名       | 必选 | 类型   | 说明                                           |
 | :----------- | :--- | :----- | ---------------------------------------------- |
-| RegionID     | 是   | string | 站点编号                                       |
-| VdcID        | 是   | string | 数据中心的编号                                 |
+| RegionId     | 是   | string | 站点编号                                       |
+| VdcId        | 是   | string | 数据中心的编号                                 |
 | BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配id |
 | InstanceName | 是   | string | 实例名称                                       |
 | PaasGoodsId  | 是   | string | 产品的规格编号                                 |
