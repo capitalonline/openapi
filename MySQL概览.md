@@ -52,18 +52,22 @@ MySQL 公开API目录
 
 #### 账号
 
-| API                     | 描述           |
-| ----------------------- | -------------- |
-| CreatePrivilegedAccount | 创建高权限账号 |
+| API                     | 描述                   |
+| ----------------------- | ---------------------- |
+| CreatePrivilegedAccount | 创建账号               |
+| ModifyDbPrivilege       | 修改普通账号数据库权限 |
+| DeleteDbPrivilege       | 删除普通账号数据库权限 |
+| DescribeDbPrivileges    | 获取普通账号详细权限   |
 
 #### 备份
 
-| API             | 描述                 |
-| --------------- | -------------------- |
-| CreateBackup    | 为实例创建一个备份集 |
-| DescribeBackups | 查看备份集列表       |
-| DeleteBackup    | 删除数据备份文件     |
-| DownloadBackup  | 获取备份下载地址     |
+| API                  | 描述                                  |
+| -------------------- | ------------------------------------- |
+| CreateBackup         | 为实例创建一个备份集                  |
+| DescribeBackups      | 查看备份集列表                        |
+| DeleteBackup         | 删除数据备份文件                      |
+| DownloadBackup       | 获取备份下载地址                      |
+| ModifyDbBackupPolicy | 修改云数据库MySQL高可用版自动备份设置 |
 
 #### 只读实例
 
@@ -715,7 +719,198 @@ def create_mysql_super_account(instance_uuid, ):
 }
 ```
 
-### 6.DescribeModifiableDBSpec
+### 6.ModifyDbPrivilege
+
+**Action：ModifyDbPrivilege**
+
+**描述：** 更新（添加、修改）云数据库MySQL普通用户权限
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** POST 
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型                                 | 说明                         |
+| :----------- | :--- | :----------------------------------- | ---------------------------- |
+| InstanceUuid | 是   | string                               | 要更新用户权限的实例编号     |
+| AccountName  | 是   | string                               | 普通用户的账号名称           |
+| Operations   | 是   | list of [Operations](#OperationsObj) | 账号赋权数据库与对应权限列表 |
+
+#### OperationsObj
+
+| 参数名    | 必选 | 类型   | 说明                                                         |
+| :-------- | :--- | :----- | ------------------------------------------------------------ |
+| DBName    | 是   | string | 需要赋权的数据库名称                                         |
+| Privilege | 是   | string | 数据库对应账号权限。<br />ReadWrite：读写权限<br />DMLOnly：仅DML<br />ReadOnly：只读权限<br />DDLOnly：仅DDL |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+
+**请求示例：**
+
+```python
+def modify_mysql_privilege(instance_uuid):
+    """
+    更新（添加、修改）云数据库MySQL普通用户权限
+    :param instance_uuid: 实例编号
+    """
+    action = "ModifyDbPrivilege"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "AccountName": "pt",
+        "Operations": [{
+            "DBName": "test2",
+            "Privilege": "ReadWrite"
+        }, {
+            "DBName": "test1",
+            "Privilege": "DDLOnly"
+    	}]
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Message": "Success."
+}
+```
+
+### 7.DeleteDbPrivilege
+
+**Action：DeleteDbPrivilege**
+
+**描述：** 删除云数据库MySQL普通用户权限。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型           | 说明                     |
+| :----------- | :--- | :------------- | ------------------------ |
+| InstanceUuid | 是   | string         | 要删除用户权限的实例编号 |
+| AccountName  | 是   | string         | 普通用户的账号名称       |
+| DBNames      | 是   | list of string | 需要删除权限的数据库名称 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Code    | string | 状态码   |
+| Message | string | 信息描述 |
+
+**请求示例：**
+
+```json
+def delete_user_privilege(instance_uuid):
+    """
+    删除云数据库MySQL普通用户权限
+    :param instance_uuid: 实例编号
+    """
+    action = "DeleteDbPrivilege"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "AccountName": "pt",
+        "DBNames": ["test"]
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Message": "success"
+}
+```
+
+### 8.DescribeDbPrivileges
+
+**Action：DescribeDbPrivileges**
+
+**描述：** 获取云数据库MySQL普通用户详细权限。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+无
+
+**返回参数：**
+
+| 参数名  | 类型                | 说明                                                   |
+| :------ | :------------------ | ------------------------------------------------------ |
+| Code    | string              | 状态码                                                 |
+| Data    | [DataObj](#dataobj) | MySQL普通用户权限明细数据集合                          |
+| Message | string              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+
+#### DataObj
+
+| 参数名    | 类型   | 说明                  |
+| :-------- | :----- | --------------------- |
+| ReadWrite | string | 读写权限详细权限说明  |
+| DMLOnly   | string | 仅DML权限详细权限说明 |
+| ReadOnly  | string | 只读权限详细权限说明  |
+| DDLOnly   | string | 仅DDL权限详细权限说明 |
+
+**请求示例：**
+
+```python
+def get_mysql_user_privileges():
+    """
+    获取云数据库MySQL普通用户详细权限
+    """
+    action = "DescribeDbPrivileges"
+    method = "GET"
+    param = {
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "DDLOnly": "CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE",
+        "DMLOnly": "SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, SHOW VIEW, EVENT, TRIGGER",
+        "ReadOnly": "SELECT, LOCK TABLES, SHOW VIEW",
+        "ReadWrite": "SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER"
+    },
+    "Message": "success"
+}
+```
+
+### 9.DescribeModifiableDBSpec
 
 **Action：DescribeModifiableDBSpec**
 
@@ -816,7 +1011,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 }
 ```
 
-### 7.ModifyDBInstanceSpec
+### 10.ModifyDBInstanceSpec
 
 **Action：ModifyDBInstanceSpec**
 
@@ -879,7 +1074,7 @@ def modify_mysql_spec(instance_uuid, ):
 }
 ```
 
-### 8.DeleteDBInstance
+### 11.DeleteDBInstance
 
 **Action：DeleteDBInstance**
 
@@ -936,7 +1131,7 @@ def delete_mysql(instance_uuid, ):
 }
 ```
 
-### 9.DescribeAvailableReadOnlyConfig
+### 12.DescribeAvailableReadOnlyConfig
 
 **Action：DescribeAvailableReadOnlyConfig**
 
@@ -1042,7 +1237,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 }
 ```
 
-### 10.CreateReadOnlyDBInstance
+### 13.CreateReadOnlyDBInstance
 
 **Action：CreateReadOnlyDBInstance**
 
@@ -1105,7 +1300,7 @@ def create_mysql_for_readonly(instance_uuid):
     "TaskId": "***********"
 }
 ```
-### 11.CreateBackup
+### 14.CreateBackup
 
 **Action：CreateBackup**
 
@@ -1165,7 +1360,7 @@ def create_backup(instance_uuid):
 }
 ```
 
-### 12.DescribeBackups
+### 15.DescribeBackups
 
 **Action：DescribeBackups**
 
@@ -1267,7 +1462,7 @@ def get_mysql_backups(instance_uuid):
 }
 ```
 
-### 13.DeleteBackup
+### 16.DeleteBackup
 
 **Action：DeleteBackup**
 
@@ -1326,7 +1521,7 @@ def delete_backup(instance_uuid, backupid):
 }
 ```
 
-### 14.DownloadBackup
+### 17.DownloadBackup
 
 **Action：DownloadBackup**
 
@@ -1405,7 +1600,74 @@ def get_backup_describe(instance_uuid, backupid):
 }
 ```
 
-### 15.DescribeDBInstancePerformance
+### 18.ModifyDbBackupPolicy
+
+**Action：ModifyDbBackupPolicy**
+
+**描述：** 修改云数据库MySQL高可用版自动备份设置。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型                                     | 说明                     |
+| :----------- | :--- | :--------------------------------------- | ------------------------ |
+| InstanceUuid | 是   | string                                   | 要修改备份设置的实例编号 |
+| DataBackups  | 是   | object of [DataBackups](#DataBackupsObj) | 备份设置                 |
+
+#### DataBackupsObj
+
+| 参数名   | 必选 | 类型           | 说明                                                         |
+| :------- | :--- | :------------- | ------------------------------------------------------------ |
+| TimeSlot | 是   | string         | 备份时间段，以整点开始，整点结束，间隔为一小时。<br />输入参数范围：["00:00-01:00","01:00-02:00","02:00-03:00","03:00-04:00","04:00-05:00","05:00-06:00","06:00-07:00","07:00-08:00","08:00-09:00","09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00","13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00","17:00-18:00","18:00-19:00","19:00-20:00","20:00-21:00","21:00-22:00","22:00-23:00","23:00-24:00"] |
+| DateList | 是   | list of string | 备份周期，输入参数范围：["0","1","2","3","4","5","6"]，0为星期日，1为星期一，以此类推 |
+| Sign     | 是   | int            | 自动备份开关，关闭：0 ，开启：1                              |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Code    | string | 状态码   |
+| Message | string | 信息描述 |
+
+**请求示例：**
+
+```json
+def modify_mysql_backup_policy(instance_uuid):
+    """
+    修改云数据库MySQL高可用版自动备份设置
+    :param instance_uuid: 实例编号
+    """
+    action = "ModifyDbBackupPolicy"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "DataBackups": {
+            "TimeSlot": "13:00-14:00",
+            "DateList": ["0", "1", "2", "3", "4", "5", "6"],
+            "Sign": 1
+        }
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Message": "success"
+}
+```
+
+### 19.DescribeDBInstancePerformance
 
 **Action：DescribeDBInstancePerformance**
 
