@@ -41,7 +41,7 @@ instance.interceptors.response.use(
     }
     if (response.status == 200) {
       if (response.data.code === 'Unauthorized') {
-        const sso_url = process.env.VUE_APP_SSO_URL || response.data.data.sso;
+        const sso_url = response.data.data.sso || process.env.VUE_APP_SSO_URL;
         window.location.href = sso_url + '?referer=' + window.location.href.split('?')[0];
       } else if (response.data.code === 'Success' || response.data.code === 0)  {
         return response.data

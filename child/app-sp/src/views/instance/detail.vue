@@ -77,16 +77,41 @@
           <span class="label">子网:</span>
           <span v-if="detail && detail.pipe && detail.pipe.subnet_id">{{detail && detail.pipe && detail.pipe.subnet_id}} / {{detail && detail.pipe && detail.pipe.subnet_name}}</span>
         </div>
-        <div class="content">
+        <div class="content display-flex">
           <span class="label">私网IP：</span>
-          <span v-if="detail && detail.pipe && detail.pipe.private_net_ip">{{detail && detail.pipe && detail.pipe.private_net_ip.join(',')}}</span>
+          <span v-if="detail && detail.pipe">
+            <template v-if="detail.pipe.private_net">{{ detail.pipe.private_net }} （主）</template><br>
+            <template v-if="detail.pipe.pub_net">
+              {{ detail.pipe.pub_net }}
+              <template v-if="detail.pipe.eip_info[detail.pipe.pub_net] && detail.pipe.eip_info[detail.pipe.pub_net].conf_name">
+                （{{ detail.pipe.eip_info[detail.pipe.pub_net].conf_name }}）
+              </template>
+              <br>
+            </template>
+            <span v-for="item in detail.pipe.virtual_net" :key="item">
+              {{ item }}
+              <template v-if="detail.pipe.eip_info[item] && detail.pipe.eip_info[item].conf_name">
+                （{{ detail.pipe.eip_info[item].conf_name }}）
+              </template><br>
+            </span>
+          </span>
         </div>
-        <!-- <template v-if="detail && detail.pipe && detail.pipe.private_pipe_list">
-          <div v-for="item in detail.pipe.private_pipe_list" :key = "item.net_id" class="content">
-            <span class="label" v-if="item.net_name">{{`${item.net_name}:`}}</span>
-            <span>{{item.ip}}</span>
-          </div>
-        </template> -->
+        <div class="content display-flex">
+          <span class="label">公网IP：</span>
+          <span v-if="detail && detail.pipe">
+            <template v-if="detail.pipe.pub_net && detail.pipe.eip_info[detail.pipe.pub_net] && detail.pipe.eip_info[detail.pipe.pub_net].eip_ip">
+              {{ detail.pipe.eip_info[detail.pipe.pub_net].eip_ip }}
+              （{{ detail.pipe.eip_info[detail.pipe.pub_net].conf_name }}）
+              <br>
+            </template>
+            <span v-for="item in detail.pipe.virtual_net" :key="item">
+              <template v-if="detail.pipe.eip_info[item] && detail.pipe.eip_info[item].conf_name">
+                {{ item.eip_ip}}
+                （{{ detail.pipe.eip_info[item].conf_name }}）
+              </template><br>
+            </span>
+          </span>
+        </div>
         <div class="divider"></div>
         <div class="content">
           <span class="label">所属机房:</span>
@@ -166,6 +191,9 @@ export default class InsDetail extends Vue{
     margin-right: 8px;
   }
 
+}
+.display-flex {
+  display: flex;
 }
 // .label{
 //   width: 100px;

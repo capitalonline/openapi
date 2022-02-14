@@ -53,7 +53,38 @@
             :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="private_net" label="私网IP"></el-table-column>
+      <el-table-column label="私网IP">
+        <template #default="scope">
+          <div v-if="scope.row.private_net">{{ scope.row.private_net }}（主）</div>
+          <div v-if="scope.row.pub_net">
+            {{ scope.row.pub_net }}
+            <template v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name">
+              （{{ scope.row.eip_info[scope.row.pub_net].conf_name }}）
+            </template>
+          </div>
+          <div v-for="item in scope.row.virtual_net" :key="item">
+            {{ item }}
+            <template v-if="scope.row.eip_info[item] && scope.row.eip_info[item].conf_name">
+              （{{ scope.row.eip_info[item].conf_name }}）
+            </template>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="公网IP">
+        <template #default="scope">
+          <div v-if="scope.row.private_net"> </div>
+          <div v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name">
+            {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
+            （{{ scope.row.eip_info[scope.row.pub_net].conf_name }}）
+          </div>
+          <div v-for="item in scope.row.virtual_net" :key="item">
+            <template v-if="scope.row.eip_info[item] && scope.row.eip_info[item].conf_name">
+              {{ scope.row.eip_info[item].eip_ip }}
+              （{{ scope.row.eip_info[item].conf_name }}）
+            </template>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="create_time" label="创建时间">
         <template #default="scope">
           <div class="time-box">{{ scope.row.create_time }}</div>
