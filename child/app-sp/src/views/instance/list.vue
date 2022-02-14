@@ -72,8 +72,7 @@
       </el-table-column>
       <el-table-column label="公网IP">
         <template #default="scope">
-          <div v-if="scope.row.private_net"> </div>
-          <div v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name">
+          <div v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name" class="m-top23">
             {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
             （{{ scope.row.eip_info[scope.row.pub_net].conf_name }}）
           </div>
@@ -773,5 +772,8 @@ export default class App extends Vue {
 .operate-table {
   max-height: 300px;
   overflow: auto;
+}
+.m-top23 {
+  margin-top: 23px;
 }
 </style>
