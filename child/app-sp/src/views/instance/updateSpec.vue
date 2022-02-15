@@ -98,7 +98,7 @@ export default class updateSpec extends Vue{
     let resData = await Service.get_category_list({
       az_id: this.az_id,
       customer_id: this.customer_id,
-      biiling_method: this.billing_method,
+      billing_method: this.billing_method,
       cpu: String(this.default_cpu_size),
       ram: String(this.default_ram_size)
     });

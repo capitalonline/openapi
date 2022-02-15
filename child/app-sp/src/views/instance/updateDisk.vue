@@ -135,8 +135,8 @@ export default class updateDisk extends Vue {
     if (this.is_gpu) {
       this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');
     } else {
-      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature !== 'local');
-      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature !== 'local');
+      this.system_disk_info = this.all_disk_info.system_disk;
+      this.data_disk_info = this.all_disk_info.data_disk;
     }
     this.data.default_system_info = this.system_disk_info[0];
     this.FnChangeSystemType()

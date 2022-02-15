@@ -351,7 +351,7 @@ export default class App extends Vue {
         ebs_number: 1,
         is_follow_delete: Number(item.del)
       }
-      if (!this.ecs_spec_info.is_gpu) {
+      if (row.disk_feature !== 'local') {
         row['storage_space'] = item.disk_size;
         row['iops'] = item.iops;
         row['handling_capacity'] = item.handling_capacity;
@@ -433,7 +433,7 @@ export default class App extends Vue {
       },
       number: this.num_info.num ? this.num_info.num : 1,
     }
-    if (this.ecs_spec_info.is_gpu) {
+    if (this.system_info.disk_feature === 'local') {
       reqData.disk_info.system_disk.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
       reqData.disk_info.billing_info[this.ecs_spec_info.ecs_goods_id] = this.ecs_spec_info.billing_info[this.ecs_spec_info.ecs_goods_id];
       reqData.disk_info.system_disk.gic_goods_id = reqData.disk_info.billing_info[this.ecs_spec_info.ecs_goods_id].gic_goods_id;
@@ -530,7 +530,7 @@ export default class App extends Vue {
       username: this.os_info.username || 'root',
       password: this.ecs_name_info.password
     }
-    if (this.ecs_spec_info.is_gpu) {
+    if (this.system_info.disk_feature === 'local') {
       reqData.disk_info.system_disk.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
       reqData.disk_info.system_disk.gic_goods_id = this.ecs_spec_info.billing_info[this.ecs_spec_info.ecs_goods_id].gic_goods_id;
       reqData['gpu_id'] = this.ecs_spec_info.gpu_id;
