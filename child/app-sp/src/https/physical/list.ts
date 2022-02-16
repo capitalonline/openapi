@@ -67,6 +67,14 @@ export default{
     host_import(req){
         return service(getHostOptions('POST','/host/import/',req))
     },
-    //todo,和可用区信息一起
+    //获取资源归属列表
+    get_host_attribution(req){
+        return service(getHostOptions('GET','/host/get_host_attribution/',req))
+    },
+    //设置资源归属
+    set_host_attribution(req){
+        return service(getHostOptions('POST','/host/set_host_attribution/',req))
+    },
+    
 
 }

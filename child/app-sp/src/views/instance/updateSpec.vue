@@ -27,7 +27,7 @@
         <el-table :data="family_list" border>
           <el-table-column label="选择" width="60">
             <template #default="scope">
-              <el-radio v-model="data.cpu_ram_gpu" :label="FnJoinGoodCpuRamGpu(scope.row)" @change="FnEmit">&nbsp;</el-radio>
+              <el-radio v-model="data.spec_id" :label="scope.row.spec_id" @change="FnEmit">&nbsp;</el-radio>
             </template>
           </el-table-column>
           <el-table-column prop="ecs_family_name" label="规格族"></el-table-column>
@@ -41,7 +41,7 @@
           <el-table-column prop="cpu_name" label="处理器型号" width="200"></el-table-column>
           <el-table-column label="参考价格">
             <template #default="scope">
-              <span>{{ cpu_ram_gpu_price[FnJoinGoodCpuRamGpu(scope.row)] }}</span>
+              <span>{{ cpu_ram_gpu_price[scope.row.spec_id] }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -74,7 +74,7 @@ export default class updateSpec extends Vue{
   private cpu_ram_gpu_price = {};
   private data = {
     category_id: '',
-    cpu_ram_gpu: ''
+    spec_id: ''
   };
   private async FnGetAllCpuRam() {
     let resData = await Service.get_all_cpu_ram();
@@ -127,17 +127,13 @@ export default class updateSpec extends Vue{
     if (resData.code == 'Success') {
       this.family_list = resData.data.ecs_family_info;
       this.billing_info = deal_fee_info(resData.data.billing_info, true);
-      this.data.cpu_ram_gpu = this.FnJoinGoodCpuRamGpu(this.family_list[0]);
+      this.data.spec_id = this.family_list[0].spec_id;
       this.FnGetPrice()
       this.FnEmit()
     }
   }
-  private FnJoinGoodCpuRamGpu(row): string {
-    row.gpu = row.gpu || 0;
-    return row.ecs_goods_id + '_' + row.cpu + '_' + row.ram + '_' + row.gpu
-  }
-  private FnGetDefaultFamily(cpu_ram_gpu: string) {
-    return this.family_list.find(item => this.FnJoinGoodCpuRamGpu(item) === cpu_ram_gpu)
+  private FnGetDefaultFamily(spec_id: string) {
+    return this.family_list.find(item => item.spec_id === spec_id)
   }
   private async FnGetPrice() {
     const reqData = {
@@ -155,13 +151,13 @@ export default class updateSpec extends Vue{
     const resData = await Service.get_price(reqData);
     if (resData.code === 'Success') {
       resData.data.ecs.forEach(value => {
-        this.$set(this.cpu_ram_gpu_price, this.FnJoinGoodCpuRamGpu(value), resData.data.price_symbol + Number(value.price).toFixed(2) + '/' + resData.data.price_unit)
+        this.$set(this.cpu_ram_gpu_price, value.spec_id, resData.data.price_symbol + Number(value.price).toFixed(2) + '/' + resData.data.price_unit)
       })
     }
   }
   @Emit('fn-spec')
   private FnEmit() {
-    let row = this.FnGetDefaultFamily(this.data.cpu_ram_gpu)
+    let row = this.FnGetDefaultFamily(this.data.spec_id)
     return {
       ecs_goods_id: row.ecs_goods_id,
       ecs_goods_name: row.ecs_family_name,
@@ -171,6 +167,9 @@ export default class updateSpec extends Vue{
       gpu_id: row.gpu_type_id,
       card_name: row.gpu_show_type,
       is_gpu: this.is_gpu,
+      cpu_model: row.cpu_name,
+      support_gpu_driver: row.support_gpu_driver,
+      spec_family_id: row.spec_family_id,
       billing_info: this.billing_info
     }
   }

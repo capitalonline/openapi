@@ -41,7 +41,7 @@
           chart_id="system_chart"
           :data="system_load"
           class="item"
-          v-if="ecs_info.os_system !== 'windows'">
+          v-if="ecs_info.os_system.toLocaleLowerCase() !== 'windows'">
         </line-echart>
       </div>
 
@@ -258,13 +258,14 @@ export default class Monitor extends Vue{
       replica: replica,
       ip: ip,
       instanceType: instanceType,
+      os: this.ecs_info.os_system.toLocaleLowerCase(),
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
-      if (this.ecs_info.os_system !== 'windows') this.FnGetLoad(type, reqData);
+      if (this.ecs_info.os_system.toLocaleLowerCase() !== 'windows') this.FnGetLoad(type, reqData);
     } else if (this.default_tab === 'disk') {
       this.FnGetDiskInfo(type, reqData);
     } else if (this.default_tab === 'net') {
@@ -282,11 +283,10 @@ export default class Monitor extends Vue{
       this.ecs_info = {
         region_id: data.region_id,
         az_id: data.az_id,
-        private_net_ip: data.pipe.private_net_ip[0],
+        private_net_ip: data.pipe.private_net[0],
         os_system: data.os_info.system,
         create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
-      console.log('create_finish_time', this.ecs_info.create_finish_time)
       this.detail_info.ecs_name.value = data.ecs_name;
       this.detail_info.ecs_id.value = data.ecs_id;
       this.detail_info.ecs_rule.value =
@@ -295,13 +295,13 @@ export default class Monitor extends Vue{
       this.detail_info.system_disk_conf.value =
         `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
-      this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
+      this.detail_info.private_net_ip.value = data.pipe.private_net[0];
       this.detail_info.status.value = data.status_display;
       this.detail_info.public_net_ip.value = data.pipe.pub_net?.public_net_ip;
       if (!data.is_gpu) {
         delete this.tab_list.gpu
       }
-      this.FnGetChartData()
+      // this.FnGetChartData()
     }
   }
   private async FnGetCpu(type, reqData) {
