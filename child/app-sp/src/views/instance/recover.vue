@@ -45,6 +45,7 @@ import Service from '../../https/instance/list';
 export default class Recover extends Vue {
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: []}) private multiple_selection!: Array<Object>;
+  @Prop({default: 0}) private is_gpu!: 0|1;
   $message;
   $set;
   private ip_usage = {};
@@ -89,6 +90,7 @@ export default class Recover extends Vue {
     }
     let reqData = {
       customer_id: this.customer_id,
+      is_gpu: this.is_gpu,
       ecs_list: this.multiple_selection.map((item :any) => {
         return {
           ecs_id: item.ecs_id,

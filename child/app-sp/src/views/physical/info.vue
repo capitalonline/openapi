@@ -38,7 +38,10 @@
                         <div class="m-bottom10">已分配CPU核数：<span class="destroy">{{detail_info.vcpu_allot}}</span> / {{detail_info.cpu_cores_total}}</div>
                     </el-tooltip>
                     <el-tooltip content='已分配的内存容量/该物理机总容量' placement='bottom' effect="light">
-                        <div>已分配内存容量：<span class="destroy">{{detail_info.memory_allot}}</span> / {{detail_info.memory_total}}</div>
+                        <div class="m-bottom10">已分配内存容量：<span class="destroy">{{detail_info.memory_allot}}</span> / {{detail_info.memory_total}}</div>
+                    </el-tooltip>
+                    <el-tooltip content='已分配的显卡容量/该宿主机显卡总数量' placement='bottom' effect="light" v-if="detail_info.gpu_instance==='GPU'">
+                        <div>已分配显卡：<span class="destroy">{{parseInt(detail_info.gpu_count) - parseInt(detail_info.gpu_free)}}</span> / {{detail_info.gpu_count}}</div>
                     </el-tooltip>
                 </div>
                 

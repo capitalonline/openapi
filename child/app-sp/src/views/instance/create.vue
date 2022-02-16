@@ -62,6 +62,7 @@
             :az_id="default_az.az_id"
             :is_gpu="ecs_spec_info.is_gpu"
             :customer_id="customer_id"
+            :support_gpu_driver="ecs_spec_info.support_gpu_driver"
             @fn-os="FnGetOs">
           </update-os>
         </el-card>
@@ -72,6 +73,7 @@
             :data_disk="true"
             :is_gpu="ecs_spec_info.is_gpu"
             :os_disk_size="os_info.disk_size"
+            :spec_family_id="ecs_spec_info.spec_family_id"
             :billing_method="billing_method"
             @fn-system-disk="FnGetSystemDisk"
             @fn-data-disk="FnGetDataDisk"
@@ -315,6 +317,7 @@ export default class App extends Vue {
   }
 
   private FnGetSpec (data): void {
+    console.log('data', data)
     if (this.ecs_spec_info.is_gpu === data.is_gpu) {
       this.ecs_spec_info = data;
       this.FnGetPrice('spec')
@@ -485,6 +488,7 @@ export default class App extends Vue {
       region_id: this.default_region.region_id,
       az_id: this.default_az.az_id,
       is_gpu: this.ecs_spec_info.is_gpu,
+      cpu_model: this.ecs_spec_info.cpu_model,
       net_info: {
         vpc_id: this.default_vpc.vpc_id,
         vpc_segment_id: this.default_vpc.vpc_segment_id,

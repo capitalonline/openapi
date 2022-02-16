@@ -147,9 +147,9 @@
                                     <el-select v-model="rule_data.event_type" placeholder="请选择事件类型">
                                         <el-option
                                             v-for="item in static_list.event_type"
-                                            :key="item.id"
-                                            :label="item.title"
-                                            :value="item.id"
+                                            :key="item.event_type"
+                                            :label="item.type_name"
+                                            :value="item.event_type"
                                         >
                                         </el-option>
                                     </el-select>
@@ -233,6 +233,7 @@ import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator'
 import { Form } from "element-ui";
 import {range_list,notice_list,alarm_type,cycle_num,cycle_time,event_type,event_name,productList}from '../../assets/alarm_data';
 import Service from '../../https/alarm/list'
+import {deal_list} from '../../utils/transIndex';
 @Component({})
 export default class RuleConfig extends Vue{
     @Prop({default:()=>[]})strategy_data!:any
@@ -265,7 +266,7 @@ export default class RuleConfig extends Vue{
         cycle_num,
         cycle_time,
         event_type,
-        event_name,
+        event_name:[],
     }
     private product_list:any=[]
     private selected_products:any = []
@@ -274,7 +275,8 @@ export default class RuleConfig extends Vue{
             this.product_list.push({...item,visible:false,rule_list:[]})
         })
         this.get_index_list()
-    }
+        this.getEventList()
+    } 
     private valid(name){
         this.$nextTick(()=>{
             const form = this.$refs[name] as Form
@@ -309,6 +311,31 @@ export default class RuleConfig extends Vue{
             })
         })
         this.rule_data.level.map(item=>item.metricUnit = unit)
+    }
+    @Watch("rule_data.event_type")
+    private watch_event_type(nv){
+        let key_list=['event_name_zh','event_id']
+        let label_list=['title','id']
+        let fil:any = this.static_list.event_type.filter((item:any)=>item.event_type===nv)
+        this.static_list.event_name =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) : [];
+        const ids = this.static_list.event_name.map(item=>item.id)//事件列表所有的id
+        if((new Set([...ids,...this.rule_data.event_name])).size>ids.length){//如果属于当前这个事件名称里，长度最大为ids的长度
+            this.rule_data.event_name=[]
+        }
+        
+    }
+    private async getEventList(){
+        let res:any=await Service.get_event_list({})
+        if(res.code==="Success"){
+            let key_list=['event_name_zh','event_id']
+            let label_list=['title','id']
+            this.static_list.event_type = res.data;
+            //为了渲染初始化时已有规则的列表描述
+            res.data.map(item=>{
+                this.static_list.event_name=[...this.static_list.event_name,...item.list]
+            })
+            this.static_list.event_name=deal_list(this.static_list.event_name,label_list,key_list)
+        }
     }
     private get_index_list_by_value(value){
         let arr = []
@@ -345,7 +372,7 @@ export default class RuleConfig extends Vue{
     }
     //编辑或者选中某个已有的规则
     @Watch("strategy_data",{immediate:true,deep:true})
-    private watch_strategy_data(newVal){
+    private watch_strategy_data(newVal,ov){
         if(Object.keys(newVal).length===0){
             return;
         }
@@ -369,17 +396,17 @@ export default class RuleConfig extends Vue{
                 name:element.name,
                 metricID:this.get_index_list_by_value(element.ruleRecords[0].metricID),
                 event_type:element.ruleRecords[0].eventType,
-                event_name:element.ruleRecords[0].eventName,
+                event_name:element.ruleRecords[0].eventId,
                 metricUnit:element.ruleRecords[0].alarmType==="event" ? '' : element.ruleRecords[0].metricUnit,
                 alram_type:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].level.toString() : '',
                 notice:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].alarmMethod : [],
                 level:list,
                 desc:element.ruleRecords[0].alarmType==="event" ?
-                [`${this.trans_arr(element.ruleRecords[0].level.toString(),alarm_type)} | ${this.trans_arr(element.ruleRecords[0].eventName,event_name)}`] 
+                [`${this.trans_arr(element.ruleRecords[0].level.toString(),this.static_list.alarm_type)} | ${this.trans_arr(element.ruleRecords[0].eventId,this.static_list.event_name)}`] 
                 
                     :
                     list.map(inn=>{
-                    return `${this.getDescription(element.ruleRecords[0].metricID)} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                    return `${this.getDescription(element.ruleRecords[0].metricID)} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,this.static_list.alarm_type)} 持续${inn.cycle_num}次就报警`
                 })
             }
             const fil:any = this.selected_products.filter(item=>item.id===element.productType)
@@ -399,7 +426,7 @@ export default class RuleConfig extends Vue{
                 })
             }
         })
-        console.log("this.selected_products",this.selected_products)
+        // console.log("this.selected_products",this.selected_products)
     }
     private getDescription(id){
         let name=""
@@ -434,6 +461,7 @@ export default class RuleConfig extends Vue{
             if(item.id===id){
                 item.visible = !item.visible
                 if(this.edit_key==="" && item.visible){
+                    this.static_list.event_name=[]
                     this.clear()
                 }
                 if(val==="edit" && !item.visible){
@@ -480,13 +508,13 @@ export default class RuleConfig extends Vue{
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
                                     desc:this.rule_data.level.map(inn=>{
-                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,alarm_type)} 持续${inn.cycle_num}次就报警`
+                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,this.static_list.alarm_type)} 持续${inn.cycle_num}次就报警`
                                     })
                                 }]
                             }else{//事件报警
                                 item.rule_list=[...item.rule_list,{
                                     ...obj,
-                                    desc:[`${this.trans_arr(this.rule_data.alram_type,alarm_type)} | ${this.trans_arr(this.rule_data.event_name,event_name)}`]
+                                    desc:[`${this.trans_arr(this.rule_data.alram_type,this.static_list.alarm_type)} | ${this.trans_arr(this.rule_data.event_name,this.static_list.event_name)}`]
                                 }]
                             }
                         }else{
@@ -494,8 +522,8 @@ export default class RuleConfig extends Vue{
                                 if(inn.id === edit_rule_id){
                                     inn = {...inn,...this.rule_data}
                                     inn.desc = inn.tab_key==="0" ? inn.level.map(inner=>{
-                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inner.range} ${inner.num}${inner.metricUnit}${this.trans_arr(inner.alram_type,alarm_type)} 持续${inner.cycle_num}次就报警`
-                                    }) : [`${this.trans_arr(inn.alram_type,alarm_type)} | ${this.trans_arr(inn.event_name,event_name)}`]
+                                        return `${this.getDescription(this.rule_data.metricID[1])} ${inner.range} ${inner.num}${inner.metricUnit}${this.trans_arr(inner.alram_type,this.static_list.alarm_type)} 持续${inner.cycle_num}次就报警`
+                                    }) : [`${this.trans_arr(inn.alram_type,this.static_list.alarm_type)} | ${this.trans_arr(inn.event_name,this.static_list.event_name)}`]
                                 }
                                 return inn;
                             })
@@ -553,7 +581,7 @@ export default class RuleConfig extends Vue{
         const fil:any = this.selected_products.filter(item=>item.id === pro_id)
         const fil_rule:any = fil[0].rule_list.filter(item=>item.id===id)
         this.rule_data = JSON.parse(JSON.stringify(fil_rule[0])) 
-        console.log("rule_data",this.rule_data)
+        // console.log("rule_data",this.rule_data)
     }
     private change_rule_notice(val){
     }

@@ -256,14 +256,16 @@ export default class ApplyStrategy extends Vue{
     //设置区域ID
     private get_area_id(obj:any){
         this.form_data.area = obj.regions
+
         this.form_data.az = obj.az
         
     }
     //设置可用区ID
-    private get_az_id(val){
-        const {region_info,region_key} = val
-        this.form_data={...this.form_data,az:region_key}
-    }
+    // private get_az_id(val){
+    //     console.log("get_az_id",val)
+    //     const {region_info,region_key} = val
+    //     this.form_data={...this.form_data,az:region_key}
+    // }
     @Watch("az_list.length",{immediate:true})
     private Watch_az_list(nv,ov){
         if(nv===0 && ov>0){
