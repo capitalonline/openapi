@@ -188,8 +188,6 @@ export default class updateDisk extends Vue {
     }
     data.default_disk_info = this.data_disk_info[0] || {};
     if ( !data.default_disk_info.disk_name ) {
-      this.$message.warning('请输入客户ID');
-
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
