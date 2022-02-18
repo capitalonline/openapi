@@ -1,6 +1,6 @@
 <template>
   <div class="monitor">
-    <div v-if="source_name === 'instance_monitor'">
+    <div v-if="source_name === 'monitor'">
       <back-header title="云服务器监控" back_url="/instance"></back-header>
       <el-card class="m-bottom20">
         <template #header>
@@ -234,7 +234,7 @@ export default class Monitor extends Vue{
     let ip = '';
     let instanceType = '';
     let type = 'kvm';
-    if (this.source_name === 'instance_monitor') {
+    if (this.source_name === 'monitor') {
       id = this.detail_info.ecs_id.value;
       region = this.ecs_info.region_id;
       replica = this.ecs_info.az_id;
@@ -422,7 +422,7 @@ export default class Monitor extends Vue{
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
     this.source_name = this.$route.name;
-    if (this.source_name === 'instance_monitor') {
+    if (this.source_name === 'monitor') {
       this.FnGetDetail();
     }
   }
