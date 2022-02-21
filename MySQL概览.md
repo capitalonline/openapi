@@ -839,7 +839,7 @@ def modify_mysql_privilege(instance_uuid):
 
 **请求示例：**
 
-```json
+```python
 def delete_user_privilege(instance_uuid):
     """
     删除云数据库MySQL普通用户权限
