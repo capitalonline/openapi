@@ -1657,7 +1657,7 @@ def get_backup_describe(instance_uuid, backupid):
 
 **请求示例：**
 
-```json
+```python
 def modify_mysql_backup_policy(instance_uuid):
     """
     修改云数据库MySQL高可用版自动备份设置
