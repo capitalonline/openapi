@@ -8,6 +8,7 @@ MySQL 公开API目录
       - [备份](#备份)
       - [只读实例](#只读实例)
       - [监控](#监控)
+      - [参数](#参数)
       - [错误码](#错误码)
     - [访问地址](#访问地址)
     - [1.DescribeRegions](#1describeregions)
@@ -27,7 +28,7 @@ MySQL 公开API目录
       - [OperationsObj](#operationsobj)
     - [7.DeleteDbPrivilege](#7deletedbprivilege)
     - [8.DescribeDbPrivileges](#8describedbprivileges)
-      - [DataObj](#dataobj-1)
+      - [查询权限DataObj](#查询权限dataobj)
     - [9.DescribeModifiableDBSpec](#9describemodifiabledbspec)
     - [10.ModifyDBInstanceSpec](#10modifydbinstancespec)
     - [11.DeleteDBInstance](#11deletedbinstance)
@@ -40,6 +41,13 @@ MySQL 公开API目录
     - [18.ModifyDbBackupPolicy](#18modifydbbackuppolicy)
       - [DataBackupsObj](#databackupsobj)
     - [19.DescribeDBInstancePerformance](#19describedbinstanceperformance)
+    - [20.DescribeDBParameter](#20describedbparameter)
+      - [查询参数DataObj](#查询参数dataobj)
+      - [ParametersObj](#parametersobj)
+    - [21.DescribeDBParameterModifyHistory](#21describedbparametermodifyhistory)
+      - [查询参数修改历史DataObj](#查询参数修改历史dataobj)
+    - [22.DescribeDBParameterModifyHistory](#22describedbparametermodifyhistory)
+      - [修改参数ParametersObj](#修改参数parametersobj)
 
 ### API概览
 
@@ -88,6 +96,14 @@ MySQL 公开API目录
 | API                           | 描述                      |
 | ----------------------------- | ------------------------- |
 | DescribeDBInstancePerformance | 获取云数据库MySQL监控指标 |
+
+#### 参数
+
+| API                              | 描述                              |
+| -------------------------------- | --------------------------------- |
+| DescribeDBParameter              | 获取云数据库MySQL参数列表         |
+| DescribeDBParameterModifyHistory | 获取云数据库MySQL参数修改历史记录 |
+| ModifyDBParameter                | 修改云数据库MySQL参数             |
 
 #### 错误码
 
@@ -869,13 +885,13 @@ def delete_user_privilege(instance_uuid):
 
 **返回参数：**
 
-| 参数名  | 类型                | 说明                                                   |
-| :------ | :------------------ | ------------------------------------------------------ |
-| Code    | string              | 状态码                                                 |
-| Data    | [DataObj](#dataobj) | MySQL普通用户权限明细数据集合                          |
-| Message | string              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+| 参数名  | 类型                        | 说明                                                   |
+| :------ | :-------------------------- | ------------------------------------------------------ |
+| Code    | string                      | 状态码                                                 |
+| Data    | [DataObj](#查询权限dataobj) | MySQL普通用户权限明细数据集合                          |
+| Message | string                      | 返回调用接口状态信息和code相对应，比如：Success, Error |
 
-#### DataObj
+#### 查询权限DataObj
 
 | 参数名    | 类型   | 说明                  |
 | :-------- | :----- | --------------------- |
@@ -1799,3 +1815,234 @@ def get_instance_Performance(instance_uuid, metric_key, start_time, end_time):
 }
 ```
 
+### 20.DescribeDBParameter
+
+**Action：DescribeDBParameter**
+
+**描述：** 获取云数据库MySQL参数列表。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| ------------ | ---- | ------ | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 名称    | 类型                        | 描述     |
+| :------ | :-------------------------- | :------- |
+| Message | string                      | 信息描述 |
+| Code    | string                      | 状态码   |
+| Data    | [DataObj](#查询参数dataobj) | 数据     |
+
+#### 查询参数DataObj
+
+| 名称       | 类型                                    | 描述     |
+| :--------- | :-------------------------------------- | :------- |
+| Parameters | list of [ParametersObj](#parametersobj) | 参数信息 |
+
+#### ParametersObj
+
+| 名称         | 类型   | 描述         |
+| :----------- | :----- | :----------- |
+| DefaultValue | string | 参数默认值   |
+| CurrentValue | string | 运行参数值   |
+| Description  | string | 参数描述     |
+| IsModify     | string | 是否可修改   |
+| CheckingCode | string | 可修改参数值 |
+| IsRestart    | string | 是否重启     |
+| Name         | string | 参数名       |
+
+**请求示例：**
+
+```python
+def get_mysql_parameter_info():
+    """
+    获取MySQL参数列表
+    """
+    action = "DescribeDBParameter"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Parameters": [{
+            "CheckingCode": "[10-84]",
+            "CurrentValue": "84",
+            "DefaultValue": "84",
+            "Description": "Maximum length of words that are stored in an InnoDB FULLTEXT index.",
+            "IsModify": "true",
+            "IsRestart": "true",
+            "Name": "innodb_ft_max_token_size"
+        }]
+    },
+    "Message": "success"
+}
+```
+
+### 21.DescribeDBParameterModifyHistory
+
+**Action：DescribeDBParameterModifyHistory**
+
+**描述：** 获取云数据库MySQL参数修改历史。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| ------------ | ---- | ------ | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+| StartTime    | 是   | string | 开始时间 |
+| EndTime      | 是   | string | 结束时间 |
+
+**返回参数：**
+
+| 名称    | 类型                                | 描述     |
+| :------ | :---------------------------------- | :------- |
+| Message | string                              | 信息描述 |
+| Code    | string                              | 状态码   |
+| Data    | [DataObj](#查询参数修改历史dataobj) | 数据     |
+
+#### 查询参数修改历史DataObj
+
+| 名称              | 类型   | 描述           |
+| :---------------- | :----- | :------------- |
+| IsValid           | bool   | 是否生效       |
+| ModifyTime        | string | 变更时间       |
+| ModifyRole        | string | 操作者         |
+| OldParameterValue | string | 变更前的参数值 |
+| NewParameterValue | string | 变更后的参数值 |
+| StatusMessage     | string | 状态描述       |
+| ParameterName     | string | 参数名         |
+
+**请求示例：**
+
+```python
+def get_mysql_parameter_history():
+    """
+    获取MySQL参数修改历史
+    """
+    action = "DescribeDBParameterModifyHistory"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************",
+        "StartTime": "2022-02-01 17:16:08",
+        "EndTime": "2022-02-18 17:16:08"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "IsValid": ture,
+        "ModifyRole": "用户",
+        "ModifyTime": "2022-02-17 15:34:06",
+        "NewParameterValue": "74.43",
+        "OldParameterValue": "74.43",
+        "ParameterName": "innodb_max_dirty_pages_pct",
+        "StatusMessage": "已生效"
+    }],
+    "Message": "success"
+}
+```
+
+### 22.DescribeDBParameterModifyHistory
+
+**Action：ModifyDBParameter**
+
+**描述：** 修改云数据库MySQL参数。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型                                            | 说明       |
+| ------------ | ---- | ----------------------------------------------- | ---------- |
+| InstanceUuid | 是   | string                                          | 实例编号   |
+| Parameters   | 是   | list of [ParametersObj](#修改参数parametersobj) | 待修改参数 |
+
+#### 修改参数ParametersObj
+
+| 参数名 | 必选 | 类型   | 说明     |
+| ------ | ---- | ------ | -------- |
+| Name   | 是   | string | 参数名称 |
+| Value  | 是   | string | 参数值   |
+
+**返回参数：**
+
+| 名称    | 类型   | 描述                 |
+| :------ | :----- | :------------------- |
+| Message | string | 信息描述             |
+| Code    | string | 状态码               |
+| Data    | dict   | 参数修改历史查询数据 |
+| TaskId  | string | 任务编号             |
+
+**请求示例：**
+
+```python
+def modify_mysql_parameter(instance_uuid):
+    """
+    修改云数据库MySQL参数
+    :param instance_uuid: 实例编号
+    """
+    action = "ModifyDBParameter"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": "************",
+        "Parameters": [
+            {
+                "Name": "back_log",
+                "Value": "345"
+            }, {
+                "Name": "connect_timeout",
+                "Value": "145"
+            }
+        ]
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Parameter configuration is being configured",
+    "TaskId": "42a73680-af4d-498e-b6a2-416fec04ca44"
+}
+```
