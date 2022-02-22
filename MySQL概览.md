@@ -29,24 +29,28 @@ MySQL 公开API目录
     - [7.DeleteDbPrivilege](#7deletedbprivilege)
     - [8.DescribeDbPrivileges](#8describedbprivileges)
       - [查询权限DataObj](#查询权限dataobj)
-    - [9.DescribeModifiableDBSpec](#9describemodifiabledbspec)
-    - [10.ModifyDBInstanceSpec](#10modifydbinstancespec)
-    - [11.DeleteDBInstance](#11deletedbinstance)
-    - [12.DescribeAvailableReadOnlyConfig](#12describeavailablereadonlyconfig)
-    - [13.CreateReadOnlyDBInstance](#13createreadonlydbinstance)
-    - [14.CreateBackup](#14createbackup)
-    - [15.DescribeBackups](#15describebackups)
-    - [16.DeleteBackup](#16deletebackup)
-    - [17.DownloadBackup](#17downloadbackup)
-    - [18.ModifyDbBackupPolicy](#18modifydbbackuppolicy)
+    - [9.DescribeDBAccount](#9describedbaccount)
+      - [查询用户DataObj](#查询用户dataobj)
+      - [DatabasePrivilegesObj](#databaseprivilegesobj)
+    - [10.DeleteDBAccount](#10deletedbaccount)
+    - [11.DescribeModifiableDBSpec](#11describemodifiabledbspec)
+    - [12.ModifyDBInstanceSpec](#12modifydbinstancespec)
+    - [13.DeleteDBInstance](#13deletedbinstance)
+    - [14.DescribeAvailableReadOnlyConfig](#14describeavailablereadonlyconfig)
+    - [15.CreateReadOnlyDBInstance](#15createreadonlydbinstance)
+    - [16.CreateBackup](#16createbackup)
+    - [17.DescribeBackups](#17describebackups)
+    - [18.DeleteBackup](#18deletebackup)
+    - [19.DownloadBackup](#19downloadbackup)
+    - [20.ModifyDbBackupPolicy](#20modifydbbackuppolicy)
       - [DataBackupsObj](#databackupsobj)
-    - [19.DescribeDBInstancePerformance](#19describedbinstanceperformance)
-    - [20.DescribeDBParameter](#20describedbparameter)
+    - [21.DescribeDBInstancePerformance](#21describedbinstanceperformance)
+    - [22.DescribeDBParameter](#22describedbparameter)
       - [查询参数DataObj](#查询参数dataobj)
       - [ParametersObj](#parametersobj)
-    - [21.DescribeDBParameterModifyHistory](#21describedbparametermodifyhistory)
+    - [23.DescribeDBParameterModifyHistory](#23describedbparametermodifyhistory)
       - [查询参数修改历史DataObj](#查询参数修改历史dataobj)
-    - [22.DescribeDBParameterModifyHistory](#22describedbparametermodifyhistory)
+    - [24.DescribeDBParameterModifyHistory](#24describedbparametermodifyhistory)
       - [修改参数ParametersObj](#修改参数parametersobj)
 
 ### API概览
@@ -73,6 +77,8 @@ MySQL 公开API目录
 | ModifyDbPrivilege       | 修改普通账号数据库权限 |
 | DeleteDbPrivilege       | 删除普通账号数据库权限 |
 | DescribeDbPrivileges    | 获取普通账号详细权限   |
+| DescribeDBAccount       | 获取账号列表           |
+| DeleteDBAccount         | 删除账号               |
 
 #### 备份
 
@@ -933,7 +939,158 @@ def get_mysql_user_privileges():
 }
 ```
 
-### 9.DescribeModifiableDBSpec
+### 9.DescribeDBAccount
+
+**Action：DescribeDBAccount**
+
+**描述：** 获取云数据库MySQL用户
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** GET 
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 参数名  | 类型                                | 说明                 |
+| :------ | :---------------------------------- | :------------------- |
+| Message | string                              | 信息描述             |
+| Code    | string                              | 状态码               |
+| Data    | list of [DataObj](#查询用户dataobj) | 实例当前用户列表信息 |
+
+#### 查询用户DataObj
+
+| 参数名             | 类型                                                    | 说明                                                         |
+| :----------------- | :------------------------------------------------------ | :----------------------------------------------------------- |
+| AccountType        | string                                                  | 账号类型<br />高权限用户："Super"<br/>普通用户："Normal"     |
+| ServiceId          | string                                                  | 账号所属实例编号                                             |
+| AccountStatus      | string                                                  | 账号状态<br/>processing：处理中<br/>available：已激活<br/>unavailable：未激活 |
+| AccountName        | string                                                  | 账号名称                                                     |
+| AccountDescription | string                                                  | 账号描述                                                     |
+| DatabasePrivileges | list of [DatabasePrivilegesObj](#databaseprivilegesobj) | 数据库权限详情                                               |
+
+#### DatabasePrivilegesObj
+
+| 参数名                 | 类型   | 说明                                                         |
+| :--------------------- | :----- | :----------------------------------------------------------- |
+| AccountPrivilegeType   | string | 数据库对应账号权限。<br/>ReadWrite：读写权限<br/>DMLOnly：仅DML<br/>ReadOnly：只读权限<br/>DDLOnly：仅DDL |
+| DBName                 | string | 已授权数据库名称                                             |
+| TableName              | string | 已授权数据表名称                                             |
+| AccountPrivilegeDetail | string | 账号权限详情                                                 |
+
+**请求示例：**
+
+```python
+def get_mysql_account():
+    """
+    获取云数据库MySQL用户
+    """
+    action = "DescribeDBAccount"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Message": "success",
+    "Code": "Success",
+    "Data": [{
+        "AccountType": "Super",
+        "ServiceId": "******************",
+        "AccountStatus": "available",
+        "DatabasePrivileges": [],
+        "AccountName": "admin",
+        "AccountDescription": "123123"
+    }, {
+        "AccountType": "Normal",
+        "ServiceId": "******************",
+        "AccountStatus": "available",
+        "DatabasePrivileges": [{
+            "AccountPrivilegeType": "ReadWrite",
+            "DBName": "test",
+            "TableName": "*",
+            "AccountPrivilegeDetail": "SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER"
+        }],
+        "AccountName": "pt",
+        "AccountDescription": ""
+    }]
+}
+```
+
+### 10.DeleteDBAccount
+
+**Action：DeleteDBAccount**
+
+**描述：** 删除云数据库MySQL用户
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** POST 
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明             |
+| ------------ | ---- | ------ | ---------------- |
+| InstanceUuid | 是   | string | 实例编号         |
+| AccountName  | 是   | string | 需删除的账号名称 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | :------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | Object | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def delete_user(instance_uuid):
+    """
+    删除云数据库MySQL用户
+    :param instance_uuid: 实例编号
+    """
+    action = "DeleteDBAccount"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": "**************",
+        "AccountName": "root",
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success",
+    "TaskId": ""
+}
+```
+
+### 11.DescribeModifiableDBSpec
 
 **Action：DescribeModifiableDBSpec**
 
@@ -1034,7 +1191,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 }
 ```
 
-### 10.ModifyDBInstanceSpec
+### 12.ModifyDBInstanceSpec
 
 **Action：ModifyDBInstanceSpec**
 
@@ -1097,7 +1254,7 @@ def modify_mysql_spec(instance_uuid, ):
 }
 ```
 
-### 11.DeleteDBInstance
+### 13.DeleteDBInstance
 
 **Action：DeleteDBInstance**
 
@@ -1154,7 +1311,7 @@ def delete_mysql(instance_uuid, ):
 }
 ```
 
-### 12.DescribeAvailableReadOnlyConfig
+### 14.DescribeAvailableReadOnlyConfig
 
 **Action：DescribeAvailableReadOnlyConfig**
 
@@ -1260,7 +1417,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 }
 ```
 
-### 13.CreateReadOnlyDBInstance
+### 15.CreateReadOnlyDBInstance
 
 **Action：CreateReadOnlyDBInstance**
 
@@ -1323,7 +1480,7 @@ def create_mysql_for_readonly(instance_uuid):
     "TaskId": "***********"
 }
 ```
-### 14.CreateBackup
+### 16.CreateBackup
 
 **Action：CreateBackup**
 
@@ -1383,7 +1540,7 @@ def create_backup(instance_uuid):
 }
 ```
 
-### 15.DescribeBackups
+### 17.DescribeBackups
 
 **Action：DescribeBackups**
 
@@ -1485,7 +1642,7 @@ def get_mysql_backups(instance_uuid):
 }
 ```
 
-### 16.DeleteBackup
+### 18.DeleteBackup
 
 **Action：DeleteBackup**
 
@@ -1544,7 +1701,7 @@ def delete_backup(instance_uuid, backupid):
 }
 ```
 
-### 17.DownloadBackup
+### 19.DownloadBackup
 
 **Action：DownloadBackup**
 
@@ -1623,7 +1780,7 @@ def get_backup_describe(instance_uuid, backupid):
 }
 ```
 
-### 18.ModifyDbBackupPolicy
+### 20.ModifyDbBackupPolicy
 
 **Action：ModifyDbBackupPolicy**
 
@@ -1690,7 +1847,7 @@ def modify_mysql_backup_policy(instance_uuid):
 }
 ```
 
-### 19.DescribeDBInstancePerformance
+### 21.DescribeDBInstancePerformance
 
 **Action：DescribeDBInstancePerformance**
 
@@ -1815,7 +1972,7 @@ def get_instance_Performance(instance_uuid, metric_key, start_time, end_time):
 }
 ```
 
-### 20.DescribeDBParameter
+### 22.DescribeDBParameter
 
 **Action：DescribeDBParameter**
 
@@ -1896,7 +2053,7 @@ def get_mysql_parameter_info():
 }
 ```
 
-### 21.DescribeDBParameterModifyHistory
+### 23.DescribeDBParameterModifyHistory
 
 **Action：DescribeDBParameterModifyHistory**
 
@@ -1973,7 +2130,7 @@ def get_mysql_parameter_history():
 }
 ```
 
-### 22.DescribeDBParameterModifyHistory
+### 24.DescribeDBParameterModifyHistory
 
 **Action：ModifyDBParameter**
 
