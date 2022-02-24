@@ -79,7 +79,7 @@
         </div>
         <div class="content">
           <span class="label">私网IP：</span>
-          <span v-if="detail && detail.pipe && detail.pipe.private_net_ip">{{detail && detail.pipe && detail.pipe.private_net_ip.join(',')}}</span>
+          <span v-if="detail && detail.pipe && detail.pipe.private_net">{{detail && detail.pipe && detail.pipe.private_net}}</span>
         </div>
         <!-- <template v-if="detail && detail.pipe && detail.pipe.private_pipe_list">
           <div v-for="item in detail.pipe.private_pipe_list" :key = "item.net_id" class="content">

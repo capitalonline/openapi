@@ -114,7 +114,7 @@ export default class Monitor extends Vue{
   private ecs_info = {
     region_id: '',
     az_id: '',
-    private_net_ip: '',
+    private_net: '',
     create_finish_time: '',
     os_system: ''
   };
@@ -125,8 +125,8 @@ export default class Monitor extends Vue{
     az_name: {label: '地域及可用区', value: ''},
     system_disk_conf: {label: '系统盘', value: ''},
     os_info: {label: '镜像', value: ''},
-    public_net_ip: {label: '公网IP', value: ''},
-    private_net_ip: {label: '私网IP', value: ''},
+    public_net: {label: '公网IP', value: ''},
+    private_net: {label: '私网IP', value: ''},
     status: {label: '运行状态', value: ''}
   }
   private cpu_used = {
@@ -238,7 +238,7 @@ export default class Monitor extends Vue{
       id = this.detail_info.ecs_id.value;
       region = this.ecs_info.region_id;
       replica = this.ecs_info.az_id;
-      ip = this.ecs_info.private_net_ip;
+      ip = this.ecs_info.private_net;
       instanceType = 'vm';
     } else {
       let query = this.$route.query;
@@ -282,7 +282,7 @@ export default class Monitor extends Vue{
       this.ecs_info = {
         region_id: data.region_id,
         az_id: data.az_id,
-        private_net_ip: data.pipe.private_net_ip[0],
+        private_net: data.pipe.private_net,
         os_system: data.os_info.system,
         create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
@@ -295,9 +295,9 @@ export default class Monitor extends Vue{
       this.detail_info.system_disk_conf.value =
         `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
-      this.detail_info.private_net_ip.value = data.pipe.private_net_ip[0];
+      this.detail_info.private_net.value = data.pipe.private_net;
       this.detail_info.status.value = data.status_display;
-      this.detail_info.public_net_ip.value = data.pipe.pub_net?.public_net_ip;
+      this.detail_info.public_net.value = data.pipe.pub_net?.public_net;
       if (!data.is_gpu) {
         delete this.tab_list.gpu
       }
