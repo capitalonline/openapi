@@ -50,7 +50,7 @@ MySQL 公开API目录
       - [ParametersObj](#parametersobj)
     - [23.DescribeDBParameterModifyHistory](#23describedbparametermodifyhistory)
       - [查询参数修改历史DataObj](#查询参数修改历史dataobj)
-    - [24.DescribeDBParameterModifyHistory](#24describedbparametermodifyhistory)
+    - [24.ModifyDBParameter](#24modifydbparameter)
       - [修改参数ParametersObj](#修改参数parametersobj)
 
 ### API概览
@@ -2130,7 +2130,7 @@ def get_mysql_parameter_history():
 }
 ```
 
-### 24.DescribeDBParameterModifyHistory
+### 24.ModifyDBParameter
 
 **Action：ModifyDBParameter**
 
