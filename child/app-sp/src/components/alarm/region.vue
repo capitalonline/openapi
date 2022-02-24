@@ -160,14 +160,13 @@ export default class Region extends Vue{
       }
       this.setRegionCheckState(this.area_list,'regions')
       this.sel_region = this.trans(this.area_list,'regions')
-      this.get_area_id()
+      this.get_area_id('region')
   }
   @Watch("form_data.az")
   private watch_az(nv){
       this.setRegionCheckState(this.az_list,'az')
-      console.log("watch_az",this.form_data.az)
       this.sel_az = this.trans(this.az_list,'az')
-      this.get_area_id()
+      this.get_area_id('az')
   }
   private judge(list,isIndeterminate,checkAll){//判断全选的
     if(list.every(item=>item.check)){
@@ -183,8 +182,8 @@ export default class Region extends Vue{
           }
       }
   }
-  @Emit("get_area_id")
-  private get_area_id(){
+    @Emit("get_area_id")
+    private get_area_id(label:String){
         let az_ids = []
         this.area_list.map(item=>{
             item.region_list.map(inn=>{
@@ -193,33 +192,32 @@ export default class Region extends Vue{
                 })
             })
         })
-      if(this.area_list.every(item=>!item.check)){
-          return {
-            regions:this.getAllIds('area_list'),
-            az:az_ids
-          }
-      }else{
-          let temp=[]
-          this.area_list.map(item=>{
-              item.region_list.map(inn=>{
-                    if(this.form_data.regions.includes(inn.region_id)){//当前这个区域被勾选
-                        let ids = inn.az_list.map(az=>az.az_id)
-                        let fil = this.form_data.az.filter(az=>ids.includes(az))
-                        // console.log("fil",fil)
-                        if(fil.length===0){
-                            temp=[...temp,...ids]
-                        }else{
-                            temp=[...temp,...fil]
+        if(this.area_list.every(item=>!item.check && !item.isIndeterminate_group)){//check是指这一行全选
+            return {
+                regions:this.getAllIds('area_list'),
+                az:az_ids
+            }
+        }else{
+            let temp=[]
+            this.area_list.map(item=>{
+                item.region_list.map(inn=>{
+                        if(this.form_data.regions.includes(inn.region_id)){//当前这个区域被勾选
+                            let ids = inn.az_list.map(az=>az.az_id)
+                            let fil = this.form_data.az.filter(az=>ids.includes(az))
+                            // console.log("fil",fil)
+                            if(fil.length===0){
+                                temp=[...temp,...ids]
+                            }else{
+                                temp=[...temp,...fil]
+                            }
                         }
-                    }
-                })
-          })
-          console.log("temp",temp)
-          return {
-              regions:this.form_data.regions,
-              az:temp
-          }
-      }
+                    })
+            })
+            return {
+                regions:this.form_data.regions,
+                az:temp
+            }
+        }
   }
   getAllIds(list){
       let arr=[]

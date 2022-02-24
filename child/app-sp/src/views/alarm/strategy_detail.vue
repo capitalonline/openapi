@@ -48,17 +48,32 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch,PropSync } from 'vue-property-decorator';
 import {alarm_type,event_name}from '../../assets/alarm_data';
-import Service from '../../https/alarm/list'
+import Service from '../../https/alarm/list';
+import {deal_list} from '../../utils/transIndex'
 @Component({})
 export default class InsDetail extends Vue{
     @PropSync("visible") detail_visible!:Boolean;
     @Prop({default:()=>[]}) rows!:any
     private list:any=[]
     private index_list:any=[]
-    private loading:boolean=true
+    private loading:boolean=true;
+    private event_name:any=[]
     created() {
-        this.get_index_list()
         
+        this.getEventList()
+    }
+    private async getEventList(){
+        let res:any=await Service.get_event_list({})
+        if(res.code==="Success"){
+            let key_list=['event_name_zh','event_id']
+            let label_list=['title','id']
+            //为了渲染初始化时已有规则的列表描述
+            res.data.map(item=>{
+                this.event_name=[...this.event_name,...item.list]
+            })
+            this.event_name=deal_list(this.event_name,label_list,key_list)
+            this.get_index_list()
+        }
     }
     //获取指标项列表
     private async get_index_list(){
@@ -101,7 +116,7 @@ export default class InsDetail extends Vue{
                 id:item.id,
                 name:item.name,
                 desc:item.ruleRecords[0].alarmType==="event" ?
-                [`${this.trans_arr(item.ruleRecords[0].level.toString(),alarm_type)} | ${this.trans_arr(item.ruleRecords[0].eventName,event_name)}`] 
+                [`${this.trans_arr(item.ruleRecords[0].level.toString(),alarm_type)} | ${this.trans_arr(item.ruleRecords[0].eventId,this.event_name)}`] 
                 
                     :
                     temp_list.map(inn=>{
@@ -128,7 +143,6 @@ export default class InsDetail extends Vue{
             }
         })
         this.loading=false
-        // console.log("this.list",this.list)
     }
     private getDescription(id){
         let name=""
@@ -149,7 +163,6 @@ export default class InsDetail extends Vue{
         const temp = list.map(item=>{
             return obj[item]
         })
-        console.log("temp",temp)
         return temp.join(' | ')
     }
     private trans_arr(id,arr){

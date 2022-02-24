@@ -19,6 +19,7 @@
         ref="table"
         @selection-change="handleSelectionChange"
         @sort-change="FnSortChange"
+        @filter-change="filterAttribute"
       >
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="host_name" label="主机名"></el-table-column>
@@ -31,9 +32,17 @@
         <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
         <el-table-column prop="system_version" label="操作系统"></el-table-column>
         <el-table-column prop="host_model" label="机器类型"></el-table-column>
+        <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
+        <el-table-column prop="host_attribution__name" label="主机归属" :filter-multiple="false" :filters="host_belongs" column-key="host_belong"></el-table-column>
+        <el-table-column prop="gpu_model" label="显卡型号"></el-table-column>
+        <el-table-column prop="gpu_count" label="显卡数量"></el-table-column>  
         <el-table-column prop="out_band_address" label="带外IP"></el-table-column>
         <el-table-column prop="host_ip" label="管理网IP"></el-table-column>
-        <el-table-column prop="storage_ip" label="存储网IP"></el-table-column>
+        <el-table-column prop="storage_ip" label="存储网IP">
+          <!-- <template slot-scope="scope">
+            <div v-for="item in scope.row.storage_ip" :key="item">{{item}}</div>
+          </template> -->
+        </el-table-column>
         <el-table-column prop="cpu" label="CPU使用率" sortable="custom">
           <template slot-scope="scope">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
@@ -67,7 +76,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -78,6 +87,9 @@
       </template>
       <template v-if="visible && oper_type==='record'">
         <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
+      </template>
+      <template v-if="visible && oper_type==='resource'">
+        <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
       </template>
     </div>
 </template>
@@ -94,6 +106,8 @@ import {trans} from '../../utils/transIndex';
 import {getHostStatus} from '../../utils/getStatusInfo';
 import Record from '../../views/instance/record.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
+import Resource from './resource.vue';
+import {deal_list} from '../../utils/transIndex'
 @Component({
   components:{
     ActionBlock,
@@ -101,7 +115,8 @@ import SvgIcon from '../../components/svgIcon/index.vue';
     UploadFile,
     Migrate,
     Record,
-    SvgIcon
+    SvgIcon,
+    Resource
   }
 })
 export default class PhysicalList extends Vue {
@@ -128,13 +143,16 @@ export default class PhysicalList extends Vue {
     {label:'完成维护',value:'finish'},
     {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
+    {label:'分配资源',value:'resource'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
     {label:'进入带外管理',value:'out_of_band'},
     {label:'迁移',value:'migrate'},
     {label:'操作记录',value:'record'},
+    {label:'分配资源',value:'resource'},
   ]
+  private host_belongs=[]
   private search_data:any={}
   private page_info:any={
     current:1,
@@ -146,16 +164,18 @@ export default class PhysicalList extends Vue {
   private oper_type:string="";
   private oper_label:string="";
   private multi_rows:any=[];
-  private auth_list=[]
+  private auth_list=[];
+  private filter_data:any={}
   created() {
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
-      this.fn_search()
+      this.fn_search();
+      this.get_host_attribution()
       this.auth_list = this.$store.state.auth_info[this.$route.name]
   }
   private fn_search(data:any={}){
-    this.search_data = data
+    this.search_data = {...data,...this.filter_data}
     this.page_info.current = 1
     this.get_physical_list()
   }
@@ -164,7 +184,7 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private async get_physical_list(){
-    const {az_id,pod_name,room,host_name,vm_name,power_status,host_status}=this.search_data
+    const {az_id,pod_name,room,host_name,vm_name,power_status,host_status,host_belong}=this.search_data
     let res:any=await Service.get_host_list({
       az_id,
       pod_name,
@@ -177,10 +197,20 @@ export default class PhysicalList extends Vue {
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
+      host_attribution_id:host_belong ? host_belong[0] : undefined
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
       this.page_info.total = res.data.page_info.count || 0
+    }
+  }
+  private async get_host_attribution (){
+    let res:any =await Service.get_host_attribution({})
+    if(res.code==="Success"){
+      let key_list=['host_attribution_id','name'];
+      let label_list=['value','text']
+      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
+      console.log("this.host_belongs",this.host_belongs)
     }
   }
    private async down(){
@@ -240,7 +270,6 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_cpu =undefined
     this.search_data.sort_ram =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
-    
     this.get_physical_list()
   }
   private handleSizeChange(size){
@@ -251,21 +280,35 @@ export default class PhysicalList extends Vue {
     this.page_info.current = cur
     this.get_physical_list()
   }
+  private filterAttribute(obj:any){
+    this.filter_data = {...this.filter_data,...obj}
+    this.fn_search(this.search_data)
+  }
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    
     if(this.multi_rows.length===0 && value!=='upload'){
       this.$message.warning("请先勾选物理机!");
       return;
     }
-    if(value==="upload"){
+    if(value==="upload" || value==="resource"){
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
       return;
     }
     if(this.judge(value)){
+      if(value==="disperse"){
+        //筛选出GPU物理机
+        let fil = this.multi_rows.filter(item=>item.host_purpose==='GPU');
+        let bool:boolean = fil.every(item=>{//判断GPU物理机上的GPU云主机是不是处于已关机
+          return item.ecs_list.every(inn=>(inn.is_gpu && inn.status==="已关机") || !inn.is_gpu)
+        })
+        if(!bool){
+          this.$message.warning("GPU物理机中的GPU云主机需为关机状态!");
+          return;
+        }
+      }
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;

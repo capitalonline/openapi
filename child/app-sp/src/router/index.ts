@@ -17,15 +17,15 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/instance/monitor/:id',
-    name: 'instance_monitor',
+    name: 'monitor',
     component: () => import('../views/instance/monitor.vue'),
     meta: {menu: 'instance_list'}
   },
   {
     path: '/instance/gpu/monitor/',
-    name: 'monitor',
+    name: 'gpu_monitor',
     component: () => import('../views/instance/monitor.vue'),
-    meta: {menu: 'monitor'}
+    meta: {menu: 'gpu_monitor'}
   },
   {
     path:'/alarmInfo',

@@ -91,5 +91,9 @@ export default{
             data: req
           })
     },
+    //获取事件列表
+    get_event_list(req){
+        return service(getAlarmOptions('GET','/strategy/event/list',req))
+    }
 
 }

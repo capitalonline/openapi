@@ -82,7 +82,6 @@ export default class Index extends Vue{
         
     }
     private async getStrategyList(name:string=''){
-        console.log("getStrategyList")
         let res:any = await Service.get_strategy_list({
             name,
             page: 1,
@@ -151,7 +150,7 @@ export default class Index extends Vue{
                                 metricID:'',
                                 alarmType:inn.tab_key==="0" ?'metric' : 'event',
                                 alarmMethod:inn.notice ? inn.notice : [],
-                                eventName:inn.event_name,
+                                eventId:inn.event_name,
                                 eventType:inn.event_type,
                                 level:parseInt(inn.alram_type),
 

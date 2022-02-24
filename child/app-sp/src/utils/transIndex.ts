@@ -6,7 +6,7 @@ export function trans(list:any,oldLable:string,oldValue:string,newLable:string,n
     return arr;
    
 }
-export function deal_list(list,label_list,key_list,other={}){//[{disk_size:disk_size}]
+export function deal_list(list,label_list,key_list,other={}){//label_list表示替换后的字段名，key_list表示原来数组的字段名
     let temp=[]
     list.map(item=>{
         let obj={}

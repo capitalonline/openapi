@@ -123,13 +123,30 @@ export default class Migrate extends Vue{
     created() {
         this.get_physical_list()
         this.get_recommended_host()
+        if(this.rows[0].host_purpose==='GPU'){
+            this.list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu)
+        }else{
+            this.list=this.rows[0].ecs_list
+        }
     }
     //关闭面板时重新获取实例列表
     private change_physical(val){
         if(!val){
             this.get_physical_list()
         }
-        
+    }
+    @Watch("physical")
+    private watch_physical(nv){
+        this.judge()
+    }
+    private judge(){
+        let cpu:any=this.physical_list.filter(item=>item.host_purpose==='CPU')
+        let cpu_ids:any=cpu.map(item=>item.host_id)
+        let len = [...new Set([...cpu_ids,...this.physical])].length
+        if(this.selected.some(item=>item.is_gpu) && len<[...cpu_ids,...this.physical].length){//选中的云主机中存在gpu云主机，选中的目的主机中存在非gpu的物理机
+            this.$message.warning('GPU云主机不能被迁移到非GPU物理机上')
+            this.physical=[]
+        }
     }
     private async get_physical_list(val:string=""){
         let res:any=await Service.get_host_list({
@@ -139,13 +156,16 @@ export default class Migrate extends Vue{
             page_size:20,
         })
         if(res.code==="Success"){
-            this.physical_list = res.data.host_list.filter(item=>item.host_id!==this.rows[0].host_id && item.machine_status==="online");
-            
+            this.physical_list = res.data.host_list.filter(item=>
+                item.host_id!==this.rows[0].host_id 
+                && item.machine_status==="online" && this.rows[0].gpu_model===item.gpu_model);
         }
     }
     private async get_recommended_host(){
         let res:any=await Service.recommended_host({
             host_id:this.rows[0].host_id,
+            is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
+            gpu_card_name:this.rows[0].gpu_real_name
         })
         if(res.code==="Success"){
             this.recommend = res.data.data;
@@ -160,7 +180,7 @@ export default class Migrate extends Vue{
         this.selected=val
         this.checked = val.length === this.list.length;
         this.isIndeterminate = val.length > 0 && val.length < this.list.length;
-        
+        this.judge()
     }
     private async confirm(){
         if(this.selected.length===0){
@@ -169,7 +189,8 @@ export default class Migrate extends Vue{
         let res:any=await Service.migrate({
             ecs_ids:this.selected.map(item=>item.ecs_id),
             start_host_id:this.rows[0].host_id,
-            end_host_ids:this.physical
+            end_host_ids:this.physical,
+            is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
         })
         if(res.code==="Success"){
             this.$message.success(`物理机迁移任务下发成功！`)

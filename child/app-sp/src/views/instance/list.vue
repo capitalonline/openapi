@@ -53,7 +53,37 @@
             :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="private_net" label="私网IP"></el-table-column>
+      <el-table-column label="私网IP">
+        <template #default="scope">
+          <div v-if="scope.row.private_net">{{ scope.row.private_net }}（主）</div>
+          <div v-if="scope.row.pub_net">
+            {{ scope.row.pub_net }}
+            <template v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name">
+              （{{ scope.row.eip_info[scope.row.pub_net].conf_name }}）
+            </template>
+          </div>
+          <div v-for="item in scope.row.virtual_net" :key="item">
+            {{ item }}
+            <template v-if="scope.row.eip_info[item] && scope.row.eip_info[item].conf_name">
+              （{{ scope.row.eip_info[item].conf_name }}）
+            </template>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="公网IP">
+        <template #default="scope">
+          <div v-if="scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name" class="m-top23">
+            {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
+            （{{ scope.row.eip_info[scope.row.pub_net].conf_name }}）
+          </div>
+          <div v-for="item in scope.row.virtual_net" :key="item">
+            <template v-if="scope.row.eip_info[item] && scope.row.eip_info[item].conf_name">
+              {{ scope.row.eip_info[item].eip_ip }}
+              （{{ scope.row.eip_info[item].conf_name }}）
+            </template>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="create_time" label="创建时间">
         <template #default="scope">
           <div class="time-box">{{ scope.row.create_time }}</div>
@@ -104,7 +134,7 @@
 
     <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false" @close="FnClose">
       <template v-if="default_operate_type === 'recover_ecs'">
-        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" @fn-close="FnClose"></Recover>
+        <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" :is_gpu="is_gpu" @fn-close="FnClose"></Recover>
       </template>
       <div v-else>
         <el-alert
@@ -166,10 +196,26 @@
               @fn-spec="FnChangeSpec"></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
-            <update-os ref="update_os" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu" @fn-os="FnGetOsInfo"></update-os>
-            <update-disk ref="update_disk" :system_disk="true" :customer_id="customer_id" :az_id="az_id" :is_gpu="is_gpu"
-              :os_disk_size="Number(os_info.disk_size)" :origin_disk_size="origin_disk_size"
-              @fn-billing-info="FnGetDiskBillingInfo" @fn-system-disk="FnChangeSystem"></update-disk>
+            <update-os
+              ref="update_os"
+              :customer_id="customer_id"
+              :az_id="az_id"
+              :is_gpu="is_gpu"
+              :support_gpu_driver="support_gpu_driver"
+              @fn-os="FnGetOsInfo">
+            </update-os>
+            <update-disk
+              ref="update_disk"
+              :system_disk="true"
+              :customer_id="customer_id"
+              :az_id="az_id"
+              :is_gpu="is_gpu"
+              :os_disk_size="Number(os_info.disk_size)"
+              :origin_disk_size="origin_disk_size"
+              :spec_family_id="spec_family_id"
+              @fn-billing-info="FnGetDiskBillingInfo"
+              @fn-system-disk="FnChangeSystem">
+            </update-disk>
             <reset-pwd ref="reset_pwd" :customer_id="customer_id" :az_id="az_id" :username="os_info.username"></reset-pwd>
           </template>
           <template v-if="default_operate_type === 'reset_pwd'">
@@ -250,6 +296,8 @@ export default class App extends Vue {
   private az_id: string = '';
   private is_gpu: number = 0;
   private origin_disk_size: number = 0;
+  private support_gpu_driver: string = '';
+  private spec_family_id: string = '';
   private billing_method: string = '0';
   private multiple_selection: Array<Object> = [];
   private multiple_selection_id: Array<string> = [];
@@ -398,6 +446,8 @@ export default class App extends Vue {
     this.az_id = '';
     this.billing_method = '0';
     this.origin_disk_size = 0;
+    this.support_gpu_driver = '';
+    this.spec_family_id = '';
     let flag = true;
     this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
@@ -408,6 +458,8 @@ export default class App extends Vue {
         this.az_id = item.az_id;
         this.billing_method = item.billing_method;
         this.is_gpu = Number(item.is_gpu);
+        this.support_gpu_driver = item.support_gpu_driver;
+        this.spec_family_id = item.spec_family_id;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning('只允许对同一客户的同一可用区下实例进行批量操作！')
@@ -422,6 +474,16 @@ export default class App extends Vue {
       }
       if (type === 'open_bill' && item.is_charge) {
         this.$message.warning('只允许对未开启计费的实例开启计费！')
+        flag = false;
+        break;
+      }
+      if (type === 'update_system' && item.support_gpu_driver != this.support_gpu_driver) {
+        this.$message.warning(`只允许对同一驱动类型实例进行批量${operate_info.label}操作！`)
+        flag = false;
+        break;
+      }
+      if (type === 'update_system' && item.spec_family_id != this.spec_family_id) {
+        this.$message.warning(`只允许对同一规格族实例进行批量${operate_info.label}操作！`)
         flag = false;
         break;
       }
@@ -561,17 +623,17 @@ export default class App extends Vue {
       billing_method: this.billing_method || '0',
       is_gpu: this.is_gpu,
       ecs_ids: this.multiple_selection_id,
-      ebs_goods_info: {
-        handling_capacity: data.handling_capacity,
-        iops: data.iops,
-        storage_space: data.storage_space
-      },
+      ebs_goods_info: {},
       billing_info: this.disk_billing_info[data.ecs_goods_id]
     }
     if (this.is_gpu) {
-      reqData['local_disk-IOPS'] = data.iops;
-      reqData['local_disk-space'] = data.storage_space;
-      reqData['local_disk-throughput'] = data.handling_capacity;
+      reqData.ebs_goods_info['local_disk-IOPS'] = data.iops;
+      reqData.ebs_goods_info['local_disk-space'] = data.storage_space;
+      reqData.ebs_goods_info['local_disk-throughput'] = data.handling_capacity;
+    } else {
+      reqData.ebs_goods_info['iops'] = data.iops;
+      reqData.ebs_goods_info['storage_space'] = data.storage_space;
+      reqData.ebs_goods_info['handling_capacity'] = data.handling_capacity;
     }
     const resData = await Service.change_system_price(reqData)
     if (resData.code === 'Success') {
@@ -590,7 +652,7 @@ export default class App extends Vue {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
           ebs_goods_id: disk_data.system_disk.ecs_goods_id,
-          gic_goods_id: this.disk_billing_info[disk_data.system_disk.ecs_goods_id].gic_goods_id,
+          gic_goods_id: this.disk_billing_info[disk_data.system_disk.ecs_goods_id]?.gic_goods_id,
           goods_name: disk_data.system_disk.disk_name,
           disk_feature: disk_data.system_disk.disk_feature,
           disk_type: disk_data.system_disk.disk_type,
@@ -602,8 +664,14 @@ export default class App extends Vue {
           origin_disk_size: this.origin_disk_size,
         },
       }
+      if (disk_data.system_disk.disk_feature === 'local') {
+        reqData.disk_info.system_disk['local_disk-IOPS'] = reqData.disk_info.system_disk['iops'];
+        reqData.disk_info.system_disk['local_disk-space'] = reqData.disk_info.system_disk['storage_space'];
+        reqData.disk_info.system_disk['local_disk-throughput'] = reqData.disk_info.system_disk['handling_capacity'];
+      }
       reqData.password = pwd_data.password;
       reqData.billing_info = this.disk_billing_info;
+      reqData.is_gpu = this.is_gpu;
       let resData: any = await Service.update_system(reqData);
       if (resData.code === 'Success') {
         this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
@@ -742,5 +810,8 @@ export default class App extends Vue {
 .operate-table {
   max-height: 300px;
   overflow: auto;
+}
+.m-top23 {
+  margin-top: 23px;
 }
 </style>

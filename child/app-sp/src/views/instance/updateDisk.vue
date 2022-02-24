@@ -81,6 +81,7 @@ export default class updateDisk extends Vue {
   @Prop({default: false}) private data_disk!: boolean;
   @Prop({default: 0}) private os_disk_size!: number;
   @Prop({default: 0}) private origin_disk_size!: number;
+  @Prop({default: ''}) private spec_family_id!: string;
   @Prop({default: 0}) private is_gpu!: 1 | 0;
   $message;
   private all_disk_info = {
@@ -119,7 +120,8 @@ export default class updateDisk extends Vue {
     const resData: any = await diskService.get_disk_type({
       az_id: this.az_id,
       customer_id: this.customer_id,
-      billing_method: this.billing_method
+      billing_method: this.billing_method,
+      spec_family_id: this.spec_family_id
     });
     if (resData.code == 'Success') {
       this.all_disk_info = {
@@ -135,8 +137,8 @@ export default class updateDisk extends Vue {
     if (this.is_gpu) {
       this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');
     } else {
-      this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature !== 'local');
-      this.data_disk_info = this.all_disk_info.data_disk.filter(item => item.disk_feature !== 'local');
+      this.system_disk_info = this.all_disk_info.system_disk;
+      this.data_disk_info = this.all_disk_info.data_disk;
     }
     this.data.default_system_info = this.system_disk_info[0];
     this.FnChangeSystemType()
@@ -186,8 +188,6 @@ export default class updateDisk extends Vue {
     }
     data.default_disk_info = this.data_disk_info[0] || {};
     if ( !data.default_disk_info.disk_name ) {
-      this.$message.warning('请输入客户ID');
-
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
@@ -293,23 +293,28 @@ export default class updateDisk extends Vue {
     this.data.system_disk_min = Math.max(Number(this.data.default_system_info.disk_min), this.os_disk_size, this.origin_disk_size)
     return this.data.system_disk_min
   }
+  private created() {
+    if (this.az_id) {
+      this.FnGetDiskInfo();
+    }
+  }
 
   @Watch('data.default_system_info.ecs_goods_id')
   private FnChangeSystem() {
     this.data.system_size = this.FnSystemMinSize();
   }
-  @Watch('az_id', {immediate: true})
-  private FnChangeAz(newVal, oldVal) {
-    this.FnGetDiskInfo();
-  }
-  @Watch('is_gpu')
-  private FnChangeGpu(newVal) {
-    this.data_disk_list = [];
-    this.FnFilterDisk();
-  }
+
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {
     this.FnGetDiskInfo();
+  }
+  @Watch('spec_family_id')
+  private FnChangeFamily(newVal) {
+    console.log('newVal', newVal)
+    if (newVal) {
+      this.data_disk_list = [];
+      this.FnGetDiskInfo();
+    }
   }
   @Watch('os_disk_size')
   private FnChangeOs(newVal) {

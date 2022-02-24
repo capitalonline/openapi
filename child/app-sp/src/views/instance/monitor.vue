@@ -1,6 +1,6 @@
 <template>
   <div class="monitor">
-    <div v-if="source_name === 'instance_monitor'">
+    <div v-if="source_name === 'monitor'">
       <back-header title="云服务器监控" back_url="/instance"></back-header>
       <el-card class="m-bottom20">
         <template #header>
@@ -41,7 +41,7 @@
           chart_id="system_chart"
           :data="system_load"
           class="item"
-          v-if="ecs_info.os_system !== 'windows'">
+          v-if="ecs_info.os_system.toLocaleLowerCase() !== 'windows'">
         </line-echart>
       </div>
 
@@ -234,7 +234,7 @@ export default class Monitor extends Vue{
     let ip = '';
     let instanceType = '';
     let type = 'kvm';
-    if (this.source_name === 'instance_monitor') {
+    if (this.source_name === 'monitor') {
       id = this.detail_info.ecs_id.value;
       region = this.ecs_info.region_id;
       replica = this.ecs_info.az_id;
@@ -258,13 +258,14 @@ export default class Monitor extends Vue{
       replica: replica,
       ip: ip,
       instanceType: instanceType,
+      os: this.ecs_info.os_system.toLocaleLowerCase(),
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
-      if (this.ecs_info.os_system !== 'windows') this.FnGetLoad(type, reqData);
+      if (this.ecs_info.os_system.toLocaleLowerCase() !== 'windows') this.FnGetLoad(type, reqData);
     } else if (this.default_tab === 'disk') {
       this.FnGetDiskInfo(type, reqData);
     } else if (this.default_tab === 'net') {
@@ -286,7 +287,6 @@ export default class Monitor extends Vue{
         os_system: data.os_info.system,
         create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
-      console.log('create_finish_time', this.ecs_info.create_finish_time)
       this.detail_info.ecs_name.value = data.ecs_name;
       this.detail_info.ecs_id.value = data.ecs_id;
       this.detail_info.ecs_rule.value =
@@ -297,11 +297,11 @@ export default class Monitor extends Vue{
       this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
       this.detail_info.private_net.value = data.pipe.private_net;
       this.detail_info.status.value = data.status_display;
-      this.detail_info.public_net.value = data.pipe.pub_net?.public_net;
+      this.detail_info.public_net.value = data.pipe.pub_net;
       if (!data.is_gpu) {
         delete this.tab_list.gpu
       }
-      this.FnGetChartData()
+      // this.FnGetChartData()
     }
   }
   private async FnGetCpu(type, reqData) {
@@ -422,7 +422,7 @@ export default class Monitor extends Vue{
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
     this.source_name = this.$route.name;
-    if (this.source_name === 'instance_monitor') {
+    if (this.source_name === 'monitor') {
       this.FnGetDetail();
     }
   }

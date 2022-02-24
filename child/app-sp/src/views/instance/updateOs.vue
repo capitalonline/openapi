@@ -40,6 +40,8 @@ export default class updateOs extends Vue{
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: 0}) private is_gpu!: 0|1;
+  @Prop({default: ''}) private support_gpu_driver!: string;
+
   private os_list = {};
   private default_os_template_type = {
     os_template_type: '',
@@ -91,9 +93,9 @@ export default class updateOs extends Vue{
     }
     return list.filter(item => {
       if (this.is_gpu) {
-        return item.support_type.includes('gpu')
+        return item.support_type.includes('gpu') && item.support_gpu_driver == this.support_gpu_driver
       } else {
-        return item.support_type.includes('kvm')
+        return item.support_type.includes('kvm') && item.support_gpu_driver == this.support_gpu_driver
       }
     })
   }
@@ -162,6 +164,10 @@ export default class updateOs extends Vue{
   @Watch('customer_id')
   private FnChangeCustomer(newVal, oldVal) {
     this.FnGetOsList();
+  }
+  @Watch('support_gpu_driver')
+  private FnChangeGpuDriver(newVal) {
+    this.FnChangeOsType(this.data.default_os_type)
   }
   @Watch('is_gpu')
   private FnChangeGpu(newVal) {

@@ -51,7 +51,7 @@ export default class Operate extends Vue{
   @Prop({default:()=>[]}) rows!:any
   @Prop(String) title!:string;
   @Prop(String) oper_type!:string;
-  private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作吗？`
+  private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作？`
   private status_list:Array<String> = ['开机','关机','重启']
   private operate_info={
     'start_up_host':'host_operate',
@@ -71,7 +71,7 @@ export default class Operate extends Vue{
       maintenance_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
     }:{host_ids:this.rows.map(item=>item.host_id)}
-    
+
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
@@ -91,7 +91,7 @@ export default class Operate extends Vue{
   private back(val){
       this.visible_sync=false
   }
-  
+
 }
 </script>
 <style lang="scss">
