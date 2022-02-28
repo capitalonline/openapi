@@ -171,7 +171,7 @@
           </el-table-column>
           <el-table-column label="操作系统" v-if="default_operate_type === 'update_system'">
             <template #default="scope">
-              <div>{{ scope.row.os_type }} {{scope.row.os_version}} {{scope.row.os_bit}}位</div>
+              <div>{{ scope.row.name }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态">

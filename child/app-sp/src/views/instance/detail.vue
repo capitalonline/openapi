@@ -47,7 +47,7 @@
           </el-col>
         </el-row>
         <div class="title">操作系统</div>
-        <div class="content">{{detail && detail.os_info && detail.os_info.system}}&nbsp;&nbsp;{{detail && detail.os_info && detail.os_info.version}}&nbsp;&nbsp;{{detail && detail.os_info && detail.os_info.bite}}{{detail && detail.os_info && detail.os_info.unit}}</div>
+        <div class="content">{{detail && detail.os_info && detail.os_info.name}}</div>
         <div class="title">存储</div>
         <div class="content">
           <span class="label">系统盘：</span>

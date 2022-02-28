@@ -1,8 +1,8 @@
 <template>
-  <el-form 
+  <el-form
     :model="data"
     ref="resetForm"
-    label-position="left" 
+    label-position="left"
     label-width="120px"
     :rules="rules"
     :inline-message="true"
@@ -20,11 +20,11 @@
       </el-form-item>
       <el-form-item prop="default_os_version">
         <el-select v-model="data.default_os_version" value-key="os_id" @change="FnEmit">
-          <el-option 
-            v-for="version in default_os_version_list" 
-            :key="version.os_id" 
-            :value="version" 
-            :label="version.os_type+' '+version.os_version+' '+version.os_bit+'位'"></el-option>
+          <el-option
+            v-for="version in default_os_version_list"
+            :key="version.os_id"
+            :value="version"
+            :label="version.name"></el-option>
         </el-select>
       </el-form-item>
     </div>
@@ -73,7 +73,7 @@ export default class updateOs extends Vue{
       return
     }
     let resData: any = await Service.get_os_list({
-      customer_id: this.customer_id, 
+      customer_id: this.customer_id,
       az_id: this.az_id});
     if (resData.code == 'Success') {
       this.os_list = resData.data;
@@ -102,13 +102,12 @@ export default class updateOs extends Vue{
 
   @Emit('fn-os')
   private FnEmit() {
-    const fil = this.default_os_version_list.filter(item=>item.os_id === this.data.default_os_version.os_id)
     return {
       os_id: this.data.default_os_version.os_id,
       os_type: this.data.default_os_version.os_type,
       username: this.data.default_os_version.username,
       disk_size: this.data.default_os_version.disk_size,
-      os_label:fil.length>0 ? fil[0].os_type+' '+fil[0].os_version+' '+fil[0].os_bit+'位' : ''
+      os_label: this.default_os_version_list.find(item=>item.os_id === this.data.default_os_version.os_id).name
     }
   }
 
@@ -157,7 +156,7 @@ export default class updateOs extends Vue{
     this.FnEmit()
   }
 
-  @Watch('az_id') 
+  @Watch('az_id')
   private FnChangeAz(newVal, oldVal) {
     this.FnGetOsList();
   }

@@ -46,11 +46,11 @@
       </div>
 
       <div class="chart-box" v-if="default_tab === 'net'">
-        <line-echart
+        <!-- <line-echart
           chart_id="net_chart"
           :data="net_in_out"
           class="item"
-        ></line-echart>
+        ></line-echart> -->
         <line-echart
           chart_id="net_rate_chart"
           :data="net_rate"
@@ -399,11 +399,11 @@ export default class Monitor extends Vue{
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
-    Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout'}, reqData)),
-      Service.get_network(type, Object.assign({queryType: 'networkin'}, reqData))
-    ]).then(resData => {
-      this.FnHandleDubleData('net_in_out', resData)
-    })
+    // Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout'}, reqData)),
+    //   Service.get_network(type, Object.assign({queryType: 'networkin'}, reqData))
+    // ]).then(resData => {
+    //   this.FnHandleDubleData('net_in_out', resData)
+    // })
     this.net_rate.yValue = [];
     Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout_rate'}, reqData)),
       Service.get_network(type, Object.assign({queryType: 'networkin_rate'}, reqData))
