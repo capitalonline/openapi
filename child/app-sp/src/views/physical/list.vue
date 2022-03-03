@@ -22,7 +22,7 @@
         @filter-change="filterAttribute"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="host_name" label="主机名"></el-table-column>
+        <el-table-column prop="host_name" label="主机名" sortable="custom"></el-table-column>
         <el-table-column prop="az_name" label="区域"></el-table-column>
         <el-table-column prop="host_room" label="机房名称"></el-table-column>
         <el-table-column prop="host_rack" label="机柜编号"></el-table-column>
@@ -32,11 +32,12 @@
         <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
         <el-table-column prop="system_version" label="操作系统"></el-table-column>
         <el-table-column prop="host_model" label="机器类型"></el-table-column>
-        <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
+        <el-table-column prop="host_type_ch" label="主机类型" :filter-multiple="false" :filters="host_types" column-key="host_type"></el-table-column>
+        <el-table-column prop="host_purpose_ch" label="主机用途" :filter-multiple="false" :filters="host_uses" column-key="host_purpose"></el-table-column>
         <el-table-column prop="host_attribution__name" label="主机归属" :filter-multiple="false" :filters="host_belongs" column-key="host_belong"></el-table-column>
         <el-table-column prop="gpu_model" label="显卡型号"></el-table-column>
         <el-table-column prop="gpu_count" label="显卡数量"></el-table-column>  
-        <el-table-column prop="out_band_address" label="带外IP"></el-table-column>
+        <el-table-column prop="out_band_address" label="带外IP" sortable="custom"></el-table-column>
         <el-table-column prop="host_ip" label="管理网IP"></el-table-column>
         <el-table-column prop="storage_ip" label="存储网IP">
           <!-- <template slot-scope="scope">
@@ -76,7 +77,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -90,6 +91,9 @@
       </template>
       <template v-if="visible && oper_type==='resource'">
         <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
+      </template>
+      <template v-if="visible && oper_type==='update_attribute'">
+        <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
       </template>
     </div>
 </template>
@@ -107,7 +111,8 @@ import {getHostStatus} from '../../utils/getStatusInfo';
 import Record from '../../views/instance/record.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
-import {deal_list} from '../../utils/transIndex'
+import {deal_list} from '../../utils/transIndex';
+import UpdateAttribute from './updateAttribute.vue'
 @Component({
   components:{
     ActionBlock,
@@ -116,7 +121,8 @@ import {deal_list} from '../../utils/transIndex'
     Migrate,
     Record,
     SvgIcon,
-    Resource
+    Resource,
+    UpdateAttribute
   }
 })
 export default class PhysicalList extends Vue {
@@ -144,6 +150,7 @@ export default class PhysicalList extends Vue {
     {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
+    {label:'更改属性',value:'update_attribute'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -166,12 +173,15 @@ export default class PhysicalList extends Vue {
   private multi_rows:any=[];
   private auth_list=[];
   private filter_data:any={}
+  private host_types=[]
+  private host_uses=[];
   created() {
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
       this.fn_search();
       this.get_host_attribution()
+      this.getHostTypes()
       this.auth_list = this.$store.state.auth_info[this.$route.name]
   }
   private fn_search(data:any={}){
@@ -184,7 +194,7 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private async get_physical_list(){
-    const {az_id,pod_name,room,host_name,vm_name,power_status,host_status,host_belong}=this.search_data
+    const {az_id,pod_name,room,host_name,vm_name,power_status,host_status,host_belong,host_purpose,host_type}=this.search_data
     let res:any=await Service.get_host_list({
       az_id,
       pod_name,
@@ -197,20 +207,32 @@ export default class PhysicalList extends Vue {
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
-      host_attribution_id:host_belong ? host_belong[0] : undefined
+      host_attribution_id:host_belong ? host_belong[0] : undefined,
+      sort_host_name:this.search_data.sort_host_name,
+      sort_out_band_address:this.search_data.sort_out_band_address,
+      host_purpose:host_purpose ? host_purpose[0] : undefined,
+      host_type:host_type ? host_type[0] : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
       this.page_info.total = res.data.page_info.count || 0
     }
   }
+  private async getHostTypes(){
+        let res:any =await Service.get_host_type({})
+        if(res.code==='Success'){
+          let key_list=['type','type_name','list'];
+          let label_list=['value','text','list']
+          this.host_types =deal_list(res.data,label_list,key_list) 
+        }
+        
+    }
   private async get_host_attribution (){
     let res:any =await Service.get_host_attribution({})
     if(res.code==="Success"){
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
-      console.log("this.host_belongs",this.host_belongs)
     }
   }
    private async down(){
@@ -266,9 +288,10 @@ export default class PhysicalList extends Vue {
     this.multi_rows = data
   }
   private FnSortChange(obj){
-    console.log("FnSortChange",obj)
     this.search_data.sort_cpu =undefined
-    this.search_data.sort_ram =undefined
+    this.search_data.sort_ram =undefined;
+    this.search_data.sort_host_name =undefined
+    this.search_data.sort_out_band_address =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -282,6 +305,14 @@ export default class PhysicalList extends Vue {
   }
   private filterAttribute(obj:any){
     this.filter_data = {...this.filter_data,...obj}
+    if(this.filter_data.host_type && this.filter_data.host_type.length>0){
+      let key_list=['use_type','use_name'];
+      let label_list=['value','text']
+      let fil = this.host_types.filter(item=>item.value===this.filter_data.host_type[0]);
+      this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[]
+    }else{
+      this.host_uses=[]
+    }
     this.fn_search(this.search_data)
   }
   
@@ -291,7 +322,7 @@ export default class PhysicalList extends Vue {
       this.$message.warning("请先勾选物理机!");
       return;
     }
-    if(value==="upload" || value==="resource"){
+    if(['upload','resource','update_attribute'].includes(value)){
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
@@ -359,6 +390,7 @@ export default class PhysicalList extends Vue {
   }
  
   private close(val){
+    this.oper_type==="upload" && this.get_room_list()
     val==='1' && this.get_physical_list()
     this.visible=false;
     this.oper_type='';

@@ -75,6 +75,14 @@ export default{
     set_host_attribution(req){
         return service(getHostOptions('POST','/host/set_host_attribution/',req))
     },
+    //获取主机类型和主机用途
+    get_host_type(req){
+        return service(getHostOptions('GET','/host/get_host_config/',req))
+    },
+    //更改属性
+    update_attribute(req){
+        return service(getHostOptions('POST','/host/set_host_config/',req))
+    }
     
 
 }
