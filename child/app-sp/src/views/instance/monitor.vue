@@ -9,7 +9,7 @@
         <div class="detail-box">
           <div v-for="(item, key) in detail_info" :key="key" class="row">
             <span class="left-title">{{ item.label }}:</span>
-            <span>{{ item.value }}</span>
+            <span v-html="item.value"></span>
           </div>
         </div>
       </el-card>
@@ -295,9 +295,24 @@ export default class Monitor extends Vue{
       this.detail_info.system_disk_conf.value =
         `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
-      this.detail_info.private_net.value = data.pipe.private_net;
+
+      let pipe_info = data.pipe;
+      this.detail_info.private_net.value = `${pipe_info.private_net}（主）<br> `;
+        this.detail_info.public_net.value = '';
+        if (pipe_info.pub_net) {
+          let pub_eip_info = pipe_info.eip_info[pipe_info.pub_net];
+          this.detail_info.private_net.value+= pipe_info.pub_net +
+            (pub_eip_info.conf_name ? '（' + pub_eip_info.conf_name + '）' : ' ') + '默认出网网卡<br>';
+          if ( pub_eip_info.eip_ip ) this.detail_info.public_net.value = `${pub_eip_info.eip_ip}（${pub_eip_info.conf_name}）<br>`;
+        }
+        for (let item of pipe_info.virtual_net) {
+          let eip_info = pipe_info.eip_info[item];
+          this.detail_info.private_net.value+= item + (eip_info.conf_name ? '（' + eip_info.conf_name + '）': '') + '<br>';
+          if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）
+            ${eip_info.current_use_qos}Mbps（最高）<br>`;
+        }
+
       this.detail_info.status.value = data.status_display;
-      this.detail_info.public_net.value = data.pipe.pub_net;
       if (!data.is_gpu) {
         delete this.tab_list.gpu
       }
@@ -443,6 +458,7 @@ export default class Monitor extends Vue{
   display: flex;
   flex-wrap: wrap;
   .row {
+    display: flex;
     width: calc(100%/3);
     line-height: 32px;
   }

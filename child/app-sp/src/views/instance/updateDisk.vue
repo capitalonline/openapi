@@ -55,7 +55,7 @@
           <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
         </el-form-item>
       </div>
-      <el-form-item :label="data_disk_list.length===0?'数据盘':''">
+      <el-form-item :label="data_disk_list.length===0?'数据盘':''" v-if="data_disk_info.length > 0">
         <div class="disk-btn">
           <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
