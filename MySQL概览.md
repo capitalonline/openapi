@@ -1492,11 +1492,12 @@ def create_mysql_for_readonly(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                           |
-| :----------- | :--- | :----- | ------------------------------ |
-| InstanceUuid | 是   | string | 实例编号                       |
-| BackupType   | 是   | string | 备份方法（目前只支持物理备份） |
-| Desc         | 否   | string | 备份的描述,不传默认为空字符串  |
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| InstanceUuid | 是   | string | 实例编号                                                     |
+| BackupType   | 是   | string | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| Desc         | 否   | string | 备份的描述,不传默认为空字符串                                |
+| DBList       | 否   | list   | 当备份类型为逻辑备份时，用于指定数据库备份，<br />不填默认为整个实例备份 |
 
 **返回参数：**
 
@@ -1522,7 +1523,11 @@ def create_backup(instance_uuid):
     body = {
         "InstanceUuid": instance_uuid,
         "BackupType": "physical-backup",  # 目前只支持物理备份
-        "Desc": "test-openapi-python"
+        "Desc": "test-openapi-python",
+        "DBList":[
+            "test1",
+            "test2"
+        ]
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -1558,19 +1563,20 @@ def create_backup(instance_uuid):
 
 **返回参数：**
 
-| 参数名     | 类型   | 说明                           |
-| :--------- | :----- | ------------------------------ |
-| Message    | string | 信息描述                       |
-| Code       | string | 状态码                         |
-| Data       | dict   | 数据                           |
-| BackupId   | string | 备份id                         |
-| Status     | string | 备份状态                       |
-| BackupType | string | 备份类型（全备份）             |
-| StartTime  | string | 开始时间                       |
-| EndTime    | string | 结束时间                       |
-| BackupMode | string | 备份策略（自动备份、手动备份） |
-| BackupSize | string | 备份文件大小，单位字节         |
-| Desc       | string | 备份描述                       |
+| 参数名         | 类型   | 说明                                                         |
+| :------------- | :----- | ------------------------------------------------------------ |
+| Message        | string | 信息描述                                                     |
+| Code           | string | 状态码                                                       |
+| Data           | dict   | 数据                                                         |
+| BackupId       | string | 备份id                                                       |
+| Status         | string | 备份状态                                                     |
+| BackupType     | string | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| StartTime      | string | 开始时间                                                     |
+| EndTime        | string | 结束时间                                                     |
+| BackupMode     | string | 备份策略（自动备份、手动备份）                               |
+| BackupSize     | string | 备份文件大小，单位字节                                       |
+| Desc           | string | 备份描述                                                     |
+| BackupStrategy | string | 备份范围，取值范围：<br />整个实例："instance"<br />指定数据库："db" |
 
 **请求示例：**
 
@@ -1601,12 +1607,13 @@ def get_mysql_backups(instance_uuid):
         "BackupId": "**************************",
         "BackupMode": "auto",
         "BackupSize": 677496,
-        "BackupType": "physical-backup",
+        "BackupType": "logical-backup",
         "Desc": "",
         "EndTime": "2020-06-18 04:10:13",
         "InstanceId": "**************************",
         "StartTime": "2020-06-18 04:09:59",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"db"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1616,7 +1623,8 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-17 04:10:22",
         "InstanceId": "**************************",
         "StartTime": "2020-06-17 04:10:08",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1626,7 +1634,8 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-16 04:10:17",
         "InstanceId": "**************************",
         "StartTime": "2020-06-16 04:10:03",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }, {
         "BackupId": "**************************",
         "BackupMode": "manual",
@@ -1636,7 +1645,8 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-15 15:04:59",
         "InstanceId": "**************************",
         "StartTime": "2020-06-15 15:04:41",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }],
     "Message": "Success."
 }
@@ -1720,21 +1730,22 @@ def delete_backup(instance_uuid, backupid):
 
 **返回参数：**
 
-| 参数名                    | 类型      | 说明                                                     |
-| :------------------------ | :-------- | -------------------------------------------------------- |
-| Message                   | string    | 信息描述                                                 |
-| Code                      | string    | 状态码                                                   |
-| Data                      | dict      | 数据                                                     |
-| BackupId                  | string    | 备份编号                                                 |
-| Status                    | string    | 备份状态                                                 |
-| BackupType                | string    | 备份的类型（全备份）                                     |
-| StartTime                 | string    | 备份的开始时间                                           |
-| EndTime                   | string    | 备份的结束时间                                           |
-| BackupMode                | ststringr | 备份策略（自动或者手动备份）                             |
-| BackupSize                | string    | 备份文件大小，单位字节                                   |
-| Desc                      | string    | 备份的描述（手动备份可以自定义内容），自动备份为空字符串 |
-| BackupDownloadUrl         | string    | 公网下载地址                                             |
-| BackupIntranetDownloadUrl | string    | 内网下载地址                                             |
+| 参数名                    | 类型      | 说明                                                         |
+| :------------------------ | :-------- | ------------------------------------------------------------ |
+| Message                   | string    | 信息描述                                                     |
+| Code                      | string    | 状态码                                                       |
+| Data                      | dict      | 数据                                                         |
+| BackupId                  | string    | 备份编号                                                     |
+| Status                    | string    | 备份状态                                                     |
+| BackupType                | string    | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| StartTime                 | string    | 备份的开始时间                                               |
+| EndTime                   | string    | 备份的结束时间                                               |
+| BackupMode                | ststringr | 备份策略（自动或者手动备份）                                 |
+| BackupSize                | string    | 备份文件大小，单位字节                                       |
+| Desc                      | string    | 备份的描述（手动备份可以自定义内容），自动备份为空字符串     |
+| BackupDownloadUrl         | string    | 公网下载地址                                                 |
+| BackupIntranetDownloadUrl | string    | 内网下载地址                                                 |
+| BackupStrategy            | string    | 备份范围，取值范围：<br />整个实例："instance"<br />指定数据库："db" |
 
 **请求示例：**
 
@@ -1768,12 +1779,13 @@ def get_backup_describe(instance_uuid, backupid):
         "BackupIntranetDownloadUrl": "http://88.***************",
         "BackupMode": "auto",
         "BackupSize": 68140,
-        "BackupType": "full-backup",
+        "BackupType": "physical-backup",
         "Desc": "",
         "EndTime": "2020-06-18 04:00:26",
         "InstanceId": "***************",
         "StartTime": "2020-06-18 04:00:06",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     },
     "Message": "Success.",
     "TaskId": ""
