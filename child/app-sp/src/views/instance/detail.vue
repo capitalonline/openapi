@@ -19,7 +19,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="10">
+          <el-col :span="10" class="name-row">
             <span class="label">云服务器名称:</span>
             <span><pre>{{detail && detail.ecs_name}}</pre></span>
           </el-col>
@@ -178,6 +178,10 @@ export default class InsDetail extends Vue{
       margin-right: 8px;
     }
   }
+}
+.name-row {
+  display: flex;
+  line-height: 22px;
 }
 .title{
   font-size: 16px;
