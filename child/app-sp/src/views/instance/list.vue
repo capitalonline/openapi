@@ -487,6 +487,11 @@ export default class App extends Vue {
         flag = false;
         break;
       }
+      if (type === 'update_spec' && this.is_gpu) {
+        this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`)
+        flag = false;
+        break
+      }
       if (operate_info.auth.indexOf(item.status) < 0) {
         this.$message.warning(operate_info.msg)
         flag = false;
@@ -575,6 +580,7 @@ export default class App extends Vue {
       az_id: this.az_id,
       billing_method: this.billing_method || '0',
       ecs_ids: this.multiple_selection_id,
+      is_gpu: this.is_gpu,
       ecs_goods_info: {
         cpu: data.cpu,
         ram: data.ram,
@@ -591,6 +597,7 @@ export default class App extends Vue {
     let data = (this.$refs.update_spec as any).FnSubmit();
     if( data.flag ) {
       reqData.billing_info = data.spec_info.billing_info[data.spec_info.ecs_goods_id];
+      reqData.is_gpu = this.is_gpu;
       reqData.ecs_info = {
         ecs_goods_info: {
           ecs_goods_id: data.spec_info.ecs_goods_id,
