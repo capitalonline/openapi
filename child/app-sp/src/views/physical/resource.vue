@@ -18,6 +18,7 @@
             <el-table
                 :data="rows"
                 border
+                max-height="300"
             >
                 <el-table-column prop="host_name" label="主机名"></el-table-column>
                 <el-table-column prop="az_name" label="主机名"></el-table-column>
