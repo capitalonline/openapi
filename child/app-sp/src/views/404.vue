@@ -4,7 +4,7 @@
       <img src="@/assets/404.png">
     </div>
     <div class="error-img">
-      
+      您没有权限访问，请联系管理员！
     </div>
   </div>
 
