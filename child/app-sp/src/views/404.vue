@@ -4,7 +4,7 @@
       <img src="@/assets/404.png">
     </div>
     <div class="error-img">
-      
+      您没有权限访问，请联系管理员！
     </div>
   </div>
 
@@ -24,5 +24,9 @@ export default class App extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 18px;
+  .error-img {
+    margin-right: 30px;
+  }
 }
 </style>
