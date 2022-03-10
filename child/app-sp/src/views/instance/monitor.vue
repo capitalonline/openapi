@@ -308,8 +308,7 @@ export default class Monitor extends Vue{
         for (let item of pipe_info.virtual_net) {
           let eip_info = pipe_info.eip_info[item];
           this.detail_info.private_net.value+= item + (eip_info.conf_name ? '（' + eip_info.conf_name + '）': '') + '<br>';
-          if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）
-            ${eip_info.current_use_qos}Mbps（最高）<br>`;
+          if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）<br>`;
         }
 
       this.detail_info.status.value = data.status_display;
