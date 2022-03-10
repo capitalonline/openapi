@@ -66,7 +66,7 @@ html, body {
 
 /* 单选按钮组 */
 .el-radio-button__inner {
-  width: 100px;
+  min-width: 100px;
   padding: 8px 12px;
   margin-right: 10px;
   border-left: 1px solid #DCDFE6;
