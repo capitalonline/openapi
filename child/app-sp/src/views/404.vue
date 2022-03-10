@@ -24,5 +24,9 @@ export default class App extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 18px;
+  .error-img {
+    margin-right: 30px;
+  }
 }
 </style>
