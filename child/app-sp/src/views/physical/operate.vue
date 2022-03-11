@@ -19,10 +19,36 @@
                 :data="rows"
                 border
             >
-                <el-table-column prop="host_name" label="主机名"></el-table-column>
+                <el-table-column prop="host_name" label="主机名" width="140"></el-table-column>
+                <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="!status_list.includes(title)"></el-table-column>
                 <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
+                <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
+                <!-- <el-table-column prop="power_status_name" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column> -->
             </el-table>
+            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate'].includes(oper_type)" label-position="left">
+              <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
+                <el-radio-group v-model="form_data.valid">
+                  <el-radio :label="'1'">成功</el-radio>
+                  <el-radio :label="'0'">失败</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- <el-form-item prop="recycleId" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象：' : '回收部门：'}`, trigger: 'blur' }]">
+                  <el-select v-model="form_data.recycleId">
+                    <el-option v-for="item in recycle_list" :key="item.key" :label="item.label" :value="item.key"></el-option>
+                  </el-select>
+              </el-form-item> -->
+            </el-form>
+            <!-- <div v-if="oper_type==='finish_validate'" class="text-center m-top20">
+              <span>验证结果:</span>
+              
+            </div>
+            <div class="text-center m-top20" v-if="['shelves','finish_validate'].includes(oper_type)">
+              <span>{{oper_type==='finish_validate' ? '通知对象：' : '回收部门：'}}</span>
+              <el-select v-model="recycleId">
+                <el-option v-for="item in recycle_list" :key="item.key" :label="item.label" :value="item.key"></el-option>
+              </el-select>
+            </div> -->
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
@@ -39,7 +65,7 @@ import { Component, Emit, Prop, Vue,PropSync } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/physical/list';
 import moment from 'moment';
-
+import {Form} from 'element-ui'
 @Component({
   components:{
     ActionBlock
@@ -52,7 +78,16 @@ export default class Operate extends Vue{
   @Prop(String) title!:string;
   @Prop(String) oper_type!:string;
   private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作？`
-  private status_list:Array<String> = ['开机','关机','重启']
+  private status_list:Array<String> = ['开机','关机','重启'];
+  private valid:number=1;
+  private recycle_list=[
+    {label:'裸金属',key:'ljs'},
+    {label:'集团',key:'jt'}
+  ]
+  private form_data={
+    valid:'',
+    recycleId:'',
+  }
   private operate_info={
     'start_up_host':'host_operate',
     'shutdown_host':'host_operate',
@@ -64,6 +99,18 @@ export default class Operate extends Vue{
     'disperse':'disperse',
   }
   private async confirm(){
+    if(['shelves','finish_validate'].includes(this.oper_type)){
+      let flag:boolean=true
+      let form = this.$refs.form as Form;
+      form.validate((valid)=>{
+        if(!valid){
+          flag = false
+        }
+      })
+      if(!flag){
+        return false
+      }
+    }
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)

@@ -82,7 +82,15 @@ export default{
     //更改属性
     update_attribute(req){
         return service(getHostOptions('POST','/host/set_host_config/',req))
-    }
+    },
+    //获取更改设置的专属客户列表
+    getCustomerList(req){
+        return service(getHostOptions('POST','/host/get_customer_list/',req))
+    },
+    //获取更改设置的专属客户列表
+    getFamilyList(req){
+        return service(getHostOptions('POST','/host/get_family_list/',req))
+    },
     
 
 }

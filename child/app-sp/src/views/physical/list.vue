@@ -22,39 +22,27 @@
         @filter-change="filterAttribute"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="host_name" label="主机名" sortable="custom"></el-table-column>
-        <el-table-column prop="az_name" label="区域"></el-table-column>
-        <el-table-column prop="host_room" label="机房名称"></el-table-column>
-        <el-table-column prop="host_rack" label="机柜编号"></el-table-column>
-        <el-table-column prop="rack_place" label="起始U位"></el-table-column>
-        <el-table-column prop="rack_space" label="占用U位"></el-table-column>
-        <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
-        <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
-        <el-table-column prop="system_version" label="操作系统"></el-table-column>
-        <el-table-column prop="host_model" label="机器类型"></el-table-column>
-        <el-table-column prop="host_type_ch" label="主机类型" :filter-multiple="false" :filters="host_types" column-key="host_type"></el-table-column>
-        <el-table-column prop="host_purpose_ch" label="主机用途" :filter-multiple="false" :filters="host_uses" column-key="host_purpose"></el-table-column>
-        <el-table-column prop="host_attribution__name" label="主机归属" :filter-multiple="false" :filters="host_belongs" column-key="host_belong"></el-table-column>
-        <el-table-column prop="gpu_model" label="显卡型号"></el-table-column>
-        <el-table-column prop="gpu_count" label="显卡数量"></el-table-column>  
-        <el-table-column prop="out_band_address" label="带外IP" sortable="custom"></el-table-column>
-        <el-table-column prop="host_ip" label="管理网IP"></el-table-column>
-        <el-table-column prop="storage_ip" label="存储网IP">
-          <!-- <template slot-scope="scope">
-            <div v-for="item in scope.row.storage_ip" :key="item">{{item}}</div>
-          </template> -->
-        </el-table-column>
-        <el-table-column prop="cpu" label="CPU使用率" sortable="custom">
-          <template slot-scope="scope">
+        <el-table-column 
+          v-for="item in custom_host" 
+          :filter-multiple="item.column_key ? false : null"
+          :key="item.prop" 
+          :prop="item.prop" 
+          :label="item.label" 
+          :column-key="item.column_key ? item.column_key : null"
+          :filters="item.column_key ? item.list : null"
+          :sortable="item.sortable ? item.sortable : null"
+        >
+          <template #default="scope" v-if="item.prop==='machine_status_name'">
+            <div>{{scope.row.machine_status_name}}</div>
+            <!-- <div v-if="scope.row.machine_status!=='off_shelves'" class="destroy">{{'裸金属'}}</div> -->
+          </template>
+          <template #default="scope" v-else-if="item.prop==='cpu'">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
-        </el-table-column>
-        <el-table-column prop="ram" label="内存使用率" sortable="custom">
-          <template slot-scope="scope">
+          <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="create_time" label="创建时间"></el-table-column>
         <el-table-column label="操作栏">
           <template slot-scope="scope">
             <el-dropdown @command="handleOperate">
@@ -138,9 +126,17 @@ export default class PhysicalList extends Vue {
     vm_name:{placeholder:'请输入VM名称'},
     power_status:{placeholder:'请选择主机电源状态',list:[]},
     host_status:{placeholder:'请选择主机机器状态',list:[]},
+    // ecs_id:{placeholder:'请输入云服务器ID'},
+    // out_band_address:{placeholder:'请输入带外IP'},
+    // host_ip:{placeholder:'请输入管理网IP'},
+    // host_id:{placeholder:'请输入物理机ID'},
+    // gpu_model:{placeholder:'请输入显卡型号'},
+    // host_rack:{placeholder:'请输入机柜编号'},
+    bare_metal_id:{placeholder:'请输入裸金属产品ID'},
   }
   private operate_btns:any=[
     {label:'导入',value:'upload'},
+    // {label:'完成验证',value:'finish_validate'},
     {label:'开机',value:'start_up_host'},
     {label:'关机',value:'shutdown_host'},
     {label:'重启',value:'restart_host'},
@@ -175,6 +171,32 @@ export default class PhysicalList extends Vue {
   private filter_data:any={}
   private host_types=[]
   private host_uses=[];
+  private host_source=[]
+  private custom_host=[
+    {label:'主机名',prop:'host_name',sortable:'custom'},
+    {label:'区域',prop:'az_name'},
+    {label:'机房名称',prop:'host_room'},
+    {label:'机柜编号',prop:'host_rack'},
+    {label:'起始U位',prop:'rack_place'},
+    {label:'占用U位',prop:'rack_space'},
+    {label:'电源状态',prop:'power_status_name'},
+    {label:'机器状态',prop:'machine_status_name'},
+    {label:'操作系统',prop:'system_version'},
+    {label:'机器类型',prop:'host_model'},
+    {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
+    {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
+    {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
+    // {label:'主机来源',prop:'host_attribution__source',column_key:'host_source',list:this.host_source},
+    {label:'显卡型号',prop:'gpu_model'},
+    {label:'显卡数量',prop:'gpu_count'},
+    {label:'带外IP',prop:'out_band_address',sortable:'custom'},
+    // {label:'管理网IP',prop:'host_ip',sortable:'custom'},
+    {label:'管理网IP',prop:'host_ip'},
+    {label:'存储网IP',prop:'storage_ip'},
+    {label:'CPU使用率',prop:'cpu',sortable:'custom'},
+    {label:'内存使用率',prop:'ram',sortable:'custom'},
+    {label:'创建时间',prop:'create_time'},
+  ]
   created() {
       this.get_room_list()
       this.get_az_list()
@@ -194,13 +216,14 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private async get_physical_list(){
-    const {az_id,pod_name,room,host_name,vm_name,power_status,host_status,host_belong,host_purpose,host_type}=this.search_data
+    const {az_id,bare_metal_id,pod_name,room,host_name,vm_name,power_status,host_status,host_belong,host_purpose,host_type}=this.search_data
     let res:any=await Service.get_host_list({
       az_id,
       pod_name,
       machine_room_name:room,
       host_name,
       vm_name,
+      bare_metal_id,
       power_status,
       machine_status:host_status,
       page_index:this.page_info.current,
@@ -210,6 +233,7 @@ export default class PhysicalList extends Vue {
       host_attribution_id:host_belong ? host_belong[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
       sort_out_band_address:this.search_data.sort_out_band_address,
+      sort_host_ip:this.search_data.sort_host_ip,
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
     })
@@ -223,7 +247,8 @@ export default class PhysicalList extends Vue {
         if(res.code==='Success'){
           let key_list=['type','type_name','list'];
           let label_list=['value','text','list']
-          this.host_types =deal_list(res.data,label_list,key_list) 
+          this.host_types =deal_list(res.data,label_list,key_list);
+          this.setList(this.host_types,'host_type_ch')
         }
         
     }
@@ -233,6 +258,7 @@ export default class PhysicalList extends Vue {
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
+      this.setList(this.host_belongs,'host_attribution__name')
     }
   }
    private async down(){
@@ -292,6 +318,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_ram =undefined;
     this.search_data.sort_host_name =undefined
     this.search_data.sort_out_band_address =undefined
+    this.search_data.sort_host_ip =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -309,10 +336,12 @@ export default class PhysicalList extends Vue {
       let key_list=['use_type','use_name'];
       let label_list=['value','text']
       let fil = this.host_types.filter(item=>item.value===this.filter_data.host_type[0]);
-      this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[]
+      this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[];
+      
     }else{
       this.host_uses=[]
     }
+    this.setList(this.host_uses,'host_purpose_ch')
     this.fn_search(this.search_data)
   }
   
@@ -322,7 +351,7 @@ export default class PhysicalList extends Vue {
       this.$message.warning("请先勾选物理机!");
       return;
     }
-    if(['upload','resource','update_attribute'].includes(value)){
+    if(['upload','resource','finish_validate','update_attribute'].includes(value)){
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
@@ -388,7 +417,14 @@ export default class PhysicalList extends Vue {
       window.open(res.data.url.out_bond_addr)
     }
   }
- 
+  private setList(list,prop){
+    this.custom_host.map(item=>{
+      if(item.prop===prop){
+        item.list = list
+      }
+      return item;
+    })
+  }
   private close(val){
     this.oper_type==="upload" && this.get_room_list()
     val==='1' && this.get_physical_list()
