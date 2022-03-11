@@ -38,8 +38,7 @@
                     v-model="family" 
                     multiple 
                     filterable 
-                    remote
-                    :remote-method="getFamilyList"
+                    :filter-method="getFamilyList"
                     @visible-change="changeFamily"
                 >
                     <el-option v-for="item in familyList" :key="item.spec_family_id" :value="item.spec_family_id" :label="item.name"></el-option>
@@ -72,7 +71,7 @@ export default class UpdateAttribute extends Vue{
     created() {
         this.getHostTypes();
         this.getCustomerList('',true);
-        this.getFamilyList('',true);
+        this.getFamilyList();
     }
     private async getHostTypes(){
         let res:any =await Service.get_host_type({})
@@ -90,9 +89,8 @@ export default class UpdateAttribute extends Vue{
         this.use = this.host_uses.length > 0 ? this.host_uses[0].use_type : ''
     }
     private changeFamily(val){
-        if(val){
-            this.familyList=[]
-            // this.getFamilyList()
+        if(!val){
+            this.getFamilyList()
         }
     }
     private changeCustomer(val){
@@ -101,10 +99,7 @@ export default class UpdateAttribute extends Vue{
             // this.getCustomerList()
         }
     }
-    private async getFamilyList(val:string="",loading:boolean=false){
-        if(!val && !loading){
-            return
-        }
+    private async getFamilyList(val:string=""){
         let res:any=await Service.getFamilyList({
             host_ids:this.rows.map(item=>item.host_id),
             spec_family_name:val
