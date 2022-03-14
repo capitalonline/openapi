@@ -290,6 +290,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 | PrivateIp          | list   | 否       | [{“PrivateId”: “6a3ce526-287f-11e6-b7c1-0050569b4d9c”, “IP”: [“10.0.0.2”, “10.0.0"]  |
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
+| WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。|
+
 
 
 **返回参数:**
@@ -777,8 +779,9 @@ def add_disk(vm_id):
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | ImageId    | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376 | 模板Id                                       |
-| Password   | string | 否       | EcsV587!                             | 云服务器密码                                 |
+| Password   | string | 是       | EcsV587!                             | 云服务器密码                                 |
 | PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
+| ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
 
 ​	**返回参数：**
 
@@ -1103,6 +1106,7 @@ def down_card(InterfaceId, InstanceId):
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22 | 云服务器编号                                 |
 | InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 网卡的编号，可以在查询云服务器详情中查出     |
 | Address     | string | 是       | 101.251.2.29                         | 要绑定或者修改的Ip地址，解绑Ip此处请填写None |
+| Password    | string | 是       | 123abc,.;                            | 云服务器密码                                 |
 
 ​	**返回参数：**
 
