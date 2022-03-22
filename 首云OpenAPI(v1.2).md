@@ -114,6 +114,8 @@
      * [账单相关](#账单相关)
        * [1.DescribeBill](#1describebill)
        * [2.DescribeBillInfo](#2describebillinfo)
+       * [3.DescribeBillDetail](#3describebilldetail)
+       * [4.DescribeAccountInfo](#4describeAccountInfo)
      * [冷云计量相关](#冷云计量相关)
        * [1.GetMetering](#1GetMetering)
      * [其他公共接口](#其他公共接口)
@@ -6255,6 +6257,1272 @@ def describe_goodsId():
     },
     "Message": "bill details query success",
     "TaskId": ""
+}
+```
+
+### 3.DescribeBillDetail
+
+   **Action: DescribeBillDetail**
+
+​	**描述：** 查询账单
+
+   **请求地址:** cdsapi.capitalonline.net/billing
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值     | 描述                                                   |
+| -------- | ------ | -------- | ---------- | ------------------------------------------------------ |
+| DateFrom | string | 是       | 2021.10.01 | 开始日期（大于2019.01.01）                             |
+| DateTo   | string | 是       | 2021.10.31 | 结束日期（大于2019.01.01）开始日期到结束日期不超过31天 |
+
+   **返回参数：**
+
+| 参数         | 参数类型 | 含义                             |
+| ------------ | -------- | -------------------------------- |
+| Code         | string   | 返回码                           |
+| Message      | string   | 返回信息                         |
+| Data         | dict     | 返回数据字典                     |
+| TotalSummary | dict     | 总消费数据字典                   |
+| TotalRecords | int      | 账单总条数                       |
+| TotalCost    | float    | 总消费                           |
+| ViceCost     | float    | 副账户消费                       |
+| MasterCost   | float    | 主账户消费                       |
+| ToDeduct     | float    | 待扣金额                         |
+| BillDetail   | list     | 账单详情                         |
+| Site         | string   | 站点                             |
+| APP          | string   | 虚拟数据中心名称                 |
+| PublicIp     | string   | 公网ip                           |
+| Currency     | string   | 币种（”CN“：人民币，”US“：美元） |
+| Label        | string   | 云服务器标签                     |
+| Project      | string   | 项目组名称                       |
+| PrivateIp    | string   | 私网ip                           |
+| GoodsType    | string   | 商品类型                         |
+| CloudId      | string   | 资源id                           |
+| TotalCost    | float    | 总费用                           |
+| BillType     | string   | 计费方式                         |
+| Config       | string   | 配置详情                         |
+| Product      | string   | 商品名称                         |
+| Resource     | string   | 资源名称                         |
+| BeginTime    | string   | 开始时间                         |
+| EndTime      | string   | 结束时间                         |
+
+​	**返回示例:**
+
+```json
+{
+  "Code": "success",
+  "Data": {
+    "BeginTime": "2021.10.01",
+    "BillDetail": [
+      {
+        "APP": "",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "包年包月计费",
+        "CloudId": "2c6cc7f7731228f2daef4bbde87552c6",
+        "Config": "网页加速-HTTPS:0GB,下载加速-HTTPS:0GB,动态加速-HTTP:0GB,点播加速-HTTP:0GB,下载加速-HTTP:0GB,直播加速:0GB,网页加速-HTTP:0GB,点播加速-HTTPS:0GB,动态加速-HTTPS:0Gb",
+        "Currency": "CN",
+        "EndTime": "2021-11-01 00:00:00",
+        "GoodsType": "CDN",
+        "Label": "",
+        "Product": "CDN-V2-中国大陆-流量",
+        "Project": "默认项目组",
+        "Resource": "CDN-V2-中国大陆-流量",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-08 00:00:00",
+        "BillType": "包年包月计费",
+        "CloudId": "2c6cc7f7731228f2daef4bbde87552c6",
+        "Config": "网页加速-HTTPS:0GB,下载加速-HTTPS:0GB,动态加速-HTTP:0GB,点播加速-HTTP:0GB,下载加速-HTTP:0GB,直播加速:0GB,网页加速-HTTP:0GB,点播加速-HTTPS:0GB,动态加速-HTTPS:0Gb",
+        "Currency": "CN",
+        "EndTime": "2021-11-08 00:00:00",
+        "GoodsType": "CDN",
+        "Label": "",
+        "Product": "CDN-V2-中国大陆-流量",
+        "Project": "默认项目组",
+        "Resource": "CDN-V2-中国大陆-流量",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "3a5827b6-0b9b-11ec-95e0-ae64e33724df",
+        "Config": "5Mb",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 16:01:44",
+        "GoodsType": "带宽",
+        "Label": "",
+        "Product": "电信-固定带宽",
+        "Project": "默认项目组",
+        "Resource": "公网1",
+        "Site": "北京A",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-11 16:01:44",
+        "BillType": "按需付费",
+        "CloudId": "3a5827b6-0b9b-11ec-95e0-ae64e33724df",
+        "Config": "10Mb",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 16:05:04",
+        "GoodsType": "带宽",
+        "Label": "",
+        "Product": "电信-固定带宽",
+        "Project": "默认项目组",
+        "Resource": "公网1",
+        "Site": "北京A",
+        "TotalCost": "0.06"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-11 16:05:04",
+        "BillType": "按需付费",
+        "CloudId": "3a5827b6-0b9b-11ec-95e0-ae64e33724df",
+        "Config": "5Mb",
+        "Currency": "CN",
+        "EndTime": "2021-10-31 00:00:00",
+        "GoodsType": "带宽",
+        "Label": "",
+        "Product": "电信-固定带宽",
+        "Project": "默认项目组",
+        "Resource": "公网1",
+        "Site": "北京A",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "3aee2e8c-0b9b-11ec-9450-e2cb0b669b1c",
+        "Config": "4个",
+        "Currency": "CN",
+        "EndTime": "2021-10-31 00:00:00",
+        "GoodsType": "公网IP",
+        "Label": "",
+        "Product": "单线IP",
+        "Project": "默认项目组",
+        "Resource": "ip",
+        "Site": "北京A",
+        "TotalCost": "159.90"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-09 11:27:01",
+        "BillType": "按需付费",
+        "CloudId": "4aa49175-8ef1-4939-a043-3b6ce54527a0",
+        "Config": "内存:16GB,操作系统:CDS-OS-CentOS8.2-64bit-Public-V7,vCPU:4C,性能型系统盘:20GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-09 11:28:29",
+        "GoodsType": "云主机",
+        "Label": "",
+        "Product": "通用型云主机g3v2",
+        "Project": "默认项目组",
+        "Resource": "买2台",
+        "Site": "北京A",
+        "TotalCost": "0.03"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-09 11:28:29",
+        "BillType": "按需付费",
+        "CloudId": "4aa49175-8ef1-4939-a043-3b6ce54527a0",
+        "Config": "性能型系统盘:20GB,内存:16GB,操作系统:CDS-OS-CentOS8.2-64bit-Public-V7,vCPU:4C",
+        "Currency": "CN",
+        "EndTime": "2021-10-09 11:28:39",
+        "GoodsType": "云主机",
+        "Label": "",
+        "Product": "通用型云主机g3v2",
+        "Project": "默认项目组",
+        "Resource": "买2台",
+        "Site": "北京A",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-26 18:48:20",
+        "BillType": "按需付费",
+        "CloudId": "632a36b4-20bb-4b5e-a07b-100fdd28944f",
+        "Config": "CPU:2C,RAM:4GB,CPU:2C,SSD磁盘:100GB,SSD磁盘:100GB,RAM:4GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-27 00:00:00",
+        "GoodsType": "关系型数据库",
+        "Label": "",
+        "Product": "云数据库MySQL高可用版v2",
+        "Project": "默认项目组",
+        "Resource": "mysql-2021-10-26-QlkVh",
+        "Site": "北京A",
+        "TotalCost": "6.42"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-27 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "632a36b4-20bb-4b5e-a07b-100fdd28944f",
+        "Config": "SSD磁盘:100GB,RAM:4GB,CPU:2C,RAM:4GB,SSD磁盘:100GB,CPU:2C",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 00:00:00",
+        "GoodsType": "关系型数据库",
+        "Label": "",
+        "Product": "云数据库MySQL高可用版v2",
+        "Project": "默认项目组",
+        "Resource": "mysql-2021-10-26-QlkVh",
+        "Site": "北京A",
+        "TotalCost": "29.76"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-28 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "632a36b4-20bb-4b5e-a07b-100fdd28944f",
+        "Config": "RAM:4GB,CPU:2C,SSD磁盘:100GB,RAM:4GB,CPU:2C,SSD磁盘:100GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 17:04:35",
+        "GoodsType": "关系型数据库",
+        "Label": "",
+        "Product": "云数据库MySQL高可用版v2",
+        "Project": "默认项目组",
+        "Resource": "mysql-2021-10-26-QlkVh",
+        "Site": "北京A",
+        "TotalCost": "21.16"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-11 16:01:44",
+        "BillType": "按需付费",
+        "CloudId": "6cd5bb9e-2a69-11ec-a5f1-42330aefd4e3",
+        "Config": "4个",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 16:04:20",
+        "GoodsType": "公网IP",
+        "Label": "",
+        "Product": "单线IP",
+        "Project": "默认项目组",
+        "Resource": "ip",
+        "Site": "北京A",
+        "TotalCost": "0.01"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.001万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-02 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-02 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_标签:0.0万个,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-03 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-03 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-04 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-04 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_写及其它请求计费:0.0万次,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-05 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-05 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-06 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-06 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-07 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-07 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.001万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-08 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-08 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-09 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-09 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-10 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-10 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-11 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "7ee393bf0eef576799f288c9f6ea2256",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 16:06:13",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "111",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "包年包月计费",
+        "CloudId": "7f938c1974a127bc462a45b2edcc5b04",
+        "Config": "动态加速-HTTP:0GB,直播加速:0GB,下载加速-HTTPS:0GB,网页加速-HTTPS:0GB,点播加速-HTTP:0GB,下载加速-HTTP:0GB,网页加速-HTTP:0GB,点播加速-HTTPS:0GB,动态加速-HTTPS:0GB",
+        "Currency": "CN",
+        "EndTime": "2021-11-01 00:00:00",
+        "GoodsType": "CDN",
+        "Label": "",
+        "Product": "CDN-V2-海外-流量",
+        "Project": "默认项目组",
+        "Resource": "CDN-V2-海外-流量",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "88d6a9c0-f8eb-11eb-97f5-562e7f031744",
+        "Config": "同城首次免费：5.0Mb，<br>区间线路：北京-北京;",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 11:28:49",
+        "GoodsType": "云互联网络",
+        "Label": "",
+        "Product": "云互联网络组-峰值型",
+        "Project": "项目01",
+        "Resource": "云互联",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-26 11:29:30",
+        "BillType": "按需付费",
+        "CloudId": "9b8e038c-19f4-458e-89d8-7e7b76f7c947",
+        "Config": "内存:1GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 17:04:47",
+        "GoodsType": "非关系型数据库",
+        "Label": "",
+        "Product": "Redis经济型主从v2",
+        "Project": "默认项目组",
+        "Resource": "这是redis的一个实例",
+        "Site": "北京A",
+        "TotalCost": "11.24"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-08 00:00:00",
+        "BillType": "包年包月计费",
+        "CloudId": "b57abfdf-32a8-4c8a-9d84-ee5312647c80",
+        "Config": "操作系统:CDS-OS-CentOS8.2-64bit-Public-V7,系统硬盘:20GB,vCPU:4C,内存:8GB",
+        "Currency": "CN",
+        "EndTime": "2021-11-08 00:00:00",
+        "GoodsType": "云主机",
+        "Label": "",
+        "Product": "标准型云主机",
+        "Project": "默认项目组",
+        "Resource": "包月升降配",
+        "Site": "北京A",
+        "TotalCost": "354.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-29 18:05:30",
+        "BillType": "包年包月计费",
+        "CloudId": "bee1deba-389f-11ec-95fb-0e937cc906ef",
+        "Config": "下行流量8点-24点:0GB,下行流量0点-8点:0GB,请求次数:0万次,冷数据取回量:0GB,存储空间:1024GB",
+        "Currency": "CN",
+        "EndTime": "2021-11-01 00:00:00",
+        "GoodsType": "冷云存储",
+        "Label": "",
+        "Product": "冷云存储-河北",
+        "Project": "默认项目组",
+        "Resource": "leng",
+        "Site": "",
+        "TotalCost": "2.15"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-29 18:05:30",
+        "BillType": "按需付费",
+        "CloudId": "bee1deba-389f-11ec-95fb-0e937cc906ef",
+        "Config": "存储空间:0.0GB,请求次数:0.0万次,下行流量8点-24点:0.0GB,冷数据取回量:0.0GB,下行流量0点-8点:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-30 00:00:00",
+        "GoodsType": "冷云存储",
+        "Label": "",
+        "Product": "冷云存储-河北",
+        "Project": "默认项目组",
+        "Resource": "leng",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-30 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "bee1deba-389f-11ec-95fb-0e937cc906ef",
+        "Config": "存储空间:1024.0GB,请求次数:0.0万次,下行流量8点-24点:0.0GB,冷数据取回量:0.0GB,下行流量0点-8点:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-31 00:00:00",
+        "GoodsType": "冷云存储",
+        "Label": "",
+        "Product": "冷云存储-河北",
+        "Project": "默认项目组",
+        "Resource": "leng",
+        "Site": "",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-26 18:49:18",
+        "BillType": "按需付费",
+        "CloudId": "c6758c88-f89e-4da6-9a87-c0f33e92c505",
+        "Config": "CPU:1C,RAM:2GB,CPU:1C,RAM:2GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-27 00:00:00",
+        "GoodsType": "四层负载均衡",
+        "Label": "",
+        "Product": "LVS v2",
+        "Project": "默认项目组",
+        "Resource": "LVS-2021-10-26-YVZqa",
+        "Site": "北京A",
+        "TotalCost": "1.46"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-27 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "c6758c88-f89e-4da6-9a87-c0f33e92c505",
+        "Config": "RAM:2GB,CPU:1C,RAM:2GB,CPU:1C",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 17:04:12",
+        "GoodsType": "四层负载均衡",
+        "Label": "",
+        "Product": "LVS v2",
+        "Project": "默认项目组",
+        "Resource": "LVS-2021-10-26-YVZqa",
+        "Site": "北京A",
+        "TotalCost": "11.80"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-26 18:59:38",
+        "BillType": "按需付费",
+        "CloudId": "c7fb262f-d8ff-4b77-91d9-f95356dbe63f",
+        "Config": "CPU:1C,RAM:2GB,CPU:1C,RAM:2GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-27 00:00:00",
+        "GoodsType": "负载均衡",
+        "Label": "",
+        "Product": "HaProxy v2",
+        "Project": "默认项目组",
+        "Resource": "HaProxy-2021-10-26-rFYpm",
+        "Site": "北京A",
+        "TotalCost": "1.42"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-27 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "c7fb262f-d8ff-4b77-91d9-f95356dbe63f",
+        "Config": "RAM:2GB,CPU:1C,RAM:2GB,CPU:1C",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 17:04:05",
+        "GoodsType": "负载均衡",
+        "Label": "",
+        "Product": "HaProxy v2",
+        "Project": "默认项目组",
+        "Resource": "HaProxy-2021-10-26-rFYpm",
+        "Site": "北京A",
+        "TotalCost": "11.80"
+      },
+      {
+        "APP": "云主机虚拟数据中心01",
+        "BeginTime": "2021-10-26 19:03:15",
+        "BillType": "按需付费",
+        "CloudId": "d87047a0-364b-11ec-abf8-0242ac110002",
+        "Config": "系统盘:60GB,cpu:4C,系统盘:60GB,cpu:4C,系统盘:60GB,cpu:4C,性能盘:100GB,内存:8GB,性能盘:100GB,性能盘:100GB,内存:8GB,内存:8GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-27 00:00:00",
+        "GoodsType": "消息引擎",
+        "Label": "",
+        "Product": "消息引擎Kafka v2",
+        "Project": "默认项目组",
+        "Resource": "消息引擎Kafka v2",
+        "Site": "北京H",
+        "TotalCost": "19.14"
+      },
+      {
+        "APP": "云主机虚拟数据中心01",
+        "BeginTime": "2021-10-27 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "d87047a0-364b-11ec-abf8-0242ac110002",
+        "Config": "系统盘:60GB,cpu:4C,系统盘:60GB,cpu:4C,系统盘:60GB,cpu:4C,性能盘:100GB,性能盘:100GB,内存:8GB,内存:8GB,性能盘:100GB,内存:8GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 00:00:00",
+        "GoodsType": "消息引擎",
+        "Label": "",
+        "Product": "消息引擎Kafka v2",
+        "Project": "默认项目组",
+        "Resource": "消息引擎Kafka v2",
+        "Site": "北京H",
+        "TotalCost": "93.09"
+      },
+      {
+        "APP": "云主机虚拟数据中心01",
+        "BeginTime": "2021-10-28 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "d87047a0-364b-11ec-abf8-0242ac110002",
+        "Config": "cpu:4C,性能盘:100GB,cpu:4C,性能盘:100GB,内存:8GB,性能盘:100GB,内存:8GB,内存:8GB,系统盘:60GB,系统盘:60GB,cpu:4C,系统盘:60GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-29 00:00:00",
+        "GoodsType": "消息引擎",
+        "Label": "",
+        "Product": "消息引擎Kafka v2",
+        "Project": "默认项目组",
+        "Resource": "消息引擎Kafka v2",
+        "Site": "北京H",
+        "TotalCost": "93.09"
+      },
+      {
+        "APP": "云主机虚拟数据中心01",
+        "BeginTime": "2021-10-29 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "d87047a0-364b-11ec-abf8-0242ac110002",
+        "Config": "cpu:4C,cpu:4C,内存:8GB,内存:8GB,内存:8GB,系统盘:60GB,系统盘:60GB,系统盘:60GB,性能盘:100GB,性能盘:100GB,性能盘:100GB,cpu:4C",
+        "Currency": "CN",
+        "EndTime": "2021-10-29 14:50:12",
+        "GoodsType": "消息引擎",
+        "Label": "",
+        "Product": "消息引擎Kafka v2",
+        "Project": "默认项目组",
+        "Resource": "消息引擎Kafka v2",
+        "Site": "北京H",
+        "TotalCost": "57.60"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-01 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-02 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-02 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_标签:0.0万个,OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-03 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-03 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-04 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-04 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_标签:0.0万个,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-05 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-05 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-06 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-06 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-07 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-07 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_写及其它请求计费:0.0万次,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_标签:0.0万个,OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-08 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-08 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-09 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-09 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-10 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-10 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-11 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-11 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_标签:0.0万个,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-12 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-12 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个",
+        "Currency": "CN",
+        "EndTime": "2021-10-13 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-13 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-14 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-14 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-15 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-15 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个,OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-16 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-16 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-17 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-17 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个,OSS_new_写及其它请求计费:0.0万次,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_CDN 回源流量:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-18 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-18 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-19 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-19 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个",
+        "Currency": "CN",
+        "EndTime": "2021-10-20 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-20 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-21 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-21 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_标签:0.0万个,OSS_new_存储空间:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-22 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-22 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-23 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-23 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_外网流出:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_写及其它请求计费:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-24 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-24 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-25 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-25 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_CDN 回源流量:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-26 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-26 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_标签:0.0万个,OSS_new_外网流出:0.0GB,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-27 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-27 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_CDN 回源流量:0.0GB,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-28 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-28 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个,OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB",
+        "Currency": "CN",
+        "EndTime": "2021-10-29 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-29 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_存储空间:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_外网流出:0.0GB,OSS_new_标签:0.0万个,OSS_new_写及其它请求计费:0.0万次",
+        "Currency": "CN",
+        "EndTime": "2021-10-30 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "",
+        "BeginTime": "2021-10-30 00:00:00",
+        "BillType": "按需付费",
+        "CloudId": "ef211673a5ab58199ec1be3a7a63236f",
+        "Config": "OSS_new_请求-读请求计费-GET:0.0万次,OSS_new_外网流出:0.0GB,OSS_new_存储空间:0.0GB,OSS_new_CDN 回源流量:0.0GB,OSS_new_写及其它请求计费:0.0万次,OSS_new_标签:0.0万个",
+        "Currency": "CN",
+        "EndTime": "2021-10-31 00:00:00",
+        "GoodsType": "新对象存储",
+        "Label": "",
+        "Product": "新对象存储",
+        "Project": "默认项目组",
+        "Resource": "www",
+        "Site": "北京E",
+        "TotalCost": "0.00"
+      },
+      {
+        "APP": "北京A云主机",
+        "BeginTime": "2021-10-09 11:27:04",
+        "BillType": "按需付费",
+        "CloudId": "ffb63aa3-af79-4da5-ac4d-8938e9415f6a",
+        "Config": "性能型系统盘:20GB,内存:16GB,操作系统:CDS-OS-CentOS8.2-64bit-Public-V7,vCPU:4C",
+        "Currency": "CN",
+        "EndTime": "2021-10-09 11:28:56",
+        "GoodsType": "云主机",
+        "Label": "",
+        "Product": "通用型云主机g3v2",
+        "Project": "默认项目组",
+        "Resource": "买2台",
+        "Site": "北京A",
+        "TotalCost": "0.03"
+      }
+    ],
+    "EndTime": "2021.10.30",
+    "TotalRecords": 69,
+    "TotalSummary": {
+      "Currency": "CN",
+      "MasterCost": 0,
+      "ToDeduct": 0,
+      "TotalCost": 874.16,
+      "ViceCost": 874.16
+    }
+  },
+  "Message": "账单详情数据获取成功",
+  "TaskId": ""
+}
+```
+
+### 4.DescribeAccountInfo
+
+   **Action: DescribeAccountInfo**
+
+​	**描述：** 查询主账户余额，充值记录已经消费概况
+
+   **请求地址:** cdsapi.capitalonline.net/billing
+
+   **请求方法：GET**
+
+   **请求参数：**无
+
+**返回参数：**
+
+| 参数               | 参数类型 | 含义             |
+| ------------------ | -------- | ---------------- |
+| Code               | string   | 返回码           |
+| Message            | string   | 返回信息         |
+| Data               | dict     | 返回数据字典     |
+| MasterTotalBalance | float    | 主账户余额       |
+| CreditLine         | float    | 信用额度         |
+| ToDeduct           | float    | 待扣金额         |
+| RechargeCount      | int      | 主账户充值次数   |
+| RechargeRecord     | list     | 主账户充值记录   |
+| Currency           | string   | 币种             |
+| Amount             | float    | 主账户充值金额   |
+| SwiftNumber        | string   | 流水号           |
+| CreateDate         | string   | 充值日期         |
+| Type               | string   | 充值方式         |
+| MasterTotalCost    | float    | 主账户消费金额   |
+| CostCount          | int      | 主账户消费月数   |
+| CostRecords        | list     | 主账户月消费记录 |
+| Month              | string   | 消费月时间       |
+| Currency           | string   | 币种             |
+| Amount             | float    | 主账户月消费金额 |
+
+​	**返回示例:**
+
+```json
+{
+  "Code": "success",
+  "Data": {
+    "CostCount": 5,
+    "CostRecords": [
+      {
+        "Amount": 0,
+        "Currency": "CN",
+        "Month": "202107"
+      },
+      {
+        "Amount": 0,
+        "Currency": "CN",
+        "Month": "202108"
+      },
+      {
+        "Amount": 0,
+        "Currency": "CN",
+        "Month": "202109"
+      },
+      {
+        "Amount": 0,
+        "Currency": "CN",
+        "Month": "202110"
+      },
+      {
+        "Amount": 0.01,
+        "Currency": "CN",
+        "Month": "202111"
+      }
+    ],
+    "CreditLine": 0,
+    "MasterTotalBalance": 0,
+    "MasterTotalCost": 0.01,
+    "RechargeCount": 1,
+    "RechargeRecord": [
+      {
+        "Amount": 0.01,
+        "CreateDate": "2021-11-16 11:04:25",
+        "Currency": "CN",
+        "SwiftNumber": "202111161104036848",
+        "Type": "线上充值"
+      }
+    ],
+    "ToDeduct": 16.63
+  },
+  "Message": "主账户的剩余金额、待扣金额、充值记录、消费金额以及月消费金额获取成功",
+  "TaskId": ""
 }
 ```
 
