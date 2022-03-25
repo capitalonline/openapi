@@ -7846,10 +7846,8 @@ def get_status(task_id):
 | 广州A      | CN_Guangzhou_A    | 否             | 中国大陆 |
 | 荷兰A      | EUR_Netherlands_A | 否             | 欧洲地区 |
 | 洛杉矶A    | US_LosAngeles_A   | 否             | 北美地区 |
-| 纽约A      | US_NewYork_A      | 否             | 北美地区 |
 | 上海A      | CN_Shanghai_A     | 否             | 中国大陆 |
 | 上海C      | CN_Shanghai_C     | 否             | 中国大陆 |
-| 上海D      | CN_Shanghai_D     | 否             | 中国大陆 |
 | 首尔A      | APAC_Seoul_A      | 否             | 亚太地区 |
 | 台北A      | CN_Taipei_A       | 否             | 中国大陆 |
 | 无锡A      | CN_Wuxi_A         | 否             | 中国大陆 |
