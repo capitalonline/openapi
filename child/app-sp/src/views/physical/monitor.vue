@@ -64,6 +64,11 @@
           :data="gpu_memory_used"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_temperature"
+          :data="gpu_temperature"
+          class="item"
+        ></line-echart>
       </div>
     </div>
   </div>
@@ -178,7 +183,7 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0,
     legend: []
-  };
+  }
   private gpu_memory_used = {
     title: '显存使用率',
     unit: '',
@@ -186,7 +191,15 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0,
     legend: []
-  };
+  }
+  private gpu_temperature = {
+    title: 'GPU温度',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  }
   private default_date_timer = [];
 
   private FnGetTimer(timer) {
@@ -334,8 +347,9 @@ export default class Monitor extends Vue{
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
     if (resData.code === 'Success') {
-      ecs_list = resData.data.ecs_list
-      ecs_list = resData.data.ecs_list
+      ecs_list = resData.data.ecs_list.filter(item => {
+        return item.status !== 'destroy'
+      })
     }
     Promise.all(ecs_list.map(item => {
       this.gpu_used.legend.push(item.ecs_name)
@@ -366,6 +380,21 @@ export default class Monitor extends Vue{
       })
     })).then(resData => {
       this.FnHandleMoreData('gpu_memory_used', resData)
+    })
+    Promise.all(ecs_list.map(item => {
+      this.gpu_temperature.legend.push(item.ecs_name)
+      return Service.get_gpu(type, {
+        queryType: 'temperature',
+        hostId: item.ecs_id,
+        region: reqData.region,
+        replica: reqData.replica,
+        ip: item.private_net,
+        instanceType: 'vm',
+        start: reqData.start,
+        end: reqData.end
+      })
+    })).then(resData => {
+      this.FnHandleMoreData('gpu_temperature', resData)
     })
   }
   private created() {
