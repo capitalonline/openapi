@@ -111,12 +111,15 @@
                         <el-form-item
                             prop="disk_name"
                             label="云盘名称"
+                            
                         >
                             <div class="disk-name">
                                 <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                                 <span class="name-error" v-if="inn.disk_name.trim().length===1">云盘名称长度不能为1</span>
+                                <span class="name-error" v-else-if="inn.disk_name.trim().length>1 && !(/^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/.test(inn.disk_name))">云盘名称格式不正确</span>
+
                             </div>
-                            <div class="remark">2-40个字符，可包含大小写字母、中文、数字、点号、下划线、半角冒号、连字符、英文括号等常用字符</div>
+                            <div class="remark">2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头</div>
                         </el-form-item>
                         <div class="card_inline">
                             <el-form-item
@@ -666,7 +669,8 @@ export default class CreateDisk extends Vue{
         if(this.form_data.ecs_id==="" && this.form_data.isMounted==="1"){
             return;
         }
-        if(this.form_data.disk_list.some(item=>item.disk_name.trim().length===1)){
+        let reg = /^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/
+        if(this.form_data.disk_list.some(item=>item.disk_name.trim().length===1 || (item.disk_name.trim().length>1 && !reg.test(item.disk_name)))){
             return;
         }
         this.form_data.disk_list.map(item=>{

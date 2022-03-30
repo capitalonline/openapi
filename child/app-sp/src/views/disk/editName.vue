@@ -17,8 +17,9 @@
             <div class="label">云盘名称:</div>
             <el-input v-model="new_name" placeholder="请输入新的名称" minlength="2" maxlength="40" show-word-limit></el-input>
             <span class="name-error" v-if="new_name.trim().length<2">云盘名称长度最少为2</span>
+            <span class="name-error" v-else-if="!(/^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/.test(new_name))">云盘名称格式不正确</span>
         </div>
-        <div class="remark">长度限制为2-40个字符</div>
+        <div class="remark">2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头</div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
             <el-button @click="cancel">取消</el-button>
@@ -35,10 +36,14 @@ export default class EditName extends Vue{
     @Prop({default:()=>{}}) name!:any;
     private new_name:string = this.name.disk_name
     private async confirm(){
-        if(this.new_name.trim().length<2){
-            console.log("this.new_name.trim()",this.new_name.trim())
+        let reg = /^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/
+        if(!reg.test(this.new_name)){
             return;
         }
+        // if(this.new_name.trim().length<2){
+        //     console.log("this.new_name.trim()",this.new_name.trim())
+        //     return;
+        // }
         let res:any =await Service.edit_disk_name({
             customer_id:this.name.customer_id,
             disk_id:this.name.disk_id,
