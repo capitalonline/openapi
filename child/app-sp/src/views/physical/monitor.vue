@@ -97,7 +97,8 @@ export default class Monitor extends Vue{
   private host_info = {
     region_id: '',
     az_id: '',
-    host_ip: ''
+    host_ip: '',
+    host_purpose: ''
   };
   private cpu_used = {
     title: 'CPU使用率',
@@ -240,6 +241,9 @@ export default class Monitor extends Vue{
     })
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
+      if (this.host_info.host_purpose !== 'GPU') {
+        delete this.tab_list.gpu
+      }
       this.FnGetChartData()
     }
   }

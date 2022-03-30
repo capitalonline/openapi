@@ -87,6 +87,11 @@
           :data="gpu_memory_used"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_temperature"
+          :data="gpu_temperature"
+          class="item"
+        ></line-echart>
       </div>
     </el-card>
   </div>
@@ -220,6 +225,14 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0
   };
+  private gpu_temperature = {
+    title: 'GPU温度',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  }
   private default_date_timer = [];
 
   private FnGetTimer(timer) {
@@ -428,10 +441,13 @@ export default class Monitor extends Vue{
   private FnGetGpuInfo(type, reqData) {
     Service.get_gpu(type, Object.assign({queryType: 'gpu_usage'}, reqData)).then(resData => {
       this.FnHandleSingleData('gpu_used', resData);
-    });
+    })
     Service.get_gpu(type, Object.assign({queryType: 'memory_usage'}, reqData)).then(resData => {
       this.FnHandleSingleData('gpu_memory_used', resData);
-    });
+    })
+    Service.get_gpu(type, Object.assign({queryType: 'temperature'}, reqData)).then(resData => {
+      this.FnHandleSingleData('gpu_temperature', resData);
+    })
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
