@@ -330,21 +330,43 @@ export default class Monitor extends Vue{
       billing_method: 'all',
       host_id: this.host_id
     })
+    let ecs_list = []
+    this.gpu_used.legend = []
+    this.gpu_memory_used.legend = []
     if (resData.code === 'Success') {
-      this.gpu_used.legend = resData.data.ecs_list
-      this.gpu_memory_used.legend = resData.data.ecs_list
+      ecs_list = resData.data.ecs_list
+      ecs_list = resData.data.ecs_list
     }
-    let service_list = []
-    this.gpu_used.legend.forEach(item => {
-      service_list.push()
+    Promise.all(ecs_list.map(item => {
+      this.gpu_used.legend.push(item.ecs_name)
+      return Service.get_gpu(type, {
+        queryType: 'gpu_usage',
+        hostId: item.ecs_id,
+        region: reqData.region,
+        replica: reqData.replica,
+        ip: item.private_net,
+        instanceType: 'vm',
+        start: reqData.start,
+        end: reqData.end
+      })
+    })).then(resData => {
+      this.FnHandleMoreData('gpu_used', resData)
     })
-
-    Service.get_gpu(type, {queryType: 'gpu_usage', ...reqData}).then(resData => {
-      this.FnHandleSingleData('gpu_used', resData);
-    });
-    Service.get_gpu(type, {queryType: 'memory_usage', ...reqData}).then(resData => {
-      this.FnHandleSingleData('gpu_memory_used', resData);
-    });
+    Promise.all(ecs_list.map(item => {
+      this.gpu_memory_used.legend.push(item.ecs_name)
+      return Service.get_gpu(type, {
+        queryType: 'memory_usage',
+        hostId: item.ecs_id,
+        region: reqData.region,
+        replica: reqData.replica,
+        ip: item.private_net,
+        instanceType: 'vm',
+        start: reqData.start,
+        end: reqData.end
+      })
+    })).then(resData => {
+      this.FnHandleMoreData('gpu_memory_used', resData)
+    })
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
