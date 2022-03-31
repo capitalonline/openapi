@@ -47,10 +47,15 @@
           <span :class="scope.row.status">{{ scope.row.status_display }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="配置详情" width="90">
+      <el-table-column
+        label="计算规格"
+        :filters="ecs_goods_name_list"
+        column-key="ecs_goods_name"
+        width="100">
         <template #default="scope">
-            <el-button type="text" @click="FnToDetail(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_detail')">配置详情</el-button>
+          {{ scope.row.ecs_goods_name }} <br>
+          {{scope.row.cpu_size}}vCPU | {{scope.row.ram_size}}GiB <br>
+          <span v-if="scope.row.gpu_size">| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="私网IP">
@@ -111,6 +116,8 @@
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
+          <el-button type="text" @click="FnToDetail(scope.row.ecs_id)"
+            :disabled="!operate_auth.includes('instance_detail')">详情</el-button>
           <el-button type="text" @click="FnToRecord(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('instance_record')">操作记录</el-button>
             <el-button type="text" @click="FnToMonitor(scope.row.ecs_id)" :disabled="!operate_auth.includes('monitor')">监控</el-button>
@@ -222,7 +229,19 @@
             <reset-pwd ref="reset_pwd" label="新密码" :customer_id="customer_id" :az_id="az_id"></reset-pwd>
           </template>
         </div>
-        <div class="text-right m-right20" v-if="total_price">变更后总价：<span class="num_message">{{ total_price }}</span></div>
+        <div
+          class="text-right m-right20"
+          v-if="total_price"
+        >
+          变更后总价：
+          <span class="num_message">{{ total_price }}</span>
+        </div>
+        <div class="text-center" v-if="default_operate_type === 'shutdown_ecs'">
+          关机方式：
+          <el-radio v-model="shutdown_ecs_type" label="shutdown_ecs" class="m-left20">正常关机</el-radio>
+          <el-radio v-model="shutdown_ecs_type" label="compel_shutdown_ecs" class="m-left20">强制关机</el-radio>
+          <mark-tip class="mark-tip" content="等同于断电处理，Windows操作系统可能会损坏，请谨慎选择"></mark-tip>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -251,6 +270,7 @@ import updateSpec from './updateSpec.vue';
 import updateOs from './updateOs.vue';
 import updateDisk from './updateDisk.vue';
 import Recover from './recover.vue';
+import MarkTip from '../../components/markTip.vue';
 import moment from 'moment';
 @Component({
   components: {
@@ -262,15 +282,12 @@ import moment from 'moment';
     updateSpec,
     updateOs,
     updateDisk,
-    Recover
+    Recover,
+    MarkTip
   },
 })
 
 export default class App extends Vue {
-  $router;
-  $route;
-  $message;
-  $store;
   private search_con = {
     ecs_id: { placeholder: '请输入云服务器ID' },
     ecs_name: { placeholder: '请输入云服务器名称' },
@@ -291,6 +308,7 @@ export default class App extends Vue {
   private search_reqData = {};
   private search_billing_method = 'all';
   private search_op_source = '';
+  private search_ecs_goods_name = [];
   private instance_list: Array<Object> = [];
   private customer_id: string = '';
   private az_id: string = '';
@@ -305,6 +323,7 @@ export default class App extends Vue {
   private show_operate_dialog: boolean = false;
   private operate_title: string = '';
   private default_operate_type: string = '';
+  private shutdown_ecs_type: string = 'shutdown_ecs';
   private record_visible:boolean = false;
   private record_id:string = '';
   private detail_visible:boolean = false;
@@ -321,11 +340,13 @@ export default class App extends Vue {
     1: '包年包月',
   }
   private billing_method_list = [];
+  private ecs_goods_name_list = [];
   private timer = null;
   private os_info = {};
   private disk_billing_info = {};
   private total_price = '';
   private ecs_list_price = {};
+
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       ecs_id: data.ecs_id,
@@ -350,6 +371,9 @@ export default class App extends Vue {
     if (val.billing_method) {
       this.search_billing_method = val.billing_method.length>0?val.billing_method[0]:'all';
     }
+    if (val.ecs_goods_name) {
+      this.search_ecs_goods_name = val.ecs_goods_name;
+    }
     this.FnGetList();
   }
   private async FnGetList(loading: boolean = true) {
@@ -360,12 +384,18 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
-    const resData: any = await Service.get_instance_list(Object.assign({
+    let reqData = Object.assign({
       billing_method: this.search_billing_method==''?'no':this.search_billing_method,
-      op_source: this.search_op_source,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size
-    }, this.search_reqData));
+    }, this.search_reqData)
+    if (this.search_op_source) {
+      reqData['op_source'] = this.search_op_source
+    }
+    if (this.search_ecs_goods_name.length > 0) {
+      reqData['spec_family_ids'] = JSON.stringify(this.search_ecs_goods_name)
+    }
+    const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === 'Success') {
       this.instance_list = resData.data.ecs_list;
       var rows = [];
@@ -428,7 +458,7 @@ export default class App extends Vue {
         flag = false;
         break;
       }
-      if (['delete_ecs', 'recover_ecs', 'destroy_ecs'].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
+      if (['recover_ecs'].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
         this.$message.warning(`只允许对同一类型实例进行批量${operate_info.label}操作！`)
         flag = false;
         break;
@@ -535,7 +565,10 @@ export default class App extends Vue {
     }
   }
   private async FnPowerOperate(reqData) {
-    const resData: any = await Service.operate_instance(reqData);
+    if (this.default_operate_type === 'shutdown_ecs') {
+      reqData.op_type = this.shutdown_ecs_type
+    }
+    const resData = await Service.operate_instance(reqData);
     if(resData.code == "Success") {
       this.$message.success(resData.msg || `成功下发 ${this.operate_title} 任务！`);
       this.FnClose();
@@ -719,7 +752,9 @@ export default class App extends Vue {
       ecs_id: id
     })
     if (resData.code === 'Success') {
-      window.open(resData.data.vnc_info);
+      let vnc_info = resData.data.vnc_info.split('/vnc_lite.html');
+      let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
+      window.open(url)
     }
   }
   private FnClose() {
@@ -731,12 +766,10 @@ export default class App extends Vue {
   private FnToDetail(id) {
     this.detail_id = id
     this.detail_visible = true
-    // this.$router.push('/instance/detail/' + id)
   }
   private FnToRecord(id) {
     this.record_id = id
     this.record_visible = true
-    // this.$router.push('/instance/record/' + id)
   }
   private FnToMonitor(id) {
     this.$router.push('/instance/monitor/' + id)
@@ -764,7 +797,7 @@ export default class App extends Vue {
     if (this.$store.state.status_list.length > 0) {
       this.search_con.status.list = this.$store.state.status_list;
     } else {
-      let resData: any = await Service.get_status_list();
+      const resData = await Service.get_status_list();
       if (resData.code === 'Success') {
         this.search_con.status.list = [];
         for (let key in resData.data) {
@@ -777,10 +810,23 @@ export default class App extends Vue {
       }
     }
   }
+  // 获取云服务器类型信息
+  private async FnGetCateGoryList() {
+    const resData = await Service.get_family_data()
+    if (resData.code === 'Success') {
+      this.ecs_goods_name_list = resData.data.spec_family_list.map(item => {
+        return {
+          value: item.spec_family_id,
+          text: item.name
+        }
+      })
+    }
+  }
 
   private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
-    this.FnGetStatus();
+    this.FnGetStatus()
+    this.FnGetCateGoryList()
     this.search_con.os_type.list = [{
       label: "centos",
       type: "centos"
@@ -820,5 +866,9 @@ export default class App extends Vue {
 }
 .m-top23 {
   margin-top: 23px;
+}
+.mark-tip {
+  margin-left: -20px;
+  vertical-align: top;
 }
 </style>

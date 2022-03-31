@@ -20,6 +20,9 @@ export default {
   get_status_list() {
     return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
   },
+  get_family_data() {
+    return service(getEcsOptions('GET', '/ecs/get_family_data/'))
+  },
   reset_password(reqData) {
     return service(getEcsOptions('POST', '/ecs/ecs_reset_password/', reqData))
   },
