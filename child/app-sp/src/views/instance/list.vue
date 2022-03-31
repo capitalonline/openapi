@@ -267,10 +267,6 @@ import moment from 'moment';
 })
 
 export default class App extends Vue {
-  $router;
-  $route;
-  $message;
-  $store;
   private search_con = {
     ecs_id: { placeholder: '请输入云服务器ID' },
     ecs_name: { placeholder: '请输入云服务器名称' },
@@ -795,7 +791,7 @@ export default class App extends Vue {
       this.billing_method_list.push({ value: key, text: this.billing_method_relation[key]})
     }
     if(this.$route.query.host_id) {
-      this.search_con.host_id.default_value = this.$route.query.host_id;
+      this.search_con.host_id.default_value = this.$route.query.host_id as string;
     } else {
       this.FnSearch()
     }
