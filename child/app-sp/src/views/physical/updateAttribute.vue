@@ -2,11 +2,11 @@
     <el-dialog
         title="设置属性"
         :visible.sync="visible_sync"
-        width="500px"
+        width="600px"
         :destroy-on-close="true"
         :close-on-click-modal="false"
     >
-        <div class="main">
+        <div class="main-edit">
             <div class="m-bottom20">
                 <span>主机类型</span>
                 <el-select v-model="type" @change="changeType">
@@ -157,12 +157,22 @@ export default class UpdateAttribute extends Vue{
 }
 </script>
 <style lang="scss" scoped>
-.main{
+.main-edit{
     span{
         width: 120px;
         display: inline-block;
         margin-right: 20px;
         text-align: right;
+    }
+    .el-select,.el-input{
+        width: 340px;
+    }
+}
+</style>
+<style lang="scss">
+.main-edit{
+    .el-select .el-tag{
+        width: 100% !important;
     }
 }
 </style>
