@@ -170,6 +170,7 @@ export default class updateSpec extends Vue{
       cpu_model: row.cpu_name,
       support_gpu_driver: row.support_gpu_driver,
       spec_family_id: row.spec_family_id,
+      spec_id: row.spec_id,
       billing_info: this.billing_info
     }
   }
