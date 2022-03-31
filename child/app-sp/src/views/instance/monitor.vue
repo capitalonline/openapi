@@ -230,8 +230,7 @@ export default class Monitor extends Vue{
     unit: '',
     xTime: [],
     yValue: [],
-    resize: 0,
-    legend: []
+    resize: 0
   }
   private default_date_timer = [];
 
