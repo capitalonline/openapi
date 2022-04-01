@@ -39,11 +39,11 @@ instance.interceptors.response.use(
     if (loadingCount <= 0) {
       loadingInstance.close();
     }
-    if (response.status == 200) {
+    if (response.status == 200 && response.data) {
       if (response.data.code === 'Unauthorized') {
         const sso_url = response.data.data.sso || process.env.VUE_APP_SSO_URL;
         window.location.href = sso_url + '?referer=' + window.location.href.split('?')[0];
-      } else if (response.data.code === 'Success' || response.data.code === 0)  {
+      } else if (response.data.code === 'Success' || response.data.code === 0 || response.data instanceof Blob)  {
         return response.data
       } else {
         Message({ message: response.data.message || response.data.msg, type: 'error' })
@@ -58,6 +58,7 @@ instance.interceptors.response.use(
     }
     if(error.response.status == 401) {
     } else {
+      
       Message({ message: error.response.data.msg || error.response.data, type: 'error' })
     }
     return Promise.reject(error.response.data)

@@ -138,7 +138,7 @@ export default class UpdateAttribute extends Vue{
             spec_family_ids:this.family,
         })
         if(res.code==='Success'){
-             if(res.data.fail_list.length>0){
+             if(res.data.fail_host_list.length>0){
                 this.$message.warning(res.message)
                 this.back("0");
                 return;

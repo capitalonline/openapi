@@ -1,5 +1,6 @@
 import service from '../http'
 import { getEcsOptions }from '../common'
+import qs from 'qs'
 
 export default {
   get_instance_list(reqData) {
@@ -19,6 +20,9 @@ export default {
   },
   get_status_list() {
     return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
+  },
+  get_family_data() {
+    return service(getEcsOptions('GET', '/ecs/get_family_data/'))
   },
   reset_password(reqData) {
     return service(getEcsOptions('POST', '/ecs/ecs_reset_password/', reqData))
@@ -47,5 +51,15 @@ export default {
   // 开启计费获取价格
   each_resource_price(reqData) {
     return service(getEcsOptions('POST', '/ecs/each_resource_price/', reqData))
+  },
+  // 导出excel
+  export_list(reqData) {
+    return service({
+      method: 'GET',
+      url: '/ecs_business/v1/ecs/ecs_list_download/',
+      params: reqData,
+      paramsSerializer: params => qs.stringify(params),
+      responseType: 'blob'
+    })
   }
 }

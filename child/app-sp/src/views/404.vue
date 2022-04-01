@@ -4,7 +4,11 @@
       <img src="@/assets/404.png">
     </div>
     <div class="error-img">
-      您没有权限访问，请联系管理员！
+      <div>可能原因：</div>
+      <ul>
+        <li>输入的网址不正确！</li>
+        <li>您没有权限访问，请联系管理员！</li>
+      </ul>
     </div>
   </div>
 
@@ -27,6 +31,7 @@ export default class App extends Vue {
   font-size: 18px;
   .error-img {
     margin-right: 30px;
+    line-height: 32px;
   }
 }
 </style>
