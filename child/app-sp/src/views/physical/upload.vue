@@ -89,8 +89,16 @@ export default class Upload extends Vue{
   }
   private FnSuccess(response, file, fileList){
     if(response.code==="Success"){
-      this.$message.success(response.message)
-      this.back("1")
+      if(response.data.fail_host_list.length>0){
+        this.$message.warning(`物理机导入任务下发失败！`)
+        this.back("1");
+        return;
+      }else{
+        this.$message.success(`物理机导入任务下发成功！`)
+        this.back("1")
+      }
+      // this.$message.success(response.message)
+      // this.back("1")
     }else{
       this.$message.error(JSON.stringify(response.message))
       this.back("0")

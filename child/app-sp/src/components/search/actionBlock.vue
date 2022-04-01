@@ -87,7 +87,10 @@ export default class ActionBlock extends Vue {
       }
     }
     if (flag > 0) {
-      this.FnSearch()
+      setTimeout(()=>{
+        this.FnSearch()
+      },500)
+      
     }
   }
 }

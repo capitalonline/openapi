@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="instance-list">
     <action-block :search_option="search_con" @fn-search="FnSearch">
       <template #default>
         <el-button type="primary" @click="FnToCreate"
@@ -26,6 +26,13 @@
          :disabled="!operate_auth.includes('open_bill')">开启计费</el-button>
       </template>
     </action-block>
+    <div class="icon m-bottom10">
+      <el-tooltip content="导出" placement="bottom" effect="light">
+        <el-button type="text" @click="FnExport" v-loading="loading">
+          <svg-icon icon="export" class="export"></svg-icon>
+        </el-button>
+      </el-tooltip>
+    </div>
     <el-table
       ref="multipleTable"
       :data="instance_list"
@@ -139,7 +146,13 @@
       :total="page_info.total">
     </el-pagination>
 
-    <el-dialog :title="operate_title" :visible.sync="show_operate_dialog" :close-on-click-modal="false" @close="FnClose">
+    <el-dialog
+      :title="operate_title"
+      :visible.sync="show_operate_dialog"
+      :close-on-click-modal="false"
+      @close="FnClose"
+      width="60%"
+    >
       <template v-if="default_operate_type === 'recover_ecs'">
         <Recover ref="recover" :multiple_selection="multiple_selection" :customer_id="customer_id" :is_gpu="is_gpu" @fn-close="FnClose"></Recover>
       </template>
@@ -261,8 +274,11 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LabelBlock from '../../components/labelBlock.vue';
 import actionBlock from '../../components/search/actionBlock.vue';
+import SvgIcon from '../../components/svgIcon/index.vue';
 import getInsStatus from '../../utils/getStatusInfo';
+import {trans} from '../../utils/transIndex';
 import Service from '../../https/instance/list';
+import EcsService from '../../https/instance/create';
 import Record from './record.vue';
 import Detail from './detail.vue';
 import resetPwd from './resetPwd.vue';
@@ -283,12 +299,14 @@ import moment from 'moment';
     updateOs,
     updateDisk,
     Recover,
+    SvgIcon,
     MarkTip
   },
 })
 
 export default class App extends Vue {
   private search_con = {
+    az_id: { placeholder: '请选择可用区', list: [] },
     ecs_id: { placeholder: '请输入云服务器ID' },
     ecs_name: { placeholder: '请输入云服务器名称' },
     status: { placeholder: '请选择云服务器状态', list: [] },
@@ -346,9 +364,11 @@ export default class App extends Vue {
   private disk_billing_info = {};
   private total_price = '';
   private ecs_list_price = {};
+  private loading = false;
 
   private FnSearch(data: any = {}) {
     this.search_reqData = {
+      az_id: data.az_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
       status: data.status,
@@ -810,6 +830,16 @@ export default class App extends Vue {
       }
     }
   }
+  private async get_az_list(){
+    const res = await EcsService.get_region_az_list({})
+    if(res.code==="Success"){
+      res.data.forEach(item=>{
+        item.region_list.forEach(inn=>{
+          this.search_con.az_id.list = [...this.search_con.az_id.list, ...trans(inn.az_list,'az_name','az_id','label','type')]
+        })
+      })
+    }
+  }
   // 获取云服务器类型信息
   private async FnGetCateGoryList() {
     const resData = await Service.get_family_data()
@@ -823,9 +853,33 @@ export default class App extends Vue {
     }
   }
 
+  private async FnExport() {
+    this.loading = true;
+    const resData = await Service.export_list(Object.assign({
+      billing_method: this.search_billing_method==''?'no':this.search_billing_method,
+      op_source: this.search_op_source,
+    }, this.search_reqData));
+    if (resData) {
+      this.loading = false;
+      let blob = new Blob([resData], {
+        type: 'application/octet-stream'
+      });
+      let reader = new FileReader();
+      reader.readAsText(blob, 'utf-8');
+      reader.onload = () => {
+        let link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "云服务器列表" + ".xlsx";
+        link.click();
+        window.URL.revokeObjectURL(link.href)
+      };
+    }
+  }
+
   private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus()
+    this.get_az_list()
     this.FnGetCateGoryList()
     this.search_con.os_type.list = [{
       label: "centos",
@@ -870,5 +924,11 @@ export default class App extends Vue {
 .mark-tip {
   margin-left: -20px;
   vertical-align: top;
+}
+</style>
+<style lang="scss">
+.instance-list .el-loading-spinner .circular {
+  width: 24px;
+  height: 24px;
 }
 </style>

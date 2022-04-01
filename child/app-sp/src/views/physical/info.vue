@@ -68,7 +68,7 @@ export default class Info extends Vue{
         host_model:{label:'型号:',value:'111'},
         cpu_model:{label:'处理器类型:',value:''},
         cpu_sockets:{label:'处理器数量:',value:''},
-        cpu_cores:{label:'逻辑处理器:',value:''},
+        cpu_cores_total:{label:'逻辑处理器:',value:''},
         netcard_count:{label:'网卡:',value:''},
         gpu_model:{label:'显卡型号:',value:''},
         gpu_count:{label:'显卡数量:',value:''},
