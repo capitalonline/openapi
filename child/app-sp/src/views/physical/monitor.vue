@@ -271,7 +271,7 @@ export default class Monitor extends Vue{
     let index = 0;
     resData.forEach((item: any) => {
       if (item.code === 'Success') {
-        if (index === 0) {
+        if (item.data.xTime) {
           this[type].xTime = item.data.xTime;
           this[type].unit = item.data.unit;
         }
@@ -350,6 +350,7 @@ export default class Monitor extends Vue{
     let ecs_list = []
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
+    this.gpu_temperature.legend = []
     if (resData.code === 'Success') {
       ecs_list = resData.data.ecs_list.filter(item => {
         return item.status !== 'destroy'
