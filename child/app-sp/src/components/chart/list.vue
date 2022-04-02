@@ -121,6 +121,7 @@ export default class LineEchart extends Vue {
     };
     this.option.series = [];
     this.legend_relation = {};
+    this.legend = [];
     if (!this.data.legend || this.data.legend.length === 0) {
       this.option.series.push({
         name: this.data.title,
