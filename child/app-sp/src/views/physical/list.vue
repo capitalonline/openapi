@@ -24,6 +24,7 @@
         @selection-change="handleSelectionChange"
         @sort-change="FnSortChange"
         @filter-change="filterAttribute"
+        :max-height="tableHeight"
       >
         <el-table-column type="selection"></el-table-column>
         <el-table-column 
@@ -41,11 +42,9 @@
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu'">
-            <div>22</div>
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
-            <div>33</div>
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
           </template>
         </el-table-column>
@@ -186,7 +185,8 @@ export default class PhysicalList extends Vue {
   private host_uses=[];
   private host_source=[];
   private all_column_item=[];
-  private custom_visible:boolean = false
+  private custom_visible:boolean = false;
+  private tableHeight=70;
   private custom_host=[
     {label:'主机名',prop:'host_name',sortable:'custom'},
     {label:'区域',prop:'az_name'},
@@ -225,6 +225,16 @@ export default class PhysicalList extends Vue {
         this.search_option[i].default_value = this.$store.state.host_search[i]
       }
       
+  }
+  mounted() {
+    this.$nextTick(()=>{
+      let table = this.$refs.table as any
+      this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      let self = this;
+      window.onresize = function(){
+        self.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      }
+    });
   }
   private async get_host_list_field(){
     let res:any = await Service.get_host_list_field({})
