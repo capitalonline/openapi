@@ -116,7 +116,7 @@
                             <div class="disk-name">
                                 <el-input v-model="inn.disk_name" minlength="2" maxlength="40" show-word-limit />
                                 <span class="name-error" v-if="inn.disk_name.trim().length===1">云盘名称长度不能为1</span>
-                                <span class="name-error" v-else-if="inn.disk_name.trim().length>1 && !(/^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/.test(inn.disk_name))">云盘名称格式不正确</span>
+                                <span class="name-error" v-else-if="inn.disk_name.trim().length>1 && !(/^[A-Za-z][\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{1,39}$/.test(inn.disk_name))">云盘名称不符合规范</span>
 
                             </div>
                             <div class="remark">2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头</div>
@@ -435,6 +435,14 @@ export default class CreateDisk extends Vue{
                 return item;
             })}
         }
+    }
+    //获取云盘剩余可使用额度
+    private async get_disk_limit(){
+        let res = await disk_service.get_disk_limit({
+            customer_id:this.form_data.customer_id,
+            az_id:this.form_data.az,
+            feature:'',
+        })
     }
     private clearEcs(){
         this.form_data.ecs_id="";
