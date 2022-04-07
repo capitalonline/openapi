@@ -264,6 +264,7 @@ export default class CreateDisk extends Vue{
                 iops:2824,
                 throughput:96,
                 disk_feature:'',
+                disk_max:1
             }
         ],
         
@@ -282,7 +283,8 @@ export default class CreateDisk extends Vue{
     private billing_info:any={}
     private visible:boolean=false
     private total_price:string='￥0.00/天';
-    private price_unit:string="￥"
+    private price_unit:string="￥";
+    private restVolume:any={}
     private config_info={
         regionAz:{label:'地域及可用区：',value:'--'},
         ecs_name:{label:'挂载实例名称：',value:'--'},
@@ -406,7 +408,8 @@ export default class CreateDisk extends Vue{
             page_size:20,
             keyword:val,
             customer_id:this.form_data.customer_id,
-            az_id:this.form_data.az
+            az_id:this.form_data.az,
+            billing_method: 'all'
         });
         if (resData.code == 'Success') {
             /*todo
@@ -426,23 +429,35 @@ export default class CreateDisk extends Vue{
             this.billing_info = resData.data.billing_info
             this.disk_type_list = resData.data.data_disk.filter(item=>item.disk_feature==="HDD" || item.disk_feature==="SSD");
             this.disk_type_list.map(item=>{
+                this.get_disk_limit(item.disk_feature)
                 this.data_disk_info = Object.assign({},this.data_disk_info,{[item.ecs_goods_id]:item});
             })
+            // this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
+            //     item.ecs_goods_id = this.disk_type_list[0].ecs_goods_id;
+            //     item.disk_feature = this.disk_type_list[0].disk_feature;
+            //     this.change_type(item.ecs_goods_id,index)
+            //     return item;
+            // })}
+        }
+    }
+    //获取云盘剩余可使用额度
+    private async get_disk_limit(type){
+        let res = await disk_service.get_disk_limit({
+            customer_id:this.form_data.customer_id,
+            az_id:this.form_data.az,
+            feature:type,
+        })
+        if(res.code==='Success'){
+            this.restVolume[type] = res.data.rest_volume;
             this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
                 item.ecs_goods_id = this.disk_type_list[0].ecs_goods_id;
                 item.disk_feature = this.disk_type_list[0].disk_feature;
+                item.disk_max = this.restVolume[this.disk_type_list[0].disk_feature] > this.disk_type_list[0].disk_max ? 
+                                this.disk_type_list[0].disk_max : this.restVolume[this.disk_type_list[0].disk_feature]
                 this.change_type(item.ecs_goods_id,index)
                 return item;
             })}
         }
-    }
-    //获取云盘剩余可使用额度
-    private async get_disk_limit(){
-        let res = await disk_service.get_disk_limit({
-            customer_id:this.form_data.customer_id,
-            az_id:this.form_data.az,
-            feature:'',
-        })
     }
     private clearEcs(){
         this.form_data.ecs_id="";
@@ -456,7 +471,7 @@ export default class CreateDisk extends Vue{
         const resData: any = await detail_service.get_detail({
             ecs_id:this.form_data.ecs_id
         });
-        if (resData.code == 'Success') {
+        if (resData.code === 'Success') {
             const {data:{disk,ecs_rule,ecs_name}}=resData
             let mounted_disk= disk.data_disk_conf ? disk.data_disk_conf.length : 0;
             if(mounted_disk===16){
@@ -532,6 +547,10 @@ export default class CreateDisk extends Vue{
         this.config_info.regionAz.value=area_name+'-'+region_name+'-'+this.az_list[0].az_name
         this.clearEcs()
     }
+    //获取当前页面剩余容量
+    getRemain(type){
+        this.form_data.disk_list
+    }
     //新增云盘配置
     private add(){
         if(this.form_data.disk_list.length===this.disk_total){
@@ -545,6 +564,7 @@ export default class CreateDisk extends Vue{
             throughput:this.disk_type_list[0].min_throughput,
             amount:1,
             disk_feature:this.disk_type_list[0].disk_feature,
+            disk_max:
         }]}
         this.get_disk_quantity()
     }
