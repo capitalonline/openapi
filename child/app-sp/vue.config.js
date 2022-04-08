@@ -13,8 +13,8 @@ module.exports = {
     proxy: {
       '/ecs_business': {
         // target: '10.131.165.157:8001',
-        target:'http://cos-ecs-business.gic.pre',
-        // target:'http://ecs-business.gic.test',
+        // target:'http://cos-ecs-business.gic.pre',
+        target:'http://ecs-business.gic.test',
         ws: true,
         changeOrigin: true
       },
