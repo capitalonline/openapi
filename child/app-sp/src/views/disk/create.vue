@@ -143,7 +143,8 @@
                                     :step="get_step_max(inn.ecs_goods_id).step" 
                                     :min="get_step_max(inn.ecs_goods_id).min" 
                                     :max="get_step_max(inn.ecs_goods_id).max" 
-                                    @input="change_capacity(inn.disk_size,inn.ecs_goods_id)" 
+                                    @input="change_capacity(inn.ecs_goods_id)"
+                                    @change="change_capacity(inn.ecs_goods_id)"
                                 >
                                 </el-input-number>&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
                                 <span class="m-left20">IOPS: {{inn.iops}}&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].iops_unit : 'IOPS'}}</span>
@@ -466,12 +467,13 @@ export default class CreateDisk extends Vue{
         // if(res.code==='Success'){
             // this.restVolume[type] = res.data.rest_volume;//各类型总剩余容量;
             // this.showResetVolume[type] = res.data.rest_volume;//显示当前可使用容量;
-            this.showResetVolume['HDD'] = 120;
+            this.showResetVolume['HDD'] = 20;
             this.showResetVolume['SSD'] = 100;
         // }
     }
     private clearEcs(){
         this.form_data.ecs_id="";
+        this.ecs_mounted_disk=0
         this.config_info.ecs_name.value = '--'
         this.ecs_specifications = ''
         this.get_instance_list()
@@ -530,7 +532,11 @@ export default class CreateDisk extends Vue{
             ssd:ssdSize,
         }
     }
-    set_disk_total(){
+    set_disk_total(type){
+        let num = this.showResetVolume[type] / this.form_data.disk_list[0].disk_size;//可挂载块数
+        this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? Math.floor(num) : (16 - this.ecs_mounted_disk) : Math.floor(num)
+        this.form_data.disk_list[0].amount = this.disk_total > this.form_data.disk_list[0].amount ? this.form_data.disk_list[0].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
+        this.get_disk_quantity()
 
     }
     //设置挂载
@@ -603,13 +609,13 @@ export default class CreateDisk extends Vue{
     private async changeNum(index,current){
         await this.$nextTick(()=>{
             if(!current)this.$set(this.form_data.disk_list[index],'amount',1);
-            // let 
-            this.get_disk_quantity()
-            // const sum:number = this.form_data.isMounted==='0' ? 50 : this.disk_total
-            // if(this.total>sum){
-            //     this.form_data.disk_list[index].amount = this.form_data.disk_list[index].amount - (this.total - sum)
-            //     this.total = sum
-            // }
+            let type = this.form_data.disk_list[0].disk_feature;
+            this.set_disk_total(type)
+            // let num = this.showResetVolume[type] / this.form_data.disk_list[0].disk_size;//可挂载块数
+            // this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? Math.floor(num) : (16 - this.ecs_mounted_disk) : Math.floor(num)
+            // this.form_data.disk_list[0].amount = this.disk_total > this.form_data.disk_list[0].amount ? this.form_data.disk_list[0].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
+            // this.get_disk_quantity()
+            
         });
         
     }
@@ -656,11 +662,11 @@ export default class CreateDisk extends Vue{
     //监听类型改变
     private change_type(id,index){
         let type = this.form_data.disk_list[index].disk_feature;
-        if(this.data_disk_info[id].disk_min > this.showResetVolume[type]){
+        if(this.form_data.disk_list[index].disk_size > this.showResetVolume[type]){
             this.$message.warning(`${type}剩余可使用空间不足！`)
             return;
         }
-        if((this.data_disk_info[id].disk_min*this.form_data.disk_list[index].amount) > this.showResetVolume[type]){
+        if((this.form_data.disk_list[index].disk_size*this.form_data.disk_list[index].amount) > this.showResetVolume[type]){
             this.form_data.disk_list[index].amount = 1
         }
          
@@ -668,16 +674,23 @@ export default class CreateDisk extends Vue{
         this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id]).throughput
         this.form_data.disk_list[index].disk_size = this.data_disk_info[id].disk_min;
         this.form_data.disk_list[index].disk_feature = this.data_disk_info[id].disk_feature;
-        this.form_data.is_bill==='1' && this.getDiskFee()
-        let num = this.showResetVolume[type] / this.form_data.disk_list[index].disk_size;//可挂载块数
-        this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? num : (16 - this.ecs_mounted_disk) : num
-        this.form_data.disk_list[index].amount = this.disk_total > this.form_data.disk_list[index].amount ? this.form_data.disk_list[index].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
-        this.get_disk_quantity()
+        this.form_data.is_bill==='1' && this.getDiskFee();
+        this.set_disk_total(type)
+        // let num = this.showResetVolume[type] / this.form_data.disk_list[index].disk_size;//可挂载块数
+        // this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? Math.floor(num) : (16 - this.ecs_mounted_disk) : Math.floor(num)
+        // this.form_data.disk_list[index].amount = this.disk_total > this.form_data.disk_list[index].amount ? this.form_data.disk_list[index].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
+        // this.get_disk_quantity()
         this.form_data.disk_list[index].disk_max = this.showResetVolume[type] > this.form_data.disk_list[index].disk_max ? this.form_data.disk_list[index].disk_max : this.showResetVolume[type];
     }
     //监听容量改变
-    private async change_capacity(size,id){
+    private async change_capacity(id){
         await this.$nextTick(()=>{
+            let type = this.data_disk_info[id].disk_feature;
+            this.set_disk_total(type)
+            // let num = this.showResetVolume[type] / this.form_data.disk_list[0].disk_size;//可挂载块数
+            // this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? Math.floor(num) : (16 - this.ecs_mounted_disk) : Math.floor(num)
+            // this.form_data.disk_list[0].amount = this.disk_total > this.form_data.disk_list[0].amount ? this.form_data.disk_list[0].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
+            // this.get_disk_quantity()
             this.form_data.disk_list.map(item=>{
             if(item.ecs_goods_id===id){
                 if(!item.disk_size){
