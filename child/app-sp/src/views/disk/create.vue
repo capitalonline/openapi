@@ -143,7 +143,7 @@
                                     :step="get_step_max(inn.ecs_goods_id).step" 
                                     :min="get_step_max(inn.ecs_goods_id).min" 
                                     :max="get_step_max(inn.ecs_goods_id).max" 
-                                    @input="change_capacity(inn.ecs_goods_id)"
+                                    @blur="change_capacity(inn.ecs_goods_id)"
                                     @change="change_capacity(inn.ecs_goods_id)"
                                 >
                                 </el-input-number>&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
@@ -165,7 +165,9 @@
                                 @change="changeNum(index,inn.amount)"
                             >
                             </el-input-number>&nbsp;块
-                            <div class="prompt_message" v-if="form_data.isMounted==='1'">还可以挂载&nbsp;<span class="num_message">{{disk_total - inn.amount}}</span>&nbsp;块盘， 已挂载&nbsp;<span class="num_message">{{inn.amount}}</span>&nbsp;块盘</div>
+                            <div class="prompt_message">还可以挂载&nbsp;<span class="num_message">{{disk_total - inn.amount}}</span>&nbsp;块盘， 已挂载&nbsp;<span class="num_message">{{inn.amount}}</span>&nbsp;块盘</div>
+
+                            <!-- <div class="prompt_message" v-if="form_data.isMounted==='1'">还可以挂载&nbsp;<span class="num_message">{{disk_total - inn.amount}}</span>&nbsp;块盘， 已挂载&nbsp;<span class="num_message">{{inn.amount}}</span>&nbsp;块盘</div> -->
 
                         </el-form-item>
                         <!-- <template v-if="index===form_data.disk_list.length-1 && disk_type_list.length>0">
@@ -182,7 +184,7 @@
                         </template> -->
                         
                     </el-card>
-                    <el-card class="m-bottom10">
+                    <el-card class="m-bottom10" v-if="form_data.is_bill==='1'">
                         <el-form-item
                             prop="fee"
                             label="计费方式"
@@ -281,6 +283,7 @@ export default class CreateDisk extends Vue{
                 iops:2824,
                 throughput:96,
                 disk_feature:'',
+                disk_max:1
             }
         ],
         
@@ -467,7 +470,7 @@ export default class CreateDisk extends Vue{
         // if(res.code==='Success'){
             // this.restVolume[type] = res.data.rest_volume;//各类型总剩余容量;
             // this.showResetVolume[type] = res.data.rest_volume;//显示当前可使用容量;
-            this.showResetVolume['HDD'] = 20;
+            this.showResetVolume['HDD'] = 65900;
             this.showResetVolume['SSD'] = 100;
         // }
     }
@@ -674,13 +677,17 @@ export default class CreateDisk extends Vue{
         this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id]).throughput
         this.form_data.disk_list[index].disk_size = this.data_disk_info[id].disk_min;
         this.form_data.disk_list[index].disk_feature = this.data_disk_info[id].disk_feature;
+        this.form_data.disk_list[index].disk_max =this.showResetVolume[type] >  this.data_disk_info[id].disk_max ? this.data_disk_info[id].disk_max : this.showResetVolume[type];
         this.form_data.is_bill==='1' && this.getDiskFee();
         this.set_disk_total(type)
         // let num = this.showResetVolume[type] / this.form_data.disk_list[index].disk_size;//可挂载块数
         // this.disk_total = this.form_data.isMounted==='1' ? (16 - this.ecs_mounted_disk) > num ? Math.floor(num) : (16 - this.ecs_mounted_disk) : Math.floor(num)
         // this.form_data.disk_list[index].amount = this.disk_total > this.form_data.disk_list[index].amount ? this.form_data.disk_list[index].amount : this.disk_total//未挂载不用判断，挂载的时候amount不会超过当前实例允许的可以挂载量
         // this.get_disk_quantity()
-        this.form_data.disk_list[index].disk_max = this.showResetVolume[type] > this.form_data.disk_list[index].disk_max ? this.form_data.disk_list[index].disk_max : this.showResetVolume[type];
+        // this.form_data.disk_list[index].disk_max = this.form_data.disk_list[index].disk_max ? this.form_data.disk_list[index].disk_max : this.showResetVolume[type];
+        console.log("this.form_data.disk_list[index].disk_max",this.form_data.disk_list[index].disk_max)
+        this.get_step_max(this.form_data.disk_list[index].ecs_goods_id)
+        console.log("get_step_max",this.get_step_max(this.form_data.disk_list[index].ecs_goods_id).max)
     }
     //监听容量改变
     private async change_capacity(id){
