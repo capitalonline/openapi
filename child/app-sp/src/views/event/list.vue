@@ -17,19 +17,19 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer" label="客户名称"></el-table-column>
       <el-table-column prop="event_name" label="事件名称"></el-table-column>
-      <el-table-column prop="event_state_name" label="事件状态">
+      <el-table-column prop="event_state_name" label="事件状态" :filter-multiple="false" column-key="status" :filters="status_list">
         <template slot-scope="scope">
           <span :class="[scope.row.status === 'failed'|| scope.row.status === 'part_fail' ? 'err' : '']">{{scope.row.event_state_name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="implementation_name" label="任务执行情况"></el-table-column>
       <el-table-column prop="op_user" label="操作用户"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间">
+      <el-table-column prop="create_time" label="创建时间" sortable="custom">
         <template slot-scope="scope">
           <span>{{scope.row.create_time ? moment(scope.row.create_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="update_time" label="完成时间">
+      <el-table-column prop="update_time" label="完成时间" sortable="custom">
         <template slot-scope="scope">
           <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
@@ -99,7 +99,12 @@ export default class List extends Vue {
   private event_list:any=[]
   private min_date:any = ""
   private search_data:any = {}
-  private event_detail: boolean = false
+  private event_detail: boolean = false;
+  private status_list=[
+    {text:'成功',value:'success'},
+    {text:'失败',value:'failed'},
+    {text:'部分失败',value:'part_fail'},
+  ]
   created() {
     this.event_detail = !!this.$store.state.auth_info["event_detail"]
     this.fn_search()

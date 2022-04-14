@@ -145,6 +145,14 @@ export default class PhysicalList extends Vue {
     gpu_model:{placeholder:'请输入显卡型号'},
     host_rack:{placeholder:'请输入机柜编号'},
     bare_metal_id:{placeholder:'请输入裸金属产品ID'},
+    create_time: {
+      placeholder: ['开始时间', '结束时间'],
+      type: 'datetimerange',
+      width: '360',
+      clearable: true,
+      dis_day: 1,
+      defaultTime: [] 
+    },
   }
   private operate_btns:any=[
     {label:'导入',value:'upload'},
