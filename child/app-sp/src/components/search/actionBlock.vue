@@ -1,6 +1,6 @@
 <template>
   <div class="action-box">
-      <div class="search-box">
+      <div class="search-box" ref="search" :class="{fold:!isOpen}">
         <div v-for="(value, key) in search_option" :key="key" class="search-input" :style="value.width ? {width:`${value.width}px`} : {}">
           <el-select v-model="search_value[key]" v-if="value.list && !value.type" :placeholder="value.placeholder" clearable>
             <el-option v-for="(item,id) in value.list" :key="Array.isArray(value.list) ? item.type : id" :label="Array.isArray(value.list) ? item.label : item" :value="Array.isArray(value.list) ? item.type : id"></el-option>
@@ -20,11 +20,11 @@
             </date-picker>
           </template>
         </div>
-        
-        <div class="m-bottom20">
-          <el-button type="primary" @click="FnSearch">查 询</el-button>
-          <el-button type="default" @click="FnClear">清 空</el-button>
-        </div>
+      </div>
+      <div class="m-bottom20">
+        <el-button type="primary" @click="FnSearch">查 询</el-button>
+        <el-button type="default" @click="FnClear">清 空</el-button>
+        <el-button type="text" class="m-bottom10" @click="isOpen=!isOpen">{{isOpen ? '折叠' : '展开'}}</el-button>
       </div>
       <slot>
         <el-button type="primary" @click="FnShowCreate" v-if="create_btn" :disabled="disabled">{{ create_btn }}</el-button>
@@ -50,6 +50,7 @@ export default class ActionBlock extends Vue {
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
+  private isOpen:boolean=true
   
   private FnGetTime(time, key) {
     this.time = time;
@@ -78,7 +79,19 @@ export default class ActionBlock extends Vue {
     }
     this.FnSearch()
   }
+  @Watch('search_option',{immediate:true,deep:true})
+  private watch_search_option(){
+    this.$nextTick(()=>{
+      let search = this.$refs.search as any
+      let hei = window.getComputedStyle(search).height.replace('px','')
+      console.log("hei",hei,parseInt(hei))
+      if(parseInt(hei) >52 && this.isOpen){//超过一行，折叠
+        this.isOpen=false
+      }
+    })
+  }
   private mounted() {
+    
     let flag = 0;
     for (let key in this.search_option) {
       if (this.search_option[key].default_value) {
@@ -97,6 +110,7 @@ export default class ActionBlock extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
 .action-box {
   padding: 20px;
   background: #f2f2f2;
@@ -119,7 +133,24 @@ export default class ActionBlock extends Vue {
     width: 100%;
   }
 }
-
+.fold{
+  height: 52px;
+  overflow: hidden;
+  // display: flex;
+  // overflow: hidden;
+  .search-input {
+    width: 200px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    .el-range-editor.el-input__inner{
+      width: 100% !important;
+      padding: 0px 10px !important;
+    }
+  }
+  .el-select {
+    width: 100%;
+  }
+}
 
 </style>
 <style lang="scss">
