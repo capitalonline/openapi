@@ -11,7 +11,7 @@
     <el-table :data="event_list" border class="event-table">
       <el-table-column prop="event_id" label="事件ID">
         <template slot-scope="scope">
-          <span class="event-id">{{scope.row.event_id}}</span>
+          <span class="clickble" @click="view(scope.row.event_id,scope.row.event_name)">{{scope.row.event_id}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
