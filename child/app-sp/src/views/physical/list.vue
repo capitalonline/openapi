@@ -70,7 +70,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -87,6 +87,9 @@
       </template>
       <template v-if="visible && oper_type==='update_attribute'">
         <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
+      </template>
+      <template v-if="visible && oper_type==='business_test'">
+        <business-test :visible.sync="visible"></business-test>
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
@@ -111,7 +114,8 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
 import {deal_list} from '../../utils/transIndex';
 import UpdateAttribute from './updateAttribute.vue';
-import CustomListItem from './customListItem.vue'
+import CustomListItem from './customListItem.vue';
+import BusinessTest from './businessTest.vue'
 @Component({
   components:{
     ActionBlock,
@@ -122,7 +126,8 @@ import CustomListItem from './customListItem.vue'
     SvgIcon,
     Resource,
     UpdateAttribute,
-    CustomListItem
+    CustomListItem,
+    BusinessTest
   }
 })
 export default class PhysicalList extends Vue {
@@ -159,6 +164,7 @@ export default class PhysicalList extends Vue {
     {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
+    {label:'业务测试',value:'business_test'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -479,7 +485,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && value!=='upload'){
+    if(this.multi_rows.length===0 && !['upload','business_test'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
@@ -495,10 +501,11 @@ export default class PhysicalList extends Vue {
       }
         
     }
-    if(['upload','resource','update_attribute'].includes(value)){
+    if(['upload','resource','update_attribute','business_test'].includes(value)){
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
+      console.log("this.oper_type",this.oper_type)
       return;
     }
     if(this.judge(value)){
