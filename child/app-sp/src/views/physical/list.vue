@@ -1,6 +1,6 @@
 <template>
     <div>
-      <action-block :search_option="search_option" @fn-search="fn_search" :type="true">
+      <action-block :search_option="search_option" @fn-search="fn_search" :type="true" @fn-operate="FnOperate">
           <template #default>
               <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
           </template>
@@ -235,16 +235,12 @@ export default class PhysicalList extends Vue {
       
   }
   mounted() {
-    this.$nextTick(()=>{
-      let table = this.$refs.table as any
-      this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
-      let self = this;
-      window.onresize = function(){
-        self.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
-      }
-    });
+    this.setHeight()
   }
   private FnOperate(){
+    this.setHeight()
+  }
+  setHeight(){
     this.$nextTick(()=>{
       let table = this.$refs.table as any
       this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;

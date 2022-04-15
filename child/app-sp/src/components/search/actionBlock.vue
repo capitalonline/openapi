@@ -91,7 +91,6 @@ export default class ActionBlock extends Vue {
   }
   @Emit("fn-operate")
   private FnOperate(){
-    
   }
   @Emit('fn-create')
   private FnShowCreate() {
