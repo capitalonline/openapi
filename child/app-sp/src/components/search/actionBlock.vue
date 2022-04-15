@@ -20,11 +20,15 @@
             </date-picker>
           </template>
         </div>
+        <div class="m-bottom20" v-if="!type">
+          <el-button type="primary" @click="FnSearch">查 询</el-button>
+          <el-button type="default" @click="FnClear">清 空</el-button>
+        </div>
       </div>
-      <div class="m-bottom20">
+      <div class="m-bottom20" v-if="type">
         <el-button type="primary" @click="FnSearch">查 询</el-button>
         <el-button type="default" @click="FnClear">清 空</el-button>
-        <el-button type="text" class="m-bottom10" @click="isOpen=!isOpen">{{isOpen ? '折叠' : '展开'}}</el-button>
+        <el-button type="text" class="m-bottom10" @click="operate">{{isOpen ? '折叠' : '展开'}}</el-button>
       </div>
       <slot>
         <el-button type="primary" @click="FnShowCreate" v-if="create_btn" :disabled="disabled">{{ create_btn }}</el-button>
@@ -46,11 +50,11 @@ export default class ActionBlock extends Vue {
   @Prop({ default: {} }) private search_option!: Object;
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
-
+  @Prop({ default: false }) private type!: boolean;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
-  private isOpen:boolean=true
+  private isOpen:boolean=true;//默认展开
   
   private FnGetTime(time, key) {
     this.time = time;
@@ -66,6 +70,29 @@ export default class ActionBlock extends Vue {
   private watch_search_value(newval,oldval){
       
   }
+  @Watch('search_option',{immediate:true,deep:true})
+  private watch_search_option(){
+    if(!this.type){
+      return;
+    }
+    this.$nextTick(()=>{
+      let search = this.$refs.search as any
+      let hei = window.getComputedStyle(search).height.replace('px','')
+      console.log("hei",hei,parseInt(hei))
+      if(parseInt(hei) >52 && this.isOpen){//超过一行，展开的情况下折叠
+        this.isOpen=false;//折叠
+      }
+      this.FnOperate()
+    })
+  }
+  private operate(){
+    this.isOpen = !this.isOpen;
+    this.FnOperate()
+  }
+  @Emit("fn-operate")
+  private FnOperate(){
+    
+  }
   @Emit('fn-create')
   private FnShowCreate() {
   }
@@ -79,19 +106,7 @@ export default class ActionBlock extends Vue {
     }
     this.FnSearch()
   }
-  @Watch('search_option',{immediate:true,deep:true})
-  private watch_search_option(){
-    this.$nextTick(()=>{
-      let search = this.$refs.search as any
-      let hei = window.getComputedStyle(search).height.replace('px','')
-      console.log("hei",hei,parseInt(hei))
-      if(parseInt(hei) >52 && this.isOpen){//超过一行，折叠
-        this.isOpen=false
-      }
-    })
-  }
   private mounted() {
-    
     let flag = 0;
     for (let key in this.search_option) {
       if (this.search_option[key].default_value) {
