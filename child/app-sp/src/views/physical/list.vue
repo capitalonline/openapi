@@ -159,7 +159,6 @@ export default class PhysicalList extends Vue {
     {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
-    {label:'业务测试',value:'business_test'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -480,7 +479,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && !['upload','business_test'].includes(value)){
+    if(this.multi_rows.length===0 && !['upload'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
