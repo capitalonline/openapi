@@ -549,7 +549,7 @@ export default class App extends Vue {
       az_id: data.az_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
-      status: data.status.join(','),
+      status: data.status ? data.status.join(',') : [],
       customer_id: data.customer_id,
       customer_name: data.customer_name,
       os_type: data.os_type,
