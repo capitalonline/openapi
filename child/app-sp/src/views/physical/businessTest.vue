@@ -11,11 +11,11 @@
             <el-button type="primary" @click="add" class="m-bottom10">新增测试任务</el-button>
             <div class="m-bottom20">将对<span class="m-left10">{{'az'}}</span><span class="num_message m-left10">{{'num'}}</span>台物理机  进行业务测试，请确保选中的物理机无客户业务进行。</div>
             <div class="m-bottom10">云主机创建（在选中的每台物理机上创建1个1核1G的云主机，GPU物理机需创建1个CPU云主机和1个GPU云主机。若创建成功且正常运行，则该项任务测试通过）</div>
-            <div v-for="n in num" :key="n">
-                <el-select v-model="task" placeholder="请选择测试任务列表">
-                    <el-option v-for="item in taskList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            <div v-for="(obj,key) in selectedTasks" :key="key" class="m-bottom10">
+                <el-select v-model="obj.task_id" placeholder="请选择测试任务列表" @change="changeTask(obj)">
+                    <el-option v-for="item in taskList" :key="item.id" :value="item.id" :label="item.name" ></el-option>
                 </el-select>
-                <span>该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
+                <span class="m-left10" v-if="obj.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
             </div>
             <div>云主机回收（测试完成，云主机进行销毁）</div>
         </div>
@@ -42,27 +42,21 @@ export default class BusinessTest extends Vue{
         {id:'4',name:'任务4'},
         {id:'5',name:'任务5'},
     ];
-    private selectedTasks = [];
+    private selectedTasks = {};
     private num:number=1;
-    private task:any={}
+    private task:string=''
     created(){
         console.log("created",this.visible_sync)
     }
-    @Watch('task',{immediate:true,deep:true})
-    private watch_task(nv,ov){
-        if(this.selectedTasks.filter(item=>item.id===nv.id).length>0){
-            return;
-        }else{
-            this.selectedTasks.push(nv)
-        }
-    }
     private add(){
-        if(this.num===this.taskList.length){
-            return ;
+        if(Object.keys(this.selectedTasks).length===this.taskList.length){
+            return;
         }
-        this.num = this.num++;
+        this.selectedTasks = {...this.selectedTasks,[Math.random()*1000]:{task_id:'',params:{}}}
+        console.log("this.selectedTasks",this.selectedTasks)
 
     }
+    private changeTask()
     private setParams(){
 
     }
