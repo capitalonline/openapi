@@ -56,7 +56,9 @@ export default class BusinessTest extends Vue{
         console.log("this.selectedTasks",this.selectedTasks)
 
     }
-    private changeTask()
+    private changeTask(){
+        
+    }
     private setParams(){
 
     }
