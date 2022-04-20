@@ -1209,7 +1209,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 | InstanceUuid | 是   | string | 要修改配置的实例编号                                         |
 | PaasGoodsId  | 否   | int    | 变更后规格的商品编号                                         |
 | DiskType     | 否   | string | 磁盘类型，磁盘的添加类型。只能跟最开始购买时候类型一致。不能一个实例加多种类型磁盘，比如最开始添加高性能磁盘，后面也只能选择添加高性能磁盘 |
-| DiskValue    | 否   | string | 磁盘大小                                                     |
+| DiskValue    | 否   | string | 新增磁盘大小                                                     |
 
 **返回参数：**
 
