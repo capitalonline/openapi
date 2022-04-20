@@ -142,6 +142,11 @@ pre {
   text-overflow:ellipsis;
   white-space: nowrap;
 }
+.long-msg{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 /*限制tooltip的宽度 */
 .tooltip-width{
   max-width: 200px;

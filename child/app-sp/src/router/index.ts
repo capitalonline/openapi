@@ -130,6 +130,12 @@ const routes: RouteConfig[] = [
     meta: {meta: 'pod_list'}
   },
   {
+    path: '/message',
+    name: 'message_list',
+    component: () => import('../views/message/list.vue'),
+    meta: {meta: 'message_list'}
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),

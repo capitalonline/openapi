@@ -7,7 +7,7 @@
         :close-on-click-modal="false"
         @close="cancel"
     >
-        <div>
+        <div class="m-left10">
             <el-button type="primary" @click="add" class="m-bottom10">新增测试任务</el-button>
             <div class="m-bottom20">将对<span class="m-left10">{{'az'}}</span><span class="num_message m-left10">{{'num'}}</span>台物理机  进行业务测试，请确保选中的物理机无客户业务进行。</div>
             <div class="m-bottom10"><circle-icon :num="1"></circle-icon>云主机创建（在选中的每台物理机上创建1个1核1G的云主机，GPU物理机需创建1个CPU云主机和1个GPU云主机。若创建成功且正常运行，则该项任务测试通过）</div>
@@ -20,6 +20,7 @@
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
             </div>
             <div><circle-icon :num="selectedTasks.length+2"></circle-icon>云主机回收（测试完成，云主机进行销毁）</div>
+            
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
@@ -51,6 +52,7 @@ export default class BusinessTest extends Vue{
     private task:string='';
     created(){
     }
+    
     private set_disList(){
         let ids = this.selectedTasks.map(task=>task.task_id)//已经选中的任务id
         this.selectedTasks.map(item=>{
@@ -74,19 +76,21 @@ export default class BusinessTest extends Vue{
     }
     private del(ind){
         console.log("del",ind)
-        this.selectedTasks = this.selectedTasks.map((item,index)=>{
-            console.log("index",ind)
-            if(index===ind){
-                return false
+        let list:any=[]
+        this.selectedTasks.map((item,index)=>{
+            if(index!==ind){
+                list.push(item)
             }
-            return item
+            return item;
         })
+        this.selectedTasks = list
         this.set_disList()
     }
     private setParams(){
         
     }
     private confirm(){
+        
         this.visible_sync=false
     }
     private cancel(){
@@ -94,3 +98,11 @@ export default class BusinessTest extends Vue{
     }
 }
 </script>
+<style lang="scss" scoped>
+.email{
+    display: inline-block;
+    width: 420px;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+</style>

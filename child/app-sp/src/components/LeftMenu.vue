@@ -84,6 +84,10 @@ export default class LeftMenu extends Vue {
       ]
     },
     {
+      name: "message_list",
+      label: "消息通知"
+    },
+    {
       name: "task",
       label: "任务管理",
       children: [
