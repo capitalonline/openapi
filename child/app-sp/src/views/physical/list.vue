@@ -111,7 +111,8 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
 import {deal_list} from '../../utils/transIndex';
 import UpdateAttribute from './updateAttribute.vue';
-import CustomListItem from './customListItem.vue'
+import CustomListItem from './customListItem.vue';
+import moment from 'moment';
 @Component({
   components:{
     ActionBlock,
@@ -318,8 +319,10 @@ export default class PhysicalList extends Vue {
       host_id,
       gpu_model,
       host_rack,
-      host_source
+      host_source,
+      create_time
     }=this.search_data
+    console.log("create_time",create_time)
     let res:any=await Service.get_host_list({
       az_id,
       pod_name,
@@ -334,6 +337,8 @@ export default class PhysicalList extends Vue {
       host_id,
       gpu_model,
       host_rack,
+      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm') : undefined,
+      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm') : undefined,
       machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,

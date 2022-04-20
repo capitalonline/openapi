@@ -17,19 +17,22 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer" label="客户名称"></el-table-column>
       <el-table-column prop="event_name" label="事件名称"></el-table-column>
-      <el-table-column prop="event_state_name" label="事件状态" :filter-multiple="false" column-key="status" :filters="status_list">
+      <el-table-column prop="event_state_name" label="事件状态">
+      <!-- <el-table-column prop="event_state_name" label="事件状态" :filter-multiple="false" column-key="status" :filters="status_list"> -->
         <template slot-scope="scope">
           <span :class="[scope.row.status === 'failed'|| scope.row.status === 'part_fail' ? 'err' : '']">{{scope.row.event_state_name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="implementation_name" label="任务执行情况"></el-table-column>
       <el-table-column prop="op_user" label="操作用户"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间" sortable="custom">
+      <el-table-column prop="create_time" label="创建时间">
+      <!-- <el-table-column prop="create_time" label="创建时间" sortable="custom"> -->
         <template slot-scope="scope">
           <span>{{scope.row.create_time ? moment(scope.row.create_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="update_time" label="完成时间" sortable="custom">
+      <el-table-column prop="update_time" label="完成时间">
+      <!-- <el-table-column prop="update_time" label="完成时间" sortable="custom"> -->
         <template slot-scope="scope">
           <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
