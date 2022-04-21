@@ -1,8 +1,18 @@
 
 import Vue from 'vue';
+import { 
+  Button, 
+  Dropdown,
+  DropdownMenu,
+  DropdownItem
+} from 'element-ui';
 import Vuex from 'vuex';
 import cookie from './cookie';
 
+Vue.use(Button);
+Vue.use(Dropdown);
+Vue.use(DropdownMenu);
+Vue.use(DropdownItem);
 Vue.use(Vuex);
 
 export default new Vuex.Store({

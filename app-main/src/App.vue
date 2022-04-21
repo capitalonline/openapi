@@ -17,16 +17,17 @@ import Header from './components/Header.vue';
 export default class App extends Vue {}
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #ccc;
   height: 100%;
+  color: #333;
 }
 #container {
-  height: 100%;
+  height: calc(100% - 52px);
+  overflow: auto;
 }
 #container>div {
   height: 100%;

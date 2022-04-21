@@ -4,13 +4,14 @@ import router from './router';
 import store from './store';
 import startQiankun from './apps';
 import { getUserInfo } from './init';
+import './assets/reset.scss';
 
 Vue.config.productionTip = false;
 
 async function Init() {
   await getUserInfo()
 
-  startQiankun()
+  startQiankun({sandbox: {strictStyleIsolation: true}})
 
   new Vue({
     router,

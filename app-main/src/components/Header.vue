@@ -37,7 +37,6 @@ import axios from 'axios';
 export default class Header extends Vue {
   @Prop() private msg!: string;
   private get loginName() {
-    console.log('$store', this.$store)
     return this.$store.state.login_name
   }
   private handleCommand(command: string) {
@@ -77,5 +76,8 @@ export default class Header extends Vue {
     display: flex;
     align-items: center;
   }
+}
+.m-right10 {
+  margin-right: 10px;
 }
 </style>

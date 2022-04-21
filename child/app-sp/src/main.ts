@@ -78,12 +78,14 @@ if (!window.__POWERED_BY_QIANKUN__) {
 }
 
 export async function bootstrap () {
-  console.log('bootstrap')
 }
 
-export async function mount (props: any) {
-  console.log('mount', props)
-  await getUserInfo()
+export function mount (props: any) {
+  props.onGlobalStateChange((state, prev) => {
+    store.commit('SET_AUTH_INFO', state.permission_dict);
+    console.log('SET_AUTH_INFO', store.state.auth_info)
+  }, true);
+  console.log('ddddd')
   render(props)
 }
 

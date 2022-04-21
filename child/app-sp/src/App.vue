@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Header></Header>
     <el-container class="container">
       <el-aside width="200px">
         <left-menu></left-menu>
@@ -14,12 +13,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Header from './components/Header.vue';
 import LeftMenu from './components/LeftMenu.vue';
 
 @Component({
   components: {
-    Header,
     LeftMenu
   }
 })
@@ -39,7 +36,7 @@ export default class App extends Vue {
   color: #333;
 }
 .container {
-  height: calc(100% - 52px);
+  height: 100%;
   overflow: auto;
 }
 .main-content {
