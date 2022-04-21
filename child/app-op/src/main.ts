@@ -2,8 +2,16 @@ import Vue from 'vue';
 import App from './App.vue';
 import routes from './router';
 import store from './store';
-import './public-path'
+import './public-path';
 import VueRouter from 'vue-router';
+import ElementUI from 'element-ui';
+import './assets/reset.scss';
+import './assets/common.scss';
+import { getUserInfo } from '../src/init';
+import Clipboard from 'v-clipboard';
+
+Vue.use(ElementUI)
+Vue.use(Clipboard)
 
 Vue.config.productionTip = false;
 
@@ -30,15 +38,19 @@ function render(props: prop = {}) {
 
 // 独立运行时
 if(!window.__POWERED_BY_QIANKUN__) {
-  render();
+  getUserInfo().then(() => {
+    render();
+  })
 }
 
 export async function bootstrap() {
-  console.log("bootstrap")
 }
 
 export async function mount(props: any) {
-  console.log('mount', props)
+  store.commit('SET_QIANKUN', true)
+  props.onGlobalStateChange((state, prev) => {
+    store.commit('SET_AUTH_INFO', state.permission_dict);
+  }, true);
   render(props)
 }
 

@@ -1,5 +1,5 @@
 const path = require('path');
-const publicPath = '/child/app-sp/';
+const publicPath = '/child/app-op/';
 
 module.exports = {
   publicPath: publicPath,
