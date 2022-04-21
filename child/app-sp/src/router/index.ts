@@ -22,12 +22,6 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
-    path: '/instance/gpu/monitor/',
-    name: 'gpu_monitor',
-    component: () => import('../views/instance/monitor.vue'),
-    meta: {menu: 'gpu_monitor'}
-  },
-  {
     path:'/alarmInfo',
     name:'alarm_info',
     component:()=>import('../views/alarm/info.vue'),
@@ -122,12 +116,6 @@ const routes: RouteConfig[] = [
     name: 'project_list',
     component: () => import('../views/project/list.vue'),
     meta: {menu: 'project_list'}
-  },
-  {
-    path: '/pod',
-    name: 'pod_list',
-    component: () => import('../views/pod/list.vue'),
-    meta: {meta: 'pod_list'}
   },
   {
     path: '/404',

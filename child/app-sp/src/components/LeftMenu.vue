@@ -4,24 +4,24 @@
     class="el-menu-vertical-demo"
     >
     <template v-for="item in menu">
-      <el-submenu 
-        :index="item.name" 
-        :key="item.name" 
+      <el-submenu
+        :index="item.name"
+        :key="item.name"
         v-if="item.children">
         <template slot="title">
           <span>{{ item.label }}</span>
         </template>
-        <el-menu-item 
-          v-for="child in item.children" 
-          :key="child.name" 
+        <el-menu-item
+          v-for="child in item.children"
+          :key="child.name"
           :index="child.name"
           @click="FnChangeUrl(child.name)">
           <span>{{ child.label }}</span>
         </el-menu-item>
       </el-submenu>
-      <el-menu-item 
-        :index="item.name" 
-        :key="item.name" 
+      <el-menu-item
+        :index="item.name"
+        :key="item.name"
         @click="FnChangeUrl(item.name)"
         v-else>
         <span>{{ item.label }}</span>
@@ -35,7 +35,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 
 @Component({
   components: {
-    
+
   },
 })
 export default class LeftMenu extends Vue {
@@ -44,14 +44,6 @@ export default class LeftMenu extends Vue {
   private active_menu: string = '';
   private active_name: string = ''
   private all_menu = [
-    {
-      name: "monitor",
-      label: "监控"
-    },
-    {
-      name: "pod_list",
-      label: "POD管理"
-    },
     {
       name: "physical_list",
       label: "物理机管理"
