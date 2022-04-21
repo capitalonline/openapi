@@ -1,11 +1,15 @@
 <template>
   <el-dialog :visible.sync="visible" title="自定义列表项" :show-close="false" :close-on-click-modal="false">
-    <div>清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
-    <div class="checkbox-box">
-      <el-checkbox-group v-model="select_item">
-        <el-checkbox v-for="item in all_item" :key="item.label" :label="item.label"></el-checkbox>
-      </el-checkbox-group>
-    </div>
+    <div class="m-bottom10">清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
+    <template v-for="n in all_item">
+      <div class="label">{{n.name}}</div>
+      <div class="checkbox-box">
+        <el-checkbox-group v-model="select_item">
+          <el-checkbox v-for="item in n.filed" :key="item.show_name" :label="item.show_name" :disabled="item.show_name==='主机名'"></el-checkbox>
+        </el-checkbox-group>
+      </div>
+    </template>
+    
     <span>已选择：<span class="num_message">{{select_item.length}}</span></span>
     
     <span slot="footer">
@@ -25,7 +29,8 @@ interface CustomItem {
 @Component
 export default class CustomListItem extends Vue {
   @Prop({default: false}) private visible!: boolean;
-  @Prop({default: () => []}) private all_item!: Array<CustomItem>;
+  @Prop({default: () => []}) private all_column_item!: Array<CustomItem>;
+  @Prop({default: () => []}) private all_item!: Array<any>;
   private select_item: Array<string> = [];
   private created() {
     this.FnHandleSelectItem(this.$store.state.custom_host)
@@ -34,8 +39,9 @@ export default class CustomListItem extends Vue {
     if (item.length>0) {
       this.select_item = [...item];
     } else {
-      this.select_item = this.all_item.slice(0,25).map(item=>item.label)
+      this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
+    console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {
@@ -59,10 +65,15 @@ export default class CustomListItem extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.label{
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
 .checkbox-box {
   display: flex;
   padding: 18px;
-  margin-top: 18px;
+  margin-bottom: 18px;
   border: 1px solid #dde2ef;
   .el-checkbox {
     width: 26%;

@@ -90,7 +90,8 @@
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
-        :all_item="all_column_item" 
+        :all_item="all_item"
+        :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
     </div>
@@ -151,7 +152,7 @@ export default class PhysicalList extends Vue {
       type: 'datetimerange',
       width: '360',
       clearable: true,
-      dis_day: 1,
+      dis_day: 31,
       defaultTime: [] 
     },
   }
@@ -194,19 +195,19 @@ export default class PhysicalList extends Vue {
   private host_uses=[];
   private host_source=[];
   private all_column_item=[];
+  private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[
     {label:'主机名',prop:'host_name',sortable:'custom'},
-    {label:'区域',prop:'az_name'},
-    {label:'机房名称',prop:'host_room'},
-    {label:'机柜编号',prop:'host_rack'},
+    {label:'机房',prop:'host_room'},
+    {label:'机柜',prop:'host_rack'},
     {label:'起始U位',prop:'rack_place'},
     {label:'占用U位',prop:'rack_space'},
     {label:'电源状态',prop:'power_status_name'},
     {label:'机器状态',prop:'machine_status_name'},
     {label:'操作系统',prop:'system_version'},
-    {label:'机器类型',prop:'host_model'},
+    {label:'服务器型号',prop:'host_model'},
     {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
     {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
     {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
@@ -255,8 +256,14 @@ export default class PhysicalList extends Vue {
     let res:any = await Service.get_host_list_field({})
     if(res.code==="Success"){
       let key_list=['field_name','show_name'];
-      let label_list=['prop','label'] 
-      this.all_column_item = deal_list(res.data,label_list,key_list);
+      let label_list=['prop','label'];
+      let list:Array<any>=[]
+      res.data.map(item=>{
+        list=[...list,...item.filed];
+        return item;
+      })
+      this.all_item = res.data;
+      this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
 
     }
@@ -337,8 +344,8 @@ export default class PhysicalList extends Vue {
       host_id,
       gpu_model,
       host_rack,
-      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm') : undefined,
-      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm') : undefined,
+      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
