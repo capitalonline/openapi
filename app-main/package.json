@@ -5,9 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:dev": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@sentry/tracing": "^6.19.6",
+    "@sentry/vue": "^6.19.6",
     "axios": "^0.26.1",
     "core-js": "^3.6.5",
     "element-theme": "^2.0.1",

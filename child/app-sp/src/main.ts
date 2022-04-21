@@ -8,8 +8,6 @@ import ElementUI from 'element-ui';
 import './assets/reset.scss';
 import './assets/common.scss';
 import { getUserInfo } from '../src/init';
-import * as Sentry from '@sentry/vue';
-import { Integrations } from '@sentry/tracing';
 
 Vue.use(ElementUI)
 
@@ -49,20 +47,7 @@ function render (props: prop = {}) {
       next()
     }
   })
-  // Sentry.init({
-  //   Vue,
-  //   dsn: 'http://807ce19725244499a99480d12cef58be@sentry.yun-paas.net:9000/14',
-  //   integrations: [
-  //     new Integrations.BrowserTracing({
-  //       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-  //       tracingOrigins: ['http://cloudos-sp-front.gic.test/', /^\//]
-  //     })
-  //   ],
-  //   // Set tracesSampleRate to 1.0 to capture 100%
-  //   // of transactions for performance monitoring.
-  //   // We recommend adjusting this value in production
-  //   tracesSampleRate: 1.0
-  // });
+
   instance = new Vue({
     router,
     store,
