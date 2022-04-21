@@ -4,6 +4,12 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   {
+    path: '/overview',
+    name: 'overview',
+    component: () => import('../views/overview/index.vue'),
+    meta: {menu: 'overview'}
+  },
+  {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),

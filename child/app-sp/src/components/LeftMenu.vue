@@ -45,6 +45,10 @@ export default class LeftMenu extends Vue {
   private active_name: string = ''
   private all_menu = [
     {
+      name: "overview",
+      label: "概览"
+    },
+    {
       name: "monitor",
       label: "监控"
     },
