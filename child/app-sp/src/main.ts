@@ -72,6 +72,7 @@ function render (props: prop = {}) {
 
 // 独立运行时
 if (!window.__POWERED_BY_QIANKUN__) {
+  store.commit('SET_QIANKUN', false)
   getUserInfo().then(() => {
     render();
   })
@@ -81,11 +82,10 @@ export async function bootstrap () {
 }
 
 export function mount (props: any) {
+  store.commit('SET_QIANKUN', true)
   props.onGlobalStateChange((state, prev) => {
     store.commit('SET_AUTH_INFO', state.permission_dict);
-    console.log('SET_AUTH_INFO', store.state.auth_info)
   }, true);
-  console.log('ddddd')
   render(props)
 }
 

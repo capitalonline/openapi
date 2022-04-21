@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Header :class="{'header-box': $store.state.qiankun}"></Header>
     <el-container class="container">
       <el-aside width="200px">
         <left-menu></left-menu>
@@ -13,10 +14,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import Header from './components/Header.vue';
 import LeftMenu from './components/LeftMenu.vue';
 
 @Component({
   components: {
+    Header,
     LeftMenu
   }
 })
@@ -38,6 +41,11 @@ export default class App extends Vue {
 .container {
   height: 100%;
   overflow: auto;
+}
+.header-box {
+  position: absolute;
+  right: 140px;
+  top: 0px;;
 }
 .main-content {
   background: #f5f6fa;

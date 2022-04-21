@@ -4,9 +4,24 @@ import router from './router';
 import store from './store';
 import startQiankun from './apps';
 import { getUserInfo } from './init';
+import { 
+  Button, 
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Icon,
+  Tooltip
+} from 'element-ui';
 import './assets/reset.scss';
 
 Vue.config.productionTip = false;
+
+Vue.use(Button);
+Vue.use(Dropdown);
+Vue.use(DropdownMenu);
+Vue.use(DropdownItem);
+Vue.use(Icon);
+Vue.use(Tooltip);
 
 async function Init() {
   await getUserInfo()

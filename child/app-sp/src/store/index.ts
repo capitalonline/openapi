@@ -8,6 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    qiankun: false,
     token: cookie.get('cds-op-token'),
     login_name: 'login_name',
     auth_info: {},
@@ -25,6 +26,9 @@ export default new Vuex.Store({
   getters: {
   },
   mutations: {
+    SET_QIANKUN (state, flag) {
+      state.qiankun = flag;
+    },
     SET_TOKEN (state, token) {
       cookie.set('cds-op-token', token);
       state.token = token;
@@ -52,7 +56,7 @@ export default new Vuex.Store({
     SET_HOST_SEARCH(state,data){
       state.host_search = data
     }
-    
+
   },
   actions: {
   },

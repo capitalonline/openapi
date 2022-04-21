@@ -15,8 +15,11 @@
       </svg>
     </div>
     <div class="right-content">
-      <el-button type="text" @click="FnToWiki('public')">公网设置问题排查sop</el-button>
-      <el-button type="text" @click="FnToWiki('')" class="m-right10">运维OP使用手册V1.0</el-button>
+      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10">
+        <el-button @click="FnChangeEntry()">
+          <i class="el-icon-menu"></i>
+        </el-button>
+      </el-tooltip>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           {{ loginName }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -35,7 +38,26 @@ import axios from 'axios';
 
 @Component
 export default class Header extends Vue {
-  @Prop() private msg!: string;
+  private entry_type = 'sp';
+  private entry_text = {
+    sp: '切换至运营管理系统',
+    op: '切换至运维管理系统'
+  }
+  private FnChangeEntry(type='') {
+    if (window.location.href.indexOf('under-app-sp') > 0) {
+      this.entry_type = 'sp'
+      if (!type) {
+        this.$router.push({name: 'under-app-op'})
+        this.entry_type = 'op'
+      }
+    } else if (window.location.href.indexOf('under-app-op') > 0) {
+      this.entry_type = 'op'
+      if (!type){
+        this.$router.push({name: 'under-app-sp'})
+        this.entry_type = 'sp'
+      }
+    }
+  }
   private get loginName() {
     return this.$store.state.login_name
   }
@@ -53,6 +75,10 @@ export default class Header extends Vue {
     } else {
       window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
     }
+  }
+
+  private created() {
+    this.FnChangeEntry('created')
   }
 }
 </script>
