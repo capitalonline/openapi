@@ -41,11 +41,10 @@ export default class CustomListItem extends Vue {
     } else {
       this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
-    console.log("this.select_item",this.select_item)
+    // console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {
-    console.log("this.select_item",this.select_item)
     if(this.select_item.length<5 || this.select_item.length>25){
       this.$message.warning("自定义列表项最少为5项，最多为25项")
       return;

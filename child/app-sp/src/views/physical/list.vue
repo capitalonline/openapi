@@ -36,10 +36,20 @@
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
+          :width="item.width ? item.width : null"
         >
           <template #default="scope" v-if="item.prop==='machine_status_name'">
             <div>{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='net_nic'">
+            <el-tooltip effect="light" v-if="scope.row.net_nic.length>0">
+              <div slot="content">
+                <div v-for="(item,index) in scope.row.net_nic" :key="index">{{item}}</div>
+              </div>
+              <div class="tooltip-cell">{{scope.row.net_nic[0]}}</div>
+            </el-tooltip>
+            <div v-else></div>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu'">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
@@ -216,6 +226,7 @@ export default class PhysicalList extends Vue {
     {label:'显卡数量',prop:'gpu_count'},
     {label:'带外IP',prop:'out_band_address',sortable:'custom'},
     {label:'管理网IP',prop:'host_ip',sortable:'custom'},
+    {label:'虚拟机数量',prop:'ecs_num',sortable:'custom'},
     {label:'存储网IP1',prop:'storage_ip'},
     {label:'CPU使用率',prop:'cpu',sortable:'custom'},
     {label:'内存使用率',prop:'ram',sortable:'custom'},
@@ -288,6 +299,9 @@ export default class PhysicalList extends Vue {
       }
       if(item.prop==='host_source'){
         item = Object.assign(item,{},{column_key:'host_source',list:this.host_source})
+      }
+      if(item.prop==='net_nic'){
+        item = Object.assign(item,{},{width:'180px'})
       }
       return item;
     })
