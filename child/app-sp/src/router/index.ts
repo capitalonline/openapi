@@ -87,13 +87,6 @@ const routes: RouteConfig[] = [
     component:()=>import('../views/mirror/list.vue'),
     meta:{menu:'mirror_list'}
   },
-  
-  {
-    path:'/commonMirror',
-    name:'common_mirror_list',
-    component:()=>import('../views/mirror/commonMirror.vue'),
-    meta:{menu:'common_mirror_list'}
-  },
   {
     path:'/privateMirror',
     name:'private_mirror_list',
