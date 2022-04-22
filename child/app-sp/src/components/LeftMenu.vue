@@ -61,22 +61,12 @@ export default class LeftMenu extends Vue {
       label: "物理机管理"
     },
     {
-      name: 'produce',
-      label: '云服务器管理',
-      children: [
-        {
-          name: "instance_list",
-          label: "云服务器"
-        },
-        {
-          name: "disk_list",
-          label: "云盘"
-        },
-        // {
-        //   name: "mirror_list",
-        //   label: "公共镜像列表"
-        // }
-      ]
+      name: "instance_list",
+      label: "云服务器管理"
+    },
+    {
+      name: "disk_list",
+      label: "云盘管理"
     },
     {
       name: 'mirror',
@@ -92,7 +82,7 @@ export default class LeftMenu extends Vue {
         }
       ]
     },
-    { name: 'event_list', label: "事件列表" },
+    { name: 'event_list', label: "任务管理" },
     {
       name:'alarm_manage',
       label:'报警管理',
