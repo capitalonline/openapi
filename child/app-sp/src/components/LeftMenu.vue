@@ -45,12 +45,24 @@ export default class LeftMenu extends Vue {
   private active_name: string = ''
   private all_menu = [
     {
+      name: "overview",
+      label: "概览"
+    },
+    // {
+    //   name: "monitor",
+    //   label: "监控"
+    // },
+    // {
+    //   name: "pod_list",
+    //   label: "POD管理"
+    // },
+    {
       name: "physical_list",
       label: "物理机管理"
     },
     {
       name: 'produce',
-      label: '产品管理',
+      label: '云服务器管理',
       children: [
         {
           name: "instance_list",
@@ -60,12 +72,27 @@ export default class LeftMenu extends Vue {
           name: "disk_list",
           label: "云盘"
         },
+        // {
+        //   name: "mirror_list",
+        //   label: "公共镜像列表"
+        // }
+      ]
+    },
+    {
+      name: 'mirror',
+      label: '镜像管理',
+      children: [
         {
           name: "mirror_list",
-          label: "公共镜像列表"
+          label: "公共镜像管理"
+        },
+        {
+          name: "private_mirror_list",
+          label: "私有镜像管理"
         }
       ]
     },
+    { name: 'event_list', label: "事件列表" },
     {
       name:'alarm_manage',
       label:'报警管理',
@@ -76,19 +103,18 @@ export default class LeftMenu extends Vue {
       ]
     },
     {
-      name: "task",
-      label: "任务管理",
-      children: [
-        { name: 'event_list', label: "事件列表" },
-        // { name: 'event_detail', label: "任务记录" },
-        { name: 'main_task_list', label: "主任务配置" },
-        { name: 'sub_task_list', label: "子任务配置" }
-      ]
+      name: "message_list",
+      label: "消息通知"
     },
     {
-      name: "project_list",
-      label: "项目管理",
-    }
+      name: "task_config",
+      label: "底层任务配置",
+      children: [
+        { name: 'main_task_list', label: "主任务配置" },
+        { name: 'sub_task_list', label: "子任务配置" },
+        { name: 'project_list', label: "项目管理" },
+      ]
+    },
   ];
   private menu: Array<object> = [];
   private FnChangeUrl(name): void {
