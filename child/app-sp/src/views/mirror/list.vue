@@ -20,8 +20,14 @@
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="drive_type" :filters="drive_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="az" label="可用区">
+                <template slot-scope="scope">
+                    <el-tooltip effect="light" :content="'111'">
+                        <span>共<span class="num_message">{{scope.row.az_list.length}}</span>个</span>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column prop="" label="" type="expand">
                 <template slot-scope="props">
-                    <span>共<span class="num_message">{{props.row.az_list.length}}</span>个</span>
                     
                 </template>
             </el-table-column>
