@@ -13,20 +13,25 @@
         <el-table :data="list" border class="event-table">
             <!-- <el-table-column type="selection"></el-table-column> -->
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
-            <el-table-column prop="os_name" label="镜像名称"></el-table-column>
-            <el-table-column prop="type" label="镜像类型" :filter-multiple="false" column-key="type" :filters="mirror_type"></el-table-column>
+            <el-table-column prop="display_name" label="镜像名称"></el-table-column>
+            <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="type" :filters="mirror_type"></el-table-column>
             <el-table-column prop="size" label="容量" sortable="custom"></el-table-column>
-            <el-table-column prop="compute_type" label="计算类型" :filter-multiple="false" column-key="compute_type" :filters="compute_type"></el-table-column>
-            <el-table-column prop="drive_type" label="驱动类型" :filter-multiple="false" column-key="drive_type" :filters="drive_type"></el-table-column>
-            <el-table-column prop="storage" label="存储类型"></el-table-column>
+            <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="compute_type" :filters="compute_type"></el-table-column>
+            <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="drive_type" :filters="drive_type"></el-table-column>
+            <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="az" label="可用区">
-                <template slot-scope="scope">
-                    <span>{{scope.row.az}}</span>
+                <template slot-scope="props">
+                    <span>共<span class="num_message">{{props.row.az_list.length}}</span>个</span>
+                    
                 </template>
             </el-table-column>
-            <el-table-column prop="customer" label="客户权限"></el-table-column>
+            <el-table-column prop="customer" label="客户权限">
+                <template slot-scope="scope">
+                    <span>{{scope.row.customer_list && scope.row.customer_list.length>0 ? scope.row.customer_list.join(',') : '全部客户'}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="status" label="状态" :filter-multiple="false" column-key="status" :filters="status_list"></el-table-column>
-            <el-table-column prop="path" label="路径"></el-table-column>
+            <el-table-column prop="path_name" label="路径"></el-table-column>
             <el-table-column prop="update_time" label="更新时间"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
             <el-table-column prop="operate" label="操作">
@@ -95,7 +100,32 @@ export default class CommonMirror extends Vue{
             defaultTime:[]
         }
     }
-    private list:any=[{id:1,status:'enable'}]
+    private list:any=[ {
+                "os_id":"img-11ec-962e-02428922def1",
+                "display_name":"",
+                "os_type":"windows",
+                "size":200,
+                "support_type":"cpu",
+                "support_gpu_driver":"DataCenter",
+                "backend_type":"local",
+                "az_list":[
+                    {
+                    "az_id":"1",
+                    "az_name":"2",
+                    "os_id":"3",
+                    "gic_resource_id":"",
+                    "status":"",
+                    "create_time":"",
+                    'pod_name_list':['','']
+                    }
+                ],
+         		"status":"",
+        		'customer_list':['E020912','E888908'],
+                'path_name':'',
+				"create_time":"",
+				"update_time":"",
+            }
+]
     private current:number = 1
     private size:number = 20
     private total:number = 0
@@ -110,7 +140,7 @@ export default class CommonMirror extends Vue{
     private oper_info:any={};
     created() {
         this.auth_list = this.$store.state.auth_info[   this.$route.name]
-        this.search()
+        // this.search()
     }
     private search(data:any={}){
         this.current = 1;
@@ -124,7 +154,16 @@ export default class CommonMirror extends Vue{
             display_name,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
+            os_type:'',
+            sort_size:'',
+            support_gpu_driver:'',
+            status:'',
+            sort_time:'',
         })
+        if(res.code==='Success'){
+            this.list = res.data.image_list;
+            this.total = res.data.page_info.count
+        }
     }
     private handleSizeChange(size){
         this.size = size
