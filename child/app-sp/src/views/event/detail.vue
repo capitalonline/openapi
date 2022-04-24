@@ -26,7 +26,11 @@
             <span :class="[scope.row.status === 'failed' ? 'err' : '']">{{scope.row.task_state}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="error_type" label="失败类型"></el-table-column>
+        <el-table-column prop="error_type" label="失败类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.error_type ? scope.row.error_type : '-'}}</span>
+          </template>
+        </el-table-column>
         <!-- <el-table-column prop="fail_type" label="失败类型" :filter-multiple="false" column-key="fail_type" :filters="fail_type_list"></el-table-column> -->
         <el-table-column label="失败原因">
           <template slot-scope="scope">
