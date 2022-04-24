@@ -18,15 +18,9 @@ const status = {
 
 // {操作：[主机状态]}
 const auth = {
-  start_up_ecs: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '开 机' },
-  shutdown_ecs: {auth: ['running'], msg: '已选实例需为运行中！', label: '关 机'},
-  restart_ecs: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '重 启'},
   delete_ecs: {auth: ['running', 'shutdown', 'error'], msg: '已选实例状态需为已关机或运行中或错误！', label: '逻辑删除'},
   recover_ecs: {auth: ['deleted'], msg: '已选实例状态需为已删除！', label: '恢 复'},
   destroy_ecs: {auth: ['deleted', 'failed'], msg: '已选实例状态需为已删除或创建失败！', label: '销 毁'},
-  update_spec: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换实例规格'},
-  update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换操作系统'},
-  reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'},
   open_bill: {auth: ['running', 'shutdown'], msg: '已选实例状态需为运行中或已关机！', label: '开启计费'}
 }
 const host_status={//error为新增状态，异常

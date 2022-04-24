@@ -7,6 +7,7 @@ const routes: RouteConfig[] = [
     path: '/',
     name: 'layout',
     component: () => import('../layouts/layout.vue'),
+    redirect: '/instance',
     children: [
       {
         path: '/instance',
