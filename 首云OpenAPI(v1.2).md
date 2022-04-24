@@ -276,7 +276,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
-| Password           | string   | 否       | EcsV587!                                                     | 云服务器密码                                                 |
+| Password           | string   | 否       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
@@ -286,6 +286,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
+| ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
 | SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] |      ssd支持IOPS,默认: "IOPS": 0                                                        |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
@@ -781,7 +782,8 @@ def add_disk(vm_id):
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | ImageId    | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376 | 模板Id                                       |
-| Password   | string | 是       | EcsV587!                             | 云服务器密码                                 |
+| ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
+| Password   | string | 是       | EcsV587!                             | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
 | PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
 | ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
 
@@ -1108,7 +1110,7 @@ def down_card(InterfaceId, InstanceId):
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22 | 云服务器编号                                 |
 | InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 网卡的编号，可以在查询云服务器详情中查出     |
 | Address     | string | 是       | 101.251.2.29                         | 要绑定或者修改的Ip地址，解绑Ip此处请填写None |
-| Password    | string | 是       | 123abc,.;                            | 云服务器密码                                 |
+| Password    | string | 是       | 123abc,.;                            | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
 
 ​	**返回参数：**
 
@@ -2665,7 +2667,7 @@ def down_card(InterfaceId, InstanceId):
 | PowerOn          | Bool   | 是       | True   | 是否开机定制模板                                             |
 | WithDataDisk     | Bool   | 否       | True   | 所定制的模板是否需要挂载原主机数据盘，默认为 True            |
 | InstanceUserName | String | 否       | root   | 云主机用户名, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写用户名 如您修改过管理员权限默认账户，请填写修改后的名称。如用户名不一致，会导致创建云主机失败！ |
-| InstancePassword | String | 否       | xxxx   | 云主机密码, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写云主机密码 |
+
 
 ​	**返回参数：** 
 
