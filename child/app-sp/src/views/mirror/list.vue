@@ -28,7 +28,12 @@
             </el-table-column>
             <el-table-column prop="" label="" type="expand">
                 <template slot-scope="props">
-                    
+                    <div v-for="(item,index) in props.row.az_list" :key="index">
+                        <span class="az">{{item.az_name}}</span>
+                        <span class="az">{{item.create_time}}</span>
+                        <span class="az">{{item.status}}</span>
+                        <el-button type="text" class="az">删除</el-button>
+                    </div>
                 </template>
             </el-table-column>
             <el-table-column prop="customer" label="客户权限">
@@ -106,7 +111,7 @@ export default class CommonMirror extends Vue{
             defaultTime:[]
         }
     }
-    private list:any=[ {
+    private list:Array<any>=[ {
                 "os_id":"img-11ec-962e-02428922def1",
                 "display_name":"",
                 "os_type":"windows",
@@ -237,5 +242,10 @@ export default class CommonMirror extends Vue{
 i.el-icon-s-tools{
   font-size: 18px;
   vertical-align: middle;
+}
+.az{
+    display: inline-block;
+    float: right;
+    margin-right: 10px;
 }
 </style>
