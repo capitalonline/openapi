@@ -71,11 +71,11 @@
                     </div>
                     
                 </div>
-                <div class="m-right10 flex-between">
-                    <span class="m-right10 m-top20">迁移推荐:</span>
+                <div class="m-right10 flex-base">
+                    <span class="m-right10">迁移推荐:</span>
                     <div>
                         <div v-for="item in recommend" :key="item.host_id">
-                            {{item.host_id}}
+                            {{item.host_name}}
                             <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="top" effect="light">
                                 <span><CustomIcon :hei="item.cpu_usage" />CPU</span>
                             </el-tooltip>
@@ -226,7 +226,10 @@ export default class Migrate extends Vue{
             display:flex
         }
     }
-
+    .flex-base{
+        display: flex;
+        align-items: baseline;
+    }
     
     
 }
