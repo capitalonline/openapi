@@ -1,6 +1,6 @@
 <template>
   <div class="action-box">
-    <div class="search-box">
+    <div class="search-box" ref="search" :class="{fold:!isOpen}">
       <div
         v-for="(value, key) in search_option"
         :key="key"
@@ -54,11 +54,15 @@
           </date-picker>
         </template>
       </div>
-
-      <div class="m-bottom20">
+      <div class="m-bottom20" v-if="!type">
         <el-button type="primary" @click="FnSearch">查 询</el-button>
         <el-button type="default" @click="FnClear">清 空</el-button>
       </div>
+    </div>
+    <div class="m-bottom20" v-if="type">
+      <el-button type="primary" @click="FnSearch">查 询</el-button>
+      <el-button type="default" @click="FnClear">清 空</el-button>
+      <el-button type="text" class="m-bottom10" @click="operate">{{isOpen ? '折叠' : '展开'}}</el-button>
     </div>
     <slot>
       <el-button
@@ -86,11 +90,12 @@ export default class ActionBlock extends Vue {
   @Prop({ default: {} }) private search_option!: Object;
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
-
+  @Prop({ default: false }) private type!: boolean;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
-
+  private isOpen:boolean=true;//默认展开
+  
   private FnGetTime(time, key) {
     this.time = time;
     this.date_key = key;
@@ -101,13 +106,34 @@ export default class ActionBlock extends Vue {
     this.search_value[this.date_key] = this.time;
     return this.search_value;
   }
-  @Watch("search_value", { immediate: true, deep: true })
-  private watch_search_value(newval, oldval) {}
-  @Emit("fn-create")
-  private FnShowCreate() {}
-  private FnClear() {
-    for (let i in this.search_option) {
-      if (["datetimerange", "daterange"].includes(this.search_option[i].type)) {
+  @Watch('search_option',{immediate:true,deep:true})
+  private watch_search_option(){
+    if(!this.type){
+      return;
+    }
+    this.$nextTick(()=>{
+      let search = this.$refs.search as any
+      let hei = window.getComputedStyle(search).height.replace('px','')
+      console.log("hei",hei,parseInt(hei))
+      if(parseInt(hei) >52 && this.isOpen){//超过一行，展开的情况下折叠
+        this.isOpen=false;//折叠
+      }
+      this.FnOperate()
+    })
+  }
+  private operate(){
+    this.isOpen = !this.isOpen;
+    this.FnOperate()
+  }
+  @Emit("fn-operate")
+  private FnOperate(){
+  }
+  @Emit('fn-create')
+  private FnShowCreate() {
+  }
+  private FnClear(){
+    for(let i in this.search_option){
+      if(["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
       } else {
         this.search_value = {};
@@ -137,6 +163,7 @@ export default class ActionBlock extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
 .action-box {
   padding: 20px;
   background: #f2f2f2;
@@ -159,6 +186,25 @@ export default class ActionBlock extends Vue {
     width: 100%;
   }
 }
+.fold{
+  height: 52px;
+  overflow: hidden;
+  // display: flex;
+  // overflow: hidden;
+  .search-input {
+    width: 200px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    .el-range-editor.el-input__inner{
+      width: 100% !important;
+      padding: 0px 10px !important;
+    }
+  }
+  .el-select {
+    width: 100%;
+  }
+}
+
 </style>
 <style lang="scss">
 .el-picker-panel__footer {
