@@ -10,9 +10,9 @@
                 <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table :data="list" border class="event-table">
+        <el-table :data="list" border class="event-table" :tooltip-effect="'light'">
             <!-- <el-table-column type="selection"></el-table-column> -->
-            <el-table-column prop="os_id" label="镜像ID"></el-table-column>
+            <el-table-column prop="os_id" label="镜像ID" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="type" :filters="mirror_type"></el-table-column>
             <el-table-column prop="size" label="容量" sortable="custom"></el-table-column>
@@ -112,7 +112,7 @@ export default class CommonMirror extends Vue{
         }
     }
     private list:Array<any>=[ {
-                "os_id":"img-11ec-962e-02428922def1",
+                "os_id":"img-11ec-962e-02428922def11111111111111111111111111111111111",
                 "display_name":"",
                 "os_type":"windows",
                 "size":200,
@@ -125,8 +125,8 @@ export default class CommonMirror extends Vue{
                     "az_name":"2",
                     "os_id":"3",
                     "gic_resource_id":"",
-                    "status":"",
-                    "create_time":"",
+                    "status":"enable",
+                    "create_time":"2022-04-25",
                     'pod_name_list':['','']
                     }
                 ],
@@ -244,8 +244,8 @@ i.el-icon-s-tools{
   vertical-align: middle;
 }
 .az{
-    display: inline-block;
-    float: right;
-    margin-right: 10px;
+    // display: flex;
+    // justify-content: flex-end;
+    // margin-right: 10px;
 }
 </style>
