@@ -6,8 +6,8 @@
             :data="list"
             border
         >
-            <el-table-column prop="selection" label="操作内容"></el-table-column>
-            <el-table-column prop="selection" label="操作结果"></el-table-column>
+            <el-table-column prop="op_content" label="操作内容"></el-table-column>
+            <el-table-column prop="op_result" label="操作结果"></el-table-column>
             <el-table-column prop="msg" label="响应信息">
                 <template slot-scope="scope">
                     <div>
@@ -19,9 +19,9 @@
                 </template>
             </el-table-column>
             <el-table-column prop="selection" label="附件" width="400px" align="center"></el-table-column>
-            <el-table-column prop="selection" label="操作人"></el-table-column>
-            <el-table-column prop="selection" label="完成时间"></el-table-column>
-            <el-table-column prop="selection" label="创建时间"></el-table-column>
+            <el-table-column prop="op_user" label="操作人"></el-table-column>
+            <el-table-column prop="finish_time" label="完成时间"></el-table-column>
+            <el-table-column prop="create_time" label="创建时间"></el-table-column>
         </el-table>
         <el-pagination
             @size-change="getList()"
@@ -37,6 +37,10 @@
 <script lang="ts">
 import {Vue,Component} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
+import Service from '../../https/message/list';
+import EcsService from '../../https/instance/create';
+import {trans} from '../../utils/transIndex';
+import moment from 'moment'
 @Component({
     components:{
         ActionBlock
@@ -44,7 +48,8 @@ import ActionBlock from '../../components/search/actionBlock.vue';
 })
 export default class Message extends Vue{
     private search_dom:any={
-        content:{placeholder:'请选择操作内容',list:[{label:'业务测试',type:"test"}]},
+        az_id:{placeholder:'请选择可用区',list:[]},
+        op_content:{placeholder:'请选择操作内容',list:[{label:'业务测试',type:"test"}]},
         create_time:{
             placeholder: ['开始时间', '结束时间'],
             type: 'daterange',
@@ -53,7 +58,7 @@ export default class Message extends Vue{
             dis_day: 30,
             defaultTime: [] 
         },
-        user:{placeholder:'请输入操作人'},
+        op_user:{placeholder:'请输入操作人'},
     }
     private page_info={
         page_sizes: [20, 50, 100],
@@ -63,14 +68,45 @@ export default class Message extends Vue{
 
     }
     private list:Array<any>=[];
-    private search_data:any={}
+    private search_data:any={};
+    created(){
+        this.get_az_list();
+        this.get_inform_list()
+        this.search();
+    }
+    private async get_az_list(){
+        let res:any=await EcsService.get_region_az_list({})
+        if(res.code==="Success"){
+        res.data.forEach(item=>{
+            item.region_list.forEach(inn=>{
+            this.search_dom.az_id.list=[...this.search_dom.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+            })
+        })
+        }
+    }
+    private async get_inform_list(){
+        let res:any=await Service.get_inform_list({})
+        if(res.code==="Success"){
+            this.search_dom.az_id.list=res.data
+        }
+    }
     private search(data:any={}){
-        this.search_data = data;
+        this.search_data = {...data};
         this.page_info.page_index=1;
         this.getList()
     }
-    private getList(){
-
+    private async getList(){
+        const {az_id,op_content,create_time,op_user} = this.search_data
+        let res:any = await Service.get_message_list({
+            az_id,
+            op_content,
+            op_user,
+            create_time_start:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+            create_time_end:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+        })
+        if(res.code==='Success'){
+            this.list = res.data.business_record_list
+        }
     }
 }
 </script>

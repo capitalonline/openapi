@@ -14,7 +14,7 @@
             <div v-for="(item,index) in selectedTasks" :key="index" class="m-bottom10">
                 <circle-icon :num="index+2"></circle-icon>
                 <el-select v-model="item.task_id" placeholder="请选择测试任务列表" @change="changeTask($event,index)">
-                    <el-option v-for="inn in taskList" :key="inn.id" :value="inn.id" :label="inn.name" :disabled="item.disList.includes(inn.id)"></el-option>
+                    <el-option v-for="inn in taskList" :key="inn.maintask_name" :value="inn.maintask_name" :label="inn.display_name" :disabled="item.disList.includes(inn.maintask_name)"></el-option>
                 </el-select>
                 <span class="m-left10" v-if="item.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
@@ -32,6 +32,7 @@
 import {Vue,Component,Prop,PropSync,Watch} from 'vue-property-decorator';
 import SvgIcon from '../../components/svgIcon/index.vue';
 import CircleIcon from './indexIcon.vue';
+import Service from '../../https/physical/list'
 @Component({
     components:{
         SvgIcon,
@@ -40,23 +41,23 @@ import CircleIcon from './indexIcon.vue';
 })
 export default class BusinessTest extends Vue{
     @PropSync('visible')visible_sync!:boolean;
-    private taskList:Array<any>= [
-        {id:'1',name:'任务1'},
-        {id:'2',name:'任务2'},
-        {id:'3',name:'任务3'},
-        {id:'4',name:'任务4'},
-        {id:'5',name:'任务5'},
-    ];
+    private taskList:Array<any>= [];
     private selectedTasks:Array<any> = [];
     private num:number=1;
     private task:string='';
     created(){
+        this.get_task_list()
     }
-    
+    private async get_task_list(){
+        let res:any=await Service.get_task_list({})
+        if(res.code==='Success'){
+            this.taskList = res.data.task_list
+        }
+    }
     private set_disList(){
         let ids = this.selectedTasks.map(task=>task.task_id)//已经选中的任务id
         this.selectedTasks.map(item=>{
-            item.disList = ids.filter(inn=>inn!==item.task_id)
+            item.disList = ids.filter(inn=>inn!==item.maintask_name)
             return item;
         })
         console.log("this.selectedTasks",this.selectedTasks)
