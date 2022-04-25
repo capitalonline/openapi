@@ -1,13 +1,7 @@
 <template>
   <div class="instance-list">
-    <action-block :search_option="search_con" @fn-search="FnSearch">
+    <action-block :search_option="search_con" @fn-search="FnSearch" :type="true">
       <template #default>
-        <el-button
-          type="primary"
-          @click="FnToCreate"
-          :disabled="!operate_auth.includes('instance_create')"
-          >创建实例</el-button
-        >
         <el-button
           type="primary"
           @click="FnOperate('start_up_ecs')"
@@ -28,24 +22,6 @@
         >
         <el-button
           type="primary"
-          @click="FnOperate('delete_ecs')"
-          :disabled="!operate_auth.includes('delete')"
-          >逻辑删除</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('recover_ecs')"
-          :disabled="!operate_auth.includes('recover')"
-          >恢 复</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('destroy_ecs')"
-          :disabled="!operate_auth.includes('destroy')"
-          >销 毁</el-button
-        >
-        <el-button
-          type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
           >更换实例规格</el-button
@@ -61,12 +37,6 @@
           @click="FnOperate('reset_pwd')"
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('open_bill')"
-          :disabled="!operate_auth.includes('open_bill')"
-          >开启计费</el-button
         >
       </template>
     </action-block>
@@ -485,6 +455,11 @@ export default class App extends Vue {
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
     status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
+    customer_id: { placeholder: "请输入客户ID" },
+    customer_name: { placeholder: "请输入客户名称" },
+    os_type: { placeholder: "请选择操作系统", list: [] },
+    private_net: { placeholder: "请输入私网IP" },
+    host_id: { placeholder: "请输入物理机ID", default_value: "" },
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -493,11 +468,6 @@ export default class App extends Vue {
       dis_day: 1,
       defaultTime: []
     },
-    customer_id: { placeholder: "请输入客户ID" },
-    customer_name: { placeholder: "请输入客户名称" },
-    os_type: { placeholder: "请选择操作系统", list: [] },
-    private_net: { placeholder: "请输入私网IP" },
-    host_id: { placeholder: "请输入物理机ID", default_value: "" }
   };
   private search_reqData = {};
   private search_billing_method = "all";
