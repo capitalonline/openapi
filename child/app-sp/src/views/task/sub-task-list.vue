@@ -66,6 +66,7 @@
     <el-dialog
       :title="dialog_title"
       :visible.sync="create_dialog"
+      @close="FnClose"
       width="60%">
       <div>
         <label-block label="子任务名称">
