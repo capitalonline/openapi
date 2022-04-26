@@ -70,7 +70,7 @@ export default class DatePicker extends Vue {
  
   @Emit('fn-emit')
   FnEmit() {
-    this,this.min_date=""
+    this.min_date=""
     return this.time
   }
 }
