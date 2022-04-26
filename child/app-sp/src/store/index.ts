@@ -22,6 +22,7 @@ export default new Vuex.Store({
       '内存使用率','创建时间','虚拟机数量','CPU','网卡'
     ],
     host_search:{},
+    pod_id:storage.get('pod_id') || '',
   },
   getters: {
   },
@@ -55,6 +56,10 @@ export default new Vuex.Store({
     },
     SET_HOST_SEARCH(state,data){
       state.host_search = data
+    },
+    SET_POD(state,id){
+      storage.set('pod_id',id)
+      state.pod_id = id
     }
 
   },
