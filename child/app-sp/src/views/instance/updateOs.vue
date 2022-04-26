@@ -95,7 +95,7 @@ export default class updateOs extends Vue{
       if (this.is_gpu) {
         return item.support_type.includes('gpu') && item.support_gpu_driver == this.support_gpu_driver
       } else {
-        return item.support_type.includes('kvm') && item.support_gpu_driver == this.support_gpu_driver
+        return item.support_type.includes('cpu') && item.support_gpu_driver == this.support_gpu_driver
       }
     })
   }
