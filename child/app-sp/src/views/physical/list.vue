@@ -1,6 +1,6 @@
 <template>
     <div>
-      <action-block :search_option="search_option" @fn-search="fn_search" :type="true" @fn-operate="FnOperate">
+      <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
               <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
           </template>
@@ -237,7 +237,7 @@ export default class PhysicalList extends Vue {
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
-      this.fn_search();
+      // this.fn_search();
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()

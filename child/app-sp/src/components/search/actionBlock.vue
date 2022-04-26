@@ -50,7 +50,7 @@ export default class ActionBlock extends Vue {
   @Prop({ default: {} }) private search_option!: Object;
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
-  @Prop({ default: false }) private type!: boolean;
+  @Prop({ default: false }) private type!: boolean | string;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
@@ -113,7 +113,7 @@ export default class ActionBlock extends Vue {
         flag++
       }
     }
-    if (flag > 0) {
+    if (flag > 0 || this.type==='physical') {
       setTimeout(()=>{
         this.FnSearch()
       },500)
