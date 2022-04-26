@@ -325,7 +325,7 @@ export default class Monitor extends Vue{
 
       this.detail_info.status.value = data.status_display;
       if (!data.is_gpu) {
-        delete this.tab_list.gpu
+        Vue.delete(this.tab_list, 'gpu')
       }
       // this.FnGetChartData()
     }

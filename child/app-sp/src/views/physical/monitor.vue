@@ -242,7 +242,7 @@ export default class Monitor extends Vue{
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
       if (this.host_info.host_purpose !== 'GPU') {
-        delete this.tab_list.gpu
+        Vue.delete(this.tab_list, 'gpu')
       }
       this.FnGetChartData()
     }
