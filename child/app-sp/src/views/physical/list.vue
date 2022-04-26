@@ -1,6 +1,6 @@
 <template>
     <div>
-      <action-block :search_option="search_option" @fn-search="fn_search" :type="true" @fn-operate="FnOperate">
+      <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
               <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
           </template>
@@ -268,20 +268,21 @@ export default class PhysicalList extends Vue {
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
+      // this.fn_search();
       this.get_host_attribution()
       this.getHostTypes();
-      this.fn_search();
       this.get_host_recycle_department()
       this.auth_list = this.$store.state.auth_info[this.$route.name];
       delete this.$store.state.host_search['']
-      if(Object.keys(this.$store.state.host_search).length>0 || this.$route.query.host_id){
-        for(let i in this.search_option){
-          this.search_option[i].default_value = this.$store.state.host_search[i]
-        }
-        if(this.$route.query.host_id){
-          this.search_option.host_id.default_value = this.$route.query.host_id as string
-        }
+      for(let i in this.search_option){
+        this.search_option[i].default_value = this.$store.state.host_search[i]
       }
+      if(this.$route.query.host_id){
+        this.search_option.host_id.default_value = this.$route.query.host_id as string
+      }
+      // if(Object.keys(this.$store.state.host_search).length>0 || this.$route.query.host_id){
+        
+      // }
       // else{
       //   this.fn_search();
       // }

@@ -54,6 +54,7 @@
           </date-picker>
         </template>
       </div>
+
       <div class="m-bottom20" v-if="!type">
         <el-button type="primary" @click="FnSearch">查 询</el-button>
         <el-button type="default" @click="FnClear">清 空</el-button>
@@ -90,12 +91,13 @@ export default class ActionBlock extends Vue {
   @Prop({ default: {} }) private search_option!: Object;
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
-  @Prop({ default: false }) private type!: boolean;
+  @Prop({ default: false }) private type!: boolean | string;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
   private isOpen:boolean=true;//默认展开
   
+
   private FnGetTime(time, key) {
     this.time = time;
     this.date_key = key;
@@ -131,9 +133,12 @@ export default class ActionBlock extends Vue {
   @Emit('fn-create')
   private FnShowCreate() {
   }
-  private FnClear(){
-    for(let i in this.search_option){
-      if(["datetimerange", "daterange"].includes(this.search_option[i].type)) {
+  
+  @Watch("search_value", { immediate: true, deep: true })
+  private watch_search_value(newval, oldval) {}
+  private FnClear() {
+    for (let i in this.search_option) {
+      if (["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
       } else {
         this.search_value = {};
@@ -153,10 +158,11 @@ export default class ActionBlock extends Vue {
         flag++;
       }
     }
-    if (flag > 0) {
-      setTimeout(() => {
-        this.FnSearch();
-      }, 500);
+    if (flag > 0 || this.type==='physical') {
+      setTimeout(()=>{
+        this.FnSearch()
+      },500)
+      
     }
   }
 }
