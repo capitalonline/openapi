@@ -1,7 +1,7 @@
 import Cookie from 'js-cookie';
 
 export default {
-  set(key: string, val: string | object) {
+  set(key: string, val: string) {
     Cookie.set(key, val)
   },
   get(key: string) {
