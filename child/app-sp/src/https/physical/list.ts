@@ -105,7 +105,7 @@ export default{
     },
     //获取业务测试任务列表
     get_task_list(req){
-        return service(getHostOptions('GET','/host/business_test_task',req))
+        return service(getHostOptions('GET','/host/business_test_task/',req))
     },
     //业务测试下发
     create_test_task(req){

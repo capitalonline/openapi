@@ -49,7 +49,7 @@ import moment from 'moment'
 export default class Message extends Vue{
     private search_dom:any={
         az_id:{placeholder:'请选择可用区',list:[]},
-        op_content:{placeholder:'请选择操作内容',list:[{label:'业务测试',type:"test"}]},
+        op_content:{placeholder:'请选择操作内容',list:[]},
         create_time:{
             placeholder: ['开始时间', '结束时间'],
             type: 'daterange',
@@ -87,7 +87,7 @@ export default class Message extends Vue{
     private async get_inform_list(){
         let res:any=await Service.get_inform_list({})
         if(res.code==="Success"){
-            this.search_dom.az_id.list=res.data
+            this.search_dom.op_content.list=res.data
         }
     }
     private search(data:any={}){
@@ -103,9 +103,12 @@ export default class Message extends Vue{
             op_user,
             create_time_start:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
             create_time_end:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+            page_index:this.page_info.page_index,
+            page_size:this.page_info.page_size
         })
         if(res.code==='Success'){
-            this.list = res.data.business_record_list
+            this.list = res.data.business_record_list;
+            this.page_info.total = res.data.count
         }
     }
 }

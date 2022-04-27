@@ -100,10 +100,7 @@ export default class BusinessTest extends Vue{
 }
 </script>
 <style lang="scss" scoped>
-.email{
-    display: inline-block;
+.el-select{
     width: 420px;
-    margin-left: 10px;
-    margin-top: 20px;
 }
 </style>

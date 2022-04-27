@@ -114,9 +114,15 @@
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
-        :all_item="all_column_item" 
+        :all_item="all_item"
+        :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
+      <!-- <custom-list-item 
+        :visible.sync="custom_visible" 
+        :all_item="all_column_item" 
+        @fn-custom="get_custom_columns"
+      ></custom-list-item> -->
     </div>
 </template>
 <script lang="ts">
@@ -252,6 +258,7 @@ export default class PhysicalList extends Vue {
     {label:'内存使用率',prop:'ram',sortable:'custom'},
     {label:'创建时间',prop:'create_time'},
   ]
+  private all_item:Array<any>=[];
   created() {
       this.get_host_list_field()
       this.get_room_list()
@@ -291,10 +298,21 @@ export default class PhysicalList extends Vue {
   private async get_host_list_field(){
     let res:any = await Service.get_host_list_field({})
     if(res.code==="Success"){
+      // let key_list=['field_name','show_name'];
+      // let label_list=['prop','label'] 
+      // this.all_column_item = deal_list(res.data,label_list,key_list);
+      // this.get_custom_columns(this.$store.state.custom_host)
       let key_list=['field_name','show_name'];
-      let label_list=['prop','label'] 
-      this.all_column_item = deal_list(res.data,label_list,key_list);
+      let label_list=['prop','label'];
+      let list:Array<any>=[]
+      res.data.map(item=>{
+        list=[...list,...item.filed];
+        return item;
+      })
+      this.all_item = res.data;
+      this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
+
 
     }
   }
