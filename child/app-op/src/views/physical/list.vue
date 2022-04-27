@@ -142,7 +142,7 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
 import {deal_list} from '../../utils/transIndex';
 import UpdateAttribute from './updateAttribute.vue';
-import CustomListItem from './customListItem.vue';
+import CustomListItem from '../../components/customListItem.vue';
 import moment from 'moment';
 @Component({
   components:{

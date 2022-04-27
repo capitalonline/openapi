@@ -35,6 +35,16 @@
       </template>
     </action-block>
     <div class="icon m-bottom10">
+      <el-tooltip content="自定义列表项" placement="bottom" effect="light">
+        <el-button type="text" @click="FnCustom">
+          <i class="el-icon-s-tools" ></i>
+        </el-button>        
+      </el-tooltip>
+      <el-tooltip content="刷新" placement="bottom" effect="light">
+        <el-button type="text" @click="FnGetList">
+          <svg-icon icon="refresh" class="refresh"></svg-icon>
+        </el-button>
+      </el-tooltip>
       <el-tooltip content="导出" placement="bottom" effect="light">
         <el-button type="text" @click="FnExport" v-loading="loading">
           <svg-icon icon="export" class="export"></svg-icon>
@@ -50,9 +60,20 @@
       border
     >
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-      <el-table-column prop="customer_name" label="客户名称"></el-table-column>
-      <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
+      <el-table-column
+        v-for="item in select_table_item"
+        :key="item.prop"
+        :label="item.label"
+        :prop="item.prop"
+        :column-key="item.prop"
+        :sortable="item.sortable"
+        :filters="item.filters"
+        :filter-multiple="false"
+      >
+        <template #default="scope">
+          {{ scope.row[item.prop] }}
+        </template>
+      </el-table-column>
       <el-table-column prop="ecs_name" label="云服务器名称">
         <template #default="scope">
           <pre>{{ scope.row.ecs_name }}</pre>
@@ -93,7 +114,7 @@
               class="circel-border"
               v-if="
                 scope.row.eip_info[scope.row.pub_net] &&
-                  scope.row.eip_info[scope.row.pub_net].conf_name
+                scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
@@ -120,7 +141,7 @@
           <div
             v-if="
               scope.row.eip_info[scope.row.pub_net] &&
-                scope.row.eip_info[scope.row.pub_net].conf_name
+              scope.row.eip_info[scope.row.pub_net].conf_name
             "
           >
             <span class="circel-border">
@@ -180,39 +201,6 @@
           <div>
             {{ scope.row.op_source === "cloud_op" ? "运维后台" : "GIC" }}
           </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="180">
-        <template #default="scope">
-          <el-button
-            type="text"
-            @click="FnToDetail(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_detail')"
-            >详情</el-button
-          >
-          <el-button
-            type="text"
-            @click="FnToRecord(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_record')"
-            >操作记录</el-button
-          >
-          <el-button
-            type="text"
-            @click="FnToMonitor(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('monitor')"
-            >监控</el-button
-          >
-          <el-button
-            type="text"
-            :disabled="
-              scope.row.status !== 'running' || !operate_auth.includes('vnc')
-            "
-            @click="FnToVnc(scope.row.ecs_id)"
-            >远程连接</el-button
-          >
-          <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
-              :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
-            开启计费</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -407,6 +395,14 @@
         @close-detail="closeDetail"
       />
     </template>
+
+    <custom-list-item
+      type="ecs"
+      :visible.sync="show_custom" 
+      :all_item="all_item"
+      :all_column_item="all_table_item" 
+      @fn-custom="FnGetTableItem"
+    ></custom-list-item>
   </div>
 </template>
 
@@ -415,6 +411,7 @@ import { Component, Vue } from "vue-property-decorator";
 import LabelBlock from "../../components/labelBlock.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
+import CustomListItem from '../../components/customListItem.vue';
 import getInsStatus from "../../utils/getStatusInfo";
 import { trans } from "../../utils/transIndex";
 import Service from "../../https/instance/list";
@@ -441,6 +438,7 @@ import moment from "moment";
     Recover,
     SvgIcon,
     MarkTip,
+    CustomListItem
   },
 })
 export default class App extends Vue {
@@ -512,6 +510,130 @@ export default class App extends Vue {
   private loading = false;
   private sort_prop_name = "";
   private sort_order = 0;
+  private show_custom = false;
+  private all_item = [
+    {
+      name: "基本信息",
+      filed: [
+        {
+          field_name: "ecs_id",
+          show_name: "云服务器ID"
+        },
+        {
+          field_name: "ecs_name",
+          show_name: "云服务器名称"
+        },
+        {
+          field_name: "customer_id",
+          show_name: "客户ID"
+        },
+        {
+          field_name: "customer_name",
+          show_name: "客户名称"
+        },
+        {
+          field_name: "customer_type",
+          show_name: "客户类别"
+        },
+        {
+          field_name: "customer_level",
+          show_name: "客户等级"
+        },
+        {
+          field_name: "az_name",
+          show_name: "可用区"
+        },
+        {
+          field_name: "pod",
+          show_name: "POD",
+          hidden: true
+        }
+      ]
+    },
+    {
+      name: "产品信息",
+      filed: [
+        {
+          field_name: "goods_name",
+          show_name: "计算规格"
+        },
+        {
+          field_name: "system_disk_type",
+          show_name: "系统盘类型"
+        },
+        {
+          field_name: "system_disk_size",
+          show_name: "系统盘容量"
+        },
+        {
+          field_name: "data_disk_type",
+          show_name: "数据盘类型"
+        },
+        {
+          field_name: "data_disk_size",
+          show_name: "数据盘容量"
+        },
+        {
+          field_name: "host_name",
+          show_name: "所属宿主机"
+        },
+        {
+          field_name: "os_type",
+          show_name: "操作系统类型",
+          hidden: true
+        },
+        {
+          field_name: "os_version",
+          show_name: "操作系统版本",
+          hidden: true
+        },
+        {
+          field_name: "private_net",
+          show_name: "主私网IP",
+          hidden: true
+        },
+        {
+          field_name: "virtual_net",
+          show_name: "虚拟出网网关",
+          hidden: true
+        },
+        {
+          field_name: "pub_net",
+          show_name: "公网IP",
+          hidden: true
+        }
+      ]
+    },
+    {
+      name: "其他",
+      filed: [
+        {
+          field_name: "create_time",
+          show_name: "创建时间"
+        },
+        {
+          field_name: "destroy_time",
+          show_name: "销毁时间",
+          hidden: true
+        },
+        {
+          field_name: "is_charge",
+          show_name: "计费方式"
+        },
+        {
+          field_name: "is_renewal",
+          show_name: "续约方式",
+          hidden: true
+        },
+        {
+          field_name: "status",
+          show_name: "状态"
+        }
+      ]
+    }
+  ]
+  private all_table_item = []
+  private select_table_item = [];
 
   private FnSearch(data: any = {}) {
     this.search_reqData = {
@@ -941,9 +1063,9 @@ export default class App extends Vue {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
           ebs_goods_id: disk_data.system_disk.ecs_goods_id,
-          gic_goods_id: this.disk_billing_info[
-            disk_data.system_disk.ecs_goods_id
-          ]?.gic_goods_id,
+          gic_goods_id:
+            this.disk_billing_info[disk_data.system_disk.ecs_goods_id]
+              ?.gic_goods_id,
           goods_name: disk_data.system_disk.disk_name,
           disk_feature: disk_data.system_disk.disk_feature,
           disk_type: disk_data.system_disk.disk_type,
@@ -1098,7 +1220,15 @@ export default class App extends Vue {
       });
     }
   }
-
+  private FnCustom() {
+    this.show_custom = true;
+  }
+  // 自定义列表项后改变表格展示项
+  private FnGetTableItem(item_list) {
+    this.select_table_item = this.all_table_item.filter((item) =>
+      item_list.includes(item.label)
+    );
+  }
   private async FnExport() {
     this.loading = true;
     const resData = await Service.export_list(
@@ -1162,6 +1292,15 @@ export default class App extends Vue {
     } else {
       this.FnSearch();
     }
+    this.all_item.forEach(item => {
+      this.all_table_item.push(...item.filed.map(item => {
+        return {
+          label: item.show_name,
+          prop: item.field_name,
+          hidden: item.hidden
+        }
+      }))
+    });
   }
   private beforeDestroy() {
     this.FnClearTimer();

@@ -14,6 +14,7 @@ export default new Vuex.Store({
     auth_info: {},
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
+    ecs_custom_item: JSON.parse(storage.get('ecs_custom_item')) || [],
     custom_host:JSON.parse(storage.get('custom_host')) || [
       '主机名','区域','机房名称','机柜编号','起始U位',
       '占用U位','电源状态','机器状态','操作系统','机器类型',
@@ -48,6 +49,10 @@ export default new Vuex.Store({
     SET_STATUS_LIST (state, status) {
       storage.set('status_list', JSON.stringify(status));
       state.status_list = status;
+    },
+    SET_ECS_CUSTOM_ITEM(state, list) {
+      state.ecs_custom_item = list;
+      storage.set('ecs_custom_item', JSON.stringify(list))
     },
     SET_CUSTOM_HOST(state,list){
       storage.set('custom_host',JSON.stringify(list))
