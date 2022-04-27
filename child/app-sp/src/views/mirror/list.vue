@@ -28,10 +28,10 @@
             </el-table-column>
             <el-table-column prop="" label="" type="expand">
                 <template slot-scope="props">
-                    <div v-for="(item,index) in props.row.az_list" :key="index">
-                        <span class="az">{{item.az_name}}</span>
-                        <span class="az">{{item.create_time}}</span>
-                        <span class="az">{{item.status}}</span>
+                    <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
+                        <div class="az">{{item.az_name}}</div>
+                        <div class="time">{{item.create_time}}</div>
+                        <div class="status">{{item.status}}</div>
                         <el-button type="text" class="az">删除</el-button>
                     </div>
                 </template>
@@ -65,16 +65,17 @@
             :total="total">
         </el-pagination>
         <template v-if="visible && ['add','edit'].includes(oper_type)">
-            <add-common :visible.sync="visible" :id="oper_info.id ? oper_info.id : ''"></add-common>
+            <add-common :visible.sync="visible" :oper_info="oper_info"></add-common>
         </template>
         <template v-if="visible && ['sync'].includes(oper_type)">
-            <sync-mirror :visible.sync="visible"></sync-mirror>
+            <sync-mirror :visible.sync="visible" :os_id="oper_info.os_id"></sync-mirror>
         </template>
         <template v-if="visible && ['change'].includes(oper_type)">
-            <change-status :visible.sync="visible"></change-status>
+            <change-status :visible.sync="visible" :oper_info="oper_info"></change-status>
         </template>
-        <template v-if="visible && ['addCommon'].includes(oper_type)">
-            <add-common-mirror :visible.sync="visible"></add-common-mirror>
+        
+        <template v-if="visible && ['record'].includes(oper_type)">
+            <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id"></Record>
         </template>
     </div>
 </template>
@@ -87,6 +88,7 @@ import AddCommon from './addCommon.vue';
 import SyncMirror from './syncMirror.vue';
 import ChangeStatus from './changeStatus.vue';
 import AddCommonMirror from '../instance/addCommonMirror.vue';
+import Record from '../instance/record.vue'
 import moment from 'moment'
 @Component({
     components:{
@@ -95,7 +97,8 @@ import moment from 'moment'
         AddCommon,
         SyncMirror,
         ChangeStatus,
-        AddCommonMirror
+        AddCommonMirror,
+        Record
     }
 })
 export default class CommonMirror extends Vue{
@@ -128,9 +131,18 @@ export default class CommonMirror extends Vue{
                     "status":"enable",
                     "create_time":"2022-04-25",
                     'pod_name_list':['','']
+                    },
+                    {
+                    "az_id":"2",
+                    "az_name":"2",
+                    "os_id":"3",
+                    "gic_resource_id":"",
+                    "status":"enable",
+                    "create_time":"2022-04-25",
+                    'pod_name_list':['','']
                     }
                 ],
-         		"status":"",
+         		"status":"enable",
         		'customer_list':['E020912','E888908'],
                 'path_name':'',
 				"create_time":"",
@@ -150,9 +162,36 @@ export default class CommonMirror extends Vue{
     private oper_type:string="";
     private oper_info:any={};
     created() {
-        this.auth_list = this.$store.state.auth_info[   this.$route.name]
+        this.auth_list = this.$store.state.auth_info[this.$route.name]
         // this.search()
     }
+    @Watch('visible')
+    private watch_visible(nv){
+        if(!nv){
+            this.oper_info={}
+        }
+    }
+    private async get_status_list(){
+
+    }
+    private async get_mirror_type(){
+        let res:any = await Service.get_mirror_type({})
+        if(res.code==="Success"){
+            res.data.type_list.map(item=>{
+                this.mirror_type.push({text:item,value:item})
+            })
+            
+        }
+    }
+    // private async get_mirror_type(){
+    //     let res:any = await Service.get_mirror_type({})
+    //     if(res.code==="Success"){
+    //         res.data.type_list.map(item=>{
+    //             this.mirror_type.push({text:item,value:item})
+    //         })
+            
+    //     }
+    // }
     private search(data:any={}){
         this.current = 1;
         this.search_data=data
@@ -198,11 +237,17 @@ export default class CommonMirror extends Vue{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+        }).then(async() => {
+            let res:any = await Service.del_pub_mirror({
+                os_id:obj.os_id
+            })
+            if(res.code==="Success"){
+                this.$message({
+                    type: 'success',
+                    message: res.message
+                });
+            }
+          
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -222,7 +267,7 @@ export default class CommonMirror extends Vue{
     }
     private record(obj){
         this.visible=true;
-        this.oper_type='addCommon';
+        this.oper_type='record';
         this.oper_info=obj
     }
     private down(){
@@ -243,9 +288,18 @@ i.el-icon-s-tools{
   font-size: 18px;
   vertical-align: middle;
 }
-.az{
-    // display: flex;
-    // justify-content: flex-end;
-    // margin-right: 10px;
+.table-expand{
+    display: flex;
+    justify-content:right;
+    margin-right: 10px;
+    align-items: center;
+    .az,.status{
+        width: 100px;
+        line-height: 32px;
+    }
+    .time{
+        width: 150px;
+        line-height: 32px;
+    }
 }
 </style>

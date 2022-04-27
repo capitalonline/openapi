@@ -32,22 +32,42 @@
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,PropSync} from 'vue-property-decorator';
+import {Form} from 'element-ui';
+import Service from '../../https/mirror/list'
 @Component({
     components:{
     }
 })
 export default class SyncMirror extends Vue{
     @PropSync('visible')visible_sync!:boolean;
-    private form_data={
-        id:'',
-        name:'',
+    @Prop({default:()=>{}})oper_info!:any;
+    private form_data:any={
+        id:this.oper_info.os_id,
+        name:this.oper_info.display_name,
         status:'',
         remark:''
     }
     private confirm(){
-        this.visible_sync=false
+        const form= this.$refs.form_status as Form;
+        const {id,status,remark} = this.form_data
+        form.validate(async valid=>{
+            if(valid){
+                let res:any = await Service.change_status({
+                    os_id:id,
+                    is_running:Number(status),
+                    context:remark
+                })
+                if(res.code==='Success'){
+                    this.$message.success(res.message)
+                }
+                this.visible_sync=false
+            }
+        })
+        
     }
     private cancel(){
+        const form= this.$refs.form_status as Form;
+        form.resetFields()
         this.visible_sync=false
     }
 }
