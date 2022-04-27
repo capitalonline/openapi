@@ -422,7 +422,7 @@ export default class PhysicalList extends Vue {
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
-      console.log("this.list",this.list)
+      // console.log("this.list",this.list)
       this.page_info.total = res.data.page_info.count || 0
     }
   }
