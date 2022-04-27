@@ -27,6 +27,7 @@ import { Component, Prop, Emit, Vue } from 'vue-property-decorator';
 interface CustomItem {
   label: string,
   prop: string,
+  hidden?: boolean,
   readonly?: boolean
 }
 @Component
