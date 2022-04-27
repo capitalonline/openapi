@@ -16,9 +16,8 @@
 </template>
 
 <script lang="ts">
-import { min } from 'moment';
+// import { min } from 'moment';
 import { Component, Prop, Emit, Watch, Vue } from 'vue-property-decorator';
-
 @Component
 export default class DatePicker extends Vue {
   @Prop({ default: () => {
@@ -36,7 +35,7 @@ export default class DatePicker extends Vue {
   private min_date: any = "";
   private day: number= 0;
   private dis_date(cur){
-    const {day} = this
+    const {day} = this;
     if(day===0) return;
     let one_day = 1000*60*60*24;
     let date = new Date().getTime();
@@ -46,7 +45,7 @@ export default class DatePicker extends Vue {
       min_date = new Date(this.time_option.min_date).getTime();
       return cur.getTime() > max_date || cur.getTime() < min_date - one_day
     }
-    return cur.getTime() > max_date ||  cur.getTime() > (this.min_date || date)  + one_day * day  || cur.getTime() < this.min_date - one_day * day
+    return cur.getTime() > max_date ||  cur.getTime() > (this.min_date || date)  + one_day * day  || (this.min_date && cur.getTime() < this.min_date - one_day * day)
   }
   private onPicker({ maxDate, minDate }){
     this.min_date = minDate.getTime();
@@ -60,13 +59,18 @@ export default class DatePicker extends Vue {
   }
   @Watch('time_option.defaultTime') 
   private FnChangeDefaultTime(newVal) {
-    if (newVal) {
+    if (newVal.length>0) {
       this.time = newVal;
       // this.FnEmit()
+    }else{
+        this.time = newVal;
+        this.FnEmit()
     }
   }
+ 
   @Emit('fn-emit')
   FnEmit() {
+    this.min_date=""
     return this.time
   }
 }
