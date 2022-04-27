@@ -12,7 +12,7 @@
         <div class="migrate">
             <div class="left">
                 <div class="m-bottom10">
-                    <el-checkbox v-model="checked" :indeterminate="isIndeterminate" @change="handleCheckAllChange"></el-checkbox>
+                    <el-checkbox v-model="checked" :indeterminate="isIndeterminate" @change="handleCheckAllChange" :disabled="useable_list.length===0"></el-checkbox>
                     {{rows[0].host_name}}(<span class="num_message">{{selected.length}}</span>/{{list.length}})
                 </div>
                 <el-table
@@ -23,8 +23,15 @@
                     max-height="500"
                     @selection-change="handleSelectionChange"
                 >
-                    <el-table-column type="selection"></el-table-column>
-                    <el-table-column prop="ecs_id" label=""></el-table-column>
+                    <el-table-column type="selection" :selectable="checkSelectable"></el-table-column>
+                    <el-table-column prop="ecs_id" label="">
+                        <template slot-scope="scope">
+                            <el-tooltip :content="'待迁移的云主机需为CPU型或已关机的GPU型'" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
+                                <span>{{scope.row.ecs_id}}</span>
+                            </el-tooltip>
+                            <span v-else>{{scope.row.ecs_id}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="status" label=""></el-table-column>
                     <el-table-column prop="genre" label=""></el-table-column>
                 </el-table>
@@ -71,11 +78,11 @@
                     </div>
                     
                 </div>
-                <div class="m-right10 flex-between">
-                    <span class="m-right10 m-top20">迁移推荐:</span>
+                <div class="m-right10 flex-base">
+                    <span class="m-right10">迁移推荐:</span>
                     <div>
                         <div v-for="item in recommend" :key="item.host_id">
-                            {{item.host_id}}
+                            {{item.host_name}}
                             <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="top" effect="light">
                                 <span><CustomIcon :hei="item.cpu_usage" />CPU</span>
                             </el-tooltip>
@@ -119,15 +126,17 @@ export default class Migrate extends Vue{
     private isIndeterminate:Boolean=false
     private physical:Array<string>=[]
     private physical_list:any=[]
-    private recommend=[]
+    private recommend=[];
+    private useable_list:any=[]
     created() {
         this.get_physical_list()
         this.get_recommended_host()
         if(this.rows[0].host_purpose==='GPU'){
-            this.list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu)
+            this.useable_list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu).map(inn=>inn.ecs_id)
         }else{
-            this.list=this.rows[0].ecs_list
-        }
+            this.useable_list=this.rows[0].ecs_list.map(item=>item.ecs_id)
+        }//可以进行迁移的云主机
+        this.list=this.rows[0].ecs_list;
     }
     //关闭面板时重新获取实例列表
     private change_physical(val){
@@ -138,6 +147,13 @@ export default class Migrate extends Vue{
     @Watch("physical")
     private watch_physical(nv){
         this.judge()
+    }
+    private checkSelectable(row,index){
+        if(this.useable_list.includes(row.ecs_id)){
+            return true
+        }else{
+            return false
+        }
     }
     private judge(){
         let cpu:any=this.physical_list.filter(item=>item.host_purpose==='CPU')
@@ -226,7 +242,10 @@ export default class Migrate extends Vue{
             display:flex
         }
     }
-
+    .flex-base{
+        display: flex;
+        align-items: baseline;
+    }
     
     
 }

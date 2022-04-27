@@ -21,10 +21,17 @@
         <el-table-column prop="cloud_id" label="操作资源ID"></el-table-column>
         <el-table-column prop="task_type" label="任务名称"></el-table-column>
         <el-table-column prop="task_state" label="任务状态">
+        <!-- <el-table-column prop="task_state" label="任务状态" :filter-multiple="false" column-key="task_state" :filters="status_list"> -->
           <template slot-scope="scope">
             <span :class="[scope.row.status === 'failed' ? 'err' : '']">{{scope.row.task_state}}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="error_type" label="失败类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.error_type ? scope.row.error_type : '-'}}</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column prop="fail_type" label="失败类型" :filter-multiple="false" column-key="fail_type" :filters="fail_type_list"></el-table-column> -->
         <el-table-column label="失败原因">
           <template slot-scope="scope">
             <el-button type="text" @click="view(scope.row.detail)" v-if="scope.row.status==='failed'">查看</el-button>
@@ -32,16 +39,19 @@
           </template>
         </el-table-column>
         <el-table-column prop="create_time" label="创建时间">
+        <!-- <el-table-column prop="create_time" label="创建时间" sortable="custom"> -->
           <template slot-scope="scope">
             <span>{{scope.row.create_time ? moment(scope.row.create_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="update_time" label="更新时间">
+        <!-- <el-table-column prop="update_time" label="更新时间" sortable="custom"> -->
           <template slot-scope="scope">
             <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="end_time" label="完成时间">
+        <!-- <el-table-column prop="end_time" label="完成时间" sortable="custom"> -->
           <template slot-scope="scope">
             <span>{{scope.row.end_time ? moment(scope.row.end_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
           </template>
@@ -127,6 +137,17 @@ export default class Detail extends Vue {
     private size:number = 20
     private total:number = 0
     private search_data:any = {}
+    private status_list=[
+      {text:'成功',value:'success'},
+      {text:'失败',value:'failed'},
+      {text:'部分失败',value:'part_fail'},
+    ]
+    private fail_type_list=[
+      {text:'计算',value:'success'},
+      {text:'存储',value:'failed'},
+      {text:'镜像',value:'part_fail'},
+      {text:'调度',value:'dd'},
+    ]
     created() {
       this.fn_search()
     }
