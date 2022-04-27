@@ -24,13 +24,14 @@
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
         </el-table>
         <el-pagination
-            @size-change="getList()"
-            @current-change="getList()"
-            :current-page.sync="page_info.page_index"
-            :page-sizes="page_info.page_sizes"
-            :page-size.sync="page_info.page_size"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="page_info.current"
+            :page-sizes="[20, 50, 100]"
+            :page-size="page_info.size"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="page_info.total">
+            :total="page_info.total"
+        >
         </el-pagination>
     </div>
 </template>
@@ -60,12 +61,10 @@ export default class Message extends Vue{
         },
         op_user:{placeholder:'请输入操作人'},
     }
-    private page_info={
-        page_sizes: [20, 50, 100],
-        page_size: 20,
-        page_index: 1,
-        total: 0
-
+    private page_info:any={
+        current:1,
+        size:20,
+        total:0
     }
     private list:Array<any>=[];
     private search_data:any={};
@@ -108,8 +107,16 @@ export default class Message extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.business_record_list;
-            this.page_info.total = res.data.count
+            this.page_info.total = res.data.page_info.count
         }
+    }
+    private handleSizeChange(size:number){
+        this.page_info.size = size
+        this.getList()
+    }
+    private handleCurrentChange(cur){
+        this.page_info.current = cur
+        this.getList()
     }
 }
 </script>

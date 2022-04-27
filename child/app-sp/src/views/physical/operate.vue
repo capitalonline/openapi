@@ -10,6 +10,13 @@
     >
         <div>
             <el-alert
+                title="操作重启请检查是否有虚机运行，若有，请谨慎操作！"
+                type="warning"
+                center
+                v-if="oper_type==='restart_host'"
+                :closable="false">
+            </el-alert>
+            <el-alert
                 :title="alert_title"
                 type="warning"
                 center

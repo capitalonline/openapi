@@ -135,6 +135,11 @@ pre {
     text-overflow: ellipsis;
   }
 }
+.tooltip-cell{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
 .id-cell {
   display: inline-block;
   max-width: calc(100% - 24px);
