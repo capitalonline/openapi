@@ -41,7 +41,7 @@ module.exports = {
         }
       },
       '/api': {
-        target: 'http://10.128.22.18:9000',
+        target: 'http://cds-os-tasker.gic.test',
         ws: true,
         changeOrigin: true
       }

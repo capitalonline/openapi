@@ -1,6 +1,6 @@
 <template>
     <div>
-      <action-block :search_option="search_option" @fn-search="fn_search">
+      <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
               <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
           </template>
@@ -36,16 +36,46 @@
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
+          :width="item.width ? item.width : null"
         >
           <template #default="scope" v-if="item.prop==='machine_status_name'">
             <div>{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='net_nic'">
+            <el-tooltip effect="light" v-if="scope.row.net_nic.length>0">
+              <div slot="content">
+                <div v-for="(item,index) in scope.row.net_nic" :key="index">{{item}}</div>
+              </div>
+              <div class="tooltip-cell">{{scope.row.net_nic[0]}}</div>
+            </el-tooltip>
+            <div v-else></div>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu'">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='ecs_num'">
+            <el-button type="text" @click="goEcs(scope.row.host_id)">{{scope.row.ecs_num}}</el-button>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
+            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
+          </template>
+          <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
+            <div class="net-model">
+              <el-tooltip
+                v-if="scope.row.net_model"
+                :content="scope.row.net_model"
+                popper-class="tooltip-width" 
+                placement="right" 
+                effect="light">
+                  <span class="id-cell">{{ scope.row.net_model }}</span>
+              </el-tooltip>
+              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
+            </div>
+            
           </template>
         </el-table-column>
         <el-table-column label="操作栏">
@@ -90,7 +120,8 @@
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
-        :all_item="all_column_item" 
+        :all_item="all_item"
+        :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
     </div>
@@ -111,7 +142,8 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
 import {deal_list} from '../../utils/transIndex';
 import UpdateAttribute from './updateAttribute.vue';
-import CustomListItem from './customListItem.vue'
+import CustomListItem from './customListItem.vue';
+import moment from 'moment';
 @Component({
   components:{
     ActionBlock,
@@ -145,6 +177,14 @@ export default class PhysicalList extends Vue {
     gpu_model:{placeholder:'请输入显卡型号'},
     host_rack:{placeholder:'请输入机柜编号'},
     bare_metal_id:{placeholder:'请输入裸金属产品ID'},
+    create_time: {
+      placeholder: ['开始时间', '结束时间'],
+      type: 'datetimerange',
+      width: '360',
+      clearable: true,
+      dis_day: 31,
+      defaultTime: [] 
+    },
   }
   private operate_btns:any=[
     {label:'导入',value:'upload'},
@@ -167,6 +207,17 @@ export default class PhysicalList extends Vue {
     {label:'操作记录',value:'record'},
     {label:'分配资源',value:'resource'},
   ]
+  private error_msg={
+    start_up_host:'已选主机需为在线或离线状态',
+    shutdown_host:'已选主机需为在线或离线状态',
+    restart_host:'已选主机需为在线或离线状态',
+    online_maintenance:'已选主机需为在线状态',
+    offline_maintenance:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',
+    finish:'已选主机需为在线维护中或离线维护中',
+    shelves:'已选主机上不能有虚拟机运行',
+    disperse:'已选主机需为在线状态',
+    migrate:'已选主机需为在线状态'
+  };
   private host_belongs=[]
   private search_data:any={}
   private page_info:any={
@@ -185,19 +236,19 @@ export default class PhysicalList extends Vue {
   private host_uses=[];
   private host_source=[];
   private all_column_item=[];
+  private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[
     {label:'主机名',prop:'host_name',sortable:'custom'},
-    {label:'区域',prop:'az_name'},
-    {label:'机房名称',prop:'host_room'},
-    {label:'机柜编号',prop:'host_rack'},
+    {label:'机房',prop:'host_room'},
+    {label:'机柜',prop:'host_rack'},
     {label:'起始U位',prop:'rack_place'},
     {label:'占用U位',prop:'rack_space'},
     {label:'电源状态',prop:'power_status_name'},
     {label:'机器状态',prop:'machine_status_name'},
     {label:'操作系统',prop:'system_version'},
-    {label:'机器类型',prop:'host_model'},
+    {label:'服务器型号',prop:'host_model'},
     {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
     {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
     {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
@@ -206,6 +257,7 @@ export default class PhysicalList extends Vue {
     {label:'显卡数量',prop:'gpu_count'},
     {label:'带外IP',prop:'out_band_address',sortable:'custom'},
     {label:'管理网IP',prop:'host_ip',sortable:'custom'},
+    {label:'虚拟机数量',prop:'ecs_num',sortable:'custom'},
     {label:'存储网IP1',prop:'storage_ip'},
     {label:'CPU使用率',prop:'cpu',sortable:'custom'},
     {label:'内存使用率',prop:'ram',sortable:'custom'},
@@ -216,17 +268,35 @@ export default class PhysicalList extends Vue {
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
-      this.fn_search();
+      // this.fn_search();
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
       this.auth_list = this.$store.state.auth_info[this.$route.name];
+      delete this.$store.state.host_search['']
       for(let i in this.search_option){
         this.search_option[i].default_value = this.$store.state.host_search[i]
       }
+      if(this.$route.query.host_id){
+        this.search_option.host_id.default_value = this.$route.query.host_id as string
+      }
+      // if(Object.keys(this.$store.state.host_search).length>0 || this.$route.query.host_id){
+        
+      // }
+      // else{
+      //   this.fn_search();
+      // }
+      
+      
       
   }
   mounted() {
+    this.setHeight()
+  }
+  private FnOperate(){
+    this.setHeight()
+  }
+  setHeight(){
     this.$nextTick(()=>{
       let table = this.$refs.table as any
       this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
@@ -240,8 +310,14 @@ export default class PhysicalList extends Vue {
     let res:any = await Service.get_host_list_field({})
     if(res.code==="Success"){
       let key_list=['field_name','show_name'];
-      let label_list=['prop','label'] 
-      this.all_column_item = deal_list(res.data,label_list,key_list);
+      let label_list=['prop','label'];
+      let list:Array<any>=[]
+      res.data.map(item=>{
+        list=[...list,...item.filed];
+        return item;
+      })
+      this.all_item = res.data;
+      this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
 
     }
@@ -252,8 +328,11 @@ export default class PhysicalList extends Vue {
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
+      }
+      if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
+        item = Object.assign(item,{},{width:'180px'})
       }
       if(item.prop==='host_type_ch'){
         item = Object.assign(item,{},{column_key:'host_type',list:this.host_types})
@@ -267,6 +346,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_source'){
         item = Object.assign(item,{},{column_key:'host_source',list:this.host_source})
       }
+      if(item.prop==='net_nic'){
+        item = Object.assign(item,{},{width:'180px'})
+      }
       return item;
     })
   }
@@ -276,6 +358,7 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private beforeDestroy() {
+    console.log("this.search_data",this.search_data)
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
   }
   private FnCustom(){
@@ -304,7 +387,8 @@ export default class PhysicalList extends Vue {
       host_id,
       gpu_model,
       host_rack,
-      host_source
+      host_source,
+      create_time
     }=this.search_data
     let res:any=await Service.get_host_list({
       az_id,
@@ -320,11 +404,14 @@ export default class PhysicalList extends Vue {
       host_id,
       gpu_model,
       host_rack,
+      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
+      sort_ecs_num:this.search_data.sort_ecs_num,
       host_attribution_id:host_belong ? host_belong[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
       sort_out_band_address:this.search_data.sort_out_band_address,
@@ -335,6 +422,7 @@ export default class PhysicalList extends Vue {
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
+      // console.log("this.list",this.list)
       this.page_info.total = res.data.page_info.count || 0
     }
   }
@@ -356,6 +444,14 @@ export default class PhysicalList extends Vue {
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
       this.setList(this.host_belongs,'host_attribution__name')
     }
+  }
+  private goEcs(id){
+    this.$router.push({
+      path:'/instance',
+      query:{
+        host_id:id
+      }
+    })
   }
    private async down(){
     const {
@@ -451,6 +547,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_host_name =undefined
     this.search_data.sort_out_band_address =undefined
     this.search_data.sort_host_ip =undefined
+    this.search_data.sort_ecs_num =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -517,7 +614,7 @@ export default class PhysicalList extends Vue {
       this.oper_label = label
       this.visible=true;
     }else{
-      this.$message.warning(getHostStatus(value).msg)
+      this.$message.warning(this.error_msg[value])
     }
     
     
@@ -527,7 +624,12 @@ export default class PhysicalList extends Vue {
     let flag_list = this.multi_rows.every(item=>{
       let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
       let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
-      let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true
+      let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
+      if(!vm_flag && ['shutdown_host','restart_host'].includes(val)){
+        this.error_msg[val]=getHostStatus(val).msg2
+      }else{
+        this.error_msg[val]=getHostStatus(val).msg
+      }
       return power_flag && host_flag && vm_flag
     })
     return flag_list
@@ -542,7 +644,7 @@ export default class PhysicalList extends Vue {
           this.oper_type=label;
           this.visible=true;
         }else{
-          this.$message.warning(getHostStatus(label).msg)
+          this.$message.warning(this.error_msg[label])
         }
     }else if(label==="out_of_band"){
       this.out_of_band()
@@ -581,6 +683,9 @@ export default class PhysicalList extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+.net-model{
+  display: flex;
+}
 .icon{
   width:100%;
   text-align: right;

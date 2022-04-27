@@ -1,8 +1,8 @@
 <template>
   <div>
-    <action-block :search_option="search_con" 
-      create_btn="新建主任务配置" 
-      @fn-search="FnGetList" 
+    <action-block :search_option="search_con"
+      create_btn="新建主任务配置"
+      @fn-search="FnGetList"
       @fn-create="FnShowCreate"
       :disabled="!operate_auth.includes('create')"
     ></action-block>
@@ -22,7 +22,7 @@
       <el-table-column prop="is_valid" label="is_valid"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="text" @click="FnShowUpdate(scope.row)" 
+          <el-button type="text" @click="FnShowUpdate(scope.row)"
             :disabled="!operate_auth.includes('edit')">编辑</el-button>
           <el-button type="text" @click="FnShowDel(scope.row.id, scope.row.maintask_name)"
             :disabled="!operate_auth.includes('delete')">删除</el-button>
@@ -43,6 +43,7 @@
     <el-dialog
       :title="dialog_title"
       :visible.sync="create_dialog"
+      @close="FnClose"
       width="50%">
       <div>
         <label-block label="主任务名称">

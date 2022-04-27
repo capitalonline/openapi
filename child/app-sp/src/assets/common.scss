@@ -29,7 +29,8 @@
 .mounting,
 .unmounting,
 .recovering,
-.recycling {
+.recycling,
+.creating_image {
   color:#4984E7;
 }
 .running {
@@ -133,6 +134,11 @@ pre {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+.tooltip-cell{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 .id-cell {
   display: inline-block;
