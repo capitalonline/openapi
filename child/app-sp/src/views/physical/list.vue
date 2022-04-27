@@ -390,7 +390,6 @@ export default class PhysicalList extends Vue {
       host_source,
       create_time
     }=this.search_data
-    console.log("create_time",create_time)
     let res:any=await Service.get_host_list({
       az_id,
       pod_name,
