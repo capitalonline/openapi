@@ -15,7 +15,6 @@
         <el-tooltip content="导出" placement="bottom" effect="light">
           <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
         </el-tooltip>
-        
       </div>
       <el-table
         :data="list"
@@ -100,7 +99,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -117,6 +116,9 @@
       </template>
       <template v-if="visible && oper_type==='update_attribute'">
         <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
+      </template>
+      <template v-if="visible && oper_type==='business_test'">
+        <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
@@ -143,6 +145,7 @@ import Resource from './resource.vue';
 import {deal_list} from '../../utils/transIndex';
 import UpdateAttribute from './updateAttribute.vue';
 import CustomListItem from './customListItem.vue';
+import BusinessTest from './businessTest.vue'
 import moment from 'moment';
 @Component({
   components:{
@@ -154,7 +157,8 @@ import moment from 'moment';
     SvgIcon,
     Resource,
     UpdateAttribute,
-    CustomListItem
+    CustomListItem,
+    BusinessTest
   }
 })
 export default class PhysicalList extends Vue {
@@ -199,6 +203,7 @@ export default class PhysicalList extends Vue {
     {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
+    {label:'业务测试',value:'business_test'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -239,6 +244,7 @@ export default class PhysicalList extends Vue {
   private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
+  private az_info:any={}
   private custom_host=[
     {label:'主机名',prop:'host_name',sortable:'custom'},
     {label:'机房',prop:'host_room'},
@@ -263,6 +269,7 @@ export default class PhysicalList extends Vue {
     {label:'内存使用率',prop:'ram',sortable:'custom'},
     {label:'创建时间',prop:'create_time'},
   ]
+  private all_item:Array<any>=[];
   created() {
       this.get_host_list_field()
       this.get_room_list()
@@ -319,6 +326,7 @@ export default class PhysicalList extends Vue {
       this.all_item = res.data;
       this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
+
 
     }
   }
@@ -423,7 +431,7 @@ export default class PhysicalList extends Vue {
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
-      console.log("this.list",this.list)
+      // console.log("this.list",this.list)
       this.page_info.total = res.data.page_info.count || 0
     }
   }
@@ -577,7 +585,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && value!=='upload'){
+    if(this.multi_rows.length===0 && !['upload','business_test'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
@@ -593,7 +601,24 @@ export default class PhysicalList extends Vue {
       }
         
     }
-    if(['upload','resource','update_attribute'].includes(value)){
+    if(['upload','resource','update_attribute','business_test'].includes(value)){
+      if(value==='business_test'){
+        if(!this.search_data.az_id){
+          this.$message.warning('请先筛选可用区!')
+          return;
+        }
+        if(this.list.length===0){
+          this.$message.warning('当前无宿主机可进行业务测试!')
+          return;
+        }
+        let fil = this.search_option.az_id.list.filter(item=>item.type===this.search_data.az_id)
+        this.az_info={
+          az_id:this.search_data.az_id,
+          az_name:fil.length>0 ? fil[0].label : '',
+          length:this.page_info.total
+        }
+      }
+      console.log("this.oper_type",this.oper_type)
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
