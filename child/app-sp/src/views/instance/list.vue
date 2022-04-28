@@ -330,7 +330,7 @@
             v-if="default_operate_type === 'update_system'"
           >
             <template #default="scope">
-              <div>{{ scope.row.name }}</div>
+              <div>{{ scope.row.os_name }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态">
