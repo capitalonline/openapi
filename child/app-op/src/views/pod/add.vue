@@ -15,7 +15,7 @@
       <el-form-item label="区域">{{ region }}</el-form-item>
       <el-form-item label="可用区">{{ az_name }}</el-form-item>
       <el-form-item label="管理IP"  prop="ip_address">
-        <el-input v-model="data.ip_address"></el-input>
+        <el-input v-model="data.ip_address" placeholder="若有多个管理IP，请以英文逗号隔开"></el-input>
       </el-form-item>
       <el-form-item label="机房名称" prop="zoom_name">
         <el-input v-model="data.zoom_name"></el-input>
