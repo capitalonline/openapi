@@ -358,7 +358,6 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private beforeDestroy() {
-    console.log("this.search_data",this.search_data)
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
   }
   private FnCustom(){
@@ -422,7 +421,6 @@ export default class PhysicalList extends Vue {
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
-      // console.log("this.list",this.list)
       this.page_info.total = res.data.page_info.count || 0
     }
   }

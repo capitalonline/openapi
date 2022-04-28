@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
-import routes from './router';
+import all_routes from './router';
 import store from './store';
 import './public-path';
 import VueRouter from 'vue-router';
@@ -20,19 +20,47 @@ let instance: any;
 interface prop {
   [propName: string]: any
 };
-
-function render(props: prop = {}) {
+let routes = [];
+function FnHandleRoutes(data) {
+  data.forEach((item, index) => {
+    if (item.children && store.state.auth_info[item.name]) {
+      const children = []
+      item.children.forEach(child => {
+        if (store.state.auth_info[item.name].includes(child.name)) {
+          children.push(child)
+        }
+      })
+      routes.push({
+        ...item,
+        children: children
+      })
+    } else if (store.state.auth_info[item.name]) {
+      routes.push(item)
+    } else if (item.meta?.no_auth) {
+      routes.push(item)
+    }
+  })
+}
+function render (props: prop = {}) {
   const { container } = props;
+  FnHandleRoutes(all_routes)
   router = new VueRouter({
     mode: 'history',
     base: window.__POWERED_BY_QIANKUN__ ? '/under-app-op' : '/child/app-op',
-    routes,
+    routes
+  })
+  router.beforeEach((to, from, next) => {
+    if (!to.name) {
+      next({ name: routes[0].name })
+    } else {
+      next()
+    }
   })
 
   instance = new Vue({
     router,
     store,
-    render: (h) => h(App),
+    render: (h) => h(App)
   }).$mount(container ? container.querySelector('#app') : '#app');
 }
 

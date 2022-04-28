@@ -1,6 +1,6 @@
 <template>
   <div class="instance-list">
-    <action-block :search_option="search_con" @fn-search="FnSearch">
+    <action-block :search_option="search_con" @fn-search="FnSearch" type="instance">
       <template #default>
         <el-button
           type="primary"
@@ -71,136 +71,92 @@
         :filter-multiple="false"
       >
         <template #default="scope">
-          {{ scope.row[item.prop] }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="ecs_name" label="云服务器名称">
-        <template #default="scope">
-          <pre>{{ scope.row.ecs_name }}</pre>
-        </template>
-      </el-table-column>
-      <el-table-column prop="az_name" label="可用区"></el-table-column>
-      <el-table-column prop="status" label="状态" width="90">
-        <template #default="scope">
-          <span :class="scope.row.status">{{ scope.row.status_display }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="计算规格"
-        :filters="ecs_goods_name_list"
-        column-key="ecs_goods_name"
-        width="100"
-      >
-        <template #default="scope">
-          {{ scope.row.ecs_goods_name }} <br />
-          {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
-          <span v-if="scope.row.gpu_size"
-            >| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span
-          >
-        </template>
-      </el-table-column>
-      <el-table-column prop="private_net" label="私网IP" sortable="custom">
-        <template #default="scope">
-          <div v-if="scope.row.private_net">
-            {{ scope.row.private_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="虚拟出网网关">
-        <template #default="scope">
-          <div v-if="scope.row.pub_net">
-            <span
-              class="circel-border"
+          <template v-if="item.prop === 'ecs_name'">
+            <pre>{{ scope.row.ecs_name }}</pre>
+          </template>
+          <template v-else-if="item.prop === 'status'">
+            <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+          </template>
+          <template v-else-if="item.prop === 'goods_name'">
+            {{ scope.row.ecs_goods_name }} <br />
+            {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
+            <span v-if="scope.row.gpu_size"
+              >| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span
+            >
+          </template>
+          <template v-else-if="item.prop === 'private_net'">
+            <div v-if="scope.row.private_net">
+              {{ scope.row.private_net }}
+              （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'virtual_net'">
+            <div v-if="scope.row.pub_net">
+              <span
+                class="circel-border"
+                v-if="
+                  scope.row.eip_info[scope.row.pub_net] &&
+                  scope.row.eip_info[scope.row.pub_net].conf_name
+                "
+              >
+                {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
+              </span>
+              {{ scope.row.pub_net }}
+              （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+            </div>
+            <div v-for="item in scope.row.virtual_net" :key="item">
+              <span
+                class="circel-border"
+                v-if="
+                  scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
+                "
+              >
+                {{ scope.row.eip_info[item].conf_name }}
+              </span>
+              {{ item }}
+              （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'pub_net'">
+            <div
               v-if="
                 scope.row.eip_info[scope.row.pub_net] &&
                 scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
-              {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
-            </span>
-            {{ scope.row.pub_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
-          </div>
-          <div v-for="item in scope.row.virtual_net" :key="item">
-            <span
-              class="circel-border"
-              v-if="
-                scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
-              "
-            >
-              {{ scope.row.eip_info[item].conf_name }}
-            </span>
-            {{ item }}
-            （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="公网IP">
-        <template #default="scope">
-          <div
-            v-if="
-              scope.row.eip_info[scope.row.pub_net] &&
-              scope.row.eip_info[scope.row.pub_net].conf_name
-            "
-          >
-            <span class="circel-border">
-              {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
-            </span>
-            {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
-          </div>
-          <div v-for="item in scope.row.virtual_net" :key="item">
-            <template
-              v-if="
-                scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
-              "
-            >
               <span class="circel-border">
-                {{ scope.row.eip_info[item].conf_name }}
+                {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
               </span>
-              {{ scope.row.eip_info[item].eip_ip }}
-            </template>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="host_name" label="所属物理机" sortable="custom">
-      </el-table-column>
-      <el-table-column prop="create_time" label="创建时间">
-        <template #default="scope">
-          <div class="time-box">{{ scope.row.create_time }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="billing_method"
-        label="计费方式"
-        :filters="billing_method_list"
-        column-key="billing_method"
-        :filter-multiple="false"
-      >
-        <template #default="scope">
-          <div>
-            {{
-              scope.row.is_charge
-                ? billing_method_relation[scope.row.billing_method]
-                : "不计费"
-            }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="op_source"
-        label="创建来源"
-        :filters="[
-          { text: '运维后台', value: 'cloud_op' },
-          { text: 'GIC', value: 'gic' },
-        ]"
-        column-key="op_source"
-        :filter-multiple="false"
-      >
-        <template #default="scope">
-          <div>
-            {{ scope.row.op_source === "cloud_op" ? "运维后台" : "GIC" }}
-          </div>
+              {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
+            </div>
+            <div v-for="item in scope.row.virtual_net" :key="item">
+              <template
+                v-if="
+                  scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
+                "
+              >
+                <span class="circel-border">
+                  {{ scope.row.eip_info[item].conf_name }}
+                </span>
+                {{ scope.row.eip_info[item].eip_ip }}
+              </template>
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'create_time'">
+            <div class="time-box">{{ scope.row.create_time }}</div>
+          </template>
+          <template v-else-if="item.prop === 'billing_method'">
+            <div>
+              {{
+                scope.row.is_charge
+                  ? billing_method_relation[scope.row.billing_method]
+                  : "不计费"
+              }}
+            </div>
+          </template>
+          <template v-else>
+            {{ scope.row[item.prop] }}
+          </template>
         </template>
       </el-table-column>
     </el-table>
@@ -617,7 +573,7 @@ export default class App extends Vue {
           hidden: true
         },
         {
-          field_name: "is_charge",
+          field_name: "billing_method",
           show_name: "计费方式"
         },
         {
@@ -1335,8 +1291,20 @@ export default class App extends Vue {
   border: 1px solid #888;
   border-radius: 30px;
 }
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  i {
+    font-size: 18px;
+  }
+}
 </style>
 <style lang="scss">
+.instance-list .el-table__body-wrapper {
+  max-height: calc(100vh - 430px);
+  overflow: auto;
+}
 .instance-list .el-loading-spinner .circular {
   width: 24px;
   height: 24px;
