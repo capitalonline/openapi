@@ -15,7 +15,6 @@
         <el-tooltip content="导出" placement="bottom" effect="light">
           <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
         </el-tooltip>
-        
       </div>
       <el-table
         :data="list"
@@ -604,6 +603,10 @@ export default class PhysicalList extends Vue {
       if(value==='business_test'){
         if(!this.search_data.az_id){
           this.$message.warning('请先筛选可用区!')
+          return;
+        }
+        if(this.list.length===0){
+          this.$message.warning('当前无宿主机可进行业务测试!')
           return;
         }
         let fil = this.search_option.az_id.list.filter(item=>item.type===this.search_data.az_id)

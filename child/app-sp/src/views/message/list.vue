@@ -1,6 +1,11 @@
 <template>
     <div>
         <action-block :search_option="search_dom" @fn-search="search"></action-block>
+        <div class="icon m-bottom10">
+            <el-tooltip content="刷新" placement="bottom" effect="light">
+                <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+            </el-tooltip>
+        </div>
         <el-table
             ref="message"
             :data="list"
@@ -11,8 +16,8 @@
             <el-table-column prop="result_detail" label="响应信息">
                 <template slot-scope="scope">
                     <div>
-                        <el-tooltip popper-class="tooltip-width"  v-if="scope.row.msg" :content="scope.row.msg" effect="light" placement="bottom">
-                            <div class="long-msg">{{scope.row.msg}}</div>
+                        <el-tooltip popper-class="tooltip-width"  v-if="scope.row.result_detail" :content="scope.row.result_detail" effect="light" placement="bottom">
+                            <div class="long-msg">{{scope.row.result_detail}}</div>
                         </el-tooltip>
                         <div v-else>-</div>
                     </div>
@@ -20,8 +25,11 @@
             </el-table-column>
             <el-table-column prop="file_name" label="附件" width="400px" align="center">
                 <template slot-scope="scope">
+                    <el-tooltip popper-class="tooltip-width"  :content="scope.row.file_name" effect="light" placement="bottom">
+                        <div class="long-msg clickble" @click="down(scope.row.pipeline_group_id)">{{scope.row.file_name}}</div>
+                    </el-tooltip>
                     <!-- <el-button type="text" @click="down(scope.row.pipeline_group_id)">{{111}}</el-button> -->
-                    <el-button type="text" @click="down(scope.row.pipeline_group_id)">{{scope.row.file_name}}</el-button>
+                    
                 </template>
             </el-table-column>
             <el-table-column prop="op_user" label="操作人"></el-table-column>
@@ -46,10 +54,12 @@ import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/message/list';
 import EcsService from '../../https/instance/create';
 import {trans} from '../../utils/transIndex';
-import moment from 'moment'
+import moment from 'moment';
+import SvgIcon from '../../components/svgIcon/index.vue';
 @Component({
     components:{
-        ActionBlock
+        ActionBlock,
+        SvgIcon
     }
 })
 export default class Message extends Vue{
@@ -126,5 +136,15 @@ export default class Message extends Vue{
     private down(id:string='111'){
         window.location.href=`/ecs_business/v1/host/download_test_report?pipeline_group_id=${id}`
     }
+    private refresh(){
+        this.page_info.current = 1;
+        this.getList()
+    }
 }
 </script>
+<style lang="scss" scoped>
+.icon{
+  width:100%;
+  text-align: right;
+}
+</style>
