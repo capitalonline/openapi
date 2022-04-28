@@ -473,36 +473,44 @@ export default class App extends Vue {
       filed: [
         {
           field_name: "ecs_id",
-          show_name: "云服务器ID"
+          show_name: "云服务器ID",
+          sortable: "custom"
         },
         {
           field_name: "ecs_name",
-          show_name: "云服务器名称"
+          show_name: "云服务器名称",
+          sortable: "custom"
         },
         {
           field_name: "customer_id",
-          show_name: "客户ID"
+          show_name: "客户ID",
+          sortable: "custom"
         },
         {
           field_name: "customer_name",
-          show_name: "客户名称"
+          show_name: "客户名称",
+          sortable: "custom"
         },
         {
           field_name: "customer_type",
-          show_name: "客户类别"
+          show_name: "客户类别",
+          sortable: "custom"
         },
         {
           field_name: "customer_level",
-          show_name: "客户等级"
+          show_name: "客户等级",
+          sortable: "custom"
         },
         {
           field_name: "az_name",
-          show_name: "可用区"
+          show_name: "可用区",
+          sortable: "custom"
         },
         {
           field_name: "pod",
           show_name: "POD",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         }
       ]
     },
@@ -511,52 +519,63 @@ export default class App extends Vue {
       filed: [
         {
           field_name: "goods_name",
-          show_name: "计算规格"
+          show_name: "计算规格",
+          sortable: "custom"
         },
         {
           field_name: "system_disk_type",
-          show_name: "系统盘类型"
+          show_name: "系统盘类型",
+          sortable: "custom"
         },
         {
           field_name: "system_disk_size",
-          show_name: "系统盘容量"
+          show_name: "系统盘容量",
+          sortable: "custom"
         },
         {
           field_name: "data_disk_type",
-          show_name: "数据盘类型"
+          show_name: "数据盘类型",
+          sortable: "custom"
         },
         {
           field_name: "data_disk_size",
-          show_name: "数据盘容量"
+          show_name: "数据盘容量",
+          sortable: "custom"
         },
         {
           field_name: "host_name",
-          show_name: "所属宿主机"
+          show_name: "所属宿主机",
+          sortable: "custom"
         },
         {
           field_name: "os_type",
           show_name: "操作系统类型",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "os_version",
           show_name: "操作系统版本",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "private_net",
           show_name: "主私网IP",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "virtual_net",
           show_name: "虚拟出网网关",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "pub_net",
           show_name: "公网IP",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         }
       ]
     },
@@ -565,38 +584,45 @@ export default class App extends Vue {
       filed: [
         {
           field_name: "create_time",
-          show_name: "创建时间"
+          show_name: "创建时间",
+          sortable: "custom"
         },
         {
           field_name: "destroy_time",
           show_name: "销毁时间",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "billing_method",
-          show_name: "计费方式"
+          show_name: "计费方式",
+          sortable: "custom"
         },
         {
           field_name: "is_renewal",
           show_name: "续约方式",
-          hidden: true
+          hidden: true,
+          sortable: "custom"
         },
         {
           field_name: "status",
-          show_name: "状态"
+          show_name: "状态",
         }
       ]
     }
   ]
   private all_table_item = []
   private select_table_item = [];
+  private filters_status = ["destroy", "destroying"]; // 运营op不展示销毁的状态
+  private default_status = []; // 默认展示的状态
 
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       az_id: data.az_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
-      status: data.status ? data.status.join(",") : [],
+      // status: data.status && data.status.length > 0 ? data.status.join(",") : this.default_status.join(","), 和后端沟通，后端限制了status长度
+      status: data.status && data.status.length > 0 ? data.status.join(",") : "",
       customer_id: data.customer_id,
       customer_name: data.customer_name,
       os_type: data.os_type,
@@ -1137,15 +1163,19 @@ export default class App extends Vue {
   private async FnGetStatus() {
     if (this.$store.state.status_list.length > 0) {
       this.search_con.status.list = this.$store.state.status_list;
+      this.default_status = this.search_con.status.list.map(item => item.type)
     } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
         this.search_con.status.list = [];
         for (let key in resData.data) {
-          this.search_con.status.list.push({
-            label: resData.data[key],
-            type: key,
-          });
+          if (!this.filters_status.includes(key)) {
+            this.search_con.status.list.push({
+              label: resData.data[key],
+              type: key,
+            });
+            this.default_status.push(key)
+          }
         }
         this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
       }
@@ -1220,7 +1250,7 @@ export default class App extends Vue {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
     this.get_az_list();
-    this.FnGetCateGoryList();
+    // this.FnGetCateGoryList();
     this.search_con.os_type.list = [
       {
         label: "centos",
@@ -1245,15 +1275,14 @@ export default class App extends Vue {
       this.search_con.host_id.default_value = this.$route.query
         .host_id as string;
       this.search_con.status.default_value = ["running", "shutdown", "deleted"];
-    } else {
-      this.FnSearch();
     }
     this.all_item.forEach(item => {
       this.all_table_item.push(...item.filed.map(item => {
         return {
           label: item.show_name,
           prop: item.field_name,
-          hidden: item.hidden
+          hidden: item.hidden,
+          sortable: item.sortable
         }
       }))
     });
