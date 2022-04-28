@@ -150,6 +150,11 @@
       </el-table-column>
       <el-table-column prop="host_name" label="所属物理机" sortable="custom">
       </el-table-column>
+      <el-table-column prop="update_time" label="更新时间">
+        <template #default="scope">
+          <div class="time-box">{{ scope.row.update_time }}</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="create_time" label="创建时间">
         <template #default="scope">
           <div class="time-box">{{ scope.row.create_time }}</div>
