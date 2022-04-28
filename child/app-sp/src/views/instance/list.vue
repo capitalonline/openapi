@@ -59,7 +59,7 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-      <el-table-column prop="ecs_name" label="云服务器名称">
+      <el-table-column prop="ecs_name" label="云服务器名称" sortable="custom">
         <template #default="scope">
           <pre>{{ scope.row.ecs_name }}</pre>
         </template>
