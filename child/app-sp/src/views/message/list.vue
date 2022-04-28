@@ -8,7 +8,7 @@
         >
             <el-table-column prop="op_content" label="操作内容"></el-table-column>
             <el-table-column prop="op_result" label="操作结果"></el-table-column>
-            <el-table-column prop="msg" label="响应信息">
+            <el-table-column prop="result_detail" label="响应信息">
                 <template slot-scope="scope">
                     <div>
                         <el-tooltip popper-class="tooltip-width"  v-if="scope.row.msg" :content="scope.row.msg" effect="light" placement="bottom">
@@ -18,7 +18,12 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="selection" label="附件" width="400px" align="center"></el-table-column>
+            <el-table-column prop="file_name" label="附件" width="400px" align="center">
+                <template slot-scope="scope">
+                    <!-- <el-button type="text" @click="down(scope.row.pipeline_group_id)">{{111}}</el-button> -->
+                    <el-button type="text" @click="down(scope.row.pipeline_group_id)">{{scope.row.file_name}}</el-button>
+                </template>
+            </el-table-column>
             <el-table-column prop="op_user" label="操作人"></el-table-column>
             <el-table-column prop="finish_time" label="完成时间"></el-table-column>
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
@@ -53,7 +58,7 @@ export default class Message extends Vue{
         op_content:{placeholder:'请选择操作内容',list:[]},
         create_time:{
             placeholder: ['开始时间', '结束时间'],
-            type: 'daterange',
+            type: 'datetimerange',
             width: '360',
             clearable: true,
             dis_day: 30,
@@ -102,8 +107,8 @@ export default class Message extends Vue{
             op_user,
             create_time_start:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
             create_time_end:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
-            page_index:this.page_info.page_index,
-            page_size:this.page_info.page_size
+            page_index:this.page_info.current,
+            page_size:this.page_info.size
         })
         if(res.code==='Success'){
             this.list = res.data.business_record_list;
@@ -117,6 +122,9 @@ export default class Message extends Vue{
     private handleCurrentChange(cur){
         this.page_info.current = cur
         this.getList()
+    }
+    private down(id:string='111'){
+        window.location.href=`/ecs_business/v1/host/download_test_report?pipeline_group_id=${id}`
     }
 }
 </script>
