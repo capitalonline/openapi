@@ -269,7 +269,6 @@ export default class PhysicalList extends Vue {
     {label:'内存使用率',prop:'ram',sortable:'custom'},
     {label:'创建时间',prop:'create_time'},
   ]
-  private all_item:Array<any>=[];
   created() {
       this.get_host_list_field()
       this.get_room_list()
