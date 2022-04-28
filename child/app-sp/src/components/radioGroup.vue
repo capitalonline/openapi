@@ -23,6 +23,7 @@ export default class Area extends Vue{
       border-left: 1px solid #DCDFE6;
       border-radius: 4px;
       font-size: 12px;
+      margin-bottom: 10px;
     }
     .el-radio-button:last-child .el-radio-button__inner,
     .el-radio-button:first-child .el-radio-button__inner {
