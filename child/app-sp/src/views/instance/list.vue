@@ -367,6 +367,7 @@
               :customer_id="customer_id"
               :az_id="az_id"
               :is_gpu="is_gpu"
+              :default_os_type="os_type"
               :support_gpu_driver="support_gpu_driver"
               @fn-os="FnGetOsInfo"
             >
@@ -510,6 +511,7 @@ export default class App extends Vue {
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
+  private os_type = "";
   private billing_method: string = "0";
   private multiple_selection: Array<Object> = [];
   private multiple_selection_id: Array<string> = [];
@@ -709,6 +711,7 @@ export default class App extends Vue {
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
+    this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
@@ -721,6 +724,7 @@ export default class App extends Vue {
         this.is_gpu = Number(item.is_gpu);
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
+        this.os_type = item.os_type;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
@@ -765,6 +769,11 @@ export default class App extends Vue {
         flag = false;
         break;
       }
+      if (type === "update_system" && item.os_type != this.os_type) {
+          this.$message.warning(`Windows和linux系统不可以互换重装！`);
+          flag = false;
+          break;
+        }
       if (type === "update_spec" && this.is_gpu) {
         this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
         flag = false;
