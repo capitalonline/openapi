@@ -1,6 +1,6 @@
 <template>
   <div class="instance-list">
-    <action-block :search_option="search_con" @fn-search="FnSearch" type="instance">
+    <action-block :search_option="search_con" @fn-search="FnSearch" type="instance" @fn-operate="FnIsOpen">
       <template #default>
         <el-button
           type="primary"
@@ -58,6 +58,7 @@
       @filter-change="handleFilterChange"
       @sort-change="handleSortChange"
       border
+      :max-height="tableHeight"
     >
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column
@@ -445,6 +446,7 @@ export default class App extends Vue {
   private record_id: string = "";
   private detail_visible: boolean = false;
   private detail_id: string = "";
+  private tableHeight=70;
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -1287,6 +1289,22 @@ export default class App extends Vue {
       }))
     });
   }
+  mounted() {
+    this.setHeight()
+  }
+  private FnIsOpen(){
+    this.setHeight()
+  }
+  setHeight(){
+    this.$nextTick(()=>{
+      let table = this.$refs.multipleTable as any
+      this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      let self = this;
+      window.onresize = function(){
+        self.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      }
+    });
+  }
   private beforeDestroy() {
     this.FnClearTimer();
   }
@@ -1330,10 +1348,10 @@ export default class App extends Vue {
 }
 </style>
 <style lang="scss">
-.instance-list .el-table__body-wrapper {
-  max-height: calc(100vh - 430px);
-  overflow: auto;
-}
+// .instance-list .el-table__body-wrapper {
+//   max-height: calc(100vh - 430px);
+//   overflow: auto;
+// }
 .instance-list .el-loading-spinner .circular {
   width: 24px;
   height: 24px;

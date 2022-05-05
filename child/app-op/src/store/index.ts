@@ -16,11 +16,10 @@ export default new Vuex.Store({
     status_list: JSON.parse(storage.get('status_list')) || [],
     ecs_custom_item: JSON.parse(storage.get('ecs_custom_item')) || [],
     custom_host:JSON.parse(storage.get('custom_host')) || [
-      '主机名','区域','机房名称','机柜编号','起始U位',
-      '占用U位','电源状态','机器状态','操作系统','机器类型',
-      '主机类型','主机用途','主机归属','主机来源','显卡型号',
-      '显卡数量','带外IP','管理网IP','存储网IP1','CPU使用率',
-      '内存使用率','创建时间','虚拟机数量','CPU','网卡'
+      '主机名','机器状态','电源状态','虚拟机数量',
+      '主机类型','主机用途','主机归属','主机来源','CPU型号',
+      'CPU总核数','显卡型号','显卡数量','网卡型号','内存总容量','存储总容量',
+      '专属客户','规格族','创建时间'
     ],
     host_search:{},
   },

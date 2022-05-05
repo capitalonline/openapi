@@ -3,7 +3,7 @@
      <el-dialog
       title="分配资源"
       :visible.sync="visible_sync"
-      width="760px"
+      width="770px"
       :destroy-on-close="true"
       :close-on-click-modal="false"
       @close="back"
@@ -18,10 +18,10 @@
             <el-table
                 :data="rows"
                 border
-                max-height="300"
+                max-height="253"
             >
-                <el-table-column prop="host_name" label="主机名"></el-table-column>
-                <el-table-column prop="az_name" label="主机名"></el-table-column>
+                <el-table-column prop="host_name" label="主机名" width="150px"></el-table-column>
+                <el-table-column prop="az_name" label="区域"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
                 <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
