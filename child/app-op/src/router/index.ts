@@ -4,12 +4,6 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   {
-    path: '/404',
-    name: '404',
-    component: () => import('../views/404.vue'),
-    meta: {menu: '404', no_auth: true, hidden: true}
-  },
-  {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
@@ -49,7 +43,13 @@ const routes: RouteConfig[] = [
     name: 'pod_list',
     component: () => import('../views/pod/list.vue'),
     meta: {label: 'POD管理', meta: 'pod_list'}
-  }
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/404.vue'),
+    meta: {menu: '404', no_auth: true, hidden: true}
+  },
 ];
 
 export default routes;

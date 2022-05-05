@@ -307,7 +307,9 @@ export default class PhysicalList extends Vue {
     });
   }
   private async get_host_list_field(){
-    let res:any = await Service.get_host_list_field({})
+    let res:any = await Service.get_host_list_field({
+      is_op:'0'
+    })
     if(res.code==="Success"){
       let key_list=['field_name','show_name'];
       let label_list=['prop','label'];
