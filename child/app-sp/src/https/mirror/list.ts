@@ -5,7 +5,7 @@ import { getEcsOptions } from '../common'
 export default{
     //获取公共镜像列表
     get_pub_mirror_list(req){
-        return service(getEcsOptions('POST','/img/get_pub_image_list/',req))
+        return service(getEcsOptions('GET','/img/get_pub_image_list/',req))
     },
     //公共镜像名称判重
     check_name(req){
@@ -41,8 +41,12 @@ export default{
     },
     //获取私有镜像列表
     get_private_mirror_list(req){
-        return service(getEcsOptions('POST','/img/get_private_image_list/',req))
+        return service(getEcsOptions('GET','/img/get_private_image_list/',req))
     },
+    //获取镜像状态
+    get_status_list(req){
+        return service(getEcsOptions('GET','/img/get_image_status_list/',req))
+    }
 }
 
     

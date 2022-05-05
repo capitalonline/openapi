@@ -88,7 +88,7 @@ export default class InsDetail extends Vue{
   $message;
   @Prop(Boolean) visible!:Boolean;
   @Prop(String) record_id!:String
-  @Prop(String) type:String
+  @Prop(String) type:string
   private state_list:any = [
     {
         type:'',

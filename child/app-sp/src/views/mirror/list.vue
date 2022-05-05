@@ -10,14 +10,20 @@
                 <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table :data="list" border class="event-table" :tooltip-effect="'light'">
+        <el-table 
+            :data="list" 
+            border 
+            class="event-table"
+            @sort-change="FnSortChange"
+            @filter-change="filterAttribute"
+        >
             <!-- <el-table-column type="selection"></el-table-column> -->
             <el-table-column prop="os_id" label="镜像ID" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
-            <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="type" :filters="mirror_type"></el-table-column>
+            <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
             <el-table-column prop="size" label="容量" sortable="custom"></el-table-column>
-            <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="compute_type" :filters="compute_type"></el-table-column>
-            <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="drive_type" :filters="drive_type"></el-table-column>
+            <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
+            <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="az" label="可用区">
                 <template slot-scope="scope">
@@ -114,65 +120,38 @@ export default class CommonMirror extends Vue{
             defaultTime:[]
         }
     }
-    private list:Array<any>=[ {
-                "os_id":"img-11ec-962e-02428922def11111111111111111111111111111111111",
-                "display_name":"",
-                "os_type":"windows",
-                "size":200,
-                "support_type":"cpu",
-                "support_gpu_driver":"DataCenter",
-                "backend_type":"local",
-                "az_list":[
-                    {
-                    "az_id":"1",
-                    "az_name":"2",
-                    "os_id":"3",
-                    "gic_resource_id":"",
-                    "status":"enable",
-                    "create_time":"2022-04-25",
-                    'pod_name_list':['','']
-                    },
-                    {
-                    "az_id":"2",
-                    "az_name":"2",
-                    "os_id":"3",
-                    "gic_resource_id":"",
-                    "status":"enable",
-                    "create_time":"2022-04-25",
-                    'pod_name_list':['','']
-                    }
-                ],
-         		"status":"enable",
-        		'customer_list':['E020912','E888908'],
-                'path_name':'',
-				"create_time":"",
-				"update_time":"",
-            }
-]
+    private list:Array<any>=[]
     private current:number = 1
     private size:number = 20
     private total:number = 0
     private search_data:any={};
     private auth_list:any=[];
     private mirror_type:any=[];
-    private compute_type:any=[];
-    private drive_type:any=[];
+    private filter_data:any={}
+    private compute_type:any=[
+        {text:'GPU',value:'GPU'},
+        {text:'CPU',value:'CPU'},
+        {text:'CPU/GPU',value:'CPU/GPU'},
+    ];
+    private drive_type:any=[
+        {text:'DataCenter',value:'DataCenter'},
+        {text:'Geforce',value:'Geforce'},
+    ];
     private status_list:any=[];
     private visible:boolean=true;
     private oper_type:string="";
     private oper_info:any={};
     created() {
-        this.auth_list = this.$store.state.auth_info[this.$route.name]
-        // this.search()
+        this.auth_list = this.$store.state.auth_info[this.$route.name];
+        this.get_mirror_type();
+        this.get_status_list()
+        this.search()
     }
     @Watch('visible')
     private watch_visible(nv){
         if(!nv){
             this.oper_info={}
         }
-    }
-    private async get_status_list(){
-
     }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
@@ -183,32 +162,35 @@ export default class CommonMirror extends Vue{
             
         }
     }
-    // private async get_mirror_type(){
-    //     let res:any = await Service.get_mirror_type({})
-    //     if(res.code==="Success"){
-    //         res.data.type_list.map(item=>{
-    //             this.mirror_type.push({text:item,value:item})
-    //         })
-            
-    //     }
-    // }
+    private async get_status_list(){
+        let res:any = await Service.get_status_list({})
+        if(res.code==="Success"){
+            let list:any=[];
+            for(let i in res.data){
+                list.push({text:res.data[i],value:i})
+            }
+            this.status_list = list
+        }
+    }
     private search(data:any={}){
         this.current = 1;
-        this.search_data=data
+        this.search_data={...data,...this.filter_data}
         this.getMirrorList()
     }
     private async getMirrorList(){
-        const{os_id,display_name,time} = this.search_data
+        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
             os_id,
             display_name,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
-            os_type:'',
-            sort_size:'',
-            support_gpu_driver:'',
-            status:'',
-            sort_time:'',
+            os_type:os_type ? os_type[0] : undefined,
+            sort_size,
+            support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
+            status:status ? status[0] : undefined,
+            sort_time:sort_create_time,
+            page_index:this.current,
+            page_size:this.size
         })
         if(res.code==='Success'){
             this.list = res.data.image_list;
@@ -222,6 +204,18 @@ export default class CommonMirror extends Vue{
     private handleCurrentChange(cur){
         this.current = cur
         this.getMirrorList()
+    }
+    private FnSortChange(obj){
+        this.search_data.sort_size =undefined
+        this.search_data.sort_create_time =undefined
+        this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
+        this.getMirrorList()
+    }
+    private filterAttribute(obj:any){
+        console.log("obj",obj)
+        this.filter_data = {...this.filter_data,...obj};
+        this.search(this.search_data)
+        
     }
     private add(){
         this.visible=true;
