@@ -216,7 +216,7 @@ export default class AddCommon extends Vue{
                     let res:any = await Service.edit_pub_mirror({
                         os_id:this.oper_info.os_id,
                         display_name,
-                        customer_ids
+                        customer_ids:customer_ids==='' ? [] : customer_ids.split(',')
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)

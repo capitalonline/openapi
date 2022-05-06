@@ -163,7 +163,7 @@ export default class InsDetail extends Vue{
         ...req
       })
     }else if(this.type==='message'){
-      await m_service.get_pub_operate_record({
+      res = await m_service.get_pub_operate_record({
         os_id:this.record_id,
         content_type:data.content,
         start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
