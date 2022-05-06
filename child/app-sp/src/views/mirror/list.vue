@@ -18,10 +18,14 @@
             @filter-change="filterAttribute"
         >
             <!-- <el-table-column type="selection"></el-table-column> -->
-            <el-table-column prop="os_id" label="镜像ID" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
-            <el-table-column prop="size" label="容量" sortable="custom"></el-table-column>
+            <el-table-column prop="size" label="容量" sortable="custom">
+                <template slot-scope="scope">
+                    <span>{{scope.row.size}}GB</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
@@ -37,7 +41,7 @@
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
                         <div class="az">{{item.az_name}}</div>
                         <div class="time">{{item.create_time}}</div>
-                        <div class="status">{{item.status}}</div>
+                        <div class="status">{{item.status_display}}</div>
                         <el-button type="text" class="az">删除</el-button>
                     </div>
                 </template>
@@ -178,7 +182,7 @@ export default class CommonMirror extends Vue{
         this.getMirrorList()
     }
     private async getMirrorList(){
-        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time} = this.search_data
+        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
             os_id,
             display_name,
@@ -187,8 +191,9 @@ export default class CommonMirror extends Vue{
             os_type:os_type ? os_type[0] : undefined,
             sort_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
+            support_type:support_type ? support_type[0] : undefined,
             status:status ? status[0] : undefined,
-            sort_time:sort_create_time,
+            sort_create_time:sort_create_time,
             page_index:this.current,
             page_size:this.size
         })

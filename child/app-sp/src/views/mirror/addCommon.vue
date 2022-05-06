@@ -76,16 +76,17 @@
                 <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span>
                 <el-input v-else type="textarea" autosize v-model="form_data.path_md5" :maxlength=" 256" show-word-limit resize="none"></el-input>
             </el-form-item>
-            <div class="error_message file-tip" v-if=" form_data.os_file.length===0 && !oper_info.os_id ">未找到目标镜像文件，请上传</div>
+            <div class="error_message file-tip" v-if=" os_file.length===0 && !oper_info.os_id ">未找到目标镜像文件，请上传</div>
             <el-form-item label="" prop="os_file" v-if="!oper_info.os_id">
                 <el-upload
-                    name="mirror"
+                    name="file"
+                    ref="upload"
                     class="upload-demo"
-                    accept=""
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :action="`/ecs_business/v1/img/create_pub_image/${query_url}`"
                     :before-upload="before_upload"
+                    :file-list="os_file"
+                    :auto-upload="false"
                     :on-success="FnSuccess"
-                    :file-list="form_data.os_file"
                     :headers="{
                         'Access-Token':$store.state.token
                     }"
@@ -101,7 +102,7 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import {Vue,Component,Prop,PropSync} from 'vue-property-decorator';
+import {Vue,Component,Prop,PropSync, Watch} from 'vue-property-decorator';
 import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/mirror/list';
 import EcsService from '../../https/instance/create';
@@ -121,6 +122,8 @@ export default class AddCommon extends Vue{
     private compute_type_list:any=['GPU','CPU','CPU/GPU']
     private drive_type_list:any=['DataCenter','Geforce'];
     private file_type_list:any=['iso','qcow2'];
+    private query_url:string="";
+    private os_file:any=[]
     private form_data:any={
         id:this.oper_info.os_id,
         display_name:this.oper_info.display_name ? this.oper_info.display_name : '',
@@ -135,7 +138,6 @@ export default class AddCommon extends Vue{
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
-        os_file:[]
 
     }
     private rules={
@@ -175,11 +177,39 @@ export default class AddCommon extends Vue{
         console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
+        console.log("response",response)
+    }
+    @Watch("form_data",{immediate:true,deep:true})
+    private watch_form_data(){
+        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5}=this.form_data;
+        console.log("customer_ids",customer_ids.split(','))
+        let obj={
+            display_name,
+            os_type,
+            os_version,
+            os_bit,
+            customer_ids,
+            az_id,
+            backend_type,
+            support_type,
+            support_gpu_driver,
+            os_file_type,
+            path_md5,
+        }
+        let str=""
+        for (let i in obj){
+            if(obj[i]){
+                str =str+`${i}=${obj[i]}&`
+            }
+        }
+        this.query_url = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
+         console.log("this.query_url",this.query_url)
 
     }
     private confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,os_file}=this.form_data
+        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5}=this.form_data
+
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -192,23 +222,25 @@ export default class AddCommon extends Vue{
                         this.$message.success(res.message)
                     }
                 }else{
-                    let res:any = await Service.add_pub_mirror({
-                        display_name,
-                        os_type,
-                        os_version,
-                        os_bit,
-                        customer_ids,
-                        az_id,
-                        backend_type,
-                        support_type,
-                        support_gpu_driver,
-                        os_file_type,
-                        path_md5,
-                        os_file:[]
-                    })
-                    if(res.code==='Success'){
-                        this.$message.success(res.message)
-                    }
+                    const upload = this.$refs.upload as any;
+                    upload.submit()
+                    // let res:any = await Service.add_pub_mirror({
+                        // display_name,
+                        // os_type,
+                        // os_version,
+                        // os_bit,
+                        // customer_ids,
+                        // az_id,
+                        // backend_type,
+                        // support_type,
+                        // support_gpu_driver,
+                        // os_file_type,
+                        // path_md5,
+                        // os_file:[]
+                    // })
+                    // if(res.code==='Success'){
+                    //     this.$message.success(res.message)
+                    // }
                 }
                 
                 // this.visible_sync=false

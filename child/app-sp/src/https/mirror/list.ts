@@ -17,7 +17,7 @@ export default{
     },
     //新增公共镜像
     add_pub_mirror(req){
-        return service(getEcsOptions('POST','/img/create_pub_image/',req))
+        return service(getEcsOptions('GET','/img/create_pub_image/',req))
     },
     //编辑公共镜像
     edit_pub_mirror(req){
