@@ -11,4 +11,9 @@ export default{
     get_inform_list(req){
         return service(getHostOptions('GET','/host/get_op_content/',req))
     },
+    //获取文件下载路由
+    get_down_path(req){
+        return service(getHostOptions('GET','/host/download_test_report/',req))
+        
+    }
 }
