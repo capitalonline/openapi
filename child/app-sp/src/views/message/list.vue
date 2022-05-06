@@ -133,8 +133,18 @@ export default class Message extends Vue{
         this.page_info.current = cur
         this.getList()
     }
-    private down(id:string='111'){
-        window.location.href=`/ecs_business/v1/host/download_test_report?pipeline_group_id=${id}`
+    private async down(id:string=''){
+        let res:any =await Service.get_down_path({
+            pipeline_group_id:id
+        })
+        if(res.code==='Success'){
+            if(res.data.file_path){
+                window.location.href=res.data.file_path
+            }else{
+                this.$message.warning('文件下载路由不存在')
+            }
+        }
+        
     }
     private refresh(){
         this.page_info.current = 1;
