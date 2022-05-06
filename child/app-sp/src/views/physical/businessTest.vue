@@ -18,16 +18,16 @@
                 </el-select>
             </div> -->
             <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{taskList.length>0 ? taskList[0].display_name : ''}}</div>
-            <div class="m-bottom10"><circle-icon :num="2"></circle-icon>{{taskList.length>0 ? taskList[1].display_name :''}}</div>
+            <!-- <div class="m-bottom10"><circle-icon :num="2"></circle-icon>{{taskList.length>0 ? taskList[1].display_name :''}}</div> -->
             <div v-for="(item,index) in selectedTasks" :key="index" class="m-bottom10">
-                <circle-icon :num="index+3"></circle-icon>
+                <circle-icon :num="index+2"></circle-icon>
                 <el-select v-model="item.task_id" placeholder="请选择测试任务列表" @change="changeTask($event,index)">
                     <el-option v-for="inn in selectable" :key="inn.maintask_name" :value="inn.maintask_name" :label="inn.display_name" :disabled="item.disList.includes(inn.maintask_name)"></el-option>
                 </el-select>
                 <span class="m-left10" v-if="item.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
             </div>
-            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 3"></circle-icon>{{taskList.length>0 ? taskList[taskList.length-1].display_name : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? taskList[taskList.length-1].display_name : ''}}</div>
             
         </div>
         <span slot="footer" class="dialog-footer">
@@ -66,12 +66,11 @@ export default class BusinessTest extends Vue{
         if(res.code==='Success'){
             this.taskList = [...res.data.task_list];
             for(let i in this.taskList ){
-                if(![0,1,this.taskList.length-1].includes(Number(i))){
+                if(![0,this.taskList.length-1].includes(Number(i))){
                     this.selectable.push(this.taskList[i])
                 }
             }
-            console.log("selectable",this.selectable)
-            // this.selectable = res.data.task_list.map(item=>)
+            // console.log("selectable",this.selectable)
         }
     }
     private set_disList(){
@@ -109,7 +108,7 @@ export default class BusinessTest extends Vue{
     private async confirm(){
         let list=[
             {maintask_name:this.taskList[0].maintask_name,dep_params:{}},
-            {maintask_name:this.taskList[1].maintask_name,dep_params:{}},
+            // {maintask_name:this.taskList[1].maintask_name,dep_params:{}},
         ]
         this.selectedTasks.map(item=>{
             list.push({maintask_name:item.task_id,dep_params:item.params})
