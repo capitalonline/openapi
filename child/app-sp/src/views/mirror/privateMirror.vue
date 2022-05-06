@@ -1,13 +1,9 @@
 <template>
     <div>
-        <action-block :search_option="search_option" @fn-search="search">
-            <template #default>
-                <el-button type="primary" @click="add" :disabled="!auth_list.includes('create')">新增镜像</el-button>
-            </template>
-        </action-block>
+        <action-block :search_option="search_option" @fn-search="search"></action-block>
         <div class="icon m-bottom10">
             <el-tooltip content="导出" placement="bottom" effect="light">
-                <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
+                <el-button type="text" @click="down" :disabled="auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
         <el-table 
@@ -20,19 +16,27 @@
             <!-- <el-table-column type="selection"></el-table-column> -->
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
+            <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+            <el-table-column prop="customer_name" label="客户名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
-            <el-table-column prop="size" label="容量" sortable="custom">
+            <el-table-column prop="init_mirror" label="初始镜像">
+                <template slot-scope="scope">
+                    <span>{{`${scope.row.os_type} ${scope.row.os_version} ${scope.row.os_bit}位`}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="size" label="容量(GB)" sortable="custom">
                 <template slot-scope="scope">
                     <span>{{scope.row.size}}GB</span>
                 </template>
             </el-table-column>
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
-            <el-table-column prop="backend_type" label="存储类型"></el-table-column>
-            <el-table-column prop="az" label="可用区">
+            <el-table-column prop="business_disk_type" label="盘类型" :filter-multiple="false" column-key="business_disk_type" :filters="disk_type"></el-table-column>
+            <el-table-column prop="backend_type" label="存储介质" :filter-multiple="false" column-key="backend_type" :filters="storage_list"></el-table-column>
+            <el-table-column prop="az" label="存在可用区数量">
                 <template slot-scope="scope">
                     <el-tooltip effect="light" :content="'111'">
-                        <span>共<span class="num_message">{{scope.row.az_list.length}}</span>个</span>
+                        <span>共<span class="num_message">{{scope.row.az_list ? scope.row.az_list.length : 0}}</span>个</span>
                     </el-tooltip>
                 </template>
             </el-table-column>
@@ -46,21 +50,15 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="customer" label="客户权限">
+            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list">
                 <template slot-scope="scope">
-                    <span>{{scope.row.customer_list && scope.row.customer_list.length>0 ? scope.row.customer_list.join(',') : '全部客户'}}</span>
+                    <span :class="scope.row.status">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="status" label="状态" :filter-multiple="false" column-key="status" :filters="status_list"></el-table-column>
-            <el-table-column prop="path_name" label="路径"></el-table-column>
-            <el-table-column prop="update_time" label="更新时间"></el-table-column>
+            <el-table-column prop="update_time" label="更新时间" sortable="custom"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" v-if="['enable','disable'].includes(scope.row.status)" @click="edit(scope.row)">编辑</el-button>
-                    <el-button type="text" v-if="['enable','disable','build_fail'].includes(scope.row.status)" @click="del(scope.row)">删除</el-button>
-                    <el-button type="text" v-if="['enable','disable'].includes(scope.row.status)" @click="changeStatus(scope.row)">状态变更</el-button>
-                    <el-button type="text" v-if="['enable'].includes(scope.row.status)" @click="FnSync(scope.row)">同步</el-button>
                     <el-button type="text" @click="record(scope.row)">操作记录</el-button>
                 </template>
             </el-table-column>
@@ -74,19 +72,6 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
-        <template v-if="visible && ['add','edit'].includes(oper_type)">
-            <add-common :visible.sync="visible" :oper_info="oper_info"></add-common>
-        </template>
-        <template v-if="visible && ['sync'].includes(oper_type)">
-            <sync-mirror :visible.sync="visible" :os_id="oper_info.os_id"></sync-mirror>
-        </template>
-        <template v-if="visible && ['change'].includes(oper_type)">
-            <change-status :visible.sync="visible" :oper_info="oper_info"></change-status>
-        </template>
-        
-        <template v-if="visible && ['record'].includes(oper_type)">
-            <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id"></Record>
-        </template>
     </div>
 </template>
 <script lang="ts">
@@ -94,27 +79,18 @@ import {Vue,Component,Prop,Watch} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/mirror/list';
-import AddCommon from './addCommon.vue';
-import SyncMirror from './syncMirror.vue';
-import ChangeStatus from './changeStatus.vue';
-import AddCommonMirror from '../instance/addCommonMirror.vue';
-import Record from '../instance/record.vue'
-import moment from 'moment'
+import moment from 'moment';
+import {trans} from '../../utils/transIndex';
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
-        AddCommon,
-        SyncMirror,
-        ChangeStatus,
-        AddCommonMirror,
-        Record
     }
 })
-export default class CommonMirror extends Vue{
-    private search_option:Object={
-        os_id:{placeholder:'请输入镜像ID'},
-        display_name:{placeholder:'请输入镜像名称'},
+export default class PrivateMirror extends Vue{
+    private search_option:any={
+        customer_info:{placeholder:'请输入客户ID/名称'},
+        image_info:{placeholder:'请输入镜像ID/名称'},
         time:{
             placeholder:['开始时间','结束时间'],
             type:'daterange',
@@ -124,14 +100,13 @@ export default class CommonMirror extends Vue{
             defaultTime:[]
         }
     }
-    private list:Array<any>=[]
+    private list:any=[{id:1,status:'enable'}]
     private current:number = 1
     private size:number = 20
     private total:number = 0
     private search_data:any={};
     private auth_list:any=[];
     private mirror_type:any=[];
-    private filter_data:any={}
     private compute_type:any=[
         {text:'GPU',value:'GPU'},
         {text:'CPU',value:'CPU'},
@@ -141,30 +116,34 @@ export default class CommonMirror extends Vue{
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
     ];
+    private disk_type:any=[{text:'系统盘',value:'system'},{text:'数据盘',value:'data'}];
+    private storage_list:any=[{value:'local',text:'本地盘'}]
     private status_list:any=[];
     private visible:boolean=true;
-    private oper_type:string="";
+    private oper_type:String="";
     private oper_info:any={};
+    private filter_data:any={}
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.get_mirror_type();
         this.get_status_list()
-        this.search()
-    }
-    @Watch('visible')
-    private watch_visible(nv){
-        if(!nv){
-            this.oper_info={}
-        }
+        this.search();
     }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
         if(res.code==="Success"){
+            let list:any=[]
             res.data.type_list.map(item=>{
-                this.mirror_type.push({text:item,value:item})
+                list.push({text:item,value:item});
+                return item
             })
-            
+            this.mirror_type = list
         }
+    }
+    private search(data:any={}){
+        this.current = 1;
+        this.search_data={...data,...this.filter_data}
+        this.getMirrorList()
     }
     private async get_status_list(){
         let res:any = await Service.get_status_list({})
@@ -176,24 +155,23 @@ export default class CommonMirror extends Vue{
             this.status_list = list
         }
     }
-    private search(data:any={}){
-        this.current = 1;
-        this.search_data={...data,...this.filter_data}
-        this.getMirrorList()
-    }
     private async getMirrorList(){
-        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status} = this.search_data
-        let res:any = await Service.get_pub_mirror_list({
-            os_id,
-            display_name,
+        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data
+        let res:any = await Service.get_private_mirror_list({
+            image_info,
+            customer_info,
+            az_id:'',
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,
             sort_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
+            business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
             status:status ? status[0] : undefined,
-            sort_create_time:sort_create_time,
+            backend_type:backend_type ? backend_type[0] : undefined,
+            sort_update_time,
+            sort_create_time,
             page_index:this.current,
             page_size:this.size
         })
@@ -212,6 +190,7 @@ export default class CommonMirror extends Vue{
     }
     private FnSortChange(obj){
         this.search_data.sort_size =undefined
+        this.search_data.sort_update_time =undefined;
         this.search_data.sort_create_time =undefined
         this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
         this.getMirrorList()
@@ -236,17 +215,11 @@ export default class CommonMirror extends Vue{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(async() => {
-            let res:any = await Service.del_pub_mirror({
-                os_id:obj.os_id
-            })
-            if(res.code==="Success"){
-                this.$message({
-                    type: 'success',
-                    message: res.message
-                });
-            }
-          
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -255,9 +228,7 @@ export default class CommonMirror extends Vue{
         });
     }
     private changeStatus(obj){
-        this.visible=true;
-        this.oper_type='change';
-        this.oper_info=obj
+
     }
     private FnSync(obj){
         this.visible=true;
@@ -265,12 +236,34 @@ export default class CommonMirror extends Vue{
         this.oper_info=obj
     }
     private record(obj){
-        this.visible=true;
-        this.oper_type='record';
-        this.oper_info=obj
+
     }
     private down(){
-
+        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data;
+        let obj={
+            image_info,
+            customer_info,
+            az_id:'',
+            start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
+            end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
+            os_type:os_type ? os_type[0] : undefined,
+            sort_size,
+            support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
+            support_type:support_type ? support_type[0] : undefined,
+            business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
+            status:status ? status[0] : undefined,
+            backend_type:backend_type ? backend_type[0] : undefined,
+            sort_update_time,
+            sort_create_time,
+        }
+        let str=""
+        for (let i in obj){
+            if(obj[i]){
+                str =str+`${i}=${obj[i]}&`
+            }
+        }
+        let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
+        window.location.href=`/ecs_business/v1/img/private_image_list_download/${query}`
     }
     private operate(id:String){
        
