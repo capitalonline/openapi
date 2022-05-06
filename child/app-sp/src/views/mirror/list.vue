@@ -51,16 +51,16 @@
                     <span>{{scope.row.customer_list && scope.row.customer_list.length>0 ? scope.row.customer_list.join(',') : '全部客户'}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="status" label="状态" :filter-multiple="false" column-key="status" :filters="status_list"></el-table-column>
+            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list"></el-table-column>
             <el-table-column prop="path_name" label="路径"></el-table-column>
             <el-table-column prop="update_time" label="更新时间"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="operate" label="操作" width="180">
                 <template slot-scope="scope">
-                    <el-button type="text" v-if="['enable','disable'].includes(scope.row.status)" @click="edit(scope.row)">编辑</el-button>
-                    <el-button type="text" v-if="['enable','disable','build_fail'].includes(scope.row.status)" @click="del(scope.row)">删除</el-button>
-                    <el-button type="text" v-if="['enable','disable'].includes(scope.row.status)" @click="changeStatus(scope.row)">状态变更</el-button>
-                    <el-button type="text" v-if="['enable'].includes(scope.row.status)" @click="FnSync(scope.row)">同步</el-button>
+                    <el-button type="text" v-if="['running','blocking'].includes(scope.row.status)" @click="edit(scope.row)">编辑</el-button>
+                    <el-button type="text" v-if="['running','blocking','create_fail'].includes(scope.row.status)" @click="del(scope.row)">删除</el-button>
+                    <el-button type="text" v-if="['running','blocking'].includes(scope.row.status)" @click="changeStatus(scope.row)">状态变更</el-button>
+                    <el-button type="text" v-if="['running'].includes(scope.row.status)" @click="FnSync(scope.row)">同步</el-button>
                     <el-button type="text" @click="record(scope.row)">操作记录</el-button>
                 </template>
             </el-table-column>
@@ -85,7 +85,7 @@
         </template>
         
         <template v-if="visible && ['record'].includes(oper_type)">
-            <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id"></Record>
+            <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id" @close="close"></Record>
         </template>
     </div>
 </template>
@@ -274,6 +274,9 @@ export default class CommonMirror extends Vue{
     }
     private operate(id:String){
        
+    }
+    private close(val){
+        this.visible = false
     }
     
 }
