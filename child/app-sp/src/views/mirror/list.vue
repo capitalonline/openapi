@@ -31,9 +31,7 @@
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="az" label="可用区">
                 <template slot-scope="scope">
-                    <el-tooltip effect="light" :content="'111'">
-                        <span>共<span class="num_message">{{scope.row.az_list.length}}</span>个</span>
-                    </el-tooltip>
+                    <span>共<span class="num_message">{{scope.row.az_list.length}}</span>个</span>
                 </template>
             </el-table-column>
             <el-table-column prop="" label="" type="expand">
@@ -42,7 +40,7 @@
                         <div class="az">{{item.az_name}}</div>
                         <div class="time">{{item.create_time}}</div>
                         <div class="status">{{item.status_display}}</div>
-                        <el-button type="text" class="az">删除</el-button>
+                        <el-button type="text" class="az" @click="del_az(props.row.os_id,item.az_id)">删除</el-button>
                     </div>
                 </template>
             </el-table-column>
@@ -154,7 +152,8 @@ export default class CommonMirror extends Vue{
     @Watch('visible')
     private watch_visible(nv){
         if(!nv){
-            this.oper_info={}
+            this.oper_info={};
+            this.getMirrorList()
         }
     }
     private async get_mirror_type(){
@@ -184,8 +183,8 @@ export default class CommonMirror extends Vue{
     private async getMirrorList(){
         const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
-            os_id,
-            display_name,
+            image_id:os_id,
+            image_name:display_name,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,
@@ -238,13 +237,14 @@ export default class CommonMirror extends Vue{
           type: 'warning'
         }).then(async() => {
             let res:any = await Service.del_pub_mirror({
-                os_id:obj.os_id
+                os_ids:[obj.os_id]
             })
             if(res.code==="Success"){
                 this.$message({
                     type: 'success',
                     message: res.message
                 });
+                this.getMirrorList()
             }
           
         }).catch(() => {
@@ -253,6 +253,31 @@ export default class CommonMirror extends Vue{
             message: '已取消删除'
           });          
         });
+    }
+    private async del_az(os_id,az_id){
+        this.$confirm('确定将镜像从该可用区移除?', '删除', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+            let res:any = await Service.del_pub_mirror_az({
+                os_id,
+                az_ids:[az_id]
+            })
+            if(res.code==="Success"){
+                this.$message({
+                    type: 'success',
+                    message: res.message
+                });
+                this.getMirrorList()
+            }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+        
     }
     private changeStatus(obj){
         this.visible=true;

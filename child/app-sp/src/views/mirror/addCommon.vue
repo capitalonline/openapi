@@ -243,7 +243,7 @@ export default class AddCommon extends Vue{
                     // }
                 }
                 
-                // this.visible_sync=false
+                this.visible_sync=false
             }
         })
     }

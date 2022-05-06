@@ -27,9 +27,13 @@ export default{
     change_status(req){
         return service(getEcsOptions('POST','/img/alter_image/',req))
     },
+    //将镜像从某个可用区移除
+    del_pub_mirror_az(req){
+        return service(getEcsOptions('POST','/img/delete_pub_image/',req))
+    },
     //删除镜像
     del_pub_mirror(req){
-        return service(getEcsOptions('POST','/img/delete_pub_image/',req))
+        return service(getEcsOptions('POST','/img/batch_delete_pub_image/',req))
     },
     //获取公共镜像操作记录
     get_pub_operate_record(req){
@@ -37,7 +41,11 @@ export default{
     },
     //获取公共镜像同步详情
     get_pub_sync_detail(req){
-        return service(getEcsOptions('GET','/img/pub_image_info/',req))
+        return service(getEcsOptions('POST','/img/pub_image_info/',req))
+    },
+    //同步公共镜像
+    sync_mirror(req){
+        return service(getEcsOptions('POST','/img/sync_pub_image/',req))
     },
     //获取私有镜像列表
     get_private_mirror_list(req){
