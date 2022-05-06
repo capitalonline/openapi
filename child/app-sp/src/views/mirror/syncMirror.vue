@@ -97,7 +97,7 @@ export default class SyncMirror extends Vue{
                 this.az_info[item.region_group_name] = {...this.az_info[item.region_group_name],[item.az_id]:{...item,label:i}}
             })
         }
-        console.log("obj",this.az_info)
+        // console.log("obj",this.az_info)
     }
     private async get_pub_sync_detail(){
         this.az_info={}
