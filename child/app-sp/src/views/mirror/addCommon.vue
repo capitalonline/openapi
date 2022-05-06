@@ -203,7 +203,7 @@ export default class AddCommon extends Vue{
             }
         }
         this.query_url = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
-         console.log("this.query_url",this.query_url)
+        //  console.log("this.query_url",this.query_url)
 
     }
     private confirm(){
