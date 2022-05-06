@@ -7,11 +7,11 @@
         :close-on-click-modal="false"
         @close="cancel"
     >
-        <el-card>
+        <el-card class="card-box">
             <div slot="header" class="clearfix">镜像信息</div>
             <el-row :gutter="24">
                 <el-col :span="12" v-for="item in info" :key="item.id">
-                    <span class="label">{{item.label}}:</span>
+                    <span class="label">{{item.label}}: </span>
                     <span class="value">{{item.value}}</span>
                 </el-col>
             </el-row>
@@ -19,15 +19,16 @@
         <el-card>
             <div slot="header" class="clearfix">镜像同步位置</div>
             <div class="card">
-                <el-card v-for="(item,key) in az_info" :key="key" class="sync">
-                    <div slot="header" class="clearfix">{{key}}</div>
-                    <el-checkbox v-for="(inn,i) in item" :key="i" :label="i" v-if="inn.label!=='not_available_az_list'" :disabled="inn.label==='current_az_list'">{{inn.az_name}}</el-checkbox>
+                <el-card v-for="(item,key) in list" :key="item.id" class="sync">
+                    <div slot="header" class="clearfix">{{item.name}}</div>
+                    <el-checkbox-group  v-model="item.checkList">
+                        <el-checkbox v-for="(inn) in item.data" :key="inn.az_id" :label="inn.az_id" v-if="inn.label!=='not_available_az_list'" :disabled="inn.label==='current_az_list'">{{inn.az_name}}</el-checkbox>
+                    </el-checkbox-group>
                     <el-divider></el-divider>
-                    <div class="m-bottom10">不支持可用区</div>
-                    <div v-for="(inn,i) in item" :key="i" v-if="inn.label==='not_available_az_list'">{{inn.az_name}}</div>
+                    <div class="m-bottom10" v-if="item.len>0">不支持可用区</div>
+                    <div v-for="(i) in item.data" :key="i" v-if="i.label==='not_available_az_list'">{{i.az_name}}</div>
                 </el-card>
             </div>
-            
         </el-card>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
@@ -52,7 +53,8 @@ export default class SyncMirror extends Vue{
         size:{label:'容量',value:'4'},
         type:{label:'类型',value:'5'},
     }
-    private az_info:any={}
+    private az_info:any={};
+    private list:any=[]
     private current_az_list:any=[
              {
               "az_id":"16e6e380-729d-11ec-b62a-1e00e202ff80",
@@ -87,20 +89,42 @@ export default class SyncMirror extends Vue{
               "region_group_id":"408fd19e-fa78-11e6-bd9a-30b49e091019",
               "region_group_name":"中国大陆"}]
     created(){
-        let temp={
-            'current_az_list':this.current_az_list,
-            'available_az_list':this.available_az_list,
-            'not_available_az_list':this.not_available_az_list
-        }
-        for(let i in temp){
-            temp[i].map(item=>{
-                this.az_info[item.region_group_name] = {...this.az_info[item.region_group_name],[item.az_id]:{...item,label:i}}
-            })
-        }
-        // console.log("obj",this.az_info)
+        // let temp={
+        //     'current_az_list':this.current_az_list,
+        //     'available_az_list':this.available_az_list,
+        //     'not_available_az_list':this.not_available_az_list
+        // }
+        // for(let i in temp){
+        //     temp[i].map(item=>{
+        //         this.az_info[item.region_group_name] = {...this.az_info[item.region_group_name],[item.az_id]:{...item}}
+        //     })
+        // }
+        // console.log("obj",this.az_info);
+        // let list_temp:any=[];
+        // for(let i in this.az_info){
+        //     let temp_list=[]
+        //     for(let inn in this.az_info[i]){
+        //         temp_list.push(this.az_info[i][inn])
+        //     }
+        //     list_temp.push({name:i,data:temp_list,checkList:[],len:temp_list.filter(inn=>inn.label==='not_available_az_list').length,id:Math.random()*1000})
+        // }
+        // console.log("list",list_temp)
+        // this.list = list_temp;
+        // let info:any={};
+        // let list:any=[];
+        // for(let i in temp){
+        //     temp[i].map(item=>{
+        //         item = {...item,label:i}
+        //         let names = list.map(na=>na.name);
+        //         if(names.includes(item.region_group_name)){
+
+        //         }
+        //     })
+        // }
+        this.get_pub_sync_detail()
     }
     private async get_pub_sync_detail(){
-        this.az_info={}
+        let az_info={}
         let res:any = await Service.get_pub_sync_detail({
             os_id:this.os_id
         })
@@ -118,13 +142,34 @@ export default class SyncMirror extends Vue{
             }
             for(let i in temp){
                 temp[i].map(item=>{
-                    this.az_info[item.region_group_name] = {...this.az_info[item.region_group_name],[item.az_id]:{...item,label:i}}
+                    az_info[item.region_group_name] = {...az_info[item.region_group_name],[item.az_id]:{...item,label:i}};//同一区域拼接
+                    // console.log("this.az_info",this.az_info)
                 })
             }
-            
+            let list_temp:any=[];
+            for(let i in az_info){
+                let temp_list=[]
+                for(let inn in az_info[i]){
+                    temp_list.push(az_info[i][inn])
+                }
+                list_temp.push({name:i,data:temp_list,checkList:[],len:temp_list.filter(inn=>inn.label==='not_available_az_list').length,id:Math.random()*1000})
+            }
+            console.log("list",list_temp)
+            this.list = list_temp;
         }
     }
-    private confirm(){
+    private async confirm(){//sync_mirror
+        let data:any=[]
+        this.list.map(item=>{
+            data=[...data,...item.checkList]
+        })
+        let res:any = await Service.sync_mirror({
+            os_id:this.os_id,
+            az_ids:data
+        })
+        if(res.code==='Success'){
+            this.$message.success(res.msg)
+        }
         this.visible_sync=false
     }
     private cancel(){
@@ -133,12 +178,10 @@ export default class SyncMirror extends Vue{
 }
 </script>
 <style lang="scss" scoped>
-.el-card{
+.card-box{
     margin-bottom: 20px;
 }
-.el-card:last-child{
-    margin-bottom: 0;
-}
+
 .label{
     width:120px;
 }
