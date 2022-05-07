@@ -23,6 +23,7 @@
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
+            <el-table-column prop="os_file_type" label="镜像文件类型"></el-table-column>
             <el-table-column prop="size" label="容量" sortable="custom">
                 <template slot-scope="scope">
                     <span>{{scope.row.size}}GB</span>
@@ -40,7 +41,13 @@
             <el-table-column prop="" label="" type="expand">
                 <template slot-scope="props">
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
-                        <div class="az">{{item.az_name}}</div>
+                        <div class="az-name">
+                            <span>{{item.az_name}}</span>
+                            <span v-if="item.pod_name_list.length>0"> ( </span>
+                            <span v-for="(pod,index) in item.pod_name_list.slice(0,2)" :key="pod">{{pod}}{{index===item.pod_name_list.length-1 ? '' : ','}}</span>
+                            <span v-if="item.pod_name_list.length>2"> ...</span>
+                            <span v-if="item.pod_name_list.length>0">)</span>
+                        </div>
                         <div class="time">{{item.create_time}}</div>
                         <div class="status" :class="item.status">{{item.status_display}}</div>
                         <el-button type="text" class="az" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status)">删除</el-button>
@@ -318,6 +325,9 @@ i.el-icon-s-tools{
     .time{
         width: 150px;
         line-height: 32px;
+    }
+    .az-name{
+        width: 300px;
     }
 }
 </style>

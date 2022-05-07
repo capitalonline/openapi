@@ -89,38 +89,6 @@ export default class SyncMirror extends Vue{
               "region_group_id":"408fd19e-fa78-11e6-bd9a-30b49e091019",
               "region_group_name":"中国大陆"}]
     created(){
-        // let temp={
-        //     'current_az_list':this.current_az_list,
-        //     'available_az_list':this.available_az_list,
-        //     'not_available_az_list':this.not_available_az_list
-        // }
-        // for(let i in temp){
-        //     temp[i].map(item=>{
-        //         this.az_info[item.region_group_name] = {...this.az_info[item.region_group_name],[item.az_id]:{...item}}
-        //     })
-        // }
-        // console.log("obj",this.az_info);
-        // let list_temp:any=[];
-        // for(let i in this.az_info){
-        //     let temp_list=[]
-        //     for(let inn in this.az_info[i]){
-        //         temp_list.push(this.az_info[i][inn])
-        //     }
-        //     list_temp.push({name:i,data:temp_list,checkList:[],len:temp_list.filter(inn=>inn.label==='not_available_az_list').length,id:Math.random()*1000})
-        // }
-        // console.log("list",list_temp)
-        // this.list = list_temp;
-        // let info:any={};
-        // let list:any=[];
-        // for(let i in temp){
-        //     temp[i].map(item=>{
-        //         item = {...item,label:i}
-        //         let names = list.map(na=>na.name);
-        //         if(names.includes(item.region_group_name)){
-
-        //         }
-        //     })
-        // }
         this.get_pub_sync_detail()
     }
     private async get_pub_sync_detail(){
@@ -135,9 +103,10 @@ export default class SyncMirror extends Vue{
             this.info.size.value = res.data.size;
             this.info.type.value = res.data.display_name;
             const {current_az_list,available_az_list,not_available_az_list}=res.data
+            let ids = current_az_list.map(item=>item.az_id)
             let temp={
                 'current_az_list':current_az_list,
-                'available_az_list':available_az_list,
+                'available_az_list':available_az_list.filter(item=>!ids.includes(item.az_id)),
                 'not_available_az_list':not_available_az_list
             }
             for(let i in temp){
@@ -168,7 +137,7 @@ export default class SyncMirror extends Vue{
             az_ids:data
         })
         if(res.code==='Success'){
-            this.$message.success(res.msg)
+            this.$message.success(res.message)
         }
         this.visible_sync=false
     }

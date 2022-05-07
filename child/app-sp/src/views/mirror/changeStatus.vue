@@ -44,12 +44,15 @@ export default class SyncMirror extends Vue{
     private form_data:any={
         id:this.oper_info.os_id,
         name:this.oper_info.display_name,
-        status:'',
+        status:this.oper_info.status==='running' ? 1 : 0,
         remark:''
     }
     private confirm(){
         const form= this.$refs.form_status as Form;
-        const {id,status,remark} = this.form_data
+        const {id,status,remark} = this.form_data;
+        if((this.oper_info.status==='running' && Number(this.form_data.status)===1) || (this.oper_info.status==='blocking' && Number(this.form_data.status)===0)){
+            return;
+        }
         form.validate(async valid=>{
             if(valid){
                 let res:any = await Service.change_status({
