@@ -35,7 +35,7 @@
                 <span>公共镜像</span>
             </el-form-item>
             <el-form-item label="客户ID" prop="customer_ids">
-                <customer-input @FnCustomer="FnCustomer" :customers="customer_list" :list="oper_info.cutomer_list"></customer-input>
+                <customer-input @FnCustomer="FnCustomer" :customers="customer_list" :list="oper_info.customer_list"></customer-input>
                 <!-- <el-input v-model="form_data.customer_ids"></el-input> -->
             </el-form-item>
             <el-form-item label="容量" prop="size" v-if="oper_info.os_id">
@@ -156,13 +156,15 @@ export default class AddCommon extends Vue{
         backend_type: [{ required: true, message: '请选择存储类型', trigger: 'change' }],
         support_type: [{ required: true, message: '请选择计算类型', trigger: 'change' }],
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
-        path_md5: [{ required: true, message: '请输入MD5', trigger: 'change' }],
+        path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
     }
     created(){
         this.get_mirror_type();
         this.get_az_list();
         this.form_data.support_type='CPU/GPU'
-        console.log("this.oper_info",this.oper_info)
+        if(this.oper_info.os_id){
+            this.rules.path_md5=[{required:false}]
+        }
     }
     private validate_name(rule, value, callback){
         if(!value){
