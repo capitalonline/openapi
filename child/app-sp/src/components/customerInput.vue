@@ -21,17 +21,20 @@ import Service from '../https/physical/list'
 })
 export default class CustomerInput extends Vue{
     @Prop({default:()=>[]})customers!:any;
-    @Prop({default:()=>[]})rows!:any
+    @Prop({default:()=>[]})rows!:any;
+    @Prop({default:()=>[]})list!:any;
     private customer_id:Array<string>=[];
     private customerList:any=[];
     private flag:boolean=true;
     created(){
-        this.customer_id = this.customers
-        if(this.customer_id.length>0){
-            this.customer_id.map(item=>{
-                this.getCustomerList(item,true)
-            })
-        }
+        this.customer_id = this.customers;
+        this.customerList = list
+        // this.getCustomerList('',true)
+        // if(this.customer_id.length>0){
+        //     this.customer_id.map(item=>{
+        //         
+        //     })
+        // }
         
     }
     private changeCustomer(val){
@@ -65,7 +68,7 @@ export default class CustomerInput extends Vue{
 <style lang="scss">
     .customer{
         .el-select{
-            width: 80%;
+            width: 100%;
         }
         .el-select .el-tag{
             width: 100% !important;

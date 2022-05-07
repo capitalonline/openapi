@@ -29,7 +29,7 @@
                 <el-input v-model=" form_data.name"></el-input>
             </el-form-item>
             <el-form-item label="测试账户ID" prop="test_id" :rules="[{required: true,trigger:'blur',validator: validate_account}]" class="test">
-                <customer-input @FnCustomer="FnCustomer"></customer-input>
+                <div class="test"><customer-input @FnCustomer="FnCustomer"></customer-input></div>
                 <el-tooltip content="请输入测试账户ID，待镜像制作完成进行测试" placement="right" effect="light">
                     <el-button type="text" class="m-left10"><svg-icon icon="info"></svg-icon></el-button>
                 </el-tooltip>
@@ -104,6 +104,7 @@ export default class AddCommonMirror extends Vue{
     margin-bottom: 0;
 }
 .test{
-    width: 280px;
+    width: 90%;
+    display: inline-block;
 }
 </style>
