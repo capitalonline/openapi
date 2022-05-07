@@ -30,6 +30,7 @@
 .unmounting,
 .recovering,
 .recycling,
+.syncing,
 .creating_image {
   color:#4984E7;
 }
@@ -37,11 +38,13 @@
   color:#2DA867;
 }
 .deleted,
+.blocking,
 .destroy {
   color: #e6a23c;
 }
 .shutdown,
 .error,
+.create_fail,
 .failed,.build_fail {
   color:#DA3B18;
 }

@@ -246,6 +246,15 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
+          <el-button
+            type="text"
+            :disabled="
+              scope.row.status !== 'shutdown' || !operate_auth.includes('add_common_mirror')
+            "
+            @click="addCommon(scope.row)"
+            >制作公共镜像</el-button
+          >
+          
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -443,11 +452,17 @@
         @close-detail="closeDetail"
       />
     </template>
+    <template v-if="common_visible">
+      <add-common
+        :visible.sync="common_visible"
+        :ecs_info="ecs_info"
+      />
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import LabelBlock from "../../components/labelBlock.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
@@ -463,6 +478,7 @@ import updateOs from "./updateOs.vue";
 import updateDisk from "./updateDisk.vue";
 import Recover from "./recover.vue";
 import MarkTip from "../../components/markTip.vue";
+import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 @Component({
   components: {
@@ -476,7 +492,8 @@ import moment from "moment";
     updateDisk,
     Recover,
     SvgIcon,
-    MarkTip
+    MarkTip,
+    AddCommon
   }
 })
 export default class App extends Vue {
@@ -543,13 +560,14 @@ export default class App extends Vue {
   private loading = false;
   private sort_prop_name = '';
   private sort_order = 0;
-
+  private ecs_info:any={};
+  private common_visible:boolean=false
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       az_id: data.az_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
-      status: data.status ? data.status.join(',') : [],
+      status: data.status ? data.status.join(',') : '',
       customer_id: data.customer_id,
       customer_name: data.customer_name,
       os_type: data.os_type,
@@ -1049,6 +1067,17 @@ export default class App extends Vue {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
       let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
       window.open(url);
+    }
+  }
+  private addCommon(obj){
+    this.FnClearTimer()
+    this.ecs_info = obj
+    this.common_visible = true;
+  }
+  @Watch("common_visible")
+  private watch_common_visible(nv){
+    if(!nv){
+      this.FnGetList();
     }
   }
   private FnClose() {

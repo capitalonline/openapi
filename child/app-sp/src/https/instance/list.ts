@@ -4,7 +4,7 @@ import qs from 'qs'
 
 export default {
   get_instance_list(reqData) {
-    return service(getEcsOptions('GET', '/ecs/ecs_list/', reqData))
+    return service(getEcsOptions('POST', '/ecs/ecs_list/', reqData))
   },
   operate_instance(reqData) {
     return service(getEcsOptions('POST', '/ecs/operate/', reqData))
@@ -51,6 +51,10 @@ export default {
   // 开启计费获取价格
   each_resource_price(reqData) {
     return service(getEcsOptions('POST', '/ecs/each_resource_price/', reqData))
+  },
+  //制作公共镜像
+  add_common_mirror(reqData) {
+    return service(getEcsOptions('POST', '/img/create_pub_image_by_ecs/', reqData))
   },
   // 导出excel
   export_list(reqData) {
