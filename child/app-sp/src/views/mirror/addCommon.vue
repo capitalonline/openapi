@@ -171,6 +171,7 @@ export default class AddCommon extends Vue{
             return callback(new Error('请输入镜像名称'))
         }else{
             Service.check_name({
+                os_id:this.oper_info.os_id ? this.oper_info.os_id : ''
                 display_name:value
             }).then(res=>{
                 if(res.code==='Success'){
@@ -207,7 +208,7 @@ export default class AddCommon extends Vue{
     }
   }
     private before_upload(file){
-        console.log("before_upload",file)
+        // console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
         console.log("response",response)
