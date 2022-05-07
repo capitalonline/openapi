@@ -65,7 +65,7 @@ export default class CustomerInput extends Vue{
 <style lang="scss">
     .customer{
         .el-select{
-            width: 540px;
+            width: 80%;
         }
         .el-select .el-tag{
             width: 100% !important;

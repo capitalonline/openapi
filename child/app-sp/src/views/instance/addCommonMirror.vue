@@ -28,8 +28,8 @@
             <el-form-item label="镜像名称" prop="name" :rules="[{required: true, message:'请输入镜像名称',trigger:'blur'}]">
                 <el-input v-model=" form_data.name"></el-input>
             </el-form-item>
-            <el-form-item label="测试账户ID" prop="test_id" :rules="[{required: true,trigger:'blur',validator: validate_account}]">
-                <el-input v-model=" form_data.test_id" class="test"></el-input>
+            <el-form-item label="测试账户ID" prop="test_id" :rules="[{required: true,trigger:'blur',validator: validate_account}]" class="test">
+                <customer-input @FnCustomer="FnCustomer"></customer-input>
                 <el-tooltip content="请输入测试账户ID，待镜像制作完成进行测试" placement="right" effect="light">
                     <el-button type="text" class="m-left10"><svg-icon icon="info"></svg-icon></el-button>
                 </el-tooltip>
@@ -44,10 +44,12 @@
 <script lang="ts">
 import {Vue,Component,Prop,PropSync} from 'vue-property-decorator';
 import SvgIcon from '../../components/svgIcon/index.vue';
-import Service from '../../https/instance/list'
+import Service from '../../https/instance/list';
+import CustomerInput from '../../components/customerInput.vue'
 @Component({
     components:{
-        SvgIcon
+        SvgIcon,
+        CustomerInput
     }
 })
 export default class AddCommonMirror extends Vue{
@@ -63,15 +65,14 @@ export default class AddCommonMirror extends Vue{
         name:'',
         test_id:'',
     }
+    private FnCustomer(val){
+        this.form_data.test_id =val
+    }
     private validate_account(rule, value, callback){
-        if(!value){
+        if(value.length===0){
             return callback(new Error('请输入测试账户ID，以逗号分隔'))
         }else{
-            if(value.split(',').every(item=>item.length>6)){
-                return callback()
-            }else{
-                return callback(new Error('请输入正确的测试账户ID，以逗号分隔'))
-            }
+            return callback()
         }
     }
     private async confirm(){
@@ -83,7 +84,7 @@ export default class AddCommonMirror extends Vue{
                     az_id:this.ecs_info.az_id,
                     ecs_id:this.ecs_info.ecs_id,
                     customer_id:this.ecs_info.customer_id,
-                    customer_ids:this.form_data.test_id.split(','),
+                    customer_ids:this.form_data.test_id,
                 })
                 if(res.code==='Success'){
                     this.$message.success(res.message)

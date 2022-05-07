@@ -57,14 +57,14 @@
             </el-form-item>
             <el-form-item label="计算类型" prop="support_type">
                 <span v-if="oper_info.os_id">{{ form_data.support_type }}</span>
-                <el-select v-else v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type!=='iso'">
+                <el-select v-else v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
                     <el-option v-for="item in compute_type_list" :key="item" :label="item" :value=" item"></el-option>
                 </el-select>
                 <el-tooltip :content=" '若是标准镜像，选择第三项：CPU/GPU' " placement="right" effect="light" v-if="!oper_info.os_id">
                     <el-button type="text"><svg-icon icon="info" class="m-left10"></svg-icon></el-button>
                 </el-tooltip>
             </el-form-item>
-            <el-form-item label="驱动类型" prop="support_gpu_driver" v-if="form_data.os_file_type!=='iso' || form_data.support_type==='GPU'">
+            <el-form-item label="驱动类型" prop="support_gpu_driver" v-if="form_data.support_type==='GPU'">
                 <span v-if="oper_info.os_id">{{ form_data.support_gpu_driver }}</span>
                 <el-select v-else v-model="form_data.support_gpu_driver">
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
@@ -161,6 +161,7 @@ export default class AddCommon extends Vue{
     created(){
         this.get_mirror_type();
         this.get_az_list();
+        this.form_data.support_type='CPU/GPU'
         console.log("this.oper_info",this.oper_info)
     }
     private validate_name(rule, value, callback){
@@ -209,6 +210,12 @@ export default class AddCommon extends Vue{
     private FnSuccess(response, file, fileList){
         console.log("response",response)
     }
+    @Watch('form_data.os_file_type')
+    private watch_os_file_type(nv){
+        if(nv==='iso'){
+            this.form_data.support_type='CPU/GPU'
+        }
+    }
     // @Watch("form_data",{immediate:true,deep:true})
     // private watch_form_data(){
     //     const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5}=this.form_data;
@@ -236,7 +243,6 @@ export default class AddCommon extends Vue{
     //      console.log("this.query_url",this.query_url)
     // }
     private FnCustomer(val){
-        // console.log("FnCustomer",val)
         this.form_data.customer_ids =val? val.join(',') : ''
     }
     private async confirm(){
@@ -265,7 +271,7 @@ export default class AddCommon extends Vue{
                         az_id,
                         backend_type,
                         support_type,
-                        support_gpu_driver,
+                        support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
                     })
