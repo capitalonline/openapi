@@ -54,7 +54,7 @@ export default{
     //获取镜像状态
     get_status_list(req){
         return service(getEcsOptions('GET','/img/get_image_status_list/',req))
-    }
+    },
 }
 
     

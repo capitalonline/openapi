@@ -9,6 +9,9 @@
             <el-tooltip content="导出" placement="bottom" effect="light">
                 <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
+            <el-tooltip content="刷新" placement="bottom" effect="light">
+                <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+            </el-tooltip>
         </div>
         <el-table 
             :data="list" 
@@ -17,7 +20,6 @@
             @sort-change="FnSortChange"
             @filter-change="filterAttribute"
         >
-            <!-- <el-table-column type="selection"></el-table-column> -->
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
@@ -29,9 +31,10 @@
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
-            <el-table-column prop="az" label="可用区">
+            <el-table-column prop="az" label="可用区" width="120">
                 <template slot-scope="scope">
-                    <span>共<span class="num_message">{{scope.row.az_list.length}}</span>个</span>
+                    <span>共  <span class="num_message">{{scope.row.az_list.length}}</span>  个</span>
+                    <span>   ( 可用:<span class="num_message">  {{scope.row.az_list.filter(item=>item.status==='running').length}}</span> )</span>
                 </template>
             </el-table-column>
             <el-table-column prop="" label="" type="expand">
@@ -39,17 +42,21 @@
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
                         <div class="az">{{item.az_name}}</div>
                         <div class="time">{{item.create_time}}</div>
-                        <div class="status">{{item.status_display}}</div>
-                        <el-button type="text" class="az" @click="del_az(props.row.os_id,item.az_id)">删除</el-button>
+                        <div class="status" :class="item.status">{{item.status_display}}</div>
+                        <el-button type="text" class="az" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status)">删除</el-button>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column prop="customer" label="客户权限">
                 <template slot-scope="scope">
-                    <span>{{scope.row.customer_list && scope.row.customer_list.length>0 ? scope.row.customer_list.join(',') : '全部客户'}}</span>
+                    <span>{{scope.row.white_customer_list && scope.row.white_customer_list.length>0 ? scope.row.white_customer_list.join(',') : '全部客户'}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list"></el-table-column>
+            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list">
+                <template slot-scope="scope">
+                    <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="path_name" label="路径"></el-table-column>
             <el-table-column prop="update_time" label="更新时间"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
@@ -81,7 +88,12 @@
         <template v-if="visible && ['change'].includes(oper_type)">
             <change-status :visible.sync="visible" :oper_info="oper_info"></change-status>
         </template>
-        
+        <template v-if="visible && ['del'].includes(oper_type)">
+            <del-mirror :visible.sync="visible" :rows="[oper_info]" :type="oper_type"></del-mirror>
+        </template>
+        <template v-if="visible && ['del_az'].includes(oper_type)">
+            <del-mirror :visible.sync="visible" :rows="[oper_info]" :type="oper_type"></del-mirror>
+        </template>
         <template v-if="visible && ['record'].includes(oper_type)">
             <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id" @close="close"></Record>
         </template>
@@ -96,8 +108,10 @@ import AddCommon from './addCommon.vue';
 import SyncMirror from './syncMirror.vue';
 import ChangeStatus from './changeStatus.vue';
 import AddCommonMirror from '../instance/addCommonMirror.vue';
-import Record from '../instance/record.vue'
-import moment from 'moment'
+import Record from '../instance/record.vue';
+import DelMirror from './delMirror.vue'
+import moment from 'moment';
+import {paramsSerializer} from '../../utils/transIndex'
 @Component({
     components:{
         ActionBlock,
@@ -106,7 +120,8 @@ import moment from 'moment'
         SyncMirror,
         ChangeStatus,
         AddCommonMirror,
-        Record
+        Record,
+        DelMirror
     }
 })
 export default class CommonMirror extends Vue{
@@ -180,6 +195,9 @@ export default class CommonMirror extends Vue{
         this.search_data={...data,...this.filter_data}
         this.getMirrorList()
     }
+    private refresh(){
+        this.getMirrorList()
+    }
     private async getMirrorList(){
         const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
@@ -230,53 +248,15 @@ export default class CommonMirror extends Vue{
         this.oper_type='edit';
         this.oper_info=obj
     }
-    private del(obj){
-        this.$confirm('您是否要删除镜像?', '删除', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async() => {
-            let res:any = await Service.del_pub_mirror({
-                os_ids:[obj.os_id]
-            })
-            if(res.code==="Success"){
-                this.$message({
-                    type: 'success',
-                    message: res.message
-                });
-                this.getMirrorList()
-            }
-          
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
+    private del(obj:any){
+        this.visible=true;
+        this.oper_type ='del';
+        this.oper_info= obj;
     }
-    private async del_az(os_id,az_id){
-        this.$confirm('确定将镜像从该可用区移除?', '删除', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async() => {
-            let res:any = await Service.del_pub_mirror_az({
-                os_id,
-                az_ids:[az_id]
-            })
-            if(res.code==="Success"){
-                this.$message({
-                    type: 'success',
-                    message: res.message
-                });
-                this.getMirrorList()
-            }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
+    private async del_az(obj){
+        this.visible=true;
+        this.oper_type='del_az';
+        this.oper_info= obj;
         
     }
     private changeStatus(obj){
@@ -295,7 +275,18 @@ export default class CommonMirror extends Vue{
         this.oper_info=obj
     }
     private down(){
-
+        const{os_id,display_name,time,os_type,support_gpu_driver,support_type,status} = this.search_data
+        let query = paramsSerializer({
+            image_id:os_id,
+            image_name:display_name,
+            start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
+            end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
+            os_type:os_type ? os_type[0] : undefined,
+            support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
+            support_type:support_type ? support_type[0] : undefined,
+            status:status ? status[0] : undefined,
+        })
+        window.location.href=`/ecs_business/v1/img/pub_image_list_download/${query}`
     }
     private operate(id:String){
        

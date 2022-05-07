@@ -33,11 +33,10 @@
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="business_disk_type" label="盘类型" :filter-multiple="false" column-key="business_disk_type" :filters="disk_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储介质" :filter-multiple="false" column-key="backend_type" :filters="storage_list"></el-table-column>
-            <el-table-column prop="az" label="存在可用区数量">
+            <el-table-column prop="az" label="存在可用区数量"  width="120">
                 <template slot-scope="scope">
-                    <el-tooltip effect="light" :content="'111'">
-                        <span>共<span class="num_message">{{scope.row.az_list ? scope.row.az_list.length : 0}}</span>个</span>
-                    </el-tooltip>
+                    <span>共  <span class="num_message">{{scope.row.az_list ? scope.row.az_list.length : 0}}</span>   个</span>
+                    <span>   ( 可用:<span class="num_message">  {{scope.row.az_list ? scope.row.az_list.filter(item=>item.status==='running').length : 0}}</span> )</span>
                 </template>
             </el-table-column>
             <el-table-column prop="" label="" type="expand">
@@ -45,14 +44,13 @@
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
                         <div class="az">{{item.az_name}}</div>
                         <div class="time">{{item.create_time}}</div>
-                        <div class="status">{{item.status_display}}</div>
-                        <el-button type="text" class="az">删除</el-button>
+                        <div class="status" :class="item.status">{{item.status_display}}</div>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list">
                 <template slot-scope="scope">
-                    <span :class="scope.row.status">{{scope.row.status_display}}</span>
+                    <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="update_time" label="更新时间" sortable="custom"></el-table-column>
@@ -72,6 +70,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
+        <template v-if="visible">
+            <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id" @close="close"></Record>
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -81,10 +82,12 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/mirror/list';
 import moment from 'moment';
 import {trans} from '../../utils/transIndex';
+import Record from '../instance/record.vue'
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
+        Record
     }
 })
 export default class PrivateMirror extends Vue{
@@ -119,10 +122,10 @@ export default class PrivateMirror extends Vue{
     private disk_type:any=[{text:'系统盘',value:'system'},{text:'数据盘',value:'data'}];
     private storage_list:any=[{value:'local',text:'本地盘'}]
     private status_list:any=[];
-    private visible:boolean=true;
+    private visible:boolean=false;
     private oper_type:String="";
     private oper_info:any={};
-    private filter_data:any={}
+    private filter_data:any={};
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.get_mirror_type();
@@ -201,42 +204,12 @@ export default class PrivateMirror extends Vue{
         this.search(this.search_data)
         
     }
-    private add(){
-        this.visible=true;
-        this.oper_type='add'
-    }
-    private edit(obj){
-        this.visible=true;
-        this.oper_type='edit';
-        this.oper_info=obj
-    }
-    private del(obj){
-        this.$confirm('您是否要删除镜像?', '删除', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-    }
-    private changeStatus(obj){
-
-    }
-    private FnSync(obj){
-        this.visible=true;
-        this.oper_type='sync';
-        this.oper_info=obj
-    }
     private record(obj){
-
+        this.oper_info=obj;
+        this.visible=true
+    }
+    private close(val){
+        this.visible = false
     }
     private down(){
         const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data;
@@ -264,9 +237,6 @@ export default class PrivateMirror extends Vue{
         }
         let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
         window.location.href=`/ecs_business/v1/img/private_image_list_download/${query}`
-    }
-    private operate(id:String){
-       
     }
     
 }
