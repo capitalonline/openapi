@@ -228,7 +228,7 @@ export default class AddCommon extends Vue{
         // console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
-        console.log("response",response)
+        // console.log("response",response)
     }
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
