@@ -3,6 +3,7 @@
         <el-select
             v-model="customer_id"
             multiple
+            placeholder="输入关键字可进行搜索"
             filterable
             remote
             :remote-method="getCustomerList"
