@@ -649,7 +649,7 @@ export default class PhysicalList extends Vue {
       let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
       let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
       let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
-      if(!vm_flag && ['shutdown_host','restart_host'].includes(val)){
+      if(!vm_flag && ['shutdown_host'].includes(val)){
         this.error_msg[val]=getHostStatus(val).msg2
       }else{
         this.error_msg[val]=getHostStatus(val).msg

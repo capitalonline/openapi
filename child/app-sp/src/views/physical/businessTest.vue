@@ -70,7 +70,6 @@ export default class BusinessTest extends Vue{
                     this.selectable.push(this.taskList[i])
                 }
             }
-            // console.log("selectable",this.selectable)
         }
     }
     private set_disList(){
@@ -91,7 +90,6 @@ export default class BusinessTest extends Vue{
         this.set_disList()
     }
     private del(ind){
-        console.log("del",ind)
         let list:any=[]
         this.selectedTasks.map((item,index)=>{
             if(index!==ind){
