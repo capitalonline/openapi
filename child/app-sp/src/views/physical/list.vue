@@ -60,6 +60,10 @@
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text" @click="goEcs(scope.row.host_id)">{{scope.row.ecs_num}}</el-button>
           </template>
+          <!-- <template #default="props" v-if="item.prop==='ecs_num'">
+            
+          </template> -->
+          
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
           </template>
