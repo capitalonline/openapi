@@ -34,8 +34,8 @@ export default class Header extends Vue {
   private async getPodList(){
     let res = await getPodList();
     if(res.code==='Success'){
-      // this.pod_list = res.data;
-      // this.default_pod = Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
+      this.pod_list = res.data;
+      this.default_pod = Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
     }
   }
   @Watch('default_pod')

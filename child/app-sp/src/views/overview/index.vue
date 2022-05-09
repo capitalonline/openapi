@@ -19,7 +19,7 @@
     </div>
 </template>
 <script lang="ts">
-import {Vue,Component} from 'vue-property-decorator';
+import {Vue,Component,Watch} from 'vue-property-decorator';
 import Service from '../../https/overview/index'
 @Component
 export default class OverView extends Vue{
@@ -55,16 +55,24 @@ export default class OverView extends Vue{
         this.get_overview(0);
         this.get_overview(1);
     }
+    @Watch('$store.state.pod_id')
+    private watch_pod(nv){
+        this.get_overview(0);
+        this.get_overview(1);
+    }
+    
     private async get_overview(ind){
         let func = ind===0 ? 'get_host_overview' : 'get_ecs_overview'
         let res:any= await Service[func]({
-            pod:''
+            pod:this.$store.state.pod_id
         })
         if(res.code==="Success"){
-            // this.overview_info[ind].all = res.data.all;
-            // for(let i in res.data){
-            //     this.overview_info[ind].info[i] = res.data[i]
-            // }
+            this.overview_info[ind].all = res.data.all;
+            for(let i in res.data){
+                console.log("##",i,)
+                if(this.overview_info[ind].info[i])this.overview_info[ind].info[i].value = res.data[i]
+                
+            }
             
         }
     }

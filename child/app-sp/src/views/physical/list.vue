@@ -168,8 +168,8 @@ export default class PhysicalList extends Vue {
     room:{placeholder:'请选择机房',list:[]},
     host_name:{placeholder:'请输入主机名称'},
     vm_name:{placeholder:'请输入VM名称'},
-    power_status:{placeholder:'请选择主机电源状态',list:[]},
-    host_status:{placeholder:'请选择主机机器状态',list:[]},
+    // power_status:{placeholder:'请选择主机电源状态',list:[]},
+    // host_status:{placeholder:'请选择主机机器状态',list:[]},
     ecs_id:{placeholder:'请输入云服务器ID'},
     out_band_address:{placeholder:'请输入带外IP'},
     host_ip:{placeholder:'请输入管理网IP'},
@@ -195,10 +195,10 @@ export default class PhysicalList extends Vue {
     {label:'在线维护',value:'online_maintenance'},
     {label:'离线维护',value:'offline_maintenance'},
     {label:'完成维护',value:'finish'},
-    {label:'下架',value:'shelves'},
+    // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
-    {label:'分配资源',value:'resource'},
-    {label:'更改属性',value:'update_attribute'},
+    // {label:'分配资源',value:'resource'},
+    // {label:'更改属性',value:'update_attribute'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -261,7 +261,7 @@ export default class PhysicalList extends Vue {
     {label:'存储网IP1',prop:'storage_ip'},
     {label:'CPU使用率',prop:'cpu',sortable:'custom'},
     {label:'内存使用率',prop:'ram',sortable:'custom'},
-    {label:'创建时间',prop:'create_time'},
+    {label:'创建时间',prop:'create_time',sortable:'custom'},
   ]
   created() {
       this.get_host_list_field()
@@ -280,15 +280,6 @@ export default class PhysicalList extends Vue {
       if(this.$route.query.host_id){
         this.search_option.host_id.default_value = this.$route.query.host_id as string
       }
-      // if(Object.keys(this.$store.state.host_search).length>0 || this.$route.query.host_id){
-        
-      // }
-      // else{
-      //   this.fn_search();
-      // }
-      
-      
-      
   }
   mounted() {
     this.setHeight()
@@ -328,7 +319,7 @@ export default class PhysicalList extends Vue {
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
       }
       if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
@@ -411,6 +402,7 @@ export default class PhysicalList extends Vue {
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
+      sort_create_time:this.search_data.sort_create_time,
       sort_ecs_num:this.search_data.sort_ecs_num,
       host_attribution_id:host_belong ? host_belong[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
@@ -419,6 +411,7 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
+      
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -548,6 +541,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_out_band_address =undefined
     this.search_data.sort_host_ip =undefined
     this.search_data.sort_ecs_num =undefined
+    this.search_data.sort_create_time =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
