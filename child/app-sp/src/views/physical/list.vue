@@ -365,7 +365,6 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   private beforeDestroy() {
-    console.log("this.search_data",this.search_data)
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
   }
   private FnCustom(){
