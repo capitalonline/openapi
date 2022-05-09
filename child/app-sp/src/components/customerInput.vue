@@ -1,7 +1,7 @@
 <template>
     <div class="customer">
         <el-select
-            v-model="customer_id" 
+            v-model="customer_id"
             multiple
             filterable
             remote

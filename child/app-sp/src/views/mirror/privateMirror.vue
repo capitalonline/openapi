@@ -3,7 +3,7 @@
         <action-block :search_option="search_option" @fn-search="search"></action-block>
         <div class="icon m-bottom10">
             <el-tooltip content="导出" placement="bottom" effect="light">
-                <el-button type="text" @click="down" :disabled="auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
+                <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
         <el-table 
@@ -57,7 +57,7 @@
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="record(scope.row)">操作记录</el-button>
+                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>
                 </template>
             </el-table-column>
         </el-table>
