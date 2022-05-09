@@ -2,7 +2,7 @@
     <div>
         <action-block :search_option="search_option" @fn-search="search">
             <template #default>
-                <el-button type="primary" @click="add" :disabled="!auth_list.includes('create')">新增镜像</el-button>
+                <el-button type="primary" @click="add" :disabled="!auth_list.includes('add_mirror')">新增镜像</el-button>
             </template>
         </action-block>
         <div class="icon m-bottom10">
@@ -50,7 +50,7 @@
                         </div>
                         <div class="time">{{item.create_time}}</div>
                         <div class="status" :class="item.status">{{item.status_display}}</div>
-                        <el-button type="text" class="az" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status)">删除</el-button>
+                        <el-button type="text" class="az" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status) || !auth_list.includes('del_mirror')">删除</el-button>
                     </div>
                 </template>
             </el-table-column>
@@ -69,11 +69,11 @@
             <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
                 <template slot-scope="scope">
-                    <el-button type="text" v-if="['running','blocking'].includes(scope.row.status)" @click="edit(scope.row)">编辑</el-button>
-                    <el-button type="text" v-if="['running','blocking','create_fail'].includes(scope.row.status)" @click="del(scope.row)">删除</el-button>
-                    <el-button type="text" v-if="['running','blocking'].includes(scope.row.status)" @click="changeStatus(scope.row)">状态变更</el-button>
-                    <el-button type="text" v-if="['running'].includes(scope.row.status)" @click="FnSync(scope.row)">同步</el-button>
-                    <el-button type="text" @click="record(scope.row)">操作记录</el-button>
+                    <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('edit_mirror')" @click="edit(scope.row)">编辑</el-button>
+                    <el-button type="text" :disabled="!['running','blocking','create_fail'].includes(scope.row.status) || !auth_list.includes('del_mirror')" @click="del(scope.row)">删除</el-button>
+                    <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('change_status')" @click="changeStatus(scope.row)">状态变更</el-button>
+                    <el-button type="text" :disabled="!['running'].includes(scope.row.status) || !auth_list.includes('sync_mirror')" @click="FnSync(scope.row)">同步</el-button>
+                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>
                 </template>
             </el-table-column>
         </el-table>

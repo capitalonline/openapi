@@ -80,6 +80,20 @@
                 <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span>
                 <el-input v-else type="textarea" autosize v-model="form_data.path_md5" :maxlength=" 256" show-word-limit resize="none"></el-input>
             </el-form-item>
+            <el-form-item label="上传日期" prop="upload_time" >
+                <span v-if="oper_info.os_id">{{ form_data.upload_time }}</span>
+                <el-date-picker
+                    v-else
+                    v-model="form_data.upload_time"
+                    value-format="YYYY-MM-DD"
+                    type="date"
+                    :clearable="false"
+                    :picker-options="{
+                        disabledDate:FnDisable
+                    }"
+                    placeholder="选择日期">
+                </el-date-picker>
+            </el-form-item>
             <!-- <div class="error_message file-tip" v-if=" os_file.length===0 && !oper_info.os_id ">未找到目标镜像文件，请上传</div>
             <el-form-item label="" prop="os_file" v-if="!oper_info.os_id">
                 <el-upload
@@ -111,7 +125,8 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/mirror/list';
 import EcsService from '../../https/instance/create';
 import CustomerInput from '../../components/customerInput.vue'
-import {Form} from 'element-ui'
+import {Form} from 'element-ui';
+import moment from 'moment'
 @Component({
     components:{
         SvgIcon,
@@ -145,7 +160,7 @@ export default class AddCommon extends Vue{
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
-
+        upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -188,6 +203,9 @@ export default class AddCommon extends Vue{
             })
             
         }
+    }
+    private FnDisable(date){
+        return date>new Date()
     }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
@@ -253,7 +271,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5}=this.form_data
+        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -280,6 +298,7 @@ export default class AddCommon extends Vue{
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
+                        upload_time:moment(upload_time).format('YYYY-MM-DD')
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
@@ -298,7 +317,7 @@ export default class AddCommon extends Vue{
 }
 </script>
 <style lang="scss" scoped>
-.el-select{
+.el-select,.el-date-picker{
     width: 530px;
 }
 .compute{
@@ -310,6 +329,7 @@ export default class AddCommon extends Vue{
 .az{
     margin-right: 3px;
 }
+
 </style>
 <style lang="scss">
 .add-common{

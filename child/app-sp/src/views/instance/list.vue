@@ -249,7 +249,7 @@
           <el-button
             type="text"
             :disabled="
-              scope.row.status !== 'shutdown' || !operate_auth.includes('add_common_mirror')
+              scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')
             "
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button

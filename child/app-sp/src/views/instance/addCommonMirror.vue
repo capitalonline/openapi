@@ -30,7 +30,7 @@
             </el-form-item>
             <el-form-item label="测试账户ID" prop="test_id" :rules="[{required: true,trigger:'blur',validator: validate_account}]" class="test">
                 <div class="test"><customer-input @FnCustomer="FnCustomer"></customer-input></div>
-                <el-tooltip content="请输入测试账户ID，待镜像制作完成进行测试" placement="right" effect="light">
+                <el-tooltip content="请选择测试账户ID，待镜像制作完成进行测试" placement="right" effect="light">
                     <el-button type="text" class="m-left10"><svg-icon icon="info"></svg-icon></el-button>
                 </el-tooltip>
             </el-form-item>
@@ -70,7 +70,7 @@ export default class AddCommonMirror extends Vue{
     }
     private validate_account(rule, value, callback){
         if(value.length===0){
-            return callback(new Error('请输入测试账户ID，以逗号分隔'))
+            return callback(new Error('请选择测试账户ID'))
         }else{
             return callback()
         }
