@@ -9,7 +9,7 @@
     >
         <div class="m-left10">
             <el-button type="primary" @click="add" class="m-bottom10" :disabled="selectedTasks.length===selectable.length">新增测试任务</el-button>
-            <div class="m-bottom20">将对<span class="m-left10">{{az_info.az_name}}</span><span class="num_message m-left10">{{az_info.length}}</span>台物理机  进行业务测试，请确保选中的物理机无客户业务进行。</div>
+            <div class="m-bottom20">将对<span class="m-left10 num_message m-right10">{{az_info.az_name}}</span>未通过业务测试的物理机进行业务测试，已通过业务测试的物理机不会再次进行以下测试</div>
             <!-- <div v-for="(item,index) in taskList" :key="item.maintask_name" class="m-bottom10">
                 <circle-icon :num="index+1" />
                 <span v-if="index===0 || index===1 || index===taskList.length-1">{{item.display_name}}</span>
