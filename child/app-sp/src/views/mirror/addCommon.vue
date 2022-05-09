@@ -85,7 +85,6 @@
                 <el-date-picker
                     v-else
                     v-model="form_data.upload_time"
-                    value-format="YYYY-MM-DD"
                     type="date"
                     :clearable="false"
                     :picker-options="{
