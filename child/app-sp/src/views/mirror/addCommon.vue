@@ -80,10 +80,8 @@
                 <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span>
                 <el-input v-else type="textarea" autosize v-model="form_data.path_md5" :maxlength=" 256" show-word-limit resize="none"></el-input>
             </el-form-item>
-            <el-form-item label="上传日期" prop="upload_time" >
-                <span v-if="oper_info.os_id">{{ form_data.upload_time }}</span>
+            <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
-                    v-else
                     v-model="form_data.upload_time"
                     type="date"
                     :clearable="false"
@@ -186,7 +184,7 @@ export default class AddCommon extends Vue{
         }else{
             Service.check_name({
                 os_id:this.oper_info.os_id ? this.oper_info.os_id : '',
-                display_name:value
+                display_name:value,
             }).then(res=>{
                 if(res.code==='Success'){
                     if(res.data.usable){
