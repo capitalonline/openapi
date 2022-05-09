@@ -17,7 +17,7 @@
                     <el-option v-for="inn in selectable" :key="inn.maintask_name" :value="inn.maintask_name" :label="inn.display_name" :disabled="item.disList.includes(inn.maintask_name)"></el-option>
                 </el-select>
             </div> -->
-            <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{taskList.length>0 ? taskList[0].display_name : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{taskList.length>0 ? `${taskList[0].display_name} (在选中的每台物理机上创建1个1核1G的云主机，GPU物理机需创建1个CPU云主机和1个GPU云主机。若创建成功且正常运行，则该项任务测试通过)` : ''}}</div>
             <!-- <div class="m-bottom10"><circle-icon :num="2"></circle-icon>{{taskList.length>0 ? taskList[1].display_name :''}}</div> -->
             <div v-for="(item,index) in selectedTasks" :key="index" class="m-bottom10">
                 <circle-icon :num="index+2"></circle-icon>
@@ -27,7 +27,7 @@
                 <span class="m-left10" v-if="item.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
             </div>
-            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? taskList[taskList.length-1].display_name : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-1].display_name} (测试完成，云主机进行销毁)` : ''}}</div>
             
         </div>
         <span slot="footer" class="dialog-footer">
