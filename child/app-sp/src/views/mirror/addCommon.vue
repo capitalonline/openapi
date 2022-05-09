@@ -38,8 +38,12 @@
                 <customer-input @FnCustomer="FnCustomer" :customers="customer_list" :list="oper_info.customer_list"></customer-input>
                 <!-- <el-input v-model="form_data.customer_ids"></el-input> -->
             </el-form-item>
-            <el-form-item label="容量" prop="size" v-if="oper_info.os_id">
-                <span>{{ form_data.size }}GB</span>
+            <el-form-item label="容量" prop="size">
+                <span v-if="oper_info.os_id">{{ form_data.used_size ?`${ form_data.used_size }GB` : form_data.used_size}}</span>
+                <template v-else>
+                    <el-input-number v-model="form_data.used_size" :min="0"></el-input-number>  GB
+                </template>
+                
             </el-form-item>
             <el-form-item label="可用区" prop="az_id">
                 <span v-if="oper_info.os_id">
@@ -150,7 +154,7 @@ export default class AddCommon extends Vue{
         os_version:this.oper_info.os_version ? this.oper_info.os_version : '',
         os_bit:this.oper_info.os_bit ? this.oper_info.os_bit+'位' : this.bit_list[0].id,
         customer_ids:'',
-        size:this.oper_info.size ? this.oper_info.size : '',
+        used_size:this.oper_info.os_id ? this.oper_info.used_size : 20,
         az_id:this.oper_info.az_id ? this.oper_info.az_id : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : this.storage_type_list[0].id,
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
@@ -268,7 +272,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
+        const {display_name,os_type,os_version,os_bit,used_size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -290,6 +294,7 @@ export default class AddCommon extends Vue{
                         os_bit,
                         customer_ids,
                         az_id,
+                        used_size,
                         backend_type,
                         support_type,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
