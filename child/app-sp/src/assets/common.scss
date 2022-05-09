@@ -156,3 +156,7 @@ pre {
 .table-limit-height {
   height: calc(100vh - 200px) !important;
 }
+.el-table-filter{
+  max-height: 300px;
+  overflow-y: auto;
+}

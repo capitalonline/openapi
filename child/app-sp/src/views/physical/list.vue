@@ -242,28 +242,28 @@ export default class PhysicalList extends Vue {
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[
-    {label:'主机名',prop:'host_name',sortable:'custom'},
-    {label:'机房',prop:'host_room'},
-    {label:'机柜',prop:'host_rack'},
-    {label:'起始U位',prop:'rack_place'},
-    {label:'占用U位',prop:'rack_space'},
-    {label:'电源状态',prop:'power_status_name'},
-    {label:'机器状态',prop:'machine_status_name'},
-    {label:'操作系统',prop:'system_version'},
-    {label:'服务器型号',prop:'host_model'},
-    {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
-    {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
-    {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
-    {label:'主机来源',prop:'host_source',column_key:'host_source',list:this.host_source},
-    {label:'显卡型号',prop:'gpu_model'},
-    {label:'显卡数量',prop:'gpu_count'},
-    {label:'带外IP',prop:'out_band_address',sortable:'custom'},
-    {label:'管理网IP',prop:'host_ip',sortable:'custom'},
-    {label:'虚拟机数量',prop:'ecs_num',sortable:'custom'},
-    {label:'存储网IP1',prop:'storage_ip'},
-    {label:'CPU使用率',prop:'cpu',sortable:'custom'},
-    {label:'内存使用率',prop:'ram',sortable:'custom'},
-    {label:'创建时间',prop:'create_time',sortable:'custom'},
+    // {label:'主机名',prop:'host_name',sortable:'custom'},
+    // {label:'机房',prop:'host_room'},
+    // {label:'机柜',prop:'host_rack'},
+    // {label:'起始U位',prop:'rack_place'},
+    // {label:'占用U位',prop:'rack_space'},
+    // {label:'电源状态',prop:'power_status_name'},
+    // {label:'机器状态',prop:'machine_status_name'},
+    // {label:'操作系统',prop:'system_version'},
+    // {label:'服务器型号',prop:'host_model'},
+    // {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
+    // {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
+    // {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
+    // {label:'主机来源',prop:'host_source',column_key:'host_source',list:this.host_source},
+    // {label:'显卡型号',prop:'gpu_model'},
+    // {label:'显卡数量',prop:'gpu_count'},
+    // {label:'带外IP',prop:'out_band_address',sortable:'custom'},
+    // {label:'管理网IP',prop:'host_ip',sortable:'custom'},
+    // {label:'虚拟机数量',prop:'ecs_num',sortable:'custom'},
+    // {label:'存储网IP1',prop:'storage_ip'},
+    // {label:'CPU使用率',prop:'cpu',sortable:'custom'},
+    // {label:'内存使用率',prop:'ram',sortable:'custom'},
+    // {label:'创建时间',prop:'create_time',sortable:'custom'},
   ]
   created() {
       this.get_host_list_field()
@@ -321,7 +321,7 @@ export default class PhysicalList extends Vue {
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
       }
       if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
@@ -387,7 +387,7 @@ export default class PhysicalList extends Vue {
       gpu_model,
       host_rack,
       host_source,
-      create_time
+      create_time,
     }=this.search_data
     let res:any=await Service.get_host_list({
       az_id,
@@ -411,6 +411,7 @@ export default class PhysicalList extends Vue {
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
       sort_create_time:this.search_data.sort_create_time,
+      sort_gpu_count:this.search_data.sort_gpu_count,
       sort_ecs_num:this.search_data.sort_ecs_num,
       host_attribution_id:host_belong ? host_belong[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
@@ -554,6 +555,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_host_ip =undefined
     this.search_data.sort_ecs_num =undefined
     this.search_data.sort_create_time =undefined
+    this.search_data.sort_gpu_count=undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -700,4 +702,5 @@ i.el-icon-s-tools{
   font-size: 18px;
   vertical-align: middle;
 }
+
 </style>
