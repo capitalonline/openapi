@@ -234,6 +234,8 @@ export default class PhysicalList extends Vue {
   private filter_data:any={}
   private host_types=[]
   private host_uses=[];
+  private power_list=[];
+  private machine_list=[]
   private host_source=[];
   private all_column_item=[];
   private all_item:Array<any>=[];
@@ -337,6 +339,12 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_source'){
         item = Object.assign(item,{},{column_key:'host_source',list:this.host_source})
       }
+      if(item.prop==='power_status_name'){
+        item = Object.assign(item,{},{column_key:'power_status',list:this.power_list})
+      }
+      if(item.prop==='machine_status_name'){
+        item = Object.assign(item,{},{column_key:'host_status',list:this.machine_list})
+      }
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
       }
@@ -388,7 +396,7 @@ export default class PhysicalList extends Vue {
       host_name,
       vm_name,
       bare_metal_id,
-      power_status,
+      power_status:power_status ? power_status[0] : undefined,
       ecs_id,
       out_band_address,
       host_ip,
@@ -397,7 +405,7 @@ export default class PhysicalList extends Vue {
       host_rack,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
-      machine_status:host_status,
+      machine_status:host_status ? host_status[0] : undefined,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -518,8 +526,12 @@ export default class PhysicalList extends Vue {
   private async get_status_list(){
     let res:any=await Service.get_status_list({})
     if(res.code==="Success"){
-      this.search_option.power_status.list = res.data.power_status
-      this.search_option.host_status.list = res.data.machine_status
+      for(let i in res.data.power_status){
+        this.power_list.push({text:res.data.power_status[i],value:i})
+      }
+      for(let i in res.data.machine_status){
+        this.machine_list.push({text:res.data.machine_status[i],value:i})
+      }
     }
   }
   private async get_host_recycle_department(){
