@@ -1209,8 +1209,8 @@ export default class App extends Vue {
       });
     }
     if (this.$route.query.host_id) {
-      this.search_con.host_id.default_value = this.$route.query
-        .host_id as string;
+      // this.search_con.host_id.default_value = this.$route.query
+      //   .host_id as string;
       // this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
     } else {
       this.FnSearch();

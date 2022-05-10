@@ -140,7 +140,7 @@ export default class Detail extends Vue {
     private fail_type_list=[];
     private sort_prop_name:string='';
     private sort_value:string='';
-    private filter_obj={}
+    private filter_obj:any={}
     created() {
       this.getFilterList()
       this.getTaskList()
@@ -173,7 +173,6 @@ export default class Detail extends Vue {
     }
     private async getTaskList(){
       const {filter_obj:data}=this;
-      console.log("filter_obj",data)
       const id = this.$route.params.id
       let res:any = await service.get_task_list({
         pod_id:this.$store.state.pod_id,
