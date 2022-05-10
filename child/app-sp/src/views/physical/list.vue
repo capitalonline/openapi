@@ -293,7 +293,7 @@ export default class PhysicalList extends Vue {
   private tableHeight=70;
   private loading:boolean=false;
   private expand_rows:any=[]
-  private new_prop_list:any=[];
+  private new_prop_list:Array<string>=[];
   private filter_info:any={}
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
@@ -310,7 +310,7 @@ export default class PhysicalList extends Vue {
     {label:'更新时间',prop:'update_time'},
     {label:'创建时间',prop:'create_time'},
   ]
-  private filed_name_list=[
+  private filed_name_list:Array<string>=[
         "supplier", "bios_version", "out_bond_version", "host_brand", "switch_one__name",
         "switch_two__name", "switch_three__name", "switch_four__name",
         "out_band_switch__name"
@@ -374,7 +374,7 @@ export default class PhysicalList extends Vue {
       return;
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
-    this.new_prop_list = this.custom_host.filter(item=>this.filed_name_list.includes(item.prop)).map(item=>item.prop);
+    this.new_prop_list = this.custom_host.filter((item:any)=>this.filed_name_list.includes(item.prop)).map((item:any)=>item.prop);
     if(this.new_prop_list.length>0){
       this.get_host_filter_item();
     }
@@ -411,13 +411,16 @@ export default class PhysicalList extends Vue {
       }
       return item;
     })
-    let ids = this.custom_host.map(item=>item.prop);
+    let ids:Array<string> = this.custom_host.map((item:any)=>item.prop);
     if(ids.includes('ecs_num_expand')){
       return;
     }
     let num = ids.indexOf('ecs_num')
     if(num>-1){
-      this.custom_host.splice(num+1,0,{type:'expand',label:'',prop:'ecs_num_expand'})
+      let obj:any={
+        type:'expand',label:'',prop:'ecs_num_expand'
+      }
+      this.custom_host.splice(num+1,0,obj)
     }
   }
   private fn_search(data:any={}){
@@ -507,7 +510,7 @@ export default class PhysicalList extends Vue {
       filed_names:this.new_prop_list
     })
     if(res.code==='Success'){
-      let ids = this.custom_host.map(item=>item.prop);
+      let ids:Array<string> = this.custom_host.map((item:any)=>item.prop);
       for(let i in res.data){
         let num  = ids.indexOf(i);
         let item = this.custom_host[num];
@@ -515,7 +518,8 @@ export default class PhysicalList extends Vue {
         res.data[i].map(inn=>{
           list.push({text:inn,value:inn})
         })
-        this.custom_host.splice(num,1,{...item,list});
+        let obj:any=Object.assign(item,{},list)
+        this.custom_host.splice(num,1,obj);
       }
     }
   }
@@ -572,7 +576,7 @@ export default class PhysicalList extends Vue {
         start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         ...this.filter_info,
-        field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
+        field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
     }
     let str=""
     for (let i in obj){
@@ -788,7 +792,7 @@ export default class PhysicalList extends Vue {
     }
   }
   private setList(list,prop){
-    this.custom_host.map(item=>{
+    this.custom_host.map((item:any)=>{
       if(item.prop===prop){
         item.list = list
       }
