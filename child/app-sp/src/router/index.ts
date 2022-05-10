@@ -4,6 +4,18 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   {
+    path: '/overview',
+    name: 'overview',
+    component: () => import('../views/overview/index.vue'),
+    meta: {menu: 'overview'}
+  },
+  {
+    path: '/pod',
+    name: 'pod_list',
+    component: () => import('../views/pod/list.vue'),
+    meta: {meta: 'pod_list'}
+  },
+  {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
@@ -20,12 +32,6 @@ const routes: RouteConfig[] = [
     name: 'monitor',
     component: () => import('../views/instance/monitor.vue'),
     meta: {menu: 'instance_list'}
-  },
-  {
-    path: '/instance/gpu/monitor/',
-    name: 'gpu_monitor',
-    component: () => import('../views/instance/monitor.vue'),
-    meta: {menu: 'gpu_monitor'}
   },
   {
     path:'/alarmInfo',

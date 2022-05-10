@@ -1,13 +1,7 @@
 <template>
   <div class="instance-list">
-    <action-block :search_option="search_con" @fn-search="FnSearch">
+    <action-block :search_option="search_con" @fn-search="FnSearch" :type="true">
       <template #default>
-        <el-button
-          type="primary"
-          @click="FnToCreate"
-          :disabled="!operate_auth.includes('instance_create')"
-          >创建实例</el-button
-        >
         <el-button
           type="primary"
           @click="FnOperate('start_up_ecs')"
@@ -28,24 +22,6 @@
         >
         <el-button
           type="primary"
-          @click="FnOperate('delete_ecs')"
-          :disabled="!operate_auth.includes('delete')"
-          >逻辑删除</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('recover_ecs')"
-          :disabled="!operate_auth.includes('recover')"
-          >恢 复</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('destroy_ecs')"
-          :disabled="!operate_auth.includes('destroy')"
-          >销 毁</el-button
-        >
-        <el-button
-          type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
           >更换实例规格</el-button
@@ -61,12 +37,6 @@
           @click="FnOperate('reset_pwd')"
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('open_bill')"
-          :disabled="!operate_auth.includes('open_bill')"
-          >开启计费</el-button
         >
       </template>
     </action-block>
@@ -89,13 +59,13 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-      <el-table-column prop="ecs_name" label="云服务器名称">
+      <el-table-column prop="ecs_name" label="云服务器名称" sortable="custom">
         <template #default="scope">
           <pre>{{ scope.row.ecs_name }}</pre>
         </template>
       </el-table-column>
-      <el-table-column prop="az_name" label="可用区"></el-table-column>
-      <el-table-column prop="status" label="状态" width="90">
+      <!-- <el-table-column prop="az_name" label="可用区"></el-table-column> -->
+      <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="ecs_status_list">
         <template #default="scope">
           <span :class="scope.row.status">{{ scope.row.status_display }}</span>
         </template>
@@ -122,7 +92,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="虚拟出网网关">
+      <el-table-column label="虚拟出网网关IP">
         <template #default="scope">
           <div v-if="scope.row.pub_net">
             <span
@@ -180,12 +150,17 @@
       </el-table-column>
       <el-table-column prop="host_name" label="所属物理机" sortable="custom">
       </el-table-column>
+      <el-table-column prop="update_time" label="更新时间">
+        <template #default="scope">
+          <div class="time-box">{{ scope.row.update_time }}</div>
+        </template>
+      </el-table-column>
       <el-table-column prop="create_time" label="创建时间">
         <template #default="scope">
           <div class="time-box">{{ scope.row.create_time }}</div>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="billing_method"
         label="计费方式"
         :filters="billing_method_list"
@@ -217,7 +192,7 @@
             {{ scope.row.op_source === "cloud_op" ? "运维后台" : "GIC" }}
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -462,7 +437,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue,Watch } from "vue-property-decorator";
 import LabelBlock from "../../components/labelBlock.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
@@ -498,10 +473,18 @@ import moment from "moment";
 })
 export default class App extends Vue {
   private search_con = {
-    az_id: { placeholder: "请选择可用区", list: [] },
+    // az_id: { placeholder: "请选择可用区", list: [] },
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
-    status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
+    // status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
+    customer_id: { placeholder: "请输入客户ID" },
+    customer_name: { placeholder: "请输入客户名称" },
+    os_info: { placeholder: "请输入操作系统ID/名称"},
+    private_net: { placeholder: "请输入私网IP" },
+    host_id: { placeholder: "请输入物理机ID"},
+    host_name: { placeholder: "请输入物理机名称", },
+    host_ip: { placeholder: "请输入物理机管理IP"},
+    out_band_address: { placeholder: "请输入物理机带外IP"},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -510,16 +493,12 @@ export default class App extends Vue {
       dis_day: 1,
       defaultTime: []
     },
-    customer_id: { placeholder: "请输入客户ID" },
-    customer_name: { placeholder: "请输入客户名称" },
-    os_type: { placeholder: "请选择操作系统", list: [] },
-    private_net: { placeholder: "请输入私网IP" },
-    host_id: { placeholder: "请输入物理机ID", default_value: "" }
   };
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
   private search_ecs_goods_name = [];
+  private search_status=[]
   private instance_list: Array<Object> = [];
   private customer_id: string = "";
   private az_id: string = "";
@@ -562,17 +541,25 @@ export default class App extends Vue {
   private sort_order = 0;
   private ecs_info:any={};
   private common_visible:boolean=false
+  private ecs_status_list:any=[];
+   @Watch("$store.state.pod_id")
+    private watch_pod(){
+      this.FnSearch()
+    }
   private FnSearch(data: any = {}) {
     this.search_reqData = {
-      az_id: data.az_id,
+      pod_id:this.$store.state.pod_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
       status: data.status ? data.status.join(',') : '',
       customer_id: data.customer_id,
       customer_name: data.customer_name,
-      os_type: data.os_type,
+      os_info: data.os_info,
       private_net: data.private_net,
       host_id: data.host_id,
+      host_name: data.host_name,
+      host_ip: data.host_ip,
+      out_band_address: data.out_band_address,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -597,13 +584,17 @@ export default class App extends Vue {
     if (val.ecs_goods_name) {
       this.search_ecs_goods_name = val.ecs_goods_name;
     }
+    if(val.status){
+      this.search_status = val.status;
+    }
     this.FnGetList();
   }
   // 列表排序
   private handleSortChange(val) {
     let relation = {
       private_net: 'sort_private_ip',
-      host_name: 'sort_host_name'
+      host_name: 'sort_host_name',
+      ecs_name:'sort_ecs_name'
     }
     this.sort_prop_name = relation[val.prop];
     this.sort_order = Number(val.order !== 'ascending');
@@ -627,6 +618,7 @@ export default class App extends Vue {
         this.search_billing_method == "" ? "no" : this.search_billing_method,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
+      status:this.search_status.join(','),
       [this.sort_prop_name]: String(this.sort_order),
       ...this.search_reqData
     }
@@ -1118,18 +1110,19 @@ export default class App extends Vue {
   }
   private async FnGetStatus() {
     if (this.$store.state.status_list.length > 0) {
-      this.search_con.status.list = this.$store.state.status_list;
+      this.ecs_status_list = this.$store.state.status_list;
+      // this.search_con.status.list = this.$store.state.status_list;
     } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
-        this.search_con.status.list = [];
+        this.ecs_status_list = [];
         for (let key in resData.data) {
-          this.search_con.status.list.push({
-            label: resData.data[key],
-            type: key
+          this.ecs_status_list.push({
+            text: resData.data[key],
+            value: key
           });
         }
-        this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
+        this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
       }
     }
   }
@@ -1138,10 +1131,10 @@ export default class App extends Vue {
     if (res.code === "Success") {
       res.data.forEach(item => {
         item.region_list.forEach(inn => {
-          this.search_con.az_id.list = [
-            ...this.search_con.az_id.list,
-            ...trans(inn.az_list, "az_name", "az_id", "label", "type")
-          ];
+          // this.search_con.az_id.list = [
+          //   ...this.search_con.az_id.list,
+          //   ...trans(inn.az_list, "az_name", "az_id", "label", "type")
+          // ];
         });
       });
     }
@@ -1195,20 +1188,20 @@ export default class App extends Vue {
     this.FnGetStatus();
     this.get_az_list();
     this.FnGetCateGoryList();
-    this.search_con.os_type.list = [
-      {
-        label: "centos",
-        type: "centos"
-      },
-      {
-        label: "ubuntu",
-        type: "ubuntu"
-      },
-      {
-        label: "windows",
-        type: "windows"
-      }
-    ];
+    // this.search_con.os_type.list = [
+    //   {
+    //     label: "centos",
+    //     type: "centos"
+    //   },
+    //   {
+    //     label: "ubuntu",
+    //     type: "ubuntu"
+    //   },
+    //   {
+    //     label: "windows",
+    //     type: "windows"
+    //   }
+    // ];
     for (let key in this.billing_method_relation) {
       this.billing_method_list.push({
         value: key,
@@ -1218,7 +1211,7 @@ export default class App extends Vue {
     if (this.$route.query.host_id) {
       this.search_con.host_id.default_value = this.$route.query
         .host_id as string;
-      this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
+      // this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
     } else {
       this.FnSearch();
     }

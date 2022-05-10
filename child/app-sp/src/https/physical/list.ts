@@ -111,6 +111,11 @@ export default{
     create_test_task(req){
         return service(getHostOptions('POST','/host/create_test_task/',req))
     },
+    //获取筛选字段
+    get_host_filter_item(req){
+        return service(getHostOptions('POST','/host/get_host_filter_item/',req))
+    },
+    
     
 
 }
