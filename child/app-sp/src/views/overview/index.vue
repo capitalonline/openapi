@@ -64,7 +64,7 @@ export default class OverView extends Vue{
     private async get_overview(ind){
         let func = ind===0 ? 'get_host_overview' : 'get_ecs_overview'
         let res:any= await Service[func]({
-            pod:this.$store.state.pod_id
+            pod_id:this.$store.state.pod_id
         })
         if(res.code==="Success"){
             this.overview_info[ind].all = res.data.all;

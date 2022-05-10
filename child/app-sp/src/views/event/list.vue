@@ -8,7 +8,13 @@
       <div>失败：{{fail_num}}</div>
       <div class="error">失败率：{{error_percent}}</div>
     </div>
-    <el-table :data="event_list" border class="event-table">
+    <el-table 
+      :data="event_list" 
+      border 
+      class="event-table"
+      @sort-change="FnSortChange"
+      @filter-change="filterAttribute"
+    >
       <el-table-column prop="event_id" label="事件ID">
         <template slot-scope="scope">
           <span class="clickble" @click="view(scope.row.event_id,scope.row.event_name)">{{scope.row.event_id}}</span>
@@ -17,22 +23,19 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer" label="客户名称"></el-table-column>
       <el-table-column prop="event_name" label="事件名称"></el-table-column>
-      <el-table-column prop="event_state_name" label="事件状态">
-      <!-- <el-table-column prop="event_state_name" label="事件状态" :filter-multiple="false" column-key="status" :filters="status_list"> -->
+      <el-table-column prop="event_state_name" label="事件状态" :filter-multiple="false" column-key="status" :filters="status_list">
         <template slot-scope="scope">
           <span :class="[scope.row.status === 'failed'|| scope.row.status === 'part_fail' ? 'err' : '']">{{scope.row.event_state_name}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="implementation_name" label="任务执行情况"></el-table-column>
       <el-table-column prop="op_user" label="操作用户"></el-table-column>
-      <el-table-column prop="create_time" label="创建时间">
-      <!-- <el-table-column prop="create_time" label="创建时间" sortable="custom"> -->
+      <el-table-column prop="create_time" label="创建时间" sortable="custom">
         <template slot-scope="scope">
           <span>{{scope.row.create_time ? moment(scope.row.create_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="update_time" label="完成时间">
-      <!-- <el-table-column prop="update_time" label="完成时间" sortable="custom"> -->
+      <el-table-column prop="update_time" label="完成时间" sortable="custom">
         <template slot-scope="scope">
           <span>{{scope.row.update_time ? moment(scope.row.update_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
         </template>
@@ -59,9 +62,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue,Watch } from 'vue-property-decorator';
 import ActionBlock from "../../components/search/actionBlock.vue";
 import service from '../../https/event/list';
+import {trans} from '../../utils/transIndex';
 import moment from 'moment';
 @Component({
   components:{
@@ -101,33 +105,50 @@ export default class List extends Vue {
   private moment =moment
   private event_list:any=[]
   private min_date:any = ""
-  private search_data:any = {}
+  private search_data:any = {};
   private event_detail: boolean = false;
-  private status_list=[
-    {text:'成功',value:'success'},
-    {text:'失败',value:'failed'},
-    {text:'部分失败',value:'part_fail'},
-  ]
+  private sort_prop_name:string='';
+  private sort_value:string=''
+  private status_list=[];
+  private filter_obj={}
   created() {
+    this.getFilterList()
     this.event_detail = !!this.$store.state.auth_info["event_detail"]
     this.fn_search()
   }
+   @Watch("$store.state.pod_id")
+    private watch_pod(){
+      this.fn_search()
+    }
+  private async getFilterList(){
+    let res:any=await service.get_filter_list({
+      filed_names:['event_status']
+    })
+    if(res.code==='Success'){
+      for(let i in res.data.event_status){
+        this.status_list.push({text:res.data.event_status[i],value:i})
+      }
+    }
+  }
   private fn_search(data:any={}){
     this.current = 1;
-    this.search_data = data
+    this.search_data = {...data,...this.filter_obj}
     this.getEventList()
   }
   private async getEventList() {
     const {search_data:data}=this
     const res:any = await service.get_event_list({
+      pod_id:this.$store.state.pod_id,
       page_index:this.current,
       page_size:this.size,
       event_id:data.event_id || "",
       resource_id:data.resource_id || "",
+      [this.sort_prop_name]:this.sort_value,
       task_id:data.task_id || "",
       customer_id:data.customer_id || "",
       customer_name:data.customer_name || "",
       op_user:data.op_user || "",
+      event_status:data.status ? data.status[0] : undefined,
       start_time:data.time ? moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
       end_time:data.time ? moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     })
@@ -150,6 +171,15 @@ export default class List extends Vue {
   private handleCurrentChange(cur){
     this.current = cur
     this.getEventList()
+  }
+  private FnSortChange(obj){
+    this.sort_prop_name = `sort_${obj.prop}`;
+    this.sort_value = obj.order==="descending" ? '0' :obj.order==="ascending" ? '1' : undefined
+    this.getEventList()
+  }
+  private filterAttribute(obj:any){
+    this.filter_obj = {...this.filter_obj,...obj};
+    this.fn_search(this.search_data)
   }
   private view(id:string,name:string) {
     this.$router.push({path:`/event/${id}`,query:{name:name ? name : '123'}})

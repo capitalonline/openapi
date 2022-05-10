@@ -52,10 +52,10 @@ export default class LeftMenu extends Vue {
     //   name: "monitor",
     //   label: "监控"
     // },
-    // {
-    //   name: "pod_list",
-    //   label: "POD管理"
-    // },
+    {
+      name: "pod_list",
+      label: "POD管理"
+    },
     {
       name: "physical_list",
       label: "物理机管理"

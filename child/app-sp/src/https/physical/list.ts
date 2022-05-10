@@ -103,6 +103,10 @@ export default{
     get_host_list_field(req){
         return service(getHostOptions('GET','/host/get_host_list_field/',req))
     },
+    //获取筛选字段
+    get_host_filter_item(req){
+        return service(getHostOptions('POST','/host/get_host_filter_item/',req))
+    },
     
     
 

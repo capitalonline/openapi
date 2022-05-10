@@ -1,7 +1,12 @@
 <template>
   <div class="header">
     <div class="left-content">
-      <el-select v-model="default_pod">
+      <el-select 
+        v-model="default_pod" 
+        filterable
+        :filter-method="getPodList"
+        @visible-change="change_pod"
+      >
         <el-option
           v-for="(item,key) in pod_list"
           :key="key"
@@ -29,13 +34,20 @@ export default class Header extends Vue {
   }
   created(){
     this.getPodList();
-    this.default_pod = this.$store.state.pod_id ?this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
+    
   }
-  private async getPodList(){
-    let res = await getPodList();
+  private async getPodList(val:String=""){
+    let res = await getPodList({
+      az_pod_name:val
+    });
     if(res.code==='Success'){
       this.pod_list = res.data;
-      this.default_pod = Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
+      this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
+    }
+  }
+  private change_pod(val){
+    if(!val){
+        this.getPodList()
     }
   }
   @Watch('default_pod')
