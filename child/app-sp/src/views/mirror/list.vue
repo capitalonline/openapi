@@ -32,13 +32,19 @@
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
+            <el-table-column prop="customer" label="客户权限">
+                <template slot-scope="scope">
+                    <span>{{scope.row.white_customer_list && scope.row.white_customer_list.length>0 ? scope.row.white_customer_list.join(',') : '全部客户'}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="path_name" label="路径"></el-table-column>
             <el-table-column prop="az" label="可用区" width="120">
                 <template slot-scope="scope">
                     <span>共  <span class="num_message">{{scope.row.az_list.length}}</span>  个</span>
                     <span>   ( 可用:<span class="num_message">  {{scope.row.az_list.filter(item=>item.status==='running').length}}</span> )</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="" type="expand">
+            <el-table-column prop="" label="" type="expand" width="50">
                 <template slot-scope="props">
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
                         <div class="az-name">
@@ -48,25 +54,20 @@
                             <span v-if="item.pod_name_list.length>2"> ...</span>
                             <span v-if="item.pod_name_list.length>0">)</span>
                         </div>
-                        <div class="time">{{item.create_time}}</div>
                         <div class="status" :class="item.status">{{item.status_display}}</div>
-                        <el-button type="text" class="az" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status) || !auth_list.includes('del_mirror')">删除</el-button>
+                        <div class="time">{{item.create_time}}</div>
+                        <div class="perch"></div>
+                        <el-button type="text" class="operate" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status) || !auth_list.includes('del_mirror')">删除</el-button>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="customer" label="客户权限">
-                <template slot-scope="scope">
-                    <span>{{scope.row.white_customer_list && scope.row.white_customer_list.length>0 ? scope.row.white_customer_list.join(',') : '全部客户'}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list">
+            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list" width="120">
                 <template slot-scope="scope">
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="path_name" label="路径"></el-table-column>
-            <el-table-column prop="update_time" label="更新时间"></el-table-column>
-            <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
+            <el-table-column prop="create_time" label="创建时间" sortable="custom" width="120"></el-table-column>
+            <el-table-column prop="update_time" label="更新时间" width="120"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
                 <template slot-scope="scope">
                     <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('edit_mirror')" @click="edit(scope.row)">编辑</el-button>
@@ -316,18 +317,25 @@ i.el-icon-s-tools{
 .table-expand{
     display: flex;
     justify-content:right;
-    margin-right: 10px;
+    margin-bottom: 10px;
     align-items: center;
-    .az,.status{
-        width: 100px;
-        line-height: 32px;
+    .operate{
+        width: 180px;
+        padding-left: 14px;
+        text-align: left;
     }
-    .time{
-        width: 150px;
-        line-height: 32px;
+    .time,.status,.perch{
+        width: 120px;
+        padding-left: 14px;
+        line-height: 20px;
     }
     .az-name{
-        width: 300px;
+        width: 170px;
+        padding-left: 14px;
+        line-height: 20px;
     }
+}
+.table-expand:last-child{
+    margin-bottom: 0;
 }
 </style>

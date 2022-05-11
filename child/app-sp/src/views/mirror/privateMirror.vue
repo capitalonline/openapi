@@ -39,23 +39,23 @@
                     <span>   ( 可用:<span class="num_message">  {{scope.row.az_list ? scope.row.az_list.filter(item=>item.status==='running').length : 0}}</span> )</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="" type="expand">
+            <el-table-column prop="" label="" type="expand" width="50">
                 <template slot-scope="props">
                     <div v-for="(item,index) in props.row.az_list" :key="index" class="table-expand">
-                        <div class="az">{{item.az_name}}</div>
-                        <div class="time">{{item.create_time}}</div>
+                        <div class="az-name">{{item.az_name}}</div>
                         <div class="status" :class="item.status">{{item.status_display}}</div>
+                        <div class="time">{{item.create_time}}</div>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list">
+            <el-table-column prop="status_display" label="状态" :filter-multiple="false" column-key="status" :filters="status_list" width="120">
                 <template slot-scope="scope">
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="update_time" label="更新时间" sortable="custom"></el-table-column>
-            <el-table-column prop="create_time" label="创建时间" sortable="custom"></el-table-column>
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="create_time" label="创建时间" sortable="custom" width="120"></el-table-column>
+            <el-table-column prop="update_time" label="更新时间" sortable="custom" width="120"></el-table-column>
+            <el-table-column prop="operate" label="操作"  width="120">
                 <template slot-scope="scope">
                     <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>
                 </template>
@@ -253,15 +253,21 @@ i.el-icon-s-tools{
 .table-expand{
     display: flex;
     justify-content:right;
-    margin-right: 10px;
+    margin-bottom: 10px;
     align-items: center;
-    .az,.status{
-        width: 100px;
-        line-height: 32px;
+    margin-right: 240px;
+    .time,.status{
+        width: 120px;
+        padding-left: 14px;
+        line-height: 20px;
     }
-    .time{
-        width: 150px;
-        line-height: 32px;
+    .az-name{
+        width: 170px;
+        padding-left: 14px;
+        line-height: 20px;
     }
+}
+.table-expand:last-child{
+    margin-bottom: 0;
 }
 </style>
