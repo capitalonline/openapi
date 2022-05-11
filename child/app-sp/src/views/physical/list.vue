@@ -729,19 +729,17 @@ export default class PhysicalList extends Vue {
     }
     if(['upload','resource','update_attribute','business_test'].includes(value)){
       if(value==='business_test'){
-        if(!this.search_data.az_id){
-          this.$message.warning('请先筛选可用区!')
-          return;
-        }
+        // if(!this.search_data.az_id){
+        //   this.$message.warning('请先筛选可用区!')
+        //   return;
+        // }
         if(this.list.length===0){
           this.$message.warning('当前无宿主机可进行业务测试!')
           return;
         }
-        let fil = this.search_option.az_id.list.filter(item=>item.type===this.search_data.az_id)
         this.az_info={
-          az_id:this.search_data.az_id,
-          az_name:fil.length>0 ? fil[0].label : '',
-          length:this.page_info.total
+          az_id:this.list[0].az_id,
+          az_name:this.list[0].az_name,
         }
       }
       console.log("this.oper_type",this.oper_type)
