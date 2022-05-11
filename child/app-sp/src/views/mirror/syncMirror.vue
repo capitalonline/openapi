@@ -99,9 +99,9 @@ export default class SyncMirror extends Vue{
         if(res.code==='Success'){
             this.info.name.value = res.data.display_name;
             this.info.id.value = res.data.os_id;
-            this.info.system.value = res.data.os_type;
-            this.info.size.value = res.data.size;
-            this.info.type.value = res.data.display_name;
+            this.info.system.value = `${res.data.os_type} ${res.data.os_version} ${res.data.os_bit} 位`;
+            this.info.size.value = res.data.size ? res.data.size+'GB' : '';
+            this.info.type.value = res.data.template_type==='public' ? '公共镜像' : '私有镜像';
             const {current_az_list,available_az_list,not_available_az_list}=res.data
             let ids = current_az_list.map(item=>item.az_id)
             let temp={

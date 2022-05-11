@@ -39,9 +39,9 @@
                 <!-- <el-input v-model="form_data.customer_ids"></el-input> -->
             </el-form-item>
             <el-form-item label="容量" prop="size">
-                <span v-if="oper_info.os_id">{{ form_data.used_size ?`${ form_data.used_size }GB` : form_data.used_size}}</span>
+                <span v-if="oper_info.os_id">{{ form_data.size ?`${ form_data.size }GB` : form_data.size}}</span>
                 <template v-else>
-                    <el-input-number v-model="form_data.used_size" :min="0"></el-input-number>  GB
+                    <el-input-number v-model="form_data.size" :min="0"></el-input-number>  GB
                 </template>
                 
             </el-form-item>
@@ -59,6 +59,12 @@
                     <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="镜像文件类型" prop="os_file_type">
+                <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span>
+                <el-select v-model="form_data.os_file_type" v-else>
+                    <el-option v-for="item in file_type_list" :key="item" :label="item" :value=" item "></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="计算类型" prop="support_type">
                 <span v-if="oper_info.os_id">{{ form_data.support_type }}</span>
                 <el-select v-else v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
@@ -74,12 +80,7 @@
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="镜像文件类型" prop="os_file_type">
-                <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span>
-                <el-select v-model="form_data.os_file_type" v-else>
-                    <el-option v-for="item in file_type_list" :key="item" :label="item" :value=" item "></el-option>
-                </el-select>
-            </el-form-item>
+            
             <el-form-item label="MD5" prop="path_md5" >
                 <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span>
                 <el-input v-else type="textarea" autosize v-model="form_data.path_md5" :maxlength=" 256" show-word-limit resize="none"></el-input>
@@ -154,7 +155,7 @@ export default class AddCommon extends Vue{
         os_version:this.oper_info.os_version ? this.oper_info.os_version : '',
         os_bit:this.oper_info.os_bit ? this.oper_info.os_bit+'位' : this.bit_list[0].id,
         customer_ids:'',
-        used_size:this.oper_info.os_id ? this.oper_info.used_size : 20,
+        size:this.oper_info.os_id ? this.oper_info.size : 20,
         az_id:this.oper_info.az_id ? this.oper_info.az_id : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : this.storage_type_list[0].id,
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
@@ -269,7 +270,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,used_size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
+        const {display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -291,7 +292,7 @@ export default class AddCommon extends Vue{
                         os_bit,
                         customer_ids,
                         az_id,
-                        used_size,
+                        size,
                         backend_type,
                         support_type,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
