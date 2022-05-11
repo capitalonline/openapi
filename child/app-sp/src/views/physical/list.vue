@@ -313,7 +313,7 @@ export default class PhysicalList extends Vue {
   private filed_name_list:Array<string>=[
         "supplier", "bios_version", "out_bond_version", "host_brand", "switch_one__name",
         "switch_two__name", "switch_three__name", "switch_four__name",
-        "out_band_switch__name"
+        "out_band_switch__name","net_model"
     ]
   private custom_host=[
     'host_name','host_ip','out_band_address','machine_status_name','power_status_name',
