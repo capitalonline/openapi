@@ -601,10 +601,10 @@ export default class PhysicalList extends Vue {
     }
     if(['upload','resource','update_attribute','business_test'].includes(value)){
       if(value==='business_test'){
-        if(!this.search_data.az_id){
-          this.$message.warning('请先筛选可用区!')
-          return;
-        }
+        // if(!this.search_data.az_id){
+        //   this.$message.warning('请先筛选可用区!')
+        //   return;
+        // }
         if(this.list.length===0){
           this.$message.warning('当前无宿主机可进行业务测试!')
           return;
