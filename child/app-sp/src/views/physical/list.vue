@@ -520,13 +520,13 @@ export default class PhysicalList extends Vue {
       let ids:Array<string> = this.custom_host.map((item:any)=>item.prop);
       for(let i in res.data){
         let num  = ids.indexOf(i);
-        let item = this.custom_host[num];
+        let item:any = this.custom_host[num];
         let list:any=[]
         res.data[i].map(inn=>{
           list.push({text:inn,value:inn})
         })
-        let obj:any=Object.assign(item,{},list)
-        this.custom_host.splice(num,1,obj);
+        // let obj:any=Object.assign(item,{},list)
+        this.custom_host.splice(num,1,{...item,list});
       }
     }
   }
