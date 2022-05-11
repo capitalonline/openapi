@@ -38,7 +38,7 @@
                 <customer-input @FnCustomer="FnCustomer" :customers="customer_list" :list="oper_info.customer_list"></customer-input>
                 <!-- <el-input v-model="form_data.customer_ids"></el-input> -->
             </el-form-item>
-            <el-form-item label="容量" prop="size">
+            <el-form-item label="规格" prop="size">
                 <span v-if="oper_info.os_id">{{ form_data.size ?`${ form_data.size }GB` : form_data.size}}</span>
                 <template v-else>
                     <el-input-number v-model="form_data.size" :min="0"></el-input-number>  GB

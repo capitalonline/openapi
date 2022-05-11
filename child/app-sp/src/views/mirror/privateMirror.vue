@@ -24,9 +24,14 @@
                     <span>{{`${scope.row.os_type} ${scope.row.os_version} ${scope.row.os_bit}位`}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="size" label="容量(GB)" sortable="custom">
+            <el-table-column prop="size" label="规格" sortable="custom">
                 <template slot-scope="scope">
                     <span>{{scope.row.size}}GB</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="used_size" label="占用容量(GB)" sortable="custom">
+                <template slot-scope="scope">
+                    <span>{{scope.row.used_size}}GB</span>
                 </template>
             </el-table-column>
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
@@ -143,6 +148,10 @@ export default class PrivateMirror extends Vue{
             this.mirror_type = list
         }
     }
+    @Watch('$store.state.pod_id')
+    private watch_pod(){
+        this.search()
+    }
     private search(data:any={}){
         this.current = 1;
         this.search_data={...data,...this.filter_data}
@@ -159,15 +168,16 @@ export default class PrivateMirror extends Vue{
         }
     }
     private async getMirrorList(){
-        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data
+        const {image_info,customer_info,time,os_type,sort_size,sort_used_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data
         let res:any = await Service.get_private_mirror_list({
             image_info,
             customer_info,
-            az_id:'',
+            pod_id:this.$store.state.pod_id,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,
             sort_size,
+            sort_used_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
             business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
@@ -194,7 +204,8 @@ export default class PrivateMirror extends Vue{
     private FnSortChange(obj){
         this.search_data.sort_size =undefined
         this.search_data.sort_update_time =undefined;
-        this.search_data.sort_create_time =undefined
+        this.search_data.sort_create_time =undefined;
+        this.search_data.sort_used_size=undefined
         this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
         this.getMirrorList()
     }
