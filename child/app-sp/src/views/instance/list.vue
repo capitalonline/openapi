@@ -544,7 +544,7 @@ export default class App extends Vue {
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")
     private watch_pod(){
-      this.FnSearch()
+      this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
     this.search_reqData = {

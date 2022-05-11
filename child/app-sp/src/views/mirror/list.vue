@@ -181,7 +181,7 @@ export default class CommonMirror extends Vue{
     }
     @Watch('$store.state.pod_id')
     private watch_pod(){
-        this.search()
+        this.search(this.search_data)
     }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})

@@ -118,7 +118,7 @@ export default class List extends Vue {
   }
    @Watch("$store.state.pod_id")
     private watch_pod(){
-      this.fn_search()
+      this.fn_search(this.search_data)
     }
   private async getFilterList(){
     let res:any=await service.get_filter_list({
