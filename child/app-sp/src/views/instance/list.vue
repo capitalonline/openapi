@@ -4,6 +4,12 @@
       <template #default>
         <el-button
           type="primary"
+          @click="FnToCreate"
+          :disabled="!operate_auth.includes('instance_create')"
+          >创建实例</el-button
+        >
+        <el-button
+          type="primary"
           @click="FnOperate('start_up_ecs')"
           :disabled="!operate_auth.includes('start_up')"
           >开 机</el-button
@@ -22,6 +28,24 @@
         >
         <el-button
           type="primary"
+          @click="FnOperate('delete_ecs')"
+          :disabled="!operate_auth.includes('delete')"
+          >逻辑删除</el-button
+        >
+        <el-button
+          type="primary"
+          @click="FnOperate('recover_ecs')"
+          :disabled="!operate_auth.includes('recover')"
+          >恢 复</el-button
+        >
+        <el-button
+          type="primary"
+          @click="FnOperate('destroy_ecs')"
+          :disabled="!operate_auth.includes('destroy')"
+          >销 毁</el-button
+        >
+        <el-button
+          type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
           >更换实例规格</el-button
@@ -37,6 +61,12 @@
           @click="FnOperate('reset_pwd')"
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
+        >
+        <el-button
+          type="primary"
+          @click="FnOperate('open_bill')"
+          :disabled="!operate_auth.includes('open_bill')"
+          >开启计费</el-button
         >
       </template>
     </action-block>
