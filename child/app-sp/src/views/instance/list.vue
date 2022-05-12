@@ -583,7 +583,6 @@ export default class App extends Vue {
       pod_id:this.$store.state.pod_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
-      // status: data.status ? data.status.join(',') : '',
       customer_id: data.customer_id,
       customer_name: data.customer_name,
       os_info: data.os_info,
