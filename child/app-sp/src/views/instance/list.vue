@@ -551,7 +551,7 @@ export default class App extends Vue {
       pod_id:this.$store.state.pod_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
-      status: data.status ? data.status.join(',') : '',
+      // status: data.status ? data.status.join(',') : '',
       customer_id: data.customer_id,
       customer_name: data.customer_name,
       os_info: data.os_info,
@@ -606,6 +606,9 @@ export default class App extends Vue {
     return [data[0], data[1], data[2], '0'].join('.')
   }
   private async FnGetList(loading: boolean = true) {
+    if(!this.$store.state.pod_id){
+      return ;
+    }
     this.multiple_selection_id = [];
     if (!loading) {
       this.$store.commit("SET_LOADING", false);
