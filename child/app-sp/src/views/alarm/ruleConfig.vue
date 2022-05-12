@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="product_box" v-for="pro in selected_products" :key="pro.id">
+    <div class="product_box" v-for="(pro) in selected_products" :key="pro.id">
         <div class="title">
             <span>{{pro.name}}</span>
             <el-button type="text" @click="del_product(pro.id)" v-if="selected_products.length > 1">删除</el-button>
@@ -24,7 +24,7 @@
         </el-table>
         <div class="rule-box">
             <el-button type="text" @click="show_rule_box(pro.id,'add')"><i class="el-icon-circle-plus"></i>&nbsp;添加规则</el-button>
-            <div class="add-rule" v-show="pro.visible">
+            <div class="add-rule" v-if="pro.visible">
                 <el-tabs v-model="tab_key" type="card" @tab-click="changeTab">
                     <el-tab-pane label="阈值报警" title="0" :disabled="edit_key==='1'">
                         <div class="rule-warn">
@@ -47,7 +47,7 @@
                                 >
                                     <el-cascader
                                         v-model="rule_data.metricID"
-                                        :options="index_list"
+                                        :options="pro.index_list"
                                         :show-all-levels="false"
                                         :props="{ expandTrigger: 'hover' }"
                                     >
@@ -274,8 +274,6 @@ export default class RuleConfig extends Vue{
         productList.forEach(item=>{
             this.product_list.push({...item,visible:false,rule_list:[]})
         })
-        this.get_index_list()
-        this.getEventList()
     } 
     private valid(name){
         this.$nextTick(()=>{
@@ -324,8 +322,10 @@ export default class RuleConfig extends Vue{
         }
         
     }
-    private async getEventList(){
-        let res:any=await Service.get_event_list({})
+    private async getEventList(e){
+        let res:any=await Service.get_event_list({
+            type:e
+        })
         if(res.code==="Success"){
             let key_list=['event_name_zh','event_id']
             let label_list=['title','id']
@@ -349,25 +349,33 @@ export default class RuleConfig extends Vue{
         return arr;
     }
     //获取指标项列表
-    private async get_index_list(){
-        let res:any = await Service.get_index_list({})
+    private async get_index_list(e){
+        let index_list:any=[]
+        let res:any = await Service.get_index_list({
+            type:e
+        })
         if(res.code==='Success'){
             res.data && res.data.forEach(element => {
                 let temp=[]
                 element.metric_infos.forEach(item=>{
                     temp.push({
                         value:item.metric,
-                        label:item.metric,
+                        label:item.description,
                         unit:item.unit,
                         description:item.description,
                     })
                 })
-                this.index_list.push({
+                index_list.push({
                     value:element.name,
                     label:element.name,
                     children:temp
                 })
             });
+            this.selected_products.map(item=>{
+                if(item.id===e){
+                    item.index_list = index_list
+                }
+            })
         }
     }
     //编辑或者选中某个已有的规则
@@ -443,12 +451,15 @@ export default class RuleConfig extends Vue{
         this.add_product(obj)
     }
     private add_product(e){
+        this.get_index_list(e)
+        this.getEventList(e)
         if(this.selected_products.filter(item=>item.id===e).length>0){
             return;
         }
         const fil = this.product_list.filter(item=>item.id===e)
-        fil[0].rule_list = []
-        this.selected_products=[...this.selected_products,...fil ]
+        fil[0].rule_list = [];
+        this.selected_products=[...this.selected_products,...fil ];
+         console.log("111",this.selected_products)
     }
     private del_product(id:String){
         this.selected_products = this.selected_products.filter(item=>item.id!==id)
@@ -492,7 +503,7 @@ export default class RuleConfig extends Vue{
         this.rule_data = {...this.rule_data,level:level.filter((item,index)=>index<level.length-1)}
     }
     private add_rule(){//确定添加规则或者编辑规则
-        const form = this.tab_key==="0" ? this.$refs.rules_form[0] as Form : this.$refs.event_form[0] as Form
+        const form = this.tab_key==="0" ? this.$refs.rules_form[0] as Form : this.$refs.event_form[0] as Form;
         form.validate(async (valid)=>{
             if(valid){
                 if(this.tab_key==="0" && this.rule_data.level.some(item=>item.num==="" || !Number.isInteger(item.num))){
@@ -556,11 +567,11 @@ export default class RuleConfig extends Vue{
         })
     }
     private clear(){
-        this.tab_key="0"
-        const rules_form = this.$refs.rules_form[0] as Form 
-        const event_form = this.$refs.event_form[0] as Form
-        rules_form.resetFields()
-        event_form.resetFields()
+        this.tab_key="0";
+        // const rules_form = this.$refs.rules_form[0] as Form 
+        // const event_form = this.$refs.event_form[0] as Form
+        // rules_form.resetFields()
+        // event_form.resetFields()
         this.rule_data.level=[
             {
                 range:'>=',
@@ -713,7 +724,9 @@ export default class RuleConfig extends Vue{
     .check{
         display: flex;
     }
-        
+    .el-cascader .el-input{
+        width: 400px;
+    } 
     
     
 
