@@ -150,7 +150,7 @@ export default class PrivateMirror extends Vue{
     }
     @Watch('$store.state.pod_id')
     private watch_pod(){
-        this.search()
+        this.search(this.search_data)
     }
     private search(data:any={}){
         this.current = 1;

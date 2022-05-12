@@ -95,6 +95,7 @@
                     }"
                     placeholder="选择日期">
                 </el-date-picker>
+                <div class="prompt_message date-prompt">请选择该镜像在对象存储文件名的日期</div>
             </el-form-item>
             <!-- <div class="error_message file-tip" v-if=" os_file.length===0 && !oper_info.os_id ">未找到目标镜像文件，请上传</div>
             <el-form-item label="" prop="os_file" v-if="!oper_info.os_id">
@@ -329,7 +330,9 @@ export default class AddCommon extends Vue{
 .az{
     margin-right: 3px;
 }
-
+.date-prompt{
+    margin-top: -10px;
+}
 </style>
 <style lang="scss">
 .add-common{
