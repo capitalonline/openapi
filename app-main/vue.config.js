@@ -37,6 +37,11 @@ module.exports = {
         target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
+      },
+      '/': {
+        target: 'http://cloudos-sp-front.gic.test',
+        ws: true,
+        changeOrigin: true
       }
     }
   },
