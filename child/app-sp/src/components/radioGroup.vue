@@ -11,7 +11,9 @@ import {Component, Vue,Prop, PropSync, Watch} from 'vue-property-decorator';
 export default class Area extends Vue{
     @Prop({default:()=>[]}) private list!:any;
     @PropSync('value',{type:String}) syncValue!:string;
-
+    created() {
+        console.log("radio-group",this.list)
+    }
 }
 </script>
 <style lang="scss">
