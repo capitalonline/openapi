@@ -41,7 +41,6 @@ export default class InputNumber extends Vue{
     }
     @Emit("func")
     private returnValue(){
-        console.log("this.size_info",this.size_info)
         return this.size_info
     }
 }

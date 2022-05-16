@@ -30,6 +30,7 @@ export default class Area extends Vue{
     }
     @Watch("list",{immediate:true,deep:true})
     private watch_list(newVal){
+        console.log("watch_list",newVal)
         this.area_list= newVal.length>0 ? JSON.parse(JSON.stringify(newVal)) : [];
         this.value = newVal.length>0 ? this.list[0].region_list[0].region_name : ''
         newVal.length>0 && this.watch_val(this.value)
