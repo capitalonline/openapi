@@ -37,13 +37,17 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input-number v-model="disk.disk_size"
+          <input-number
+            :info="disk.default_disk_info ? disk.default_disk_info : null"
+            @func="FnChangeDataSize"
+          ></input-number>
+          <!-- <el-input-number v-model="disk.disk_size"
             :min="Number(disk.default_disk_info.disk_min)"
             :max="Number(disk.default_disk_info.disk_max)"
             :step="Number(disk.default_disk_info.disk_step)"
             @blur="FnCheckDataSize(disk)"
             @change="FnChangeDataSize(disk)"
-            step-strictly></el-input-number>
+            step-strictly></el-input-number> -->
           {{ disk.default_disk_info.disk_unit }}
         </el-form-item>
         <el-form-item>
@@ -77,8 +81,12 @@ import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import diskService from '../../https/disk/create';
 import getIops from '../../utils/getIops';
 import { deal_fee_info } from '../../utils/transIndex';
-
-@Component
+import InputNumber from '../../components/inputNumber.vue'
+@Component({
+  components:{
+    InputNumber
+  }
+})
 export default class updateDisk extends Vue {
   @Prop({default: ''}) private az_id!: string;
   @Prop({default: ''}) private customer_id!: string;
@@ -251,18 +259,21 @@ export default class updateDisk extends Vue {
   }
 
   // 当容量输入框失焦时判断是否为空，为空则填充最小值
-  private FnCheckDataSize(disk) {
-    if (!disk.disk_size) {
-      disk.disk_size = disk.default_disk_info.disk_min;
-      this.FnGetDataIops(disk)
-      this.FnDataEmit()
-    }
-  }
+  // private FnCheckDataSize(disk) {
+  //   if (!disk.disk_size) {
+  //     disk.disk_size = disk.default_disk_info.disk_min;
+  //     this.FnGetDataIops(disk)
+  //     this.FnDataEmit()
+  //   }
+  // }
   // 当数据盘容量改变时
   private FnChangeDataSize(disk) {
-    if (!disk.disk_size) {
-      return
-    }
+    this.data_disk_list.map(item=>{
+      if(item.default_disk_info.ecs_goods_id===disk.ecs_goods_id){
+        item.disk_size = disk.size;
+      }
+      return item;
+    })
     this.FnGetDataIops(disk)
     this.FnDataEmit()
   }
