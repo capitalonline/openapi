@@ -83,8 +83,19 @@
 
         <el-card>
           <label-block label="购买数量">
-            <el-input-number v-model="num_info.num" :min="num_info.min" :max="num_info.max" @blur="FnCheckNum" @change="FnGetPrice"></el-input-number>
-            <span class="prompt_message m-left10">一次最多创建20台</span>
+            <el-input-number
+              v-model="num_info.num"
+              :min="num_info.min"
+              :max="num_info.max"
+              @blur="FnCheckNum"
+              @change="FnGetPrice"
+            ></el-input-number>
+            <span class="prompt_message m-left10" :class="{error_message: num_info.num > num_info.max}">
+              一次最多可创建<span class="num_message"> {{ num_info.max }} </span>台实例
+            </span>
+            <el-button type="text" @click="FnGetLimitNum">
+              <svg-icon icon="refresh" class="refresh"></svg-icon>
+            </el-button>
           </label-block>
         </el-card>
 
@@ -169,6 +180,7 @@ import updateOs from './updateOs.vue';
 import updateDisk from './updateDisk.vue';
 import updatePwd from './resetPwd.vue';
 import confirmBox from '../../components/confirmBox.vue';
+import SvgIcon from '../../components/svgIcon/index.vue'
 import Service from '../../https/instance/create';
 import { checkEcsName } from '../../utils/checkEcsName';
 
@@ -181,7 +193,8 @@ import { checkEcsName } from '../../utils/checkEcsName';
     updateOs,
     updateDisk,
     updatePwd,
-    confirmBox
+    confirmBox,
+    SvgIcon
   }
 })
 
@@ -232,7 +245,7 @@ export default class App extends Vue {
   private num_info = {
     num: 1,
     min: 1,
-    max: 20
+    max: 1
   };
 
   private system_disk_price = '0.00';
@@ -317,12 +330,12 @@ export default class App extends Vue {
   }
 
   private FnGetSpec (data): void {
-    console.log('data', data)
     if (this.ecs_spec_info.is_gpu === data.is_gpu) {
       this.ecs_spec_info = data;
+      this.FnGetLimitNum()
       this.FnGetPrice('spec')
     } else {
-      this.ecs_spec_info = data; // 当kvm和gpu类型相互交换时，由系统盘改变触发算价
+      this.ecs_spec_info = data; // 当cpu和gpu类型相互交换时，由系统盘改变触发算价
     }
   }
 
@@ -338,6 +351,7 @@ export default class App extends Vue {
 
   private FnGetSystemDisk (data): void {
     this.system_info = data;
+    this.FnGetLimitNum()
     this.FnGetPrice('system')
   }
 
@@ -381,6 +395,7 @@ export default class App extends Vue {
         }
       }
     })
+    this.FnGetLimitNum()
     this.FnGetPrice('disk')
   }
 
@@ -388,6 +403,25 @@ export default class App extends Vue {
     this.disk_billing_info = data;
   }
 
+  private async FnGetLimitNum () {
+    const resData = await Service.get_ecs_limit({
+      customer_id: this.customer_id,
+      az_id: this.default_az.az_id,
+      spec_family_id: this.ecs_spec_info.spec_family_id,
+      spec_id: this.ecs_spec_info.spec_id,
+      disk_info: {
+        system_disk: {
+          disk_feature: this.system_info.disk_feature,
+          disk_type: this.system_info.disk_type,
+          disk_size: this.system_info.disk_size,
+        },
+        data_disks: this.data_disk_list,
+      }
+    })
+    if (resData.code === 'Success') {
+      this.num_info.max = resData.data.max_num
+    }
+  }
   // 数量输入框失焦时判断是否为空，为空则填充最小值
   private FnCheckNum () {
     if (!this.num_info.num) {
@@ -398,6 +432,9 @@ export default class App extends Vue {
   private async FnGetPrice(type) {
     console.log('type', type)
     if (!this.ecs_spec_info.ecs_goods_id) {
+      return
+    }
+    if (!this.system_info.disk_feature) {
       return
     }
     const reqData = {
@@ -453,7 +490,6 @@ export default class App extends Vue {
           return cur + item.price
         }, 0)
       }
-      console.log(data_price)
       this.data_disk_price = price_symbol + data_price.toFixed(2) + '/' + price_unit;
       this.system_disk_price = price_symbol + resData.data.disk.system_disk.price.toFixed(2) + '/' + price_unit;
       this.total_price = price_symbol + resData.data.total_price.toFixed(2) + '/' + price_unit;
@@ -471,6 +507,8 @@ export default class App extends Vue {
       return
     } else if (this.default_subnet.ip_not_used < this.num_info.num) {
       this.$message.warning('所选网络可用IP数量不足！')
+      return
+    } else if (this.num_info.num > this.num_info.max) {
       return
     }
     const pwd_result = (this.$refs.update_pwd as any).FnSubmit();
@@ -543,7 +581,6 @@ export default class App extends Vue {
       reqData.disk_info.system_disk['local_disk-space'] = this.system_info.storage_space;
       reqData.disk_info.system_disk['local_disk-throughput'] = this.system_info.handling_capacity;
     }
-    console.log(JSON.stringify(reqData))
     const resData = await Service.create_instance(reqData);
     if (resData.code === 'Success') {
       this.$message.success(resData.msg || '成功下发 创 建 任务！')

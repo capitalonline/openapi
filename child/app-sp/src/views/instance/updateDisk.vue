@@ -14,12 +14,18 @@
       <el-form-item>
         <el-input-number v-model="data.system_size"
           :min="Number(data.system_disk_min)"
-          :max="Number(data.default_system_info.disk_max)"
-          :step="Number(data.default_system_info.disk_step)"
+          :max="data.default_system_info
+            ? Number(data.default_system_info.disk_max)
+            : 0
+          "
+          :step="data.default_system_info
+            ? Number(data.default_system_info.disk_step)
+            : 0
+          "
           @blur="FnCheckSystemSize"
           @change="FnChangeSystemSize"
           step-strictly></el-input-number>
-        {{ data.default_system_info.disk_unit }}
+        {{ data.default_system_info?data.default_system_info.disk_unit:'GB' }}
       </el-form-item>
     </div>
     <template v-if="data_disk">
@@ -141,7 +147,14 @@ export default class updateDisk extends Vue {
       this.data_disk_info = this.all_disk_info.data_disk;
     }
     this.data.default_system_info = this.system_disk_info[0];
-    this.FnChangeSystemType()
+    if (this.data.default_system_info) {
+      this.FnChangeSystemType()
+    } else {
+      this.data.default_system_info = null;
+      this.data_disk_info = [];
+      this.FnSysEmit()
+      this.$message.error('该产品规格无可用的存储类型，请联系管理员')
+    }
   }
   private FnChangeSystemType(): void {
     this.data_disk_list = [];
@@ -224,15 +237,15 @@ export default class updateDisk extends Vue {
   @Emit('fn-system-disk')
   private FnSysEmit() {
     return {
-      ecs_goods_id: this.data.default_system_info.ecs_goods_id,
-      disk_name: this.data.default_system_info.disk_name,
-      disk_feature: this.data.default_system_info.disk_feature,
-      disk_type: this.data.default_system_info.disk_type,
-      disk_size: this.data.system_size,
-      disk_unit: this.data.default_system_info.disk_unit,
-      iops: this.FnGetSystemIops.iops,
-      handling_capacity: this.FnGetSystemIops.throughput,
-      storage_space: this.data.system_size,
+      ecs_goods_id: this.data.default_system_info?.ecs_goods_id || '',
+      disk_name: this.data.default_system_info?.disk_name || '',
+      disk_feature: this.data.default_system_info?.disk_feature || '',
+      disk_type: this.data.default_system_info?.disk_type || '',
+      disk_size: this.data.default_system_info?this.data.system_size:0,
+      disk_unit: this.data.default_system_info?.disk_unit || '',
+      iops: this.data.default_system_info?this.FnGetSystemIops.iops:0,
+      handling_capacity: this.data.default_system_info?this.FnGetSystemIops.throughput:0,
+      storage_space: this.data.default_system_info?this.data.system_size:0,
       is_follow_delete: 1
     }
   }
@@ -297,11 +310,6 @@ export default class updateDisk extends Vue {
     if (this.az_id) {
       this.FnGetDiskInfo();
     }
-  }
-
-  @Watch('data.default_system_info.ecs_goods_id')
-  private FnChangeSystem() {
-    this.data.system_size = this.FnSystemMinSize();
   }
 
   @Watch('customer_id')

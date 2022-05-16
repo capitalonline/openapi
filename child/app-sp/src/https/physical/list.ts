@@ -91,6 +91,19 @@ export default{
     getFamilyList(req){
         return service(getHostOptions('POST','/host/get_family_list/',req))
     },
+    //完成校验
+    finish_validate(req){
+        return service(getHostOptions('POST','/host/verification_finish/',req))
+    },
+    //获取回收部门
+    get_host_recycle_department(req){
+        return service(getHostOptions('GET','/host/get_host_recycle_department/',req))
+    },
+    //获取物理机列表字段
+    get_host_list_field(req){
+        return service(getHostOptions('GET','/host/get_host_list_field/',req))
+    },
+    
     
 
 }

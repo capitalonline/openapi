@@ -28,5 +28,8 @@ export default {
   },
   create_instance(reqData) {
     return service(getEcsOptions('POST', '/ecs/create_ecs/', reqData))
+  },
+  get_ecs_limit(reqData) {
+    return service(getEcsOptions('POST', '/ecs/get_ecs_limit/', reqData))
   }
 }

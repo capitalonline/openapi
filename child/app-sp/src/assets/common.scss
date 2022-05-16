@@ -29,7 +29,8 @@
 .mounting,
 .unmounting,
 .recovering,
-.recycling {
+.recycling,
+.creating_image {
   color:#4984E7;
 }
 .running {
@@ -134,6 +135,11 @@ pre {
     text-overflow: ellipsis;
   }
 }
+.tooltip-cell{
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
 .id-cell {
   display: inline-block;
   max-width: calc(100% - 24px);
@@ -145,4 +151,8 @@ pre {
 /*限制tooltip的宽度 */
 .tooltip-width{
   max-width: 200px;
+}
+/* 固定表头 */
+.table-limit-height {
+  height: calc(100vh - 200px) !important;
 }

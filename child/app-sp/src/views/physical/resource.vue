@@ -84,8 +84,16 @@ export default class Resource extends Vue{
         host_attribution_id:this.ecs_id
     })
     if(res.code==="Success"){
-      this.$message.success(res.message)
-      this.back("1")
+      if(res.data.fail_host_list.length>0){
+        this.$message.warning(res.message)
+        this.back("1");
+        return;
+      }else{
+        this.$message.success(res.message)
+        this.back("1")
+      }
+      // this.$message.success(res.message)
+      // this.back("1")
     }else{
       this.back("0")
     }
