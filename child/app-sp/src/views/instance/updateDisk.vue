@@ -33,7 +33,7 @@
         <el-form-item class="short-select" :label="index===0?'数据盘':''">
           <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
           <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20" @change="FnDataEmit">
-            <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name"></el-option>
+            <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name" :disabled="!FnSelectedDiskIds.includes(item.ecs_goods_id)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -190,9 +190,17 @@ export default class updateDisk extends Vue {
   private get FnGetSystemIops() {
     return getIops(this.data.default_system_info, this.data.system_size)
   }
+  private get FnSelectedDiskIds(){//筛选出data_disk_info没有被选的
+    let fil= this.data_disk_info.filter(item=>!this.data_disk_list.some(inn=>inn.default_disk_info.ecs_goods_id===item.ecs_goods_id));
+   return fil.map(item=>item.ecs_goods_id)
+  }
   private FnAddDataDisk() {
-    if (this.FnGetSurplus == 0) {
+    if (this.FnGetSurplus == 0 || this.data_disk_info.length===0) {
       return
+    }
+    let fil = this.data_disk_info.filter(item=>!this.data_disk_list.some(inn=>inn.default_disk_info.ecs_goods_id===item.ecs_goods_id))
+    if(fil.length===0){
+      return;
     }
     let data = {
       default_disk_info: {
@@ -207,11 +215,13 @@ export default class updateDisk extends Vue {
       min: 1,
       del: false
     }
-    data.default_disk_info = this.data_disk_info[0] || {};
+    // data.default_disk_info = this.data_disk_info[0] || {};
+    data.default_disk_info = fil[0] || {};
     if ( !data.default_disk_info.disk_name ) {
       return
     }
     data.disk_size = data.default_disk_info.disk_min;
+    console.log("data",data)
     this.FnGetDataIops(data);
     this.data_disk_list.push(data);
     this.FnDataEmit();
@@ -221,6 +231,7 @@ export default class updateDisk extends Vue {
     this.FnDataEmit();
   }
   private FnGetDataIops(disk) {
+    console.log("disk",disk)
     let info = getIops(disk.default_disk_info, disk.disk_size);
     disk.iops = info.iops;
     disk.iops_show = info.iops_show;
@@ -268,13 +279,14 @@ export default class updateDisk extends Vue {
   // }
   // 当数据盘容量改变时
   private FnChangeDataSize(disk) {
+    console.log("disk",disk)
     this.data_disk_list.map(item=>{
       if(item.default_disk_info.ecs_goods_id===disk.ecs_goods_id){
         item.disk_size = disk.size;
       }
       return item;
     })
-    this.FnGetDataIops(disk)
+    this.FnGetDataIops({default_disk_info:disk})
     this.FnDataEmit()
   }
   private FnCheckDataNum(disk) {
