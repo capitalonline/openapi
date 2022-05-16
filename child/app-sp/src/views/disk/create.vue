@@ -396,7 +396,6 @@ export default class CreateDisk extends Vue{
     }
     //是否开启计费
     private changeBillMode(val){
-        // console.log("changeBillMode",val)
         this.form_data.is_bill = val
         this.form_data.ecs_id=""
         this.get_instance_list()
@@ -411,7 +410,6 @@ export default class CreateDisk extends Vue{
     }
     //获取云盘计费
     private async getDiskFee(val){
-        console.log("getDiskFee",val)
         if(Object.keys(this.billing_info).length===0){
             return;
         }
@@ -451,7 +449,7 @@ export default class CreateDisk extends Vue{
             /*todo
             增加筛选系统盘为云盘的GPU实例,本期不做gpu实例挂载
             */
-            this.ECS_instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===Number(this.form_data.is_bill));
+            this.ECS_instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && item.system_disk_feature!=='local' && item.is_charge===Number(this.form_data.is_bill));
         }
     }
     //获取云盘规格信息
@@ -476,7 +474,6 @@ export default class CreateDisk extends Vue{
             this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
                 item.ecs_goods_id = fil[0].ecs_goods_id;
                 item.disk_feature = fil[0].disk_feature;
-                console.log("change_type")
                 this.change_type(item.ecs_goods_id,index)
                 return item;
             })}
@@ -484,7 +481,6 @@ export default class CreateDisk extends Vue{
     }
     //获取云盘各类型剩余可使用额度
     private async get_disk_limit(type){
-        console.log("ccc")
         let res = await disk_service.get_disk_limit({
             customer_id:this.form_data.customer_id,
             az_id:this.form_data.az,
@@ -499,7 +495,6 @@ export default class CreateDisk extends Vue{
     }
     //获取剩余显示信息
     getResetInfo(id:string,disk_size:number,amount:number):any{
-        console.log("E888925",this.disk_total)
         let capacity:number=0;
         let num:number=0
         if(!this.data_disk_info || Object.keys(this.data_disk_info).length===0 || this.showResetVolume[this.data_disk_info[id].disk_feature]<=0){
@@ -591,7 +586,6 @@ export default class CreateDisk extends Vue{
         }else{
             this.disk_total= Math.floor(num)//可挂载总量
         }
-        console.log("this.disk_total",this.disk_total)
         this.get_disk_quantity()
     }
     //设置区域ID,获取可用区列表
@@ -702,7 +696,6 @@ export default class CreateDisk extends Vue{
     }
     //监听容量改变
     private async change_capacity(obj){
-        console.log("obj",obj)
         this.form_data.disk_list.map(item=>{
             if(item.ecs_goods_id===obj.ecs_goods_id){
                 item.disk_size=obj.size;

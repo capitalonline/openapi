@@ -27,18 +27,21 @@ export default class InputNumber extends Vue{
         this.FnChange()  
     }
     private async FnChange(){
+        let size:number=0
         if(!this.size_info.size){
-            this.size_info.size = this.size_info.disk_min
+            size = this.size_info.disk_min
         }else{
-            this.$nextTick(()=>{
-                let newStep = Math.floor((this.size_info.size-this.size_info.disk_min)/this.size_info.disk_step)
-                this.size_info.size = newStep*this.size_info.disk_step+this.size_info.disk_min;
-            });
+            let newStep = Math.floor((this.size_info.size-this.size_info.disk_min)/this.size_info.disk_step);
+            size = newStep*this.size_info.disk_step+this.size_info.disk_min;
         }
+        this.$nextTick(()=>{
+            this.size_info.size = size
+        });
         this.returnValue()
     }
     @Emit("func")
     private returnValue(){
+        console.log("this.size_info",this.size_info)
         return this.size_info
     }
 }
