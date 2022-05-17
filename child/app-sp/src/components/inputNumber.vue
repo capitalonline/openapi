@@ -31,13 +31,15 @@ export default class InputNumber extends Vue{
         if(!this.size_info.size){
             size = this.size_info.disk_min
         }else{
+            this.size_info.size = Math.min(this.size_info.disk_max,this.size_info.size)
             let newStep = Math.floor((this.size_info.size-this.size_info.disk_min)/this.size_info.disk_step);
             size = newStep*this.size_info.disk_step+this.size_info.disk_min;
         }
         this.$nextTick(()=>{
-            this.size_info.size = size
+            this.size_info.size = size;
+            this.returnValue()
         });
-        this.returnValue()
+        
     }
     @Emit("func")
     private returnValue(){

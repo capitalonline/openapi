@@ -70,6 +70,7 @@
         <el-card class="disk-box">
           <update-disk :az_id="default_az.az_id" :customer_id="customer_id"
             :system_disk="true"
+            ref="update_disk"
             :data_disk="true"
             :is_gpu="ecs_spec_info.is_gpu"
             :os_disk_size="os_info.disk_size"
@@ -162,7 +163,7 @@
             <div>总价</div>
             <div class="num_message">{{ total_price }}</div>
           </div>
-          <el-button type="primary" class="create-btn" @click="FnConfirmCreate">创 建</el-button>
+          <el-button type="primary" class="create-btn" @click="FnConfirmCreate" :disabled="!isCreated">创 建</el-button>
         </el-card>
       </div>
     </div>
@@ -247,7 +248,7 @@ export default class App extends Vue {
     min: 1,
     max: 1
   };
-
+  private isCreated:boolean=true;
   private system_disk_price = '0.00';
   private data_disk_price = '0.00';
   private total_price = '0.00';
@@ -348,17 +349,28 @@ export default class App extends Vue {
       os_label: data.os_label
     }
   }
-
+  private getReset(){//返回回来的是单一的
+    this.isCreated=true;
+    let dom:any = (this.$refs.update_disk as updateDisk)
+    let obj:any = dom.getReset();
+    for(let i in obj){
+      if(obj[i]<0){
+        this.isCreated=false
+      }
+    }    
+  }
+  //E888925
   private FnGetSystemDisk (data): void {
     this.system_info = data;
+    this.getReset()
     this.FnGetLimitNum()
-    this.FnGetPrice('system')
+    this.FnGetPrice('system');
   }
-
   private FnGetDataDisk (data): void {
     this.data_disk_list = [];
     this.total_data_disk = {};
     data.forEach(item => {
+      this.getReset()
       const row = {
         ebs_goods_id: item.default_disk_info.ecs_goods_id,
         goods_name: item.default_disk_info.disk_name,
