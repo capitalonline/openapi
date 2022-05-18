@@ -576,7 +576,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && value!=='upload'){
+    if(this.multi_rows.length===0 && !['upload'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
