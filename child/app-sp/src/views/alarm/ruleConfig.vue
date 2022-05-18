@@ -589,7 +589,6 @@ export default class RuleConfig extends Vue{
         this.$nextTick(()=>{
             const rules_form:any = this.$refs.rules_form[0] as Form 
             const event_form:any = this.$refs.event_form[0] as Form
-            // console.log('rules_form',rules_form,event_form)
             rules_form.resetFields()
             event_form.resetFields()
             this.valid('rules_form');
