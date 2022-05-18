@@ -674,7 +674,7 @@ export default class CreateDisk extends Vue{
         }else{
             this.dis_change=false
         }
-        this.config_info.amount.value = this.total.toString()
+        this.config_info.amount.value = this.form_data.disk_list[0].amount.toString()
         // this.form_data.is_bill==='1' && this.getDiskFee('get_disk_quantity')
     }
     private get_step_max(id){
