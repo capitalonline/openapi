@@ -416,6 +416,9 @@ export default class App extends Vue {
   }
 
   private async FnGetLimitNum () {
+    if(!this.ecs_spec_info.spec_family_id || !this.ecs_spec_info.spec_id){
+      return;
+    }
     const resData = await Service.get_ecs_limit({
       customer_id: this.customer_id,
       az_id: this.default_az.az_id,

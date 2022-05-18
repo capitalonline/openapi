@@ -24,16 +24,24 @@ export default class InputNumber extends Vue{
     @Watch("info",{deep:true,immediate:true})
     private watch_info(nv){
         this.size_info={...this.size_info,...this.info}
-        this.FnChange()  
+        console.log("info",this.size_info)
+        this.FnChange()
     }
     private async FnChange(){
         let size:number=0
         if(!this.size_info.size){
+            console.log('aaa');
+            
             size = this.size_info.disk_min
         }else{
-            this.size_info.size = Math.min(this.size_info.disk_max,this.size_info.size)
-            let newStep = Math.floor((this.size_info.size-this.size_info.disk_min)/this.size_info.disk_step);
+            console.log('bbb',this.size_info.disk_max,this.size_info.size);
+            
+            // this.size_info.size = Math.min(this.size_info.disk_max,this.size_info.size)
+            let temp:number = (Math.min(this.size_info.disk_max,this.size_info.size) - this.size_info.disk_min)
+            temp= temp>0 ? temp : 0
+            let newStep = Math.floor(temp/this.size_info.disk_step);
             size = newStep*this.size_info.disk_step+this.size_info.disk_min;
+            console.log('size',newStep,size)
         }
         this.$nextTick(()=>{
             this.size_info.size = size;
