@@ -542,6 +542,7 @@ export default class App extends Vue {
       az_id: this.default_az.az_id,
       is_gpu: this.ecs_spec_info.is_gpu,
       cpu_model: this.ecs_spec_info.cpu_model,
+      gpu_id : this.ecs_spec_info.gpu_id,
       net_info: {
         vpc_id: this.default_vpc.vpc_id,
         vpc_segment_id: this.default_vpc.vpc_segment_id,
@@ -590,7 +591,6 @@ export default class App extends Vue {
     if (this.system_info.disk_feature === 'local') {
       reqData.disk_info.system_disk.ebs_goods_id = this.ecs_spec_info.ecs_goods_id;
       reqData.disk_info.system_disk.gic_goods_id = this.ecs_spec_info.billing_info[this.ecs_spec_info.ecs_goods_id].gic_goods_id;
-      reqData['gpu_id'] = this.ecs_spec_info.gpu_id;
       reqData.disk_info.billing_info[this.ecs_spec_info.ecs_goods_id] = this.ecs_spec_info.billing_info[this.ecs_spec_info.ecs_goods_id];
       reqData.disk_info.system_disk['local_disk-IOPS'] = this.system_info.iops;
       reqData.disk_info.system_disk['local_disk-space'] = this.system_info.storage_space;
