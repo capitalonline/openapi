@@ -280,7 +280,9 @@ export default class extends Vue {
       if(list.length>0){
         this.$nextTick(()=>{
           list.forEach(row => {
-            (this.$refs.disk_table as any).toggleRowSelection(row);
+            let table:any = (this.$refs.disk_table as any)
+            if(table)table.toggleRowSelection(row);
+            
           });
         });
         
