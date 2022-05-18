@@ -445,7 +445,7 @@ export default class App extends Vue {
   }
 
   private async FnGetPrice(type) {
-    console.log('type', type)
+    // console.log('type', type)
     if (!this.ecs_spec_info.ecs_goods_id) {
       return
     }
