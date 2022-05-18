@@ -14,8 +14,8 @@ export default new Vuex.Store({
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
     custom_host:JSON.parse(storage.get('custom_host')) || [
-      '主机名','机房','机柜','起始U位',
-      '占用U位','电源状态','机器状态','操作系统','服务器型号',
+      '主机名','机房名称','机柜编号','起始U位',
+      '占用U位','电源状态','机器状态','操作系统',
       '主机类型','主机用途','主机归属','主机来源','显卡型号',
       '显卡数量','带外IP','管理网IP','存储网IP1','CPU使用率',
       '内存使用率','创建时间','虚拟机数量',
