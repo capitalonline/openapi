@@ -169,17 +169,12 @@ export default class updateDisk extends Vue {
       for(let i in res.data){
           this.showResetVolume[i] = res.data[i].rest_volume;//各类型总剩余容量;
       }
-      console.log("this.data.default_system_info.disk_max111",this.data.default_system_info)
+      console.log('111',this.showResetVolume[this.data.default_system_info.disk_feature]);
+      
       // this.data.default_system_info.disk_max = Math.min(this.showResetVolume[this.data.default_system_info.disk_feature],this.data.default_system_info.disk_max) 
       this.FnSysEmit()
     }
   }
-  // private getTypeUsed(type){
-  //   let fil = this.list.filter(item=>item.feature===feature)
-  //     return fil.reduce((pre,cur)=>{
-  //         return pre+cur.size
-  //     },0)
-  // }
   private FnFilterDisk(): void {
     let disk_type_list = [];
     this.system_disk_info = this.all_disk_info.system_disk;
@@ -326,7 +321,8 @@ export default class updateDisk extends Vue {
   // }
   private FnChangeSystemSize(disk:any) {
     this.data.system_size = disk.size;
-    this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
+    console.log('222',this.showResetVolume[this.data.default_system_info.disk_feature]);
+    // this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
     this.data_disk_list.map(item=>{
       let systemUsed:number= this.data.default_system_info.disk_feature===item.default_disk_info.disk_feature ? this.data.system_size : 0
       item.default_disk_info.disk_max = Math.min((this.showResetVolume[item.default_disk_info.disk_feature] - systemUsed),item.default_disk_info.disk_max)
@@ -378,7 +374,8 @@ export default class updateDisk extends Vue {
       item.num = (item.num*item.disk_size + systemUsed) > item.default_disk_info.disk_max ? 1 : item.num
       return item;
     })
-    this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
+    console.log('333',this.showResetVolume[this.data.default_system_info.disk_feature]);
+    // this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
     
     //已经添加的data
     this.FnGetDataIops({default_disk_info:disk})
