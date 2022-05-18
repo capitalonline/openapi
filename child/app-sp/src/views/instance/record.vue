@@ -36,9 +36,15 @@
           </el-table-column>
           <el-table-column prop="oper_type_display" label="操作内容"></el-table-column>
           <el-table-column prop="status_display" label="状态"></el-table-column>
-          <el-table-column prop="response" label="响应信息">
+          <el-table-column prop="response" label="响应信息" v-if="!['message'].includes(type)">
             <template slot-scope="scope">
               <el-button type="text" @click="view(scope.row.result)" v-if="scope.row.result">查看</el-button>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="response" label="响应信息" v-else>
+            <template slot-scope="scope">
+              <el-button type="text" @click="view(scope.row.response)" v-if="scope.row.response">查看</el-button>
               <span v-else>-</span>
             </template>
           </el-table-column>

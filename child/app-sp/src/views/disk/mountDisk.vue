@@ -116,7 +116,8 @@ export default class MountDisk extends Vue{
             az_id:this.mount_id[0].az_id
         });
         if (resData.code == 'Success') {
-            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===this.mount_id[0].is_charge) || [];
+            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && item.system_disk_feature!=='local' && item.is_charge===this.mount_id[0].is_charge) || [];
+            console.log("this.instance_list",this.instance_list)
         }
     }
     //获取实例挂载数据盘数量
