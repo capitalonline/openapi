@@ -21,7 +21,7 @@ export default{
     },
     //获取云盘剩余可使用额度
     get_disk_limit(req) {
-        return service(getEcsOptions('GET', '/ebs/get_disk_limit/', req))
+        return service(getEcsOptions('POST', '/ebs/get_disk_limit/', req))
     },
     
 }

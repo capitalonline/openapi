@@ -366,6 +366,7 @@ export default class CreateDisk extends Vue{
         
     }
     private get curTotal():number{//当前申请了多少
+        this.form_data.is_bill==='1' && this.getDiskFee('change_type');
         return this.form_data.disk_list[0].disk_size * this.form_data.disk_list[0].amount
     }
     //获取客户名称
@@ -463,10 +464,12 @@ export default class CreateDisk extends Vue{
             this.billing_info = resData.data.billing_info
             this.disk_type_list = resData.data.data_disk
             // this.disk_type_list = resData.data.data_disk.filter(item=>item.disk_feature==="HDD" || item.disk_feature==="SSD");
+            let ids=[]
             this.disk_type_list.map(item=>{
-                this.get_disk_limit(item.disk_feature);
+                ids.push(item.disk_feature)
                 this.data_disk_info = Object.assign({},this.data_disk_info,{[item.ecs_goods_id]:item});
             })
+            this.get_disk_limit(ids);
             let fil = this.disk_type_list.filter(item=>item.disk_feature==="SSD");
             if(fil.length===0 || this.showResetVolume[fil[0].disk_feature]<fil[0].disk_min){
                 fil = [this.disk_type_list[0]]
@@ -481,21 +484,24 @@ export default class CreateDisk extends Vue{
     }
     //获取云盘各类型剩余可使用额度
     private async get_disk_limit(type){
+        console.log("type",type)
         let res = await disk_service.get_disk_limit({
             customer_id:this.form_data.customer_id,
             az_id:this.form_data.az,
             feature:type,
         })
         if(res.code==='Success'){
-            this.showResetVolume[type] = res.data.rest_volume;//各类型总剩余容量;
-            console.log("this.showResetVolume",this.showResetVolume)
+            for(let i in res.data){
+                this.showResetVolume[i] = res.data[i].rest_volume;//各类型总剩余容量;
+            }
+            
             // this.showResetVolume[type] = res.data.rest_volume;//显示当前可使用容量;
             // this.showResetVolume['HDD'] = 18;
             // this.showResetVolume['SSD'] = 101;
         }
     }
     //获取剩余显示信息
-    getResetInfo(id:string,disk_size:number,amount:number):any{
+    private getResetInfo(id:string,disk_size:number,amount:number):any{
         let capacity:number=0;
         let num:number=0
         if(!this.data_disk_info || Object.keys(this.data_disk_info).length===0 || this.showResetVolume[this.data_disk_info[id].disk_feature]<=0){
@@ -669,7 +675,7 @@ export default class CreateDisk extends Vue{
             this.dis_change=false
         }
         this.config_info.amount.value = this.total.toString()
-        this.form_data.is_bill==='1' && this.getDiskFee('get_disk_quantity')
+        // this.form_data.is_bill==='1' && this.getDiskFee('get_disk_quantity')
     }
     private get_step_max(id){
         return this.data_disk_info ? {
@@ -690,7 +696,7 @@ export default class CreateDisk extends Vue{
         this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id]).throughput
         this.form_data.disk_list[index].disk_size = this.data_disk_info[id].disk_min;
         this.form_data.disk_list[index].disk_max =this.showResetVolume[type] > this.data_disk_info[id].disk_max ? this.data_disk_info[id].disk_max : this.showResetVolume[type];
-        this.form_data.is_bill==='1' && this.getDiskFee('change_type');
+        
         this.set_disk_total(type)
         this.get_step_max(this.form_data.disk_list[index].ecs_goods_id)
         this.size_info = {...this.data_disk_info[id],disk_max:this.get_step_max(id).max,size:this.data_disk_info[id].disk_min}
@@ -734,7 +740,7 @@ export default class CreateDisk extends Vue{
          * todo
          * 解决只改一次调两次获取价格接口
          */
-        this.form_data.is_bill==='1' && this.getDiskFee('change_capacity')
+        // this.form_data.is_bill==='1' && this.getDiskFee('change_capacity')
     }
     private createConfirm(){
         const form = this.$refs.form as Form;
