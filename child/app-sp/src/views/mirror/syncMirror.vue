@@ -50,7 +50,7 @@ export default class SyncMirror extends Vue{
         name:{label:'镜像名称',value:'1'},
         id:{label:'镜像ID',value:'2'},
         system:{label:'操作系统',value:'3'},
-        size:{label:'容量',value:'4'},
+        size:{label:'规格',value:'4'},
         type:{label:'类型',value:'5'},
     }
     private az_info:any={};

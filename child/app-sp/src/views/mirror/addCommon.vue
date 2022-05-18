@@ -41,7 +41,7 @@
             <el-form-item label="规格" prop="size">
                 <span v-if="oper_info.os_id">{{ form_data.size ?`${ form_data.size }GB` : form_data.size}}</span>
                 <template v-else>
-                    <el-input-number v-model="form_data.size" :min="0"></el-input-number>  GB
+                    <el-input-number v-model="form_data.size" :min="form_data.os_type==='Windows' ? 4 : 20"></el-input-number>  GB
                 </template>
                 
             </el-form-item>
@@ -233,6 +233,14 @@ export default class AddCommon extends Vue{
     }
     private FnSuccess(response, file, fileList){
         // console.log("response",response)
+    }
+    @Watch('form_data.os_type')
+    private watch_os_type(nv){
+        if(nv==='Windows'){
+            this.form_data.size = Math.max(this.form_data.size,4)
+        }else{
+            this.form_data.size = Math.max(this.form_data.size,20)
+        }
     }
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
