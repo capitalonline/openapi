@@ -61,7 +61,7 @@
             <el-button type="text" @click="goEcs(scope.row.host_id)">{{scope.row.ecs_num}}</el-button>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
-            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
+            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
@@ -73,7 +73,7 @@
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
-              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
+              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span>
             </div>
             
           </template>
@@ -83,7 +83,6 @@
             <el-dropdown @command="handleOperate">
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
 
-              <!-- <el-button type="text"><i class="el-icon-s-operation"></i></el-button> -->
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -120,10 +119,11 @@
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
-        :all_item="all_item"
-        :all_column_item="all_column_item" 
+        :all_item="all_column_item"
         @fn-custom="get_custom_columns"
       ></custom-list-item>
+      <!-- :all_item="all_item" -->
+      <!-- :all_column_item="all_column_item"  -->
     </div>
 </template>
 <script lang="ts">
@@ -236,7 +236,7 @@ export default class PhysicalList extends Vue {
   private host_uses=[];
   private host_source=[];
   private all_column_item=[];
-  private all_item:Array<any>=[];
+  // private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[
@@ -311,13 +311,15 @@ export default class PhysicalList extends Vue {
     if(res.code==="Success"){
       let key_list=['field_name','show_name'];
       let label_list=['prop','label'];
-      let list:Array<any>=[]
-      res.data.map(item=>{
-        list=[...list,...item.filed];
-        return item;
-      })
-      this.all_item = res.data;
-      this.all_column_item = deal_list(list,label_list,key_list);
+      // let list:Array<any>=[]
+      // res.data.map(item=>{
+      //   list=[...list,...item.filed];
+      //   return item;
+      // })
+      // this.all_item = res.data;
+      // this.all_column_item = deal_list(list,label_list,key_list);
+      this.all_column_item = deal_list(res.data,label_list,key_list);
+      this.get_custom_columns(this.$store.state.custom_host)
       this.get_custom_columns(this.$store.state.custom_host)
 
     }
