@@ -18,6 +18,7 @@
             border 
             class="event-table"
             @sort-change="FnSortChange"
+            :cell-style="setCellStyle"
             @filter-change="filterAttribute"
         >
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
@@ -37,8 +38,19 @@
                     <span>{{scope.row.white_customer_list && scope.row.white_customer_list.length>0 ? scope.row.white_customer_list.join(',') : '全部客户'}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="path_name" label="路径"></el-table-column>
-            <el-table-column prop="az" label="可用区" width="120">
+            <el-table-column prop="path_name" label="路径"  width="140">
+                <template slot-scope="scope">
+                    <el-tooltip 
+                        :content="scope.row.path_name" 
+                        placement="bottom" 
+                        effect="light">
+                            <span class="id-cell">{{ scope.row.path_name }}</span>
+                    </el-tooltip>
+                    <Clipboard :content="scope.row.path_name" v-if="scope.row.path_name"></Clipboard>
+                    
+                </template>
+            </el-table-column>
+            <el-table-column prop="az" label="可用区" width="120" class-name="mirror-az">
                 <template slot-scope="scope">
                     <span>共  <span class="num_message">{{scope.row.az_list.length}}</span>  个</span>
                     <span>   ( 可用:<span class="num_message">  {{scope.row.az_list.filter(item=>item.status==='running').length}}</span> )</span>
@@ -119,7 +131,8 @@ import AddCommonMirror from '../instance/addCommonMirror.vue';
 import Record from '../instance/record.vue';
 import DelMirror from './delMirror.vue'
 import moment from 'moment';
-import {paramsSerializer} from '../../utils/transIndex'
+import {paramsSerializer} from '../../utils/transIndex';
+import Clipboard from '../../components/clipboard.vue'
 @Component({
     components:{
         ActionBlock,
@@ -129,7 +142,8 @@ import {paramsSerializer} from '../../utils/transIndex'
         ChangeStatus,
         AddCommonMirror,
         Record,
-        DelMirror
+        DelMirror,
+        Clipboard
     }
 })
 export default class CommonMirror extends Vue{
@@ -183,6 +197,7 @@ export default class CommonMirror extends Vue{
     private watch_pod(){
         this.search(this.search_data)
     }
+    
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
         if(res.code==="Success"){
@@ -239,6 +254,12 @@ export default class CommonMirror extends Vue{
     private handleCurrentChange(cur){
         this.current = cur
         this.getMirrorList()
+    }
+    setCellStyle(row, column, rowIndex, columnIndex){
+        if(columnIndex==5){
+            console.log('aaa')
+            return {"color":"red"}
+        }
     }
     private FnSortChange(obj){
         this.search_data.sort_size =undefined
@@ -342,5 +363,11 @@ i.el-icon-s-tools{
 }
 .table-expand:last-child{
     margin-bottom: 0;
+}
+
+</style>
+<style lang="scss">
+td.mirror-az.el-table__cell{
+    border-right: none;
 }
 </style>

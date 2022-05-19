@@ -41,9 +41,15 @@
             <el-form-item label="规格" prop="size">
                 <span v-if="oper_info.os_id">{{ form_data.size ?`${ form_data.size }GB` : form_data.size}}</span>
                 <template v-else>
-                    <el-input-number v-model="form_data.size" :min="form_data.os_type==='Windows' ? 4 : 20"></el-input-number>  GB
+                    <el-input-number v-model="form_data.size" :min="form_data.os_type==='Windows' ? 40 : 20"></el-input-number>  GB
                 </template>
                 
+            </el-form-item>
+            <el-form-item label="存储类型" prop="backend_type">
+                <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span>
+                <el-select v-model="form_data.backend_type" v-else>
+                    <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="可用区" prop="az_id">
                 <span v-if="oper_info.os_id">
@@ -51,12 +57,6 @@
                 </span>
                 <el-select v-model="form_data.az_id" v-else>
                     <el-option v-for="item in az_list" :key="item.az_id" :label="item.az_name" :value=" item.az_id "></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="存储类型" prop="backend_type">
-                <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span>
-                <el-select v-model="form_data.backend_type" v-else>
-                    <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
@@ -70,7 +70,7 @@
                 <el-select v-else v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
                     <el-option v-for="item in compute_type_list" :key="item" :label="item" :value=" item"></el-option>
                 </el-select>
-                <el-tooltip :content=" '若是标准镜像，选择第三项：CPU/GPU' " placement="right" effect="light" v-if="!oper_info.os_id">
+                <el-tooltip :content=" '若是标准镜像，选择第三项：GPU/CPU' " placement="right" effect="light" v-if="!oper_info.os_id">
                     <el-button type="text"><svg-icon icon="info" class="m-left10"></svg-icon></el-button>
                 </el-tooltip>
             </el-form-item>
@@ -142,8 +142,8 @@ export default class AddCommon extends Vue{
     private mirror_type_list:any=[];
     private bit_list:Array<any>=[{id:32,name:'32位'},{id:64,name:'64位'}];
     private az_list:Array<any>=[];
-    private storage_type_list:Array<any>=[{id:'local',name:'本地盘'}];
-    private compute_type_list:any=['GPU','CPU','CPU/GPU']
+    private storage_type_list:Array<any>=[];
+    private compute_type_list:any=['GPU','CPU','GPU/CPU']
     private drive_type_list:any=['DataCenter','Geforce'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
@@ -158,7 +158,7 @@ export default class AddCommon extends Vue{
         customer_ids:'',
         size:this.oper_info.os_id ? this.oper_info.size : 20,
         az_id:this.oper_info.az_id ? this.oper_info.az_id : '',
-        backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : this.storage_type_list[0].id,
+        backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
@@ -178,8 +178,8 @@ export default class AddCommon extends Vue{
     }
     created(){
         this.get_mirror_type();
-        this.get_az_list();
-        this.form_data.support_type='CPU/GPU'
+        this.get_disk_list()
+        this.form_data.support_type='GPU/CPU'
         if(this.oper_info.os_id){
             this.rules.path_md5=[{required:false, message: '请输入MD5', trigger: 'change' }]
         }
@@ -210,6 +210,32 @@ export default class AddCommon extends Vue{
     private FnDisable(date){
         return date>new Date()
     }
+    private async get_disk_list(){
+        let res:any = await Service.get_disk_list({})
+        if(res.code==="Success"){
+            for(let i in res.data){
+                this.storage_type_list.push({id:i,name:res.data[i]})
+            }
+            this.form_data.backend_type = this.storage_type_list[0].id
+        }
+    }
+    @Watch('form_data.backend_type')
+    private watch_backend_type(){
+        if(!this.oper_info.os_id){
+            this.form_data.az_id=''
+            this.get_available_az()
+        }
+        
+    }
+    private async get_available_az(){
+        let res:any = await Service.get_available_az({
+            backend_type:this.form_data.backend_type
+        })
+        if(res.code==="Success"){
+            this.az_list=res.data;
+            this.form_data.az_id = this.az_list[0].az_id
+        }
+    }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
         if(res.code==="Success"){
@@ -217,17 +243,17 @@ export default class AddCommon extends Vue{
             this.form_data.os_type = this.mirror_type_list[0]
         }
     }
-    private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
-    if(res.code==="Success"){
-      res.data.forEach(item=>{
-        item.region_list.forEach(inn=>{
-          this.az_list=[...this.az_list,...inn.az_list]
-        })
-      })
-      this.form_data.az_id = this.az_list[0].az_id
-    }
-  }
+//     private async get_az_list(){
+//     let res:any=await EcsService.get_region_az_list({})
+//     if(res.code==="Success"){
+//       res.data.forEach(item=>{
+//         item.region_list.forEach(inn=>{
+//           this.az_list=[...this.az_list,...inn.az_list]
+//         })
+//       })
+//       this.form_data.az_id = this.az_list[0].az_id
+//     }
+//   }
     private before_upload(file){
         console.log("before_upload",file)
     }
@@ -237,7 +263,7 @@ export default class AddCommon extends Vue{
     @Watch('form_data.os_type')
     private watch_os_type(nv){
         if(nv==='Windows'){
-            this.form_data.size = Math.max(this.form_data.size,4)
+            this.form_data.size = Math.max(this.form_data.size,40)
         }else{
             this.form_data.size = Math.max(this.form_data.size,20)
         }
@@ -245,7 +271,7 @@ export default class AddCommon extends Vue{
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
         if(nv==='iso'){
-            this.form_data.support_type='CPU/GPU'
+            this.form_data.support_type='GPU/CPU'
         }
     }
     // @Watch("form_data",{immediate:true,deep:true})

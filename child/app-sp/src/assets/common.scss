@@ -145,11 +145,12 @@ pre {
 }
 .id-cell {
   display: inline-block;
-  max-width: calc(100% - 24px);
+  max-width: calc(100% - 26px);
   margin-right: 6px;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
+  vertical-align: top;
 }
 /*限制tooltip的宽度 */
 .tooltip-width{
