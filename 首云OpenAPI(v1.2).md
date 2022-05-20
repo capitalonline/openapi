@@ -7637,7 +7637,7 @@ def get_metering(end_time, uid=None):
 | ReceiverId       | string | 40abe08e-5073-11e9-b148-0242ac1103aa| 告警联系人ID |
 | ReceiverMail     | string | san.zhang@capitalonline.net              | 告警联系人邮件 |
 | ReceiverName     | string | zhangsan                            | 告警联系人手机联系方式code+手机号 |
-| ReceiverTel      | string | (+86)13322221111                    | 告警联系人手机联系方式code+手机号 |
+| ReceiverTel      | string | (+86)13322221111                    | 告警联系人名称 |
 | UsedByNow        | bool   | False                               | 告警联系人是否在当前监控组 |
 | UsedByOther      | bool   | True                                | 其他监控组是否使用该告警联系人 |
 
@@ -7719,7 +7719,9 @@ def get_all_receivers():
 | -------- | ----------------------- | ---------------- | ------------------ |
 | 400      | Parameter Error | 邮箱格式异常     | 邮箱格式异常       |
 | 400      | Parameter Error | 手机格式异常     | 邮箱格式异常       |
+
 ​   **返回示例:**
+
 ```json
 {
     "Code":"Success",
