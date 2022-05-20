@@ -94,6 +94,10 @@ export default{
     //获取事件列表
     get_event_list(req){
         return service(getAlarmOptions('GET','/strategy/event/list',req))
-    }
+    },
+    //获取产品列表
+    get_product_list(req){
+        return service(getAlarmOptions('GET','/strategy/product/list',req))
+    },
 
 }

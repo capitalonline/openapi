@@ -9,6 +9,7 @@
         placement="bottom"
         width="400"
         trigger="click"
+        popper-class="popper"
         v-model="visible"
     >
         <div>
@@ -44,6 +45,7 @@
         width="400"
         trigger="click"
         v-model="az_visible"
+        popper-class="popper"
     >
         <div>
             <el-checkbox :indeterminate="az_isIndeterminate" v-model="az_checkAll" @change="handleCheckAllChange($event,'az_list')" v-if="az_list.length>0">全选</el-checkbox>
@@ -310,5 +312,9 @@ label.el-checkbox.group-all{
     .el-tag.el-tag--info .el-tag__close{
         display: none !important;
     }
+}
+.popper{
+    max-height: 500px;
+    overflow-y: auto;
 }
 </style>
