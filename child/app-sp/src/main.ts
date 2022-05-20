@@ -10,9 +10,9 @@ import './assets/common.scss';
 import { getUserInfo } from '../src/init';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
-
+import Clipboard from 'v-clipboard';
 Vue.use(ElementUI)
-
+Vue.use(Clipboard)
 Vue.config.productionTip = false;
 
 let router = null;

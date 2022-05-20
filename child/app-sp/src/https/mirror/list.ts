@@ -55,6 +55,14 @@ export default{
     get_status_list(req){
         return service(getEcsOptions('GET','/img/get_image_status_list/',req))
     },
+    //获取新增镜像时的可用区
+    get_available_az(req){
+        return service(getEcsOptions('POST','/img/get_available_az/',req))
+    },
+    //获取新增镜像时的存储类型
+    get_disk_list(req){
+        return service(getEcsOptions('GET','/img/backend_type/',req))
+    },
 }
 
     
