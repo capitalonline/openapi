@@ -118,6 +118,9 @@
        * [4.DescribeAccountInfo](#4describeAccountInfo)
      * [冷云计量相关](#冷云计量相关)
        * [1.GetMetering](#1GetMetering)
+     * [网络告警相关](#网络告警相关)
+       * [1.GetWanAlarmReceiver](#1GetWanAlarmReceiver)
+       * [2.UpdateWanAlarmReceiver](#2UpdateWanAlarmReceiver)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -7607,7 +7610,147 @@ def get_metering(end_time, uid=None):
     print(result)
     return result.get("Data")
 ```
+## 网络告警相关
+### 1.GetWanAlarmReceiver
 
+   **Action: GetWanAlarmReceiver**
+
+  **描述：** 获取网络告警全部联系人或某个告警组的联系人
+
+   **请求地址:** cdsapi.capitalonline.net/network
+
+   **请求方法：POST**
+
+   **请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值     | 描述                         |
+| ------- | ------ | -------- | ---------- | ---------------------------- |
+| ObjGroupId | string | 否       | "6541d60c-d71f-11ec-b673-0242ac110033" | 获取特定监控组或全部告警联系人，获取全部告警联系人传递空字符串  |
+
+   **返回参数：**
+
+| 名称    | 类型   | 示例值    | 描述         |
+| :------ | ------ | :-------- | :----------- |
+| Code    | string | Success   | 错误码       |
+| Message | string | 获取联系人成功 | 错误信息     |
+| Data    | object | []        | 告警联系人数据列表 |
+| ReceiverId       | string | 40abe08e-5073-11e9-b148-0242ac1103aa| 告警联系人ID |
+| ReceiverMail     | string | san.zhang@capitalonline.net              | 告警联系人邮件 |
+| ReceiverName     | string | zhangsan                            | 告警联系人手机联系方式code+手机号 |
+| ReceiverTel      | string | (+86)13322221111                    | 告警联系人名称 |
+| UsedByNow        | bool   | False                               | 告警联系人是否在当前监控组 |
+| UsedByOther      | bool   | True                                | 其他监控组是否使用该告警联系人 |
+
+​   **错误码:**
+
+| httpcode | 错误码                  | 错误信息         | 描述               |
+| -------- | ----------------------- | ---------------- | ------------------ |
+| 400      | InvalidParameter.IsNull | 缺少必要参数     | 缺少必要参数       |
+
+​   **返回示例:**
+```json
+{
+    "Code":"Success",
+    "Message":"获取联系人成功",
+    "Data":[
+        {
+            "ReceiverId":"40abe08e-5073-11e9-b148-0242ac1103aa",
+            "ReceiverMail":"san.zhang@capitalonline.net",
+            "ReceiverName":"zhangsan",
+            "ReceiverTel":"(+86)13322221111",
+            "UsedByNow":false,
+            "UsedByOther":false
+        }
+    ]
+ 
+}
+```
+
+​   **请求调用示例**
+
+```python
+def get_all_receivers():
+    NETWORK_URL = 'http://cdsapi.capitalonline.net/network'
+    action = 'GetWanAlarmReceiver'
+    method = "POST"
+    param = {}
+    AK = '您的ak值'
+    AccessKeySecret = '您的AccessKeySecret值'
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ObjGroupId":"",
+    }
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 2.UpdateWanAlarmReceiver
+
+   **Action: UpdateWanAlarmReceiver**
+
+  **描述：** 更新特定联系人联系方式
+
+   **请求地址:** cdsapi.capitalonline.net/network
+
+   **请求方法：POST**
+
+   **请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值     | 描述                         |
+| ------- | ------ | -------- | ---------- | ---------------------------- |
+| ReceiverId | string | 是       | "a09855ea-15f6-11ec-bd9c-ce61e0b35aaa" | 联系人ID |
+| Email | string | 否       | san.zhang@capitalonline.net | 联系人邮箱 |
+| Mobile | string | 否       | 13322221111| 联系人手机号 |
+| Code | string | 否      | +86 | 可选择值 +86（国内)、+1 |
+
+
+   **返回参数：**
+
+| 名称    | 类型   | 示例值    | 描述         |
+| :------ | ------ | :-------- | :----------- |
+| Code    | string | Success   | 错误码       |
+| Message | string | 获取联系人成功 | 错误信息     |
+| Data    | object | {}        |  |
+
+​   **错误码:**
+
+| httpcode | 错误码                  | 错误信息         | 描述               |
+| -------- | ----------------------- | ---------------- | ------------------ |
+| 400      | Parameter Error | 邮箱格式异常     | 邮箱格式异常       |
+| 400      | Parameter Error | 手机格式异常     | 邮箱格式异常       |
+
+​   **返回示例:**
+
+```json
+{
+    "Code":"Success",
+    "Message":"success",
+    "Data":{}
+ 
+}
+```
+
+​   **请求调用示例**
+
+```python
+def update_receiver():
+    NETWORK_URL = 'http://cdsapi.capitalonline.net/network'
+    action = 'UpdateWanAlarmReceiver'
+    method = "POST"
+    param = {}
+    AK = '您的ak值'
+    AccessKeySecret = '您的AccessKeySecret值'
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ReceiverId":"a09855ea-15f6-11ec-bd9c-ce61e0b35baf",
+        "Mobile":"13322221111",
+        "Code":"+86"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
 
 ## 其他公共接口
 
