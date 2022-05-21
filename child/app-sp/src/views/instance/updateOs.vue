@@ -92,6 +92,7 @@ export default class updateOs extends Vue{
     }
   }
   private FnHandleOsList(list) {
+    console.log("mirror-预生产")
     if (!list || list.length === 0) {
       return []
     }
