@@ -14,15 +14,16 @@
       <el-form-item>
         <el-input-number v-model="data.system_size"
           :min="Number(data.system_disk_min)"
-          
-          :max="system_disk_max"
+          :max="systemDiskMax"
           :step="data.default_system_info
             ? Number(data.default_system_info.disk_step)
             : 0
           "
-          @blur="FnCheckSystemSize"
+          @blur="FnChangeSystemSize"
           @change="FnChangeSystemSize"
-          step-strictly></el-input-number>
+          ></el-input-number>
+          
+          <!-- {{systemDiskMax}}--{{data.system_info && data.system_info.disk_feature ? showResetVolume[data.system_info.disk_feature] : ''}} -->
           <!-- :max="data.default_system_info
             ? Number(data.default_system_info.disk_max)
             : 0
@@ -32,49 +33,60 @@
       </el-form-item>
     </div>
     <template v-if="data_disk">
-      <div v-for="(disk, index) in data_disk_list" :key="index" class="inline-form">
-        <el-form-item class="short-select" :label="index===0?'数据盘':''">
-          <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
-          <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20" @change="FnDataEmit">
-            <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name" :disabled="!FnSelectedDiskIds.includes(item.ecs_goods_id)"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <!-- <el-input-number v-model="disk.disk_size"
-            :min="Number(disk.default_disk_info.disk_min)"
-            :max="Number(disk.default_disk_info.disk_max)"
-            :step="Number(disk.default_disk_info.disk_step)"
-            @blur="FnCheckDataSize(disk)"
-            @change="FnChangeDataSize(disk)"
-            step-strictly></el-input-number> -->
+      <div v-for="(disk, index) in data_disk_list" :key="index">
+        <div class="inline-form">
+          <el-form-item class="short-select" :label="index===0?'数据盘':''">
+            <i class="el-icon-remove-outline delete-icon" @click="FnDelDataDisk(index)"></i>
+            <el-select v-model="disk.default_disk_info" value-key="ecs_goods_id" class="m-right20" @change="FnDataEmit">
+              <el-option v-for="item in data_disk_info" :key="item.ecs_goods_id" :value="item" :label="item.disk_name" :disabled="!FnSelectedDiskIds.includes(item.ecs_goods_id)"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <input-number
+                :info="data_disk_info ? disk.default_disk_info : null"
+                @func="FnChangeDataSize"
+            ></input-number>
+            <!-- <el-input-number v-model="disk.disk_size"
+              :min="Number(disk.default_disk_info.disk_min)"
+              :max="Number(disk.default_disk_info.disk_max)"
+              :step="Number(disk.default_disk_info.disk_step)"
+              @blur="FnCheckDataSize(disk)"
+              @change="FnChangeDataSize(disk)"
+              step-strictly></el-input-number> -->
 
-            <!-- :max="FnGetSurplus + disk.num" 原先云盘数量的最大值 -->
-          {{ disk.default_disk_info.disk_unit }}
-        </el-form-item>
-        <el-form-item>
-          <el-input-number
-            v-model="disk.num"
-            :min="disk.min"
-            :max="Math.min(Math.floor(getResetInfo(disk).reset / disk.disk_size)+disk.num,16)"
-            :step="1"
-            class="m-left10 m-right10"
-            @blur="FnCheckDataNum(disk)"
-            @change="FnChangeDataNum(disk)">
-          </el-input-number>
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
-        </el-form-item>
-          <span class="prompt_message data-prompt">
-            当前区域已购买
-            <span class="num_message">{{disk.default_disk_info.disk_feature}}  {{getResetInfo(disk).used}}  {{disk.default_disk_info.disk_unit}}</span>
-            ，还可以购买的容量额度为：<span class="num_message">{{getResetInfo(disk).reset}} {{disk.default_disk_info.disk_unit}}</span>
-          </span>
+              <!-- :max="FnGetSurplus + disk.num" 原先云盘数量的最大值 -->
+              <!-- {{disk.default_disk_info.disk_max}}--{{data.default_disk_info && data.default_disk_info.disk_feature ? showResetVolume[data.default_disk_info.disk_feature] : ''}} -->
+            {{data.default_system_info? disk.default_disk_info.disk_unit : 'GB' }}
+            <template v-if="disk.default_disk_info.disk_feature !== 'local'">
+              <span class="m-left10 m-right10">{{ disk.iops_show }}</span>
+              <span class="m-right10">{{ disk.throughput_show }}</span>
+            </template>
+          </el-form-item>
+          <el-form-item>
+            <el-input-number
+              v-model="disk.num"
+              :min="disk.min"
+              :max="getEveryMaxNum(disk)"
+              :step="1"
+              class="m-left10 m-right10"
+              @blur="FnCheckDataNum(disk)"
+              @change="FnChangeDataNum(disk)">
+            </el-input-number>
+            <!-- {{getEveryMaxNum(disk)}} -->
+          </el-form-item>
+          <el-form-item>
+            <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
+          </el-form-item>
+        </div>
+        <div class="prompt_message data-prompt" v-if="disk.default_disk_info.disk_feature!=='local'">
+          当前区域已购买
+          <span class="num_message">{{disk.default_disk_info.disk_feature}}  {{getResetInfo(disk).used}}  {{disk.default_disk_info.disk_unit}}</span>
+          ，还可以购买的容量额度为：<span :class="[getResetInfo(disk).reset >=0 ? 'num_message':'error_message']">{{Math.max(getResetInfo(disk).reset,0)}} {{disk.default_disk_info.disk_unit}}</span>
+        </div>
       </div>
-      
       <el-form-item :label="data_disk_list.length===0?'数据盘':''" v-if="data_disk_info.length > 0">
         <div class="disk-btn">
-          <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+          <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0 || Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
           还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
         </div>
@@ -161,11 +173,10 @@ export default class updateDisk extends Vue {
       feature:this.data_disk_info.map(item=>item.disk_feature),
     })
     if(res.code==='Success'){
+      this.showResetVolume={}
       for(let i in res.data){
           this.showResetVolume[i] = res.data[i].rest_volume;//各类型总剩余容量;
       }
-      // console.log("222",this.getReset()[this.data.default_system_info.disk_feature].reset)
-      // this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
       this.FnSysEmit()
     }
   }
@@ -211,42 +222,28 @@ export default class updateDisk extends Vue {
   }
 
   private get FnGetSurplus() {
-    let num:number=0
-    this.data_disk_list.map(item=>{
-      // console.log("num",num)
-      num+=Math.floor(this.getResetInfo(item).reset / item.disk_size) 
+    let reset_num:number=this.data_disk_list.length===0 ? 16 : 0;
+    let max_num:number = this.data_disk_list.length===0 ? 16 : 0;
+    this.data_disk_list.map(disk=>{
+      max_num+= Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num)  / disk.disk_size)
+      reset_num+= Math.floor(Math.max(this.getResetInfo(disk).reset,0) / disk.disk_size)
     })
-    return this.data_disk_list.length>0 ? Math.min((16 - this.FnGetDiskNum),num) : 16 - this.FnGetDiskNum
+    console.log('FnGetSurplus',reset_num,max_num,Math.min(16 - this.FnGetDiskNum,reset_num,max_num));
+    return Math.min(16 - this.FnGetDiskNum,reset_num,max_num)
+  }
+  private getEveryMaxNum(disk){
+    let reset_num:number = Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num) /  disk.disk_size)//剩余容量还可以创建多少块
+    return reset_num+disk.num>16 ? 16 : reset_num+disk.num
   }
   private get FnGetSystemIops() {
     return getIops(this.data.default_system_info, this.data.system_size)
   }
-  private getReset(){
-    let obj={};
-    if(this.data_disk_list.length===0){
-      // console.log('system_info',this.data.default_system_info.disk_feature);
-      
-      obj[this.data.default_system_info.disk_feature] = this.showResetVolume[this.data.default_system_info.disk_feature] - this.data.system_size
-    }else{
-      this.data_disk_list.map(item=>{
-        let systemUsed:number= this.data.default_system_info.disk_feature===item.default_disk_info.disk_feature ? this.data.system_size : 0
-        obj[item.default_disk_info.disk_feature] =this.showResetVolume[item.default_disk_info.disk_feature] - item.disk_size*item.num - systemUsed;
-      })
-      if(!obj[this.data.default_system_info.disk_feature]){
-        obj[this.data.default_system_info.disk_feature] =this.showResetVolume[this.data.default_system_info.disk_feature] -  this.data.system_size
-      }
-    }
-    // console.log('obj',obj);
-    
-    return obj
-  }
   private getResetInfo(disk){//获取剩余容量
     let systemUsed:number= this.data.default_system_info.disk_feature===disk.default_disk_info.disk_feature ? this.data.system_size : 0
     let used:number = disk.disk_size*disk.num + systemUsed;
-    let reset:number = this.showResetVolume[disk.default_disk_info.disk_feature] - used ;
-    // console.log("systemUsed",systemUsed,used,this.showResetVolume[disk.default_disk_info.disk_feature],reset)
+    let reset:number = this.showResetVolume[disk.default_disk_info.disk_feature] ? this.showResetVolume[disk.default_disk_info.disk_feature] - used : disk.default_disk_info.disk_max ;
     return {
-      reset:Math.max(reset,0),
+      reset,
       used,
     }
   }
@@ -255,11 +252,12 @@ export default class updateDisk extends Vue {
    return fil.map(item=>item.ecs_goods_id)
   }
   private FnAddDataDisk() {
-    if (this.FnGetSurplus == 0 || this.data_disk_info.length===0) {
+    if (this.FnGetSurplus == 0) {
       return
     }
+    //如果数据盘时系统盘则不符合上述条件
     let fil = this.data_disk_info.filter(item=>!this.data_disk_list.some(inn=>inn.default_disk_info.ecs_goods_id===item.ecs_goods_id))
-    if(fil.length===0){
+    if(fil.length===0){//系统盘符合此种条件
       return;
     }
     let data = {
@@ -275,8 +273,8 @@ export default class updateDisk extends Vue {
       min: 1,
       del: false
     }
-    // data.default_disk_info = this.data_disk_info[0] || {};
-    data.default_disk_info = fil[0] || {};
+    // data.default_disk_info = this.data_disk_info[0] || {};    
+    data.default_disk_info = {...fil[0],disk_max:this.showResetVolume[fil[0].disk_feature] ? Math.min(fil[0].disk_max,this.showResetVolume[fil[0].disk_feature]):fil[0].disk_max} || {};
     if ( !data.default_disk_info.disk_name ) {
       return
     }
@@ -297,27 +295,17 @@ export default class updateDisk extends Vue {
     disk.throughput_show = info.throughput_show;
     disk.storage_space = disk.disk_size;
   }
-  private get system_disk_max():number{
+  private get systemDiskMax():number{
+    let fil:any = this.system_disk_info.filter(item=>item.disk_feature===this.data.default_system_info.disk_feature);
+    let value:number=0
     if(this.system_disk_info.length===0){
-      return 0
-    }
-    let system = this.system_disk_info.filter(item=>item.disk_feature===this.data.default_system_info.disk_feature)[0]
-    console.log("sysytem",system)
-    if(this.data.default_system_info.disk_feature==='local'){
-      return system.disk_max
-    }
-    let fil = this.data_disk_list.filter(item=>item.default_disk_info.disk_feature===this.data.default_system_info.disk_feature);
-    if(fil.length===0){//数据盘为空,this.showResetVolume不及时
-    console.log("this.showResetVolume[this.data.default_system_info.disk_feature]",this.showResetVolume[this.data.default_system_info.disk_feature])
-    let res = this.showResetVolume[this.data.default_system_info.disk_feature] ? Math.min(this.showResetVolume[this.data.default_system_info.disk_feature],system.disk_max) : system.disk_max
-      console.log('res',res);
-      
-      return this.showResetVolume[this.data.default_system_info.disk_feature] ? Math.min(this.showResetVolume[this.data.default_system_info.disk_feature],system.disk_max) : system.disk_max
-    }else{
-      let used = fil[0].disk_size * fil[0].num;
-      console.log('used',used);
-      return this.showResetVolume[this.data.default_system_info.disk_feature] ? Math.max((Math.min(this.showResetVolume[this.data.default_system_info.disk_feature],system.disk_max)-used),this.data.system_size) : Math.max((system.disk_max-used),this.data.system_size)
-    }
+        value=0
+      }else if(Object.keys(this.showResetVolume).length===0 || !this.showResetVolume[fil[0].disk_feature]){//考虑本地盘的情况
+        value=fil[0].disk_max
+      }else{
+        value=Math.min(fil[0].disk_max,this.showResetVolume[fil[0].disk_feature])
+      }
+    return value
   }
   // 当容量输入框失焦时判断是否为空，为空则填充最小值
   private FnCheckSystemSize() {
@@ -328,38 +316,15 @@ export default class updateDisk extends Vue {
   }
   // 当系统盘容量改变时
   private FnChangeSystemSize() {
-    let reset:(number | undefined) = this.getReset()[this.data.default_system_info.disk_feature].reset;//除去剩余量
-    this.data.default_system_info.disk_max = !reset ? this.data.default_system_info.disk_max : Math.min(reset,this.data.default_system_info.disk_max)//剩余容量
     if (!this.data.system_size) {
-      return
+      this.data.system_size = this.data.system_disk_min;
+    }else{
+      let size:number = Math.min(this.systemDiskMax,this.data.system_size)
+      let step:number = Math.floor((size - this.data.system_disk_min) / this.data.default_system_info.disk_step)      
+      this.data.system_size = step*this.data.default_system_info.disk_step + this.data.system_disk_min 
     }
-    let temp:number = this.system_disk_max - this.data.system_disk_min
-
-    let newStep:number = Math.floor(temp / this.data.default_system_info.disk_step);
-    this.data.system_size= newStep*this.data.default_system_info.disk_step+this.data.system_disk_min;
-            
-    this.data_disk_list.map(item=>{
-      let systemUsed:number= this.data.default_system_info.disk_feature===item.default_disk_info.disk_feature ? this.data.system_size : 0
-      item.default_disk_info.disk_max = Math.min((this.showResetVolume[item.default_disk_info.disk_feature] - systemUsed),item.default_disk_info.disk_max)
-      item.num = (item.num*item.disk_size + systemUsed) > item.default_disk_info.disk_max ? 1 : item.num
-      return item;
-    })
     this.FnSysEmit()
   }
-  // private FnChangeSystemSize(disk:any) {
-  //   this.data.system_size = disk.size;
-  //   console.log("111")
-  //   let reset:(number | undefined) = this.getReset()[this.data.default_system_info.disk_feature].reset;
-  //   this.data.default_system_info.disk_max = !reset ? this.data.default_system_info.disk_max : Math.min(reset,this.data.default_system_info.disk_max)//剩余容量
-    
-  //   this.data_disk_list.map(item=>{
-  //     let systemUsed:number= this.data.default_system_info.disk_feature===item.default_disk_info.disk_feature ? this.data.system_size : 0
-  //     item.default_disk_info.disk_max = Math.min((this.showResetVolume[item.default_disk_info.disk_feature] - systemUsed),item.default_disk_info.disk_max)
-  //     item.num = (item.num*item.disk_size + systemUsed) > item.default_disk_info.disk_max ? 1 : item.num
-  //     return item;
-  //   })
-  //   this.FnSysEmit()
-  // }
   @Emit('fn-system-disk')
   private FnSysEmit() {
     return {
@@ -386,23 +351,19 @@ export default class updateDisk extends Vue {
   // }
   // 当数据盘容量改变时//E888925
   private FnChangeDataSize(disk:any) {
+    let obj = {}
     this.data_disk_list.map(item=>{
-      if(item.default_disk_info.ecs_goods_id===disk.ecs_goods_id){
+      if(item.default_disk_info.disk_feature===disk.disk_feature){
         item.disk_size = disk.size;
-        this.getResetInfo(item)
+        if(item.disk_size*item.num > item.default_disk_info.disk_max){
+          item.num=1
+        }
+        obj = item
+        return item;
       }
-      
-      let systemUsed:number= this.data.default_system_info.disk_feature===item.default_disk_info.disk_feature ? this.data.system_size : 0
-      item.default_disk_info.disk_max = Math.min((this.showResetVolume[item.default_disk_info.disk_feature] - systemUsed),item.default_disk_info.disk_max)
-      // console.log('FnChangeDataSize',item.default_disk_info.disk_max);
-      item.num = (item.num*item.disk_size + systemUsed) > item.default_disk_info.disk_max ? 1 : item.num
-      return item;
     })
-    // console.log('333',this.showResetVolume[this.data.default_system_info.disk_feature]);
-    // this.data.default_system_info.disk_max = Math.min(this.getReset()[this.data.default_system_info.disk_feature].reset,this.data.default_system_info.disk_max)//剩余容量
-    
-    //已经添加的data
-    this.FnGetDataIops({default_disk_info:disk})
+    console.log('FnChangeDataSize',obj);
+    this.FnGetDataIops(obj)
     this.FnDataEmit()
   }
   private FnCheckDataNum(disk) {
@@ -414,6 +375,11 @@ export default class updateDisk extends Vue {
   private FnChangeDataNum(disk) {
     if (!disk.num) {
       return
+    }
+    console.log('this.FnGetDiskNum',this.FnGetDiskNum)//超过16待解决
+    disk.num = this.FnGetDiskNum>16 ? this.FnGetDiskNum-17 : disk.num
+    if(this.FnGetDiskNum>16){      
+      return;
     }
     this.FnDataEmit()
   }
@@ -496,7 +462,10 @@ export default class updateDisk extends Vue {
     margin-left: 0;
   }
 }
-
+.data-prompt{
+  margin-left: 151px;
+  margin-top: -17px;
+}
 .short-select {
   .el-select {
     width: 170px;

@@ -5,16 +5,16 @@
       :title="'云盘详情'"
       :btnTitle="'返回'"
     >
-      <template>您目前拥有<span class="num_message"> {{$route.query.count}} </span>块云盘</template>
+      <template #left>您目前拥有<span class="num_message"> {{$route.query.count}} </span>块云盘</template>
     </back-header>
     <div class="base_info">
       <el-tabs type="card" v-model="active_key">
         <el-tab-pane label="基本信息" name="base_info">
-          <div class="operate-btn">
+          <!-- <div class="operate-btn">
             <el-button @click="operate('mount')" :disabled="!disk_info || disk_info.status!=='waiting' || disk_info.disk_type_display!=='数据盘'">挂载</el-button>
             <el-button @click="capacity" :disabled="!disk_info || !(disk_info.status==='waiting' || (disk_info.status==='running' && disk_info.ecs_status==='running'))">扩容</el-button>
             <el-button type="text" @click="get_disk_detail"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
-          </div>
+          </div> -->
           <el-card class="m-left20 m-right20">
             <el-descriptions :column="split_column">
               <el-descriptions-item label="云盘ID">{{disk_info.disk_id || '-'}}</el-descriptions-item>
@@ -23,7 +23,7 @@
                   <div class="disk-name">
                     <pre>{{disk_info.name || '-'}}</pre>
                   </div>
-                  <el-button type="text" class="btn" :disabled="!['waiting','running'].includes(disk_info.status)" @click="operate('edit_name')">修改</el-button>
+                  <!-- <el-button type="text" class="btn" :disabled="!['waiting','running'].includes(disk_info.status)" @click="operate('edit_name')">修改</el-button> -->
               </el-descriptions-item>
               <el-descriptions-item label="可用区">{{disk_info.az_name || '-'}}</el-descriptions-item>
               <el-descriptions-item label="云盘类型">{{disk_info.feature+'云盘' || '-'}}</el-descriptions-item>
@@ -45,17 +45,17 @@
               <el-descriptions-item label="所挂载的实例名称"><pre>{{disk_info.ecs_name || '-'}}</pre></el-descriptions-item>
               <el-descriptions-item label="云盘是否随实例删除">
                 {{disk_info.is_follow_delete ? '是' : '否'}}
-                  <el-button type="text" class="btn" :disabled="disk_info.status!=='running' || disk_info.disk_type_display==='系统盘'" @click="operate('edit_attr')">修改</el-button>
+                  <!-- <el-button type="text" class="btn" :disabled="disk_info.status!=='running' || disk_info.disk_type_display==='系统盘'" @click="operate('edit_attr')">修改</el-button> -->
               </el-descriptions-item>
               <el-descriptions-item label="硬盘设备名">{{disk_info.mount_path || '-'}}</el-descriptions-item>
             </el-descriptions>
           </el-card>
           
         </el-tab-pane>
-        <el-tab-pane label="监控" name="monitor">
+        <el-tab-pane label="监控" name="monitor" v-if="disk_info.mount_path">
             <monitor
                 :info="disk_info"
-                v-if="active_key==='monitor'"
+                v-if="active_key==='monitor'&& disk_info.status==='running'"
             >
           </monitor>
 

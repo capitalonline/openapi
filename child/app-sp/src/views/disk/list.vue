@@ -353,7 +353,7 @@ export default class extends Vue {
     this.$router.push('/disk/create')
   }
   private detail(){
-    this.$router.push({path:'/disk/detail',query:{disk_id:this.mount_id[0].disk_id}})
+    this.$router.push({path:'/disk/detail',query:{disk_id:this.mount_id[0].disk_id,count:1}})
   }
   private operateRecord(obj:any){
     this.FnClearTimer();
