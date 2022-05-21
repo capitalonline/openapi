@@ -71,6 +71,7 @@
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="{label:'detail',value:scope.row}">详情</el-dropdown-item>
               <el-dropdown-item v-for="item in operateBtns.slice(1)" :key="item.value" :command="{label:item.value,value:scope.row}" :disabled="!limit_disk_operate(item.value,scope.row)">{{item.label}}</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>
@@ -350,6 +351,9 @@ export default class extends Vue {
   }
   private disk_create(){
     this.$router.push('/disk/create')
+  }
+  private detail(){
+    this.$router.push({path:'/disk/detail',query:{disk_id:this.mount_id[0].disk_id}})
   }
   private operateRecord(obj:any){
     this.FnClearTimer();

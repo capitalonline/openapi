@@ -64,6 +64,12 @@ const routes: RouteConfig[] = [
     meta:{menu:'disk_list'}
   },
   {
+    path:'/disk/detail',
+    name:'disk_detail',
+    component:()=>import('../views/disk/detail.vue'),
+    meta:{menu:'disk_list'}
+  },
+  {
     path:'/physical',
     name:'physical_list',
     component:()=>import('../views/physical/list.vue'),
