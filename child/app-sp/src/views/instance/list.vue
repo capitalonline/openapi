@@ -128,7 +128,7 @@
             <span
               class="circel-border"
               v-if="
-                scope.row.eip_info[scope.row.pub_net] &&
+                scope.row.pub_net && scope.row.eip_info[scope.row.pub_net] &&
                   scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
@@ -246,15 +246,15 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
+          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
+            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
+          </el-tooltip>
           <el-button
             type="text"
-            :disabled="
-              scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')
-            "
+            v-else
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button
           >
-          
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->

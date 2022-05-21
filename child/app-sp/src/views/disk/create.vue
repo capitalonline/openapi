@@ -287,9 +287,9 @@ export default class CreateDisk extends Vue{
         amount:{label:'购买数量：',value:'1'},
         fee:{label:'计费方式',value:'按需计费'},
     }
-    async mounted() {
+    mounted() {
         const form = this.$refs.form as Form
-        await form.validate()
+        form.validate()
         
     }
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
@@ -609,6 +609,9 @@ export default class CreateDisk extends Vue{
     }
     //监听容量改变
     private async change_capacity(id){
+        if(!this.data_disk_info){
+            return;
+        }
         await this.$nextTick(()=>{
             this.form_data.disk_list.map(item=>{
             if(item.ecs_goods_id===id){
