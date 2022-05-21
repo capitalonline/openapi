@@ -96,22 +96,18 @@ export default class updateOs extends Vue{
       return []
     }
     let fil:any= list.filter(item => {
-      if (this.is_gpu) {
-        if(item.support_type.includes('gpu') && item.support_type.includes('cpu') && item.support_gpu_driver == this.support_gpu_driver){
-          console.log('aaa');
-          
-          return item
-        }else{
-          console.log('bbb');
+      if(item.support_type.includes('gpu') && item.support_type.includes('cpu')){
+        return item;
+      }else{
+        if (this.is_gpu) {
           return item.support_type.includes('gpu') && item.support_gpu_driver == this.support_gpu_driver
+        } else {
+          return item.support_type.includes('cpu') && item.support_gpu_driver == this.support_gpu_driver
         }
-      } else {
-        console.log('ccc');
-        return item.support_type.includes('cpu') && item.support_gpu_driver == this.support_gpu_driver
       }
+      
     })
     console.log('FnHandleOsList',fil);
-    
     return fil
   }
 
