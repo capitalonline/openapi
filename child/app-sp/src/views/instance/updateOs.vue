@@ -107,7 +107,6 @@ export default class updateOs extends Vue{
       }
       
     })
-    console.log('FnHandleOsList',fil);
     return fil
   }
 
