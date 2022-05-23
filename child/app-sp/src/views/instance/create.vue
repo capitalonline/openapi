@@ -335,7 +335,7 @@ export default class App extends Vue {
       this.FnGetLimitNum()
       this.FnGetPrice('spec')
     } else {
-      this.ecs_spec_info = data; // 当kvm和gpu类型相互交换时，由系统盘改变触发算价
+      this.ecs_spec_info = data; // 当cpu和gpu类型相互交换时，由系统盘改变触发算价
     }
   }
 

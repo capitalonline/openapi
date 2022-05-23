@@ -41,6 +41,7 @@ export default class updateOs extends Vue{
   @Prop({default: ''}) private customer_id!: string;
   @Prop({default: 0}) private is_gpu!: 0|1;
   @Prop({default: ''}) private support_gpu_driver!: string;
+  @Prop({default: ''}) private default_os_type!: string;
 
   private os_list = {};
   private default_os_template_type = {
@@ -81,6 +82,9 @@ export default class updateOs extends Vue{
     }
   }
   private FnHandleInitData() {
+    if (this.default_os_type) {
+      this.default_os_template_type.os_template_type = this.default_os_type;
+    }
     if (this.default_os_template_type.os_template_type === Object.keys(this.os_list)[0]) {
       this.FnChangeOsTemType(this.default_os_template_type.os_template_type)
     } else {
@@ -91,13 +95,19 @@ export default class updateOs extends Vue{
     if (!list || list.length === 0) {
       return []
     }
-    return list.filter(item => {
-      if (this.is_gpu) {
-        return item.support_type.includes('gpu') && item.support_gpu_driver == this.support_gpu_driver
-      } else {
-        return item.support_type.includes('kvm') && item.support_gpu_driver == this.support_gpu_driver
+    let fil:any= list.filter(item => {
+      if(item.support_type.includes('gpu') && item.support_type.includes('cpu')){
+        return item;
+      }else{
+        if (this.is_gpu) {
+          return item.support_type.includes('gpu') && item.support_gpu_driver == this.support_gpu_driver
+        } else {
+          return item.support_type.includes('cpu') && item.support_gpu_driver == this.support_gpu_driver
+        }
       }
+      
     })
+    return fil
   }
 
   @Emit('fn-os')
@@ -131,7 +141,15 @@ export default class updateOs extends Vue{
 
   @Watch('default_os_template_type.os_template_type')
   private FnChangeOsTemType(newVal) {
-    this.default_os_template_type.os_types = this.os_list[newVal].os_types;
+    if (this.default_os_type) {
+      if (this.default_os_type.toLowerCase() === 'windows') {
+        this.default_os_template_type.os_types = this.os_list[newVal].os_types.filter(item=> item === this.default_os_type);
+      } else {
+        this.default_os_template_type.os_types = this.os_list[newVal].os_types.filter(item=> item.toLowerCase() != 'windows');
+      }
+    } else {
+      this.default_os_template_type.os_types = this.os_list[newVal].os_types;
+    }
     this.default_os_template_type.os_versions = this.os_list[newVal].os_versions;
     if (this.data.default_os_type !== this.default_os_template_type.os_types[0]) {
       this.data.default_os_type = this.default_os_template_type.os_types[0];

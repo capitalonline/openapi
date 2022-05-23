@@ -88,6 +88,12 @@ const routes: RouteConfig[] = [
     meta:{menu:'mirror_list'}
   },
   {
+    path:'/privateMirror',
+    name:'private_mirror_list',
+    component:()=>import('../views/mirror/privateMirror.vue'),
+    meta:{menu:'private_mirror_list'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),

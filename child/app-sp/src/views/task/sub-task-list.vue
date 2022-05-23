@@ -271,7 +271,7 @@ export default class App extends Vue {
     this.default_dependent_params = {};
     let serial_set_sub_params = [];
     for (let key in dependent_params) {
-      if (this.sub_config.serial_set_key === key) {
+      if (this.sub_config.serial_set_key === key && this.sub_config.is_series) {
         serial_set_sub_params = dependent_params[key];
       }
       else {
