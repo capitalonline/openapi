@@ -130,12 +130,12 @@
                                     <el-option v-for="item in disk_type_list" :key="item.ecs_goods_id" :label="item.disk_value" :value="item.ecs_goods_id"></el-option>
                                 </el-select>
                                 <div class="prompt_message">当前区域已购买
-                                    <span class="num_message">{{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_feature : ''}}</span>
+                                    <span class="num_message">{{data_disk_info && data_disk_info[inn.ecs_goods_id] ? data_disk_info[inn.ecs_goods_id].disk_feature : ''}}</span>
                                     <span class="num_message"> {{inn ? inn.disk_size*inn.amount : 0}}</span> 
-                                    {{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}，还可以购买的容量额度为：
+                                    {{data_disk_info && data_disk_info[inn.ecs_goods_id] ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}，还可以购买的容量额度为：
                                     <!-- <span class="num_message">{{data_disk_info && (showResetVolume[data_disk_info[inn.ecs_goods_id].disk_feature] - inn.disk_size*inn.amount)>=0 ? (showResetVolume[data_disk_info[inn.ecs_goods_id].disk_feature] - inn.disk_size*inn.amount) : 0}}</span>  -->
                                     <span class="num_message">{{getResetInfo(inn.ecs_goods_id,inn.disk_size,inn.amount).capacity}}</span>
-                                    {{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
+                                    {{data_disk_info && data_disk_info[inn.ecs_goods_id] ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
                                 </div>
                             </el-form-item>
                             <el-form-item
@@ -158,9 +158,9 @@
                                     @change="change_capacity(inn.ecs_goods_id)"
                                 >
                                 </el-input-number> -->
-                                &nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
-                                <span class="m-left20">IOPS: {{inn.iops}}&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].iops_unit : 'IOPS'}}</span>
-                                <span class="m-left20">带宽： {{inn.throughput}}&nbsp;{{data_disk_info ? data_disk_info[inn.ecs_goods_id].throughput_unit : 'MB/s'}}</span>
+                                &nbsp;{{data_disk_info && data_disk_info[inn.ecs_goods_id] ? data_disk_info[inn.ecs_goods_id].disk_unit : 'GB'}}
+                                <span class="m-left20">IOPS: {{inn.iops}}&nbsp;{{data_disk_info && data_disk_info[inn.ecs_goods_id]? data_disk_info[inn.ecs_goods_id].iops_unit : 'IOPS'}}</span>
+                                <span class="m-left20">带宽： {{inn.throughput}}&nbsp;{{data_disk_info && data_disk_info[inn.ecs_goods_id] ? data_disk_info[inn.ecs_goods_id].throughput_unit : 'MB/s'}}</span>
                             </el-form-item>
                         </div>
                         <el-form-item
@@ -177,7 +177,7 @@
                                 @change="changeNum(index,inn.amount)"
                             >
                             </el-input-number>&nbsp;块
-                            <div class="prompt_message">还可以挂载&nbsp;
+                            <div class="prompt_message" v-if="form_data.isMounted==='1'">还可以挂载&nbsp;
                                 <span class="num_message">{{getResetInfo(inn.ecs_goods_id,inn.disk_size,inn.amount).num}}</span>
                                 <!-- <span class="num_message">{{data_disk_info && (showResetVolume[data_disk_info[inn.ecs_goods_id].disk_feature] - inn.disk_size*inn.amount)>=0 ? Math.floor((showResetVolume[data_disk_info[inn.ecs_goods_id].disk_feature] - inn.disk_size*inn.amount)/inn.disk_size) : 0}}</span> -->
                                 &nbsp;块盘， 已挂载&nbsp;<span class="num_message">{{inn.amount}}</span>&nbsp;块盘</div>
@@ -205,7 +205,7 @@
                     </div>
                     <div class="config-info" v-for="(item,key) in config_info" :key="key">
                         <div>{{item.label}}</div>
-                        <div v-if="key==='disk'">
+                        <!-- <div v-if="key==='disk'">
                             <div v-if="getDiskConfigInfo().hdd > 0">
                                 <span>HDD云盘  </span>
                                 <span>{{getDiskConfigInfo().hdd}}GB</span>
@@ -215,8 +215,8 @@
                                 <span>{{getDiskConfigInfo().ssd}}GB</span>
                             </div>
                             <div class="num_message text-right" v-if="getDiskConfigInfo().ssd > 0 || getDiskConfigInfo().hdd > 0">{{total_price}}</div>
-                        </div>
-                        <div v-else-if="key==='ecs_name'" :class="[item.value==='--' ? '' : 'clickble']" @click="goToDetail(item.value)">{{item.value}}</div>
+                        </div> -->
+                        <div v-if="key==='ecs_name'" :class="[item.value==='--' ? '' : 'clickble']" @click="goToDetail(item.value)">{{item.value}}</div>
                         <div v-else>{{item.value}}</div>
                     </div>
                 </el-card>
@@ -283,7 +283,7 @@ export default class CreateDisk extends Vue{
             {
                 disk_name:'',
                 ecs_goods_id:'',
-                disk_size:128,
+                disk_size:0,
                 amount:1,
                 iops:2824,
                 throughput:96,
@@ -470,16 +470,6 @@ export default class CreateDisk extends Vue{
                 this.data_disk_info = Object.assign({},this.data_disk_info,{[item.ecs_goods_id]:item});
             })
             this.get_disk_limit(ids);
-            let fil = this.disk_type_list.filter(item=>item.disk_feature==="SSD");
-            if(fil.length===0 || this.showResetVolume[fil[0].disk_feature]<fil[0].disk_min){
-                fil = [this.disk_type_list[0]]
-            }            
-            this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
-                item.ecs_goods_id = fil[0].ecs_goods_id;
-                item.disk_feature = fil[0].disk_feature;
-                this.change_type(item.ecs_goods_id,index)
-                return item;
-            })}
         }
     }
     //获取云盘各类型剩余可使用额度
@@ -491,10 +481,22 @@ export default class CreateDisk extends Vue{
             feature:type,
         })
         if(res.code==='Success'){
+            this.showResetVolume={}
             for(let i in res.data){
                 this.showResetVolume[i] = res.data[i].rest_volume;//各类型总剩余容量;
             }
-            
+            this.$nextTick(()=>{
+                let fil = this.disk_type_list.filter(item=>item.disk_feature==="SSD");
+                if(fil.length===0){
+                    fil = [this.disk_type_list[0]]
+                }            
+                this.form_data={...this.form_data,disk_list:this.form_data.disk_list.map((item,index)=>{
+                    item.ecs_goods_id = fil[0].ecs_goods_id;
+                    item.disk_feature = fil[0].disk_feature;
+                    this.change_type(item.ecs_goods_id,index)
+                    return item;
+                })}
+            });
             // this.showResetVolume[type] = res.data.rest_volume;//显示当前可使用容量;
             // this.showResetVolume['HDD'] = 18;
             // this.showResetVolume['SSD'] = 101;
@@ -504,14 +506,12 @@ export default class CreateDisk extends Vue{
     private getResetInfo(id:string,disk_size:number,amount:number):any{
         let capacity:number=0;
         let num:number=0
-        if(!this.data_disk_info || Object.keys(this.data_disk_info).length===0 || this.showResetVolume[this.data_disk_info[id].disk_feature]<=0){
-            capacity=0;
-            num=0;
-        }else{
-            let reset:number = this.showResetVolume[this.data_disk_info[id].disk_feature] - disk_size*amount
-             capacity = reset>0 ? reset : 0;
-             num = reset>0 ? this.disk_total>Math.floor(reset/disk_size) ? Math.floor(reset/disk_size) :this.disk_total : 0
-        }
+        if(this.data_disk_info && this.data_disk_info[id] && this.showResetVolume[this.data_disk_info[id].disk_feature]>0){
+            let reset:number =Math.min(this.data_disk_info[id].disk_max,this.showResetVolume[this.data_disk_info[id].disk_feature]) - disk_size*amount
+             capacity = reset;
+             num = reset>0 ? this.disk_total>Math.floor(reset/disk_size) ? Math.floor(reset/disk_size) :this.disk_total - amount : 0;
+             this.config_info.disk.value=`${this.data_disk_info[id].disk_feature} | ${disk_size*amount}GB`
+        } 
         return {
             capacity,
             num

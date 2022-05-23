@@ -86,7 +86,7 @@
       </div>
       <el-form-item :label="data_disk_list.length===0?'数据盘':''" v-if="data_disk_info.length > 0">
         <div class="disk-btn">
-          <el-button type="text" @click="FnAddDataDisk" :disabled="FnGetSurplus === 0 || Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+          <el-button type="text" @click="FnAddDataDisk" :disabled="Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
           还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
         </div>
@@ -232,8 +232,9 @@ export default class updateDisk extends Vue {
     return Math.min(16 - this.FnGetDiskNum,reset_num,max_num)
   }
   private getEveryMaxNum(disk){
-    let reset_num:number = Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num) /  disk.disk_size)//剩余容量还可以创建多少块
-    return reset_num+disk.num>16 ? 16 : reset_num+disk.num
+    let systemUsed:number= this.data.default_system_info.disk_feature===disk.default_disk_info.disk_feature ? this.data.system_size : 0
+    let reset_num:number = Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num - systemUsed) /  disk.disk_size)//剩余容量还可以创建多少块
+    return (reset_num >16-this.FnGetDiskNum) ? 16-this.FnGetDiskNum+disk.num : reset_num+disk.num
   }
   private get FnGetSystemIops() {
     return getIops(this.data.default_system_info, this.data.system_size)
@@ -252,9 +253,9 @@ export default class updateDisk extends Vue {
    return fil.map(item=>item.ecs_goods_id)
   }
   private FnAddDataDisk() {
-    if (this.FnGetSurplus == 0) {
-      return
-    }
+    // if (this.FnGetSurplus == 0) {
+    //   return
+    // }
     //如果数据盘时系统盘则不符合上述条件
     let fil = this.data_disk_info.filter(item=>!this.data_disk_list.some(inn=>inn.default_disk_info.ecs_goods_id===item.ecs_goods_id))
     if(fil.length===0){//系统盘符合此种条件
@@ -362,7 +363,7 @@ export default class updateDisk extends Vue {
         return item;
       }
     })
-    console.log('FnChangeDataSize',obj);
+    // this.getEveryMaxNum(obj)
     this.FnGetDataIops(obj)
     this.FnDataEmit()
   }
@@ -375,11 +376,6 @@ export default class updateDisk extends Vue {
   private FnChangeDataNum(disk) {
     if (!disk.num) {
       return
-    }
-    console.log('this.FnGetDiskNum',this.FnGetDiskNum)//超过16待解决
-    disk.num = this.FnGetDiskNum>16 ? this.FnGetDiskNum-17 : disk.num
-    if(this.FnGetDiskNum>16){      
-      return;
     }
     this.FnDataEmit()
   }

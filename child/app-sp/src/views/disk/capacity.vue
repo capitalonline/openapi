@@ -317,6 +317,7 @@ export default class Capacity extends Vue{
         let res:any=await Service.expansion({
             customer_id:this.capacity_list[0].customer_id,
             expansion_info: expansion_info,
+            az_id:this.capacity_list[0].az_id,
             disk_ids:this.capacity_list.map(item=>item.disk_id),
             billing_info:bill_info
 
