@@ -119,7 +119,8 @@
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
-        :all_item="all_column_item"
+        :all_item="all_item"
+        :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
       <!-- :all_item="all_item" -->
@@ -163,7 +164,7 @@ export default class PhysicalList extends Vue {
   $route;
   $store;
   private search_option:any={
-    az_id:{placeholder:'请选择可用区',list:[]},
+    // az_id:{placeholder:'请选择可用区',list:[]},
     pod_name:{placeholder:'请输入POD名称'},
     room:{placeholder:'请选择机房',list:[]},
     host_name:{placeholder:'请输入主机名称'},
@@ -236,7 +237,7 @@ export default class PhysicalList extends Vue {
   private host_uses=[];
   private host_source=[];
   private all_column_item=[];
-  // private all_item:Array<any>=[];
+  private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[
@@ -266,7 +267,7 @@ export default class PhysicalList extends Vue {
   created() {
       this.get_host_list_field()
       this.get_room_list()
-      this.get_az_list()
+      // this.get_az_list()
       this.get_status_list()
       // this.fn_search();
       this.get_host_attribution()
@@ -311,14 +312,13 @@ export default class PhysicalList extends Vue {
     if(res.code==="Success"){
       let key_list=['field_name','show_name'];
       let label_list=['prop','label'];
-      // let list:Array<any>=[]
-      // res.data.map(item=>{
-      //   list=[...list,...item.filed];
-      //   return item;
-      // })
-      // this.all_item = res.data;
-      // this.all_column_item = deal_list(list,label_list,key_list);
-      this.all_column_item = deal_list(res.data,label_list,key_list);
+      let list:Array<any>=[]
+      res.data.map(item=>{
+        list=[...list,...item.filed];
+        return item;
+      })
+      this.all_item = res.data;
+      this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
       this.get_custom_columns(this.$store.state.custom_host)
 
@@ -372,7 +372,6 @@ export default class PhysicalList extends Vue {
   }
   private async get_physical_list(){
     const {
-      az_id,
       bare_metal_id,
       pod_name,
       room,
@@ -393,7 +392,7 @@ export default class PhysicalList extends Vue {
       create_time
     }=this.search_data
     let res:any=await Service.get_host_list({
-      az_id,
+      az_id:this.$store.state.pod_id,
       pod_name,
       machine_room_name:room,
       host_name,
@@ -502,16 +501,16 @@ export default class PhysicalList extends Vue {
     let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
     window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
-  private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
-    if(res.code==="Success"){
-      res.data.forEach(item=>{
-        item.region_list.forEach(inn=>{
-          this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
-        })
-      })
-    }
-  }
+  // private async get_az_list(){
+  //   let res:any=await EcsService.get_region_az_list({})
+  //   if(res.code==="Success"){
+  //     res.data.forEach(item=>{
+  //       item.region_list.forEach(inn=>{
+  //         this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+  //       })
+  //     })
+  //   }
+  // }
   private async get_room_list(){
     let res:any=await Service.get_room_list({})
     if(res.code==="Success"){
@@ -627,7 +626,7 @@ export default class PhysicalList extends Vue {
       let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
       let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
       let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
-      if(!vm_flag && ['shutdown_host','restart_host'].includes(val)){
+      if(!vm_flag && ['shutdown_host'].includes(val)){
         this.error_msg[val]=getHostStatus(val).msg2
       }else{
         this.error_msg[val]=getHostStatus(val).msg
