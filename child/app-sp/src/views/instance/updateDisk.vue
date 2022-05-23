@@ -86,7 +86,7 @@
       </div>
       <el-form-item :label="data_disk_list.length===0?'数据盘':''" v-if="data_disk_info.length > 0">
         <div class="disk-btn">
-          <el-button type="text" @click="FnAddDataDisk" :disabled="Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+          <el-button type="text" @click="FnAddDataDisk" :disabled="data_disk_list.some(item=>item.num===16) ||Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
           还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
         </div>
