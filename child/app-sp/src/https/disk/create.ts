@@ -23,5 +23,8 @@ export default{
     get_disk_limit(req) {
         return service(getEcsOptions('POST', '/ebs/get_disk_limit/', req))
     },
-    
+    //获取云盘详情
+    get_disk_detail(req) {
+        return service(getEcsOptions('GET', '/ebs/get_disk_detail/', req))
+    },
 }
