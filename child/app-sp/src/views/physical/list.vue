@@ -164,7 +164,7 @@ export default class PhysicalList extends Vue {
   $route;
   $store;
   private search_option:any={
-    // az_id:{placeholder:'请选择可用区',list:[]},
+    az_id:{placeholder:'请选择可用区',list:[]},
     pod_name:{placeholder:'请输入POD名称'},
     room:{placeholder:'请选择机房',list:[]},
     host_name:{placeholder:'请输入主机名称'},
@@ -267,7 +267,7 @@ export default class PhysicalList extends Vue {
   created() {
       this.get_host_list_field()
       this.get_room_list()
-      // this.get_az_list()
+      this.get_az_list()
       this.get_status_list()
       // this.fn_search();
       this.get_host_attribution()
@@ -372,6 +372,7 @@ export default class PhysicalList extends Vue {
   }
   private async get_physical_list(){
     const {
+      az_id,
       bare_metal_id,
       pod_name,
       room,
@@ -392,7 +393,8 @@ export default class PhysicalList extends Vue {
       create_time
     }=this.search_data
     let res:any=await Service.get_host_list({
-      az_id:this.$store.state.pod_id,
+      // az_id:this.$store.state.pod_id,
+      az_id,
       pod_name,
       machine_room_name:room,
       host_name,
@@ -501,16 +503,16 @@ export default class PhysicalList extends Vue {
     let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
     window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
-  // private async get_az_list(){
-  //   let res:any=await EcsService.get_region_az_list({})
-  //   if(res.code==="Success"){
-  //     res.data.forEach(item=>{
-  //       item.region_list.forEach(inn=>{
-  //         this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
-  //       })
-  //     })
-  //   }
-  // }
+  private async get_az_list(){
+    let res:any=await EcsService.get_region_az_list({})
+    if(res.code==="Success"){
+      res.data.forEach(item=>{
+        item.region_list.forEach(inn=>{
+          this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+        })
+      })
+    }
+  }
   private async get_room_list(){
     let res:any=await Service.get_room_list({})
     if(res.code==="Success"){
