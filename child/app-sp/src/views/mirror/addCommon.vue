@@ -157,7 +157,7 @@ export default class AddCommon extends Vue{
         os_bit:this.oper_info.os_bit ? this.oper_info.os_bit+'位' : this.bit_list[0].id,
         customer_ids:'',
         size:this.oper_info.os_id ? this.oper_info.size : 20,
-        az_id:this.oper_info.az_id ? this.oper_info.az_id : '',
+        az_id:this.oper_info.az_list ? this.oper_info.az_list[0] : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
@@ -255,10 +255,10 @@ export default class AddCommon extends Vue{
 //     }
 //   }
     private before_upload(file){
-        console.log("before_upload",file)
+        // console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
-        console.log("response",response)
+        // console.log("response",response)
     }
     @Watch('form_data.os_type')
     private watch_os_type(nv){
