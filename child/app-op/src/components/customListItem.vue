@@ -6,7 +6,7 @@
         <div class="label">{{n.name}}</div>
         <div class="checkbox-box">
           <el-checkbox-group v-model="select_item">
-            <el-checkbox v-for="item in n.filed" :key="item.show_name" :label="item.show_name" :disabled="item.show_name==='主机名'"></el-checkbox>
+            <el-checkbox v-for="item in n.filed" :key="item.show_name" :label="item.show_name" :disabled="item.show_name==='主机名'|| item.show_name==='云服务器ID'"></el-checkbox>
           </el-checkbox-group>
         </div>
       </template>
@@ -100,9 +100,13 @@ export default class CustomListItem extends Vue {
   padding: 18px;
   margin-bottom: 18px;
   border: 1px solid #dde2ef;
-  .el-checkbox {
-    width: 26%;
-    margin-bottom: 10px;
+  .el-checkbox-group{
+    width: 100%;
+    .el-checkbox {
+      width: 26%;
+      margin-bottom: 10px;
+    }
   }
+  
 }
 </style>

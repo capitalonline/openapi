@@ -61,5 +61,9 @@ export default {
       paramsSerializer: params => qs.stringify(params),
       responseType: 'blob'
     })
-  }
+  },
+  //获取自定义列表项
+  get_list_field() {
+    return service(getEcsOptions('POST', '/ecs/get_ecs_list_field/'))
+  },
 }
