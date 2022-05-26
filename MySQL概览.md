@@ -1330,28 +1330,56 @@ def delete_mysql(instance_uuid, ):
 
 **返回参数：**
 
-| 参数名           | 类型   | 说明                                                         |
-| :--------------- | :----- | ------------------------------------------------------------ |
-| Message          | string | 信息描述                                                     |
-| Code             | string | 状态码                                                       |
-| Data             | dict   | 数据                                                         |
-| SubProductName   | string | 子产品的名称                                                 |
-| Version          | string | 产品支持的版本                                               |
-| Architectures    | string | 产品支持的架构                                               |
-| ArchitectureName | string | 架构名称                                                     |
-| ProductId        | string | 产品的id                                                     |
-| ProductType      | string | 产品类型                                                     |
-| ComputeRoles     | list   | 支持的计算类型，不通的类型支持不通的规格和支持的添加不通类型的硬盘 |
-| Standards        | dict   | 该类型支持的规格                                             |
-| CpuRam           | list   | 支持的规格信息，以及以下商品规格支持的磁盘类型               |
-| PaasGoodsId      | int    | 具体的产品编号，用户确定购买哪一种规格(创建服务时候使用)     |
-| AttachDisk       | list   | 该类型规格能够添加的磁盘类型                                 |
-| DiskMax          | int    | 单次支持最大规格的磁盘                                       |
-| DiskValue        | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
-| AttachDisk       | string | 该类型规格能够添加的磁盘类型                                 |
-| BasicIops        | string | 基础的磁盘的iops                                             |
-| DiskUnit         | string | 磁盘规格                                                     |
-| DiskName         | string | 磁盘类型名称                                                 |
+| 参数名  | 类型                                | 说明                                                   |
+| ------- | ----------------------------------- | ------------------------------------------------------ |
+| Code    | string                              | 状态码                                                 |
+| Data    | [DataObj](#查询只读实例规格DataObj) | 可购买的MySQL只读实例规格数据对象                      |
+| Message | string                              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+
+#### 查询只读实例规格DataObj
+
+| 参数名           | 类型                                                        | 说明                                                         |
+| ---------------- | ----------------------------------------------------------- | ------------------------------------------------------------ |
+| ArchitectureName | string                                                      | 架构名称                                                     |
+| ComputeRoles     | list of [ComputeRolesObj](#查询只读实例规格ComputeRolesObj) | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
+| SubProductName   | string                                                      | 子产品名称，比如：MySQL 只读实例                             |
+| Version          | string                                                      | 产品支持的版本                                               |
+
+#### 查询只读实例规格ComputeRolesObj
+
+| 参数名      | 类型                                        | 说明                        |
+| ----------- | ------------------------------------------- | --------------------------- |
+| ComputeName | string                                      | 计算类型名称， 比如：通用型 |
+| Standards   | [StandardObj](#查询只读实例规格StandardObj) | 该类型支持的规格            |
+
+#### 查询只读实例规格StandardObj
+
+| 参数名     | 类型                                                    | 说明                             |
+| ---------- | ------------------------------------------------------- | -------------------------------- |
+| AttachDisk | list of [AttachDiskObj](#查询只读实例规格AttachDiskObj) | 该类型规格能够添加的磁盘类型列表 |
+| CpuRam     | list of [CpuRamObj](#查询只读实例规格CpuRamObj)         | 支持的规格列表                   |
+
+#### 查询只读实例规格AttachDiskObj
+
+| 参数名        | 类型   | 说明                                                         |
+| ------------- | ------ | ------------------------------------------------------------ |
+| BasicIops     | string | 基础的磁盘的iops                                             |
+| DiskMax       | int    | 单次支持扩容到最大磁盘容量为2000                             |
+| DiskMaxExpand | int    | 磁盘最大可扩容大小                                           |
+| DiskMin       | int    | 磁盘容量支持的最小值，起步为100                              |
+| DiskName      | string | 磁盘类型名称，包含SSD和性能型 SSD：SSD磁盘，磁盘IOPS默认为5000，可购买IOPS性能包 性能型：普通SSD盘，磁盘IOPS限定在3000 |
+| DiskStep      | int    | 磁盘扩容步长，步长大小=100                                   |
+| DiskUnit      | string | 磁盘容量单位：GB                                             |
+| DiskValue     | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用      |
+
+#### 查询只读实例规格CpuRamObj
+
+| 参数名      | 类型   | 说明                                           |
+| ----------- | ------ | ---------------------------------------------- |
+| CPU         | int    | 核心数量，单位：个                             |
+| Name        | string | 规格名称                                       |
+| PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
+| RAM         | int    | 内存大小，单位：GB                             |
 
 **请求示例：**
 
@@ -1379,42 +1407,66 @@ def get_mysql_modifiable_spec(instance_uuid):
 {
     "Code": "Success",
     "Data": {
-        "AttachDisk": [{
-            "BasicIops": "3000",
-            "DiskMax": 2000,
-            "DiskMaxExpand": 2000,
-            "DiskMin": 100,
-            "DiskName": "性能型",
-            "DiskStep": 100,
-            "DiskUnit": "G",
-            "DiskValue": "high_disk"
+        "ArchitectureName": "主从",
+        "ComputeRoles": [{
+            "ComputeName": "通用型",
+            "Standards": {
+                "AttachDisk": [{
+                    "BasicIops": "",
+                    "DiskMax": 4000,
+                    "DiskMaxExpand": 2000,
+                    "DiskMin": 100,
+                    "DiskName": "SSD",
+                    "DiskStep": 100,
+                    "DiskUnit": "G",
+                    "DiskValue": "ssd_disk"
+                }, {
+                    "BasicIops": "",
+                    "DiskMax": 4000,
+                    "DiskMaxExpand": 2000,
+                    "DiskMin": 100,
+                    "DiskName": "性能型",
+                    "DiskStep": 100,
+                    "DiskUnit": "G",
+                    "DiskValue": "high_disk"
+                }],
+                "CpuRam": [{
+                    "CPU": 2,
+                    "Name": "2C4G",
+                    "PaasGoodsId": 15686,
+                    "RAM": 4
+                }, {
+                    "CPU": 4,
+                    "Name": "4C8G",
+                    "PaasGoodsId": 15688,
+                    "RAM": 8
+                }, {
+                    "CPU": 4,
+                    "Name": "4C16G",
+                    "PaasGoodsId": 15690,
+                    "RAM": 16
+                }, {
+                    "CPU": 8,
+                    "Name": "8C16G",
+                    "PaasGoodsId": 15692,
+                    "RAM": 16
+                }, {
+                    "CPU": 8,
+                    "Name": "8C32G",
+                    "PaasGoodsId": 15694,
+                    "RAM": 32
+                }, {
+                    "CPU": 16,
+                    "Name": "16C64G",
+                    "PaasGoodsId": 15696,
+                    "RAM": 64
+                }]
+            }
         }],
-        "CpuRam": [{
-            "CPU": 2,
-            "N": "2C4G",
-            "PaasGoodsId": "******",
-            "RAM": 4
-        }, {
-            "CPU": 4,
-            "Name": "4C8G",
-            "PaasGoodsId": "******",
-            "RAM": 8
-        }, {
-            "CPU": 8,
-            "Name": "8C16G",
-            "PaasGoodsId": "******",
-            "RAM": 16
-        }, {
-            "CPU": 8,
-            "Name": "8C32G",
-            "PaasGoodsId": "******",
-            "RAM": 32
-        }],
-        "ProductName": "MySQL 高可用版\n",
-        "RegionId": "******"
+        "SubProductName": "MySQL 只读实例",
+        "Version": "8.0"
     },
-    "Message": "Success.",
-    "TaskId": ""
+    "Message": "获取只读规格列表成功。"
 }
 ```
 
