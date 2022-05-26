@@ -518,6 +518,7 @@ def get_mysql_spec_info():
 | DiskValue    | 是   | int    | 磁盘大小                                                     |
 | TimeZone     | 否   | string | 实例的UTC时区，默认值根据地域不同变化，输入参数范围：<br />["-12:00","-11:00","-10:00","-09:00","-08:00","-07:00","-06:00","-05:00","-04:00","-03:00","-02:00","-01:00","+00:00","+01:00","+02:00","+03:00","+04:00","+05:00","+05:30","+06:00","+07:00","+08:00","+09:00","+10:00","+11:00","+12:00","+13:00",] |
 | Amount       | 否   | int    | 购买的数量，一次最多购买10个                                 |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
 
 **返回参数：**
 
@@ -545,9 +546,10 @@ def create_mysql():
         "VdcId": "******",
         "BasePipeId": "******",
         "InstanceName": "******",
-        "PaasGoodsId": "******",
+        "PaasGoodsId": ******,
         "DiskType": "******",
         "DiskValue": 100,
+        "ServicePort": 6033,
         "Password": "******",
         "Amount": 1
     }
@@ -1482,15 +1484,16 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                     |
-| :----------- | :--- | :----- | ---------------------------------------- |
-| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例         |
-| InstanceName | 是   | string | 只读实例名称                             |
-| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格   |
-| DiskType     | 是   | string | 磁盘类型                                 |
-| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例 |
-| TestGroupId  | 否   | int    | 是否使用测试组计费                       |
-| Amount       | 否   | int    | 购买的数量一次最多购买三个               |
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例                             |
+| InstanceName | 是   | string | 只读实例名称                                                 |
+| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格                       |
+| DiskType     | 是   | string | 磁盘类型                                                     |
+| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例                     |
+| TestGroupId  | 否   | int    | 是否使用测试组计费                                           |
+| Amount       | 否   | int    | 购买的数量一次最多购买三个                                   |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
 
 **返回参数：**
 
@@ -1516,7 +1519,8 @@ def create_mysql_for_readonly(instance_uuid):
     body = {
         "InstanceUuid": instance_uuid,
         "InstanceName": "mysql_for_readonly",
-        "PaasGoodsId": "6707",
+        "PaasGoodsId": 6707,
+        "ServicePort": 6033,
         "DiskType": "high_disk",
         "DiskValue": 400,  # 磁盘大小必须大于主实例
         "Amount": 1
