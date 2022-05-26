@@ -38,6 +38,7 @@
           :sortable="item.sortable ? item.sortable : null"
           :width="item.width ? item.width : null"
           :type="item.type"
+          :class-name="item.className ? item.className : null"
         >
           <template #default="scope" v-if="item.prop==='machine_status_name'">
             <div>{{scope.row.machine_status_name}}</div>
@@ -65,7 +66,8 @@
               <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading">
                 <el-table-column v-for="inn in ecs_fields" ref="ecs_list" :key="inn.prop" :label="inn.label" :prop="inn.prop">
                   <template #default="scope" v-if="inn.prop==='ecs_name'">
-                    <span class="num_message">{{scope.row.ecs_name}}</span>
+                  
+                    <span class="clickble" @click="FnToDetail(scope.row.ecs_id)">{{scope.row.ecs_name}}</span>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='status'">
                     <span :class="scope.row.status">{{scope.row.status_display}}</span>
@@ -169,6 +171,13 @@
       <template v-if="visible && oper_type==='resource'">
         <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
       </template>
+      <template v-if="detail_visible">
+        <Detail
+          :visible="detail_visible"
+          :detail_id="detail_id"
+          @close-detail="closeDetail"
+        />
+      </template>
       <template v-if="visible && oper_type==='update_attribute'">
         <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
       </template>
@@ -201,6 +210,7 @@ import Resource from './resource.vue';
 import UpdateAttribute from './updateAttribute.vue';
 import CustomListItem from './customListItem.vue';
 import BusinessTest from './businessTest.vue'
+import Detail from '../instance/detail.vue'
 import moment from 'moment';
 @Component({
   components:{
@@ -213,7 +223,8 @@ import moment from 'moment';
     Resource,
     UpdateAttribute,
     CustomListItem,
-    BusinessTest
+    BusinessTest,
+    Detail
   }
 })
 export default class PhysicalList extends Vue {
@@ -301,6 +312,8 @@ export default class PhysicalList extends Vue {
   private expand_rows:any=[]
   private new_prop_list:Array<string>=[];
   private filter_info:any={}
+  private detail_id="";
+  private detail_visible=false 
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -388,6 +401,9 @@ export default class PhysicalList extends Vue {
     this.custom_host.map((item:any)=>{
       if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
+        if(item.prop==='ecs_num'){
+          item = Object.assign(item,{},{className:'physical'})
+        }
       }
       if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
         item = Object.assign(item,{},{width:'180px'})
@@ -538,6 +554,13 @@ export default class PhysicalList extends Vue {
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
       this.setList(this.host_belongs,'host_attribution__name')
     }
+  }
+  private FnToDetail(id) {
+    this.detail_id = id;
+    this.detail_visible = true;
+  }
+  private closeDetail() {
+    this.detail_visible = false;
   }
   // 获取网段
   private FnGetNet(ip) {
@@ -852,4 +875,9 @@ i.el-icon-s-tools{
   border: 1px solid #888;
   border-radius: 30px;
 }
+</style>
+<style lang="scss">
+  td.physical.el-table__cell{
+      border-right: none;
+  }
 </style>

@@ -14,7 +14,11 @@ export default new Vuex.Store({
     auth_info: {},
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
-    ecs_custom_item: JSON.parse(storage.get('ecs_custom_item')) || [],
+    ecs_custom_item: JSON.parse(storage.get('ecs_custom_item')) || [
+      '云服务器ID','云服务器名称','客户ID','客户名称','客户类别',
+      '客户等级','可用区','计算规格','系统盘类型','系统盘容量',
+      '数据盘类型','数据盘容量','所属宿主机','计费方式','创建时间','状态'
+    ],
     custom_host:JSON.parse(storage.get('custom_host')) || [
       '主机名','机器状态','电源状态','虚拟机数量',
       '主机类型','主机用途','主机归属','主机来源','CPU型号',

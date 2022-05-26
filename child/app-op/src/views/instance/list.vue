@@ -75,8 +75,17 @@
           <template v-if="item.prop === 'ecs_name'">
             <pre>{{ scope.row.ecs_name }}</pre>
           </template>
-          <template v-else-if="item.prop === 'status'">
+          <template v-else-if="item.prop === 'status_display'">
             <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+          </template>
+          <template v-else-if="item.prop === 'host_name'">
+            <span class="num_message">{{ scope.row.host_name }}</span>
+          </template>
+          <template v-else-if="item.prop === 'system_disk_size'">
+            <span>{{ scope.row.system_disk_size }} GB</span>
+          </template>
+          <template v-else-if="item.prop === 'data_disk_size'">
+            <span>{{ scope.row.data_disk_size }} GB</span>
           </template>
           <template v-else-if="item.prop === 'goods_name'">
             {{ scope.row.ecs_goods_name }} <br />
@@ -357,8 +366,8 @@
       type="ecs"
       :visible.sync="show_custom" 
       :all_item="all_item"
-      :all_column_item="all_table_item" 
-      @fn-custom="FnGetTableItem"
+      :all_column_item="all_column_item" 
+      @fn-custom="get_custom_columns"
     ></custom-list-item>
   </div>
 </template>
@@ -370,7 +379,7 @@ import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
 import CustomListItem from '../../components/customListItem.vue';
 import getInsStatus from "../../utils/getStatusInfo";
-import { trans } from "../../utils/transIndex";
+import { trans,deal_list } from "../../utils/transIndex";
 import Service from "../../https/instance/list";
 import EcsService from "../../https/instance/create";
 import Record from "./record.vue";
@@ -421,7 +430,7 @@ export default class App extends Vue {
     customer_name: { placeholder: "请输入客户名称" },
     os_type: { placeholder: "请选择操作系统", list: [] },
     private_net: { placeholder: "请输入私网IP" },
-    host_id: { placeholder: "请输入物理机ID", default_value: "" },
+    host_name: { placeholder: "请输入宿主机名称", default_value: "" },
   };
   private search_reqData = {};
   private search_billing_method = "all";
@@ -469,154 +478,41 @@ export default class App extends Vue {
   private sort_prop_name = "";
   private sort_order = 0;
   private show_custom = false;
-  private all_item = [
-    {
-      name: "基本信息",
-      filed: [
-        {
-          field_name: "ecs_id",
-          show_name: "云服务器ID",
-          sortable: "custom"
-        },
-        {
-          field_name: "ecs_name",
-          show_name: "云服务器名称",
-          sortable: "custom"
-        },
-        {
-          field_name: "customer_id",
-          show_name: "客户ID",
-          sortable: "custom"
-        },
-        {
-          field_name: "customer_name",
-          show_name: "客户名称",
-          sortable: "custom"
-        },
-        {
-          field_name: "customer_type",
-          show_name: "客户类别",
-          sortable: "custom"
-        },
-        {
-          field_name: "customer_level",
-          show_name: "客户等级",
-          sortable: "custom"
-        },
-        {
-          field_name: "az_name",
-          show_name: "可用区",
-          sortable: "custom"
-        },
-        {
-          field_name: "pod",
-          show_name: "POD",
-          hidden: true,
-          sortable: "custom"
-        }
-      ]
-    },
-    {
-      name: "产品信息",
-      filed: [
-        {
-          field_name: "goods_name",
-          show_name: "计算规格",
-          sortable: "custom"
-        },
-        {
-          field_name: "system_disk_type",
-          show_name: "系统盘类型",
-          sortable: "custom"
-        },
-        {
-          field_name: "system_disk_size",
-          show_name: "系统盘容量",
-          sortable: "custom"
-        },
-        {
-          field_name: "data_disk_type",
-          show_name: "数据盘类型",
-          sortable: "custom"
-        },
-        {
-          field_name: "data_disk_size",
-          show_name: "数据盘容量",
-          sortable: "custom"
-        },
-        {
-          field_name: "host_name",
-          show_name: "所属宿主机",
-          sortable: "custom"
-        },
-        {
-          field_name: "os_type",
-          show_name: "操作系统类型",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "os_version",
-          show_name: "操作系统版本",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "private_net",
-          show_name: "主私网IP",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "virtual_net",
-          show_name: "虚拟出网网关",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "pub_net",
-          show_name: "公网IP",
-          hidden: true,
-          sortable: "custom"
-        }
-      ]
-    },
-    {
-      name: "其他",
-      filed: [
-        {
-          field_name: "create_time",
-          show_name: "创建时间",
-          sortable: "custom"
-        },
-        {
-          field_name: "destroy_time",
-          show_name: "销毁时间",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "billing_method",
-          show_name: "计费方式",
-          sortable: "custom"
-        },
-        {
-          field_name: "is_renewal",
-          show_name: "续约方式",
-          hidden: true,
-          sortable: "custom"
-        },
-        {
-          field_name: "status",
-          show_name: "状态",
-        }
-      ]
-    }
-  ]
+  private all_item:any = []
+  private all_column_item=[];
   private all_table_item = []
   private select_table_item = [];
   private filters_status = ["destroy", "destroying"]; // 运营op不展示销毁的状态
   private default_status = []; // 默认展示的状态
+
+  private async get_list_field(){
+      let res:any = await Service.get_list_field()
+      if(res.code==="Success"){
+        console.log("res",res)
+        let key_list=['field_name','show_name'];
+        let label_list=['prop','label'];
+        let list:Array<any>=[]
+        res.data.map(item=>{
+          list=[...list,...item.filed];
+          return item;
+        })
+        this.all_item = res.data;
+        this.all_column_item = deal_list(list,label_list,key_list);
+        this.get_custom_columns(this.$store.state.ecs_custom_item)
+
+      }
+    }
+  private get_custom_columns(list){
+    if(list.length===0){
+      return;
+    }
+    this.select_table_item = this.all_column_item.filter(item=>list.includes(item.label));
+    this.select_table_item.map(item=>{
+      if(['ecs_id','ecs_name','customer_id','customer_level','system_disk_size','data_disk_size','host_name','create_time'].includes(item.prop)){
+        item = Object.assign(item,{},{sortable:'custom'})
+      }
+    })
+  }
 
   private FnSearch(data: any = {}) {
     this.search_reqData = {
@@ -629,7 +525,7 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_type: data.os_type,
       private_net: data.private_net,
-      host_id: data.host_id,
+      host_name: data.host_name,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -658,11 +554,13 @@ export default class App extends Vue {
   }
   // 列表排序
   private handleSortChange(val) {
-    let relation = {
-      private_net: "sort_private_ip",
-      host_name: "sort_host_name",
-    };
-    this.sort_prop_name = relation[val.prop];
+    // let relation = {
+    //   private_net: "sort_private_ip",
+    //   host_name: "sort_host_name",
+    // };
+    // console.log('val',val);
+    
+    this.sort_prop_name = `sort_${[val.prop]}`;
     this.sort_order = Number(val.order !== "ascending");
     this.FnGetList();
   }
@@ -1211,12 +1109,6 @@ export default class App extends Vue {
   private FnCustom() {
     this.show_custom = true;
   }
-  // 自定义列表项后改变表格展示项
-  private FnGetTableItem(item_list) {
-    this.select_table_item = this.all_table_item.filter((item) =>
-      item_list.includes(item.label)
-    );
-  }
   private async FnExport() {
     this.loading = true;
     const resData = await Service.export_list(
@@ -1251,6 +1143,7 @@ export default class App extends Vue {
   private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
+    this.get_list_field()
     this.get_az_list();
     // this.FnGetCateGoryList();
     this.search_con.os_type.list = [
@@ -1273,9 +1166,9 @@ export default class App extends Vue {
         text: this.billing_method_relation[key],
       });
     }
-    if (this.$route.query.host_id) {
-      this.search_con.host_id.default_value = this.$route.query
-        .host_id as string;
+    if (this.$route.query.host_name) {
+      this.search_con.host_name.default_value = this.$route.query
+        .host_name as string;
       this.search_con.status.default_value = ["running", "shutdown", "deleted"];
     }
     this.all_item.forEach(item => {

@@ -56,13 +56,23 @@
           </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
             <span>{{scope.row.exclusive_customers && scope.row.exclusive_customers.length>0 ? scope.row.exclusive_customers.join(',') : '全部客户'}}</span>
-            <!-- <span>{{(scope.row.exclusive_customers && scope.row.exclusive_customers.length>0 ? scope.row.exclusive_customers.join(',') : '全部客户'}}</span> -->
+          </template>
+          <template #default="scope" v-else-if="item.prop==='exclusive_spec_family'">
+            <el-tooltip
+              v-if="scope.row.exclusive_spec_family.length>0"
+              effect="light">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_spec_family" :key="item">{{item}}</div>
+              </template>
+                <span class="id-cell">{{ scope.row.exclusive_spec_family[0] }}</span>
+            </el-tooltip>
+            <span v-else></span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
-            <el-button type="text" @click="goEcs(scope.row.host_id)">{{scope.row.ecs_num}}</el-button>
+            <el-button type="text" @click="goEcs(scope.row.host_name)">{{scope.row.ecs_num}}</el-button>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
@@ -79,7 +89,6 @@
               </el-tooltip>
               <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
             </div>
-            
           </template>
         </el-table-column>
         <!-- <el-table-column label="操作栏">
@@ -344,7 +353,7 @@ export default class PhysicalList extends Vue {
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
       }
       if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
@@ -405,7 +414,7 @@ export default class PhysicalList extends Vue {
       host_source,
       // create_time
     }=this.search_data
-    let res:any=await Service.get_host_list({
+    let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
       // pod_name,
       machine_room_name:room,
@@ -463,7 +472,7 @@ export default class PhysicalList extends Vue {
     this.$router.push({
       path:'/instance',
       query:{
-        host_id:id
+        host_name:id
       }
     })
   }
@@ -483,10 +492,15 @@ export default class PhysicalList extends Vue {
       gpu_model,
       host_rack,
       host_source,
+      host_type,
+      host_purpose,
+      host_belong,
+      cpu_model,
+      net_model,
       // bare_metal_id,
-      sort_host_ip
+      // sort_host_ip
     }=this.search_data
-    let obj = {
+    let obj = {//缺少规格族字段筛选
         az_id,
         // pod_name,
         machine_room_name:room,
@@ -497,12 +511,17 @@ export default class PhysicalList extends Vue {
         // ecs_id,
         out_band_address,
         host_ip,
+        cpu_model,
+        net_model,
         // host_id,
         gpu_model,
         host_rack,
-        host_source,
+        host_attribution_id:host_belong ? host_belong[0] : undefined,
+        host_purpose:host_purpose ? host_purpose[0] : undefined,
+        host_source:host_source ? host_source[0] : undefined,
+        host_type:host_type ? host_type[0] : undefined,
         // bare_metal_id,
-        sort_host_ip,
+        // sort_host_ip,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
     let str=""
