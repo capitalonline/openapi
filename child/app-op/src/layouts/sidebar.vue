@@ -29,12 +29,8 @@ export default class SideBar extends Vue {
       this.$router.push({name: name})
     }
   }
-  private created() {
-    console.log('this.routes',this.routes);
-    
-    this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);
-    console.log('this.routes11',this.routes);
-    
+  private created() {    
+    this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);    
     this.FnWatchRouter(this.$route)
   }
 
