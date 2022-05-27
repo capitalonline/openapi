@@ -177,21 +177,51 @@ export default class PhysicalList extends Vue {
   $store;
   private search_option:any={
     az_id:{placeholder:'请选择可用区',list:[]},
+    // pod_name:{placeholder:'请输入POD名称'},    
+    // vm_name:{placeholder:'请输入VM名称'},
+    // power_status:{placeholder:'请选择主机电源状态',list:[]},
+    // host_status:{placeholder:'请选择主机机器状态',list:[]},
+    // ecs_id:{placeholder:'请输入云服务器ID'},
     out_band_address:{placeholder:'请输入带外IP'},
     host_ip:{placeholder:'请输入管理网IP'},
     host_name:{placeholder:'请输入主机名称/ID'},
+    // host_id:{placeholder:'请输入物理机ID'},
     gpu_model:{placeholder:'请输入显卡型号'},
     cpu_model:{placeholder:'请输入CPU型号'},
     net_model:{placeholder:'请输入网卡型号'},
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
+    // bare_metal_id:{placeholder:'请输入裸金属产品ID'},
+    // create_time: {
+    //   placeholder: ['开始时间', '结束时间'],
+    //   type: 'datetimerange',
+    //   width: '360',
+    //   clearable: true,
+    //   dis_day: 31,
+    //   defaultTime: [] 
+    // },
   }
   private operate_btns:any=[
+    // {label:'导入',value:'upload'},
+    // {label:'完成验证',value:'finish_validate'},
+    // {label:'开机',value:'start_up_host'},
+    // {label:'关机',value:'shutdown_host'},
+    // {label:'重启',value:'restart_host'},
+    // {label:'在线维护',value:'online_maintenance'},
+    // {label:'离线维护',value:'offline_maintenance'},
+    // {label:'完成维护',value:'finish'},
+    // {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
     {label:'下架',value:'shelves'},
   ]
-  private rows_operate_btns:any=[]
+  private rows_operate_btns:any=[
+    // {label:'详情',value:'physical_detail'},
+    // // {label:'进入带外管理',value:'out_of_band'},
+    // {label:'迁移',value:'migrate'},
+    // {label:'操作记录',value:'record'},
+    // {label:'分配资源',value:'resource'},
+  ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
     shutdown_host:'已选主机需为在线或离线状态',
@@ -225,12 +255,43 @@ export default class PhysicalList extends Vue {
   private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
-  private custom_host=[]
+  private custom_host=[
+    {label:'主机名',prop:'host_name',sortable:'custom'},
+    // {label:'机房',prop:'host_room'},
+    // {label:'机柜',prop:'host_rack'},
+    // {label:'起始U位',prop:'rack_place'},
+    // {label:'占用U位',prop:'rack_space'},
+    {label:'电源状态',prop:'power_status_name'},
+    {label:'机器状态',prop:'machine_status_name'},
+    // {label:'操作系统',prop:'system_version'},
+    // {label:'服务器型号',prop:'host_model'},
+    {label:'主机类型',prop:'host_type_ch',column_key:'host_type',list:this.host_types},
+    {label:'主机用途',prop:'host_purpose_ch',column_key:'host_purpose',list:this.host_uses},
+    {label:'主机归属',prop:'host_attribution__name',column_key:'host_belong',list:this.host_belongs},
+    {label:'主机来源',prop:'host_source',column_key:'host_source',list:this.host_source},
+    {label:'显卡型号',prop:'gpu_model',sortable:'custom'},
+    {label:'显卡数量',prop:'gpu_count'},
+    // {label:'带外IP',prop:'out_band_address',sortable:'custom'},
+    // {label:'管理网IP',prop:'host_ip',sortable:'custom'},
+    {label:'虚拟机数量',prop:'ecs_num',sortable:'custom'},
+    // {label:'存储网IP1',prop:'storage_ip'},
+    // {label:'CPU使用率',prop:'cpu',sortable:'custom'},
+    // {label:'内存使用率',prop:'ram',sortable:'custom'},
+    {label:'创建时间',prop:'create_time',sortable:'custom'},
+    {label:'CPU型号',prop:'cpu_model'},
+    {label:'CPU总核数',prop:'cpu_model_count'},
+    {label:'内存总容量',prop:'ram_volume',sortable:'custom'},
+    {label:'存储总容量',prop:'storage_volume',sortable:'custom'},
+    {label:'专属客户',prop:'exclusive_customers'},
+    {label:'规格族',prop:'exclusive_spec_family'},
+    {label:'网卡型号',prop:'net_nic'},
+  ]
   created() {
-      this.getFamilyList()
       this.get_host_list_field()
       this.get_room_list()
-      this.get_az_list();
+      this.get_az_list()
+      // this.get_status_list()
+      // this.fn_search();
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
@@ -241,7 +302,14 @@ export default class PhysicalList extends Vue {
       }
       if(this.$route.query.host_id){
         this.search_option.host_id.default_value = this.$route.query.host_id as string
-      }this.fn_search();      
+      }
+      // if(Object.keys(this.$store.state.host_search).length>0 || this.$route.query.host_id){
+        
+      // }
+      // else{
+      //   this.fn_search();
+      // }
+      
       
       
   }
@@ -262,10 +330,12 @@ export default class PhysicalList extends Vue {
     });
   }
   private async get_host_list_field(){
+    console.log("get_host_list_field")
     let res:any = await Service.get_host_list_field({
       is_op:'0'
     })
     if(res.code==="Success"){
+      console.log("res",res)
       let key_list=['field_name','show_name'];
       let label_list=['prop','label'];
       let list:Array<any>=[]
@@ -330,30 +400,42 @@ export default class PhysicalList extends Vue {
   private async get_physical_list(){
     const {
       az_id,
+      // bare_metal_id,
+      // pod_name,
       room,
       host_name,
+      // vm_name,
+      // power_status,
+      // host_status,
       host_belong,
       host_purpose,
       host_type,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
       host_source,
-      ecs_family_id,
-      cpu_model,
-      net_model,
+      // create_time
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
+      // pod_name,
       machine_room_name:room,
       host_name,
+      // vm_name,
+      // bare_metal_id,
+      // power_status,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
+      // start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -366,7 +448,6 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
-      ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -384,13 +465,9 @@ export default class PhysicalList extends Vue {
       
   }
   private async getFamilyList(){
-    let res:any =await ListService.get_family_data();
+    let res:any = ListService.get_family_data();
     if(res.code==='Success'){
-      let key_list=['spec_family_id','name'];
-      let label_list=['value','text']
-      this.spec_family_list =deal_list(res.data.spec_family_list,label_list,key_list);
-      console.log('this.spec_family_list',this.spec_family_list);
-      
+      // this.spec_family_list = res
     }
   }
   private async get_host_attribution (){
@@ -413,10 +490,16 @@ export default class PhysicalList extends Vue {
    private async down(){
     const {
       az_id,
+      // pod_name,
       room,
       host_name,
+      // vm_name,
+      // power_status,
+      // host_status,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
       host_source,
@@ -425,23 +508,31 @@ export default class PhysicalList extends Vue {
       host_belong,
       cpu_model,
       net_model,
-      ecs_family_id
+      // bare_metal_id,
+      // sort_host_ip
     }=this.search_data
     let obj = {//缺少规格族字段筛选
         az_id,
+        // pod_name,
         machine_room_name:room,
         host_name,
+        // vm_name,
+        // power_status,
+        // machine_status:host_status,
+        // ecs_id,
         out_band_address,
         host_ip,
         cpu_model,
         net_model,
+        // host_id,
         gpu_model,
         host_rack,
         host_attribution_id:host_belong ? host_belong[0] : undefined,
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
         host_type:host_type ? host_type[0] : undefined,
-        ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
+        // bare_metal_id,
+        // sort_host_ip,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
     let str=""
@@ -475,6 +566,13 @@ export default class PhysicalList extends Vue {
       })
     }
   }
+  // private async get_status_list(){
+  //   let res:any=await Service.get_status_list({})
+  //   if(res.code==="Success"){
+  //     this.search_option.power_status.list = res.data.power_status
+  //     this.search_option.host_status.list = res.data.machine_status
+  //   }
+  // }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
     if(res.code==="Success"){

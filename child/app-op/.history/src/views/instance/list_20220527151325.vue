@@ -1,30 +1,12 @@
 <template>
   <div class="instance-list">
-    <action-block :search_option="search_con" @fn-search="FnSearch" :type="true">
+    <action-block :search_option="search_con" @fn-search="FnSearch" type="instance" @fn-operate="FnIsOpen">
       <template #default>
         <el-button
           type="primary"
           @click="FnToCreate"
           :disabled="!operate_auth.includes('instance_create')"
           >创建实例</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('start_up_ecs')"
-          :disabled="!operate_auth.includes('start_up')"
-          >开 机</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('shutdown_ecs')"
-          :disabled="!operate_auth.includes('shutdown')"
-          >关 机</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('restart_ecs')"
-          :disabled="!operate_auth.includes('restart')"
-          >重 启</el-button
         >
         <el-button
           type="primary"
@@ -46,24 +28,6 @@
         >
         <el-button
           type="primary"
-          @click="FnOperate('update_spec')"
-          :disabled="!operate_auth.includes('update_spec')"
-          >更换实例规格</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('update_system')"
-          :disabled="!operate_auth.includes('update_system')"
-          >更换操作系统</el-button
-        >
-        <el-button
-          type="primary"
-          @click="FnOperate('reset_pwd')"
-          :disabled="!operate_auth.includes('reset_pwd')"
-          >重置密码</el-button
-        >
-        <el-button
-          type="primary"
           @click="FnOperate('open_bill')"
           :disabled="!operate_auth.includes('open_bill')"
           >开启计费</el-button
@@ -71,6 +35,16 @@
       </template>
     </action-block>
     <div class="icon m-bottom10">
+      <el-tooltip content="自定义列表项" placement="bottom" effect="light">
+        <el-button type="text" @click="FnCustom">
+          <i class="el-icon-s-tools" ></i>
+        </el-button>        
+      </el-tooltip>
+      <el-tooltip content="刷新" placement="bottom" effect="light">
+        <el-button type="text" @click="FnGetList">
+          <svg-icon icon="refresh" class="refresh"></svg-icon>
+        </el-button>
+      </el-tooltip>
       <el-tooltip content="导出" placement="bottom" effect="light">
         <el-button type="text" @click="FnExport" v-loading="loading">
           <svg-icon icon="export" class="export"></svg-icon>
@@ -84,183 +58,122 @@
       @filter-change="handleFilterChange"
       @sort-change="handleSortChange"
       border
+      :max-height="tableHeight"
     >
       <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-      <el-table-column prop="customer_name" label="客户名称"></el-table-column>
-      <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-      <el-table-column prop="ecs_name" label="云服务器名称" sortable="custom">
-        <template #default="scope">
-          <pre>{{ scope.row.ecs_name }}</pre>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column prop="az_name" label="可用区"></el-table-column> -->
-      <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="ecs_status_list">
-        <template #default="scope">
-          <span :class="scope.row.status">{{ scope.row.status_display }}</span>
-        </template>
-      </el-table-column>
       <el-table-column
-        label="计算规格"
-        :filters="ecs_goods_name_list"
-        column-key="ecs_goods_name"
-        width="100"
+        v-for="item in select_table_item"
+        :key="item.prop"
+        :label="item.label"
+        :prop="item.prop"
+        :column-key="item.prop"
+        :sortable="item.sortable"
+        :filters="item.filters"
+        :filter-multiple="false"
       >
         <template #default="scope">
-          {{ scope.row.ecs_goods_name }} <br />
-          {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
-          <span v-if="scope.row.gpu_size"
-            >| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span
-          >
-        </template>
-      </el-table-column>
-      <el-table-column prop="private_net" label="私网IP" sortable="custom">
-        <template #default="scope">
-          <div v-if="scope.row.private_net">
-            {{ scope.row.private_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="虚拟出网网关IP">
-        <template #default="scope">
-          <div v-if="scope.row.pub_net">
-            <span
-              class="circel-border"
+          <template v-if="item.prop === 'ecs_name'">
+            <pre>{{ scope.row.ecs_name }}</pre>
+          </template>
+          <template v-else-if="item.prop === 'status_display'">
+            <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+          </template>
+          <template v-else-if="item.prop === 'host_name'">
+            <span class="num_message">{{ scope.row.host_name }}</span>
+          </template>
+          <template v-else-if="item.prop === 'system_disk_size'">
+            <span>{{ scope.row.system_disk_size }} GB</span>
+          </template>
+          <template v-else-if="item.prop === 'data_disk_size'">
+            <span>{{ scope.row.data_disk_size }} GB</span>
+          </template>
+          <template v-else-if="item.prop === 'goods_name'">
+            {{ scope.row.ecs_goods_name }} <br />
+            {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
+            <span v-if="scope.row.gpu_size"
+              >| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span
+            >
+          </template>
+          <template v-else-if="item.prop === 'private_net'">
+            <div v-if="scope.row.private_net">
+              {{ scope.row.private_net }}
+              （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'virtual_net'">
+            <div v-if="scope.row.pub_net">
+              <span
+                class="circel-border"
+                v-if="
+                  scope.row.eip_info[scope.row.pub_net] &&
+                  scope.row.eip_info[scope.row.pub_net].conf_name
+                "
+              >
+                {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
+              </span>
+              {{ scope.row.pub_net }}
+              （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+            </div>
+            <div v-for="item in scope.row.virtual_net" :key="item">
+              <span
+                class="circel-border"
+                v-if="
+                  scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
+                "
+              >
+                {{ scope.row.eip_info[item].conf_name }}
+              </span>
+              {{ item }}
+              （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'pub_net'">
+            <div
               v-if="
                 scope.row.eip_info[scope.row.pub_net] &&
-                  scope.row.eip_info[scope.row.pub_net].conf_name
-              "
-            >
-              {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
-            </span>
-            {{ scope.row.pub_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
-          </div>
-          <div v-for="item in scope.row.virtual_net" :key="item">
-            <span
-              class="circel-border"
-              v-if="
-                scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
-              "
-            >
-              {{ scope.row.eip_info[item].conf_name }}
-            </span>
-            {{ item }}
-            （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="公网IP">
-        <template #default="scope">
-          <div
-            v-if="
-              scope.row.eip_info[scope.row.pub_net] &&
                 scope.row.eip_info[scope.row.pub_net].conf_name
-            "
-          >
-            <span class="circel-border">
-              {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
-            </span>
-            {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
-          </div>
-          <div v-for="item in scope.row.virtual_net" :key="item">
-            <template
-              v-if="
-                scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
               "
             >
               <span class="circel-border">
-                {{ scope.row.eip_info[item].conf_name }}
+                {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
               </span>
-              {{ scope.row.eip_info[item].eip_ip }}
-            </template>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="host_name" label="所属物理机" sortable="custom">
-      </el-table-column>
-      <el-table-column prop="update_time" label="更新时间">
-        <template #default="scope">
-          <div class="time-box">{{ scope.row.update_time }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="create_time" label="创建时间">
-        <template #default="scope">
-          <div class="time-box">{{ scope.row.create_time }}</div>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column
-        prop="billing_method"
-        label="计费方式"
-        :filters="billing_method_list"
-        column-key="billing_method"
-        :filter-multiple="false"
-      >
-        <template #default="scope">
-          <div>
-            {{
-              scope.row.is_charge
-                ? billing_method_relation[scope.row.billing_method]
-                : "不计费"
-            }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="op_source"
-        label="创建来源"
-        :filters="[
-          { text: '运维后台', value: 'cloud_op' },
-          { text: 'GIC', value: 'gic' }
-        ]"
-        column-key="op_source"
-        :filter-multiple="false"
-      >
-        <template #default="scope">
-          <div>
-            {{ scope.row.op_source === "cloud_op" ? "运维后台" : "GIC" }}
-          </div>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="操作" width="180">
-        <template #default="scope">
-          <el-button
-            type="text"
-            @click="FnToDetail(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_detail')"
-            >详情</el-button
-          >
-          <el-button
-            type="text"
-            @click="FnToRecord(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_record')"
-            >操作记录</el-button
-          >
-          <el-button
-            type="text"
-            @click="FnToMonitor(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('monitor')"
-            >监控</el-button
-          >
-          <el-button
-            type="text"
-            :disabled="
-              scope.row.status !== 'running' || !operate_auth.includes('vnc')
-            "
-            @click="FnToVnc(scope.row.ecs_id)"
-            >远程连接</el-button
-          >
-          <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
-              :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
-            开启计费</el-button> -->
+              {{ scope.row.eip_info[scope.row.pub_net].eip_ip }}
+            </div>
+            <div v-for="item in scope.row.virtual_net" :key="item">
+              <template
+                v-if="
+                  scope.row.eip_info[item] && scope.row.eip_info[item].conf_name
+                "
+              >
+                <span class="circel-border">
+                  {{ scope.row.eip_info[item].conf_name }}
+                </span>
+                {{ scope.row.eip_info[item].eip_ip }}
+              </template>
+            </div>
+          </template>
+          <template v-else-if="item.prop === 'create_time'">
+            <div class="time-box">{{ scope.row.create_time }}</div>
+          </template>
+          <template v-else-if="item.prop === 'billing_method'">
+            <div>
+              {{
+                scope.row.is_charge
+                  ? billing_method_relation[scope.row.billing_method]
+                  : "不计费"
+              }}
+            </div>
+          </template>
+          <template v-else>
+            {{ scope.row[item.prop] }}
+          </template>
         </template>
       </el-table-column>
     </el-table>
 
     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @size-change="FnGetList()"
+      @current-change="FnGetList()"
       :current-page.sync="page_info.page_index"
       :page-sizes="page_info.page_sizes"
       :page-size.sync="page_info.page_size"
@@ -448,16 +361,25 @@
         @close-detail="closeDetail"
       />
     </template>
+
+    <custom-list-item
+      type="ecs"
+      :visible.sync="show_custom" 
+      :all_item="all_item"
+      :all_column_item="all_column_item" 
+      @fn-custom="get_custom_columns"
+    ></custom-list-item>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue,Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import LabelBlock from "../../components/labelBlock.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
+import CustomListItem from '../../components/customListItem.vue';
 import getInsStatus from "../../utils/getStatusInfo";
-import { trans } from "../../utils/transIndex";
+import { trans,deal_list } from "../../utils/transIndex";
 import Service from "../../https/instance/list";
 import EcsService from "../../https/instance/create";
 import Record from "./record.vue";
@@ -481,37 +403,39 @@ import moment from "moment";
     updateDisk,
     Recover,
     SvgIcon,
-    MarkTip
-  }
+    MarkTip,
+    CustomListItem
+  },
 })
 export default class App extends Vue {
   private search_con = {
-    // az_id: { placeholder: "请选择可用区", list: [] },
+    az_id: { placeholder: "请选择可用区", list: [] },
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
-    // status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
-    customer_id: { placeholder: "请输入客户ID" },
-    customer_name: { placeholder: "请输入客户名称" },
-    os_info: { placeholder: "请输入操作系统ID/名称"},
-    private_net: { placeholder: "请输入私网IP" },
-    host_id: { placeholder: "请输入物理机ID"},
-    host_name: { placeholder: "请输入物理机名称", },
-    host_ip: { placeholder: "请输入物理机管理IP"},
-    out_band_address: { placeholder: "请输入物理机带外IP"},
+    status: {
+      placeholder: "请选择云服务器状态",
+      list: [],
+      multiple: true,
+      default_value: [],
+    },
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
       width: "360",
       clearable: true,
       dis_day: 1,
-      defaultTime: []
+      defaultTime: [],
     },
+    customer_id: { placeholder: "请输入客户ID" },
+    customer_name: { placeholder: "请输入客户名称" },
+    os_type: { placeholder: "请选择操作系统", list: [] },
+    private_net: { placeholder: "请输入私网IP" },
+    host_name: { placeholder: "请输入宿主机名称", default_value: "" },
   };
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
   private search_ecs_goods_name = [];
-  private search_status=[]
   private instance_list: Array<Object> = [];
   private customer_id: string = "";
   private az_id: string = "";
@@ -531,16 +455,17 @@ export default class App extends Vue {
   private record_id: string = "";
   private detail_visible: boolean = false;
   private detail_id: string = "";
+  private tableHeight=70;
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
     page_index: 1,
-    total: 0
+    total: 0,
   };
   private billing_method_relation = {
     "": "不计费",
     0: "按需计费",
-    1: "包年包月"
+    1: "包年包月",
   };
   private billing_method_list = [];
   private ecs_goods_name_list = [];
@@ -550,27 +475,57 @@ export default class App extends Vue {
   private total_price = "";
   private ecs_list_price = {};
   private loading = false;
-  private sort_prop_name = '';
-  private sort_order = undefined;
-  private ecs_status_list:any=[];
-   @Watch("$store.state.pod_id")
-    private watch_pod(){
-      this.FnSearch(this.search_reqData)
+  private sort_prop_name = "";
+  private sort_order = 0;
+  private show_custom = false;
+  private all_item:any = []
+  private all_column_item=[];
+  private all_table_item = []
+  private select_table_item = [];
+  private filters_status = ["destroy", "destroying"]; // 运营op不展示销毁的状态
+  private default_status = []; // 默认展示的状态
+
+  private async get_list_field(){
+      let res:any = await Service.get_list_field()
+      if(res.code==="Success"){
+        console.log("res",res)
+        let key_list=['field_name','show_name'];
+        let label_list=['prop','label'];
+        let list:Array<any>=[]
+        res.data.map(item=>{
+          list=[...list,...item.filed];
+          return item;
+        })
+        this.all_item = res.data;
+        this.all_column_item = deal_list(list,label_list,key_list);
+        this.get_custom_columns(this.$store.state.ecs_custom_item)
+
+      }
     }
+  private get_custom_columns(list){
+    if(list.length===0){
+      return;
+    }
+    this.select_table_item = this.all_column_item.filter(item=>list.includes(item.label));
+    this.select_table_item.map(item=>{
+      if(['ecs_id','ecs_name','customer_id','customer_level','system_disk_size','data_disk_size','host_name','create_time'].includes(item.prop)){
+        item = Object.assign(item,{},{sortable:'custom'})
+      }
+    })
+  }
+
   private FnSearch(data: any = {}) {
-    this.FnClearTimer();
     this.search_reqData = {
-      pod_id:this.$store.state.pod_id,
+      az_id: data.az_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
+      // status: data.status && data.status.length > 0 ? data.status.join(",") : this.default_status.join(","), 和后端沟通，后端限制了status长度
+      status: data.status && data.status.length > 0 ? data.status.join(",") : "",
       customer_id: data.customer_id,
       customer_name: data.customer_name,
-      os_info: data.os_info,
+      os_type: data.os_type,
       private_net: data.private_net,
-      host_id: data.host_id,
       host_name: data.host_name,
-      host_ip: data.host_ip,
-      out_band_address: data.out_band_address,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -578,14 +533,13 @@ export default class App extends Vue {
       end_time:
         data.create_time && data.create_time[1]
           ? moment(data.create_time[1]).format("YYYY-MM-DD")
-          : undefined
+          : undefined,
     };
     this.page_info.page_index = 1;
     this.FnGetList();
   }
   // 筛选实例来源
   private handleFilterChange(val) {
-    this.FnClearTimer();
     if (val.op_source) {
       this.search_op_source = val.op_source[0];
     }
@@ -596,43 +550,25 @@ export default class App extends Vue {
     if (val.ecs_goods_name) {
       this.search_ecs_goods_name = val.ecs_goods_name;
     }
-    if(val.status){
-      this.search_status = val.status;
-    }
     this.FnGetList();
-  }
-  //handleSizeChange
-  private handleSizeChange(val){
-    this.FnClearTimer();
-    this.page_info.page_size = val;
-    this.FnGetList()
-  }
-  private handleCurrentChange(cur){
-    this.FnClearTimer();
-    this.page_info.page_index = cur
-    this.FnGetList()
   }
   // 列表排序
   private handleSortChange(val) {
-    this.FnClearTimer();
-    let relation = {
-      private_net: 'sort_private_ip',
-      host_name: 'sort_host_name',
-      ecs_name:'sort_ecs_name'
-    }
-    this.sort_prop_name = relation[val.prop];
-    this.sort_order = val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
-    this.FnGetList()
+    // let relation = {
+    //   private_net: "sort_private_ip",
+    //   host_name: "sort_host_name",
+    // };
+    console.log('val',val);    
+    this.sort_prop_name = `sort_${[val.prop]}`;
+    this.sort_order =val.order ? Number(val.order !== "ascending") : undefined;
+    this.FnGetList();
   }
   // 获取网段
   private FnGetNet(ip) {
-    let data = ip.split('.')
-    return [data[0], data[1], data[2], '0'].join('.')
+    let data = ip.split(".");
+    return [data[0], data[1], data[2], "0"].join(".");
   }
   private async FnGetList(loading: boolean = true) {
-    if(!this.$store.state.pod_id){
-      return ;
-    }
     this.multiple_selection_id = [];
     if (!loading) {
       this.$store.commit("SET_LOADING", false);
@@ -645,11 +581,10 @@ export default class App extends Vue {
         this.search_billing_method == "" ? "no" : this.search_billing_method,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
-      status:this.search_status.join(','),
-      [this.sort_prop_name]: this.sort_order,
-      is_op:true,
-      ...this.search_reqData
-    }
+      is_op:false,
+      [this.sort_prop_name]: this.sort_order ? String(this.sort_order) : undefined,
+      ...this.search_reqData,
+    };
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
     }
@@ -661,20 +596,20 @@ export default class App extends Vue {
       this.instance_list = resData.data.ecs_list;
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
-        rows = resData.data.ecs_list.filter(row =>
+        rows = resData.data.ecs_list.filter((row) =>
           this.multiple_selection_id.includes(row.ecs_id)
         );
       }
       if (rows && rows.length > 0) {
         this.$nextTick(() => {
-          rows.forEach(row => {
+          rows.forEach((row) => {
             (this.$refs.multipleTable as any).toggleRowSelection(row);
           });
         });
       }
       this.page_info.total = resData.data.page.count;
     }
-    this.FnSetTimer();
+    // this.FnSetTimer();
   }
   private handleSelectionChange(val) {
     this.multiple_selection = val;
@@ -829,7 +764,7 @@ export default class App extends Vue {
       op_type: this.default_operate_type,
       customer_id: this.customer_id,
       az_id: this.az_id,
-      ecs_ids: this.multiple_selection_id
+      ecs_ids: this.multiple_selection_id,
     };
     if (
       ["start_up_ecs", "shutdown_ecs", "restart_ecs"].indexOf(
@@ -869,7 +804,7 @@ export default class App extends Vue {
     const resData: any = await Service.delete_instance(
       Object.assign(
         {
-          is_gpu: this.is_gpu
+          is_gpu: this.is_gpu,
         },
         reqData
       )
@@ -885,7 +820,7 @@ export default class App extends Vue {
     const resData: any = await Service.destroy_instance(
       Object.assign(
         {
-          is_gpu: this.is_gpu
+          is_gpu: this.is_gpu,
         },
         reqData
       )
@@ -924,9 +859,9 @@ export default class App extends Vue {
       ecs_goods_info: {
         cpu: data.cpu,
         ram: data.ram,
-        gpu: data.gpu
+        gpu: data.gpu,
       },
-      billing_info: data.billing_info[data.ecs_goods_id]
+      billing_info: data.billing_info[data.ecs_goods_id],
     };
     const resData = await Service.change_config_price(reqData);
     if (resData.code === "Success") {
@@ -949,8 +884,8 @@ export default class App extends Vue {
           gic_goods_id: reqData.billing_info.gic_goods_id,
           cpu: data.spec_info.cpu,
           ram: data.spec_info.ram,
-          gpu: data.spec_info.gpu
-        }
+          gpu: data.spec_info.gpu,
+        },
       };
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === "Success") {
@@ -978,7 +913,7 @@ export default class App extends Vue {
       is_gpu: this.is_gpu,
       ecs_ids: this.multiple_selection_id,
       ebs_goods_info: {},
-      billing_info: this.disk_billing_info[data.ecs_goods_id]
+      billing_info: this.disk_billing_info[data.ecs_goods_id],
     };
     if (this.is_gpu) {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
@@ -1010,9 +945,9 @@ export default class App extends Vue {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
           ebs_goods_id: disk_data.system_disk.ecs_goods_id,
-          gic_goods_id: this.disk_billing_info[
-            disk_data.system_disk.ecs_goods_id
-          ]?.gic_goods_id,
+          gic_goods_id:
+            this.disk_billing_info[disk_data.system_disk.ecs_goods_id]
+              ?.gic_goods_id,
           goods_name: disk_data.system_disk.disk_name,
           disk_feature: disk_data.system_disk.disk_feature,
           disk_type: disk_data.system_disk.disk_type,
@@ -1021,8 +956,8 @@ export default class App extends Vue {
           handling_capacity: disk_data.system_disk.handling_capacity,
           iops: disk_data.system_disk.iops,
           is_follow_delete: disk_data.system_disk.is_follow_delete,
-          origin_disk_size: this.origin_disk_size
-        }
+          origin_disk_size: this.origin_disk_size,
+        },
       };
       if (disk_data.system_disk.disk_feature === "local") {
         reqData.disk_info.system_disk["local_disk-IOPS"] =
@@ -1051,7 +986,7 @@ export default class App extends Vue {
       az_id: this.az_id,
       billing_method: "0",
       resource_ids: this.multiple_selection_id,
-      resource_type: "ecs"
+      resource_type: "ecs",
     });
     if (resData.code === "Success") {
       for (let item in resData.data.total_price) {
@@ -1071,7 +1006,7 @@ export default class App extends Vue {
       resource_ids: row.ecs_ids,
       customer_id: row.customer_id,
       billing_method: row.billing_method || "0",
-      resource_type: "ecs"
+      resource_type: "ecs",
     };
     const resData = await Service.start_charge(reqData);
     if (resData.code === "Success") {
@@ -1081,7 +1016,7 @@ export default class App extends Vue {
   }
   private async FnToVnc(id) {
     let resData: any = await Service.get_vnc_url({
-      ecs_id: id
+      ecs_id: id,
     });
     if (resData.code === "Success") {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
@@ -1127,31 +1062,34 @@ export default class App extends Vue {
   }
   private async FnGetStatus() {
     if (this.$store.state.status_list.length > 0) {
-      this.ecs_status_list = this.$store.state.status_list;
-      // this.search_con.status.list = this.$store.state.status_list;
+      this.search_con.status.list = this.$store.state.status_list;
+      this.default_status = this.search_con.status.list.map(item => item.type)
     } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
-        this.ecs_status_list = [];
+        this.search_con.status.list = [];
         for (let key in resData.data) {
-          this.ecs_status_list.push({
-            text: resData.data[key],
-            value: key
-          });
+          if (!this.filters_status.includes(key)) {
+            this.search_con.status.list.push({
+              label: resData.data[key],
+              type: key,
+            });
+            this.default_status.push(key)
+          }
         }
-        this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
+        this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
       }
     }
   }
   private async get_az_list() {
     const res = await EcsService.get_region_az_list({});
     if (res.code === "Success") {
-      res.data.forEach(item => {
-        item.region_list.forEach(inn => {
-          // this.search_con.az_id.list = [
-          //   ...this.search_con.az_id.list,
-          //   ...trans(inn.az_list, "az_name", "az_id", "label", "type")
-          // ];
+      res.data.forEach((item) => {
+        item.region_list.forEach((inn) => {
+          this.search_con.az_id.list = [
+            ...this.search_con.az_id.list,
+            ...trans(inn.az_list, "az_name", "az_id", "label", "type"),
+          ];
         });
       });
     }
@@ -1160,15 +1098,17 @@ export default class App extends Vue {
   private async FnGetCateGoryList() {
     const resData = await Service.get_family_data();
     if (resData.code === "Success") {
-      this.ecs_goods_name_list = resData.data.spec_family_list.map(item => {
+      this.ecs_goods_name_list = resData.data.spec_family_list.map((item) => {
         return {
           value: item.spec_family_id,
-          text: item.name
+          text: item.name,
         };
       });
     }
   }
-
+  private FnCustom() {
+    this.show_custom = true;
+  }
   private async FnExport() {
     this.loading = true;
     const resData = await Service.export_list(
@@ -1178,7 +1118,7 @@ export default class App extends Vue {
             this.search_billing_method == ""
               ? "no"
               : this.search_billing_method,
-          op_source: this.search_op_source
+          op_source: this.search_op_source,
         },
         this.search_reqData
       )
@@ -1186,7 +1126,7 @@ export default class App extends Vue {
     if (resData) {
       this.loading = false;
       let blob = new Blob([resData], {
-        type: "application/octet-stream"
+        type: "application/octet-stream",
       });
       let reader = new FileReader();
       reader.readAsText(blob, "utf-8");
@@ -1203,35 +1143,60 @@ export default class App extends Vue {
   private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
+    this.get_list_field()
     this.get_az_list();
-    this.FnGetCateGoryList();
-    // this.search_con.os_type.list = [
-    //   {
-    //     label: "centos",
-    //     type: "centos"
-    //   },
-    //   {
-    //     label: "ubuntu",
-    //     type: "ubuntu"
-    //   },
-    //   {
-    //     label: "windows",
-    //     type: "windows"
-    //   }
-    // ];
+    // this.FnGetCateGoryList();
+    this.search_con.os_type.list = [
+      {
+        label: "centos",
+        type: "centos",
+      },
+      {
+        label: "ubuntu",
+        type: "ubuntu",
+      },
+      {
+        label: "windows",
+        type: "windows",
+      },
+    ];
     for (let key in this.billing_method_relation) {
       this.billing_method_list.push({
         value: key,
-        text: this.billing_method_relation[key]
+        text: this.billing_method_relation[key],
       });
     }
-    if (this.$route.query.host_id) {
-      // this.search_con.host_id.default_value = this.$route.query
-      //   .host_id as string;
-      // this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
-    } else {
-      this.FnSearch();
+    if (this.$route.query.host_name) {
+      this.search_con.host_name.default_value = this.$route.query
+        .host_name as string;
+      this.search_con.status.default_value = ["running", "shutdown", "deleted"];
     }
+    this.all_item.forEach(item => {
+      this.all_table_item.push(...item.filed.map(item => {
+        return {
+          label: item.show_name,
+          prop: item.field_name,
+          hidden: item.hidden,
+          sortable: item.sortable
+        }
+      }))
+    });
+  }
+  mounted() {
+    this.setHeight()
+  }
+  private FnIsOpen(){
+    this.setHeight()
+  }
+  setHeight(){
+    this.$nextTick(()=>{
+      let table = this.$refs.multipleTable as any
+      this.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      let self = this;
+      window.onresize = function(){
+        self.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
+      }
+    });
   }
   private beforeDestroy() {
     this.FnClearTimer();
@@ -1266,8 +1231,20 @@ export default class App extends Vue {
   border: 1px solid #888;
   border-radius: 30px;
 }
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  i {
+    font-size: 18px;
+  }
+}
 </style>
 <style lang="scss">
+// .instance-list .el-table__body-wrapper {
+//   max-height: calc(100vh - 430px);
+//   overflow: auto;
+// }
 .instance-list .el-loading-spinner .circular {
   width: 24px;
   height: 24px;
