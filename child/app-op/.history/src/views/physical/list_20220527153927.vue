@@ -191,7 +191,13 @@ export default class PhysicalList extends Vue {
     {label:'更改属性',value:'update_attribute'},
     {label:'下架',value:'shelves'},
   ]
-  private rows_operate_btns:any=[]
+  private rows_operate_btns:any=[
+    // {label:'详情',value:'physical_detail'},
+    // // {label:'进入带外管理',value:'out_of_band'},
+    // {label:'迁移',value:'migrate'},
+    // {label:'操作记录',value:'record'},
+    // {label:'分配资源',value:'resource'},
+  ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
     shutdown_host:'已选主机需为在线或离线状态',
@@ -227,10 +233,10 @@ export default class PhysicalList extends Vue {
   private tableHeight=70;
   private custom_host=[]
   created() {
-      this.getFamilyList()
       this.get_host_list_field()
       this.get_room_list()
       this.get_az_list();
+      this.getFamilyList()
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
@@ -262,6 +268,7 @@ export default class PhysicalList extends Vue {
     });
   }
   private async get_host_list_field(){
+    console.log("get_host_list_field")
     let res:any = await Service.get_host_list_field({
       is_op:'0'
     })
@@ -330,30 +337,42 @@ export default class PhysicalList extends Vue {
   private async get_physical_list(){
     const {
       az_id,
+      // bare_metal_id,
+      // pod_name,
       room,
       host_name,
+      // vm_name,
+      // power_status,
+      // host_status,
       host_belong,
       host_purpose,
       host_type,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
       host_source,
-      ecs_family_id,
-      cpu_model,
-      net_model,
+      // create_time
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
+      // pod_name,
       machine_room_name:room,
       host_name,
+      // vm_name,
+      // bare_metal_id,
+      // power_status,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
+      // start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -366,7 +385,6 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
-      ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;

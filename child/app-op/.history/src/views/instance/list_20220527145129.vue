@@ -476,7 +476,7 @@ export default class App extends Vue {
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = "";
-  private sort_order = undefined;
+  private sort_order = 0;
   private show_custom = false;
   private all_item:any = []
   private all_column_item=[];
@@ -558,9 +558,10 @@ export default class App extends Vue {
     //   private_net: "sort_private_ip",
     //   host_name: "sort_host_name",
     // };
-    this.sort_prop_name = `sort_${[val.prop]}`;
-    this.sort_order =val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
+    // console.log('val',val);
     
+    this.sort_prop_name = `sort_${[val.prop]}`;
+    this.sort_order = Number(val.order !== "ascending");
     this.FnGetList();
   }
   // 获取网段
@@ -582,7 +583,7 @@ export default class App extends Vue {
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
       is_op:false,
-      [this.sort_prop_name]: this.sort_order,
+      [this.sort_prop_name]: String(this.sort_order),
       ...this.search_reqData,
     };
     if (this.search_op_source) {

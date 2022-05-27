@@ -558,6 +558,7 @@ export default class App extends Vue {
     //   private_net: "sort_private_ip",
     //   host_name: "sort_host_name",
     // };
+    console.log('val',val);    
     this.sort_prop_name = `sort_${[val.prop]}`;
     this.sort_order =val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
     

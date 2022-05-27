@@ -268,8 +268,8 @@
     </el-table>
 
     <el-pagination
-      @size-change="FnGetList()"
-      @current-change="FnGetList()"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
       :current-page.sync="page_info.page_index"
       :page-sizes="page_info.page_sizes"
       :page-size.sync="page_info.page_size"
@@ -570,15 +570,16 @@ export default class App extends Vue {
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = '';
-  private sort_order = 0;
   private ecs_info:any={};
   private common_visible:boolean=false
+  private sort_order = undefined;
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")
     private watch_pod(){
       this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
+    this.FnClearTimer();
     this.search_reqData = {
       pod_id:this.$store.state.pod_id,
       ecs_id: data.ecs_id,
@@ -605,6 +606,7 @@ export default class App extends Vue {
   }
   // 筛选实例来源
   private handleFilterChange(val) {
+    this.FnClearTimer();
     if (val.op_source) {
       this.search_op_source = val.op_source[0];
     }
@@ -620,15 +622,27 @@ export default class App extends Vue {
     }
     this.FnGetList();
   }
+  //handleSizeChange
+  private handleSizeChange(val){
+    this.FnClearTimer();
+    this.page_info.page_size = val;
+    this.FnGetList()
+  }
+  private handleCurrentChange(cur){
+    this.FnClearTimer();
+    this.page_info.page_index = cur
+    this.FnGetList()
+  }
   // 列表排序
   private handleSortChange(val) {
+    this.FnClearTimer();
     let relation = {
       private_net: 'sort_private_ip',
       host_name: 'sort_host_name',
       ecs_name:'sort_ecs_name'
     }
     this.sort_prop_name = relation[val.prop];
-    this.sort_order = Number(val.order !== 'ascending');
+    this.sort_order = val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
     this.FnGetList()
   }
   // 获取网段
@@ -653,7 +667,8 @@ export default class App extends Vue {
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
       status:this.search_status.join(','),
-      [this.sort_prop_name]: String(this.sort_order),
+      [this.sort_prop_name]: this.sort_order,
+      is_op:true,
       ...this.search_reqData
     }
     if (this.search_op_source) {

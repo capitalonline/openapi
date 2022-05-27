@@ -48,6 +48,8 @@ const routes: RouteConfig[] = [
       }
     ]
   },
+  
+  
   {
     path: '/404',
     name: '404',

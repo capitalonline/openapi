@@ -227,10 +227,10 @@ export default class PhysicalList extends Vue {
   private tableHeight=70;
   private custom_host=[]
   created() {
-      this.getFamilyList()
       this.get_host_list_field()
       this.get_room_list()
       this.get_az_list();
+      this.getFamilyList()
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
@@ -262,6 +262,7 @@ export default class PhysicalList extends Vue {
     });
   }
   private async get_host_list_field(){
+    console.log("get_host_list_field")
     let res:any = await Service.get_host_list_field({
       is_op:'0'
     })
@@ -329,20 +330,14 @@ export default class PhysicalList extends Vue {
   }
   private async get_physical_list(){
     const {
-      az_id,
-      room,
-      host_name,
-      host_belong,
+      az_id,room,
+      host_name,host_belong,
       host_purpose,
-      host_type,
-      out_band_address,
-      host_ip,
-      gpu_model,
+      host_type,out_band_address,
+      host_ip,gpu_model,
       host_rack,
       host_source,
       ecs_family_id,
-      cpu_model,
-      net_model,
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -352,8 +347,6 @@ export default class PhysicalList extends Vue {
       host_ip,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,

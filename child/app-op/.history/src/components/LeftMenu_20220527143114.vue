@@ -67,8 +67,6 @@ export default class LeftMenu extends Vue {
   };
   created() {
     this.all_menu.forEach((item:any) => {
-      console.log('menu',this.menu);
-      
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {

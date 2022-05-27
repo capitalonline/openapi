@@ -177,21 +177,51 @@ export default class PhysicalList extends Vue {
   $store;
   private search_option:any={
     az_id:{placeholder:'请选择可用区',list:[]},
+    // pod_name:{placeholder:'请输入POD名称'},    
+    // vm_name:{placeholder:'请输入VM名称'},
+    // power_status:{placeholder:'请选择主机电源状态',list:[]},
+    // host_status:{placeholder:'请选择主机机器状态',list:[]},
+    // ecs_id:{placeholder:'请输入云服务器ID'},
     out_band_address:{placeholder:'请输入带外IP'},
     host_ip:{placeholder:'请输入管理网IP'},
     host_name:{placeholder:'请输入主机名称/ID'},
+    // host_id:{placeholder:'请输入物理机ID'},
     gpu_model:{placeholder:'请输入显卡型号'},
     cpu_model:{placeholder:'请输入CPU型号'},
     net_model:{placeholder:'请输入网卡型号'},
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
+    // bare_metal_id:{placeholder:'请输入裸金属产品ID'},
+    // create_time: {
+    //   placeholder: ['开始时间', '结束时间'],
+    //   type: 'datetimerange',
+    //   width: '360',
+    //   clearable: true,
+    //   dis_day: 31,
+    //   defaultTime: [] 
+    // },
   }
   private operate_btns:any=[
+    // {label:'导入',value:'upload'},
+    // {label:'完成验证',value:'finish_validate'},
+    // {label:'开机',value:'start_up_host'},
+    // {label:'关机',value:'shutdown_host'},
+    // {label:'重启',value:'restart_host'},
+    // {label:'在线维护',value:'online_maintenance'},
+    // {label:'离线维护',value:'offline_maintenance'},
+    // {label:'完成维护',value:'finish'},
+    // {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
     {label:'下架',value:'shelves'},
   ]
-  private rows_operate_btns:any=[]
+  private rows_operate_btns:any=[
+    // {label:'详情',value:'physical_detail'},
+    // // {label:'进入带外管理',value:'out_of_band'},
+    // {label:'迁移',value:'migrate'},
+    // {label:'操作记录',value:'record'},
+    // {label:'分配资源',value:'resource'},
+  ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
     shutdown_host:'已选主机需为在线或离线状态',
@@ -227,10 +257,10 @@ export default class PhysicalList extends Vue {
   private tableHeight=70;
   private custom_host=[]
   created() {
-      this.getFamilyList()
       this.get_host_list_field()
       this.get_room_list()
       this.get_az_list();
+      this.getFamilyList()
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
@@ -262,6 +292,7 @@ export default class PhysicalList extends Vue {
     });
   }
   private async get_host_list_field(){
+    console.log("get_host_list_field")
     let res:any = await Service.get_host_list_field({
       is_op:'0'
     })
@@ -330,30 +361,42 @@ export default class PhysicalList extends Vue {
   private async get_physical_list(){
     const {
       az_id,
+      // bare_metal_id,
+      // pod_name,
       room,
       host_name,
+      // vm_name,
+      // power_status,
+      // host_status,
       host_belong,
       host_purpose,
       host_type,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
       host_source,
-      ecs_family_id,
-      cpu_model,
-      net_model,
+      // create_time
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
+      // pod_name,
       machine_room_name:room,
       host_name,
+      // vm_name,
+      // bare_metal_id,
+      // power_status,
+      // ecs_id,
       out_band_address,
       host_ip,
+      // host_id,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
+      // start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      // machine_status:host_status,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -366,7 +409,6 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
-      ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;

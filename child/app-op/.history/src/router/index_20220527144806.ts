@@ -14,21 +14,6 @@ const routes: RouteConfig[] = [
     meta: {label: 'POD管理', meta: 'pod_list'}
   },
   {
-    path:'/physical',
-    name:'physical_list',
-    component:()=>import('../views/physical/list.vue'),
-    meta: {label: '物理资源管理', menu:'physical_list'},
-    children: [
-      {
-        path:'/physical/detail',
-        name:'physical_detail',
-        component:()=>import('../views/physical/detail.vue'),
-        meta: {label: '物理机详情', menu:'physical_list'}
-    
-      }
-    ]
-  },
-  {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
@@ -48,6 +33,22 @@ const routes: RouteConfig[] = [
       }
     ]
   },
+  {
+    path:'/physical',
+    name:'physical_list',
+    component:()=>import('../views/physical/list.vue'),
+    meta: {label: '物理资源管理', menu:'physical_list'},
+    children: [
+      {
+        path:'/physical/detail',
+        name:'physical_detail',
+        component:()=>import('../views/physical/detail.vue'),
+        meta: {label: '物理机详情', menu:'physical_list'}
+    
+      }
+    ]
+  },
+  
   {
     path: '/404',
     name: '404',
