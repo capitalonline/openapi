@@ -66,9 +66,7 @@ export default class LeftMenu extends Vue {
     }
   };
   created() {
-    this.all_menu.forEach((item:any) => {
-      console.log('menu',this.menu);
-      
+    this.all_menu.forEach((item:any) => {      
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
@@ -83,9 +81,7 @@ export default class LeftMenu extends Vue {
             children: child_list
           })
         }
-      } else {
-        console.log('aaa-menu',this.menu);
-        
+      } else {        
         if (this.$store.state.auth_info[item.name]) {
           this.menu.push(item)
         }
