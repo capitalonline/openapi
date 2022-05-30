@@ -389,6 +389,16 @@ export default class PhysicalList extends Vue {
       let key_list=['spec_family_id','name'];
       let label_list=['value','text']
       this.spec_family_list =deal_list(res.data.spec_family_list,label_list,key_list);
+      console.log('this.custom_list',this.custom_host);
+      if(this.custom_host.length>0){
+        this.custom_host.map(item=>{
+          console.log('item',item);
+          if(item.column_key==='ecs_family_id' && item.list.length===0){
+            console.log('aaa');
+            this.$set(item,'list',this.spec_family_list)
+          }
+        })
+      }
       // console.log('this.spec_family_list',this.spec_family_list);
       
     }
