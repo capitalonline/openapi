@@ -20,8 +20,8 @@
                 <span class="m-left10" v-if="item.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
             </div>
-            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-1].display_name} (测试完成，云主机进行销毁)` : ''}}</div>
-            
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-1].display_name}` : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 3"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-2].display_name} (测试完成，云主机进行销毁)` : ''}}</div>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
@@ -105,6 +105,7 @@ export default class BusinessTest extends Vue{
             return item;
         })
         list.push({maintask_name:this.taskList[this.taskList.length-1].maintask_name,dep_params:{}})
+        list.push({maintask_name:this.taskList[this.taskList.length-2].maintask_name,dep_params:{}})
         let res:any = await Service.create_test_task({
             az_id:this.az_info.az_id,
             task_list:list
