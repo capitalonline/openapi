@@ -60,7 +60,7 @@
       border
       :max-height="tableHeight"
     >
-      <el-table-column type="selection" width="40"></el-table-column>
+      <el-table-column type="selection" :width="select_table_item.length>0 ? '48px' : '1100px'"></el-table-column>
       <el-table-column
         v-for="item in select_table_item"
         :key="item.prop"

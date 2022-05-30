@@ -26,10 +26,10 @@
         @filter-change="filterAttribute"
         :max-height="tableHeight"
       >
-        <el-table-column type="selection"></el-table-column>
+        <el-table-column type="selection" :width="custom_host.length>0 ? '48px' : '1100px'"></el-table-column>
         <el-table-column 
           v-for="item in custom_host" 
-          :filter-multiple="item.column_key ? false : null"
+          :filter-multiple="item.column_key ? item.multiple ? true : false : null"
           :key="item.prop" 
           :prop="item.prop" 
           :label="item.label" 
@@ -304,7 +304,7 @@ export default class PhysicalList extends Vue {
         item = Object.assign(item,{},{column_key:'host_source',list:this.host_source})
       }
       if(item.prop==='exclusive_spec_family'){
-        item = Object.assign(item,{},{column_key:'ecs_family_id',list:this.spec_family_list})
+        item = Object.assign(item,{},{column_key:'ecs_family_id',multiple:true,list:this.spec_family_list})
       }
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
@@ -366,7 +366,7 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
-      ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
+      ecs_family_list:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -441,7 +441,7 @@ export default class PhysicalList extends Vue {
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
         host_type:host_type ? host_type[0] : undefined,
-        ecs_family_id:ecs_family_id ? ecs_family_id[0] : undefined,
+        ecs_family_list:ecs_family_id && ecs_family_id.length>0 ? JSON.stringify(ecs_family_id) : undefined,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
     let str=""
