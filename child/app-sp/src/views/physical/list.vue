@@ -61,7 +61,7 @@
             <el-button type="text" @click="goEcs(scope.row.host_id)">{{scope.row.ecs_num}}</el-button>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
-            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
+            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
@@ -73,7 +73,7 @@
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
-              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
+              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span>
             </div>
             
           </template>
@@ -83,7 +83,6 @@
             <el-dropdown @command="handleOperate">
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
 
-              <!-- <el-button type="text"><i class="el-icon-s-operation"></i></el-button> -->
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -124,6 +123,8 @@
         :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
+      <!-- :all_item="all_item" -->
+      <!-- :all_column_item="all_column_item"  -->
     </div>
 </template>
 <script lang="ts">
@@ -319,6 +320,7 @@ export default class PhysicalList extends Vue {
       this.all_item = res.data;
       this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
+      this.get_custom_columns(this.$store.state.custom_host)
 
     }
   }
@@ -391,6 +393,7 @@ export default class PhysicalList extends Vue {
       create_time
     }=this.search_data
     let res:any=await Service.get_host_list({
+      // az_id:this.$store.state.pod_id,
       az_id,
       pod_name,
       machine_room_name:room,
@@ -576,7 +579,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && value!=='upload'){
+    if(this.multi_rows.length===0 && !['upload'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
@@ -625,7 +628,7 @@ export default class PhysicalList extends Vue {
       let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
       let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
       let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
-      if(!vm_flag && ['shutdown_host','restart_host'].includes(val)){
+      if(!vm_flag && ['shutdown_host'].includes(val)){
         this.error_msg[val]=getHostStatus(val).msg2
       }else{
         this.error_msg[val]=getHostStatus(val).msg
