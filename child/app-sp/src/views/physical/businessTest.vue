@@ -11,7 +11,6 @@
             <el-button type="primary" @click="add" class="m-bottom10" :disabled="selectedTasks.length===selectable.length">新增测试任务</el-button>
             <div class="m-bottom20">将对<span class="m-left10 num_message m-right10">{{az_info.az_name}}</span>未通过业务测试的物理机进行业务测试，已通过业务测试的物理机不会再次进行以下测试。业务测试完成情况可在<span class="clickble m-left10 m-right10" @click="$router.push('/message')">消息通知</span>进行查看</div>
             <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{taskList.length>0 ? `${taskList[0].display_name} (在选中的每台物理机上创建1个1核1G的云主机，GPU物理机需创建1个CPU云主机和1个GPU云主机。若创建成功且正常运行，则该项任务测试通过)` : ''}}</div>
-            <!-- <div class="m-bottom10"><circle-icon :num="2"></circle-icon>{{taskList.length>0 ? taskList[1].display_name :''}}</div> -->
             <div v-for="(item,index) in selectedTasks" :key="index" class="m-bottom10">
                 <circle-icon :num="index+2"></circle-icon>
                 <el-select v-model="item.task_id" placeholder="请选择测试任务列表" @change="changeTask($event,index)">
