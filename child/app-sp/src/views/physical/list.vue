@@ -64,9 +64,8 @@
           </template>
           <template #default="props" v-else-if="item.prop==='ecs_num_expand'">
               <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading">
-                <el-table-column v-for="inn in ecs_fields" ref="ecs_list" :key="inn.prop" :label="inn.label" :prop="inn.prop">
+                <el-table-column v-for="inn in ecs_fields" ref="ecs_list" :key="inn.prop" :label="inn.label" :prop="inn.prop" :width="inn.width ? inn.width : null">
                   <template #default="scope" v-if="inn.prop==='ecs_name'">
-                  
                     <span class="clickble" @click="FnToDetail(scope.row.ecs_id)">{{scope.row.ecs_name}}</span>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='status'">
@@ -111,7 +110,13 @@
                     <span v-if="scope.row.gpu_size">| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='disk'">
-                    <span>{{scope.row.system_disk_type}}{{scope.row.system_disk_size}}{{scope.row.system_disk_unit}}</span>
+                    <div>系统盘：{{scope.row.system_disk_type}}{{scope.row.system_disk_size}}{{scope.row.system_disk_unit}}</div>
+                    <div v-if="scope.row.data_list_list.length>0" class="disk">
+                      <span>数据盘：</span>
+                      <div>
+                        <p v-for="item in scope.row.data_list_list" :key="item.feature">{{item.feature}}云盘{{item.size}}{{item.unit}}</p>
+                      </div>
+                    </div>
                   </template>
                 </el-table-column>
               </el-table>
@@ -324,7 +329,7 @@ export default class PhysicalList extends Vue {
     {label:'虚拟出网网关IP',prop:'pub_net'},
     {label:'公网IP',prop:'pub_ip'},
     {label:'计算规格',prop:'ecs_info'},
-    {label:'存储',prop:'disk'},
+    {label:'存储',prop:'disk',width:'160px'},
     {label:'操作系统',prop:'os_name'},
     {label:'更新时间',prop:'update_time'},
     {label:'创建时间',prop:'create_time'},
@@ -862,6 +867,9 @@ export default class PhysicalList extends Vue {
 .icon{
   width:100%;
   text-align: right;
+}
+.disk{
+  display: flex;
 }
 i.el-icon-s-tools{
   font-size: 18px;
