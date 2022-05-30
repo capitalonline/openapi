@@ -366,7 +366,7 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
-      ecs_family_list:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id : undefined,
+      ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -389,8 +389,13 @@ export default class PhysicalList extends Vue {
       let key_list=['spec_family_id','name'];
       let label_list=['value','text']
       this.spec_family_list =deal_list(res.data.spec_family_list,label_list,key_list);
-      console.log('this.spec_family_list',this.spec_family_list);
-      
+      if(this.custom_host.length>0){
+        this.custom_host.map(item=>{
+          if(item.column_key==='ecs_family_id' && item.list.length===0){
+            this.$set(item,'list',this.spec_family_list)
+          }
+        })
+      }
     }
   }
   private async get_host_attribution (){
@@ -441,7 +446,7 @@ export default class PhysicalList extends Vue {
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
         host_type:host_type ? host_type[0] : undefined,
-        ecs_family_list:ecs_family_id && ecs_family_id.length>0 ? JSON.stringify(ecs_family_id) : undefined,
+        ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
     let str=""
