@@ -15,11 +15,11 @@
       </svg>
     </div>
     <div class="right-content">
-      <!-- <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10">
+      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10">
         <el-button @click="FnChangeEntry()">
           <i class="el-icon-menu"></i>
         </el-button>
-      </el-tooltip> -->
+      </el-tooltip>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           {{ loginName }}<i class="el-icon-arrow-down el-icon--right"></i>
