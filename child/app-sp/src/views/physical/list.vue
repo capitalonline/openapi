@@ -773,7 +773,6 @@ export default class PhysicalList extends Vue {
           az_name:this.list[0].az_name,
         }
       }
-      console.log("this.oper_type",this.oper_type)
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
