@@ -52,8 +52,8 @@ export default class OverView extends Vue{
         }
     }]
     created(){
-        // this.get_overview(0);
-        // this.get_overview(1);
+        this.get_overview(0);
+        this.get_overview(1);
     }
     @Watch('$store.state.pod_id')
     private watch_pod(nv){
@@ -65,6 +65,9 @@ export default class OverView extends Vue{
     }
     
     private async get_overview(ind){
+        if(!this.$store.state.pod_id){
+            return;
+        }
         let func = ind===0 ? 'get_host_overview' : 'get_ecs_overview'
         let res:any= await Service[func]({
             pod_id:this.$store.state.pod_id
