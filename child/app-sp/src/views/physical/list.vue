@@ -469,7 +469,10 @@ export default class PhysicalList extends Vue {
     this.get_physical_list()
   }
   @Watch("$store.state.pod_id")
-  private watch_pod(){
+  private watch_pod(nv){
+    if(!nv){
+      return;
+    }
     this.refresh()
   }
   private async get_physical_list(){

@@ -22,7 +22,7 @@ interface prop {
 };
 let routes = [];
 function FnHandleRoutes(data) {
-  data.forEach((item, index) => {
+  data.forEach((item, index) => {    
     if (item.children && store.state.auth_info[item.name]) {
       const children = []
       item.children.forEach(child => {
@@ -38,9 +38,16 @@ function FnHandleRoutes(data) {
       routes.push(item)
     } else if (item.meta?.no_auth) {
       routes.push(item)
+    }else{
+      for(let i in store.state.auth_info){
+        if(store.state.auth_info[i].includes(item.name)){
+          routes.push(item)
+        }
+      }
     }
   })
 }
+
 function render (props: prop = {}) {
   const { container } = props;
   FnHandleRoutes(all_routes)
@@ -52,7 +59,7 @@ function render (props: prop = {}) {
   router.beforeEach((to, from, next) => {
     if (!to.name) {
       next({ name: routes[0].name })
-    } else {
+    } else {      
       next()
     }
   })

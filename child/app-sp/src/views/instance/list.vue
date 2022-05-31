@@ -575,7 +575,10 @@ export default class App extends Vue {
   private sort_order = undefined;
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")
-    private watch_pod(){
+    private watch_pod(nv){
+      if(!nv){
+        return;
+      }
       this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
