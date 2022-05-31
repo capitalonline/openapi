@@ -240,7 +240,10 @@ export default class extends Vue {
     this.FnClearTimer()
   }
   @Watch("$store.state.pod_id")
-  private watch_pod(){
+  private watch_pod(nv){
+    if(!nv){
+      return;
+    }
     this.search(this.req_data)
   }
   @Watch("visible")

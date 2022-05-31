@@ -52,11 +52,14 @@ export default class OverView extends Vue{
         }
     }]
     created(){
-        this.get_overview(0);
-        this.get_overview(1);
+        // this.get_overview(0);
+        // this.get_overview(1);
     }
     @Watch('$store.state.pod_id')
     private watch_pod(nv){
+        if(!nv){
+            return;
+        }
         this.get_overview(0);
         this.get_overview(1);
     }
@@ -69,7 +72,6 @@ export default class OverView extends Vue{
         if(res.code==="Success"){
             this.overview_info[ind].all = res.data.all;
             for(let i in res.data){
-                console.log("##",i,)
                 if(this.overview_info[ind].info[i])this.overview_info[ind].info[i].value = res.data[i]
                 
             }

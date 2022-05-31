@@ -149,7 +149,10 @@ export default class Detail extends Vue {
       this.event_name = this.$route.query.name
     }
     @Watch("$store.state.pod_id")
-    private watch_pod(){
+    private watch_pod(nv){
+      if(!nv){
+        return;
+      }
       this.current = 1
       this.getTaskList()
     }
