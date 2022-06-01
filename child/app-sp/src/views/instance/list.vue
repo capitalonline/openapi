@@ -589,20 +589,23 @@ export default class App extends Vue {
   // 筛选实例来源
   private handleFilterChange(val) {
     this.FnClearTimer();
-    if (val.op_source) {
-      this.search_op_source = val.op_source[0];
-    }
-    if (val.billing_method) {
-      this.search_billing_method =
-        val.billing_method.length > 0 ? val.billing_method[0] : "all";
-    }
-    if (val.ecs_goods_name) {
-      this.search_ecs_goods_name = val.ecs_goods_name;
-    }
-    if(val.status){
-      this.search_status = val.status;
-    }
-    this.FnGetList();
+    setTimeout(()=>{
+      if (val.op_source) {
+        this.search_op_source = val.op_source[0];
+      }
+      if (val.billing_method) {
+        this.search_billing_method =
+          val.billing_method.length > 0 ? val.billing_method[0] : "all";
+      }
+      if (val.ecs_goods_name) {
+        this.search_ecs_goods_name = val.ecs_goods_name;
+      }
+      if(val.status){
+        this.search_status = val.status;
+      }
+      this.FnGetList();
+    },500)
+    
   }
   //handleSizeChange
   private handleSizeChange(val){
