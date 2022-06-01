@@ -763,11 +763,12 @@ def create_mysql_super_account(instance_uuid, ):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型                                 | 说明                         |
-| :----------- | :--- | :----------------------------------- | ---------------------------- |
-| InstanceUuid | 是   | string                               | 要更新用户权限的实例编号     |
-| AccountName  | 是   | string                               | 普通用户的账号名称           |
-| Operations   | 是   | list of [Operations](#OperationsObj) | 账号赋权数据库与对应权限列表 |
+| 参数名         | 必选 | 类型                                    | 说明                         |
+| :------------- | :--- | :-------------------------------------- | ---------------------------- |
+| InstanceUuid   | 是   | string                                  | 要更新用户权限的实例编号     |
+| AccountName    | 是   | string                                  | 普通用户的账号名称           |
+| Operations     | 是   | list of [Operations](#OperationsObj)    | 账号赋权数据库与对应权限列表 |
+| ExtraPrivilege | 否   | [ExtraPrivilegeObj](#ExtraPrivilegeObj) | 附加权限                     |
 
 #### OperationsObj
 
@@ -775,6 +776,12 @@ def create_mysql_super_account(instance_uuid, ):
 | :-------- | :--- | :----- | ------------------------------------------------------------ |
 | DBName    | 是   | string | 需要赋权的数据库名称                                         |
 | Privilege | 是   | string | 数据库对应账号权限。<br />ReadWrite：读写权限<br />DMLOnly：仅DML<br />ReadOnly：只读权限<br />DDLOnly：仅DDL |
+
+#### ExtraPrivilegeObj
+
+| 参数名    | 必选 | 类型   | 说明                                                         |
+| --------- | ---- | ------ | ------------------------------------------------------------ |
+| AllCreate | 否   | string | 普通账号全局create权限，默认false，取值范围：["ture","false"] |
 
 **返回参数：**
 
@@ -804,7 +811,10 @@ def modify_mysql_privilege(instance_uuid):
         }, {
             "DBName": "test1",
             "Privilege": "DDLOnly"
-    	}]
+    	}],
+        "ExtraPrivilege": {
+            "AllCreate": "true"
+        }
     }
 
     res = requests.post(url, json=body)
@@ -976,6 +986,7 @@ def get_mysql_user_privileges():
 | AccountName        | string                                                  | 账号名称                                                     |
 | AccountDescription | string                                                  | 账号描述                                                     |
 | DatabasePrivileges | list of [DatabasePrivilegesObj](#databaseprivilegesobj) | 数据库权限详情                                               |
+| ExtraPrivilege     | [ExtraPrivilegeObj](#查询用户ExtraPrivilegeObj)         | 附加权限                                                     |
 
 #### DatabasePrivilegesObj
 
@@ -985,6 +996,12 @@ def get_mysql_user_privileges():
 | DBName                 | string | 已授权数据库名称                                             |
 | TableName              | string | 已授权数据表名称                                             |
 | AccountPrivilegeDetail | string | 账号权限详情                                                 |
+
+#### 查询用户ExtraPrivilegeObj
+
+| 参数名    | 类型   | 说明                                                         |
+| --------- | ------ | ------------------------------------------------------------ |
+| AllCreate | string | 普通账号全局create权限，默认false，取值范围：["ture","false"] |
 
 **请求示例：**
 
@@ -1009,28 +1026,32 @@ def get_mysql_account():
 
 ```json
 {
-    "Message": "success",
     "Code": "Success",
     "Data": [{
-        "AccountType": "Super",
-        "ServiceId": "******************",
-        "AccountStatus": "available",
-        "DatabasePrivileges": [],
+        "AccountDescription": "",
         "AccountName": "admin",
-        "AccountDescription": "123123"
-    }, {
-        "AccountType": "Normal",
-        "ServiceId": "******************",
         "AccountStatus": "available",
-        "DatabasePrivileges": [{
-            "AccountPrivilegeType": "ReadWrite",
-            "DBName": "test",
-            "TableName": "*",
-            "AccountPrivilegeDetail": "SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER"
-        }],
+        "AccountType": "Super",
+        "DatabasePrivileges": null,
+        "ExtraPrivilege": null,
+        "ServiceId": "********************"
+    }, {
+        "AccountDescription": "",
         "AccountName": "pt",
-        "AccountDescription": ""
-    }]
+        "AccountStatus": "available",
+        "AccountType": "Normal",
+        "DatabasePrivileges": [{
+            "AccountPrivilegeDetail": "CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE",
+            "AccountPrivilegeType": "DDLOnly",
+            "DBName": "test",
+            "TableName": "*"
+        }],
+        "ExtraPrivilege": {
+            "AllCreate": "true"
+        },
+        "ServiceId": "********************"
+    }],
+    "Message": "success"
 }
 ```
 
