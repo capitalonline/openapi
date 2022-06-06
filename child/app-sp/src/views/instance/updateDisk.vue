@@ -32,7 +32,7 @@
         {{ data.default_system_info?data.default_system_info.disk_unit:'GB' }}
       </el-form-item>
     </div>
-    <template v-if="data_disk">
+    <template v-if="data_disk && data_disk_info.length > 0">
       <div v-for="(disk, index) in data_disk_list" :key="index">
         <div class="inline-form">
           <el-form-item class="short-select" :label="index===0?'数据盘':''">
@@ -57,10 +57,10 @@
               <!-- :max="FnGetSurplus + disk.num" 原先云盘数量的最大值 -->
               <!-- {{disk.default_disk_info.disk_max}}--{{data.default_disk_info && data.default_disk_info.disk_feature ? showResetVolume[data.default_disk_info.disk_feature] : ''}} -->
             {{data.default_system_info? disk.default_disk_info.disk_unit : 'GB' }}
-            <template v-if="disk.default_disk_info.disk_feature !== 'local'">
+            <!-- <template v-if="disk.default_disk_info.disk_feature !== 'local'">
               <span class="m-left10 m-right10">{{ disk.iops_show }}</span>
               <span class="m-right10">{{ disk.throughput_show }}</span>
-            </template>
+            </template> -->
           </el-form-item>
           <el-form-item>
             <el-input-number
@@ -75,7 +75,7 @@
             <!-- {{getEveryMaxNum(disk)}} -->
           </el-form-item>
           <el-form-item>
-            <el-checkbox v-model="disk.del" @change="FnDataEmit" v-if="!is_gpu">随实例删除</el-checkbox>
+            <el-checkbox v-model="disk.del" @change="FnDataEmit">随实例删除</el-checkbox>
           </el-form-item>
         </div>
         <div class="prompt_message data-prompt" v-if="disk.default_disk_info.disk_feature!=='local'">
@@ -84,9 +84,9 @@
           ，还可以购买的容量额度为：<span :class="[getResetInfo(disk).reset >=0 ? 'num_message':'error_message']">{{Math.max(getResetInfo(disk).reset,0)}} {{disk.default_disk_info.disk_unit}}</span>
         </div>
       </div>
-      <el-form-item :label="data_disk_list.length===0?'数据盘':''" v-if="data_disk_info.length > 0">
+      <el-form-item :label="data_disk_list.length===0?'数据盘':''">
         <div class="disk-btn">
-          <el-button type="text" @click="FnAddDataDisk" :disabled="Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+          <el-button type="text" @click="FnAddDataDisk" :disabled="data_disk_list.some(item=>item.num===16) ||Object.keys(showResetVolume).length===data_disk_list.length"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
           <div class="prompt_message">您已选择 <span class="num_message">{{ FnGetDiskNum }}</span> 块盘，
           还可以添加 <span class="num_message">{{ FnGetSurplus }}</span> 块盘</div>
         </div>
@@ -225,15 +225,14 @@ export default class updateDisk extends Vue {
     let reset_num:number=this.data_disk_list.length===0 ? 16 : 0;
     let max_num:number = this.data_disk_list.length===0 ? 16 : 0;
     this.data_disk_list.map(disk=>{
-      max_num+= Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num)  / disk.disk_size)
-      reset_num+= Math.floor(Math.max(this.getResetInfo(disk).reset,0) / disk.disk_size)
+      max_num+= Math.floor((this.showResetVolume[disk.default_disk_info.disk_feature] - disk.disk_size*disk.num)  / disk.disk_size)//所有类型还可以添加的块数
+
     })
-    console.log('FnGetSurplus',reset_num,max_num,Math.min(16 - this.FnGetDiskNum,reset_num,max_num));
-    return Math.min(16 - this.FnGetDiskNum,reset_num,max_num)
+    return Math.min(16 - this.FnGetDiskNum,max_num)
   }
   private getEveryMaxNum(disk){
     let systemUsed:number= this.data.default_system_info.disk_feature===disk.default_disk_info.disk_feature ? this.data.system_size : 0
-    let reset_num:number = Math.floor((disk.default_disk_info.disk_max - disk.disk_size*disk.num - systemUsed) /  disk.disk_size)//剩余容量还可以创建多少块
+    let reset_num:number = Math.floor(Math.max((this.showResetVolume[disk.default_disk_info.disk_feature] - disk.disk_size*disk.num - systemUsed),0) /  disk.disk_size)//剩余容量还可以创建多少块
     return (reset_num >16-this.FnGetDiskNum) ? 16-this.FnGetDiskNum+disk.num : reset_num+disk.num
   }
   private get FnGetSystemIops() {
@@ -272,7 +271,7 @@ export default class updateDisk extends Vue {
       disk_size: 0,
       num: 1,
       min: 1,
-      del: false
+      del: true
     }
     // data.default_disk_info = this.data_disk_info[0] || {};    
     data.default_disk_info = {...fil[0],disk_max:this.showResetVolume[fil[0].disk_feature] ? Math.min(fil[0].disk_max,this.showResetVolume[fil[0].disk_feature]):fil[0].disk_max} || {};
