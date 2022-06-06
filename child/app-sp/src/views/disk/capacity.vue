@@ -14,9 +14,9 @@
                 :closable="false">
             </el-alert>
             <div class="prompt_message m-top10 prompt" v-if="Object.keys(showResetVolume).length>0">
-                <div v-for="item in this.volumeInfo" :key="item.feature">
-                    当前可用区已购买<span class="num_message num-prompt">{{item.feature}}</span>云盘<span class="num_message num-prompt">{{item.add}}</span>
-                    GB,还可以购买的容量额度<span class="num_message num-prompt">{{item.remain}}</span>GB
+                <div v-for="(i,item) in usedVolume" :key="i">
+                    当前可用区已购买<span class="num_message num-prompt">{{item}}</span>云盘<span class="num_message num-prompt">{{i}}</span>
+                    GB,还可以购买的容量额度<span class="num_message num-prompt">{{showResetVolume[item]}}</span>GB
                 </div>
             </div>
             <el-table
@@ -36,8 +36,8 @@
                 <el-table-column prop="capacity_size" label="当前规格">
                     <template slot-scope="scope">
                         <span>容量：&nbsp;{{scope.row.capacity_size}}GB</span>
-                        <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
-                        <div class="text-left">吞吐量：&nbsp;{{scope.row.capacity_throughput}}{{scope.row.mbps_unit}}</div>
+                        <!-- <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
+                        <div class="text-left">吞吐量：&nbsp;{{scope.row.capacity_throughput}}{{scope.row.mbps_unit}}</div> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="status_name" label="状态"></el-table-column>
@@ -56,8 +56,8 @@
                             </el-input-number>
                             <div class="m-left10">
                                 <!-- max:{{scope.row.disk_max}}: -->
-                                <div class="text-left">IOPS:&nbsp;{{scope.row.disk_iops}}{{scope.row.iops_unit}}</div>
-                                <div class="text-left">吞吐量：&nbsp;{{scope.row.band_mbps}}{{scope.row.mbps_unit}}</div>
+                                <!-- <div class="text-left">IOPS:&nbsp;{{scope.row.disk_iops}}{{scope.row.iops_unit}}</div>
+                                <div class="text-left">吞吐量：&nbsp;{{scope.row.band_mbps}}{{scope.row.mbps_unit}}</div> -->
                             </div>
                         </div>
                     </template>
@@ -115,7 +115,8 @@ export default class Capacity extends Vue{
     private billing_info = {}
     private price_unit:string= "￥";
     private showResetVolume={}
-    private volumeInfo:any=[]
+    private volumeInfo:any=[];
+    private usedVolume:any={}
     created() {
         this.list = JSON.parse(this.$route.query.list)
         this.get_customer_name()
@@ -161,7 +162,6 @@ export default class Capacity extends Vue{
     }
     //获取云盘各类型剩余可使用额度
     private async get_disk_limit(type){
-        console.log("type",type)
         let res = await Create.get_disk_limit({
             customer_id:this.list[0].customer_id,
             az_id:this.list[0].az_id,
@@ -169,7 +169,8 @@ export default class Capacity extends Vue{
         })
         if(res.code==='Success'){
             for(let i in res.data){
-                this.showResetVolume[i] = res.data[i].rest_volume;//各类型总剩余容量;
+                this.usedVolume[i] = Math.max(res.data[i].current_volume,0)
+                this.showResetVolume[i] = Math.max(res.data[i].rest_volume,0);//各类型总剩余容量;
             }
             this.$nextTick(()=>{
                 this.list.map(item=>{//初始化
@@ -191,7 +192,6 @@ export default class Capacity extends Vue{
                         return item.disk_id
                     }
                 })
-                console.log("get_disk_limit",this.list)
                 this.get_expansion_price(disk_ids,'init')
                 this.getAlerInfo()
             })            
@@ -200,6 +200,9 @@ export default class Capacity extends Vue{
     }
     private async get_expansion_price(ids,label){
         const temp={}
+        if(this.list.some(item=>item.size===0 || !item.size)){
+            return;
+        }
         this.list.map(item=>{
             if(ids.includes(item.disk_id)){
                 const {ebs_goods_id,gic_goods_id,feature,size,disk_iops,band_mbps} = item
@@ -340,8 +343,8 @@ export default class Capacity extends Vue{
         margin-bottom: 56px;
         .expansion_spec{
             text-align: center;
-            display: flex;
-            align-items: center;
+            // display: flex;
+            // align-items: center;
         }
     }
     .prompt{
