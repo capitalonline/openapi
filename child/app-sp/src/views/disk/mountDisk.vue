@@ -83,7 +83,7 @@ export default class MountDisk extends Vue{
     @Prop({default:()=>[]}) mount_id!:any
     private form_data:any={
       instance_id:'',
-      del_set:false,
+      del_set:true,
     }
     private judge_ecs:Boolean=false
     private instance_list:any=[]

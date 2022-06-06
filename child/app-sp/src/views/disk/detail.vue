@@ -30,10 +30,10 @@
               <el-descriptions-item label="云盘状态">{{disk_info.status_display || '-'}}</el-descriptions-item>
               <el-descriptions-item label="云盘容量">{{disk_info.size || '-'}}</el-descriptions-item>
               <el-descriptions-item label="创建自">{{disk_info.user_name || '-'}}</el-descriptions-item>
-              <el-descriptions-item label="云盘性能">
+              <!-- <el-descriptions-item label="云盘性能">
                 <span class="m-right10">{{disk_info.disk_iops || '-'}}</span>
                 <span>{{disk_info.band_mbps || '-'}}</span>
-              </el-descriptions-item>
+              </el-descriptions-item> -->
               <el-descriptions-item label="创建时间">{{disk_info.create_time ? moment(disk_info.create_time).format("YYYY-MM-DD HH:mm:ss") : '-'}}</el-descriptions-item>
               <el-descriptions-item label="云盘属性">{{disk_info.disk_type_display || '-'}}</el-descriptions-item>
               <el-descriptions-item label="付费类型">{{disk_info.billing_method_display || '-'}}</el-descriptions-item>
@@ -52,10 +52,10 @@
           </el-card>
           
         </el-tab-pane>
-        <el-tab-pane label="监控" name="monitor" v-if="disk_info.mount_path">
+        <el-tab-pane label="监控" name="monitor">
             <monitor
                 :info="disk_info"
-                v-if="active_key==='monitor'&& disk_info.status==='running'"
+                v-if="active_key==='monitor'"
             >
           </monitor>
 
