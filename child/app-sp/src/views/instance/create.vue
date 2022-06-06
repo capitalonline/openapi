@@ -154,7 +154,7 @@
           </div>
           <div class="right-row">
             <div>购买数量</div>
-            <div class="right-text">{{ num_info.num }}</div>
+            <div class="right-text">{{ QTY }}</div>
           </div>
         </el-card>
 
@@ -244,6 +244,7 @@ export default class App extends Vue {
   private data_disks:any=[]
   private total_data_disk = {};
   private disk_billing_info = {};
+  private QTY:number=1
   private num_info = {
     num: 1,
     min: 1,
@@ -351,8 +352,9 @@ export default class App extends Vue {
   }
   private get allVoulumns():boolean{//为true时禁用
     let dom:any = this.$refs['update-disk'] as updateDisk
-    console.log('this.data_disks',this.data_disks);
-        
+    this.QTY = (this.data_disks.length >0 ? this.data_disks.reduce((pre,cur)=>{
+      return pre + cur.num
+    },0) : 0)+1
     return this.data_disks.length >0 ? this.data_disks.some(item=>dom.getResetInfo(item).reset<0) : false
   }
   //E888925
