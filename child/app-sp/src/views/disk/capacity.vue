@@ -120,7 +120,6 @@ export default class Capacity extends Vue{
     created() {
         this.list = JSON.parse(this.$route.query.list)
         this.get_customer_name()
-        // console.log("this.list",this.list)
     }
     //获取客户名称
     private async get_customer_name(){
