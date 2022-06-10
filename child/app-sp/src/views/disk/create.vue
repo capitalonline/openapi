@@ -216,7 +216,6 @@
                         <div>总价：</div>
                         <div class="num_message price">{{total_price}}</div>
                     </div>
-                    <span>{{curTotal}},{{showResetVolume[form_data.disk_list[0].disk_feature]}}</span>
                     <el-button type="primary" @click="create" :disabled="!form_data.customer_name || curTotal>showResetVolume[form_data.disk_list[0].disk_feature]">创建</el-button>
                 </el-card>
             </div>
