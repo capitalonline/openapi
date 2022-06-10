@@ -8111,18 +8111,11 @@ def get_status(task_id):
 |            | Centos_7.4_64                    |                                        |
 |            | Centos_7.3_64                    |                                        |
 |            | Centos_7.2_64                    |                                        |
-|            | Centos_7.1_64                    |                                        |
-|            | Centos_7.0_64                    |                                        |
 |	         | Centos_6.9_64	                |                                         |
-|	         | Centos_6.9_32	                |                                         |
 |	         | Centos_6.8_64	                |                                         |
-|	         | Centos_6.8_32	                |                                         |
 |	         | Centos_6.7_64	                |                                         |
-|	         | Centos_6.7_32	                |                                         |
 |	         | Centos_6.5_64	                |                                         |
 |	         | Centos_6.4_64	                |                                         |
-|	         | Centos_6.3_64	                |                                         |
-|	         | Centos_6.2_64                    |                                         |
 | Debian     | Debian_9.11_64                    |                                        |
 |            | Debian_8.11_64                    |                                        |
 |            | Debian_8.1_64                    |                                        |
