@@ -33,7 +33,6 @@
           :filter-multiple="item.column_key ? false : null"
           :key="item.prop" 
           :prop="item.prop" 
-          :label="item.label" 
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
@@ -41,6 +40,15 @@
           :type="item.type"
           :class-name="item.className ? item.className : null"
         >
+          <template slot="header" slot-scope="scope" >
+            <template v-if="item.prop==='ecs_num'">
+               <span>虚拟机数量</span>
+               <el-tooltip popper-class="tooltip-width" content="云桌面/文件存储转发的虚机未纳入统计，所以主机属性为云桌面/文件存储转发的物理机虚机数量为0不代表无虚机。" effect="light">
+                 <el-button type="text" class="m-left5 m-right5"><svg-icon icon="info" viewBox="0 0 20 20" class="more"></svg-icon></el-button>
+               </el-tooltip>
+            </template>
+             <span v-else>{{item.label}}</span>
+          </template>
           <template #default="scope" v-if="item.prop==='machine_status_name'">
             <div>{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
@@ -400,7 +408,7 @@ export default class PhysicalList extends Vue {
       if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
-          item = Object.assign(item,{},{className:'physical'})
+          item = Object.assign(item,{},{className:'physical',width:'140px'})
         }
       }
       if(['cpu_with_model','net_card_with_model'].includes(item.prop)){
