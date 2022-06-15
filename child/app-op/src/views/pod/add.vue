@@ -160,7 +160,7 @@ export default class AddPod extends Vue {
     }
     this.data.pod_name = this.row['pod_name'];
     this.data.az_id = this.row['az_id'];
-    this.data.ip_address = this.row['manager_ip'];
+    this.data.ip_address = this.row['manager_ip'].join(',');
     this.region = this.row['region'];
     this.az_name = this.row['az_name'];
     this.data.zoom_name = this.row['host_room'];

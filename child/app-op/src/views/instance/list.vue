@@ -14,12 +14,12 @@
           :disabled="!operate_auth.includes('delete')"
           >逻辑删除</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="FnOperate('recover_ecs')"
           :disabled="!operate_auth.includes('recover')"
           >恢 复</el-button
-        >
+        > -->
         <el-button
           type="primary"
           @click="FnOperate('destroy_ecs')"
@@ -223,13 +223,9 @@
           </el-table-column>
           <el-table-column label="云服务器规格">
             <template #default="scope">
-              <div>
-                {{ scope.row.ecs_goods_name }} {{ scope.row.cpu_size }}vCPU
-                {{ scope.row.ram_size }}GiB
-                <span v-if="is_gpu"
-                  >{{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span
-                >
-              </div>
+              {{ scope.row.ecs_goods_name }} <br />
+              {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
+              <span v-if="is_gpu">| {{ scope.row.gpu_size }}*{{ scope.row.card_name }}</span>
             </template>
           </el-table-column>
           <el-table-column
