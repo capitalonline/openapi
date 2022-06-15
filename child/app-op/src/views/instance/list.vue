@@ -87,7 +87,7 @@
           <template v-else-if="item.prop === 'data_disk_size'">
             <span>{{ scope.row.data_disk_size }} GB</span>
           </template>
-          <template v-else-if="item.prop === 'goods_name'">
+          <template v-else-if="item.prop === 'calculation_specification'">
             {{ scope.row.ecs_goods_name }} <br />
             {{ scope.row.cpu_size }}vCPU | {{ scope.row.ram_size }}GiB <br />
             <span v-if="scope.row.gpu_size"
