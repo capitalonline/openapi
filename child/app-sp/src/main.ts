@@ -8,9 +8,8 @@ import ElementUI from 'element-ui';
 import './assets/reset.scss';
 import './assets/common.scss';
 import { getUserInfo } from '../src/init';
-
 Vue.use(ElementUI)
-
+// Vue.use(Clipboard)
 Vue.config.productionTip = false;
 
 let router = null;

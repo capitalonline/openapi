@@ -128,7 +128,7 @@
             <span
               class="circel-border"
               v-if="
-                scope.row.eip_info[scope.row.pub_net] &&
+                scope.row.pub_net && scope.row.eip_info[scope.row.pub_net] &&
                   scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
@@ -251,6 +251,15 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
+          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
+            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
+          </el-tooltip>
+          <el-button
+            type="text"
+            v-else
+            @click="addCommon(scope.row)"
+            >制作公共镜像</el-button
+          >
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -335,7 +344,7 @@
             v-if="default_operate_type === 'update_system'"
           >
             <template #default="scope">
-              <div>{{ scope.row.name }}</div>
+              <div>{{ scope.row.os_name }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态">
@@ -372,6 +381,7 @@
               :customer_id="customer_id"
               :az_id="az_id"
               :is_gpu="is_gpu"
+              :default_os_type="os_type"
               :support_gpu_driver="support_gpu_driver"
               @fn-os="FnGetOsInfo"
             >
@@ -448,11 +458,17 @@
         @close-detail="closeDetail"
       />
     </template>
+    <template v-if="common_visible">
+      <add-common
+        :visible.sync="common_visible"
+        :ecs_info="ecs_info"
+      />
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue,Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import LabelBlock from "../../components/labelBlock.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 import SvgIcon from "../../components/svgIcon/index.vue";
@@ -468,6 +484,7 @@ import updateOs from "./updateOs.vue";
 import updateDisk from "./updateDisk.vue";
 import Recover from "./recover.vue";
 import MarkTip from "../../components/markTip.vue";
+import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 @Component({
   components: {
@@ -481,7 +498,8 @@ import moment from "moment";
     updateDisk,
     Recover,
     SvgIcon,
-    MarkTip
+    MarkTip,
+    AddCommon
   }
 })
 export default class App extends Vue {
@@ -519,6 +537,7 @@ export default class App extends Vue {
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
+  private os_type = "";
   private billing_method: string = "0";
   private multiple_selection: Array<Object> = [];
   private multiple_selection_id: Array<string> = [];
@@ -546,6 +565,8 @@ export default class App extends Vue {
   private ecs_goods_name_list = [];
   private timer = null;
   private os_info = {};
+  private ecs_info = {};
+  private common_visible:boolean=false
   private disk_billing_info = {};
   private total_price = "";
   private ecs_list_price = {};
@@ -753,6 +774,7 @@ export default class App extends Vue {
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
+    this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
@@ -765,6 +787,7 @@ export default class App extends Vue {
         this.is_gpu = Number(item.is_gpu);
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
+        this.os_type = item.os_type;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
@@ -809,6 +832,11 @@ export default class App extends Vue {
         flag = false;
         break;
       }
+      if (type === "update_system" && item.os_type != this.os_type) {
+          this.$message.warning(`Windows和linux系统不可以互换重装！`);
+          flag = false;
+          break;
+        }
       if (type === "update_spec" && this.is_gpu) {
         this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
         flag = false;
@@ -1093,6 +1121,17 @@ export default class App extends Vue {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
       let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
       window.open(url);
+    }
+  }
+  private addCommon(obj){
+    this.FnClearTimer()
+    this.ecs_info = obj
+    this.common_visible = true;
+  }
+  @Watch("common_visible")
+  private watch_common_visible(nv){
+    if(!nv){
+      this.FnGetList();
     }
   }
   private FnClose() {

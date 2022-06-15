@@ -22,8 +22,8 @@
         </el-dialog>
       </div>
       <div>
-        <action-block :search_option="type==='physical' ?{...search,...physical_option} :search" @fn-search="fn_search"></action-block>
-        <div class="icon m-bottom10" v-if="type==='physical'">
+        <action-block :search_option="['physical','message'].includes(type) ?{...search,...physical_option} :search" @fn-search="fn_search"></action-block>
+        <div class="icon m-bottom10" v-if="['physical','message'].includes(type)">
           <el-tooltip content="刷新" placement="bottom" effect="light">
             <el-button type="text" @click="getOperateRecordList"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
           </el-tooltip>
@@ -36,9 +36,15 @@
           </el-table-column>
           <el-table-column prop="oper_type_display" label="操作内容"></el-table-column>
           <el-table-column prop="status_display" label="状态"></el-table-column>
-          <el-table-column prop="response" label="响应信息">
+          <el-table-column prop="response" label="响应信息" v-if="!['message'].includes(type)">
             <template slot-scope="scope">
               <el-button type="text" @click="view(scope.row.result)" v-if="scope.row.result">查看</el-button>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="response" label="响应信息" v-else>
+            <template slot-scope="scope">
+              <el-button type="text" @click="view(scope.row.response)" v-if="scope.row.response">查看</el-button>
               <span v-else>-</span>
             </template>
           </el-table-column>
@@ -48,7 +54,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="oper_user" label="用户名"></el-table-column>
-          <el-table-column prop="flag_display" label="操作标识" v-if="type!=='physical'"></el-table-column>
+          <el-table-column prop="flag_display" label="操作标识" v-if="!['physical','message'].includes(type)"></el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
@@ -73,7 +79,8 @@
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/instance/record_detail';
-import p_service from '../../https/physical/list'
+import p_service from '../../https/physical/list';
+import m_service from '../../https/mirror/list'
 import moment from 'moment';
 import {deal_list} from '../../utils/transIndex';
 import SvgIcon from '../../components/svgIcon/index.vue'
@@ -87,7 +94,7 @@ export default class InsDetail extends Vue{
   $message;
   @Prop(Boolean) visible!:Boolean;
   @Prop(String) record_id!:String
-  @Prop(String) type:String
+  @Prop(String) type:string
   private state_list:any = [
     {
         type:'',
@@ -155,20 +162,31 @@ export default class InsDetail extends Vue{
       page_index:this.current,
       ...temp
     }
-    if(this.type!=='physical'){
-        res = await Service.get_operate_record_list({
-          cloud_type: this.type ? this.type :'ecs',
-          ...req
-        })
+    if(this.type==='physical'){
+      res = await p_service.record({
+        start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+        end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        ...req
+      })
+    }else if(this.type==='message'){
+      res = await m_service.get_pub_operate_record({
+        os_id:this.record_id,
+        status:data.state || '',
+        content_type:data.content,
+        start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+        end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        page_size:this.size,                                                                         
+        page_index:this.current,
+        
+      })
     }else{
-        res = await p_service.record({
-          start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-          end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-          ...req
-        })
+      res = await Service.get_operate_record_list({
+        cloud_type: this.type ? this.type :'ecs',
+        ...req
+      })
     }
     if(res.code==="Success"){
-      if(this.type!=="physical"){
+      if(!['physical','message'].includes(this.type)){
         this.record_list = res.data?.history_record || []
       }else{
         let key_list =['create_time','content','status_name','response','update_time','op_user']
