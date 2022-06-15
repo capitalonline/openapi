@@ -618,6 +618,7 @@ def create_mysql():
 | InstanceUuid    | string | 实例编号                         |
 | InstanceName    | string | 实例名称                         |
 | CreatedTime     | string | 实例创建时间                     |
+| ResourceId      | string | 账单ID，查询账单时的唯一标识     |
 
 **请求示例：**
 
