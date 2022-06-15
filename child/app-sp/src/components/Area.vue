@@ -27,7 +27,7 @@ export default class Area extends Vue{
     private area_id:string=""
     private area_list:any =this.list.length>0 ? JSON.parse(JSON.stringify(this.list)) : []
     created() {
-        console.log("this.value",this.value)
+        // console.log("this.value",this.value)
     }
     @Watch("list",{immediate:true,deep:true})
     private watch_list(newVal){
