@@ -32,12 +32,12 @@
           :disabled="!operate_auth.includes('delete')"
           >逻辑删除</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="FnOperate('recover_ecs')"
           :disabled="!operate_auth.includes('recover')"
           >恢 复</el-button
-        >
+        > -->
         <el-button
           type="primary"
           @click="FnOperate('destroy_ecs')"
@@ -637,7 +637,7 @@ export default class App extends Vue {
   private handleCurrentChange(cur){
     this.FnClearTimer();
     this.page_info.page_index = cur
-    this.FnGetList()
+    this.FnGetList();
   }
   // 列表排序
   private handleSortChange(val) {
