@@ -82,6 +82,30 @@
        * [17.CreateGPN](#17creategpn)
        * [18.DeleteGPN](#18deletegpn)
        * [19.ModifyVdcName](#19modifyvdcname)
+     * [私有网络相关](#私有网络相关)
+       * [1.DescribeVPC](#1describevpc)
+       * [2.CreateVPC](#2createvpc)
+       * [3.DeleteVPC](#3deletevpc)
+       * [4.DescribeSubNet](#4describesubnet)
+       * [5.CreateSubNet](#5createsubnet)
+       * [6.DeleteSubNet](#6deletesubnet)
+       * [7.DescribeVirtualGateWay](#7describevirtualgateway)
+       * [8.CreateVirtualGateWay](#8createvirtualgateway)
+       * [9.DeleteVirtualGateWay](#9deletevirtualgateway)
+       * [10.DescribeEIP](#10describeeip)
+       * [11.CreateEIP](#11createeip)
+       * [12.UpdateEIP](#12updateeip)
+       * [13.DeleteEIP](#13deleteeip)
+       * [14.BindEIP](#14bindeip)
+       * [15.UnbindEIP](#15unbindeip)
+       * [16.DescribeBandwidth](#16describebandwidth)
+       * [17.CreateBandwidth](#17createbandwidth)
+       * [18.UpdateBandwidth](#18updatebandwidth)
+       * [19.DeleteBandwidth](#19deletebandwidth)
+       * [20.BandwidthAddEIP](#20bandwidthaddeip)
+       * [21.BandwidthRemoveEIP](#21bandwidthremoveeip)
+       * [22.DescribeIPInfo](#22describeipinfo)
+       * [23.NetEIPInfo](#23neteipinfo)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
@@ -3980,6 +4004,1803 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
   "Message": "Success.",
   "TaskId": ""
 }
+```
+
+## 私有网络相关
+
+### 1.DescribeVPC
+
+​	**Action:DescribeVPC**
+
+​	**描述：** 查询私有网络(以下简称VPC)信息
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| PageNumber           | int    | 否       | 1           | 列表页码。起始值：1, 默认值：1                                                             |
+| Keyword           | string | 否       | vpc名称       | 查询关键字 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | Success                              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| Total | int      | 11                                    | VPC总数     |
+| VPCList | list     | []                                   | VPC信息列表   |
+| VPCId | string   | 9304b130-e25b-11ec-a12c-823092f7a5bd | VPC ID    |
+| VPCNmae | string   | test                                 | VPC名称     |
+| VPCSegment | string   | 10.15.0.0/16                         | VPC网段     |
+| Status | string   | ok                                   | VPC状态     |
+| RegionCode | string   | CN_Hongkong                          | VPC区域code |
+| CreateTime | datetime | 2022-06-02 18:05:47                  | 创建时间      |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Total": 2,
+        "VPCList": [
+            {
+                "CreateTime": "2022-06-02 18:05:47",
+                "RegionCode": "CN_Hongkong",
+                "Status": "ok",
+                "VPCId": "9304b130-e25b-11ec-a12c-823092f7a5bd",
+                "VPCNmae": "OPENAPI_VPC1",
+                "VPCSegment": "10.15.0.0/16"
+            },
+            {
+                "CreateTime": "2022-03-29 16:06:27",
+                "RegionCode": "CN_Hongkong",
+                "Status": "ok",
+                "VPCId": "22310dfc-af37-11ec-8944-1200cba86117",
+                "VPCNmae": "openapi测试",
+                "VPCSegment": "10.10.0.0/16"
+            }
+        ]
+    },
+    "Message": "success"
+}
+```
+
+​	**代码调用示例**
+
+```python
+def describe_vpc(regin_code, key, page):
+    action = 'DescribeVPC'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": regin_code,
+        "Keyword": key,
+        "PageNumber": page
+    }
+    res = requests.post(url, json=body)
+```
+
+### 2.CreateVPC
+
+​	**Action:CreateVPC**
+
+​	**描述：** 创建一个VPC
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
+| -------------- |--------| -------- |---------------|------------------|
+| RegionCode          | string | 是       | CN_Hongkong   | VPC区域code, 见附件五  |
+| VPCName           | string | 是       | name          | VPC名称            |
+| VPCSegment           | string | 是       | 10.15.0.0/16  | VPC网段            |
+| VPCSegmentType           | string | 是       | auto/manual   | 使用推荐网段或手动分配      |
+| SubnetList           | list   | 是       | []            | 创建VPC必须创建一个子网    |
+| AvailableZoneCode           | string   | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
+| SubnetName           | string   | 是       | 子网1            | 子网名称             |
+| SubnetSegment           | string   | 是       | 10.15.1.0/24           | 子网网段             |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述         |
+| :----- |----------|:-------------------------------------|:-----------|
+| Code   | string   | Success                              | 错误码        |
+| Message   | string   | Success                              | 信息         |
+| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 创建VPC任务ID  |
+| Data | dict     | {}                                   | 返回数据       |
+| SubnetIdList | list     | []                                   | 创建子网ID列表     |
+| SubnetTaskId | list   | []                                   | 创建子网任务ID列表 |
+| VPCId | string   | d76df710-e566-11ec-89a8-0ad447efda1e      | VPC ID     |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+
+```json
+{
+  "Code": "Success",
+  "Data": {
+    "SubnetIdList": [
+      "d7774090-e566-11ec-89a8-0ad447efda1e"
+    ],
+    "SubnetTaskId": [
+      "d776d60a-e566-11ec-89a8-0ad447efda1e"
+    ],
+    "VPCId": "d76df710-e566-11ec-89a8-0ad447efda1e"
+  },
+  "Message": "您的VPC创建任务已下发成功!",
+  "TaskId": "d7706342-e566-11ec-89a8-0ad447efda1e"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+def create_vpc():
+
+    action = 'CreateVPC'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+	"RegionCode": "CN_Hongkong",
+	"VPCName": "OPENAPI_VPC1",
+	"VPCSegment": "10.15.0.0/16",
+	"VPCSegmentType": "auto",
+	"SubnetList": [{
+			"AvailableZoneCode": "CN_Hongkong_A",
+			"SubnetName": "子网1",
+			"SubnetSegment": "10.15.1.0/24"
+		    }
+	    ]
+
+    }
+    res = requests.post(url, json=body)
+```
+### 3.DeleteVPC
+
+​	**Action:DeleteVPC**
+
+​	**描述：** 删除一个VPC
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述         |
+| -------------- |--------| -------- |---------------|------------|
+| VPCId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的VPC ID |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述    |
+| :----- |----------|:-------------------------------------|:------|
+| Code   | string   | Success                              | 错误码   |
+| Message   | string   | Success                              | 信息    |
+| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+
+{
+	"Code": "Success",
+	"Data": {},
+	"Message": "您的VPC删除任务已下发成功!",
+	"TaskId": "98087aa4-e571-11ec-991d-0ad447efda1e"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+
+def delete_vpc(vpc_id):
+    action = 'DeleteVPC'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VPCId": vpc_id
+
+    }
+    res = requests.post(url, json=body)
+```
+
+### 4.DescribeSubNet
+
+​	**Action:DescribeSubNet**
+
+​	**描述：** 查询子网信息
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                |
+| -------------- |--------|------|-------------|-------------------|
+| RegionCode          | string | 是    | CN_Hongkong | VPC区域code, 见附件五   |
+| Keyword          | string | 否    | name        | 查询关键字 名称/ID       |
+| PageNumber          | string | 否    | 1           | 列表页码。起始值：1, 默认值：1 |
+| VPCId          | string | 否    | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID            |
+| AvailableZoneCode          | string | 否    | CN_Hongkong | VPC可用区code, 见附件五  |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述      |
+| :----- |--------|:--------|:--------|
+| Code   | string | Success | 错误码     |
+| Message   | string | Success | 信息      |
+| Data | dict   | {}      | 返回信息    |
+| Total | int    | 1       | 总数      |
+| SubnetList | list   | []      | 子网列表    |
+| SubnetId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 子网ID    |
+| SubnetName | string | 子网1      | 子网名称    |
+| SubnetSegment | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 子网网段    |
+| UsedIPNum | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 已用IP数量  |
+| VPCId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC ID  |
+| VPCName | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC名称   |
+| AvailableZoneCode | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 可用区code |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+
+```json
+{
+  "Code": "Success",
+  "Data": {
+    "SubnetList": [
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "Status": "ok",
+        "SubnetId": "026f4386-e573-11ec-a09a-cabfed3cc5e1",
+        "SubnetName": "子网1",
+        "SubnetSegment": "10.15.1.0/24",
+        "UsedIPNum": 15,
+        "VPCId": "0266c864-e573-11ec-a09a-cabfed3cc5e1",
+        "VPCName": "OPENAPI_VPC1"
+      },
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "Status": "ok",
+        "SubnetId": "22390f70-af37-11ec-8944-1200cba86117",
+        "SubnetName": "子网1",
+        "SubnetSegment": "10.10.11.0/24",
+        "UsedIPNum": 18,
+        "VPCId": "22310dfc-af37-11ec-8944-1200cba86117",
+        "VPCName": "openapi测试"
+      }
+    ],
+    "Total": 2
+  },
+  "Message": "success"
+}
+```
+
+
+
+​	**代码调用示例**
+
+```python
+
+def describe_subnet(region_code, key, page, vpc_id, az_code):
+    action = 'DescribeSubnet'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": region_code,
+        "Keyword": key,
+        "PageNumber": page,
+        "VPCId": vpc_id,
+        "AvailableZoneCode":az_code
+    }
+    res = requests.post(url, json=body)
+```
+### 5.CreateSubNet
+
+​	**Action:CreateSubNet**
+
+​	**描述：** 创建一个子网
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
+| -------------- |--------| -------- |---------------|------------------|
+| VPCId          | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1   | VPC ID           |
+| SubnetList           | list   | 是       | []            | 创建VPC必须创建一个子网    |
+| AvailableZoneCode           | string   | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
+| SubnetName           | string   | 是       | 子网1            | 子网名称             |
+| SubnetSegment           | string   | 是       | 10.15.1.0/24           | 子网网段             |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述         |
+| :----- |----------|:-------------------------------------|:-----------|
+| Code   | string   | Success                              | 错误码        |
+| Message   | string   | Success                              | 信息         |
+| Data | dict     | {}                                   | 返回数据       |
+| TaskIdList | list     | []                                   | 创建子网ID列表     |
+| SubnetTaskId | list   | []                                   | 创建子网任务ID列表 |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": {
+		"SubnetIdList": ["354f920c-e577-11ec-8d74-cabfed3cc5e1"],
+		"TaskIdList": ["354f04cc-e577-11ec-8d74-cabfed3cc5e1"]
+	},
+	"Message": "您的子网创建任务已下发成功"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+
+def create_subnet():
+    action = 'CreateSubnet'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+	"VPCId": "0266c864-e573-11ec-a09a-cabfed3cc5e1",
+	"SubnetList": [{
+			"AvailableZoneCode": "CN_Hongkong_A",
+			"SubnetName": "子网3",
+			"SubnetSegment": "10.15.3.0/24"
+		}
+	]
+}
+    json.dumps(body)
+    res = requests.post(url, json=body)
+```
+
+### 6.DeleteSubNet
+
+​	**Action:DeleteSubNet**
+
+​	**描述：** 删除一个子网
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
+| -------------- |--------| -------- |---------------|------------------|
+| SubnetId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的子网ID         |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述    |
+| :----- |----------|:-------------------------------------|:------|
+| Code   | string   | Success                              | 错误码   |
+| Message   | string   | Success                              | 信息    |
+| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": {},
+	"Message": "您的子网删除任务已下发成功!",
+	"TaskId": "0e6b73d2-e571-11ec-991d-0ad447efda1e"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+
+def delete_subnet(subnet_id):
+    action = 'DeleteSubnet'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SubnetId": subnet_id
+
+    }
+    res = requests.post(url, json=body)
+```
+
+### 7.DescribeVirtualGateWay
+
+​	**Action:DescribeVirtualGateWay**
+
+​	**描述：** 查询虚拟出网网关
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                |
+| -------------- |--------|------|-------------|-------------------|
+| RegionCode          | string | 是    | CN_Hongkong | VPC区域code, 见附件五   |
+| Keyword          | string | 否    | name        | 查询关键字 名称/ID       |
+| PageNumber          | string | 否    | 1           | 列表页码。起始值：1, 默认值：1 |
+| VPCId          | string | 否    | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID            |
+| AvailableZoneCode          | string | 否    | CN_Hongkong | VPC可用区code, 见附件五  |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述      |
+| :----- |--------|:--------|:--------|
+| Code   | string | Success | 错误码     |
+| Message   | string | Success | 信息      |
+| Data | dict   | {}      | 返回信息    |
+| Total | int    | 1       | 总数      |
+| VirtualGateWayList | list   | []      | 虚拟出网网关列表 |
+| VirtualGateWayId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 虚拟出网网关ID |
+| VirtualGateWayName | string | test-gx      | 虚拟出网网关名称 |
+| VirtualGateWaySegment | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 虚拟出网网关网段 |
+| UsedIPNum | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 已经IP数量  |
+| VPCId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC ID  |
+| VPCName | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC名称   |
+| AvailableZoneCode | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 可用区code |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+
+```json
+{
+	"Code": "Success",
+	"Data": {
+		"Total": 1,
+		"VirtualGateWayList": [{
+			"AvailableZoneCode": "CN_DaBieShan_A",
+			"Status": "ok",
+			"Type": "电信",
+			"UsedIPNum": 16,
+			"VPCId": "e0e6c470-7f4f-11ec-b3e8-d2aace4aaab9",
+			"VPCName": "test-gx",
+			"VirtualGateWayId": "7be91556-7fe4-11ec-a733-d2aace4aaab9",
+			"VirtualGateWayName": "test-dainxin-02",
+			"VirtualGateWaySegment": "10.4.230.0/24"
+		}]
+	},
+	"Message": "success"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+
+def describe_virtual_gateway(regin_code, key, page, vpc_id, az_code):
+    action = 'DescribeVirtualGateWay'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": regin_code,
+        "Keyword": key,
+        "PageNumber": page,
+        "VPCId": vpc_id,
+        "AvailableZoneCode": az_code
+    }
+    json.dumps(body)
+    res = requests.post(url, json=body)
+    result = res.json()
+```
+### 8.CreateVirtualGateWay
+
+​	**Action:CreateVirtualGateWay**
+
+​	**描述：** 创建一个虚拟出网网关
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称                 | 类型     | 是否必选 | 示例值                                  | 描述               |
+|--------------------|--------| -------- |--------------------------------------|------------------|
+| VPCId              | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID           |
+| VirtualGateWayList | list   | 是       | []                                   |                  |
+| AvailableZoneCode  | string   | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| VirtualGateWayName | string   | 是       | 虚拟出网网关1                              | 虚拟出网网关名称         |
+| VirtualGateWaySegment      | string   | 是       | 10.15.1.0/24                         | 虚拟出网网关网段         |
+| Type               | string   | 是       | 联通                                   | 带宽CODE           |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述         |
+| :----- |----------|:-------------------------------------|:-----------|
+| Code   | string   | Success                              | 错误码        |
+| Message   | string   | Success                              | 信息         |
+| Data | dict     | {}                                   | 返回数据       |
+| TaskIdList | list     | []                                   | 创建子虚拟出网网关任务ID列表     |
+| VirtualGateWayIdList | list   | []                                   | 创建子虚拟出网网关ID列表 |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": {
+		"TaskIdList": ["b1730f48-e640-11ec-8fd4-8a20ea9a3e7b"],
+		"VirtualGateWayIdList": ["b173bc4a-e640-11ec-8fd4-8a20ea9a3e7b"]
+	},
+	"Message": "您的虚拟出网网关创建任务已下发成功"
+}
+```
+
+
+​	**代码调用示例**
+
+```python
+
+def create_virtual_gateway():
+    action = 'CreateVirtualGateWay'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+	"VPCId": "170d5f32-9922-11ec-91ec-02fde40489da",
+	"VirtualGateWayList": [{
+			"AvailableZoneCode": "CN_DaBieShan_A",
+			"VirtualGateWayName": "虚拟出网网关1",
+			"VirtualGateWaySegment": "10.6.1.0/24",
+            "Type": "Bandwidth_CMCC"
+		}
+	]
+}
+    json.dumps(body)
+    res = requests.post(url, json=body)
+```
+
+### 9.DeleteVirtualGateWay
+
+​	**Action:DeleteVirtualGateWay**
+
+​	**描述：** 删除一个虚拟出网网关
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述           |
+| -------------- |--------| -------- |---------------|--------------|
+| VirtualGateWayId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的虚拟出网网关ID |
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述    |
+| :----- |----------|:-------------------------------------|:------|
+| Code   | string   | Success                              | 错误码   |
+| Message   | string   | Success                              | 信息    |
+| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": {},
+	"Message": "您的虚拟出网网关删除任务已下发成功!",
+	"TaskId": "05205da2-e642-11ec-8fd4-8a20ea9a3e7b"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def delete_virtual_gateway(virtual_gateway_id):
+    action = 'DeleteVirtualGateWay'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VirtualGateWayId": virtual_gateway_id
+
+    }
+    res = requests.post(url, json=body)
+```
+
+### 10.DescribeEIP
+
+​	**Action:DescribeEIP**
+
+​	**描述：** 查询EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| AvailableZoneCode | string | 边缘节点：是 / 云平台节点：不传 | CN_Hongkong_A | VPC可用区code, 见附件五(云平台节点EIP不包含此字段)                                                           |
+| Keyword           | string | 否       | eip地址 | 查询关键字 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | Success                              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| Total | int      | 4                                   | EIP总数  |
+| EIPList | list     | []                                   | EIP信息列表 |
+| Id | string | 22597c56-e646-11ec-97e2-7687d6f44ced | EIP ID |
+| IP | string | 118.186.70.138 | EIP 地址 |
+| RegionCode | string | CN_Hongkong | VPC区域code |
+| AvailableZoneCode | string   | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| Status | string | ok                                   | EIP 状态 |
+| Description | string   | test                                 | EIP 描述信息 |
+| IsBind | bool | True                     | EIP是否绑定了子网ip |
+| CreateTime | datetime | 2022-06-02 18:05:47                  | 创建时间      |
+| BandwidthInfo | dict | {} | EIP带宽信息 |
+| Id | string | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID |
+| Name | string | "" | 共享带宽名称(云平台节点，加入了共享带宽的EIP会有此字段) |
+| Qos | int | 10 | 带宽大小（Mbps） |
+| AvailableZoneCode | string | "" | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| BandwidthType | string | Bandwidth_China_Telecom |  |
+| BillScheme | string | BandwIdth |  |
+| Status | string | ok | 带宽状态 |
+| CreateTime | string | 2022-06-02 18:05:47 | 带宽创建时间 |
+| BindResourceInfo | dict | {} | EIP绑定的子网ip信息 |
+| SubnetId | string | d9b88a1e-aa54-11ec-a512-06d5ff412043 | 子网ID（边缘节点，此处为虚拟出网网关ID） |
+| SubnetIP | string | 10.3.2.4 | 子网IP（边缘节点，此处为虚拟出网网关IP） |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  {
+    "Total": 2,
+    "EIPList":
+    [
+      {
+        "AvailableZoneCode": "",
+        "CreateTime": "2022-06-07 17:42:24",
+        "Description": "",
+        "IP": "118.186.70.138",
+        "Id": "22597c56-e646-11ec-97e2-7687d6f44ced",
+        "IsBind": false,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok",
+        "BandwidthInfo":
+        {
+          "AvailableZoneCode": "",
+          "BandwidthType": "Bandwidth_China_Telecom",
+          "BillScheme": "BandwIdth",
+          "CreateTime": "2022-06-07 17:42:24",
+          "Id": "2232dede-e646-11ec-97e2-7687d6f44ced",
+          "Name": "",
+          "Qos": 10,
+          "Status": "ok"
+        }，
+         "BindResourceInfo": null
+      },
+      {
+        "AvailableZoneCode": "",
+        "CreateTime": "2022-06-07 12:35:44",
+        "Description": "",
+        "IP": "118.186.70.137",
+        "Id": "4b75b15c-e61b-11ec-8d74-cabfed3cc5e1",
+        "IsBind": true,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok",
+        "BandwidthInfo":
+        {
+          "AvailableZoneCode": "CN_Hongkong_A",
+          "BandwidthType": "Bandwidth_China_Telecom",
+          "BillScheme": "BandwIdth_Shared",
+          "CreateTime": "2022-06-07 12:35:37",
+          "Id": "46f802ce-e61b-11ec-a09a-cabfed3cc5e1",
+          "Name": "测试1",
+          "Qos": 10,
+          "Status": "ok"
+        },
+        "BindResourceInfo":
+        {
+          "SubnetIP": "10.3.2.4",
+          "SubnetId": "d9b88a1e-aa54-11ec-a512-06d5ff412043"
+        }
+      }
+    ]
+  },
+  "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+
+def describe_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'DescribeEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": "CN_Hongkong"
+    }
+    res = requests.post(url, json=body)
+```
+
+
+
+### 11.CreateEIP
+
+​	**Action:CreateEIP**
+
+​	**描述：** 创建一个EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| AvailableZoneCode | string | 边缘节点：是 / 云平台节点: 否 |  | VPC可用区code, 见附件五(云平台节点EIP不传此字段/边缘节点必传)     |
+| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
+| BillScheme | string | 是 | BandwIdth | 计费方案 |
+| Qos | int | 是 | 5 | 带宽大小 |
+| Size | int | 是 | 1 | 创建个数 |
+| Description | string | 否 | test | EIP描述 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | Success                              | 信息        |
+| Data | list | [{"EIPId":"abcd", "IP": "1.1.1.1"}] | 返回数据      |
+| EIPId | string | abcd                                | EIP ID |
+| IP | string | 1.1.1.1                            | EIP 地址 |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  [
+    {
+      "EIPId": "3b60ee94-e6f7-11ec-b681-bafaaf87d540",
+      "IP": "118.186.70.139"
+    }
+  ],
+  "Message": "任务下发成功"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def create_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'CreateEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": "CN_Hongkong",
+        # "AvailableZoneId": None,  # 边缘节点必传
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme": "BandwIdth",
+        "Qos": 5,
+        "Size": 1,
+        "Description": "openapi测试",
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 12.UpdateEIP
+
+​	**Action:UpdateEIP**
+
+​	**描述：** 变更EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| EIPId     | string | 是       | abcd   | EIP ID                                                       |
+| Description | string | 否       | test | 描述                                               |
+| Qos        | int | 否       | 5 | 带宽大小（Mbps） |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 修改成功                          | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | abcd                                | 修改带宽任务ID |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "修改成功",
+  "TaskId": "abcd"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def update_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'UpdateEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        'EIPId': '2e4fb57a-a43d-11ec-a3b5-fefaa522c9da',
+        'Description': 'openapi',
+        'Qos': 20
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 13.DeleteEIP
+
+​	**Action:DeleteEIP**
+
+​	**描述：** 删除一个EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| EIPId      | string | 是   | abcd   | EIP ID                                                        |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | Success                              | 信息        |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": null,
+  "Message": "删除成功"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def delete_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'DeleteEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {'EIPId': '3b60ee94-e6f7-11ec-b681-bafaaf87d540'}
+    res = requests.post(url, json=body)
+```
+
+
+### 14.BindEIP
+
+​	**Action:BindEIP**
+
+​	**描述：** 绑定EIP到子网IP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| EIPId     | string | 是       | abcd     | EIP ID                                                       |
+| NetId      | string | 是      | aaaa       | 子网ID （边缘节点为虚拟出网网关ID）                                        |
+| IP         | string | 是    | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP） |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 任务下发成功              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | aaaa                                | 任务ID   |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "修改成功",
+  "TaskId": "abcd"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def bind_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'BindEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        'EIPId': '2e4fb57a-a43d-11ec-a3b5-fefaa522c9da',
+        'NetId': '22390f70-af37-11ec-8944-1200cba86117',
+        'IP': '10.10.11.4'
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 15.UnbindEIP
+
+​	**Action:UnbindEIP**
+
+​	**描述：** EIP从子网IP解绑
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| EIPId     | string | 是       | abcd     | EIP ID                                                       |
+| NetId      | string | 是      | aaaa       | 子网ID （边缘节点为虚拟出网网关ID）                                        |
+| IP         | string | 是    | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP） |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 任务下发成功              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | aaaa                                | 任务ID   |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "修改成功",
+  "TaskId": "abcd"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def unbind_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'UnbindEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        'EIPId': '2e4fb57a-a43d-11ec-a3b5-fefaa522c9da',
+        'NetId': '22390f70-af37-11ec-8944-1200cba86117',
+        'IP': '10.10.11.4'
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 16.DescribeBandwidth
+
+​	**Action:DescribeBandwidth**
+
+​	**描述：** 查询共享带宽
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| RegionCode          | string | 否      | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| AvailableZoneCode | string | 否 | CN_Hongkong_A | 列表页码。起始值：1, 默认值：1                                                             |
+| Keyword           | string | 否       | eip地址 | 查询关键字 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | Success                              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| Total | int      | 4                                   | 共享带宽总数 |
+| BandwidthList | list     | []                                   | 共享带宽信息列表 |
+| BandwidthInfo | dict | {} | EIP带宽信息 |
+| Id | string | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID |
+| Name | string | "" | 共享带宽名称 |
+| Qos | int | 10 | 带宽大小（Mbps） |
+| RegionCode | string | “” | VPC区域code, 见附件五 |
+| AvailableZoneCode | string | "" | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| BandwidthType | string | Bandwidth_China_Telecom | 带宽类型 |
+| BillScheme | string | BandwIdth | 计费方案 |
+| Status | string | ok | 带宽状态 |
+| CreateTime | string | 2022-06-02 18:05:47 | 带宽创建时间 |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  {
+    "BandwidthList":
+    [
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "BandwidthType": "Bandwidth_China_Unicom",
+        "BillScheme": "BandwIdth_Shared",
+        "CreateTime": "2022-03-21 14:56:06",
+        "Id": "fad4efd4-a8e3-11ec-a855-be7901716fad",
+        "Name": "zhz-test",
+        "Qos": 30,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok"
+      },
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme": "BandwIdth_Shared",
+        "CreateTime": "2022-03-15 17:03:56",
+        "Id": "d85b3aca-a43e-11ec-a3b5-fefaa522c9da",
+        "Name": "lxl-test",
+        "Qos": 40,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok"
+      },
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme": "BandwIdth_Shared",
+        "CreateTime": "2022-03-14 14:50:57",
+        "Id": "1a3fb8a8-a363-11ec-a585-fe67ea065188",
+        "Name": "test-zj",
+        "Qos": 300,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok"
+      },
+      {
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "BandwidthType": "Bandwidth_CMCC",
+        "BillScheme": "BandwIdth_Shared",
+        "CreateTime": "2022-03-08 16:24:57",
+        "Id": "3d6b1326-9eb9-11ec-bc9c-3a75268f4570",
+        "Name": "测试",
+        "Qos": 35,
+        "RegionCode": "CN_Hongkong",
+        "Status": "ok"
+      }
+    ],
+    "Total": 4
+  },
+  "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+
+def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
+    action = 'DescribeBandwidth'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": "CN_Hongkong",
+        "AvailableZoneCode": "CN_Hongkong_A"
+    }
+    res = requests.post(url, json=body)
+```
+
+
+
+### 17.CreateBandwidth
+
+​	**Action:CreateBandwidth**
+
+​	**描述：** 创建一个共享带宽
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| AvailableZoneCode | string | 是 | CN_Hongkong_A | VPC可用区code, 见附件五     |
+| Name | string | 是 | 香港共享带宽 | 共享带宽名称 |
+| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
+| BillScheme | string | 是 | BandwIdth | 计费方案 |
+| Qos | int | 是 | 5 | 带宽大小 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 创建成功                            | 信息        |
+| Data | list | [{"bandwidth_id":"abcd"}] | 返回数据      |
+| BandwidthId | string | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 共享带宽ID |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  [
+    {
+      "BandwidthId": "ce11eb1e-e6fa-11ec-8b50-bafaaf87d540"
+    }
+  ],
+  "Message": "创建成功"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def create_bandwidth(regin_code, key, page, vpc_id, az_code):
+    action = 'CreateBandwidth'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": "CN_Hongkong",
+        "Name": "香港共享带宽"
+        "AvailableZoneCode": "CN_Hongkong_A",
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme": "BandwIdth_Shared",
+        "Qos": 10
+    }
+    res = requests.post(url, json=body)
+```
+
+
+
+### 18.UpdateBandwidth
+
+​	**Action:UpdateBandwidth**
+
+​	**描述：** 变更共享带宽
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
+| Qos   | int | 是      | 5      | 共享带宽大小（Mbps）      |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 任务下发成功              | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | aaaa                                | 任务ID   |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": {},
+  "Message": "修改成功",
+  "TaskId": "abcd"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def update_bandwidth(regin_code, key, page, vpc_id, az_code):
+    action = 'UpdateBandwidth'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "BandwidthId": "ce11eb1e-e6fa-11ec-8b50-bafaaf87d540",
+        "Qos": 100
+    }
+    res = requests.post(url, json=body)
+```
+
+
+
+### 19.DeleteBandwidth
+
+​	**Action:DeleteBandwidth**
+
+​	**描述：** 删除一个共享带宽
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 删除成功 | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": null,
+  "Message": "删除成功"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def delete_bandwidth(regin_code, key, page, vpc_id, az_code):
+    action = 'DeleteBandwidth'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "BandwidthId": "ce11eb1e-e6fa-11ec-8b50-bafaaf87d540"
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 20.BandwidthAddEIP
+
+​	**Action:BandwidthAddEIP**
+
+​	**描述：** 共享带宽添加EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
+| EIPIdList | array | 是 | ["a", "b"] | EIP ID列表 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 删除成功 | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | 0915ce44-e6fe-11ec-9721-bafaaf87d540 | 任务id |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  {},
+  "Message": "任务下发成功",
+  "TaskId": "0915ce44-e6fe-11ec-9721-bafaaf87d540"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def bandwidth_add_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'BandwidthAddEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "BandwidthId": "8034b4da-e6fa-11ec-bede-bafaaf87d540",
+        "EIPIdList": ["c0d358c8-a377-11ec-af73-8ad8ba9228af"]
+    }
+    res = requests.post(url, json=body)
+```
+
+### 21.BandwidthRemoveEIP
+
+​	**Action:BandwidthRemoveEIP**
+
+​	**描述：** 共享带宽移除EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
+| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
+| EIPIdList | array | 是       | ["abcd"] | EIP列表                                                      |
+| Delete | bool | 是 | False | 是否直接删除EIP，（否则需要为EIP新购独享底宽， 以下参数必传） |
+| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
+| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
+| BillScheme | string | 是 | BandwIdth | 计费方案 |
+| Qos | int | 是 | 5 | 带宽大小 |
+
+
+​	**返回参数：**
+
+| 名称   | 类型       | 示例值                                  | 描述        |
+| :----- |----------|:-------------------------------------|:----------|
+| Code   | string   | Success                              | 错误码       |
+| Message   | string   | 删除成功 | 信息        |
+| Data | dict     | {}                                   | 返回数据      |
+| TaskId | string | abcd | 任务ID |
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data":
+  {},
+  "Message": "任务下发成功",
+  "TaskId": "7ed9733c-e704-11ec-a421-b2796a2c8db8"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+
+def bandwidth_remove_eip(regin_code, key, page, vpc_id, az_code):
+    action = 'BandwidthRemoveEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "EIPIdList": ["c0d358c8-a377-11ec-af73-8ad8ba9228af"],
+        "Delete": False,
+        "RegionCode": "CN_Hongkong",
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme": "BandwIdth",
+        "Qos": 5
+    }
+    res = requests.post(url, json=body)
+```
+
+### 22.DescribeIPInfo
+
+​	**Action:DescribeIPInfo**
+
+​	**描述：** 查询子网/虚拟出网网关/公网 IP 信息
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型     | 是否必选 | 示例值           | 描述                            |
+| -------------- |--------| -------- |---------------|-------------------------------|
+| NetId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 子网/虚拟出网网关/公网 ID               |
+| IPType          | string | 是       | subnet   | subnet/virtual_gateway/pubnet |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| SegmentNum | int    | 1       | 网段数量 |
+| SegmentList | list    | []      | 网段列表 |
+| NetSignal | string    | 10.15.1.*      | IP匹配 |
+| IPList | list    | []      | 网段列表 |
+| IPAddress | string    | 10.15.1.2      | 地址 |
+| IPMask | int    | 24      | 掩码 |
+| IPStatus | int    | 1      | IP状态 1使用/0未使用 |
+| IPUsage | string    |已标记,用处: 路由使用      | IP用途 |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": {
+		"SegmentList": [{
+			"IPList": [{
+					"IPAddress": "10.15.1.1",
+					"IPMask": 24,
+					"IPStatus": 1,
+					"IPUsage": "已标记,用处: 路由使用"
+				},
+				{
+					"IPAddress": "10.15.1.2",
+					"IPMask": 24,
+					"IPStatus": 1,
+					"IPUsage": "已标记,用处: 路由使用"
+				},
+				{
+					"IPAddress": "10.15.1.3",
+					"IPMask": 24,
+					"IPStatus": 1,
+					"IPUsage": "已标记,用处: 路由使用"
+				},
+				{
+					"IPAddress": "10.15.1.4",
+					"IPMask": 24,
+					"IPStatus": 0
+				},
+				{
+					"IPAddress": "10.15.1.5",
+					"IPMask": 24,
+					"IPStatus": 0
+				},
+				{
+					"IPAddress": "10.15.1.254",
+					"IPMask": 24,
+					"IPStatus": 1,
+					"IPUsage": "已标记,用处: 系统占用"
+				}
+			],
+			"NetSignal": "10.15.1.*"
+		}],
+		"SegmentNum": 1
+	},
+	"Message": "success"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def ip_list(net_id, net_type):
+    action = 'DescribeIPInfo'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "NetId": net_id,
+        "IPType": net_type
+    }
+    res = requests.post(url, json=body)
+```
+
+
+### 23.NetEIPInfo
+
+​	**Action:NetEIPInfo**
+
+​	**描述：** 查询子网/虚拟出网网关 下的EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| NetIdList          | list | 是       |["c3e41e00-a1a9-11ec-9d42-569f891b3cb6"]   | 子网/虚拟出网网关 ID  列表 |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| Data | list    | []      | 返回数据 |
+| NetId | string    | 2e4fb57a-a43d-11ec-a3b5-fefaa522c9da      | IP匹配 |
+| NetName | string    | test     | 子网/虚拟出网网关 名称 |
+| NetType | string    | subnet/vir      | 类型  子网/虚拟出网网关  |
+| IPNum | string    | 10.8.5.0      | 子网/虚拟出网网关 网络号 |
+| IPMask | int    | 24      | 子网/虚拟出网网关 掩码 |
+| EIP_INFO_LIST | list   |    []  | EIP列表 |
+| EIP | string   |   118.186.70.143  | EIP IP |
+| EIPId | string   |    2e4fb57a-a43d-11ec-a3b5-fefaa522c9da  | EIP ID |
+| Qos | int   |   20 | EIP 带宽 |
+| Status | string   |   ok  | EIP 状态 |
+| BandwidthType | string   |   ok  | EIP 带宽类型 |
+| BillScheme | string   |   ok  | EIP 带宽计费方案 |
+| ReginCode | string   |   ok  | EIP Region Code |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Data": [{
+		"EIP_INFO_LIST": [{
+			"BandwidthType": "电信",
+			"BillScheme": "固定带宽",
+			"EIP": "118.186.70.143",
+			"EIPId": "2e4fb57a-a43d-11ec-a3b5-fefaa522c9da",
+			"Qos": 20,
+			"ReginCode": "CN_Hongkong",
+			"Status": "error"
+		}],
+		"IPMask": 24,
+		"IPNum": "10.8.5.0",
+		"NetId": "c3e41e00-a1a9-11ec-9d42-569f891b3cb6",
+		"NetName": "20220312-泽宁子网测试",
+		"NetType": "subnet"
+	}],
+	"Message": "success"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def net_eip_info():
+    action = 'NetEIPInfo'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "NetIdList": ["c3e41e00-a1a9-11ec-9d42-569f891b3cb6"]
+    }
+    res = requests.post(url, json=body)
 ```
 
 ## 裸金属相关
