@@ -47,7 +47,7 @@ export default class App extends Vue {
   position: absolute;
   top: 0px;
   left: 100px;
-  width: calc(100% - 300px);
+  width: calc(100% - 350px);
 }
 .main-content {
   background: #f5f6fa;
