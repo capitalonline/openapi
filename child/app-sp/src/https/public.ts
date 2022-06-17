@@ -17,3 +17,10 @@ export function logout() {
     url: '/ecs_business/v1/account/logout/',
   })
 }
+export function getPodList(reqData) {
+  return service({
+    method: 'GET',
+    url: '/ecs_business/v1/pod/get_global_pod/',
+    params: reqData
+  })
+}

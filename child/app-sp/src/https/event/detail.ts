@@ -10,5 +10,5 @@ export default{
     //重试
     reTry(req){
         return service(getEcsOptions('POST','/task/task_retry/',req))
-    }
+    },
 }

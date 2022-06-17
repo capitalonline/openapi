@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header></Header>
+    <Header :class="{'header-box': $store.state.qiankun}"></Header>
     <el-container class="container">
       <el-aside width="200px">
         <left-menu></left-menu>
@@ -37,10 +37,17 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   color: #333;
+  max-height: calc(100% - 51px);
 }
 .container {
-  height: calc(100% - 52px);
+  height: 100%;
   overflow: auto;
+}
+.header-box {
+  position: absolute;
+  top: 0px;
+  left: 100px;
+  width: calc(100% - 300px);
 }
 .main-content {
   background: #f5f6fa;

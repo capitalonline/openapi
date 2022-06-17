@@ -17,14 +17,12 @@ export default class LongSelect extends Vue {
   private current_list = [];
   private current_index = 1;
   private created() {
-    console.time('one')
     for (let i = 0; i < this.list.length; i++) {
       this.list[i] = {
         id: i,
         name: 'a' + i
       }
     }
-    console.timeEnd('one')
     this.current_list = this.list.slice(0, this.current_index * 100)
   }
   private mounted() {
@@ -57,7 +55,6 @@ export default class LongSelect extends Vue {
       this.current_index = index;
       this.current_list.push(...this.list.slice(this.current_index * 100, (this.current_index + 1) * 100))
     }
-    console.log('current_index', this.current_index, this.current_list.length)
   }
   private load() {
     if (this.current_index * 100 > this.list.length) {
@@ -65,7 +62,6 @@ export default class LongSelect extends Vue {
     }
     this.current_list.push(...this.list.slice(this.current_index * 100, (this.current_index + 1) * 100))
     this.current_index++;
-    console.log(this.current_index, this.current_list.length )
   }
 }
 </script>

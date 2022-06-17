@@ -53,7 +53,18 @@
 .failed,.build_fail {
   color:#DA3B18;
 }
-
+.m-left5 {
+  margin-left: 5px;
+}
+.m-top5{
+  margin-top: 5px;
+}
+.m-right5 {
+  margin-right: 5px;
+}
+.m-bottom5 {
+  margin-bottom: 5px;
+}
 .m-left10 {
   margin-left: 10px;
 }
@@ -164,4 +175,8 @@ pre {
 /* 固定表头 */
 .table-limit-height {
   height: calc(100vh - 200px) !important;
+}
+.el-table-filter{
+  max-height: 320px;
+  overflow-y: auto;
 }

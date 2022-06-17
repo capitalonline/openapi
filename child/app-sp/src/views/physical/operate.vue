@@ -25,9 +25,9 @@
             <el-table
                 :data="rows"
                 border
-                max-height="300"
+                max-height="253"
             >
-                <el-table-column prop="host_name" label="主机名" width="140"></el-table-column>
+                <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="!status_list.includes(title)"></el-table-column>
                 <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
