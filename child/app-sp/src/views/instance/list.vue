@@ -62,12 +62,12 @@
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="FnOperate('open_bill')"
           :disabled="!operate_auth.includes('open_bill')"
           >开启计费</el-button
-        >
+        > -->
       </template>
     </action-block>
     <div class="icon m-bottom10">
