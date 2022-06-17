@@ -44,8 +44,8 @@ async function Init() {
 
   await getUserInfo()
 
-  startQiankun({sandbox: {experimentalStyleIsolation: true}})
-
+  // startQiankun({sandbox: {experimentalStyleIsolation: true}})
+  startQiankun()
   new Vue({
     router,
     store,
