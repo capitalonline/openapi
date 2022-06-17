@@ -271,10 +271,10 @@ export default class PhysicalList extends Vue {
     {label:'在线维护',value:'online_maintenance'},
     {label:'离线维护',value:'offline_maintenance'},
     {label:'完成维护',value:'finish'},
-    {label:'下架',value:'shelves'},
+    // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
-    {label:'分配资源',value:'resource'},
-    {label:'更改属性',value:'update_attribute'},
+    // {label:'分配资源',value:'resource'},
+    // {label:'更改属性',value:'update_attribute'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
