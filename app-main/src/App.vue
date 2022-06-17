@@ -26,7 +26,7 @@ export default class App extends Vue {}
   color: #333;
 }
 #container {
-  // height: calc(100% - 52px);
+  height: calc(100% - 52px);
   overflow: auto;
 }
 #container>div {

@@ -37,7 +37,7 @@ export default class App extends Vue {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   color: #333;
-  max-height: calc(100% - 51px);
+  // max-height: calc(100% - 51px);
 }
 .container {
   height: 100%;
@@ -47,7 +47,7 @@ export default class App extends Vue {
   position: absolute;
   top: 0px;
   left: 100px;
-  width: calc(100% - 350px);
+  width: calc(100% - 370px);
 }
 .main-content {
   background: #f5f6fa;
