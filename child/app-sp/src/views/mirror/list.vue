@@ -18,6 +18,7 @@
             border 
             class="event-table"
             @sort-change="FnSortChange"
+            :cell-style="setCellStyle"
             @filter-change="filterAttribute"
         >
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
@@ -37,8 +38,18 @@
                     <span>{{scope.row.white_customer_list && scope.row.white_customer_list.length>0 ? scope.row.white_customer_list.join(',') : '全部客户'}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="path_name" label="路径"></el-table-column>
-            <el-table-column prop="az" label="可用区" width="120">
+            <el-table-column prop="path_name" label="路径"  width="140">
+                <template slot-scope="scope">
+                    <el-tooltip 
+                        :content="scope.row.path_name" 
+                        placement="bottom" 
+                        effect="light">
+                            <span class="id-cell">{{ scope.row.path_name }}</span>
+                    </el-tooltip>
+                    <Clipboard :content="scope.row.path_name" v-if="scope.row.path_name"></Clipboard>
+                </template>
+            </el-table-column>
+            <el-table-column prop="az" label="可用区" width="120" class-name="mirror-az">
                 <template slot-scope="scope">
                     <span>共  <span class="num_message">{{scope.row.az_list.length}}</span>  个</span>
                     <span>   ( 可用:<span class="num_message">  {{scope.row.az_list.filter(item=>item.status==='running').length}}</span> )</span>
@@ -70,11 +81,16 @@
             <el-table-column prop="update_time" label="更新时间" width="120"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">
                 <template slot-scope="scope">
-                    <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('edit_mirror')" @click="edit(scope.row)">编辑</el-button>
-                    <el-button type="text" :disabled="!['running','blocking','create_fail'].includes(scope.row.status) || !auth_list.includes('del_mirror')" @click="del(scope.row)">删除</el-button>
+                    <template v-for="item in operateBtns">
+                        <el-tooltip :content="item.msg" effect="light" :key="item.label" v-if="!item.list.includes(scope.row.status) || !auth_list.includes(item.authLabel)">
+                            <el-button type="text" class="not-clickable">{{item.label}}</el-button>
+                        </el-tooltip>
+                        <el-button type="text" :key="item.label" v-else :disabled="!item.list.includes(scope.row.status) || !auth_list.includes(item.authLabel)" @click="handle(scope.row,item.fun)">{{item.label}}</el-button>
+                    </template>
+                    <!-- <el-button type="text" :disabled="!['running','blocking','create_fail'].includes(scope.row.status) || !auth_list.includes('del_mirror')" @click="del(scope.row)">删除</el-button>
                     <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('change_status')" @click="changeStatus(scope.row)">状态变更</el-button>
-                    <el-button type="text" :disabled="!['running'].includes(scope.row.status) || !auth_list.includes('sync_mirror')" @click="FnSync(scope.row)">同步</el-button>
-                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>
+                    <el-button type="text" :disabled="!['running'].includes(scope.row.status) || !auth_list.includes('sync_mirror')" @click="FnSync(scope.row)">同步</el-button>-->
+                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button> 
                 </template>
             </el-table-column>
         </el-table>
@@ -119,7 +135,8 @@ import AddCommonMirror from '../instance/addCommonMirror.vue';
 import Record from '../instance/record.vue';
 import DelMirror from './delMirror.vue'
 import moment from 'moment';
-import {paramsSerializer} from '../../utils/transIndex'
+import {paramsSerializer} from '../../utils/transIndex';
+import Clipboard from '../../components/clipboard.vue'
 @Component({
     components:{
         ActionBlock,
@@ -129,7 +146,8 @@ import {paramsSerializer} from '../../utils/transIndex'
         ChangeStatus,
         AddCommonMirror,
         Record,
-        DelMirror
+        DelMirror,
+        Clipboard
     }
 })
 export default class CommonMirror extends Vue{
@@ -162,6 +180,13 @@ export default class CommonMirror extends Vue{
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
     ];
+    private operateBtns:any=[
+        {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
+        {label:'删除',authLabel:'del_mirror',fun:'del',list:['running','blocking','create_fail'],msg:'仅支持可用,停用或者创建失败状态的镜像操作'},
+        {label:'状态变更',authLabel:'change_status',fun:'changeStatus',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
+        {label:'同步',authLabel:'sync_mirror',fun:'FnSync',list:['running'],msg:'仅支持可用状态的镜像操作'},
+        // {label:'操作记录',authLabel:'record',fun:'record',list:[],msg:''},
+    ]
     private status_list:any=[];
     private visible:boolean=true;
     private oper_type:string="";
@@ -182,6 +207,19 @@ export default class CommonMirror extends Vue{
     @Watch('$store.state.pod_id')
     private watch_pod(){
         this.search(this.search_data)
+    }
+    private handle(obj,label){
+        console.log("handle",obj,label)
+        this[label](obj)
+        // if(label==='edit'){
+        //     this.edit(obj)
+        // }else if(label==='del'){
+        //     this.del(obj)
+        // }else if(label==='changeStatus'){
+        //     this.changeStatus(obj)
+        // }else if(label==='FnSync'){
+        //     this.FnSync(obj)
+        // }
     }
     private async get_mirror_type(){
         let res:any = await Service.get_mirror_type({})
@@ -239,6 +277,12 @@ export default class CommonMirror extends Vue{
     private handleCurrentChange(cur){
         this.current = cur
         this.getMirrorList()
+    }
+    setCellStyle(row, column, rowIndex, columnIndex){
+        if(columnIndex==5){
+            console.log('aaa')
+            return {"color":"red"}
+        }
     }
     private FnSortChange(obj){
         this.search_data.sort_size =undefined
@@ -341,5 +385,11 @@ i.el-icon-s-tools{
 }
 .table-expand:last-child{
     margin-bottom: 0;
+}
+
+</style>
+<style lang="scss">
+td.mirror-az.el-table__cell{
+    border-right: none;
 }
 </style>

@@ -9,12 +9,12 @@ const routes: RouteConfig[] = [
     component: () => import('../views/overview/index.vue'),
     meta: {menu: 'overview'}
   },
-  {
-    path: '/pod',
-    name: 'pod_list',
-    component: () => import('../views/pod/list.vue'),
-    meta: {meta: 'pod_list'}
-  },
+  // {
+  //   path: '/pod',
+  //   name: 'pod_list',
+  //   component: () => import('../views/pod/list.vue'),
+  //   meta: {meta: 'pod_list'}
+  // },
   {
     path: '/instance',
     name: 'instance_list',

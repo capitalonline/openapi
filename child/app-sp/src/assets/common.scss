@@ -9,6 +9,11 @@
 .num_message {
   color: #455cc6;
 }
+.not-clickable{
+  color:#C0C4CC;
+  font-size: 12px;
+  cursor: text;
+}
 .clickble{
   cursor: pointer;
   color: #455cc6;
@@ -156,11 +161,12 @@ pre {
 }
 .id-cell {
   display: inline-block;
-  max-width: calc(100% - 24px);
+  max-width: calc(100% - 26px);
   margin-right: 6px;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
+  vertical-align: top;
 }
 .long-msg{
   overflow: hidden;

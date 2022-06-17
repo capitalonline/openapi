@@ -66,7 +66,7 @@ export default class Area extends Vue{
     }
     li.el-select-dropdown__item.item {
         min-height: 80px !important;
-        height: auto !important;
+        height: auto;
         padding-bottom: 10px;
     }
 }

@@ -161,7 +161,7 @@
                                     label="事件名称"
                                     :rules="[{ required: true, message: '请选择事件名称', trigger: 'blur' }]"
                                 >
-                                    <el-select v-model="rule_data.event_name" multiple  placeholder="请选择事件名称">
+                                    <el-select v-model="rule_data.event_name" placeholder="请选择事件名称">
                                         <el-option
                                             v-for="item in pro.event_name"
                                             :key="item.id"
@@ -248,7 +248,7 @@ export default class RuleConfig extends Vue{
         name:'',
         metricID:[],
         event_type:'',
-        event_name:[],
+        event_name:'',
         alram_type:'',
         notice:[],
         level:[{
@@ -319,16 +319,17 @@ export default class RuleConfig extends Vue{
         this.rule_data.level.map(item=>item.metricUnit = unit)
     }
     // @Watch("rule_data.event_type")
-    private watch_event_type(nv,list,pro_id){
+    private watch_event_type(nv,list,pro_id){        
         let key_list=['event_name_zh','event_id']
         let label_list=['title','id']
         let fil:any = list.filter((item:any)=>item.event_type===nv);
+
         this.selected_products.map(item=>{
             if(item.id === pro_id){
                 item.event_name = fil.length>0 ? deal_list(fil[0].list,label_list,key_list) : [];
                 const ids = item.event_name.map(ev=>ev.id)//事件列表所有的id
-                if((new Set([...ids,...this.rule_data.event_name])).size>ids.length){//如果属于当前这个事件名称里，长度最大为ids的长度
-                    this.rule_data.event_name=[]
+                if((new Set([...ids,this.rule_data.event_name])).size>ids.length){//如果属于当前这个事件名称里，长度最大为ids的长度                    
+                    this.rule_data.event_name=''
                 }
             }
         })        
@@ -379,14 +380,14 @@ export default class RuleConfig extends Vue{
         });
         return index_list
     }
-    private setRules(element,list,index_list,event_list){        
+    private setRules(element,list,index_list,event_list){                
         const obj = {//相当于rule_data
                 id:element.id,
                 tab_key:element.ruleRecords[0].alarmType==="event" ? '1' : '0',
                 name:element.name,
                 metricID:element.ruleRecords[0].alarmType==="event" ? [] : this.get_index_list_by_value(element.ruleRecords[0].metricID,index_list),
                 event_type:element.ruleRecords[0].eventType,
-                event_name:element.ruleRecords[0].eventId,
+                event_name:element.ruleRecords[0].eventId && element.ruleRecords[0].eventId.length>0 ? element.ruleRecords[0].eventId[0] : '',
                 metricUnit:element.ruleRecords[0].alarmType==="event" ? '' : element.ruleRecords[0].metricUnit,
                 alram_type:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].level.toString() : '',
                 notice:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].alarmMethod : [],
@@ -398,7 +399,7 @@ export default class RuleConfig extends Vue{
                     list.map(inn=>{
                     return `${this.getDescription(element.ruleRecords[0].metricID,index_list)} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,this.static_list.alarm_type)} 持续${inn.cycle_num}次就报警`
                 })
-            }
+            }            
             const fil:any = this.selected_products.filter(item=>item.id===element.productType)
             if(fil.length>0){
                 this.selected_products.map(item=>{
@@ -597,7 +598,7 @@ export default class RuleConfig extends Vue{
                 name:'',
                 metricID:[],
                 event_type:'',
-                event_name:[],
+                event_name:'',
                 alram_type:'',
                 notice:[],
                 level:[{
@@ -629,10 +630,15 @@ export default class RuleConfig extends Vue{
         this.tab_key = key
         this.edit_key = key
         this.edit_rule_id=id
-        this.show_rule_box(pro_id,'edit')
-        const fil:any = this.selected_products.filter(item=>item.id === pro_id)
+        this.show_rule_box(pro_id,'edit')                
+        const fil:any = this.selected_products.filter(item=>item.id === pro_id)        
         const fil_rule:any = fil[0].rule_list.filter(item=>item.id===id)
-        this.rule_data = JSON.parse(JSON.stringify(fil_rule[0])) 
+        this.rule_data = JSON.parse(JSON.stringify(fil_rule[0]))        
+        if(fil_rule[0].tab_key==='1'){              
+            this.watch_event_type(fil_rule[0].event_type,fil[0].event_type,fil[0].id)
+
+        }
+        
     }
     private change_rule_notice(val){
     }

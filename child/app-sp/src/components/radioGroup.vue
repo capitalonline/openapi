@@ -30,4 +30,5 @@ export default class Area extends Vue{
 .el-radio-button:first-child .el-radio-button__inner {
     border-radius: 4px;
 }
+
 </style>

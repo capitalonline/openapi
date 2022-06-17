@@ -52,10 +52,10 @@ export default class LeftMenu extends Vue {
     //   name: "monitor",
     //   label: "监控"
     // },
-    {
-      name: "pod_list",
-      label: "POD管理"
-    },
+    // {
+    //   name: "pod_list",
+    //   label: "POD管理"
+    // },
     {
       name: "physical_list",
       label: "物理机管理"
@@ -92,10 +92,10 @@ export default class LeftMenu extends Vue {
         {name:'alarm_contact',label:'报警联系人'},
       ]
     },
-    {
-      name: "message_list",
-      label: "消息通知"
-    },
+    // {
+    //   name: "message_list",
+    //   label: "消息通知"
+    // },
     {
       name: "task_config",
       label: "底层任务配置",

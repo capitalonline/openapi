@@ -32,12 +32,12 @@
           :disabled="!operate_auth.includes('delete')"
           >逻辑删除</el-button
         >
-        <!-- <el-button
+        <el-button
           type="primary"
           @click="FnOperate('recover_ecs')"
           :disabled="!operate_auth.includes('recover')"
           >恢 复</el-button
-        > -->
+        >
         <el-button
           type="primary"
           @click="FnOperate('destroy_ecs')"
@@ -62,12 +62,12 @@
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
         >
-        <!-- <el-button
+        <el-button
           type="primary"
           @click="FnOperate('open_bill')"
           :disabled="!operate_auth.includes('open_bill')"
           >开启计费</el-button
-        > -->
+        >
       </template>
     </action-block>
     <div class="icon m-bottom10">
@@ -128,7 +128,7 @@
             <span
               class="circel-border"
               v-if="
-                scope.row.pub_net && scope.row.eip_info[scope.row.pub_net] &&
+                scope.row.eip_info[scope.row.pub_net] &&
                   scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
@@ -251,15 +251,15 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
-            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
-          </el-tooltip>
           <el-button
             type="text"
-            v-else
+            :disabled="
+              scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')
+            "
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button
           >
+          
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -575,17 +575,9 @@ export default class App extends Vue {
   private sort_order = undefined;
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")
-    private watch_pod(nv){
-      if(!nv){
-        return;
-      }
+    private watch_pod(){
       this.FnSearch(this.search_reqData)
     }
-<<<<<<< HEAD
-=======
-  private ecs_info:any={};
-  private common_visible:boolean=false
->>>>>>> 84f9c3d1ac27945a33fc4e2426fea0dfa7bcb977
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
@@ -615,23 +607,20 @@ export default class App extends Vue {
   // 筛选实例来源
   private handleFilterChange(val) {
     this.FnClearTimer();
-    setTimeout(()=>{
-      if (val.op_source) {
-        this.search_op_source = val.op_source[0];
-      }
-      if (val.billing_method) {
-        this.search_billing_method =
-          val.billing_method.length > 0 ? val.billing_method[0] : "all";
-      }
-      if (val.ecs_goods_name) {
-        this.search_ecs_goods_name = val.ecs_goods_name;
-      }
-      if(val.status){
-        this.search_status = val.status;
-      }
-      this.FnGetList();
-    },500)
-    
+    if (val.op_source) {
+      this.search_op_source = val.op_source[0];
+    }
+    if (val.billing_method) {
+      this.search_billing_method =
+        val.billing_method.length > 0 ? val.billing_method[0] : "all";
+    }
+    if (val.ecs_goods_name) {
+      this.search_ecs_goods_name = val.ecs_goods_name;
+    }
+    if(val.status){
+      this.search_status = val.status;
+    }
+    this.FnGetList();
   }
   //handleSizeChange
   private handleSizeChange(val){
@@ -642,7 +631,7 @@ export default class App extends Vue {
   private handleCurrentChange(cur){
     this.FnClearTimer();
     this.page_info.page_index = cur
-    this.FnGetList();
+    this.FnGetList()
   }
   // 列表排序
   private handleSortChange(val) {

@@ -51,4 +51,5 @@ export default class Area extends Vue{
       border-radius: 4px;
     }
 }
+
 </style>

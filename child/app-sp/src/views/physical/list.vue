@@ -130,7 +130,7 @@
               </el-table>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
-            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
+            <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
@@ -142,7 +142,7 @@
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
-              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
+              <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span>
             </div>
             
           </template>
@@ -152,7 +152,6 @@
             <el-dropdown @command="handleOperate">
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
 
-              <!-- <el-button type="text"><i class="el-icon-s-operation"></i></el-button> -->
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
@@ -203,6 +202,8 @@
         :all_column_item="all_column_item" 
         @fn-custom="get_custom_columns"
       ></custom-list-item>
+      <!-- :all_item="all_item" -->
+      <!-- :all_column_item="all_column_item"  -->
     </div>
 </template>
 <script lang="ts">
@@ -274,7 +275,7 @@ export default class PhysicalList extends Vue {
     {label:'在线维护',value:'online_maintenance'},
     {label:'离线维护',value:'offline_maintenance'},
     {label:'完成维护',value:'finish'},
-    {label:'下架',value:'shelves'},
+    // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
@@ -397,6 +398,7 @@ export default class PhysicalList extends Vue {
       })
       this.all_item = res.data;
       this.all_column_item = deal_list(list,label_list,key_list);
+      this.get_custom_columns(this.$store.state.custom_host)
       this.get_custom_columns(this.$store.state.custom_host)
 
 

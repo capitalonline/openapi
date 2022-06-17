@@ -38,7 +38,7 @@
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="business_disk_type" label="盘类型" :filter-multiple="false" column-key="business_disk_type" :filters="disk_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储介质" :filter-multiple="false" column-key="backend_type" :filters="storage_list"></el-table-column>
-            <el-table-column prop="az" label="存在可用区数量"  width="120">
+            <el-table-column prop="az" label="存在可用区数量"  width="120" class-name="private-mirror-az">
                 <template slot-scope="scope">
                     <span>共  <span class="num_message">{{scope.row.az_list ? scope.row.az_list.length : 0}}</span>   个</span>
                     <span>   ( 可用:<span class="num_message">  {{scope.row.az_list ? scope.row.az_list.filter(item=>item.status==='running').length : 0}}</span> )</span>
@@ -280,5 +280,10 @@ i.el-icon-s-tools{
 }
 .table-expand:last-child{
     margin-bottom: 0;
+}
+</style>
+<style lang="scss">
+td.private-mirror-az.el-table__cell{
+    border-right: none;
 }
 </style>
