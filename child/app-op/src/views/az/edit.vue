@@ -3,19 +3,20 @@
         title="编辑"
         :visible.sync="visibleSync"
         width="600px"
+        :destroy-on-close="true"
     >
         <el-form :model="formData" :rules="rules" ref="ruleForm" label-width="120px" label-suffix=":" label-position="left">
             <el-form-item label="可用区编号" prop="az_id">
-                <span v-model="formData.az_id"></span>
+                <span v-text="formData.az_id"></span>
             </el-form-item>
             <el-form-item label="可用区名称" prop="az_name">
-                <span v-model="formData.az_name"></span>
+                <span v-text="formData.az_name"></span>
             </el-form-item>
             <el-form-item label="所属地域" prop="region_name">
-                <span v-model="formData.region_name"></span>
+                <span v-text="formData.region_name"></span>
             </el-form-item>
             <el-form-item label="所属地域编号" prop="region_id">
-                <span v-model="formData.region_id"></span>
+                <span v-text="formData.region_id"></span>
             </el-form-item>
              <el-form-item label="AZ Code" prop="az_code">
                 <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音"></el-input>
@@ -41,21 +42,14 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="客户ID" prop="customer_ids">
-                <el-select v-model="formData.customer_ids" placeholder="请选择">
-                    <el-option
-                        v-for="item in customerList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                </el-select>
+                <customer-input @FnCustomer="FnCustomer" :customers="formData.customer_ids"></customer-input>
             </el-form-item>
             <el-form-item label="备注" prop="remark">
                 <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="formData.remark"></el-input>
             </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="visibleSync = false">确 定</el-button>
+            <el-button type="primary" @click="confirm">确 定</el-button>
             <el-button @click="visibleSync = false">取 消</el-button>
             
         </span>
@@ -63,8 +57,15 @@
 </template>
 
 <script lang="ts">
-import {Vue,Component,PropSync,Prop} from 'vue-property-decorator'
-@Component({})
+import {Vue,Component,PropSync,Prop} from 'vue-property-decorator';
+import CustomerInput from '../../components/customerInput.vue';
+import Service from '../../https/az/list'
+import { Form } from 'element-ui';
+@Component({
+    components:{
+        CustomerInput
+    }
+})
 export default class Edit extends Vue{
     @PropSync('visible')visibleSync!:boolean;
     @Prop({default:()=>{}})info!:any;
@@ -86,7 +87,32 @@ export default class Edit extends Vue{
         status:[{ required: true, message: '请选择状态'}],
     }
     private statusList:any=[];
-    private customerList:any=[]
+    private customerList:any=[];
+    private FnCustomer(val){
+        console.log('val',val);
+        this.formData.customer_ids = val
+    }
+    private confirm(){
+        let form = this.$refs.ruleForm as Form;
+        const {az_id,az_code,net_type,backend_types,status,customer_ids,remark}=this.formData
+        form.validate(async valid=>{
+            if(valid){
+                let res:any = await Service.edit({
+                    az_id,
+                    az_code,
+                    net_type,
+                    backend_types:backend_types.join(','),
+                    status,
+                    customer_ids:customer_ids.join(','),
+                    remark
+                })
+                if(res.code==='Success'){
+                    this.$message.success(res.message)
+                }
+                this.visibleSync=false
+            }
+        })
+    }
 }
 </script>
 
