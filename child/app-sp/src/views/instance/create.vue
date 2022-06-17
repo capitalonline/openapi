@@ -600,6 +600,8 @@ export default class App extends Vue {
   @Watch('default_az.az_id')
   private FnChangeAz (newVal) {
     if (newVal) {
+      this.default_vpc.vpc_id='';
+      this.default_vpc.subnet_list=[]
       this.FnGetNetList();
     }
   }
