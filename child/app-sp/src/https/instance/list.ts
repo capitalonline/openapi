@@ -52,6 +52,10 @@ export default {
   each_resource_price(reqData) {
     return service(getEcsOptions('POST', '/ecs/each_resource_price/', reqData))
   },
+  //制作公共镜像
+  add_common_mirror(reqData) {
+    return service(getEcsOptions('POST', '/img/create_pub_image_by_ecs/', reqData))
+  },
   // 导出excel
   export_list(reqData) {
     return service({

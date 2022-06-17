@@ -32,12 +32,12 @@
           :disabled="!operate_auth.includes('delete')"
           >逻辑删除</el-button
         >
-        <!-- <el-button
+        <el-button
           type="primary"
           @click="FnOperate('recover_ecs')"
           :disabled="!operate_auth.includes('recover')"
           >恢 复</el-button
-        > -->
+        >
         <el-button
           type="primary"
           @click="FnOperate('destroy_ecs')"
@@ -128,7 +128,7 @@
             <span
               class="circel-border"
               v-if="
-                scope.row.pub_net && scope.row.eip_info[scope.row.pub_net] &&
+                scope.row.eip_info[scope.row.pub_net] &&
                   scope.row.eip_info[scope.row.pub_net].conf_name
               "
             >
@@ -251,15 +251,6 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
-            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="addCommon(scope.row)"
-            >制作公共镜像</el-button
-          >
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -344,7 +335,7 @@
             v-if="default_operate_type === 'update_system'"
           >
             <template #default="scope">
-              <div>{{ scope.row.os_name }}</div>
+              <div>{{ scope.row.name }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="状态">
@@ -381,7 +372,6 @@
               :customer_id="customer_id"
               :az_id="az_id"
               :is_gpu="is_gpu"
-              :default_os_type="os_type"
               :support_gpu_driver="support_gpu_driver"
               @fn-os="FnGetOsInfo"
             >
@@ -458,12 +448,6 @@
         @close-detail="closeDetail"
       />
     </template>
-    <template v-if="common_visible">
-      <add-common
-        :visible.sync="common_visible"
-        :ecs_info="ecs_info"
-      />
-    </template>
   </div>
 </template>
 
@@ -484,7 +468,6 @@ import updateOs from "./updateOs.vue";
 import updateDisk from "./updateDisk.vue";
 import Recover from "./recover.vue";
 import MarkTip from "../../components/markTip.vue";
-import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 @Component({
   components: {
@@ -498,8 +481,7 @@ import moment from "moment";
     updateDisk,
     Recover,
     SvgIcon,
-    MarkTip,
-    AddCommon
+    MarkTip
   }
 })
 export default class App extends Vue {
@@ -537,7 +519,6 @@ export default class App extends Vue {
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
-  private os_type = "";
   private billing_method: string = "0";
   private multiple_selection: Array<Object> = [];
   private multiple_selection_id: Array<string> = [];
@@ -570,17 +551,12 @@ export default class App extends Vue {
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = '';
-  private sort_order = undefined;
+  private sort_order = 0;
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")
-    private watch_pod(nv){
-      if(!nv){
-        return;
-      }
+    private watch_pod(){
       this.FnSearch(this.search_reqData)
     }
-  private ecs_info:any={};
-  private common_visible:boolean=false
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
@@ -610,23 +586,20 @@ export default class App extends Vue {
   // 筛选实例来源
   private handleFilterChange(val) {
     this.FnClearTimer();
-    setTimeout(()=>{
-      if (val.op_source) {
-        this.search_op_source = val.op_source[0];
-      }
-      if (val.billing_method) {
-        this.search_billing_method =
-          val.billing_method.length > 0 ? val.billing_method[0] : "all";
-      }
-      if (val.ecs_goods_name) {
-        this.search_ecs_goods_name = val.ecs_goods_name;
-      }
-      if(val.status){
-        this.search_status = val.status;
-      }
-      this.FnGetList();
-    },500)
-    
+    if (val.op_source) {
+      this.search_op_source = val.op_source[0];
+    }
+    if (val.billing_method) {
+      this.search_billing_method =
+        val.billing_method.length > 0 ? val.billing_method[0] : "all";
+    }
+    if (val.ecs_goods_name) {
+      this.search_ecs_goods_name = val.ecs_goods_name;
+    }
+    if(val.status){
+      this.search_status = val.status;
+    }
+    this.FnGetList();
   }
   //handleSizeChange
   private handleSizeChange(val){
@@ -637,7 +610,7 @@ export default class App extends Vue {
   private handleCurrentChange(cur){
     this.FnClearTimer();
     this.page_info.page_index = cur
-    this.FnGetList();
+    this.FnGetList()
   }
   // 列表排序
   private handleSortChange(val) {
@@ -648,7 +621,7 @@ export default class App extends Vue {
       ecs_name:'sort_ecs_name'
     }
     this.sort_prop_name = relation[val.prop];
-    this.sort_order = val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
+    this.sort_order = Number(val.order !== 'ascending');
     this.FnGetList()
   }
   // 获取网段
@@ -673,8 +646,7 @@ export default class App extends Vue {
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
       status:this.search_status.join(','),
-      [this.sort_prop_name]: this.sort_order,
-      is_op:true,
+      [this.sort_prop_name]: String(this.sort_order),
       ...this.search_reqData
     }
     if (this.search_op_source) {
@@ -774,7 +746,6 @@ export default class App extends Vue {
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
-    this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
     for (let index = 0; index < this.multiple_selection.length; index++) {
@@ -787,7 +758,6 @@ export default class App extends Vue {
         this.is_gpu = Number(item.is_gpu);
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
-        this.os_type = item.os_type;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
@@ -832,11 +802,6 @@ export default class App extends Vue {
         flag = false;
         break;
       }
-      if (type === "update_system" && item.os_type != this.os_type) {
-          this.$message.warning(`Windows和linux系统不可以互换重装！`);
-          flag = false;
-          break;
-        }
       if (type === "update_spec" && this.is_gpu) {
         this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
         flag = false;
@@ -1121,17 +1086,6 @@ export default class App extends Vue {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
       let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
       window.open(url);
-    }
-  }
-  private addCommon(obj){
-    this.FnClearTimer()
-    this.ecs_info = obj
-    this.common_visible = true;
-  }
-  @Watch("common_visible")
-  private watch_common_visible(nv){
-    if(!nv){
-      this.FnGetList();
     }
   }
   private FnClose() {

@@ -59,11 +59,12 @@ export default class InsDetail extends Vue{
     private loading:boolean=true;
     private event_name:any=[]
     created() {
-        
         this.getEventList()
     }
     private async getEventList(){
-        let res:any=await Service.get_event_list({})
+        let res:any=await Service.get_event_list({
+            type:'all'
+        })
         if(res.code==="Success"){
             let key_list=['event_name_zh','event_id']
             let label_list=['title','id']
@@ -77,7 +78,9 @@ export default class InsDetail extends Vue{
     }
     //获取指标项列表
     private async get_index_list(){
-        let res:any = await Service.get_index_list({})
+        let res:any = await Service.get_index_list({
+            type:'all'
+        })
         if(res.code==='Success'){
             res.data && res.data.forEach(element => {
                 let temp=[]
