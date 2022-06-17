@@ -581,11 +581,6 @@ export default class App extends Vue {
       }
       this.FnSearch(this.search_reqData)
     }
-<<<<<<< HEAD
-=======
-  private ecs_info:any={};
-  private common_visible:boolean=false
->>>>>>> 84f9c3d1ac27945a33fc4e2426fea0dfa7bcb977
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
