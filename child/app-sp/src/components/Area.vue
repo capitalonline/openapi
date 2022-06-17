@@ -54,17 +54,17 @@ export default class Area extends Vue{
 </script>
 <style lang="scss">
 .area-sp{
-.area-btn{
-  .el-radio-group{
-    display: flex !important;
-    flex-wrap: wrap;
-  }
-}
-li.el-select-dropdown__item.item {
-    min-height: 80px !important;
-    height: auto;
-    padding-bottom: 10px;
-}
+    .area-btn{
+        .el-radio-group{
+            display: flex !important;
+            flex-wrap: wrap;
+        }
+    }
+    li.el-select-dropdown__item.item {
+        min-height: 80px !important;
+        height: auto;
+        padding-bottom: 10px;
+    }
 }
 </style>
 <style lang="scss" scoped>
