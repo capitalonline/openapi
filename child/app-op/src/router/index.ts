@@ -19,12 +19,6 @@ const routes: RouteConfig[] = [
     meta: {label: 'POD管理', meta: 'pod_list'}
   },
   {
-    path: '/productType',
-    name: 'productType',
-    component: () => import('../views/productType/list.vue'),
-    meta: {label: '物理机产品类型管理', meta: 'productType'}
-  },
-  {
     path:'/physical',
     name:'physical_list',
     component:()=>import('../views/physical/list.vue'),

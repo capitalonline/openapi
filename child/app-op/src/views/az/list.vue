@@ -11,7 +11,7 @@
                 <el-option v-for="item in publicList" :key="item.region_id" :value="item.region_id">{{item.region_name}}</el-option>
             </el-select>
             <div>
-                <el-button type="primary">同步</el-button>
+                <el-button type="primary" @click="sync">同步</el-button>
             </div>
         </div>
         <el-table
@@ -64,7 +64,7 @@
             <resource :visible.sync="visible" :info="operateInfo"></resource>
         </template>
         <template v-if="visible && operateType==='record'">
-            <record :visible.sync="visible" :info="operateInfo"></record>
+            <record :visible.sync="visible" :az_id="operateInfo.az_id"></record>
         </template>
     </div>
 </template>
@@ -74,7 +74,7 @@ import {Vue,Component} from 'vue-property-decorator';
 import Service from '../../https/az/list';
 import Edit from './edit.vue';
 import Resource from './resouce.vue';
-import Record from '../instance/record.vue'
+import Record from './record.vue'
 @Component({
     components:{
         Edit,
@@ -128,6 +128,13 @@ export default class Az extends Vue{
         this.operateType = label
         this.visible=true;
     }
+    private async sync(){
+        let res:any = await Service.sync();
+        if(res.code==='Success'){
+            this.pageInfo.page_index = 1;
+            this.getAzList()
+        }
+    }
     private del(obj){
         const h = this.$createElement;
          this.$msgbox({
@@ -140,16 +147,15 @@ export default class Az extends Vue{
           showCancelButton: true,
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          beforeClose: (action, instance, done) => {
+          beforeClose:async (action, instance, done) => {
             if (action === 'confirm') {
-              instance.confirmButtonLoading = true;
-              instance.confirmButtonText = '执行中...';
-              setTimeout(() => {
+                let res:any = await Service.del_status({
+                    az_id:obj.az_id
+                })
+                if(res.code==='Success'){
+                    this.$message.success(res.message)
+                }
                 done();
-                setTimeout(() => {
-                  instance.confirmButtonLoading = false;
-                }, 300);
-              }, 3000);
             } else {
               done();
             }

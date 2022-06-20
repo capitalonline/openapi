@@ -26,18 +26,16 @@
             </el-form-item>
             <el-form-item label="存储类型" prop="backend_types">
                 <el-checkbox-group v-model="formData.backend_types">
-                    <el-checkbox label="disk">云盘</el-checkbox>
-                    <el-checkbox label="local">本地盘</el-checkbox>
-                    <el-checkbox label="nas">文件存储</el-checkbox>
+                    <el-checkbox v-for="item in backend_list" :key="item" :label="item">{{backend_list[item]}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select v-model="formData.status" placeholder="请选择">
                     <el-option
                         v-for="item in statusList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                        :key="item"
+                        :label="statusList[item]"
+                        :value="item">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -86,11 +84,24 @@ export default class Edit extends Vue{
         backend_types:[{ required: true, message: '请选择存储类型'}],
         status:[{ required: true, message: '请选择状态'}],
     }
-    private statusList:any=[];
+    private backend_list:any={}
+    private statusList:any={};
     private customerList:any=[];
     private FnCustomer(val){
         console.log('val',val);
         this.formData.customer_ids = val
+    }
+    private async getBackendTypes(){
+        let res:any = await Service.get_backend_types();
+        if(res.code==='Success'){
+            this.backend_list = res.data
+        }
+    }
+    private async gtStatusList(){
+        let res:any = await Service.get_status();
+        if(res.code==='Success'){
+            this.statusList = res.data
+        }
     }
     private confirm(){
         let form = this.$refs.ruleForm as Form;
