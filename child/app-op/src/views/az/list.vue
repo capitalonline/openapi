@@ -100,7 +100,7 @@ export default class Az extends Vue{
     }
     
     created() {
-        // this.getAzList()
+        this.getAzList()
     }
     private async getAzList(){
         let res:any = await Service.get_az_list({
