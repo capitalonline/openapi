@@ -113,6 +113,8 @@ export default class Az extends Vue{
     }
     
     created() {
+        console.log('az');
+        
         this.getRegion()
         this.getNetType()
         this.getAzList()
