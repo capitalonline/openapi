@@ -565,13 +565,13 @@ export default class App extends Vue {
   private ecs_goods_name_list = [];
   private timer = null;
   private os_info = {};
+  private ecs_info = {};
+  private common_visible:boolean=false
   private disk_billing_info = {};
   private total_price = "";
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = '';
-  private ecs_info:any={};
-  private common_visible:boolean=false
   private sort_order = undefined;
   private ecs_status_list:any=[];
    @Watch("$store.state.pod_id")

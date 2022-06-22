@@ -7,6 +7,12 @@ const routes: RouteConfig[] = [
     redirect:'/pod_list'
   },
   {
+    path: '/az',
+    name: 'az_list',
+    component: () => import('../views/az/list.vue'),
+    meta: {label: '可用区管理', meta: 'az_list'}
+  },
+  {
     path: '/pod',
     name: 'pod_list',
     component: () => import('../views/pod/list.vue'),
@@ -23,14 +29,6 @@ const routes: RouteConfig[] = [
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
     meta: {label: '云服务器管理', menu: 'instance_list'},
-    children: [
-      // {
-      //   path: '/instance/monitor/:id',
-      //   name: 'monitor',
-      //   component: () => import('../views/instance/monitor.vue'),
-      //   meta: {label: '云服务器详情', menu: 'instance_list'}
-      // }
-    ]
   },
   {
     path: '/instance/create',
