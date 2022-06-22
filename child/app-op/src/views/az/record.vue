@@ -89,8 +89,7 @@ export default class Record extends Vue{
     })
     if(res.code==="Success"){
       this.record_list = res.data.history_list
-      
-    //   this.total = res.data?.page_info?.count || 0
+      this.total = res.data?.page_info?.count || 0
     }
   }
   private handleSizeChange(size){

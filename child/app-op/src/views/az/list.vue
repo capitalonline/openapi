@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import {Vue,Component} from 'vue-property-decorator';
+import {Vue,Component,Watch} from 'vue-property-decorator';
 import Service from '../../https/az/list';
 import Edit from './edit.vue';
 import Resource from './resouce.vue';
@@ -101,6 +101,12 @@ export default class Az extends Vue{
     
     created() {
         this.getAzList()
+    }
+    @Watch('visible')
+    private watch_visible(nv){
+        if(!nv){
+            this.getAzList()
+        }
     }
     private async getAzList(){
         let res:any = await Service.get_az_list({

@@ -4,6 +4,7 @@
         :visible.sync="visibleSync"
         width="600px"
         :destroy-on-close="true"
+        :close-on-click-modal="false"
     >
         <el-form :model="formData" :rules="rules" ref="ruleForm" label-width="120px" label-suffix=":" label-position="left">
             <el-form-item label="可用区编号" prop="az_id">
@@ -26,16 +27,16 @@
             </el-form-item>
             <el-form-item label="存储类型" prop="backend_types">
                 <el-checkbox-group v-model="formData.backend_types">
-                    <el-checkbox v-for="item in backend_list" :key="item" :label="item">{{backend_list[item]}}</el-checkbox>
+                    <el-checkbox v-for="(item,i) in backend_list" :key="i" :label="i">{{item}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select v-model="formData.status" placeholder="请选择">
                     <el-option
-                        v-for="item in statusList"
-                        :key="item"
-                        :label="statusList[item]"
-                        :value="item">
+                        v-for="(item,i) in statusList"
+                        :key="i"
+                        :label="item"
+                        :value="i">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -90,6 +91,10 @@ export default class Edit extends Vue{
     private FnCustomer(val){
         console.log('val',val);
         this.formData.customer_ids = val
+    }
+    created() {
+        this.getBackendTypes();
+        this.gtStatusList()
     }
     private async getBackendTypes(){
         let res:any = await Service.get_backend_types();
