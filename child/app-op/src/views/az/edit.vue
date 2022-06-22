@@ -23,7 +23,7 @@
                 <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音"></el-input>
             </el-form-item>
             <el-form-item label="公网类型" prop="net_type">
-                <el-radio v-model="formData.net_type" label="1">三线三IP</el-radio>
+                <el-radio v-for="(item,i) in publicList" :key="i" v-model="formData.net_type" :label="i">{{item}}</el-radio>
             </el-form-item>
             <el-form-item label="存储类型" prop="backend_types">
                 <el-checkbox-group v-model="formData.backend_types">
@@ -73,12 +73,12 @@ export default class Edit extends Vue{
         az_name:this.info.az_name,
         region_name:this.info.region_name,
         region_id:this.info.region_id,
-        az_code:'',
-        net_type:'1',
+        az_code:this.info.az_code,
+        net_type:'',
         backend_types:[],
         status:'',
-        customer_ids:[],
-        remark:'',
+        customer_ids:this.info.customer,
+        remark:this.info.remark,
     }
     private rules:any={
         net_type:[{ required: true, message: '请选择公网类型'}],
@@ -87,6 +87,7 @@ export default class Edit extends Vue{
     }
     private backend_list:any={}
     private statusList:any={};
+    private publicList:any={};
     private customerList:any=[];
     private FnCustomer(val){
         console.log('val',val);
@@ -94,18 +95,28 @@ export default class Edit extends Vue{
     }
     created() {
         this.getBackendTypes();
-        this.gtStatusList()
+        this.gtStatusList();
+        this.getNetType()
+    }
+    private async getNetType(){
+        let res:any = await Service.get_net_type();
+        if(res.code==='Success'){
+            this.publicList = res.data;
+            this.formData.net_type =this.info.net_type[0]
+        }
     }
     private async getBackendTypes(){
         let res:any = await Service.get_backend_types();
         if(res.code==='Success'){
-            this.backend_list = res.data
+            this.backend_list = res.data;
+            this.formData.backend_types = this.info.backend_types
         }
     }
     private async gtStatusList(){
         let res:any = await Service.get_status();
         if(res.code==='Success'){
-            this.statusList = res.data
+            this.statusList = res.data;
+            this.formData.status = this.info.status
         }
     }
     private confirm(){

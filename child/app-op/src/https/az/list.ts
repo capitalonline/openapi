@@ -31,4 +31,16 @@ export default{
     record(req){
         return service(getEcsOptions('GET','/ecs/get_az_history/',req))
     },
+    //获取可用区网络类型
+    get_net_type(){
+        return service(getEcsOptions('GET','/ecs/get_az_net_types/'))
+    },
+    //获取可用区资源调度参数
+    get_scheduling_policy(req){
+        return service(getEcsOptions('GET','/ecs/get_scheduling_policy/',req))
+    },
+    //获取可用区资源调度参数
+    set_scheduling_policy(req){
+        return service(getEcsOptions('POST','/ecs/set_scheduling_policy/',req))
+    },
 }
