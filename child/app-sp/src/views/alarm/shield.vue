@@ -59,43 +59,17 @@ export default class Shield extends Vue{
     }
     created() {
     }
-    private async getAlarmList(){
-        const {search_data} = this
-        
-        let res:any=await Service.get_alarm_list({
-            ruleName:search_data.ruleName,//输入这个字段可以进行规则名称或者资源ID进行搜索
-            instanceID:search_data.instanceID,
-            alarmType:search_data.type,
-            contactGroupName:search_data.contact,
-            startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-            endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            dealStatus:this.dealStatus.length===0 ? "" : this.dealStatus[0],
-            page:this.current,
-            pageSize:this.size
-        })
-        
-        if(res.code==='Success'){
-            this.list = res.data.datas || []
-            this.total = res.data.total || 0
-        }
-    }
-    private view_contact(list){
-        this.visible = true
-        this.notice_list = list
-    }
     private fn_search(data:any={}){
-        this.current = 1
-        this.search_data = {...this.search_data,...data}
-        // this.activityKey = ""
-        this.getAlarmList()
+
     }
     private handleSizeChange(size){
         this.size = size
-        this.getAlarmList()
     }
     private handleCurrentChange(cur){
         this.current = cur
-        this.getAlarmList()
+    }
+    private handle(val:String){
+
     }
 }
 </script>
