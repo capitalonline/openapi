@@ -54,7 +54,6 @@
           </date-picker>
         </template>
       </div>
-
       <div class="m-bottom20" v-if="!type">
         <el-button type="primary" @click="FnSearch">查 询</el-button>
         <el-button type="default" @click="FnClear">清 空</el-button>
@@ -96,7 +95,7 @@ export default class ActionBlock extends Vue {
   private time: any = null;
   private date_key: string = "";
   private isOpen:boolean=true;//默认展开
-  
+
 
   private FnGetTime(time, key) {
     this.time = time;
@@ -161,7 +160,7 @@ export default class ActionBlock extends Vue {
       setTimeout(()=>{
         this.FnSearch()
       },500)
-      
+
     }
   }
 }

@@ -47,3 +47,12 @@ export function deal_fee_info(billing_info,isCreate:boolean=false){
 export function get_featrues(list,id){
     return list.map(item=>item[id])
 }
+export function paramsSerializer(obj){
+    let str=""
+    for (let i in obj){
+        if(obj[i]){
+            str =str+`${i}=${obj[i]}&`
+        }
+    }
+    return str==="" ? "" : `?${str.slice(0,str.length-1)}`
+}

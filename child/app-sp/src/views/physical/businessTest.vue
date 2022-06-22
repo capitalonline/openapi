@@ -52,7 +52,6 @@ export default class BusinessTest extends Vue{
     @Prop({default:()=>({
         az_id:'',
         az_name:'',
-        length:0
     })}) az_info!:any
     private taskList:Array<any>= [];
     private selectedTasks:Array<any> = [];

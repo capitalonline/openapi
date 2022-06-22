@@ -37,7 +37,28 @@ module.exports = {
         target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
-      }
+      },
+      // '/': {
+      //   target: 'http://cloudos-sp-front.gic.test',
+      //   ws: true,
+      //   changeOrigin: true
+      // }
     }
   },
+  chainWebpack: (config) => {
+    config.module
+    .rule('fonts')
+    .use('url-loader')
+    .loader('url-loader')
+    .options({
+      limit: 4096, // 小于4kb将会被打包成 base64
+      fallback: {
+        loader: 'file-loader',
+        options: {
+          name: 'fonts/[name].[hash:8].[ext]'
+        },
+      },
+    })
+    .end();
+  }
 }

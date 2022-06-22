@@ -166,8 +166,9 @@ export default class Migrate extends Vue{
     }
     private async get_physical_list(val:string=""){
         let res:any=await Service.get_host_list({
+            pod_id:this.$store.state.pod_id,
             host_name:val,
-            az_id:this.rows[0].pod__az_id,
+            // az_id:this.rows[0].pod__az_id,
             page_index:1,
             page_size:20,
         })

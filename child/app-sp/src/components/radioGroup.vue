@@ -1,5 +1,5 @@
 <template>
-    <div class="radio-btn">
+    <div>
         <el-radio-group v-model="syncValue" size="mini" >
             <el-radio-button v-for="item in list" :key="item.region_id" :label="item.region_name" ></el-radio-button>
         </el-radio-group>
@@ -15,25 +15,18 @@ export default class Area extends Vue{
 }
 </script>
 <style lang="scss">
-.radio-btn{
-    span.el-radio-button__inner {
-        margin-right: 0 !important;
-        border-right: none;
-        width: 80px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .el-radio-button:first-child .el-radio-button__inner{
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-    .el-radio-button:last-child .el-radio-button__inner{        
-        border-right: 1px solid #DCDFE6;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    .el-radio-button:first-child:last-child .el-radio-button__inner{
-        border-radius:4px
-    }
+.el-radio-button__inner {
+    min-width: 100px;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-left: 1px solid #DCDFE6;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 10px;
 }
+.el-radio-button:last-child .el-radio-button__inner,
+.el-radio-button:first-child .el-radio-button__inner {
+    border-radius: 4px;
+}
+
 </style>

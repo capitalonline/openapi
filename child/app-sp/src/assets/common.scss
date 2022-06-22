@@ -9,6 +9,11 @@
 .num_message {
   color: #455cc6;
 }
+.not-clickable{
+  color:#C0C4CC;
+  font-size: 12px;
+  cursor: text;
+}
 .clickble{
   cursor: pointer;
   color: #455cc6;
@@ -30,6 +35,7 @@
 .unmounting,
 .recovering,
 .recycling,
+.syncing,
 .creating_image {
   color:#4984E7;
 }
@@ -37,15 +43,28 @@
   color:#2DA867;
 }
 .deleted,
+.blocking,
 .destroy {
   color: #e6a23c;
 }
 .shutdown,
 .error,
+.create_fail,
 .failed,.build_fail {
   color:#DA3B18;
 }
-
+.m-left5 {
+  margin-left: 5px;
+}
+.m-top5{
+  margin-top: 5px;
+}
+.m-right5 {
+  margin-right: 5px;
+}
+.m-bottom5 {
+  margin-bottom: 5px;
+}
 .m-left10 {
   margin-left: 10px;
 }
@@ -142,11 +161,12 @@ pre {
 }
 .id-cell {
   display: inline-block;
-  max-width: calc(100% - 24px);
+  max-width: calc(100% - 26px);
   margin-right: 6px;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
+  vertical-align: top;
 }
 .long-msg{
   overflow: hidden;
@@ -160,4 +180,8 @@ pre {
 /* 固定表头 */
 .table-limit-height {
   height: calc(100vh - 200px) !important;
+}
+.el-table-filter{
+  max-height: 320px;
+  overflow-y: auto;
 }
