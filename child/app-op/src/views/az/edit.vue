@@ -20,7 +20,7 @@
                 <span v-text="formData.region_id"></span>
             </el-form-item>
              <el-form-item label="AZ Code" prop="az_code">
-                <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音"></el-input>
+                <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音" :disabled="formData.az_code!==''"></el-input>
             </el-form-item>
             <el-form-item label="公网类型" prop="net_type">
                 <el-radio v-for="(item,i) in publicList" :key="i" v-model="formData.net_type" :label="i">{{item}}</el-radio>
@@ -90,7 +90,6 @@ export default class Edit extends Vue{
     private publicList:any={};
     private customerList:any=[];
     private FnCustomer(val){
-        console.log('val',val);
         this.formData.customer_ids = val
     }
     created() {
