@@ -20,7 +20,7 @@
                 <el-option v-for="(item,i) in publicList" :key="i" :value="i" :label="item"></el-option>
             </el-select>
             <div>
-                <el-button type="primary" @click="sync">同步</el-button>
+                <el-button type="primary" @click="sync" :disabled="!authList.includes('sync')">同步</el-button>
             </div>
         </div>
         <el-table
@@ -50,10 +50,10 @@
            <el-table-column prop="create_time" label="创建时间"></el-table-column>
            <el-table-column prop="operate" label="操作">
                <template slot-scope="scope">
-                   <el-button type="text" @click="handle(scope.row,'edit')">编辑</el-button>
-                   <el-button type="text" @click="del(scope.row)">删除</el-button>
-                   <el-button type="text" @click="handle(scope.row,'record')">操作记录</el-button>
-                   <el-button type="text" @click="handle(scope.row,'resource')">调度策略管理</el-button>
+                   <el-button type="text" @click="handle(scope.row,'edit')" :disabled="!authList.includes('edit')">编辑</el-button>
+                   <el-button type="text" @click="del(scope.row)" :disabled="!authList.includes('del')">删除</el-button>
+                   <el-button type="text" @click="handle(scope.row,'record')" :disabled="!authList.includes('record')">操作记录</el-button>
+                   <el-button type="text" @click="handle(scope.row,'resource')" :disabled="!authList.includes('scheduling')">调度策略管理</el-button>
                </template>
            </el-table-column>
         </el-table>
@@ -93,7 +93,7 @@ import Record from './record.vue'
     }
 })
 export default class Az extends Vue{
-    private list:any=[{az_id:'1',az_name:'北京A'}];
+    private list:any=[];
     private search_data:any={
         region:'',
         az:'',
@@ -105,6 +105,7 @@ export default class Az extends Vue{
     private visible:boolean=false;
     private operateInfo:any={};
     private operateType:string='';
+    private authList:any=[];
     private flag:boolean=true
     private pageInfo:any={
         page_index:1,
@@ -113,6 +114,7 @@ export default class Az extends Vue{
     }
     
     created() {
+        this.authList = this.$store.state.auth_info[this.$route.name];        
         this.getRegion()
         this.getNetType()
         this.getAzList()

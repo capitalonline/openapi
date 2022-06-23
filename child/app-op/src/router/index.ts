@@ -4,7 +4,7 @@ Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   {
     path:'/',
-    redirect:'/pod_list'
+    redirect:'/az'
   },
   {
     path: '/az',
