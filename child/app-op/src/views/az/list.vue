@@ -218,7 +218,8 @@ export default class Az extends Vue{
                     az_id:obj.az_id
                 })
                 if(res.code==='Success'){
-                    this.$message.success(res.message)
+                    this.$message.success(res.message);
+                    this.getAzList()
                 }
                 done();
             } else {
@@ -226,10 +227,6 @@ export default class Az extends Vue{
             }
           }
         }).then(action => {
-          this.$message({
-            type: 'info',
-            message: 'action: ' + action
-          });
         });
     }
 }

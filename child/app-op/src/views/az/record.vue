@@ -6,7 +6,6 @@
       width="60%"
       :destroy-on-close="true"
       :close-on-click-modal="false"
-      @close="back"
     >
       <div>
         <el-dialog

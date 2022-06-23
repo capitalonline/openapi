@@ -20,7 +20,7 @@
                 <span v-text="formData.region_id"></span>
             </el-form-item>
              <el-form-item label="AZ Code" prop="az_code">
-                <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音" :disabled="formData.az_code!==''"></el-input>
+                <el-input v-model="formData.az_code" placeholder="输入可用区的小写拼音" :disabled="info.az_code!==''"></el-input>
             </el-form-item>
             <el-form-item label="公网类型" prop="net_type">
                 <el-radio v-for="(item,i) in publicList" :key="i" v-model="formData.net_type" :label="i">{{item}}</el-radio>
@@ -31,7 +31,7 @@
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="状态" prop="status">
-                <el-select v-model="formData.status" placeholder="请选择">
+                <el-select v-model="formData.status" placeholder="请选择" @change="changeStatus">
                     <el-option
                         v-for="(item,i) in statusList"
                         :key="i"
@@ -40,8 +40,10 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="客户ID" prop="customer_ids">
-                <customer-input @FnCustomer="FnCustomer" :customers="formData.customer_ids"></customer-input>
+            <el-form-item label="客户ID" prop="customer_ids" v-if="formData.status==='gray_open'">
+                <template v-if="formData.status==='gray_open'">
+                    <customer-input @FnCustomer="FnCustomer" :customers="formData.customer_ids" :list="formData.customer_ids.length >0 ? info.customer_info : []"></customer-input>
+                </template>
             </el-form-item>
             <el-form-item label="备注" prop="remark">
                 <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="formData.remark"></el-input>
@@ -116,6 +118,13 @@ export default class Edit extends Vue{
         if(res.code==='Success'){
             this.statusList = res.data;
             this.formData.status = this.info.status
+        }
+    }
+    private changeStatus(val){
+        console.log('###',this.formData.customer_ids,val);
+        
+        if(val!=='gray_open'){
+            this.formData.customer_ids=[]
         }
     }
     private confirm(){
