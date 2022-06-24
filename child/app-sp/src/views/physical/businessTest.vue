@@ -17,7 +17,7 @@
                     <el-option v-for="inn in selectable" :key="inn.maintask_name" :value="inn.maintask_name" :label="inn.display_name" :disabled="item.disList.includes(inn.maintask_name)"></el-option>
                 </el-select>
             </div> -->
-            <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{taskList.length>0 ? `${taskList[0].display_name} (在选中的每台物理机上创建1个1核1G的云主机，GPU物理机需创建1个CPU云主机和1个GPU云主机。若创建成功且正常运行，则该项任务测试通过)` : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="1"></circle-icon>{{first.description ? first.description : ''}}</div>
             <!-- <div class="m-bottom10"><circle-icon :num="2"></circle-icon>{{taskList.length>0 ? taskList[1].display_name :''}}</div> -->
             <div v-for="(item,index) in selectedTasks" :key="index" class="m-bottom10">
                 <circle-icon :num="index+2"></circle-icon>
@@ -27,8 +27,8 @@
                 <span class="m-left10" v-if="item.task_id">该任务需设置参数，请点击<el-button type="text" @click="setParams">设置参数</el-button></span>
                 <el-button class="m-left10" type="text" @click="del(index)">删除</el-button>
             </div>
-            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-2].display_name}` : ''}}</div>
-            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 3"></circle-icon>{{taskList.length>0 ? `${taskList[taskList.length-1].display_name} (测试完成，云主机进行销毁)` : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 2"></circle-icon>{{second.description ? second.description : ''}}</div>
+            <div class="m-bottom10"><circle-icon :num="selectedTasks.length + 3"></circle-icon>{{third.description ? third.description : ''}}</div>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
@@ -56,7 +56,10 @@ export default class BusinessTest extends Vue{
     private taskList:Array<any>= [];
     private selectedTasks:Array<any> = [];
     private task:string='';
-    private selectable:any=[]
+    private selectable:any=[];
+    private first:any={};
+    private second:any={};
+    private third:any={}
     created(){
         this.get_task_list()
     }
@@ -64,11 +67,22 @@ export default class BusinessTest extends Vue{
         let res:any=await Service.get_task_list({})
         if(res.code==='Success'){
             this.taskList = [...res.data.task_list];
-            for(let i in this.taskList ){
-                if(![0,this.taskList.length-1].includes(Number(i))){
-                    this.selectable.push(this.taskList[i])
+            this.taskList.map(item=>{
+                if(!['CreateEcsGpuInstanceForTestPipeline','DeleteEcsGpuInstanceForTestPipeline','UpdateHostForTestPipeline'].includes(item.maintask_name)){
+                    this.selectable.push(item)
                 }
-            }
+                if(item.maintask_name==='CreateEcsGpuInstanceForTestPipeline'){
+                    this.first = item;
+                }
+                if(item.maintask_name==='DeleteEcsGpuInstanceForTestPipeline'){
+                    this.second = item;
+                }
+                if(item.maintask_name==='UpdateHostForTestPipeline'){
+                    this.third = item;
+                }
+                return item;
+            })
+            
         }
     }
     private set_disList(){
@@ -104,15 +118,15 @@ export default class BusinessTest extends Vue{
     }
     private async confirm(){
         let list=[
-            {maintask_name:this.taskList[0].maintask_name,dep_params:{}},
+            {...this.first},
             // {maintask_name:this.taskList[1].maintask_name,dep_params:{}},
         ]
         this.selectedTasks.map(item=>{
             list.push({maintask_name:item.task_id,dep_params:item.params})
             return item;
         })
-        list.push({maintask_name:this.taskList[this.taskList.length-2].maintask_name,dep_params:{}})
-        list.push({maintask_name:this.taskList[this.taskList.length-1].maintask_name,dep_params:{}})
+        list.push(this.second)
+        list.push(this.third)
         let res:any = await Service.create_test_task({
             az_id:this.az_info.az_id,
             task_list:list
