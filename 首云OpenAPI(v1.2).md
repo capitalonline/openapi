@@ -901,6 +901,7 @@ def reset_os(vm_id, os_id):
 | Cpu                     | int      | 4                                                            | Cpu信息                   |
 | Ram                     | int      | 4                                                            | Ram信息                   |
 | Tags                    | list     | [{"TagId":"1234","TagName":"tag_abc"}]                       | 云主机资源的标签信息      |
+| CreateTime              | string   | 2022-06-01 12:30:00                                          | 云服务器创建时间      |
 
 ​	**错误码：**
 
@@ -1995,7 +1996,7 @@ def down_card(InterfaceId, InstanceId):
 | InstanceIds| list | 是         |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
 | PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe | 私网ID/公网ID(填写公网ID或私网ID)         |
 | VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
-| Password   | string | 否       | xxxx                                         | 主机密码                                    |
+| Password   | string | 是       | xxxx                                         | 主机密码                                    |
 
 ​	**返回参数：**
 
