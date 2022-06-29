@@ -179,7 +179,7 @@ export default class AddCommon extends Vue{
     created(){
         this.get_mirror_type();
         this.get_disk_list()
-        this.form_data.support_type='GPU/CPU'
+        // this.form_data.support_type='GPU/CPU'
         if(this.oper_info.os_id){
             this.rules.path_md5=[{required:false, message: '请输入MD5', trigger: 'change' }]
         }
