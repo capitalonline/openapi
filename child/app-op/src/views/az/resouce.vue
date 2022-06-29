@@ -76,7 +76,7 @@ export default class Resource extends Vue{
         }
     }
     private async confirm(){
-        if(this.gpuPoint===0 || this.cpuPoint===0){
+        if(this.gpuPoint===0 || this.cpuPoint===0 || this.cpuEcs===0 || this.gpuEcs===0 || !this.gpuPoint || !this.cpuPoint || !this.cpuEcs || !this.gpuEcs){
             this.$message.warning('物理机超分倍数必须大于0且小于等于10');
             return;
         }
