@@ -9577,6 +9577,261 @@ def update_receiver():
     return result
 ```
 
+## 云桌面相关
+
+### 1.QueryTask
+
+   **Action: QueryTask**
+
+  **描述：** 获取任务信息
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
+| --------- | ------ | -------- | ------------------------------------ | ------------ |
+| taskId    | string | 是       | 6bca6bbd-58f2-427e-acdc-2eeb4c7328c7 | 任务id       |
+| requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
+
+   **返回参数：**
+
+| 名称       | 类型   | 示例                                   | 描述                              |
+| ---------- | ------ | -------------------------------------- | --------------------------------- |
+| Code       | string | Success                                | 返回状态码: Success: 成功         |
+| Message    | string | null                                   | 返回信息                          |
+| Data       | object | {}                                     | 返回数据                          |
+| taskId     | string | “35304122-8504-400c-a61c-56ba244c5dda” | 任务id                            |
+| status     | string | “Completed”                            | 任务状态 Running Failed Completed |
+| failReason | string | “”                                     | 失败原因                          |
+| requestId  | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                          |
+
+​   **错误码:**
+
+| 错误码 | 错误信息           | 描述                 |
+| ------ | ------------------ | -------------------- |
+| 10003  | 传入参数不符合要求 | 传入参数不符合要求   |
+| 10006  | 参数错误           | 参数错误，任务不存在 |
+
+​   **返回示例:**
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "failReason": "失败子任务名称：关闭云桌面,失败子任务id:194c8fd2-d03e-41ce-a10d-53ef714fc0cd,失败流程名称:关闭云桌面,失败流程id：14695198-f1bc-454a-b464-b4b55eb9f7d7,失败原因:平台关机的云桌面不存在",
+        "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab",
+        "status": "Failed",
+        "taskId": "6bca6bbd-58f2-427e-acdc-2eeb4c7328c7"
+    },
+    "Message": ""
+}
+```
+
+​   **请求调用示例**
+
+```python
+def queryTask():
+    '''
+    获取任务信息
+    :return:
+    '''
+    action = "QueryTask"
+    method = "GET"
+    param = {"taskId": "a78a642b-7ee0-4c7e-9d45-62cd040cb910", "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"}
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print ("request error: %s" % result.get("Message"))
+    return result
+```
+
+### 2.QuerySites
+
+   **Action: QuerySites**
+
+  **描述：** 查询可用区域信息
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| siteId | string | 否       | 09a38804-c1ee-11ec-bd22-4641dfd57315 | 站点id |
+
+   **返回参数：**
+
+| 名称       | 类型   | 示例                                   | 描述                      |
+| ---------- | ------ | -------------------------------------- | ------------------------- |
+| Code       | string | Success                                | 返回状态码: Success: 成功 |
+| Message    | string | null                                   | 返回信息                  |
+| Data       | list   | []                                     | 返回数据                  |
+| siteId     | string | “d318e1a2-9bab-11ec-875a-2a8d1f4e167e” | 站点ID’                   |
+| podName    | string | “POD210”                               | ‘站点名称’                |
+| siteName   | string | “襄阳A”                                | ‘站点name’                |
+| regionName | string | “中国大陆”                             | ‘区域name’                |
+| regionId   | string | “408fd19e-fa78-11e6-bd9a-30b49e091019” | ‘区域id’                  |
+| cityName   | string | “襄阳”                                 | ‘城市name’                |
+| cityId     | string | “32e6fd62-9bac-11ec-875a-2a8d1f4e167e” | ‘城市id’                  |
+
+​   **错误码:**
+
+| 错误码 | 错误信息 | 描述 |
+| ------ | -------- | ---- |
+|        |          |      |
+
+​   **返回示例:**
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "cityId": "d318e1a2-9bab-11ec-875a-2a8d1f4e167e",
+            "cityName": "襄阳",
+            "podName": "POD210",
+            "regionId": "408fd19e-fa78-11e6-bd9a-30b49e091019",
+            "regionName": "中国大陆",
+            "siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e",
+            "siteName": "襄阳A"
+        },
+        {
+            "cityId": "39c6ed64-8d5f-11ec-9247-5293695d0ddd",
+            "cityName": "宿迁",
+            "podName": "POD203",
+            "regionId": "408fd19e-fa78-11e6-bd9a-30b49e091019",
+            "regionName": "中国大陆",
+            "siteId": "f7c3c7a6-8d5f-11ec-9311-5293695d0ddd",
+            "siteName": "宿迁A"
+        }
+    ],
+    "Message": ""
+}
+```
+
+​   **请求调用示例**
+
+```python
+def querySites():
+    '''
+    查询可用区域信息
+    :return:
+    '''
+    action = "QuerySites"
+    method = "GET"
+    param = {}
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print ("request error: %s" % result.get("Message"))
+    return result
+```
+
+### 3.QueryProducts
+
+   **Action: QueryProducts**
+
+  **描述：** 查询商品信息
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| siteId | string | 否       | 09a38804-c1ee-11ec-bd22-4641dfd57315 | 站点id |
+
+   **返回参数：**
+
+| 名称           | 类型   | 示例                                   | 描述                             |
+| -------------- | ------ | -------------------------------------- | -------------------------------- |
+| Code           | string | Success                                | 返回状态码: Success: 成功        |
+| Message        | string | null                                   | 返回信息                         |
+| Data           | list   | []                                     | 返回数据                         |
+| siteId         | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                          |
+| productId      | string | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                       |
+| cpuCores       | int    | 14                                     | cpu 核数                         |
+| memorySize     | int    | 25                                     | 内存                             |
+| gpuModel       | string | “NVIDIA A5000”                         | gpu型号                          |
+| gpuRam         | int    | 24                                     | gpu显存                          |
+| systemDiskSize | int    | 150                                    | 系统盘大小                       |
+| os             | string | “windows”                              | 操作系统                         |
+| goodsId        | int    | 15264                                  | 商品id                           |
+| requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
+| monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
+
+​   **错误码:**
+
+| 错误码 | 错误信息             | 描述                 |
+| ------ | -------------------- | -------------------- |
+| 12000  | 查询商品规格信息失败 | 查询商品规格信息失败 |
+
+​   **返回示例:**
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "cpuCores": 14,
+            "goodsId": 15264,
+            "gpuModel": "NVIDIA A5000",
+            "gpuRam": 24,
+            "memorySize": 25,
+            "monthPrice": 3364,
+            "os": "windows",
+            "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
+            "requirePrice": 0.1868333333,
+            "siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
+            "systemDiskSize": 150
+        },
+        {
+            "cpuCores": 14,
+            "goodsId": 15264,
+            "gpuModel": "NVIDIA A5000",
+            "gpuRam": 24,
+            "memorySize": 25,
+            "monthPrice": 3364,
+            "os": "windows",
+            "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
+            "requirePrice": 0.1868333333,
+            "siteId": "9efa59c0-a0db-11ec-aefa-1efd5a8f8465",
+            "systemDiskSize": 150
+        }
+    ],
+    "Message": ""
+}
+```
+
+​   **请求调用示例**
+
+```python
+def queryProducts():
+    '''
+    查询商品信息
+    :return:
+    '''
+    action = "QueryProducts"
+    method = "GET"
+    param = {}
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print ("request error: %s" % result.get("Message"))
+    return result
+```
+
+
 ## 其他公共接口
 
 ### 1.DescribeAvailableResource
