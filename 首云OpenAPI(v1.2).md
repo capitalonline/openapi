@@ -11673,7 +11673,7 @@ def createVm():
 
    **请求地址:** cdsapi.capitalonline.net/gcw
 
-   **请求方法：GET**
+   **请求方法：POST**
 
    **请求参数：**
 
@@ -11705,6 +11705,7 @@ def createVm():
 | 10006  | 参数错误                         | 参数错误，暂不支持该操作         |
 
 ​   **返回示例:**
+
 ```json
 {
     "Code": "Success",
