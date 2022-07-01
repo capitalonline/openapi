@@ -14,26 +14,30 @@
                 <div class="m-bottom10">
                     <el-checkbox v-model="checked" :indeterminate="isIndeterminate" @change="handleCheckAllChange" :disabled="useable_list.length===0"></el-checkbox>
                     {{rows[0].host_name}}(<span class="num_message">{{selected.length}}</span>/{{list.length}})
+                    <span class="warning_message">(若是GPU型云主机，建议单选虚拟机)</span>
                 </div>
                 <el-table
                     :data="list"
                     ref="table"
                     border
-                    :show-header="false"
                     max-height="500"
                     @selection-change="handleSelectionChange"
                 >
                     <el-table-column type="selection" :selectable="checkSelectable"></el-table-column>
-                    <el-table-column prop="ecs_id" label="">
+                    <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+                    <el-table-column prop="customer_name" label="客户名称"></el-table-column>
+                    <el-table-column prop="ecs_id" label="实例名称/实例ID">
                         <template slot-scope="scope">
+                            <div>{{scope.row.ecs_name}}</div>
                             <el-tooltip :content="'待迁移的云主机需为CPU型或已关机的GPU型'" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
-                                <span>{{scope.row.ecs_id}}</span>
+                                <div>{{scope.row.ecs_id}}</div>
                             </el-tooltip>
                             <span v-else>{{scope.row.ecs_id}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="status" label=""></el-table-column>
-                    <el-table-column prop="genre" label=""></el-table-column>
+                    <el-table-column prop="status" label="状态"></el-table-column>
+                    <el-table-column prop="genre" label="计算规格"></el-table-column>
+                    <el-table-column prop="genre" label="存储"></el-table-column>
                 </el-table>
                 <div class="error_message m-top10" v-if="selected.length===0">请选择虚拟机</div>
             </div>
@@ -53,13 +57,13 @@
                         <el-select 
                             v-model="physical" 
                             filterable 
-                            :filter-method="get_physical_list" 
+                            :filter-method="get_recommended_host" 
                             @visible-change="change_physical"
                             placeholder="请选择"
                             multiple 
                         >
                             <el-option
-                                v-for="item in physical_list"
+                                v-for="item in recommend"
                                 :key="item.host_id"
                                 :label="item.host_name"
                                 :value="item.host_id"
@@ -75,10 +79,11 @@
                                 
                             </el-option>
                         </el-select>
+                        <div class="error_message m-top10" v-if="recommend.length===0">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
                     </div>
                     
                 </div>
-                <div class="m-right10 flex-base">
+                <!-- <div class="m-right10 flex-base">
                     <span class="m-right10">迁移推荐:</span>
                     <div>
                         <div v-for="item in recommend" :key="item.host_id">
@@ -91,12 +96,12 @@
                             </el-tooltip>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button type="primary" @click="confirm" :disabled="this.recommend.length===0">确认</el-button>
             <el-button @click="back('0')">取消</el-button>
         </span>
     </el-dialog>
@@ -129,7 +134,6 @@ export default class Migrate extends Vue{
     private recommend=[];
     private useable_list:any=[]
     created() {
-        this.get_physical_list()
         this.get_recommended_host()
         if(this.rows[0].host_purpose==='GPU'){
             this.useable_list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu).map(inn=>inn.ecs_id)
@@ -141,7 +145,7 @@ export default class Migrate extends Vue{
     //关闭面板时重新获取实例列表
     private change_physical(val){
         if(!val){
-            this.get_physical_list()
+            this.get_recommended_host()
         }
     }
     @Watch("physical")
@@ -164,23 +168,12 @@ export default class Migrate extends Vue{
             this.physical=[]
         }
     }
-    private async get_physical_list(val:string=""){
-        let res:any=await Service.get_host_list({
-            pod_id:this.$store.state.pod_id,
-            host_name:val,
-            // az_id:this.rows[0].pod__az_id,
-            page_index:1,
-            page_size:20,
-        })
-        if(res.code==="Success"){
-            this.physical_list = res.data.host_list.filter(item=>
-                item.host_id!==this.rows[0].host_id 
-                && item.machine_status==="online" && this.rows[0].gpu_model===item.gpu_model);
-        }
-    }
-    private async get_recommended_host(){
+    private async get_recommended_host(val:string=""){
+        this.$store.commit("SET_LOADING", false);
         let res:any=await Service.recommended_host({
             host_id:this.rows[0].host_id,
+            host_name:val,
+            ecs_ids:this.selected.map(item=>item.ecs_id),
             is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
             gpu_card_name:this.rows[0].gpu_real_name
         })
@@ -195,6 +188,7 @@ export default class Migrate extends Vue{
     }
     private handleSelectionChange(val){
         this.selected=val
+        this.get_recommended_host()
         this.checked = val.length === this.list.length;
         this.isIndeterminate = val.length > 0 && val.length < this.list.length;
         this.judge()
