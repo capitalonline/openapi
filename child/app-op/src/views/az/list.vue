@@ -28,26 +28,62 @@
             border
             ref="az_list"
         >
-           <el-table-column prop="az_id" label="可用区编号"></el-table-column>
-           <el-table-column prop="az_name" label="可用区名称"></el-table-column>
-           <el-table-column prop="region_name" label="所属地域"></el-table-column>
-           <el-table-column prop="region_id" label="所属地域编号"></el-table-column>
-           <el-table-column prop="net_type_display" label="公网类型"></el-table-column>
-           <el-table-column prop="backend_types_display" label="存储类型"></el-table-column>
+           <el-table-column prop="az_id" label="可用区编号">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.az_id}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="az_name" label="可用区名称">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.az_name}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="region_name" label="所属地域">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.region_name}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="region_id" label="所属地域编号">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.region_id}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="net_type_display" label="公网类型">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.net_type_display}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="backend_types_display" label="存储类型">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.backend_types_display}}</span>
+               </template>
+           </el-table-column>
            <el-table-column prop="status_display" label="状态">
                <template slot-scope="scope">
-                   <span :class="scope.row.status">{{scope.row.status_display}}</span>
+                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.status_display}}</span>
                </template>
            </el-table-column>
            <el-table-column prop="customer" label="客户权限">
                <template slot-scope="scope">
-                   <span v-if="!scope.row.customer || scope.row.customer.length===0">全部客户</span>
-                   <span v-else>{{scope.row.customer.join(',')}}</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'" v-if="!scope.row.customer || scope.row.customer.length===0">全部客户</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'" v-else>{{scope.row.customer.join(',')}}</span>
                </template>
            </el-table-column>
-           <el-table-column prop="remark" label="备注"></el-table-column>
-           <el-table-column prop="update_time" label="更新时间"></el-table-column>
-           <el-table-column prop="create_time" label="创建时间"></el-table-column>
+           <el-table-column prop="remark" label="备注">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.remark}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="update_time" label="更新时间">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.update_time}}</span>
+               </template>
+           </el-table-column>
+           <el-table-column prop="create_time" label="创建时间">
+               <template slot-scope="scope">
+                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.create_time}}</span>
+               </template>
+           </el-table-column>
            <el-table-column prop="operate" label="操作">
                <template slot-scope="scope">
                    <el-button type="text" @click="handle(scope.row,'edit')" :disabled="!authList.includes('edit')">编辑</el-button>
@@ -245,5 +281,10 @@ export default class Az extends Vue{
         margin-bottom: 20px;
     }
 }
-
+.active{
+    color: red;
+}
+.normal{
+    color:'#606266'
+}
 </style>

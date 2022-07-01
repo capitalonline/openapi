@@ -80,7 +80,12 @@ export default class Resource extends Vue{
             this.$message.warning('物理机超分倍数必须大于0且小于等于10');
             return;
         }
+        if(!this.percent || !this.lowPercent || !this.load || !this.lowLoad){
+            this.$message.warning('使用率或负载不能为空');
+            return;
+        }
         if(this.lowPercent>this.percent || this.lowLoad>this.load){
+            this.$message.warning('降低后的使用率或负载不能高于降低之前的使用率或负载');
             return;
         }
         let res:any = await Service.set_scheduling_policy({
