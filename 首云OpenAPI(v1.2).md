@@ -12476,7 +12476,7 @@ def get_status(task_id):
 | 新加坡C    | APAC_Singapore_C  | 否             | 亚太地区 |
 | 新加坡D    | APAC_Singapore_D  | 否             | 亚太地区 |
 | 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
-| 孟买B      | APAC_Mumbai_B     | 否             | 亚太地区 |
+| 孟买B(已下线) | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
 | 弗吉尼亚A   | US_Virginia_A     | 是             | 北美地区 |
 | 德国C       | EUR_Germany_C    | 是              | 欧洲地区|
@@ -12487,6 +12487,7 @@ def get_status(task_id):
 | 苏州A      | CN_Suzhou_A     | 是          | 中国大陆 |
 | 雅加达A      | APAC_Jakarta_A     | 是          | 亚太地区 |
 | 胡志明A      | APAC_HoChiMinh_A     | 是          | 亚太地区 |
+| 马赛A      | EUR_Marseilles_A | 是             | 欧洲地区 |
 
 ## 附件二
 
@@ -12538,7 +12539,37 @@ def get_status(task_id):
 |计算型c1v2	     |CCS.C1V2 |
 |通用型g1v2	     |CCS.G1V2 |
 |内存型r1v2	     |CCS.R1V2 |
-
+| 计算网络增强型c3ne        | CCS.C3NE3   |
+| 通用网络增强型g3ne        | CCS.G3NE3   |
+| 内存网络增强型r3ne        | CCS.R3NE3   |
+| 网络增强通用型g2ne        | CCS.G2NE    |
+| 网络增强通用型g1ne        | CCS.G1NE    |
+| 网络增强计算型c2ne        | CCS.C2NE    |
+| 网络增强密集计算型ic2ne   | CCS.IC2NE   |
+| 网络增强计算型c1ne        | CCS.C1NE    |
+| 网络增强密集计算型ic1ne   | CCS.IC1NE   |
+| 网络增强内存型r2ne        | CCS.R2NE    |
+| 网络增强内存型r1ne        | CCS.R1NE    |
+| 云主机AMD密集计算型ic1a   | CCS.IC1A    |
+| 专有宿主机计算型云主机hc1 | CCS.HC1     |
+| 专有宿主机通用型云主机hg1 | CCS.HG1     |
+| 专有宿主机内存型云主机hr1 | CCS.HR1     |
+| 专有宿主机密集计算型hic1  | CCS.HIC1    |
+| 计算型c1cl                | CCS.C1CL    |
+| 专有宿主机通用型云主机hg3 | CCS.HG3     |
+| 专有宿主机计算型云主机hc3 | CCS.HC3     |
+| 专有宿主机密集计算型hic3  | CCS.HIC3    |
+| 专有宿主机内存型云主机hr3 | CCS.HR3     |
+| 密集计算型ic3cl           | CCS.IC3CL   |
+| 密集计算型ic1cl           | CCS.IC1CL   |
+| GPU计算型gc3              | CCS.GC3     |
+| 密集计算型ic2cl           | CCS.IC2CL   |
+| 计算型c2cl                | CCS.C2CL    |
+| 计算型c3cl                | CCS.C3CL    |
+| 通用型g3cl                | CCS.G3CL    |
+| 通用型g2cl                | CCS.G2CL    |
+| 内存型r3cl                | CCS.R3CL    |
+| 内存型r2cl                | CCS.R2CL    |
 
 
 ## 附件三
@@ -12573,43 +12604,53 @@ def get_status(task_id):
 
 #### 公共模板
 
-| 模板大类型 | 模板类型                         | 中文名称                               |
-| ---------- | -------------------------------- | -------------------------------------- |
-| Rocky Linux | RockyLinux_8.5_64              |                                        |
-|            | RockyLinux_8.6_64               |                                        |
-| Centos     | Centos_8.2_64                   |                                        |
-|            | Centos_8.1_64                   |                                        |
-|            | Centos_8.0_64                   |                                        |
-|            | Centos_7.8_64                   |                                        |
-|            | Centos_7.6_64                    |                                        |
-|            | Centos_7.5_64                    |                                        |
-|            | Centos_7.4_64                    |                                        |
-|            | Centos_7.3_64                    |                                        |
-|            | Centos_7.2_64                    |                                        |
-|	         | Centos_6.9_64	                |                                         |
-|	         | Centos_6.8_64	                |                                         |
-|	         | Centos_6.7_64	                |                                         |
-|	         | Centos_6.5_64	                |                                         |
-|	         | Centos_6.4_64	                |                                         |
-| Debian     | Debian_9.11_64                    |                                        |
-|            | Debian_8.11_64                    |                                        |
-|            | Debian_8.1_64                    |                                        |
-| Redhat     | Redhat_6.5_64                    |                                        |
-| Ubuntu     | Ubuntu_18.04_64	                 |                                        |
-|            | Ubuntu_16.04_64                  |                                        |
-|            | Ubuntu_14.04_64                  |                                        |
-| Windows    | Windows_2019_Datacenter_64_CN | Windows 2019 数据中心版 64位 中文版     |
-|            | Windows_2016_Datacenter_64_EN | Windows 2016 数据中心版 64位 英文版   |
-|            | Windows_2016_Datacenter_64_CN | Windows 2016 数据中心版 64位 中文版   |
-|            | Windows_2012_Standard_64_EN | Windows 2012 标准版 64位 英文版   |
-|            | Windows_2012_Standard_64_CN | Windows 2012 标准版 64位 中文版   |
-|            | Windows_2012_R2_Standard_64_EN | Windows 2012 R2 标准版 64位 英文版   |
-|            | Windows_2012_R2_Standard_64_CN | Windows 2012 R2 标准版 64位 中文版   |
-|            | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版  |
-|            | Windows_2012_R2_Datacenter_64_CN | Windows 2012 R2 数据中心版 64位 中文版 |
-|            | Windows_2012_Datacenter_64_EN | Windows 2012 数据中心版 64位 英文版 |
-|            | Windows_2012_Datacenter_64_CN | Windows 2012 数据中心版 64位 中文版 |
-|            | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版 |
+| 模板大类型       | 模板类型                             | 中文名称                               |
+|-------------|----------------------------------| -------------------------------------- |
+| Rocky Linux | RockyLinux_8.5_64                |                                        |
+|             | RockyLinux_8.6_64                |                                        |
+| Centos      | Centos_Stream_8                   |                                        |
+|             | Centos_8.2_64                    |                                        |
+|             | Centos_8.1_64                    |                                        |
+|             | Centos_8.0_64                    |                                        |
+|             | Centos_7.9_64                    |                                        |
+|             | Centos_7.8_64                    |                                        |
+|             | Centos_7.6_64                    |                                        |
+|             | Centos_7.5_64                    |                                        |
+|             | Centos_7.4_64                    |                                        |
+|             | Centos_7.3_64                    |                                        |
+|             | Centos_7.2_64                    |                                        |
+|             | Centos_6.10_64                   |                                        |
+| 	           | Centos_6.9_64	                   |                                         |
+| 	           | Centos_6.8_64	                   |                                         |
+| 	           | Centos_6.7_64	                   |                                         |
+|             | Centos_6.6_64                    |                                        |
+| 	           | Centos_6.5_64	                   |                                         |
+| 	           | Centos_6.4_64	                   |                                         |
+|             | Centos_5.9_64                    |                                        |
+| Debian      | Debian_10.2_64                   |                                        |
+|             | Debian_9.11_64                   |                                        |
+|             | Debian_8.11_64                   |                                        |
+|             | Debian_8.1_64                    |                                        |
+|             | Debian_7.4_64                    |                                        |
+| Redhat      | Redhat_7.4_64                    |                                        |
+|             | Redhat_6.5_64                    |                                        |
+| Ubuntu      | Ubuntu_20.04_64	                 |                                        |
+|             | Ubuntu_18.04_64	                 |                                        |
+|             | Ubuntu_16.04_64                  |                                        |
+|             | Ubuntu_14.04_64                  |                                        |
+| Windows     | Windows_2019_Datacenter_64_CN    | Windows 2019 数据中心版 64位 中文版     |
+|             | Windows_2019_Datacenter_64_EN    | Windows 2019 数据中心版 64位 英文版    |
+|             | Windows_2016_Datacenter_64_EN    | Windows 2016 数据中心版 64位 英文版   |
+|             | Windows_2016_Datacenter_64_CN    | Windows 2016 数据中心版 64位 中文版   |
+|             | Windows_2012_Standard_64_EN      | Windows 2012 标准版 64位 英文版   |
+|             | Windows_2012_Standard_64_CN      | Windows 2012 标准版 64位 中文版   |
+|             | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版   |
+|             | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版   |
+|             | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版  |
+|             | Windows_2012_R2_Datacenter_64_CN | Windows 2012 R2 数据中心版 64位 中文版 |
+|             | Windows_2012_Datacenter_64_EN    | Windows 2012 数据中心版 64位 英文版 |
+|             | Windows_2012_Datacenter_64_CN    | Windows 2012 数据中心版 64位 中文版 |
+|             | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版 |
 
 
 
