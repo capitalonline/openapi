@@ -175,7 +175,7 @@ export default class Migrate extends Vue{
             host_name:val,
             ecs_ids:this.selected.map(item=>item.ecs_id),
             is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
-            gpu_card_name:this.rows[0].gpu_real_name
+            gpu_card_name:this.rows[0].gpu_real_name,
         })
         if(res.code==="Success"){
             this.recommend = res.data.data;
