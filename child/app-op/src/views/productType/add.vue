@@ -64,20 +64,20 @@ export default class AddPod extends Vue {
   })}) row!: Object;
   private formData:any = {
     id:this.row.host_product_id ? this.row.host_product_id : '',
-    name: '',
-    cpu: '',
-    cpuNum:1,
-    nuclear: '',
-    memory: '',
-    memoryNum:1,
-    gpu:'',
-    gpuNum:1,
-    gpuMemory: '',
-    disk:'',
+    name: this.row.host_product_id ?  this.row.name : '',
+    cpu: this.row.host_product_id ? this.row.cpu_info.split('*')[0] : '',
+    cpuNum:this.row.host_product_id ? Number(this.row.cpu_info.split('*')[1]) : 1,
+    nuclear:this.row.host_product_id ? this.row.logic_cpu_size : '',
+    memory:this.row.host_product_id ? this.row.ram_info.split('*')[0] : '',
+    memoryNum:this.row.host_product_id ? Number(this.row.ram_info.split('*')[1]) : 1,
+    gpu:this.row.host_product_id ? this.row.gpu_info.split('*')[0] : '',
+    gpuNum:this.row.host_product_id ? Number(this.row.gpu_info.split('*')[1]) : 1,
+    gpuMemory:this.row.host_product_id ? this.row.gpu_capacity : '',
+    disk:this.row.host_product_id ? this.row.disk_info.split('*')[0] : '',
     unit:'GB',
-    diskNum:1,
-    net:'',
-    netNum:1,
+    diskNum:this.row.host_product_id ? Number(this.row.disk_info.split('*')[1]) : 1,
+    net:this.row.host_product_id ? this.row.network_card_info.split('*')[0] : '',
+    netNum:this.row.host_product_id ? Number(this.row.network_card_info.split('*')[1]) : 1,
   };
   created() {
   }

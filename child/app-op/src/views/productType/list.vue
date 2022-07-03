@@ -12,7 +12,7 @@
         >
             <el-table-column prop="host_product_id" label="物理机产品ID">
                 <template slot-scope="scope">
-                    <span>{{scope.row.host_product_id}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="name" label="产品名称">
@@ -192,6 +192,8 @@ export default class ProductType extends Vue{
 }
 </script>
 
-<style lang="" scoped>
-
+<style lang="scss" scoped>
+.normal{
+    color:#606266
+}
 </style>
