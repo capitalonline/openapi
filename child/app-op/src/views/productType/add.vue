@@ -61,7 +61,7 @@ export default class AddPod extends Vue {
   @Prop({default: '新增'}) title!: string;
   @Prop({default: () => ({
     id:'',
-  })}) row!: Object;
+  })}) row!: any;
   private formData:any = {
     id:this.row.host_product_id ? this.row.host_product_id : '',
     name: this.row.host_product_id ?  this.row.name : '',
