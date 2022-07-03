@@ -77,7 +77,6 @@ export default class UpdateAttribute extends Vue{
         let res:any =await Service.get_host_type({})
         if(res.code==='Success'){
             this.host_types = res.data;
-            console.log("res.data",res.data,this.host_types)
             this.type = this.host_types[0].type
             this.host_uses = this.host_types[0].list;
             this.use = this.host_uses[0].use_type
