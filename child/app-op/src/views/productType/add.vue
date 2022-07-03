@@ -1,7 +1,7 @@
 <template>
-  <el-dialog :visible.sync="syncVisible" :title="title" :close-on-click-modal="false" @close="FnClose">
+  <el-dialog :visible.sync="syncVisible" :title="title" :close-on-click-modal="false">
     <el-form
-        ref="resetForm"
+        ref="form"
         :model="formData"
         :rules="rules"
         label-width="120px"
@@ -31,7 +31,7 @@
         </el-form-item>
         <el-form-item label="硬盘"  prop="disk">
             <el-input-number v-model="formData.disk" :step="1" placeholder="单块容量"></el-input-number>*
-            <el-select v-modal="formData.unit">
+            <el-select v-model="formData.unit">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
             </el-select>
@@ -44,7 +44,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="FnConfirm">确 定</el-button>
-      <el-button @click="FnClose">取 消</el-button>
+      <el-button @click="syncVisible=false">取 消</el-button>
     </span>
   </el-dialog>
 </template>
@@ -52,7 +52,7 @@
 <script lang="ts">
 import { ElForm } from 'element-ui/types/form';
 import { Component, Prop, PropSync, Emit, Watch, Vue } from 'vue-property-decorator';
-import Service from '../../https/pod/index';
+import Service from '../../https/hostProductType';
 
 @Component
 export default class AddPod extends Vue {
@@ -63,7 +63,7 @@ export default class AddPod extends Vue {
     id:'',
   })}) row!: Object;
   private formData:any = {
-    id:'',
+    id:this.row.host_product_id ? this.row.host_product_id : '',
     name: '',
     cpu: '',
     cpuNum:1,
@@ -80,22 +80,64 @@ export default class AddPod extends Vue {
     netNum:1,
   };
   created() {
-    this.formData.id = this.row.id
   }
   private rules = {
     name: [{ required: true, trigger: 'blur', message: '请输入产品名称' }],
     cpu: [{ required: true, trigger: 'blur', message: '请输入CPU型号' }],
     nuclear: [{ required: true, trigger: 'blur', message: '请输入逻辑核数' }],
-    memory: [{ required: true, trigger: 'blur', message: '请输入内存' }],
-    gpu: [{ required: true, trigger: 'blur', message: '请输入产品名称' }],
-    gpuMemory: [{ required: true, trigger: 'blur', message: '请输入CPU型号' }],
-    disk: [{ required: true, trigger: 'blur', message: '请输入产品名称' }],
-    net: [{ required: true, trigger: 'blur', message: '请输入CPU型号' }],
+    memory: [{ required: true, trigger: 'blur', message: '请输入内存容量' }],
+    disk: [{ required: true, trigger: 'blur', message: '请输入单块硬盘容量' }],
+    net: [{ required: true, trigger: 'blur', message: '请输入网卡型号' }],
+  }
+  private FnConfirm(){
+    let form = this.$refs.form as any;
+    const {name,cpu,cpuNum,nuclear,memory,
+          memoryNum,gpu,gpuNum,gpuMemory,disk,
+          diskNum,net,netNum,unit
+    }=this.formData
+    let req:any={
+      name,
+      cpu_name:cpu,
+      cpu_size:cpuNum,
+      logic_cpu_size:nuclear,
+      ram_size:memoryNum,
+      ram_capacity:memory,
+      gpu_capacity:gpuMemory,
+      gpu_size:gpuNum,
+      gpu_card_name:gpu,
+      disk_size:diskNum,
+      disk_capacity:disk,
+      network_card_type:net,
+      network_card_size:netNum
+    }
+    form.validate(async valid=>{
+      if(valid){
+        let res:any;
+        if(this.title==='新增'){
+          res = await Service.add({
+            ...req,
+          })
+        }else{
+          res = await Service.edit({
+            host_product_id:this.formData.id,
+            ...req,
+          })
+        }
+        
+        if(res.code==='Success'){
+          this.syncVisible=false;
+          this.$message.success(res.message)
+        }
+      }
+    })
   }
 }
 </script>
 
 
 <style lang="scss" scoped>
-
+.el-input,.el-iput-number{
+  width: 420px;
+  margin-right: 5px;
+}
 </style>
