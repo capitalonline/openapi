@@ -26,7 +26,7 @@
             <el-input v-model="formData.gpu" placeholder="型号" :maxLength="256"></el-input>
             <span v-if="formData.gpu">  *   <el-input-number v-model="formData.gpuNum" :step="1"></el-input-number></span>
         </el-form-item>
-        <el-form-item label="显存"  prop="gpuMemory">
+        <el-form-item label="显存"  prop="gpuMemory" v-if="formData.gpu">
             <el-input-number class="four-two" v-model="formData.gpuMemory" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
         <el-form-item label="硬盘"  prop="disk">
@@ -111,7 +111,7 @@ export default class AddPod extends Vue {
       logic_cpu_size:nuclear,
       ram_size:memoryNum,
       ram_capacity:memory,
-      gpu_capacity:gpuMemory,
+      gpu_capacity:gpu ? gpuMemory : undefined,
       gpu_size:gpu ? gpuNum : undefined,
       gpu_card_name:gpu,
       disk_size:diskNum,
