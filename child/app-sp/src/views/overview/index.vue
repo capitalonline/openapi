@@ -1,5 +1,6 @@
 <template>
     <div class="box">
+        <Monitor />
         <el-card class="box-card" v-for="item in overview_info" :key="item.name">
             <div slot="header" class="clearfix">
                 <span class="title">{{item.name}}</span>
@@ -20,8 +21,13 @@
 </template>
 <script lang="ts">
 import {Vue,Component,Watch} from 'vue-property-decorator';
-import Service from '../../https/overview/index'
-@Component
+import Service from '../../https/overview/index';
+import Monitor from './monitor.vue'
+@Component({
+    components:{
+        Monitor
+    }
+})
 export default class OverView extends Vue{
     private header_info:any={
         CPU:{name:'CPU',total_label:'逻辑总核数:',total:2700,remain_label:'可用',remain:'80%',use:'20%',count:'100%',alloted:'2600核',allot_percent:'96%'},
