@@ -36,7 +36,7 @@
                 <el-table-column prop="capacity_size" label="当前规格">
                     <template slot-scope="scope">
                         <span>容量：&nbsp;{{scope.row.capacity_size}}GB</span>
-                        <!-- <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
+                        <!------ <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
                         <div class="text-left">吞吐量：&nbsp;{{scope.row.capacity_throughput}}{{scope.row.mbps_unit}}</div> -->
                     </template>
                 </el-table-column>
