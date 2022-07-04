@@ -71,17 +71,17 @@
            </el-table-column>
            <el-table-column prop="remark" label="备注">
                <template slot-scope="scope">
-                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.remark}}</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.remark}}</span>
                </template>
            </el-table-column>
            <el-table-column prop="update_time" label="更新时间">
                <template slot-scope="scope">
-                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.update_time}}</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.update_time}}</span>
                </template>
            </el-table-column>
            <el-table-column prop="create_time" label="创建时间">
                <template slot-scope="scope">
-                   <span :class="scope.row.is_complete ? scope.row.status : 'active'">{{scope.row.create_time}}</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.create_time}}</span>
                </template>
            </el-table-column>
            <el-table-column prop="operate" label="操作">
