@@ -65,19 +65,19 @@ export default class AddPod extends Vue {
   private formData:any = {
     id:this.row.host_product_id ? this.row.host_product_id : '',
     name: this.row.host_product_id ?  this.row.name : '',
-    cpu: this.row.host_product_id ? this.row.cpu_info.split('*')[0] : '',
-    cpuNum:this.row.host_product_id ? Number(this.row.cpu_info.split('*')[1]) : 1,
-    nuclear:this.row.host_product_id ? this.row.logic_cpu_size : '',
-    memory:this.row.host_product_id ? this.row.ram_info.split('*')[0] : '',
-    memoryNum:this.row.host_product_id ? Number(this.row.ram_info.split('*')[1]) : 1,
-    gpu:this.row.host_product_id ? this.row.gpu_info.split('*')[0] : '',
-    gpuNum:this.row.host_product_id ? Number(this.row.gpu_info.split('*')[1]) : 1,
-    gpuMemory:this.row.host_product_id ? this.row.gpu_capacity : '',
-    disk:this.row.host_product_id ? this.row.disk_info.split('*')[0] : '',
+    cpu: this.row.host_product_id ? this.row.cpu_name : '',
+    cpuNum:this.row.host_product_id ? Number(this.row.cpu_size) : 1,
+    nuclear:this.row.host_product_id ? Number(this.row.logic_cpu_size) : '',
+    memory:this.row.host_product_id ? Number(this.row.ram_capacity) : '',
+    memoryNum:this.row.host_product_id ? Number(this.row.ram_size) : 1,
+    gpu:this.row.host_product_id ? this.row.gpu_name : '',
+    gpuNum:this.row.host_product_id ? Number(this.row.gpu_size) : 1,
+    gpuMemory:this.row.host_product_id ? Number(this.row.gpu_capacity) : '',
+    disk:this.row.host_product_id ? Number(this.row.disk_capacity) : '',
     unit:this.row.host_product_id ? this.row.disk_unit : 'GB',
-    diskNum:this.row.host_product_id ? Number(this.row.disk_info.split('*')[1]) : 1,
-    net:this.row.host_product_id ? this.row.network_card_info.split('*')[0] : '',
-    netNum:this.row.host_product_id ? Number(this.row.network_card_info.split('*')[1]) : 1,
+    diskNum:this.row.host_product_id ? Number(this.row.disk_size) : 1,
+    net:this.row.host_product_id ? this.row.network_card_type : '',
+    netNum:this.row.host_product_id ? Number(this.row.network_card_size) : 1,
   };
   created() {
   }
@@ -104,7 +104,7 @@ export default class AddPod extends Vue {
     const {name,cpu,cpuNum,nuclear,memory,
           memoryNum,gpu,gpuNum,gpuMemory,disk,
           diskNum,net,netNum,unit
-    }=this.formData
+    }=this.formData;
     let req:any={
       name,
       cpu_name:cpu,
@@ -113,7 +113,7 @@ export default class AddPod extends Vue {
       ram_size:memoryNum,
       ram_capacity:memory,
       gpu_capacity:gpuMemory,
-      gpu_size:gpuNum,
+      gpu_size:gpu ? gpuNum : undefined,
       gpu_card_name:gpu,
       disk_size:diskNum,
       disk_capacity:disk,

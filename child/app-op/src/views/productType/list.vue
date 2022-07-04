@@ -12,51 +12,52 @@
         >
             <el-table-column prop="host_product_id" label="物理机产品ID">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="name" label="产品名称">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.name}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.name}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="cpu_info" label="CPU">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.cpu_info}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.cpu_name}}<span v-if="scope.row.cpu_name"> * </span>{{scope.row.cpu_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="logic_cpu_size" label="逻辑核数">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.logic_cpu_size}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.logic_cpu_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="ram_info" label="内存">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.ram_info}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.ram_capacity}} {{scope.row.common_unit}}<span v-if="scope.row.ram_capacity"> * </span>{{scope.row.ram_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="gpu_info" label="显卡">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.gpu_info}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.gpu_name}}<span v-if="scope.row.gpu_name"> * </span>{{scope.row.gpu_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="disk_info" label="硬盘">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.disk_info}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="network_card_info" label="网卡">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.network_card_info}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.network_card_type}}<span v-if="scope.row.network_card_type"> * </span>{{scope.row.network_card_size}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="remark" label="可用区">
+            <el-table-column prop="remark" label="可用区" width="120">
                 <template slot-scope="scope">
                     <span v-if="scope.row.az_info && scope.row.az_info.length>1">共  <span class="num_message">{{scope.row.az_info.length}}</span>  个</span>
+                    <span v-else-if="scope.row.az_info && scope.row.az_info.length===1">{{scope.row.az_info[0].az_name}}</span>
                     <span v-else></span>
                 </template>
             </el-table-column>
-            <!-- <el-table-column prop="" label="" type="expand" width="50">
+            <el-table-column prop="" label="" type="expand" width="50">
                 <template slot-scope="props">
                     <div v-for="(item,index) in props.row.az_info" :key="index" class="table-expand">
                         <div class="az-name">
@@ -69,21 +70,20 @@
                         <div class="status" :class="item.status">{{item.status_display}}</div>
                         <div class="time">{{item.create_time}}</div>
                         <div class="perch"></div>
-                        <el-button type="text" class="operate" @click="del_az({...props.row,azId:item.az_id,azName:item.az_name})" :disabled="!['running','blocking','create_fail'].includes(item.status) || !auth_list.includes('del_mirror')">删除</el-button>
                     </div>
                 </template>
-            </el-table-column> -->
-            <el-table-column prop="total_num" label="物理机台数">
+            </el-table-column>
+            <el-table-column prop="total_num" label="物理机台数" width="120">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.total_num}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.total_num}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="create_time" label="创建时间">
+            <el-table-column prop="create_time" label="创建时间" width="120">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="operate" label="操作" width="120">
                <template slot-scope="scope">
                    <el-button type="text" @click="add('edit',scope.row)">编辑</el-button>
                </template>
@@ -195,5 +195,29 @@ export default class ProductType extends Vue{
 <style lang="scss" scoped>
 .normal{
     color:#606266
+}
+.table-expand{
+    display: flex;
+    justify-content:right;
+    margin-bottom: 10px;
+    align-items: center;
+    .operate{
+        width: 180px;
+        padding-left: 14px;
+        text-align: left;
+    }
+    .time,.status,.perch{
+        width: 120px;
+        padding-left: 14px;
+        line-height: 20px;
+    }
+    .az-name{
+        width: 170px;
+        padding-left: 14px;
+        line-height: 20px;
+    }
+}
+.table-expand:last-child{
+    margin-bottom: 0;
 }
 </style>
