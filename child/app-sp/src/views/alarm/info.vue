@@ -165,7 +165,6 @@ export default class Contact extends Vue{
         this.getAlarmList()
     }
     private fil_info(obj){
-        console.log("fil_info",obj)
         this.dealStatus = obj.dealStatus
         this.current = 1
         this.getAlarmList()
