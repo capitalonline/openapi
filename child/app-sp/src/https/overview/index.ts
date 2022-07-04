@@ -11,5 +11,9 @@ export default{
     get_ecs_overview(req){
         return service(getEcsOptions('POST','/ecs/get_ecs_overview/',req))
     },
+    //获取物理机产品列表
+    get_host_type(req){
+        return service(getEcsOptions('GET','/host/host_product_list/',req))
+    },
 
 }
