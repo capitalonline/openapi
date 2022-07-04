@@ -2,7 +2,7 @@
     <div>
         <action-block :search_option="search_dom" @fn-search="FnSearch">
             <template #default>
-                <el-button type="primary" @click="add('add',{})">新增</el-button>
+                <el-button type="primary" @click="add('add',{})" :disabled="!authList.includes('add')">新增</el-button>
             </template>
         </action-block>
         <el-table
@@ -27,7 +27,7 @@
             </el-table-column>
             <el-table-column prop="logic_cpu_size" label="逻辑核数">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.logic_cpu_size}}</span>
+                    <span :class="scope.row.is_complete ? 'num_message' : 'error_message'">{{scope.row.logic_cpu_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="ram_info" label="内存">
@@ -50,9 +50,9 @@
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.network_card_type}}<span v-if="scope.row.network_card_type"> * </span>{{scope.row.network_card_size}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="remark" label="可用区" width="120">
+            <el-table-column prop="az_info" label="可用区" width="120" class-name="type-az">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.az_info && scope.row.az_info.length>1">共  <span class="num_message">{{scope.row.az_info.length}}</span>  个</span>
+                    <span v-if="scope.row.az_info && (scope.row.az_info.length>1 || scope.row.az_info.length===0)">共  <span class="num_message">{{scope.row.az_info.length}}</span>  个</span>
                     <span v-else-if="scope.row.az_info && scope.row.az_info.length===1">{{scope.row.az_info[0].az_name}}</span>
                     <span v-else></span>
                 </template>
@@ -75,17 +75,17 @@
             </el-table-column>
             <el-table-column prop="total_num" label="物理机台数" width="120">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.total_num}}</span>
+                    <span :class="scope.row.is_complete ? 'num_message' : 'error_message'">{{scope.row.total_num}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间" width="120">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.create_time}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operate" label="操作" width="120">
                <template slot-scope="scope">
-                   <el-button type="text" @click="add('edit',scope.row)">编辑</el-button>
+                   <el-button type="text" @click="add('edit',scope.row)" :disabled="!authList.includes('edit')">编辑</el-button>
                </template>
             </el-table-column>
         </el-table>
@@ -123,13 +123,14 @@ export default class ProductType extends Vue{
         host_product_id:{placeholder:'请输入物理机产品id'},
         cpu_name:{placeholder:'请输入CPU型号'},
         gpu_card_name:{placeholder:'请输入显卡型号'},
-        net_card_type:{placeholder:'请输入网卡型号'},
+        network_card_type:{placeholder:'请输入网卡型号'},
     }
     private visible:boolean=false
     private list:any=[{id:'1'}];
     private search_data:any={}
     private operLabel = 'add';
     private operInfo:any={};
+    private authList:any=[]
     private page_info:any={
         current:1,
         size:20,
@@ -137,7 +138,9 @@ export default class ProductType extends Vue{
     }
     created(){
         this.get_az_list();
-        this.getHostTypes()
+        this.getHostTypes();
+        this.authList = this.$store.state.auth_info[this.$route.name];
+        
     }
     @Watch('visible')
     private watch_visible(nv){
@@ -151,13 +154,13 @@ export default class ProductType extends Vue{
         this.getHostTypes()
     }
     private async getHostTypes(){
-        const {az_id,host_product_id,cpu_name,gpu_card_name,net_card_type}=this.search_data
+        const {az_id,host_product_id,cpu_name,gpu_card_name,network_card_type}=this.search_data
         let res:any = await Service.get_host_type({
             az_id,
             host_product_id,
             cpu_name,
             gpu_card_name,
-            net_card_type,
+            network_card_type,
             page_index:this.page_info.current,
             page_size:this.page_info.size,
         })
@@ -219,5 +222,10 @@ export default class ProductType extends Vue{
 }
 .table-expand:last-child{
     margin-bottom: 0;
+}
+</style>
+<style lang="scss">
+td.type-az.el-table__cell{
+    border-right: none;
 }
 </style>
