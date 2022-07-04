@@ -13,32 +13,32 @@
         </el-form-item>
         <el-form-item label="CPU" prop="cpu">
             <el-input v-model="formData.cpu" placeholder="型号" :maxLength="256"></el-input>*
-            <el-input-number v-model="formData.cpuNum" :step="1"></el-input-number>
+            <el-input-number v-model="formData.cpuNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="逻辑核数" prop="nuclear">
-          <el-input-number class="four-two" v-model="formData.nuclear" :step="1" placeholder="=CPU物理核数*2*颗数"></el-input-number>
+          <el-input-number class="four-two" v-model="formData.nuclear" :min="0" :step="1" placeholder="=CPU物理核数*2*颗数"></el-input-number>
         </el-form-item>
         <el-form-item label="内存" prop="memory">
-            <el-input-number class="four-two" v-model="formData.memory" :step="1" placeholder="单块容量"></el-input-number> GB *   
-            &nbsp;<el-input-number v-model="formData.memoryNum" :step="1"></el-input-number>
+            <el-input-number class="four-two" v-model="formData.memory" :min="0" :step="1" placeholder="单块容量"></el-input-number> GB *   
+            &nbsp;<el-input-number v-model="formData.memoryNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="显卡"  prop="gpu">
             <el-input v-model="formData.gpu" placeholder="型号" :maxLength="256"></el-input>
-            <span v-if="formData.gpu">  *   <el-input-number v-model="formData.gpuNum" :step="1"></el-input-number></span>
+            <span v-if="formData.gpu">  *   <el-input-number v-model="formData.gpuNum" :min="0" :step="1"></el-input-number></span>
         </el-form-item>
         <el-form-item label="显存"  prop="gpuMemory" v-if="formData.gpu">
-            <el-input-number class="four-two" v-model="formData.gpuMemory" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
+            <el-input-number class="four-two" v-model="formData.gpuMemory" :min="0" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
         <el-form-item label="硬盘"  prop="disk">
-            <el-input-number class="two" v-model="formData.disk" :step="1" placeholder="单块容量"></el-input-number>
+            <el-input-number class="two" v-model="formData.disk" :min="0" :step="1" placeholder="单块容量"></el-input-number>
             <el-select v-model="formData.unit" class="m-right10">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.diskNum" :step="1"></el-input-number>
+            </el-select>   *   <el-input-number v-model="formData.diskNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="网卡"  prop="net">
             <el-input v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
-            <el-input-number v-model="formData.netNum" :step="1"></el-input-number>
+            <el-input-number v-model="formData.netNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
