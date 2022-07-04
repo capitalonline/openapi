@@ -17,37 +17,37 @@
             </el-table-column>
             <el-table-column prop="name" label="产品名称">
                 <template slot-scope="scope">
-                    <span>{{scope.row.name}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.name}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="cpu_info" label="CPU">
                 <template slot-scope="scope">
-                    <span>{{scope.row.cpu_info}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.cpu_info}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="logic_cpu_size" label="逻辑核数">
                 <template slot-scope="scope">
-                    <span>{{scope.row.logic_cpu_size}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.logic_cpu_size}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="ram_info" label="内存">
                 <template slot-scope="scope">
-                    <span>{{scope.row.ram_info}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.ram_info}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="gpu_info" label="显卡">
                 <template slot-scope="scope">
-                    <span>{{scope.row.gpu_info}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.gpu_info}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="disk_info" label="硬盘">
                 <template slot-scope="scope">
-                    <span>{{scope.row.disk_info}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.disk_info}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="network_card_info" label="网卡">
                 <template slot-scope="scope">
-                    <span>{{scope.row.network_card_info}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.network_card_info}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="remark" label="可用区">
@@ -75,12 +75,12 @@
             </el-table-column> -->
             <el-table-column prop="total_num" label="物理机台数">
                 <template slot-scope="scope">
-                    <span>{{scope.row.total_num}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.total_num}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.host_product_id}}</span>
+                    <span :class="scope.row.is_comelete ? 'normal' : 'error_message'">{{scope.row.host_product_id}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operate" label="操作">
@@ -127,7 +127,7 @@ export default class ProductType extends Vue{
     }
     private visible:boolean=false
     private list:any=[{id:'1'}];
-    private search_data={}
+    private search_data:any={}
     private operLabel = 'add';
     private operInfo:any={};
     private page_info:any={

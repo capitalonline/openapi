@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="syncVisible" :title="title" :close-on-click-modal="false">
+  <el-dialog :visible.sync="syncVisible" :title="title" :close-on-click-modal="false" width="900px">
     <el-form
         ref="form"
         :model="formData"
@@ -16,22 +16,22 @@
             <el-input-number v-model="formData.cpuNum" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="逻辑核数" prop="nuclear">
-          <el-input-number v-model="formData.nuclear" :step="1" placeholder="=CPU物理核数*2*颗数"></el-input-number>
+          <el-input-number class="four-two" v-model="formData.nuclear" :step="1" placeholder="=CPU物理核数*2*颗数"></el-input-number>
         </el-form-item>
         <el-form-item label="内存" prop="memory">
-            <el-input-number v-model="formData.memory" :step="1" placeholder="单块容量"></el-input-number> GB *
-            <el-input-number v-model="formData.memoryNum" :step="1"></el-input-number>
+            <el-input-number class="four-two" v-model="formData.memory" :step="1" placeholder="单块容量"></el-input-number> GB *   
+            &nbsp;<el-input-number v-model="formData.memoryNum" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="显卡"  prop="gpu">
-            <el-input v-model="formData.gpu" placeholder="型号" :maxLength="256"></el-input>*
-            <el-input-number v-model="formData.gpuNum" :step="1"></el-input-number>
+            <el-input v-model="formData.gpu" placeholder="型号" :maxLength="256"></el-input>
+            <span v-if="formData.gpu">  *   <el-input-number v-model="formData.gpuNum" :step="1"></el-input-number></span>
         </el-form-item>
         <el-form-item label="显存"  prop="gpuMemory">
-            <el-input-number v-model="formData.gpuMemory" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
+            <el-input-number class="four-two" v-model="formData.gpuMemory" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
         <el-form-item label="硬盘"  prop="disk">
-            <el-input-number v-model="formData.disk" :step="1" placeholder="单块容量"></el-input-number>*
-            <el-select v-model="formData.unit">
+            <el-input-number class="two" v-model="formData.disk" :step="1" placeholder="单块容量"></el-input-number>*
+            <el-select v-model="formData.unit" class="m-right10">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
             </el-select>
@@ -60,8 +60,8 @@ export default class AddPod extends Vue {
   @PropSync('visible', {type: Boolean}) syncVisible!: boolean;
   @Prop({default: '新增'}) title!: string;
   @Prop({default: () => ({
-    id:'',
-  })}) row!: Object;
+    host_product_id:''
+  })}) row!: any;
   private formData:any = {
     id:this.row.host_product_id ? this.row.host_product_id : '',
     name: this.row.host_product_id ?  this.row.name : '',
@@ -74,17 +74,27 @@ export default class AddPod extends Vue {
     gpuNum:this.row.host_product_id ? Number(this.row.gpu_info.split('*')[1]) : 1,
     gpuMemory:this.row.host_product_id ? this.row.gpu_capacity : '',
     disk:this.row.host_product_id ? this.row.disk_info.split('*')[0] : '',
-    unit:'GB',
+    unit:this.row.host_product_id ? this.row.disk_unit : 'GB',
     diskNum:this.row.host_product_id ? Number(this.row.disk_info.split('*')[1]) : 1,
     net:this.row.host_product_id ? this.row.network_card_info.split('*')[0] : '',
     netNum:this.row.host_product_id ? Number(this.row.network_card_info.split('*')[1]) : 1,
   };
   created() {
   }
+  private validNuclear = (rule, value, callback)=>{    
+    if(!value){      
+      return callback(new Error('请输入逻辑核数'))
+    }
+    else if((value % 2)!==0){      
+      return callback(new Error('逻辑核数=CPU物理核数*2*颗数'))
+    }else{
+      callback()
+    }
+  }
   private rules = {
     name: [{ required: true, trigger: 'blur', message: '请输入产品名称' }],
     cpu: [{ required: true, trigger: 'blur', message: '请输入CPU型号' }],
-    nuclear: [{ required: true, trigger: 'blur', message: '请输入逻辑核数' }],
+    nuclear: [{ required: true, validator:this.validNuclear}],
     memory: [{ required: true, trigger: 'blur', message: '请输入内存容量' }],
     disk: [{ required: true, trigger: 'blur', message: '请输入单块硬盘容量' }],
     net: [{ required: true, trigger: 'blur', message: '请输入网卡型号' }],
@@ -108,7 +118,8 @@ export default class AddPod extends Vue {
       disk_size:diskNum,
       disk_capacity:disk,
       network_card_type:net,
-      network_card_size:netNum
+      network_card_size:netNum,
+      disk_unit:unit,
     }
     form.validate(async valid=>{
       if(valid){
@@ -140,4 +151,13 @@ export default class AddPod extends Vue {
   width: 420px;
   margin-right: 5px;
 }
+.four-two{
+  width: 420px;
+  margin-right: 5px;
+}
+.two{
+  width: 210px;
+  margin-right: 5px;
+}
+
 </style>
