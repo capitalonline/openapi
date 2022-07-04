@@ -10041,9 +10041,9 @@ def queryImages():
 
 | 名称           | 类型   | 示例                                 | 描述                                                         |
 | -------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
-| code           | string | Success                              | 返回状态码: Success: 成功                                    |
-| msg            | string | null                                 | 返回信息                                                     |
-| data           | object | {}                                   | 返回数据                                                     |
+| Code           | string | Success                              | 返回状态码: Success: 成功                                    |
+| Message            | string | null                                 | 返回信息                                                     |
+| Data           | object | {}                                   | 返回数据                                                     |
 | tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
 | areaId         | string | CN                                   | 币种                                                         |
 | requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
@@ -10123,9 +10123,9 @@ def queryVmPrice():
 
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
-| code           | string | Success                                  | 返回状态码: Success: 成功 |
-| msg            | string | null                                     | 返回信息                  |
-| data           | object | {}                                       | 返回数据                  |
+| Code           | string | Success                                  | 返回状态码: Success: 成功 |
+| Message            | string | null                                     | 返回信息                  |
+| Data           | object | {}                                       | 返回数据                  |
 | successVmIds   | array  | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | 按需转包年包月成功 vmIds  |
 | failedVmIds    | array  | []                                       | 按需转包年包月失败 vmIds  |
 | failedMsg      | string | “”                                       | 失败信息                  |
@@ -10210,9 +10210,9 @@ def updateOrder():
 
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
-| code           | string | Success                                  | 返回状态码: Success: 成功 |
-| msg            | string | null                                     | 返回信息                  |
-| data           | object | {}                                       | 返回数据                  |
+| Code           | string | Success                                  | 返回状态码: Success: 成功 |
+| Message            | string | null                                     | 返回信息                  |
+| Data           | object | {}                                       | 返回数据                  |
 | successVmIds   | array  | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | 续约成功 vmIds            |
 | failedVmIds    | array  | []                                       | 续约失败 vmIds            |
 | failedMsg      | string | “”                                       | 失败信息                  |
@@ -10294,9 +10294,9 @@ def renewalOrder():
 
 | 名称      | 类型   | 示例                                   | 描述                                                         |
 | --------- | ------ | -------------------------------------- | ------------------------------------------------------------ |
-| code      | string | Success                                | 返回状态码: Success: 成功                                    |
-| msg       | string | null                                   | 返回信息                                                     |
-| data      | list   | []                                     | 返回数据                                                     |
+| Code      | string | Success                                | 返回状态码: Success: 成功                                    |
+| Message       | string | null                                   | 返回信息                                                     |
+| Data      | list   | []                                     | 返回数据                                                     |
 | accountId | string | “7e7ba91e-4357-470a-9609-ce60d9d7e38f” | 用户id                                                       |
 | name      | string | “miao123”                              | 用户的名称                                                   |
 | email     | string | “”                                     | 邮箱                                                         |
@@ -10370,9 +10370,9 @@ def querySubAccounts():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
 
 ​   **错误码:**
 
@@ -10440,9 +10440,9 @@ def createSubAccount():
 
 | 名称       | 类型   | 示例                                                       | 描述                      |
 | ---------- | ------ | ---------------------------------------------------------- | ------------------------- |
-| code       | string | Success                                                    | 返回状态码: Success: 成功 |
-| msg        | string | null                                                       | 返回信息                  |
-| data       | obejct | {}                                                         | 返回数据                  |
+| Code       | string | Success                                                    | 返回状态码: Success: 成功 |
+| Message        | string | null                                                       | 返回信息                  |
+| Data       | obejct | {}                                                         | 返回数据                  |
 | failedNum  | int    | 0                                                          | 失败数量                  |
 | successNum | int    | 1                                                          | 成功数量                  |
 | failedMsgs | list   | [ ]                                                        | 失败错误信息              |
@@ -10530,9 +10530,9 @@ def createSubAccounts():
 
 | 名称      | 类型   | 示例    | 描述                      |
 | --------- | ------ | ------- | ------------------------- |
-| code      | string | Success | 返回状态码: Success: 成功 |
-| msg       | string | null    | 返回信息                  |
-| data      | obejct | {}      | 返回数据                  |
+| Code      | string | Success | 返回状态码: Success: 成功 |
+| Message       | string | null    | 返回信息                  |
+| Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
 ​   **错误码:**
@@ -10598,9 +10598,9 @@ def changeSubAccountName():
 
 | 名称      | 类型   | 示例    | 描述                      |
 | --------- | ------ | ------- | ------------------------- |
-| code      | string | Success | 返回状态码: Success: 成功 |
-| msg       | string | null    | 返回信息                  |
-| data      | obejct | {}      | 返回数据                  |
+| Code      | string | Success | 返回状态码: Success: 成功 |
+| Message       | string | null    | 返回信息                  |
+| Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
 ​   **错误码:**
@@ -11353,9 +11353,9 @@ def getEipPrice():
 
 | 名称  | 类型   | 示例                                     | 描述                      |
 | ----- | ------ | ---------------------------------------- | ------------------------- |
-| code  | string | Success                                  | 返回状态码: Success: 成功 |
-| msg   | string | null                                     | 返回信息                  |
-| data  | object | {}                                       | 返回数据                  |
+| Code  | string | Success                                  | 返回状态码: Success: 成功 |
+| Message   | string | null                                     | 返回信息                  |
+| Data  | object | {}                                       | 返回数据                  |
 | vmIds | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 
 ​   **错误码:**
@@ -11418,9 +11418,9 @@ def queryVms():
 
 | 名称         | 类型   | 示例                                   | 描述                                                         |
 | ------------ | ------ | -------------------------------------- | ------------------------------------------------------------ |
-| code         | string | Success                                | 返回状态码: Success: 成功                                    |
-| msg          | string | null                                   | 返回信息                                                     |
-| data         | object | {}                                     | 返回数据                                                     |
+| Code         | string | Success                                | 返回状态码: Success: 成功                                    |
+| Message          | string | null                                   | 返回信息                                                     |
+| Data         | object | {}                                     | 返回数据                                                     |
 | vmName       | string | “openapi_test_2”                       | 云桌面的名称                                                 |
 | siteId       | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 区域                                                         |
 | billMethod   | int    | 0                                      | 计费类型 1包年包月 0按需                                     |
@@ -11506,15 +11506,15 @@ def queryVm():
 
    **返回参数：**
 
-| 名称   | 类型 | 示例 | 描述                  |      |
-| ---------- | -------- | -------- | ------------------------- | ---- |
-| code       | string   | Success  | 返回状态码: Success: 成功 |      |
-| msg        | string   | null     | 返回信息                  |      |
-| data       | list     | []       | 返回数据                  |      |
-| vmName     | string   | “”       | 云桌面的名称              |      |
-| billMethod | int      | “”       | 计费类型                  |      |
-| expireTime | string   | “”       | 包月到期时间              |      |
-| status     | string   | “”       | 状态                      |      |
+| 名称   | 类型 | 示例 | 描述                  |
+| ---------- | -------- | -------- | ------------------------- |
+| Code       | string   | Success  | 返回状态码: Success: 成功 |
+| Message        | string   | null     | 返回信息                  |
+| Data       | list     | []       | 返回数据                  |
+| vmName     | string   | “”       | 云桌面的名称              |
+| billMethod | int      | “”       | 计费类型                  |
+| expireTime | string   | “”       | 包月到期时间              | 
+| status     | string   | “”       | 状态                      |
 
 ​   **错误码:**
 
@@ -11525,9 +11525,16 @@ def queryVm():
 ​   **返回示例:**
 ```json
 {
-    "code": "Success",
-    "msg": null,
-    "data": []
+    "Code": "Success",
+    "Data": [
+        {
+            "billMethod": 1,
+            "expireTime": "2022-06-30T16:00:00.000+0000",
+            "status": "using",
+            "vmName": "业务测试_shangw"
+        }
+    ],
+    "Message": ""
 }
 ```
 
@@ -11589,9 +11596,9 @@ def queryExpireVms():
 
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
-| code           | string | Success                                  | 返回状态码: Success: 成功 |
-| msg            | string | null                                     | 返回信息                  |
-| data           | obejct | {}                                       | 返回数据                  |
+| Code           | string | Success                                | 返回状态码: Success: 成功 |
+| Message            | string | null                                   | 返回信息                  |
+| Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “53b150e2-bb27-4db1-8dc6-650eaba66fc2”   | 任务id                    |
 | vmIds          | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 | requestId      | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab”   | 请求uuid                  |
@@ -11687,9 +11694,9 @@ def createVm():
 
 | 名称           | 类型   | 示例                                      | 描述                      |
 | -------------- | ------ | ----------------------------------------- | ------------------------- |
-| code           | string | Success                                   | 返回状态码: Success: 成功 |
-| msg            | string | null                                      | 返回信息                  |
-| data           | obejct | {}                                        | 返回数据                  |
+| Code           | string | Success                                | 返回状态码: Success: 成功 |
+| Message            | string | null                                   | 返回信息                  |
+| Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “10e0284f-6ce5-4cb0-a61e-4858865d9295”    | 任务id                    |
 | vmIds          | array  | [ “a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”    | 请求uuid                  |
@@ -11767,9 +11774,9 @@ def operateVm():
 
 | 名称           | 类型   | 示例                                   | 描述                      |
 | -------------- | ------ | -------------------------------------- | ------------------------- |
-| code           | string | Success                                | 返回状态码: Success: 成功 |
-| msg            | string | null                                   | 返回信息                  |
-| data           | obejct | {}                                     | 返回数据                  |
+| Code           | string | Success                                | 返回状态码: Success: 成功 |
+| Message            | string | null                                   | 返回信息                  |
+| Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “0b4b8f52-def3-466f-ac37-d1069590cbe9” | 任务id                    |
 | vmId           | string | “a8d09bab-64d4-4549-9c8c-0efe19423e5e” | 云桌面id                  |
 | requestId      | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                  |
@@ -11842,9 +11849,9 @@ def rebuildVm():
 
 | 名称           | 类型   | 示例                                   | 描述                      |
 | -------------- | ------ | -------------------------------------- | ------------------------- |
-| code           | string | Success                                | 返回状态码: Success: 成功 |
-| msg            | string | null                                   | 返回信息                  |
-| data           | obejct | {}                                     | 返回数据                  |
+| Code           | string | Success                                | 返回状态码: Success: 成功 |
+| Message            | string | null                                   | 返回信息                  |
+| Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “8eb19f5b-fd44-4225-94f5-0f9e39e56695” | 任务id                    |
 | vmId           | string | “a8d09bab-64d4-4549-9c8c-0efe19423e5e” | 云桌面id                  |
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 请求uuid                  |
@@ -11919,9 +11926,9 @@ def deleteVm():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
 
 ​   **错误码:**
 
@@ -11985,9 +11992,9 @@ def changeVmName():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
 
 ​   **错误码:**
 
@@ -12051,9 +12058,9 @@ def updateVmLabels():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
 
 ​   **错误码:**
 
@@ -12116,9 +12123,14 @@ def changeAccount():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
+| failedNum | int | 2      | 解绑失败数               |
+| successNum | int | 1      | 解绑成功数            |
+| failedMsgs | list | []      | 解绑失败错误信息          |
+| messsage | string |  对应云桌面不存在     | 失败原因描述              |
+| vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
 
 ​   **错误码:**
 
@@ -12131,7 +12143,20 @@ def changeAccount():
 ```json
 {
     "Code": "Success",
-    "Data": null,
+    "Data": {
+        "failedMsgs": [
+            {
+                "messsage": "对应云桌面不存在",
+                "vmId": "3b9e2d0c-a3a6-4817-9238-afffbbadd498"
+            },
+            {
+                "messsage": "对应云桌面不存在",
+                "vmId": "e55aa451-0655-4b18-a73f-3971ad5cba00"
+            }
+        ],
+        "failedNum": 2,
+        "successNum": 1
+    },
     "Message": ""
 }
 ```
@@ -12147,7 +12172,11 @@ def unbindAccounts():
     action = "UnbindAccounts"
     method = "POST"
     body = {
-        "vmIds": ["1f08cc62-c24b-46dd-b190-bf139d00ee82"],
+        "vmIds": [
+            "1e13e8ac-b553-473d-9274-d9a9e513a5b1",
+            "3b9e2d0c-a3a6-4817-9238-afffbbadd498",
+            "e55aa451-0655-4b18-a73f-3971ad5cba00"
+        ],
         "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
@@ -12181,9 +12210,14 @@ def unbindAccounts():
 
 | 名称 | 类型   | 示例    | 描述                      |
 | ---- | ------ | ------- | ------------------------- |
-| code | string | Success | 返回状态码: Success: 成功 |
-| msg  | string | null    | 返回信息                  |
-| data | obejct | {}      | 返回数据                  |
+| Code | string | Success | 返回状态码: Success: 成功 |
+| Message  | string | null    | 返回信息                  |
+| Data | obejct | {}      | 返回数据                  |
+| failedNum | int | 2      | 绑定失败数               |
+| successNum | int | 1      | 绑定成功数            |
+| failedMsgs | list | []      | 绑定失败错误信息          |
+| messsage | string |  对应云桌面不存在     | 失败原因描述              |
+| vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
 
 ​   **错误码:**
 
@@ -12196,7 +12230,20 @@ def unbindAccounts():
 ```json
 {
     "Code": "Success",
-    "Data": null,
+    "Data": {
+        "failedMsgs": [
+            {
+                "messsage": "对应云桌面不存在",
+                "vmId": "3b9e2d0c-a3a6-4817-9238-afffbbadd498"
+            },
+            {
+                "messsage": "对应云桌面不存在",
+                "vmId": "e55aa451-0655-4b18-a73f-3971ad5cba00"
+            }
+        ],
+        "failedNum": 2,
+        "successNum": 1
+    },
     "Message": ""
 }
 ```
@@ -12212,9 +12259,13 @@ def bindAccounts():
     action = "BindAccounts"
     method = "POST"
     body = {
-        "vmIds": ["1f08cc62-c24b-46dd-b190-bf139d00ee82"],
+        "vmIds": [
+            "1e13e8ac-b553-473d-9274-d9a9e513a5b1",
+            "3b9e2d0c-a3a6-4817-9238-afffbbadd498",
+            "e55aa451-0655-4b18-a73f-3971ad5cba00"
+        ],
         "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
-        "accountId": "9294858a-3948-4ece-8378-f31daf6bff0b"
+        "accountId": "4f53fcf6-fea2-41ce-a260-12ad9307704f"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
     res = requests.post(url,json=body)
