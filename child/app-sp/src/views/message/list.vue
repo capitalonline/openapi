@@ -49,7 +49,7 @@
     </div>
 </template>
 <script lang="ts">
-import {Vue,Component} from 'vue-property-decorator';
+import {Vue,Component,Watch} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/message/list';
 import EcsService from '../../https/instance/create';
@@ -64,7 +64,7 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 })
 export default class Message extends Vue{
     private search_dom:any={
-        az_id:{placeholder:'请选择可用区',list:[]},
+        // az_id:{placeholder:'请选择可用区',list:[]},
         op_content:{placeholder:'请选择操作内容',list:[]},
         create_time:{
             placeholder: ['开始时间', '结束时间'],
@@ -84,20 +84,27 @@ export default class Message extends Vue{
     private list:Array<any>=[];
     private search_data:any={};
     created(){
-        this.get_az_list();
+        // this.get_az_list();
         this.get_inform_list()
         this.search();
     }
-    private async get_az_list(){
-        let res:any=await EcsService.get_region_az_list({})
-        if(res.code==="Success"){
-        res.data.forEach(item=>{
-            item.region_list.forEach(inn=>{
-            this.search_dom.az_id.list=[...this.search_dom.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
-            })
-        })
+    @Watch("$store.state.pod_id")
+    private watch_pod(nv){
+        if(!nv){
+            return;
         }
+        this.search(this.search_data)
     }
+    // private async get_az_list(){
+    //     let res:any=await EcsService.get_region_az_list({})
+    //     if(res.code==="Success"){
+    //     res.data.forEach(item=>{
+    //         item.region_list.forEach(inn=>{
+    //         this.search_dom.az_id.list=[...this.search_dom.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+    //         })
+    //     })
+    //     }
+    // }
     private async get_inform_list(){
         let res:any=await Service.get_inform_list({})
         if(res.code==="Success"){
@@ -112,7 +119,7 @@ export default class Message extends Vue{
     private async getList(){
         const {az_id,op_content,create_time,op_user} = this.search_data
         let res:any = await Service.get_message_list({
-            az_id,
+            pod_id:this.$store.state.pod_id,
             op_content,
             op_user,
             create_time_start:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
