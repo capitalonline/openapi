@@ -15,10 +15,11 @@ export default class CustomIcon extends Vue{
     .total{
         height: 32px;
         width:18px;
-        background: #f0f0f0;
+        background: rgb(241,241,241);
         position: relative;
         display: inline-block;
         margin:0 10px;
+        margin-bottom: 5px;
         .used{
             width: 100%;
             position: absolute;

@@ -3,7 +3,7 @@
      <el-dialog
       title="迁移"
       :visible.sync="visible_sync"
-      width="1140px"
+      width="1180px"
       :destroy-on-close="true"
       custom-class="upload"
       :close-on-click-modal="false"
@@ -28,7 +28,7 @@
                     <el-table-column prop="customer_name" label="客户名称"></el-table-column>
                     <el-table-column prop="ecs_id" label="实例名称/实例ID">
                         <template slot-scope="scope">
-                            <div>{{scope.row.ecs_name}}</div>
+                            <div>{{scope.row.name}} / </div>
                             <el-tooltip :content="'待迁移的云主机需为CPU型或已关机的GPU型'" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
                                 <div>{{scope.row.ecs_id}}</div>
                             </el-tooltip>
@@ -37,7 +37,16 @@
                     </el-table-column>
                     <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column prop="genre" label="计算规格"></el-table-column>
-                    <el-table-column prop="genre" label="存储"></el-table-column>
+                    <el-table-column prop="genre" label="存储" width="130px">
+                        <template slot-scope="scope">
+                            <div>系统盘：{{Object.keys(scope.row.disk_info.system)[0]}} {{scope.row.disk_info.system[Object.keys(scope.row.disk_info.system)[0]]}}{{scope.row.disk_info.unit}}</div>
+                            <div v-if="Object.keys(scope.row.disk_info.data).length>0" class="data-item">
+                                数据盘：
+                                <!-- <div v-for="(name,i) in scope.row.disk_info.data" :key="i">{{i}}</div> -->
+                                <div v-for="(item,i) in scope.row.disk_info.data" :key="i">{{i}} {{item}}{{scope.row.disk_info.unit}}</div>
+                            </div>
+                        </template>
+                    </el-table-column>
                 </el-table>
                 <div class="error_message m-top10" v-if="selected.length===0">请选择虚拟机</div>
             </div>
@@ -51,7 +60,38 @@
                     <span class="m-right10">可用区:</span>
                     <span>{{rows[0].az_name}}</span>
                 </div>
-                <div class="m-bottom10 flex-host">
+                <div>物理机：<span class="prompt_message">（若不选择则随机迁移至合适的目的主机）</span></div>
+                <div class="recommend" v-if="recommend.length>0">
+                    <div v-for="item in recommend" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
+                        {{item.host_name}}
+                        <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                            <div class="title">
+                                <CustomIcon :hei="item.cpu_usage" />
+                                <div>CPU</div>
+                            </div>
+                        </el-tooltip>
+                        <el-tooltip :content="(parseFloat(item.memory_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                            <div class="title">
+                                <CustomIcon :hei="item.memory_usage" />
+                                <div>内存</div>
+                            </div>
+                        </el-tooltip>
+                        <el-tooltip :content="(parseFloat(item.local_storage_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                            <div class="title">
+                                <CustomIcon :hei="item.local_storage_usage" />
+                                <div>本地存储</div>
+                            </div>
+                        </el-tooltip>
+                        <el-tooltip :content="`${item.used_gpu_num} / ${item.total_gpu_num}`" placement="bottom" effect="light">
+                            <div class="title">
+                                <CustomIcon :hei="item.total_gpu_num===0 ? 0 : Number((item.used_gpu_num / item.total_gpu_num).toFixed(2))*100" />
+                                <div>显卡</div>
+                            </div>
+                        </el-tooltip>
+                    </div>
+                </div>
+                <div v-else class="error_message m-top10">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
+                <!-- <div class="m-bottom10 flex-host">
                     <span class="m-right10">物理机:</span>
                     <div>
                         <el-select 
@@ -70,19 +110,19 @@
                                 
                             >
                                 <span>{{item.host_name}}</span>
-                                <!-- <el-tooltip :content="(parseFloat(item.cpu)).toFixed(2)+'%'" placement="bottom" effect="light">
+                                <el-tooltip :content="(parseFloat(item.cpu)).toFixed(2)+'%'" placement="bottom" effect="light">
                                     <span><CustomIcon :hei="item.cpu" />CPU</span>
                                 </el-tooltip>
                                 <el-tooltip :content="(parseFloat(item.ram)).toFixed(2)+'%'" placement="bottom" effect="light">
                                     <span><CustomIcon :hei="item.ram" />内存</span>
-                                </el-tooltip> -->
+                                </el-tooltip> 
                                 
                             </el-option>
                         </el-select>
                         <div class="error_message m-top10" v-if="recommend.length===0">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
                     </div>
                     
-                </div>
+                </div> -->
                 <!-- <div class="m-right10 flex-base">
                     <span class="m-right10">迁移推荐:</span>
                     <div>
@@ -142,16 +182,6 @@ export default class Migrate extends Vue{
         }//可以进行迁移的云主机
         this.list=this.rows[0].ecs_list;
     }
-    //关闭面板时重新获取实例列表
-    private change_physical(val){
-        if(!val){
-            this.get_recommended_host()
-        }
-    }
-    @Watch("physical")
-    private watch_physical(nv){
-        this.judge()
-    }
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
             return true
@@ -179,6 +209,9 @@ export default class Migrate extends Vue{
         })
         if(res.code==="Success"){
             this.recommend = res.data.data;
+            if(this.selected.length===0){
+                this.physical=[]
+            }
         }
     }
     private handleCheckAllChange(val){
@@ -191,7 +224,14 @@ export default class Migrate extends Vue{
         this.get_recommended_host()
         this.checked = val.length === this.list.length;
         this.isIndeterminate = val.length > 0 && val.length < this.list.length;
-        this.judge()
+        // this.judge()
+    }
+    private handle(id:string){
+        if(this.physical.includes(id)){
+            this.physical = this.physical.filter(item=>item!==id)
+        }else{
+            this.physical.push(id)
+        }
     }
     private async confirm(){
         if(this.selected.length===0){
@@ -227,7 +267,7 @@ export default class Migrate extends Vue{
         flex: 1;
     }
     .center{
-        width: 180px;
+        width: 100px;
         margin-top: 58px;
         padding: 0 20px;
     }
@@ -241,11 +281,31 @@ export default class Migrate extends Vue{
         display: flex;
         align-items: baseline;
     }
-    
-    
 }
-
-
+.recommend{
+    max-height: 400px;
+    overflow-y: auto;
+    .item{
+        padding: 10px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        background: rgb(248,248,248);
+        cursor: pointer;
+        .title{
+            display: flex;
+            flex-direction: column;
+            margin: 0 5px;
+            align-items: center;
+        }
+    }
+    .active{
+        background: rgb(240,249,235);
+    }
+}
+.data-item{
+    display: flex;
+}
 </style>
 <style lang="scss">
 .migrate{
