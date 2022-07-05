@@ -29,13 +29,15 @@
 .mounting,
 .unmounting,
 .recovering,
+.gray_open,
 .recycling {
   color:#4984E7;
 }
-.running {
+.running,.global_open {
   color:#2DA867;
 }
 .deleted,
+.global_close,
 .destroy {
   color: #e6a23c;
 }

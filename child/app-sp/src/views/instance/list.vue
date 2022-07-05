@@ -565,6 +565,8 @@ export default class App extends Vue {
   private ecs_goods_name_list = [];
   private timer = null;
   private os_info = {};
+  private ecs_info = {};
+  private common_visible:boolean=false
   private disk_billing_info = {};
   private total_price = "";
   private ecs_list_price = {};
@@ -579,8 +581,6 @@ export default class App extends Vue {
       }
       this.FnSearch(this.search_reqData)
     }
-  private ecs_info:any={};
-  private common_visible:boolean=false
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
