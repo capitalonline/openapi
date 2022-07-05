@@ -255,7 +255,6 @@ export default class AddCommon extends Vue{
 //     }
 //   }
     private before_upload(file){
-        // console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
         // console.log("response",response)
