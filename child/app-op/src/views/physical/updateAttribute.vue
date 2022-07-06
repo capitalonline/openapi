@@ -111,7 +111,6 @@ export default class UpdateAttribute extends Vue{
     }
     // @Watch("customer_id")
     // private watch_customer_id(nv){
-    //     console.log("watch_customer_id",nv)
     // }
     private async getCustomerList(val:string="",loading:boolean=false){
         if(!val && !loading){
