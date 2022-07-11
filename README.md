@@ -106,6 +106,7 @@
        * [21.BandwidthRemoveEIP](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#21bandwidthremoveeip)
        * [22.DescribeIPInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#22describeipinfo)
        * [23.NetEIPInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#23neteipinfo)
+       * [24.ReserveIPAndBindEIP](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#24reserveipandbindeip)
      * [裸金属相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#裸金属相关)
        * [1.DescribeBmsGoods](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebmsgoodsprice)

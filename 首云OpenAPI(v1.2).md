@@ -106,6 +106,7 @@
        * [21.BandwidthRemoveEIP](#21bandwidthremoveeip)
        * [22.DescribeIPInfo](#22describeipinfo)
        * [23.NetEIPInfo](#23neteipinfo)
+       * [24.ReserveIPAndBindEIP](#24reserveipandbindeip)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
@@ -5837,6 +5838,73 @@ def net_eip_info():
     }
     res = requests.post(url, json=body)
 ```
+### 24.ReserveIPAndBindEIP
+
+​	**Action:ReserveIPAndBindEIP**
+
+​	**描述：** 保留IP并绑定EIP
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| AvailableZoneCode | string | 是 | CN_Hongkong_A | VPC可用区code, 见附件五 |
+| Ips        | list | 是       |   | ip信息 |
+| NetId | string | 是 |3e229ff2-ee26-11ec-8a3f-f64faa0dae79 | 虚拟出网网关ID |
+| AddressList | array | 是 |["172.18.2.0"] | 虚拟出网网关IP地址列表 |
+| EIPList | array | 是 |["114.112.38.17"] | EIP地址列表 |
+| Description | string | 是 |手动保留并绑定 | 描述 |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+	"Code": "Success",
+	"Message": "任务下发成功"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def eip_batch_bind_and_reserve_ip():
+    action = 'ReserveIPAndBindEIP'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "AvailableZoneCode": "CN_DaBieShan_A",
+        "Ips": [
+            {
+                "NetId": "3e229ff2-ee26-11ec-8a3f-f64faa0dae79",
+                "AddressList": ["172.18.2.0"],
+                "EIPList": ["114.112.38.17"],
+                "Description": "手动保留并绑定"
+            }
+        ]
+    }
+    res = requests.post(url, json=body)
+```
 
 ## 裸金属相关
 
@@ -9497,13 +9565,13 @@ def get_metering(end_time, uid=None):
 | UsedByNow        | bool   | False                               | 告警联系人是否在当前监控组 |
 | UsedByOther      | bool   | True                                | 其他监控组是否使用该告警联系人 |
 
-​   **错误码:**
+   **错误码:**
 
 | httpcode | 错误码                  | 错误信息         | 描述               |
 | -------- | ----------------------- | ---------------- | ------------------ |
 | 400      | InvalidParameter.IsNull | 缺少必要参数     | 缺少必要参数       |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code":"Success",
@@ -9522,7 +9590,7 @@ def get_metering(end_time, uid=None):
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def get_all_receivers():
@@ -9569,14 +9637,14 @@ def get_all_receivers():
 | Message | string | 获取联系人成功 | 错误信息     |
 | Data    | object | {}        |  |
 
-​   **错误码:**
+   **错误码:**
 
 | httpcode | 错误码                  | 错误信息         | 描述               |
 | -------- | ----------------------- | ---------------- | ------------------ |
 | 400      | Parameter Error | 邮箱格式异常     | 邮箱格式异常       |
 | 400      | Parameter Error | 手机格式异常     | 邮箱格式异常       |
 
-​   **返回示例:**
+   **返回示例:**
 
 ```json
 {
@@ -9587,7 +9655,7 @@ def get_all_receivers():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def update_receiver():
@@ -9639,14 +9707,14 @@ def update_receiver():
 | failReason | string | “”                                     | 失败原因                          |
 | requestId  | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                          |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                 |
 | ------ | ------------------ | -------------------- |
 | 10003  | 传入参数不符合要求 | 传入参数不符合要求   |
 | 10006  | 参数错误           | 参数错误，任务不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -9660,7 +9728,7 @@ def update_receiver():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryTask():
@@ -9711,13 +9779,13 @@ def queryTask():
 | cityName   | string | “襄阳”                                 | ‘城市name’                |
 | cityId     | string | “32e6fd62-9bac-11ec-875a-2a8d1f4e167e” | ‘城市id’                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息 | 描述 |
 | ------ | -------- | ---- |
 |        |          |      |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -9745,7 +9813,7 @@ def queryTask():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def querySites():
@@ -9800,13 +9868,13 @@ def querySites():
 | requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
 | monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息             | 描述                 |
 | ------ | -------------------- | -------------------- |
 | 12000  | 查询商品规格信息失败 | 查询商品规格信息失败 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -9842,7 +9910,7 @@ def querySites():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryProducts():
@@ -9903,13 +9971,13 @@ def queryProducts():
 | siteName      | string | "保定A"                                | 站点名称                                                     |
 | status        | string | "Available"                            | 状态 Creating(创建中)，Available(可用),Synchronizing(同步中), Error(错误), Deleting(删除中), Using(使用中) ，Deleted(已删除) ， 只有Available(可用)与Using(使用中)的镜像可用来创建与重装云桌面 |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息 | 描述                                   |
 | :----- | :------- | :------------------------------------- |
 | 10006  | 参数错误 | 1、无对应商品规格信息 2、无对应站点信息 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "code": "Success",
@@ -9993,7 +10061,7 @@ def queryProducts():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryImages():
@@ -10049,7 +10117,7 @@ def queryImages():
 | requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
 | requestContent | string | {}                                   | 请求参数                                                     |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                                                    |
 | ------ | ------------------ | ------------------------------------------------------- |
@@ -10057,7 +10125,7 @@ def queryImages():
 | 10003  | 传入参数不符合要求 | 传入参数不符合要求，计费周期可选值为minute、month或year |
 | 10006  | 参数错误           | 参数错误，无对应站点信息                                |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10071,7 +10139,7 @@ def queryImages():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryVmPrice():
@@ -10132,7 +10200,7 @@ def queryVmPrice():
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid                  |
 | requestContent | string | “”                                       | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                                                     | 描述                                                         |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -10142,7 +10210,7 @@ def queryVmPrice():
 | 10003  | 传入参数不符合要求                                           | 传入参数不符合要求，包月购买时长需大于等于1                  |
 | 10006  | 参数错误                                                     | 参数错误，对应云桌面不存在                                   |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10159,7 +10227,7 @@ def queryVmPrice():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def updateOrder():
@@ -10219,7 +10287,7 @@ def updateOrder():
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid                  |
 | requestContent | string | “”                                       | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                                                     | 描述                                                         |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -10228,7 +10296,7 @@ def updateOrder():
 | 10003  | 传入参数不符合要求                                           | 传入参数不符合要求，包月是否续约可选值为0或1,1是续约,0是不续约 |
 | 10006  | 参数错误                                                     | 参数错误，对应云桌面不存在                                   |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10245,7 +10313,7 @@ def updateOrder():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def renewalOrder():
@@ -10304,13 +10372,13 @@ def renewalOrder():
 | bindNum   | int    | 0                                      | 已绑定云桌面的数量                                           |
 | status    | string | “create”                               | 账户状态，creating(创建中)，create(创建完成),error(创建失败) |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息 | 描述 |
 | ------ | -------- | ---- |
 |        |          |      |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10327,7 +10395,7 @@ def renewalOrder():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def querySubAccounts():
@@ -10374,7 +10442,7 @@ def querySubAccounts():
 | Message  | string | null    | 返回信息                  |
 | Data | obejct | {}      | 返回数据                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述               |
 | ------ | ------------------ | ------------------ |
@@ -10382,7 +10450,7 @@ def querySubAccounts():
 | 10005  | 账户数据异常       | 账户数据异常       |
 | 11000  | 创建用户错误       | 创建用户错误       |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10391,7 +10459,7 @@ def querySubAccounts():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def createSubAccount():
@@ -10451,7 +10519,7 @@ def createSubAccount():
 | remark     | string | miao123aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                   | 备注                      |
 | messsage   | string | 子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 | 错误信息                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述               |
 | ------ | ------------------ | ------------------ |
@@ -10459,7 +10527,7 @@ def createSubAccount():
 | 10005  | 账户数据异常       | 账户数据异常       |
 | 11003  | 批量创建用户失败   | 批量创建用户失败   |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10479,7 +10547,7 @@ def createSubAccount():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def createSubAccounts():
@@ -10535,7 +10603,7 @@ def createSubAccounts():
 | Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                |
 | ------ | ------------------ | ------------------- |
@@ -10543,7 +10611,7 @@ def createSubAccounts():
 | 10211  | 修改用户名失败     | 修改用户名失败      |
 | 10006  | 参数错误           | 参数错误,无对应账户
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10552,7 +10620,7 @@ def createSubAccounts():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def changeSubAccountName():
@@ -10603,7 +10671,7 @@ def changeSubAccountName():
 | Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                 |
 | ------ | ------------------ | -------------------- |
@@ -10611,7 +10679,7 @@ def changeSubAccountName():
 | 11013  | 修改用户备注失败   | 修改用户备注失败     |
 | 10006  | 参数错误           | 参数错误，无对应账户 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10620,7 +10688,7 @@ def changeSubAccountName():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def changeSubAccountRemark():
@@ -10672,7 +10740,7 @@ def changeSubAccountRemark():
 | taskId         | string | “d460f799-6896-4d93-b037-02ee2efb3adb” | 任务id                    |
 | requestContent | string | “”                                     | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                         |
 | ------ | ------------------ | ---------------------------- |
@@ -10682,7 +10750,7 @@ def changeSubAccountRemark():
 | 10007  | 当前账户权限不足   | 当前账户权限不足             |
 | 10006  | 参数错误           | 参数错误，对应站点信息不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10695,7 +10763,7 @@ def changeSubAccountRemark():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def createDefaultNet():
@@ -10746,7 +10814,7 @@ def createDefaultNet():
 | taskId         | string | “d460f799-6896-4d93-b037-02ee2efb3adb” | 任务id                    |
 | requestContent | string | “”                                     | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                         |
 | ------ | ------------------ | ---------------------------- |
@@ -10756,7 +10824,7 @@ def createDefaultNet():
 | 10007  | 当前账户权限不足   | 当前账户权限不足             |
 | 10006  | 参数错误           | 参数错误，对应站点信息不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10769,7 +10837,7 @@ def createDefaultNet():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def supplyDefaultNet():
@@ -10846,7 +10914,7 @@ def supplyDefaultNet():
 | conf_id     | String  | 1216                                 | 带宽类型 id                                                  |
 | conf_name   | String  | 电信                                 | 带宽类型名字                                                 |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                | 描述                    |
 | ------ | ----------------------- | ----------------------- |
@@ -10854,7 +10922,7 @@ def supplyDefaultNet():
 | 10003  | 传入参数不符合要求      | 传入参数不符合要求      |
 | 10006  | 参数错误                | 参数错误,无对应站点信息 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -10925,7 +10993,7 @@ def supplyDefaultNet():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def getDefaultNet():
@@ -10993,7 +11061,7 @@ def getDefaultNet():
 | conf_id    | String  | 1216                                 | 带宽类型 id                                                  |
 | conf_name  | String  | 电信                                 | 带宽类型名字                                                 |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                | 描述                    |
 | ------ | ----------------------- | ----------------------- |
@@ -11001,7 +11069,7 @@ def getDefaultNet():
 | 10003  | 传入参数不符合要求      | 传入参数不符合要求      |
 | 10006  | 参数错误                | 参数错误,无对应站点信息 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11068,7 +11136,7 @@ def getDefaultNet():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def getCustomNet():
@@ -11126,7 +11194,7 @@ def getCustomNet():
 | id                  | string | “b76cab5a-c749-11eb-b7f6-ea86f8094c7b” | id                               |
 | name                | string | “VPC公网带宽-固定带宽”                 | name                             |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                        |
 | ------ | ------------------ | --------------------------- |
@@ -11134,7 +11202,7 @@ def getCustomNet():
 | 13504  | 获取计费方案失败   | 服务错误查询失败            |
 | 10006  | 参数错误           | 参数错误,对应站点信息不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11207,7 +11275,7 @@ def getCustomNet():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def getLineBillingScheme():
@@ -11263,7 +11331,7 @@ def getLineBillingScheme():
 | cycle           | string | “/天”                 | 周期                      |
 | end_time        | string | “2099-01-01 00:00:00” | 结束时间                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                    |
 | ------ | ------------------ | ----------------------- |
@@ -11271,7 +11339,7 @@ def getLineBillingScheme():
 | 13503  | 获取eip价格失败    | 服务错误查询失败        |
 | 10006  | 参数错误           | 参数错误,无对应站点信息 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11302,7 +11370,7 @@ def getLineBillingScheme():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def getEipPrice():
@@ -11358,13 +11426,13 @@ def getEipPrice():
 | Data  | object | {}                                       | 返回数据                  |
 | vmIds | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                                                         |
 | ------ | ------------------ | ------------------------------------------------------------ |
 | 10003  | 传入参数不符合要求 | 传入参数不符合要求，计费模式可选值为1或0,1为包年包月,2为按需 |
 
-​   **返回示例:**
+   **返回示例:**
 
 ```json
 {
@@ -11378,7 +11446,7 @@ def getEipPrice():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryVms():
@@ -11436,14 +11504,14 @@ def queryVms():
 | expireTime   | string | “2098-12-31T16:00:00.000+0000”         | 包月到期时间                                                 |
 | status       | string | “using”                                | 状态 : configuring(“配置中”), rebooting(“重启中”), starting(“开机中”), using(“已开机”), stoping(“关机中”), stop(“已关机”), deleteing(“删除中”), deleted(“已删除”),dataMoving(“云桌面迁移中”),error(“错误”),asNeedExpiring(“欠费关机中”),asNeedExpired(“已欠费”),asMonthExpiring(“到期关机中”),asMonthExpired(“已到期”),logicalDeleted(“逻辑删除”),destroying(“欠费到期删除中”),destroy(“欠费到期已删除”),invisibleError(“回收错误”) |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                       |
 | ------ | ------------------ | -------------------------- |
 | 10003  | 传入参数不符合要求 | 云桌面id为空               |
 | 10006  | 参数错误           | 参数错误，对应云桌面不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11468,7 +11536,7 @@ def queryVms():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryVm():
@@ -11516,13 +11584,13 @@ def queryVm():
 | expireTime | string   | “”       | 包月到期时间              | 
 | status     | string   | “”       | 状态                      |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息 | 描述 |
 | ------ | -------- | ---- |
 |        |          |      |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11538,7 +11606,7 @@ def queryVm():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def queryExpireVms():
@@ -11604,7 +11672,7 @@ def queryExpireVms():
 | requestId      | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab”   | 请求uuid                  |
 | requestContent | string | “”                                       | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                                                     | 描述                                                         |
 | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -11618,7 +11686,7 @@ def queryExpireVms():
 | 13000  | 当前资源不足                                                 | 当前资源不足                                                 |
 | 10006  | 参数错误                                                     | 参数错误，无对应商品信息                                     |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11634,7 +11702,7 @@ def queryExpireVms():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def createVm():
@@ -11702,7 +11770,7 @@ def createVm():
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”    | 请求uuid                  |
 | requestContent | string | “”                                        | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                         | 描述                             |
 | ------ | -------------------------------- | -------------------------------- |
@@ -11711,7 +11779,7 @@ def createVm():
 | 13002  | GPU云桌面执行操作失败            | GPU云桌面执行操作失败            |
 | 10006  | 参数错误                         | 参数错误，暂不支持该操作         |
 
-​   **返回示例:**
+   **返回示例:**
 
 ```json
 {
@@ -11728,7 +11796,7 @@ def createVm():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def operateVm():
@@ -11782,7 +11850,7 @@ def operateVm():
 | requestId      | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                  |
 | requestContent | string | “”                                     | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息                                         | 描述                                             |
 | ------ | ------------------------------------------------ | ------------------------------------------------ |
@@ -11794,7 +11862,7 @@ def operateVm():
 | 10006  | 参数错误                                         | 参数错误,无对应云桌面信息                        |
 | 10008  | 系统内数据错误                                   | 系统内数据错误,商品信息查询失败                  |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11808,7 +11876,7 @@ def operateVm():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def rebuildVm():
@@ -11857,7 +11925,7 @@ def rebuildVm():
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 请求uuid                  |
 | requestContent | string | “”                                     | 请求参数                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息              | 描述                  |
 | ------ | --------------------- | --------------------- |
@@ -11867,7 +11935,7 @@ def rebuildVm():
 | 13002  | GPU云桌面执行操作失败 | GPU云桌面执行操作失败 |
 | 10006  | 参数错误              | 参数错误,云桌面不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11881,7 +11949,7 @@ def rebuildVm():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def deleteVm():
@@ -11930,14 +11998,14 @@ def deleteVm():
 | Message  | string | null    | 返回信息                  |
 | Data | obejct | {}      | 返回数据                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述                  |
 | ------ | ------------------ | --------------------- |
 | 10003  | 传入参数不符合要求 | 传入参数不符合要求    |
 | 10006  | 参数错误           | 参数错误,云桌面不存在 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -11946,7 +12014,7 @@ def deleteVm():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def changeVmName():
@@ -11996,14 +12064,14 @@ def changeVmName():
 | Message  | string | null    | 返回信息                  |
 | Data | obejct | {}      | 返回数据                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息           | 描述               |
 | ------ | ------------------ | ------------------ |
 | 10003  | 传入参数不符合要求 | 传入参数不符合要求 |
 | 13015  | 更新云桌面备注失败 | 更新云桌面备注失败 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -12012,7 +12080,7 @@ def changeVmName():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def updateVmLabels():
@@ -12062,14 +12130,14 @@ def updateVmLabels():
 | Message  | string | null    | 返回信息                  |
 | Data | obejct | {}      | 返回数据                  |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息              | 描述                                                         |
 | ------ | --------------------- | ------------------------------------------------------------ |
 | 10003  | 传入参数不符合要求    | 传入参数不符合要求                                           |
 | 13011  | 换绑GPU云桌面实例失败 | 对没有绑定用户的云桌面在已开机和已关机的状态下都可以绑定用户，对于已经绑定用户的云桌面仅在已关机的状态下可以换绑用户 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -12078,7 +12146,7 @@ def updateVmLabels():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def changeAccount():
@@ -12132,14 +12200,14 @@ def changeAccount():
 | messsage | string |  对应云桌面不存在     | 失败原因描述              |
 | vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息              | 描述                                     |
 | ------ | --------------------- | ---------------------------------------- |
 | 10003  | 传入参数不符合要求    | 传入参数不符合要求                       |
 | 13012  | 解绑GPU云桌面实例失败 | 仅支持已关机状态的云桌面执行解绑用户操作 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -12161,7 +12229,7 @@ def changeAccount():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def unbindAccounts():
@@ -12219,14 +12287,14 @@ def unbindAccounts():
 | messsage | string |  对应云桌面不存在     | 失败原因描述              |
 | vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
 
-​   **错误码:**
+   **错误码:**
 
 | 错误码 | 错误信息              | 描述                  |
 | ------ | --------------------- | --------------------- |
 | 10003  | 传入参数不符合要求    | 传入参数不符合要求    |
 | 13013  | 绑定GPU云桌面实例失败 | 绑定GPU云桌面实例失败 |
 
-​   **返回示例:**
+   **返回示例:**
 ```json
 {
     "Code": "Success",
@@ -12248,7 +12316,7 @@ def unbindAccounts():
 }
 ```
 
-​   **请求调用示例**
+   **请求调用示例**
 
 ```python
 def bindAccounts():
