@@ -5,11 +5,15 @@
         </action-block>
         <el-table :data="list" border class="event-table">
             <el-table-column type="selection"></el-table-column>
-            <el-table-column prop="productType" label="屏蔽名称"></el-table-column>
-            <el-table-column prop="instanceID" label="产品类型"></el-table-column>
-            <el-table-column prop="createTime" label="屏蔽状态"></el-table-column>
-            <el-table-column prop="durationTime" label="创建时间"></el-table-column>
-            <el-table-column prop="ruleName" label="修改时间"></el-table-column>
+            <el-table-column prop="shield_name" label="屏蔽名称"></el-table-column>
+            <el-table-column prop="createTime" label="屏蔽状态">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.enable===1" class="running">屏蔽中</span>
+                     <span v-else class="build_fail">已停用</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="created_time" label="创建时间"></el-table-column>
+            <el-table-column prop="updated_time" label="修改时间"></el-table-column>
             <el-table-column prop="operation" label="操作">
                 <el-button type="text" v-for="(item,i) in operateBtns" :key="item" @click="handle(i)">{{item}}</el-button>
             </el-table-column>
@@ -58,6 +62,18 @@ export default class Shield extends Vue{
         del:'删除',
     }
     created() {
+        this.get_shield_list()
+    }
+    private async get_shield_list(){
+        let res:any = await Service.get_shield_list({
+            page:this.current,
+            size:this.size,
+            name:this.search_data.name
+        })
+        if(res.code==='Success'){
+            this.list = res.data.datas;
+            this.total = res.data.total
+        }
     }
     private fn_search(data:any={}){
 
@@ -69,7 +85,9 @@ export default class Shield extends Vue{
         this.current = cur
     }
     private handle(val:String){
-
+        if(val==='create'){
+            this.$router.push('/alarmInfo/create')
+        }
     }
 }
 </script>

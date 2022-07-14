@@ -99,5 +99,13 @@ export default{
     get_product_list(req){
         return service(getAlarmOptions('GET','/strategy/product/list',req))
     },
+    //获取屏蔽列表
+    get_shield_list(req){
+        return service(getAlarmOptions('GET','/shield/list',req))
+    },
+    //获取创建所需信息
+    get_create_info(req){
+        return service(getAlarmOptions('GET','/shield/info',req))
+    },
 
 }
