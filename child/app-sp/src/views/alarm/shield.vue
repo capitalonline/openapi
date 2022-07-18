@@ -15,7 +15,9 @@
             <el-table-column prop="created_time" label="创建时间"></el-table-column>
             <el-table-column prop="updated_time" label="修改时间"></el-table-column>
             <el-table-column prop="operation" label="操作">
-                <el-button type="text" v-for="(item,i) in operateBtns" :key="item" @click="handle(i)">{{item}}</el-button>
+                <template slot-scope="scope">
+                    <el-button type="text" v-for="(item,i) in operateBtns" :key="item" @click="handle(i,scope.row)">{{item}}</el-button>
+                </template>
             </el-table-column>
         </el-table>
         <el-pagination
@@ -84,9 +86,17 @@ export default class Shield extends Vue{
     private handleCurrentChange(cur){
         this.current = cur
     }
-    private handle(val:String){
+    private handle(val:string,row:any={}){
+        console.log('row',row,this.$store.state.auth_info);
         if(val==='create'){
             this.$router.push('/alarmInfo/create')
+        }else if(val==='detail'){
+            this.$router.push({
+                path:'/alarmInfo/detail',
+                params:{
+                    id:row.id
+                }
+            })
         }
     }
 }

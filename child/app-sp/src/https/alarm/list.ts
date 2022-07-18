@@ -107,5 +107,20 @@ export default{
     get_create_info(req){
         return service(getAlarmOptions('GET','/shield/info',req))
     },
+    //创建前获取策略列表
+    get_strategy_info(req){
+        return service(getAlarmOptions('GET','/shield/condition/strategy',req))
+    },
+    //获取规则列表
+    get_rule_info(req){
+        return service(getAlarmOptions('GET','/shield/condition/rule',req))
+    },
+    //创建告警策略
+    create_shield(req){
+        return service(getAlarmOptions('POST','/shield',req))
+    },
+    shield_detail(req){
+        return service(getAlarmOptions('GET','/shield',req))
+    },
 
 }
