@@ -11589,8 +11589,8 @@ def queryExpireVms():
 | qos            | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
 | vpcId          | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
-| vGatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
-| vGatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
+| vgatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
+| vgatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
 
    **返回参数：**
 
