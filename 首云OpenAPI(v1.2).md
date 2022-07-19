@@ -10367,6 +10367,7 @@ def renewalOrder():
 | Data      | list   | []                                     | 返回数据                                                     |
 | accountId | string | “7e7ba91e-4357-470a-9609-ce60d9d7e38f” | 用户id                                                       |
 | name      | string | “miao123”                              | 用户的名称                                                   |
+| password     | string | “CDS—GCW666”                         | 用户密码      |
 | email     | string | “”                                     | 邮箱                                                         |
 | remark    | string | “miao123”                              | 备注                                                         |
 | bindNum   | int    | 0                                      | 已绑定云桌面的数量                                           |
@@ -10388,6 +10389,7 @@ def renewalOrder():
             "bindNum": 0,
             "email": "17716313367@163.com",
             "name": "miao123",
+            "password": "CDS—GCW666",
             "remark": "miao123"
         }
     ],
@@ -10430,6 +10432,7 @@ def querySubAccounts():
 | 名称      | 类型   | 是否必须 | 示例                                    | 描述                                                         |
 | --------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
+| password     | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合        |
 | email     | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name      | string | 是       | miao123                                 | 用户的名称                                                   |
 | remark    | string | 否       | “miao123”                               | 备注，，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
@@ -10500,6 +10503,7 @@ def createSubAccount():
 | ------------------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId           | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
 | createAccountParams | list   | 是       | []                                      | 账户参数                                                     |
+| password            | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合 |
 | email               | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name                | string | 是       | “miao123”                               | 用户的名称                                                   |
 | remark              | string | 否       | “miao123”                               | 备注，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
