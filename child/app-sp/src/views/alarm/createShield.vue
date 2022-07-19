@@ -1,138 +1,142 @@
 <template>
     <div>
         <back-header :title="`${edit_id==='' ? '创建' : '编辑'}告警屏蔽`" back_url="/alarmInfo"></back-header>
-        <el-form :model="shieldData" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
-            <el-form-item prop="name" label="屏蔽名称">
-                <el-input v-model="shieldData.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
-                <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
-            </el-form-item>
-            <el-form-item prop="mechanism" label="告警机制">
-                <el-select
-                    v-model="shieldData.mechanism" 
-                    placeholder="请选择已有策略"
-                >
-                    <el-option
-                        v-for="item in mechanismList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
+        <el-card>
+            <el-form :model="shieldData" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
+                <el-form-item prop="name" label="屏蔽名称">
+                    <el-input v-model="shieldData.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
+                    <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
+                </el-form-item>
+                <el-form-item prop="mechanism" label="告警机制">
+                    <el-select
+                        v-model="shieldData.mechanism" 
+                        placeholder="请选择已有策略"
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item prop="scope" label="抑制范围">
-                <el-select
-                    v-model="shieldData.scope" 
-                    placeholder="请选择抑制范围"
-                >
-                    <el-option
-                        v-for="item in scopeList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
-                    >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item prop="condition" label="条件">
-                <div v-for="(con,index) in shieldData.condition" :key="con.label">
-                    <el-select v-model="con.label">
                         <el-option
-                            v-for="item in conditionList"
-                            :disabled="selectedIds.includes(item.label)"
-                            :key="item.label"
-                            :label="item.name"
-                            :value="item.label"
-                        >
-                        </el-option>
-                    </el-select>
-                    <el-select v-model="con.oper" class="m-left10 m-right10">
-                        <el-option
-                            v-for="item in operateIcon"
+                            v-for="item in mechanismList"
                             :key="item.id"
                             :label="item.name"
                             :value="item.id"
                         >
                         </el-option>
                     </el-select>
-                    <template v-if="['id'].includes(con.label)">
-                        <el-input v-model="con.value" class="w-420" />
-                    </template>
-                    <template v-else-if="['customer_id'].includes(con.label)">
-                        <div class="w-420">
-                            <customer :customers="[]"  @FnCustomer="FnCustomer"></customer>
-                        </div>
-                    </template>
-                    <template v-else-if="['to_group','alertname'].includes(con.label)">
-                        <!--策略和规则-->
-                        <el-select
-                            v-model="con.value" 
-                            class="w-420"
+                </el-form-item>
+                <el-form-item prop="scope" label="抑制范围">
+                    <el-select
+                        v-model="shieldData.scope" 
+                        placeholder="请选择抑制范围"
+                    >
+                        <el-option
+                            v-for="item in scopeList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
                         >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="condition" label="条件">
+                    <div v-for="(con,index) in shieldData.condition" :key="con.label">
+                        <el-select v-model="con.label">
                             <el-option
-                                v-for="item in labelContent[con.label]"
+                                v-for="item in conditionList"
+                                :disabled="selectedIds.includes(item.label)"
+                                :key="item.label"
+                                :label="item.name"
+                                :value="item.label"
+                            >
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="con.oper" class="m-left10 m-right10">
+                            <el-option
+                                v-for="item in operateIcon"
                                 :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
+                            >
+                            </el-option>
+                        </el-select>
+                        <template v-if="['id'].includes(con.label)">
+                            <el-input v-model="con.value" class="w-420" />
+                        </template>
+                        <template v-else-if="['customer_id'].includes(con.label)">
+                            <div class="w-420">
+                                <customer :customers="[]"  @FnCustomer="FnCustomer"></customer>
+                            </div>
+                        </template>
+                        <template v-else-if="['to_group','alertname'].includes(con.label)">
+                            <!--策略和规则-->
+                            <el-select
+                                v-model="con.value" 
+                                class="w-420"
                                 filterable
+                                multiple
                                 :filter-method="con.label==='to_group'? getStrategyInfo : getRuleInfo"
                                 @visible-change="changeValue($event,con.label)"
-                                :label="item.name"
-                                :value="item.id"
                             >
-                            </el-option>
-                        </el-select>
-                    </template>
-                    <template v-else>
-                        <el-select
-                            v-model="con.value" 
-                            class="w-420"
-                        >
-                            <el-option
-                                v-for="item in labelContent[con.label]"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
+                                <el-option
+                                    v-for="item in labelContent[con.label]"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.name"
+                                >
+                                </el-option>
+                            </el-select>
+                        </template>
+                        <template v-else>
+                            <el-select
+                                v-model="con.value" 
+                                class="w-420"
                             >
-                            </el-option>
-                        </el-select>
-                    </template>
-                    <el-button type="text" @click="delCondition(con.label)" v-if="index!==0"><i class="el-icon-remove"></i></el-button>
-                </div>
-                <el-button type="text" @click="addCondition"><i class="el-icon-circle-plus"></i></el-button>
+                                <el-option
+                                    v-for="item in labelContent[con.label]"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id"
+                                >
+                                </el-option>
+                            </el-select>
+                        </template>
+                        <el-button type="text" @click="delCondition(con.label)" v-if="index!==0"><i class="el-icon-remove"></i></el-button>
+                    </div>
+                    <el-button type="text" @click="addCondition"><i class="el-icon-circle-plus"></i></el-button>
+                        
                     
-                
-            </el-form-item>
-            <el-form-item prop="time" label="静默时间">
-                <el-select
-                    v-model="shieldData.timeScope" 
-                >
-                    <el-option
-                        v-for="item in timeScopeList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id"
+                </el-form-item>
+                <el-form-item prop="time" label="静默时间">
+                    <el-select
+                        v-model="shieldData.timeScope" 
                     >
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <div v-if="shieldData.timeScope===0">
-                <el-date-picker
-                    v-model="shieldData.timeRange"
-                    type="datetimerange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期">
-                </el-date-picker>
-            </div>
-            <div v-if="shieldData.timeScope===1">
-                <el-date-picker
-                    v-model="shieldData.ensTime"
-                    type="datetime"
-                    placeholder="选择时间">
-                </el-date-picker>
-            </div>
-            
-        </el-form>
-        <el-button type="primary" @click="confirm">创建</el-button>
+                        <el-option
+                            v-for="item in timeScopeList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <div v-if="shieldData.timeScope===0">
+                    <el-date-picker
+                        v-model="shieldData.timeRange"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期">
+                    </el-date-picker>
+                </div>
+                <div v-if="shieldData.timeScope===1">
+                    <el-date-picker
+                        v-model="shieldData.endTime"
+                        type="datetime"
+                        placeholder="选择时间">
+                    </el-date-picker>
+                </div>
+                
+            </el-form>
+        </el-card>
+        
+        <el-button type="primary" @click="confirm">确定</el-button>
     </div>
 </template>
 <script lang="ts">
@@ -184,10 +188,43 @@ export default class CreateShield extends Vue{
         ]
     }
     created() {
+        if(this.$route.query && this.$route.query.id){
+            this.edit_id = this.$route.query.id as string;
+            this.getDetail()
+        }
         this.get_create_info();
         this.getRegionAz();
         this.getStrategyInfo();
-        this.getRuleInfo()
+        this.getRuleInfo();
+        
+    }
+    private async getDetail(){        
+        let res:any = await Service.shield_detail({id:this.edit_id})
+        if(res.code==='Success'){
+            
+            this.shieldData.name = res.data.shield_name;
+            this.shieldData.mechanism = res.data.shield_mechanism;
+            this.shieldData.scope = res.data.effective_scope;
+            // this.shieldData.conditions.value = res.data.conditions;
+            this.shieldData.timeScope = res.data.shield_time_ch;
+            if(this.shieldData.timeScope==='特定时间范围'){
+                this.shieldData.timeRange = [res.data.shield_start_time,res.data.shield_end_time];
+            }else if(this.shieldData.timeScope==='特定时间为止'){
+                this.shieldData.endTime = res.data.shield_end_time;
+            }
+            let list:any=[]
+            res.data.conditions.map(item=>{
+                console.log('item.condition_value',item.condition_value.split(','));
+                
+                let len = item.condition_value.split(',')
+                list.push({
+                    label:item.condition_object,
+                    oper:item.operator,
+                    value:len.length===0 ? '' : len.length===1 ? len[0] : len
+                })
+            })
+            this.shieldData.condition=[...list]
+        }
     }
     private async get_create_info(){
         let res:any=await Service.get_create_info({})
@@ -274,12 +311,13 @@ export default class CreateShield extends Vue{
         let form = this.$refs.form as any;
         form.validate(async valid=>{
             if(valid){
+                console.log('this.shieldData',this.shieldData)
                 let list = []
                 this.shieldData.condition.map(item=>{
                     list.push({
                         condition_object:item.label,
                         operator:item.oper,
-                        value:Array.isArray(item.value) ? item.value.join(',') : item.value
+                        condition_value:Array.isArray(item.value) ? item.value.join(',') : item.value
                     })
                     return item;
                 })

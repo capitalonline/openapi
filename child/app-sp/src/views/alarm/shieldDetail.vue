@@ -1,10 +1,24 @@
 <template>
-    <div>
+    <div class="detail">
         <back-header :title="'屏蔽详情'" back_url="/alarmInfo"></back-header>
-        <div v-for="(item,i) in info" :key="i">
-            <span>{{item.label}}</span>
-            <span v-html="item.value"></span>
-        </div>
+        <el-card>
+            <el-descriptions title="" :column="1" labelClassName='label'>
+                <el-descriptions-item v-for="(item,i) in info" :key="i" :label="item.label">
+                    <span v-html="item.value" v-if="i!=='conditions'"></span>
+                    <span v-else>
+                        <span v-for="inn in item.value" :key="inn.id">{{inn.condition_object_ch}} : {{inn.id}}<br></span>
+                    </span>
+                </el-descriptions-item>
+            </el-descriptions>
+        </el-card>
+        
+        <!-- <div v-for="(item,i) in info" :key="i" class="item">
+            <span>{{item.label}}:</span>
+            <span v-html="item.value" v-if="i!=='conditions'"></span>
+            <span v-else>
+                <div v-for="inn in item.value" :key="inn.id">{{inn.condition_object_ch}} : {{inn.id}}</div>
+            </span>
+        </div> -->
     </div>
 </template>
 <script lang="ts">
@@ -27,16 +41,14 @@ export default class ShieldDetail extends Vue{
     }
     private id:string=''
     created() {
-        this.id = this.$route.params.id;
+        this.id = this.$route.query.id as string;
         this.detail()
     }
-    private async detail(){
-        console.log('id',this.$route.params.id);
-        
+    private async detail(){        
         let res:any = await Service.shield_detail({id:this.id})
         if(res.code==='Success'){
             this.info.shield_name.value = res.data.shield_name;
-            this.info.shieldshield_mechanism_ch_name.value = res.data.shield_mechanism_ch;
+            this.info.shield_mechanism_ch.value = res.data.shield_mechanism_ch;
             this.info.effective_scope_ch.value = res.data.effective_scope_ch;
             this.info.conditions.value = res.data.conditions;
             this.info.shield_time_ch.value = res.data.shield_time_ch + '<br>' + '<span v-if="res.data.shield_start_time">'+res.data.shield_start_time+'——'+res.data.shield_end_time+'</span>';
@@ -44,3 +56,8 @@ export default class ShieldDetail extends Vue{
     }
 }
 </script>
+<style lang="scss">
+.label{
+    width:100px;
+}
+</style>
