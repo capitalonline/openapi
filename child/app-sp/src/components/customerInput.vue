@@ -28,14 +28,26 @@ export default class CustomerInput extends Vue{
     private flag:boolean=true;
     created(){
         this.customerList = [...this.list];
-        console.log("this.customerList",this.customerList)
+        console.log("this.customerList",this.customerList,this.customers)
         this.customer_id = this.customers;
-        
+        this.getDefaultCustomerList()
     }
     private changeCustomer(val){
         if(val){
             this.customerList=[]
             // this.getCustomerList()
+        }
+    }
+    private async getDefaultCustomerList(){
+        if(this.list.length>0){
+            return;
+        }
+        let res:any=await Service.getCustomerList({
+            host_ids:this.rows.map(item=>item.host_id),
+            customer_ids:this.customer_id,
+        })
+        if (res.code == 'Success'){
+            this.customerList=res.data.customer_list;
         }
     }
     private async getCustomerList(val:string="",loading:boolean=false){
@@ -44,7 +56,7 @@ export default class CustomerInput extends Vue{
         };
         let res:any=await Service.getCustomerList({
             host_ids:this.rows.map(item=>item.host_id),
-            customer_id:val
+            customer_id:val,
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
@@ -58,6 +70,7 @@ export default class CustomerInput extends Vue{
     private FnCustomer(){
         return this.customer_id
     }
+    
 }
 </script>
 <style lang="scss">

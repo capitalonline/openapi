@@ -40,12 +40,6 @@ const routes: RouteConfig[] = [
     meta:{menu:'alarm_info'}
   },
   {
-    path:'/alarmInfo/detail',
-    name:'alarm_detail',
-    component:()=>import('../views/alarm/shieldDetail.vue'),
-    meta:{menu:'alarm_info'}
-  },
-  {
     path:'/alarmStrategy',
     name:'alarm_strategy',
     component:()=>import('../views/alarm/strategy.vue'),
