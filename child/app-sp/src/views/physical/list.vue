@@ -15,7 +15,6 @@
         <el-tooltip content="导出" placement="bottom" effect="light">
           <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
         </el-tooltip>
-        
       </div>
       <el-table
         :data="list"
@@ -169,7 +168,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -193,6 +192,9 @@
       </template>
       <template v-if="visible && oper_type==='update_attribute'">
         <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
+      </template>
+      <template v-if="visible && oper_type==='business_test'">
+        <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
@@ -221,6 +223,7 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Resource from './resource.vue';
 import UpdateAttribute from './updateAttribute.vue';
 import CustomListItem from './customListItem.vue';
+import BusinessTest from './businessTest.vue'
 import Detail from '../instance/detail.vue'
 import moment from 'moment';
 @Component({
@@ -234,6 +237,7 @@ import moment from 'moment';
     Resource,
     UpdateAttribute,
     CustomListItem,
+    BusinessTest,
     Detail
   }
 })
@@ -273,6 +277,7 @@ export default class PhysicalList extends Vue {
     {label:'完成维护',value:'finish'},
     // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
+    {label:'业务测试',value:'business_test'},
     // {label:'分配资源',value:'resource'},
     // {label:'更改属性',value:'update_attribute'},
   ]
@@ -313,9 +318,10 @@ export default class PhysicalList extends Vue {
   private machine_list=[]
   private host_source=[];
   private all_column_item=[];
-  private all_item:Array<any>=[];
   private custom_visible:boolean = false;
   private tableHeight=70;
+  private az_info:any={}
+  private all_item:Array<any>=[];
   private loading:boolean=false;
   private expand_rows:any=[]
   private new_prop_list:Array<string>=[];
@@ -394,6 +400,7 @@ export default class PhysicalList extends Vue {
       this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.custom_host)
       this.get_custom_columns(this.$store.state.custom_host)
+
 
     }
   }
@@ -745,7 +752,7 @@ export default class PhysicalList extends Vue {
   }
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && !['upload'].includes(value)){
+    if(this.multi_rows.length===0 && !['upload','business_test'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
@@ -761,7 +768,17 @@ export default class PhysicalList extends Vue {
       }
         
     }
-    if(['upload','resource','update_attribute'].includes(value)){
+    if(['upload','resource','update_attribute','business_test'].includes(value)){
+      if(value==='business_test'){
+        if(this.list.length===0){
+          this.$message.warning('当前无宿主机可进行业务测试!')
+          return;
+        }
+        this.az_info={
+          az_id:this.list[0].az_id,
+          az_name:this.list[0].az_name,
+        }
+      }
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;

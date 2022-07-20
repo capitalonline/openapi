@@ -76,11 +76,11 @@ export default class LineEchart extends Vue {
     dataZoom: [
       {
         type: 'inside',
-        start: 0,
-        end: 10
+        start: 90,
+        end: 100
       }, {
-        start: 0,
-        end: 10
+        start: 90,
+        end: 100
       }
     ],
     series: []
@@ -121,6 +121,7 @@ export default class LineEchart extends Vue {
     };
     this.option.series = [];
     this.legend_relation = {};
+    this.legend = [];
     if (!this.data.legend || this.data.legend.length === 0) {
       this.option.series.push({
         name: this.data.title,

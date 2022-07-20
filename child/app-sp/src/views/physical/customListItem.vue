@@ -89,7 +89,7 @@ export default class CustomListItem extends Vue {
 </style>-->
 <template>
   <el-dialog :visible.sync="visible" title="自定义列表项" :show-close="false" :close-on-click-modal="false">
-    <div class="m-bottom10">清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
+    <div>清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
     <div class="item">
       <template v-for="n in all_item">
         <div class="label">{{n.name}}</div>
@@ -100,8 +100,6 @@ export default class CustomListItem extends Vue {
         </div>
       </template>
     </div>
-    
-    
     <span>已选择：<span class="num_message">{{select_item.length}}</span></span>
     
     <span slot="footer">
