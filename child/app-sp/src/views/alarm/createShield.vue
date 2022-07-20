@@ -4,11 +4,12 @@
         <el-card>
             <el-form :model="shieldData" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                 <el-form-item prop="name" label="屏蔽名称">
-                    <el-input v-model="shieldData.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
+                    <el-input :disabled="!!edit_id" v-model="shieldData.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
                     <div class="prompt_message">可包含大小写字母,中文,数字,点号,下划线,半角冒号,连字符,英文括号</div>
                 </el-form-item>
                 <el-form-item prop="mechanism" label="告警机制">
                     <el-select
+                        :disabled="!!edit_id"
                         v-model="shieldData.mechanism" 
                         placeholder="请选择已有策略"
                     >
@@ -23,6 +24,7 @@
                 </el-form-item>
                 <el-form-item prop="scope" label="抑制范围">
                     <el-select
+                        :disabled="!!edit_id"
                         v-model="shieldData.scope" 
                         placeholder="请选择抑制范围"
                     >
@@ -37,7 +39,7 @@
                 </el-form-item>
                 <el-form-item prop="condition" label="条件">
                     <div v-for="(con,index) in shieldData.condition" :key="con.label">
-                        <el-select v-model="con.label">
+                        <el-select v-model="con.label" @change="changeLabel(index)">
                             <el-option
                                 v-for="item in conditionList"
                                 :disabled="selectedIds.includes(item.label)"
@@ -116,18 +118,20 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <div v-if="shieldData.timeScope===0">
+                <div v-if="shieldData.timeScope===0" class="time">
                     <el-date-picker
                         v-model="shieldData.timeRange"
+                        :clearable="false"
                         type="datetimerange"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
                     </el-date-picker>
                 </div>
-                <div v-if="shieldData.timeScope===1">
+                <div v-if="shieldData.timeScope===1" class="time">
                     <el-date-picker
                         v-model="shieldData.endTime"
+                        :clearable="false"
                         type="datetime"
                         placeholder="选择时间">
                     </el-date-picker>
@@ -185,7 +189,15 @@ export default class CreateShield extends Vue{
         name:[
             {required:true,message:'请输入屏蔽名称',trigger:'blur'},
             { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
-        ]
+        ],
+        condition:[{required:true,message:'请输入屏蔽条件',validator:this.validCondition}]
+    }
+    private validCondition(rule, value, callback){
+        if(this.shieldData.condition.some(item=>!item.value || item.value.length===0)){            
+            return callback(new Error('请输入屏蔽条件'))
+        }else{
+            return callback()
+        }
     }
     created() {
         if(this.$route.query && this.$route.query.id){
@@ -264,7 +276,9 @@ export default class CreateShield extends Vue{
                 this.getRuleInfo()
             }
         }
-        
+    }
+    private changeLabel(index){
+        this.shieldData.condition[index].value=''
     }
     private async getStrategyInfo(name:string=''){
         let res:any = await Service.get_strategy_info({
@@ -321,18 +335,19 @@ export default class CreateShield extends Vue{
                     })
                     return item;
                 })
-                let res:any = await Service.create_shield({
-                    shield_name:this.shieldData.name,
-                    shield_mechanism:Number(this.shieldData.mechanism),
-                    effective_scope:Number(this.shieldData.scope),
-                    shield_time:Number(this.shieldData.timeScope),
-                    shield_start_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[0]).format('YYYY-MM-DD HH:mm:ss'):undefined,
-                    shield_end_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[1]).format('YYYY-MM-DD HH:mm:ss'):Number(this.shieldData.timeScope)===1 ? moment(this.shieldData.endTime).format('YYYY-MM-DD HH:mm:ss') :undefined,
-                    conditions:list
-                })
-                if(res.code==='Success'){
+                // let res:any = await Service[this.edit_id? 'edit_shield' :'create_shield']({
+                //     id:this.edit_id ? this.edit_id : undefined,
+                //     shield_name:this.shieldData.name,
+                //     shield_mechanism:Number(this.shieldData.mechanism),
+                //     effective_scope:Number(this.shieldData.scope),
+                //     shield_time:Number(this.shieldData.timeScope),
+                //     shield_start_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[0]).format('YYYY-MM-DD HH:mm:ss'):undefined,
+                //     shield_end_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[1]).format('YYYY-MM-DD HH:mm:ss'):Number(this.shieldData.timeScope)===1 ? moment(this.shieldData.endTime).format('YYYY-MM-DD HH:mm:ss') :undefined,
+                //     conditions:list
+                // })
+                // if(res.code==='Success'){
 
-                }
+                // }
             }
         })
     }
@@ -350,5 +365,8 @@ export default class CreateShield extends Vue{
 .el-icon-remove:before{
     margin-top: 10px;
     margin-left: 10px;
+}
+.time{
+    margin-left: 100px;
 }
 </style>
