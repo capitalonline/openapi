@@ -49,9 +49,9 @@
             </el-table-column>
             <el-table-column prop="action" label="操作栏">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="detail(scope.row)">详情</el-button>
-                    <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1">屏蔽</el-button>
-                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0">停止屏蔽</el-button>
+                    <el-button type="text" @click="detail(scope.row)" :disabled="!authList.includes('infoDetail')">详情</el-button>
+                    <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1 || !(authList.includes('alarm_create') && authList.includes('edit'))">屏蔽</el-button>
+                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0 || !authList.includes('stop')">停止屏蔽</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -111,6 +111,7 @@ export default class Contact extends Vue{
         contact:{placeholder:'报警联系人组',list:[]},
         strategyName:{placeholder:'请输入策略名称'},
     }
+    private authList:any=[]
     private fil_list = [
         {
             text:'已处理',
@@ -136,6 +137,7 @@ export default class Contact extends Vue{
     private info:any={}
     created() {
         this.getContactGroupList()
+        this.authList = this.$store.state.auth_info[this.$route.name]
         // this.getAlarmList()
     }
     private async getContactGroupList(){
