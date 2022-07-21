@@ -16,6 +16,7 @@
                     <span>{{scope.row.metricPeriod ? scope.row.metricPeriod===60 ? '1小时1周期' :`${scope.row.metricPeriod}分钟1周期` :'-'}}</span>
                 </template>
             </el-table-column>
+            <el-table-column prop="strategyName" label="策略名称"></el-table-column>
             <el-table-column prop="ruleName" label="规则名称"></el-table-column>
             <el-table-column prop="alarmType" label="报警类型">
                 <template slot-scope="scope">
@@ -46,6 +47,13 @@
                     <span>{{scope.row.dealStatus ? '已处理' : '未处理'}}</span>
                 </template>
             </el-table-column>
+            <el-table-column prop="action" label="操作栏">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="detail(scope.row)">详情</el-button>
+                    <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1">屏蔽</el-button>
+                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0">停止屏蔽</el-button>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -59,21 +67,31 @@
         <template v-if="visible">
             <notice-contact :visible.sync="visible" :list="notice_list" />
         </template>
+        <template v-if="operateVisible && operateType==='detail'">
+            <info-detail :visible.sync="operateVisible" :info="info" />
+        </template>
+        <template v-if="operateVisible  && operateType==='shield'">
+            <info-shield :visible.sync="operateVisible" :info="info" />
+        </template>
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import TimeGroup from '../../components/search/timeGroup.vue'
 import moment from 'moment';
 import Service from '../../https/alarm/list'
 import {trans} from '../../utils/transIndex';
-import NoticeContact from './notice_contact.vue'
+import NoticeContact from './notice_contact.vue';
+import InfoDetail from './infoDetail.vue';
+import InfoShield from './infoShield.vue';
 @Component({
     components:{
         ActionBlock,
         TimeGroup,
-        NoticeContact
+        NoticeContact,
+        InfoDetail,
+        InfoShield
     }
 })
 export default class Contact extends Vue{
@@ -91,6 +109,7 @@ export default class Contact extends Vue{
         instanceID:{placeholder:'请输入资源ID'},
         type:{placeholder:'报警类型',list:this.type_list},
         contact:{placeholder:'报警联系人组',list:[]},
+        strategyName:{placeholder:'请输入策略名称'},
     }
     private fil_list = [
         {
@@ -110,8 +129,11 @@ export default class Contact extends Vue{
     private moment =moment
     private search_data:any = {}
     private dealStatus:Array<string> = [];
-    private visible:boolean= false
-    private notice_list:any=[]
+    private visible:boolean= false;
+    private operateVisible:boolean= false
+    private operateType:string=''
+    private notice_list:any=[];
+    private info:any={}
     created() {
         this.getContactGroupList()
         // this.getAlarmList()
@@ -124,7 +146,6 @@ export default class Contact extends Vue{
     }
     private async getAlarmList(){
         const {search_data} = this
-        
         let res:any=await Service.get_alarm_list({
             ruleName:search_data.ruleName,//输入这个字段可以进行规则名称或者资源ID进行搜索
             instanceID:search_data.instanceID,
@@ -168,7 +189,45 @@ export default class Contact extends Vue{
         this.dealStatus = obj.dealStatus
         this.current = 1
         this.getAlarmList()
-
+    }
+    private detail(row){
+        this.info=row;
+        this.operateType='detail'
+        this.operateVisible=true
+    }
+    private shield(row){
+        this.info=row;
+        this.operateType='shield'
+        this.operateVisible=true
+    }
+    private stopShield(row){
+        const h = this.$createElement;
+        this.$msgbox({
+          title: '提示',
+          message: h('p', null, [
+            h('span', null, `确定停止${row.shieldName}`),
+            h('i', { style: 'color: #455cc6' },),
+            h('span', null, ' 屏蔽策略吗? ')
+          ]),
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(async action => {
+            let res:any = await Service.shield_apply({
+                ids:[row.shieldID],
+                enable:0
+            })
+            if(res.code==='Success'){
+                this.$message.success(res.message)
+                this.getAlarmList()
+            }
+        })
+    }
+    @Watch('operateVisible')
+    private watchOperateVisible(nv){
+        if(!nv){
+            this.getAlarmList()
+        }
     }
 }
 </script>

@@ -99,5 +99,41 @@ export default{
     get_product_list(req){
         return service(getAlarmOptions('GET','/strategy/product/list',req))
     },
+    //获取屏蔽列表
+    get_shield_list(req){
+        return service(getAlarmOptions('GET','/shield/list',req))
+    },
+    //获取创建所需信息
+    get_create_info(req){
+        return service(getAlarmOptions('GET','/shield/info',req))
+    },
+    //创建前获取策略列表
+    get_strategy_info(req){
+        return service(getAlarmOptions('GET','/shield/condition/strategy',req))
+    },
+    //获取规则列表
+    get_rule_info(req){
+        return service(getAlarmOptions('GET','/shield/condition/rule',req))
+    },
+    //创建告警策略
+    create_shield(req){
+        return service(getAlarmOptions('POST','/shield',req))
+    },
+    //编辑告警策略
+    edit_shield(req){
+        return service(getAlarmOptions('PUT','/shield',req))
+    },
+    //获取屏蔽详情
+    shield_detail(req){
+        return service(getAlarmOptions('GET','/shield',req))
+    },
+    //应用或停用屏蔽
+    shield_apply(req){
+        return service(getAlarmOptions('PUT','/shield/apply',req))
+    },
+    //删除屏蔽
+    shield_del(req){
+        return service(getAlarmOptions('POST','/shield/delete',req))
+    },
 
 }
