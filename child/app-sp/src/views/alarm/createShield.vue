@@ -153,7 +153,6 @@ import Service from '../../https/alarm/list';
 import CreateService from '../../https/instance/create'
 import BackHeader from '../../components/backHeader.vue';
 import Customer from '../../components/customerInput.vue';
-import {alarm_type} from '../../assets/alarm_data.ts';
 import HostService from '../../https/physical/list'
 import {deal_list} from '../../utils/transIndex'
 import moment from 'moment';
@@ -189,7 +188,20 @@ export default class CreateShield extends Vue{
         alertname:[],
         region:[],
         az:[],
-        serverity:deal_list(alarm_type,['id','name'],['id','title'])
+        serverity:[
+            {
+                id:'2',
+                name:'严重',
+            },
+            {
+                id:'1',
+                name:'告警',
+            },
+            {
+                id:'0',
+                name:'普通',
+            },
+        ]
     }
     private rules:any={
         name:[
