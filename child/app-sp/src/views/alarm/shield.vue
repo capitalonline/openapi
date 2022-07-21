@@ -86,7 +86,7 @@ export default class Shield extends Vue{
     private async getShieldList(){
         let res:any = await Service.get_shield_list({
             page:this.current,
-            size:this.size,
+            pageSize:this.size,
             name:this.search_data.name
         })
         if(res.code==='Success'){
@@ -123,12 +123,6 @@ export default class Shield extends Vue{
             }})
         }else if(val==='detail'){
             this.visible=true
-            // this.$router.push({
-            //     path:'/alarmInfo/detail',
-            //     query:{
-            //         id:row.id
-            //     }
-            // })
         }else if(['apply','stop'].includes(val)){
             this.apply()
         }else if(val==='del'){
