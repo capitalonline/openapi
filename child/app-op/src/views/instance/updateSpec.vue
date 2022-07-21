@@ -27,7 +27,8 @@
         <el-table :data="family_list" border>
           <el-table-column label="选择" width="60">
             <template #default="scope">
-              <el-radio v-model="data.spec_id" :label="scope.row.spec_id" @change="FnEmit">&nbsp;</el-radio>
+              <!-- <el-radio v-model="data.spec_id" :label="scope.row.spec_id" @change="FnEmit">&nbsp;</el-radio> -->
+            <el-radio v-model="data.id" :label="scope.row.id" @change="FnEmit">&nbsp;</el-radio>
             </template>
           </el-table-column>
           <el-table-column prop="ecs_family_name" label="规格族"></el-table-column>
@@ -74,7 +75,8 @@ export default class updateSpec extends Vue{
   private cpu_ram_gpu_price = {};
   private data = {
     category_id: '',
-    spec_id: ''
+    spec_id: '',
+    id:'',
   };
   private async FnGetAllCpuRam() {
     let resData = await Service.get_all_cpu_ram();
@@ -128,12 +130,14 @@ export default class updateSpec extends Vue{
       this.family_list = resData.data.ecs_family_info;
       this.billing_info = deal_fee_info(resData.data.billing_info, true);
       this.data.spec_id = this.family_list[0].spec_id;
+      this.data.id = this.family_list[0]?.id;
       this.FnGetPrice()
       this.FnEmit()
     }
   }
   private FnGetDefaultFamily(spec_id: string) {
-    return this.family_list.find(item => item.spec_id === spec_id)
+    //item.spec_id
+    return this.family_list.find(item => item.id === spec_id)
   }
   private async FnGetPrice() {
     const reqData = {
@@ -157,7 +161,8 @@ export default class updateSpec extends Vue{
   }
   @Emit('fn-spec')
   private FnEmit() {
-    let row = this.FnGetDefaultFamily(this.data.spec_id)
+    // let row = this.FnGetDefaultFamily(this.data.spec_id)
+    let row = this.FnGetDefaultFamily(this.data.id)
     return {
       ecs_goods_id: row.ecs_goods_id,
       ecs_goods_name: row.ecs_family_name,

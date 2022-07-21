@@ -65,7 +65,7 @@
            </el-table-column>
            <el-table-column prop="customer" label="客户权限">
                <template slot-scope="scope">
-                   <span :class="scope.row.is_complete ? 'normal' : 'active'" v-if="!scope.row.customer || scope.row.customer.length===0">全部客户</span>
+                   <span :class="scope.row.is_complete ? 'normal' : 'active'" v-if="!scope.row.customer || scope.row.customer.length===0">{{scope.row.customer && scope.row.status==='gray_open'&& scope.row.customer.length===0 ? '-' : '全部客户'}}</span>
                    <span :class="scope.row.is_complete ? 'normal' : 'active'" v-else>{{scope.row.customer.join(',')}}</span>
                </template>
            </el-table-column>

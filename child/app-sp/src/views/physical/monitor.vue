@@ -241,7 +241,7 @@ export default class Monitor extends Vue{
     })
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
-      if (this.host_info.host_purpose !== 'GPU') {
+      if (this.host_info.host_purpose === 'CPU') {
         Vue.delete(this.tab_list, 'gpu')
       }
       this.FnGetChartData()
@@ -353,8 +353,8 @@ export default class Monitor extends Vue{
     this.gpu_temperature.legend = []
     if (resData.code === 'Success') {
       ecs_list = resData.data.ecs_list.filter(item => {
-        return item.status !== 'destroy'
-      })
+        return item.status !== 'destroy' && (this.host_info.host_purpose === 'GPU' ? true : item.is_gpu)
+      })      
     }
     Promise.all(ecs_list.map(item => {
       this.gpu_used.legend.push(item.ecs_name)
