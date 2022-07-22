@@ -80,16 +80,16 @@ export default class UpdateAttribute extends Vue{
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
-        {id:'all',name:'云盘/本地盘'}
+        {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
         if(this.rows.length>1 || (this.rows.length===1 && this.rows[0].backend_type==='')){
-            this.backend = 'block'
+            this.backend = 'local,block'
         }else{
-            this.backend = this.rows[0]?.backend_type
+            this.backend =this.rows[0]?.backend_type
         }
     }
     private async getHostTypes(){
@@ -153,7 +153,7 @@ export default class UpdateAttribute extends Vue{
             host_type:this.type,
             customer_ids:this.customer_id,
             spec_family_ids:this.family,
-            backend_type:this.backend==='all' ? 'local,block' : this.backend
+            backend_type:this.backend
         })
         if(res.code==='Success'){
              if(res.data.fail_host_list.length>0){
