@@ -44,7 +44,7 @@
               <el-descriptions-item label="所挂载的实例ID">{{disk_info.ecs_id || '-'}}</el-descriptions-item>
               <el-descriptions-item label="所挂载的实例名称"><pre>{{disk_info.ecs_name || '-'}}</pre></el-descriptions-item>
               <el-descriptions-item label="云盘是否随实例删除">
-                {{disk_info.is_follow_delete ? '是' : '否'}}
+                {{disk_info.ecs_id ? disk_info.is_follow_delete ? '是' : '否' : '-'}}
                   <!-- <el-button type="text" class="btn" :disabled="disk_info.status!=='running' || disk_info.disk_type_display==='系统盘'" @click="operate('edit_attr')">修改</el-button> -->
               </el-descriptions-item>
               <el-descriptions-item label="硬盘设备名">{{disk_info.mount_path || '-'}}</el-descriptions-item>

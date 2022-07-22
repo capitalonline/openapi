@@ -1097,9 +1097,9 @@ export default class App extends Vue {
     }
   }
   private async FnGetStatus() {
-    if (this.$store.state.status_list.length > 0) {
-      this.search_con.status.list = this.$store.state.status_list;
-    } else {
+    // if (this.$store.state.status_list.length > 0) {
+    //   this.search_con.status.list = this.$store.state.status_list;
+    // } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
         this.search_con.status.list = [];
@@ -1109,9 +1109,9 @@ export default class App extends Vue {
             type: key
           });
         }
-        this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
+        // this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
       }
-    }
+    // }
   }
   private async get_az_list() {
     const res = await EcsService.get_region_az_list({});
