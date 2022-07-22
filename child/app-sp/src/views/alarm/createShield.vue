@@ -27,6 +27,7 @@
                         :disabled="!!edit_id"
                         v-model="shieldData.scope" 
                         placeholder="请选择抑制范围"
+                        @change="changeScope"
                     >
                         <el-option
                             v-for="item in scopeList"
@@ -131,10 +132,14 @@
                         end-placeholder="结束日期">
                     </el-date-picker>
                 </div>
+                <!-- :picker-options="{
+                            disabledDate:FnDisEnd,
+                        }" -->
                 <div v-if="shieldData.timeScope===1" class="time">
                     <el-date-picker
                         v-model="shieldData.endTime"
                         :clearable="false"
+                        
                         type="datetime"
                         placeholder="选择时间">
                     </el-date-picker>
@@ -230,6 +235,9 @@ export default class CreateShield extends Vue{
             this.shieldData.mechanism = res.data.shield_mechanism;
             this.shieldData.scope = res.data.effective_scope;
             this.shieldData.timeScope = res.data.shield_time;
+            if(Number(this.shieldData.scope)===4){
+                this.conditionList = this.conditionList.filter(item=>item.label!=='id')
+            }
             if(this.shieldData.timeScope===0){
                 this.shieldData.timeRange =  res.data.shield_start_time!=='' && res.data.shield_end_time!=='' ? [res.data.shield_start_time,res.data.shield_end_time] : [];
             }else if(this.shieldData.timeScope===1){
@@ -256,6 +264,7 @@ export default class CreateShield extends Vue{
             this.scopeList = [...res.data.shield_scope];
             this.conditionList = res.data.condition_object;
             this.timeScopeList = res.data.shield_time;
+            this.IDConditionList = res.data.condition_object.filter(item=>item.label==='id')
             if(!this.edit_id){
                 this.shieldData.mechanism = this.mechanismList[0]?.id;
                 this.shieldData.scope = this.scopeList[0]?.id
@@ -290,6 +299,25 @@ export default class CreateShield extends Vue{
                 this.getStrategyInfo()
             }else{
                 this.getRuleInfo()
+            }
+        }
+    }
+    // private FnDisRange(date){
+    //     console.log('date',date)
+    //     return date
+    // }
+    // private FnDisEnd(time){
+    //     return time.getTime() < new Date().getTime() - 
+    // }
+    private changeScope(){
+        if(Number(this.shieldData.scope)===4){
+            this.conditionList = this.conditionList.filter(item=>item.label!=='id')
+            if(this.selectedIds.includes('id')){
+                this.delCondition('id')
+            }
+        }else{            
+            if(this.conditionList.filter(item=>item.label==='id').length===0){
+                this.conditionList = [...this.conditionList,...this.IDConditionList]
             }
         }
     }
