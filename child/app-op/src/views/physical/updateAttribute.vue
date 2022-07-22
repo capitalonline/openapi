@@ -87,7 +87,7 @@ export default class UpdateAttribute extends Vue{
         this.getCustomerList('',true);
         this.getFamilyList();
         if(this.rows.length>1 || (this.rows.length===1 && this.rows[0].backend_type==='')){
-            this.backend = 'block'
+            this.backend = 'local,block'
         }else{
             this.backend =this.rows[0]?.backend_type
         }
