@@ -207,8 +207,8 @@ export default class Contact extends Vue{
         this.$msgbox({
           title: '提示',
           message: h('p', null, [
-            h('span', null, `确定停止${row.shieldName}`),
-            h('i', { style: 'color: #455cc6' },),
+            h('span', null, `确定停止 `),
+            h('i', { style: 'color: #455cc6' },`${row.shieldName} `),
             h('span', null, ' 屏蔽策略吗? ')
           ]),
           showCancelButton: true,
