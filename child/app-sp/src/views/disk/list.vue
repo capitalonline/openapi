@@ -523,7 +523,7 @@ export default class extends Vue {
     this.mount_id=[]
     this.operate_type = ''
     this.toggleSelection()
-    console.log('val',val)
+    // console.log('val',val)
     if(val==='1'){
       this.current =1;
     }
