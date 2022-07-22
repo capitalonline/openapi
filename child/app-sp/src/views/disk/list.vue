@@ -247,12 +247,12 @@ export default class extends Vue {
     }
     this.search(this.req_data)
   }
-  @Watch("visible")
-  private watch_visble(nv,ov){
-    if(!nv){
-      this.close_disk()
-    }
-  }
+  // @Watch("visible")
+  // private watch_visble(nv,ov){
+  //   if(!nv && this.opera){
+  //     this.close_disk()
+  //   }
+  // }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
@@ -435,12 +435,12 @@ export default class extends Vue {
   //恢复或销毁云盘
   private restore(str:string){
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return item.status ==='deleted' && !item.is_follow_delete
+      return item.status ==='deleted' && !item.ecs_id
     })
     const fail_state:boolean = this.mount_id.every((item,index,arr)=>{
-      return (item.status ==='deleted' && !item.is_follow_delete) || item.status ==='build_fail'
+      return (item.status ==='deleted' && !item.ecs_id) || item.status ==='build_fail'
     })
-    if(str==="restore"){
+    if(str==="restore"){//恢复
       if(!flag){
         this.$message.warning('只允许对已删除且不随实例删除的云盘进行批量操作！')
         return;
@@ -505,9 +505,9 @@ export default class extends Vue {
     }else if(label==="delete"){
       return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="restore"){
-      return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
+      return obj.status==="deleted" && !obj.ecs_id && this.auth_list.includes(label)
     }else if(label==="destroy"){
-      return ((obj.status==="deleted" && obj.is_follow_delete===false) || obj.status ==='build_fail') && this.auth_list.includes(label)
+      return ((obj.status==="deleted" && !obj.ecs_id) || obj.status ==='build_fail') && this.auth_list.includes(label)
     }else if(label==="disk_capacity"){
       return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting" && this.auth_list.includes('disk_capacity')
     }else if(label==="edit_attr"){
@@ -518,12 +518,16 @@ export default class extends Vue {
       return obj.status==="waiting" && obj.is_charge===0 && this.auth_list.includes(label)
     }
   }
-  private close_disk(){
+  private close_disk(val:string='1'){
     this.visible = false
     this.mount_id=[]
     this.operate_type = ''
     this.toggleSelection()
-    this.current =1;
+    console.log('val',val)
+    if(val==='1'){
+      this.current =1;
+    }
+    
     this.getDiskList()
     
   }

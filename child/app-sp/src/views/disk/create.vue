@@ -212,7 +212,7 @@
             </div>
             <div class="button_box">
                 <el-card class="box-card">
-                    <div class="flex-between m-bottom20">
+                    <div class="flex-between m-bottom20" v-if="form_data.is_bill==='1'">
                         <div>总价：</div>
                         <div class="num_message price">{{total_price}}</div>
                     </div>

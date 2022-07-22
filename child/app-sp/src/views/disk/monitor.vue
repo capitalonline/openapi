@@ -5,7 +5,7 @@
             <disk-chart
                 :chart_id="'iops'"
                 :data="chartData"
-                :title="`IOPS(${chartData.iops && chartData.iops.unit ? chartData.iops.unit :''})`"
+                :title="`IOPS`"
             ></disk-chart>
         </el-card>
         <el-card class="m-bottom20">
