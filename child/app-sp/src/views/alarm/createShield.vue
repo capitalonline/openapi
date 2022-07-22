@@ -372,7 +372,6 @@ export default class CreateShield extends Vue{
                 if(this.shieldData.condition.some(item=>!item.value ||item.value.length===0)){
                     return;
                 }
-                console.log('this.shieldData',this.shieldData)
                 let list = []
                 this.shieldData.condition.map(item=>{
                     list.push({
