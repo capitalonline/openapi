@@ -44,6 +44,14 @@
                     <el-option v-for="item in familyList" :key="item.spec_family_id" :value="item.spec_family_id" :label="item.name"></el-option>
                 </el-select>
             </div>
+            <div class="m-bottom20">
+                <span>支持存储类型</span>
+                <el-select
+                    v-model="backend" 
+                >
+                    <el-option v-for="item in backendList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                </el-select>
+            </div>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
@@ -60,6 +68,7 @@ export default class UpdateAttribute extends Vue{
     @Prop({default:()=>[]}) rows!:any
     private type:String="";
     private use:String = "";
+    private backend:string=''
     private host_types=[]
     private host_uses=[];
     private customer_id:any=[];
@@ -68,10 +77,20 @@ export default class UpdateAttribute extends Vue{
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
+    private backendList:any=[
+        {id:'block',name:'云盘'},
+        {id:'local',name:'本地盘'},
+        {id:'local,block',name:'云盘/本地盘'}
+    ]
     created() {
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
+        if(this.rows.length>1 || (this.rows.length===1 && this.rows[0].backend_type==='')){
+            this.backend = 'local,block'
+        }else{
+            this.backend =this.rows[0]?.backend_type
+        }
     }
     private async getHostTypes(){
         let res:any =await Service.get_host_type({})
@@ -79,7 +98,7 @@ export default class UpdateAttribute extends Vue{
             this.host_types = res.data;
             this.type = this.host_types[0].type
             this.host_uses = this.host_types[0].list;
-            this.use = this.host_uses[0].use_type
+            this.use = this.host_uses[0].use_type;
         }
         
     }
@@ -134,6 +153,7 @@ export default class UpdateAttribute extends Vue{
             host_type:this.type,
             customer_ids:this.customer_id,
             spec_family_ids:this.family,
+            backend_type:this.backend
         })
         if(res.code==='Success'){
              if(res.data.fail_host_list.length>0){
