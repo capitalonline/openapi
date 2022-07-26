@@ -150,7 +150,7 @@ export default class Shield extends Vue{
             //flag为true时不能操作
             let applyFlag = list.some(item=>item.enable===1 || this.judgeDeadTime(item.shield_end_time))
             flag = !applyFlag
-        }else if(['stop','detail'].includes(type)){
+        }else if(['stop'].includes(type)){
             flag = !list.some(item=>item.enable===0)
         }else if(['edit','del'].includes(type)){
             flag = !list.some(item=>item.enable===1)
