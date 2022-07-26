@@ -19,7 +19,7 @@
             </el-table-column>
             <el-table-column prop="updated_time" label="修改时间">
                 <template slot-scope="scope">
-                    <span>{{moment(scope.row.created_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{moment(scope.row.updated_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operation" label="操作">
