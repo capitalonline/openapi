@@ -11,7 +11,7 @@
                     <el-select
                         :disabled="!!edit_id"
                         v-model="shieldData.mechanism" 
-                        placeholder="请选择已有策略"
+                        placeholder="请选择告警机制"
                     >
                         <el-option
                             v-for="item in mechanismList"
@@ -21,6 +21,10 @@
                         >
                         </el-option>
                     </el-select>
+                    <mark-tip :content="'静默机制：对符合条件的特定告警在特定时间范围内直接静默。'" class="m-left10">
+                        <el-button type="text"><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                    </mark-tip>
+                    
                 </el-form-item>
                 <el-form-item prop="scope" label="抑制范围">
                     <el-select
@@ -37,8 +41,17 @@
                         >
                         </el-option>
                     </el-select>
+                    <mark-tip :content="'抑制范围用来区分屏蔽条件‘故障资源ID’，若不选择‘故障资源ID’作为屏蔽条件，抑制范围只能选择默认。指定云服务器- 配置‘故障资源ID’需输入云服务器ID，屏蔽对象为对应云服务器；指定宿主机-配置‘故障资源ID’需输入宿主机名称，屏蔽对象为对应宿主机；指定宿主机下云服务器-配置‘故障资源ID’需输入宿主机名称，屏蔽对象为对应宿主机下的云服务器。'" class="m-left10">
+                        <el-button type="text"><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                    </mark-tip>
                 </el-form-item>
                 <el-form-item prop="condition" label="条件">
+                    <template #label>
+                        <span>条件</span>
+                        <mark-tip :content="'对告警信息进行判断，对满足条件的告警信息进行特定操作。多个条件之间为且关系，配置对象的值之间为或关系'" class="m-left10">
+                            <el-button type="text" ><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                        </mark-tip>
+                    </template>
                     <div class="content">
                         <div v-for="(con,index) in shieldData.condition" :key="con.label"  class="item">
                             <el-select v-model="con.label" @change="changeLabel(index)">
@@ -51,57 +64,70 @@
                                 >
                                 </el-option>
                             </el-select>
-                            <el-select v-model="con.oper" class="m-left10 m-right10">
+                            <el-select v-model="con.oper" class="m-left10 m-right10" @change="changeOperator(index)">
                                 <el-option
                                     v-for="item in operateIcon"
                                     :key="item.id"
                                     :label="item.name"
                                     :value="item.id"
                                 >
+                                <span v-if="Number(item.id)===1">
+                                    {{item.name}}
+                                    <mark-tip :content="'符合条件的告警在如下配置时间范围内被静默。'" class="m-left10">
+                                        <el-button type="text" ><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                                    </mark-tip>
+                                </span>
+                                <span v-else>{{item.name}}</span>
                                 </el-option>
                             </el-select>
-                            <template v-if="['id'].includes(con.label)">
-                                <el-input v-model="con.value" class="w-420" />
-                            </template>
-                            <template v-else-if="['customer_id'].includes(con.label)">
-                                <div class="w-420">
-                                    <customer :customers="con.value"  @FnCustomer="FnCustomer"></customer>
-                                </div>
-                            </template>
-                            <template v-else-if="['to_group','alertname'].includes(con.label)">
-                                <!--策略和规则-->
-                                <el-select
-                                    v-model="con.value" 
-                                    class="w-420"
-                                    filterable
-                                    multiple
-                                    :filter-method="con.label==='to_group'? getStrategyInfo : getRuleInfo"
-                                    @visible-change="changeValue($event,con.label)"
-                                >
-                                    <el-option
-                                        v-for="item in labelContent[con.label]"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.name"
+                            <template v-if="Number(con.oper)===0">
+                                <template v-if="['id'].includes(con.label)">
+                                    <el-input v-model="con.value" class="w-420" />
+                                </template>
+                                <template v-else-if="['customer_id'].includes(con.label)">
+                                    <div class="w-420">
+                                        <customer :customers="con.value"  @FnCustomer="FnCustomer"></customer>
+                                    </div>
+                                </template>
+                                <template v-else-if="['to_group','alertname'].includes(con.label)">
+                                    <!--策略和规则-->
+                                    <el-select
+                                        v-model="con.value" 
+                                        class="w-420"
+                                        filterable
+                                        multiple
+                                        :filter-method="con.label==='to_group'? getStrategyInfo : getRuleInfo"
+                                        @visible-change="changeValue($event,con.label)"
                                     >
-                                    </el-option>
-                                </el-select>
+                                        <el-option
+                                            v-for="item in labelContent[con.label]"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.name"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </template>
+                                <template v-else>
+                                    <el-select
+                                        v-model="con.value" 
+                                        class="w-420"
+                                    >
+                                        <el-option
+                                            v-for="item in labelContent[con.label]"
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.name"
+                                        >
+                                        </el-option>
+                                    </el-select>
+                                </template>
                             </template>
                             <template v-else>
-                                <el-select
-                                    v-model="con.value" 
-                                    class="w-420"
-                                >
-                                    <el-option
-                                        v-for="item in labelContent[con.label]"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.name"
-                                    >
-                                    </el-option>
-                                </el-select>
+                                <el-input v-model="con.value" placeholder="请输入正则表达式" class="w-420" />
+                                
                             </template>
-                            <el-button type="text" @click="delCondition(con.label)" v-if="shieldData.condition.length>1"><i class="el-icon-remove"></i></el-button>
+                            <el-button type="text" @click="delCondition(con.label)" v-if="shieldData.condition.length>1 && con.label!=='id'"><i class="el-icon-remove"></i></el-button>
                             <div v-if="!con.value || con.value.length===0" class="error_message err">请输入或选择条件值</div>
                         </div>
                          <el-button type="text" @click="addCondition" v-if="shieldData.condition.length < conditionList.length"><i class="el-icon-circle-plus"></i></el-button>
@@ -110,6 +136,12 @@
                     
                 </el-form-item>
                 <el-form-item prop="time" label="静默时间">
+                     <template #label>
+                        <span>静默时间</span>
+                        <mark-tip :content="'符合条件的告警在如下配置时间范围内被静默。'" class="m-left10">
+                            <el-button type="text" ><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                        </mark-tip>
+                    </template>
                     <el-select
                         v-model="shieldData.timeScope" 
                     >
@@ -127,19 +159,21 @@
                         v-model="shieldData.timeRange"
                         :clearable="false"
                         type="datetimerange"
+                        :editable="false"
+                        @blur="changeDate"
+                        :picker-options="FnRangePicker()"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
                     </el-date-picker>
                 </div>
-                <!-- :picker-options="{
-                            disabledDate:FnDisEnd,
-                        }" -->
+                
                 <div v-if="shieldData.timeScope===1" class="time">
                     <el-date-picker
                         v-model="shieldData.endTime"
                         :clearable="false"
-                        
+                        :editable="false"
+                        :picker-options="FnPicker()"
                         type="datetime"
                         placeholder="选择时间">
                     </el-date-picker>
@@ -160,7 +194,9 @@ import BackHeader from '../../components/backHeader.vue';
 import Customer from '../../components/customerInput.vue';
 // import {alarm_type} from '../../assets/alarm_data.ts';
 import HostService from '../../https/physical/list'
-import {deal_list} from '../../utils/transIndex'
+import {deal_list} from '../../utils/transIndex';
+import svgIcon from '@/components/svgIcon/index.vue';
+import MarkTip from '@/components/markTip.vue';
 import moment from 'moment';
 @Component({
     components:{
@@ -191,7 +227,9 @@ export default class CreateShield extends Vue{
     private IDConditionList:any=[]
     private timeScopeList:any=[];
     private operateIcon:any=[{id:0,name:'等于'},{id:1,name:'正则'}];
-    private customerList:any=[]
+    private customerList:any=[];
+    private minDate:any='';
+    private maxDate:any=''
     private labelContent:any={
         to_group:[],
         alertname:[],
@@ -235,7 +273,7 @@ export default class CreateShield extends Vue{
             this.shieldData.mechanism = res.data.shield_mechanism;
             this.shieldData.scope = res.data.effective_scope;
             this.shieldData.timeScope = res.data.shield_time;
-            if(Number(this.shieldData.scope)===4){
+            if(Number(this.shieldData.scope)===3){
                 this.conditionList = this.conditionList.filter(item=>item.label!=='id')
             }
             if(this.shieldData.timeScope===0){
@@ -302,17 +340,51 @@ export default class CreateShield extends Vue{
             }
         }
     }
-    // private FnDisRange(date){
-    //     console.log('date',date)
-    //     return date
-    // }
-    // private FnDisEnd(time){
-    //     return time.getTime() < new Date().getTime() - 
-    // }
+    private FnPicker(){
+        let selectedTime = moment(this.shieldData.endTime).format('YYYY-MM-DD')
+        let date = moment(new Date()).format('YYYY-MM-DD')
+        let h = new Date().getHours()
+        let m = new Date().getMinutes()
+        let s = new Date().getSeconds()
+        let str=`${h}:${m}:00`
+        if(this.shieldData.endTime && selectedTime!==date){
+            str='00:00:00'
+        }
+        return{
+            disabledDate:(time)=>{
+                return time.getTime() < Date.now() - 8.64e7
+            },
+            selectableRange:`${str}-23:59:59`
+        }
+    }
+    private changeDate(){
+        this.minDate='';
+        this.maxDate=''
+    }
+    private FnRangePicker(){
+        let selectedTime = moment(this.shieldData.endTime).format('YYYY-MM-DD')
+        let date = moment(new Date()).format('YYYY-MM-DD')
+        let h = new Date().getHours()
+        let m = new Date().getMinutes()
+        let str=`${h}:${m}:00`
+        if(this.shieldData.endTime && selectedTime!==date){
+            str='00:00:00'
+        }
+        return{
+            onPick:({ maxDate, minDate })=>{
+                this.maxDate = maxDate ? maxDate.getTime() : '';
+                this.minDate = minDate.getTime();
+            },
+            disabledDate:(time)=>{
+                return this.minDate && !this.maxDate ? time.getTime() < Date.now() - 8.64e7 : false
+            },
+            selectableRange:`${str}-23:59:59`
+        }
+    }
     private changeScope(){
-        if(Number(this.shieldData.scope)===4){
+        if(Number(this.shieldData.scope)===3){
             this.conditionList = this.conditionList.filter(item=>item.label!=='id')
-            if(this.selectedIds.includes('id')){
+            if(this.selectedIds.includes('id')){                
                 this.delCondition('id')
             }
         }else{            
@@ -322,6 +394,9 @@ export default class CreateShield extends Vue{
         }
     }
     private changeLabel(index){
+        this.shieldData.condition[index].value=''
+    }
+    private changeOperator(index){
         this.shieldData.condition[index].value=''
     }
     private async getStrategyInfo(name:string=''){
@@ -383,6 +458,10 @@ export default class CreateShield extends Vue{
                     return;
                 }
                 if(this.shieldData.condition.some(item=>!item.value ||item.value.length===0)){
+                    return;
+                }
+                if(Number(this.shieldData.scope)!==3 && !this.selectedIds.includes('id')){
+                    this.$message.warning('抑制范围非默认时故障资源ID必选！')
                     return;
                 }
                 console.log('this.shieldData',this.shieldData)
