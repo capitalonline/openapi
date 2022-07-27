@@ -153,6 +153,7 @@ export default class Contact extends Vue{
             instanceID:search_data.instanceID,
             alarmType:search_data.type,
             contactGroupName:search_data.contact,
+            strategyName:search_data.strategyName,
             startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
             endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
             dealStatus:this.dealStatus.length===0 ? "" : this.dealStatus[0],

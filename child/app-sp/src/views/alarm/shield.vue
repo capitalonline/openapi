@@ -19,7 +19,7 @@
             </el-table-column>
             <el-table-column prop="updated_time" label="修改时间">
                 <template slot-scope="scope">
-                    <span>{{moment(scope.row.created_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{moment(scope.row.updated_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operation" label="操作">
@@ -146,7 +146,7 @@ export default class Shield extends Vue{
             //flag为true时不能操作
             let applyFlag = list.some(item=>item.enable===1 || this.judgeDeadTime(item.shield_end_time))
             flag = !applyFlag
-        }else if(['stop','detail'].includes(type)){
+        }else if(['stop'].includes(type)){
             flag = !list.some(item=>item.enable===0)
         }else if(['edit','del'].includes(type)){
             flag = !list.some(item=>item.enable===1)
