@@ -475,7 +475,7 @@ export default class CreateShield extends Vue{
                     this.$message.warning('抑制范围非默认时故障资源ID必选！')
                     return;
                 }
-                console.log('this.shieldData',this.shieldData)
+                console.log('this.shieldData--',this.shieldData)
                 let list = []
                 this.shieldData.condition.map(item=>{
                     list.push({
