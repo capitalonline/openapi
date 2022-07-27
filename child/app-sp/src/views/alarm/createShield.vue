@@ -73,9 +73,16 @@
                                 >
                                 <span v-if="Number(item.id)===1">
                                     {{item.name}}
-                                    <mark-tip :content="'符合条件的告警在如下配置时间范围内被静默。'" class="m-left10">
-                                        <el-button type="text" ><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
-                                    </mark-tip>
+                                    <el-tooltip 
+                                        class="m-left10"
+                                        :placement="'right'" 
+                                        :effect="'light'"
+                                        popper-class="tooltip-class">
+                                        <template #content>
+                                            <span v-html="'选择正则需输入正则表达式。<br>例：以 Hello 开头：^Hello<br>以 Hello 结尾：Hello$<br>包含 Hello ：Hello'"></span>
+                                        </template>
+                                        <el-button type="text"><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
+                                    </el-tooltip>
                                 </span>
                                 <span v-else>{{item.name}}</span>
                                 </el-option>
@@ -306,7 +313,10 @@ export default class CreateShield extends Vue{
             this.IDConditionList = res.data.condition_object.filter(item=>item.label==='id')
             if(!this.edit_id){
                 this.shieldData.mechanism = this.mechanismList[0]?.id;
-                this.shieldData.scope = this.scopeList[0]?.id
+                this.shieldData.scope = this.scopeList[0]?.id;                
+                if(Number(this.shieldData.scope)===3){
+                    this.conditionList = this.conditionList.filter(item=>item.label!=='id')
+                }
                 this.shieldData.condition[0].label =this.conditionList[0]?.label
                 this.shieldData.condition[0].oper = this.operateIcon[0].id
                 this.shieldData.timeScope = this.timeScopeList[0]?.id
