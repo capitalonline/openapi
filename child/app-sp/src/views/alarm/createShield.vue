@@ -135,7 +135,7 @@
                                 
                             </template>
                             <el-button type="text" @click="delCondition(con.label)" v-if="shieldData.condition.length>1 && con.label!=='id'"><i class="el-icon-remove"></i></el-button>
-                            <div v-if="!con.value || con.value.length===0" class="error_message err">请输入或选择条件值</div>
+                            <div v-if="!con.value || con.value.length===0" class="error_message err">{{Number(con.oper)===0 ? con.label==='id' ? '输入故障资源ID，多个值用英文逗号隔开' : '请输入或选择条件值' : '输入正则表达式，多个值用英文逗号隔开'}}</div>
                         </div>
                          <el-button type="text" @click="addCondition" v-if="shieldData.condition.length < conditionList.length"><i class="el-icon-circle-plus"></i></el-button>
 
