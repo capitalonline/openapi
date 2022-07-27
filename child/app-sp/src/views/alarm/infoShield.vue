@@ -40,6 +40,10 @@
                         v-model="formData.timeRange"
                         :clearable="false"
                         type="datetimerange"
+                        popper-class="date-time"
+                        :editable="false"
+                        @blur="changeDate"
+                        :picker-options="FnRangePicker()"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期">
@@ -49,6 +53,8 @@
                     <el-date-picker
                         v-model="formData.endTime"
                         :clearable="false"
+                        :editable="false"
+                        :picker-options="FnPicker()"
                         type="datetime"
                         placeholder="选择时间">
                     </el-date-picker>
@@ -71,6 +77,8 @@ import moment from 'moment';
 export default class InfoShield extends Vue{
     @Prop({default:()=>{}})info!:any;
     @PropSync('visible')visibleSync!:boolean;
+    private minDate:any='';
+    private maxDate:any=''
     private formData={
         name:'',
         timeScope:'',
@@ -121,6 +129,48 @@ export default class InfoShield extends Vue{
             if(this.info.shieldID){
                 this.getShieldDetail()
             }
+        }
+    }
+    private FnPicker(){
+        let selectedTime = moment(this.formData.endTime).format('YYYY-MM-DD')
+        let date = moment(new Date()).format('YYYY-MM-DD')
+        let h = new Date().getHours()
+        let m = new Date().getMinutes()
+        let s = new Date().getSeconds()
+        let str=`${h}:${m}:00`
+        if(this.formData.endTime && selectedTime!==date){
+            str='00:00:00'
+        }
+        return{
+            disabledDate:(time)=>{
+                return time.getTime() < Date.now() - 8.64e7
+            },
+            selectableRange:`${str}-23:59:59`
+        }
+    }
+    private changeDate(){
+        this.minDate='';
+        this.maxDate=''
+    }
+    private FnRangePicker(){
+        let selectedTime = moment(this.formData.endTime).format('YYYY-MM-DD')
+        let date = moment(new Date()).format('YYYY-MM-DD')
+        let h = new Date().getHours()
+        let m = new Date().getMinutes()
+        let str=`${h}:${m}:00`
+        if(this.formData.endTime && selectedTime!==date){
+            str='00:00:00'
+        }
+        return{
+            onPick:({ maxDate, minDate })=>{
+                this.maxDate = maxDate ? maxDate.getTime() : '';
+                this.minDate = minDate.getTime();
+            },
+            disabledDate:(time)=>{
+                return this.minDate && !this.maxDate ? time.getTime() < Date.now() - 8.64e7 : false
+            },
+            // selectableRange:[`${str}-23:59:59`,'18:30:00-20:32:00']
+            // selectableRange:[`06:00:00-08:59:59`,'18:30:00-20:32:00']
         }
     }
     private confirm(){
