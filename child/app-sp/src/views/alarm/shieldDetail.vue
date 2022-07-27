@@ -9,12 +9,16 @@
         <div class="box">
             <el-descriptions title="" :column="1" labelClassName='label'>
                 <el-descriptions-item v-for="(item,i) in info" :key="i" :label="item.label">
-                    <span v-html="item.value" v-if="i!=='conditions'"></span>
-                    <span v-else>
+                    <span v-html="item.value"></span>
+                    <!-- <span v-else>
                         <span v-for="inn in item.value" :key="inn.id" class="item"><span class="item-label">{{inn.condition_object_ch}} : </span>{{inn.condition_value}}<br></span>
-                    </span>
+                    </span> -->
                 </el-descriptions-item>
             </el-descriptions>
+            <el-table :data="conditions" border class="m-top10">
+                <el-table-column prop="condition_object_ch" label="条件对象" align="center"></el-table-column>
+                <el-table-column prop="condition_value" label="取值" align="center"></el-table-column>
+            </el-table>
         </div>
     </el-dialog>  
 </template>
@@ -33,9 +37,10 @@ export default class ShieldDetail extends Vue{
         shield_name:{label:'屏蔽名称',value:''},
         shield_mechanism_ch:{label:'告警机制',value:''},
         effective_scope_ch:{label:'抑制范围',value:''},
-        conditions:{label:'条件',value:[]},
+        // conditions:{label:'条件',value:[]},
         shield_time_ch:{label:'静默时间',value:''},
     }
+    private conditions:any=[]
     private id:string=this.detaiId
     created() {
         this.detail()
@@ -46,9 +51,10 @@ export default class ShieldDetail extends Vue{
             this.info.shield_name.value = res.data.shield_name;
             this.info.shield_mechanism_ch.value = res.data.shield_mechanism_ch;
             this.info.effective_scope_ch.value = res.data.effective_scope_ch;
-            this.info.conditions.value = res.data.conditions;
+            this.conditions = res.data.conditions;
+            
             let obj={
-                0:'<div class="m-top10">'+res.data.shield_start_time+'——'+res.data.shield_end_time+'</div>',
+                0:'<div class="m-top10">'+res.data.shield_start_time+' —— '+res.data.shield_end_time+'</div>',
                 1:'<div class="m-top10">'+res.data.shield_end_time+'</div>',
                 2:''
             }
@@ -59,7 +65,7 @@ export default class ShieldDetail extends Vue{
 </script>
 <style lang="scss">
 .box{
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
 
 }
