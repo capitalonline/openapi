@@ -324,9 +324,6 @@ export default class CreateShield extends Vue{
             if(this.edit_id){
                 this.getDetail()
             }
-            // }else{
-                
-            // }
             
         }
     }
