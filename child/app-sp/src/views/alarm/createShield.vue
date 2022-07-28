@@ -54,7 +54,7 @@
                     </template>
                     <div class="content">
                         <div v-for="(con,index) in shieldData.condition" :key="con.label"  class="item">
-                            <el-select v-model="con.label" @change="changeLabel(index)">
+                            <el-select v-model="con.label" @change="changeLabel(index)" :disabled="con.label==='id'">
                                 <el-option
                                     v-for="item in conditionList"
                                     :disabled="selectedIds.includes(item.label)"
@@ -119,6 +119,7 @@
                                     <el-select
                                         v-model="con.value" 
                                         class="w-420"
+                                        multiple
                                     >
                                         <el-option
                                             v-for="item in labelContent[con.label]"
@@ -281,9 +282,10 @@ export default class CreateShield extends Vue{
             this.shieldData.mechanism = res.data.shield_mechanism;
             this.shieldData.scope = res.data.effective_scope;
             this.shieldData.timeScope = res.data.shield_time;
-            if(Number(this.shieldData.scope)===3){
-                this.conditionList = this.conditionList.filter(item=>item.label!=='id')
-            }
+            // if(Number(this.shieldData.scope)===3){
+            //     this.conditionList = this.conditionList.filter(item=>item.label!=='id')
+            // }
+            this.changeScope()
             if(this.shieldData.timeScope===0){
                 this.shieldData.timeRange =  res.data.shield_start_time!=='' && res.data.shield_end_time!=='' ? [res.data.shield_start_time,res.data.shield_end_time] : [];
             }else if(this.shieldData.timeScope===1){
@@ -291,11 +293,10 @@ export default class CreateShield extends Vue{
             }
             let list:any=[];
             res.data.conditions.map(item=>{
-                let len = item.condition_value.split(',')
                 let obj = {
                     label:item.condition_object,
                     oper:item.operator,
-                    value:['customer_id','to_group','alertname'].includes(item.condition_object) ? len : len[0],
+                    value:Number(item.operator)===0 ? !['id'].includes(item.condition_object) ? item.condition_value.split(',') : item.condition_value:item.condition_value,
                     id:item.id
                 }   
                 list.push(obj)
@@ -311,18 +312,22 @@ export default class CreateShield extends Vue{
             this.conditionList = res.data.condition_object;
             this.timeScopeList = res.data.shield_time;
             this.IDConditionList = res.data.condition_object.filter(item=>item.label==='id')
-            if(!this.edit_id){
-                this.shieldData.mechanism = this.mechanismList[0]?.id;
-                this.shieldData.scope = this.scopeList[0]?.id;                
-                if(Number(this.shieldData.scope)===3){
-                    this.conditionList = this.conditionList.filter(item=>item.label!=='id')
-                }
-                this.shieldData.condition[0].label =this.conditionList[0]?.label
-                this.shieldData.condition[0].oper = this.operateIcon[0].id
-                this.shieldData.timeScope = this.timeScopeList[0]?.id
-            }else{
+            
+            // if(!this.edit_id){
+            this.shieldData.mechanism = this.mechanismList[0]?.id;
+            this.shieldData.scope = this.scopeList[0]?.id;   
+            if(Number(this.shieldData.scope)===3){
+                this.conditionList = this.conditionList.filter(item=>item.label!=='id');
+            }             
+            this.shieldData.condition[0].label =Number(this.shieldData.scope)===3 ? this.conditionList[0]?.label :this.IDConditionList[0]?.label
+            this.shieldData.condition[0].oper = this.operateIcon[0].id
+            this.shieldData.timeScope = this.timeScopeList[0]?.id
+            if(this.edit_id){
                 this.getDetail()
             }
+            // }else{
+                
+            // }
             
         }
     }
@@ -403,6 +408,15 @@ export default class CreateShield extends Vue{
             if(this.conditionList.filter(item=>item.label==='id').length===0){
                 this.conditionList = [...this.conditionList,...this.IDConditionList]
             }
+            if(!this.selectedIds.includes('id')){
+                this.shieldData.condition.unshift({
+                    label:this.IDConditionList[0].label,
+                    oper:0,
+                    value:''
+
+                })
+            }
+            
         }
     }
     private changeLabel(index){
