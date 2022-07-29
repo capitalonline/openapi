@@ -243,7 +243,7 @@ export default class CreateShield extends Vue{
         alertname:[],
         region:[],
         az:[],
-        serverity:[
+        severity:[
             {
                 id:'2',
                 name:'严重',
