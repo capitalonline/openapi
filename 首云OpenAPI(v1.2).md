@@ -270,7 +270,7 @@
 ```python
 def percentEncode(str):
   	"""将特殊转义字符替换"""
-    res = urllib.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
+    res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
     res = res.replace('%7E', '~')
@@ -306,7 +306,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
     D['Signature'] = signature
-    url = url + '/?' + urllib.urlencode(D)
+    url = url + '/?' + urllib.parse.urlencode(D)
     return url
 ```
 
@@ -430,7 +430,7 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create vm error: %s" % result.get("Message"))
+        print("create vm error: %s" % result.get("Message"))
     return result.get("TaskId")
 ```
 
@@ -492,7 +492,7 @@ def delete_instance(vm_ids):
     res = requests.post(url,json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     return True
 ```
@@ -678,7 +678,7 @@ def update_vm(vm_id):
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
-    print result
+    print(result)
 ```
 
 ### 7.CreateDisk
@@ -887,7 +887,7 @@ def reset_os(vm_id, os_id):
     }
     res = requests.post(url, json=body)
     result = json.loads(res.ocntent)
-    print result
+    print(result)
 ```
 
 ### 11.DescribeInstances
@@ -1019,7 +1019,7 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vm error."
+        print("get vm error.")
         return None
     return result.get("Data")
 ```
@@ -1085,8 +1085,8 @@ def up_card(InterfaceId, InstanceId):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "up card error."
-        print result.get("Message")
+        print("up card error.")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -1148,8 +1148,8 @@ def down_card(InterfaceId, InstanceId):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "down card error."
-        print result.get("Message")
+        print("down card error.")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -3047,7 +3047,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vdc info error."
+        print("get vdc info error.")
         return None
     data = result.get("Data")
     return data
@@ -3131,7 +3131,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "create vdc error."
+        print("create vdc error.")
         return None
     task_id = result.get("TaskId")
     return task_id
@@ -3347,7 +3347,7 @@ def modify_public_qos(publicId, qos):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -3953,7 +3953,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create GPN error: %s" % result.get("Message"))
+        print("create GPN error: %s" % result.get("Message"))
     return result.get("TaskId")
 ```
 
@@ -9744,7 +9744,7 @@ def queryTask():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -9829,7 +9829,7 @@ def querySites():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -9926,7 +9926,7 @@ def queryProducts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10079,7 +10079,7 @@ def queryImages():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10163,7 +10163,7 @@ def queryVmPrice():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10249,7 +10249,7 @@ def updateOrder():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10336,7 +10336,7 @@ def renewalOrder():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10413,7 +10413,7 @@ def querySubAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10483,7 +10483,7 @@ def createSubAccount():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return resul
 ```
 
@@ -10576,7 +10576,7 @@ def createSubAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10644,7 +10644,7 @@ def changeSubAccountName():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10712,7 +10712,7 @@ def changeSubAccountRemark():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10786,7 +10786,7 @@ def createDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10860,7 +10860,7 @@ def supplyDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11013,7 +11013,7 @@ def getDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11156,7 +11156,7 @@ def getCustomNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11295,7 +11295,7 @@ def getLineBillingScheme():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11396,7 +11396,7 @@ def getEipPrice():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11466,7 +11466,7 @@ def queryVms():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11556,7 +11556,7 @@ def queryVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11626,7 +11626,7 @@ def queryExpireVms():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11740,7 +11740,7 @@ def createVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11820,7 +11820,7 @@ def operateVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11896,7 +11896,7 @@ def rebuildVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11972,7 +11972,7 @@ def deleteVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12038,7 +12038,7 @@ def changeVmName():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12104,7 +12104,7 @@ def updateVmLabels():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12170,7 +12170,7 @@ def changeAccount():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12256,7 +12256,7 @@ def unbindAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12344,7 +12344,7 @@ def bindAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12478,7 +12478,7 @@ def get_region_goods(site_code):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get site goods error."
+        print( "get site goods error.")
         return None
     data = result.get("Data")
     wan_goods = data.get("WanGoods")
@@ -12552,7 +12552,7 @@ def get_status(task_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "task status error."
+        print("task status error.")
         return None
     return result.get("Data")
 ```
@@ -12837,7 +12837,7 @@ def get_status(task_id):
 ```python
 def percentEncode(str):
   	"""转换特殊符号"""
-    res = urllib.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
+    res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
     res = res.replace('%7E', '~')
@@ -12873,7 +12873,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
     D['Signature'] = signature
-    url = url + '/?' + urllib.urlencode(D)
+    url = url + '/?' + urllib.parse.urlencode(D)
     return url
 ```
 
@@ -12904,7 +12904,7 @@ def descrive_public_qos(vdc_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vdc info error."
+        print("get vdc info error.")
     data = result.get("Data")
     if len(data) > 0:
         vdcInfo = data[0]
@@ -12964,7 +12964,7 @@ def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vm error."
+        print("get vm error.")
         return None
     return result.get("Data")
 ```
@@ -13052,7 +13052,7 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create vm error: %s" % result.get("Message"))
+        print("create vm error: %s" % result.get("Message"))
         return None
     return result.get("TaskId")
 ```
@@ -13095,7 +13095,7 @@ def modify_public_qos(publicId, qos):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     task_id = result.get("TaskId")
     return task_id
@@ -13139,7 +13139,7 @@ def modify_vm_charge_type(vm_id, ):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     return True
 ```
@@ -13174,7 +13174,7 @@ def get_status(task_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "task status error."
+        print("task status error.")
         return None
     return result.get("Data")
 ```
@@ -13214,7 +13214,7 @@ def create_template(vm_id):
     }
     res = requests.get(url, json=body)
     result = json.loads(res.content)
-    print result
+    print(result)
 ```
 
 ​	**返回示例**
