@@ -181,23 +181,14 @@
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
        * [3.DescribeImage](#3describeimage)
-     
        * [4.CreateInstance](#4createinstance)
-     
        * [5.ModifyInstanceName](#5modifyinstancename)
-     
        * [6.DescribeInstanceList](#6describeinstancelist)
-     
        * [7.DescribePrice](#7describeprice)
-     
        * [8.DescribeInstance](#8describeinstance)
-     
        * [9.DeleteInstance](#9deleteinstance)
-     
        * [10.OperateInstance](#10operateinstance)
-     
        * [11.ModifyInstancePassword](#11modifyinstancepassword)
-     
        * [12.DescribeInstanceStatus](#12describeinstancestatus)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
