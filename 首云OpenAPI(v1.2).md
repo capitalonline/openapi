@@ -177,6 +177,28 @@
        * [28.ChangeAccount](#28ChangeAccount)
        * [29.UnbindAccounts](#29UnbindAccounts)
        * [30.BindAccounts](#30BindAccounts)
+     * [弹性云服务器ECS相关](#弹性云服务器ECS相关)
+       * [1.DescribeRegions](#1describeregions)
+       * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
+       * [3.DescribeImage](#3describeimage)
+     
+       * [4.CreateInstance](#4createinstance)
+     
+       * [5.ModifyInstanceName](#5modifyinstancename)
+     
+       * [6.DescribeInstanceList](#6describeinstancelist)
+     
+       * [7.DescribePrice](#7describeprice)
+     
+       * [8.DescribeInstance](#8describeinstance)
+     
+       * [9.DeleteInstance](#9deleteinstance)
+     
+       * [10.OperateInstance](#10operateinstance)
+     
+       * [11.ModifyInstancePassword](#11modifyinstancepassword)
+     
+       * [12.DescribeInstanceStatus](#12describeinstancestatus)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -6233,7 +6255,7 @@ def describe_bms_images():
 | CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
 | CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
 | SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
-| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     | 
+| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     |
 | PortMode            | string | 否      | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上|
 
 **返回数据：**
@@ -11585,7 +11607,7 @@ def queryVm():
 | Data       | list     | []       | 返回数据                  |
 | vmName     | string   | “”       | 云桌面的名称              |
 | billMethod | int      | “”       | 计费类型                  |
-| expireTime | string   | “”       | 包月到期时间              | 
+| expireTime | string   | “”       | 包月到期时间              |
 | status     | string   | “”       | 状态                      |
 
    **错误码:**
@@ -12346,6 +12368,1297 @@ def bindAccounts():
     if result.get("Code") != "Success":
         print("request error: %s" % result.get("Message"))
     return result
+```
+
+## 弹性云服务器ECS相关
+
+### 1.DescribeRegions
+
+**Action**: DescribeRegions
+
+**描述**：获取弹性云服务器ECS可售的地域可用区信息
+
+**请求地址**:	cdsapi.capitalonline.net/ecs/v1/open_api/ecs/region_az_info
+
+**请求方法**:	GET
+
+**返回参数**：
+
+| 名称              | 类型   | 示例值                               | 描述               |
+| ----------------- | ------ | ------------------------------------ | ------------------ |
+| code              | string | Success                              | 返回码             |
+| code_msg          | string | success                              | 返回码对应基础信息 |
+| message           | string | 获取地域可用区信息成功               | 返回详细描述信息   |
+| region_group_name | string | 中国                                 | 大区名称           |
+| region_list       | list   | []                                   | 地域列表           |
+| region_id         | string | 39c6ed64-8d5f-11ec-9247-5293695d0ddd | 地域id             |
+| region_name       | string | 宿迁                                 | 地域名称           |
+| az_id             | string | f7c3c7a6-8d5f-11ec-9311-5293695d0ddd | 可用区id           |
+| az_name           | string | 宿迁B                                | 可用区名称         |
+
+**请求示例**
+
+```python
+def region_az_info():
+    """
+    获取地区可用区信息
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/region_az_info'
+    action = "DescribeRegions"
+    method = "GET"
+    param = {}
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取地域可用区信息成功！",
+    "data": [
+        {
+            "region_id": "39c6ed64-8d5f-11ec-9247-5293695d0ddd",
+            "region_group_name": "中国",
+            "region_list": [
+                {
+                    "region_name": "宿迁",
+                    "az_list": [
+                        {
+                            "az_id": "f7c3c7a6-8d5f-11ec-9311-5293695d0ddd",
+                            "az_name": "宿迁A"
+                        },
+                        {
+                            "az_id": "09a38804-c1ee-11ec-bd22-4641dfd57315",
+                            "az_name": "宿迁B"
+                        }                      
+                    ]
+                }
+            ]
+        }
+       
+    ]
+}
+```
+
+### 2.DescribeEcsFamilyInfo
+
+**Action**: DescribeEcsFamilyInfo
+
+**描述**：获取弹性云服务器ECS计算类型规格信息
+
+**请求**URL：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/ecs_family_info
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数           | 要求 | 类型   | 说明                                    |
+| -------------- | ---- | ------ | --------------------------------------- |
+| az_id          | 必选 | string | 可用区id                                |
+| billing_method | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月 |
+
+**返回参数**
+
+| 参数               | 类型   | 示例                                 | 说明           |
+| ------------------ | ------ | ------------------------------------ | -------------- |
+| ecs_family_info    | dict   | {}                                   | 计算类型族信息 |
+| ecs_family_name    | string | 极速渲染型re3                        | 规格族名称     |
+| spec_list          | list   | []                                   | 规格列表       |
+| cpu                | int    | 16                                   | cpu大小        |
+| ram                | int    | 32                                   | 内存大小       |
+| gpu                | int    | 1                                    | 显卡数量       |
+| gpu_show_type      | string | NVIDIA RTX 3090                      | 显卡型号       |
+| gpu_type_id        | string | da67104f-c8e3-462b-99fc-1329c2872675 | 显卡类型id     |
+| support_gpu_driver | string | Geforce                              | 显卡驱动类型   |
+
+**请求示例**
+
+```python
+def ecs_family_info():
+    """
+    获取计算类型族
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/ecs_family_info'
+    action = "DescribeEcsFamilyInfo"
+    method = "GET"
+    param = {
+        "az_id": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "billing_method": "0"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取云服务器类型成功！",
+    "data": {
+        "ecs_family_info": [
+            {
+                "ecs_family_name": "CPU计算型C1",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 2,
+                        "ram": 4,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    },
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 4,
+                        "ram": 8,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    }
+                ]
+            },
+            {
+                "ecs_family_name": "CPU计算型C2",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 2,
+                        "ram": 4,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    },
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 4,
+                        "ram": 8,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    }
+                ]
+            },
+            {
+                "ecs_family_name": "CPU计算型C3",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 4,
+                        "ram": 8,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    },
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 8,
+                        "ram": 16,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    },
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 16,
+                        "ram": 32,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    }
+                ]
+            },
+            {
+                "ecs_family_name": "CPU密集计算型I3",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "",
+                        "gpu_type_id": "",
+                        "cpu": 4,
+                        "ram": 4,
+                        "gpu": 0,
+                        "support_gpu_driver": ""
+                    }
+                ]
+            },
+            {
+                "ecs_family_name": "极速渲染型re2",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "NVIDIA RTX 3090",
+                        "gpu_type_id": "da67104f-c8e3-462b-99fc-1329c2872675",
+                        "cpu": 16,
+                        "ram": 32,
+                        "gpu": 1,
+                        "support_gpu_driver": "Geforce"
+                    },
+                    {
+                        "gpu_show_type": "NVIDIA RTX 3090",
+                        "gpu_type_id": "da67104f-c8e3-462b-99fc-1329c2872675",
+                        "cpu": 64,
+                        "ram": 128,
+                        "gpu": 2,
+                        "support_gpu_driver": "Geforce"
+                    }
+                ]
+            },
+            {
+                "ecs_family_name": "极速渲染型re3",
+                "spec_list": [
+                    {
+                        "gpu_show_type": "NVIDIA RTX 3090",
+                        "gpu_type_id": "da67104f-c8e3-462b-99fc-1329c2872675",
+                        "cpu": 16,
+                        "ram": 32,
+                        "gpu": 1,
+                        "support_gpu_driver": "Geforce"
+                    },
+                    {
+                        "gpu_show_type": "NVIDIA RTX 3090",
+                        "gpu_type_id": "da67104f-c8e3-462b-99fc-1329c2872675",
+                        "cpu": 32,
+                        "ram": 64,
+                        "gpu": 2,
+                        "support_gpu_driver": "Geforce"
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+### 3.DescribeImage
+
+**Action**: DescribeImage
+
+**描述**：获取镜像信息
+
+**请求**URL：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/image_info
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数  | 要求 | 类型   | 说明     |
+| ----- | ---- | ------ | -------- |
+| az_id | 必选 | string | 可用区id |
+
+**返回参数**
+
+| 参数               | 类型   | 示例                                 | 说明                                                         |
+| ------------------ | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| **public**         | dict   | {}                                   | 公共镜像                                                     |
+| **private**        | dict   | {}                                   | 私有镜像                                                     |
+| os_versions        | dict   | {}                                   | 镜像类型字典                                                 |
+| os_id              | string | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
+| display_name       | string | create-image1                        | 镜像名称                                                     |
+| os_type            | string | Centos                               | 系统类型                                                     |
+| os_version         | string | 7.4                                  | 镜像版本                                                     |
+| os_bit             | string | 64                                   | 镜像系统位数                                                 |
+| size               | int    | 24                                   | 镜像大小（单位：GB）                                         |
+| username           | string | root                                 | 系统用户名                                                   |
+| support_type       | list   | ["cpu","gpu"]                        | 支持的云服务器类型("cpu"、"gpu")                             |
+| support_gpu_driver | string | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
+
+**请求示例**
+
+```python
+def image_info():
+    """
+    获取镜像信息
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/image_info'
+    action = "DescribeImage"
+    method = "GET"
+    param = {
+        "az_id": "16e6e380-729d-11ec-b62a-1e00e202ff80"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取镜像信息成功！",
+    "data": {
+        "public": {
+            "name": "公共镜像",
+            "os_template_type": "public",
+            "os_versions": {
+                "Centos": [
+                    {
+                        "os_id": "ee300237-0ef4-40a9-ad79-7470262d4a2f",
+                        "display_name": "Centos 7.4 64位",
+                        "os_type": "Centos",
+                        "os_version": "7.4",
+                        "os_bit": 64,
+                        "size": 24
+                        "username": "root",
+                        "support_type": [
+                            "cpu"
+                        ],
+                        "support_gpu_driver": "",
+                    },
+                    {
+                        "os_id": "b2624c3c-d28e-4586-bf1a-20db4be3f680",
+                        "display_name": "Centos 7.4 64位",
+                        "os_type": "Centos",
+                        "os_version": "7.4",
+                        "os_bit": 64,
+                        "size": 24
+                        "username": "root",
+                        "support_type": [
+                            "gpu"
+                        ], 
+                       "support_gpu_driver": "Datacenter",
+                    },
+                    {
+                        "os_id": "38e4c433-9ce9-407a-90a2-28082bbe4a71",
+                        "display_name": "Centos 8.2 64位",
+                        "os_type": "Centos",
+                        "os_version": "8.2",
+                        "os_bit": 64,
+                        "size": 24
+                        "username": "root",
+                        "support_gpu_driver": "Datacenter",
+                        "support_type": [
+                            "gpu"
+                        ],
+                    },
+                    {
+                        "os_id": "2421999f-b22d-44e5-a6f9-b37e6c968ca0",
+                        "display_name": "Centos 8.2 64位",
+                        "os_type": "Centos",
+                        "os_version": "8.2",
+                        "os_bit": 64,
+                         "size": 24
+                        "username": "root",
+                        "support_gpu_driver": "Geforce",
+                        "support_type": [
+                            "gpu"
+                        ],
+                    }
+				],
+                "Windows": [
+                    {
+                        "os_id": "9587d78b-9501-445e-881b-38cbf01dd414",
+                        "os_version": "10",
+                        "os_bit": 64,
+                        "display_name": "Windows 10 64位",
+                        "username": "admin",
+                        "support_gpu_driver": "Datacenter",
+                        "support_type": [
+                            "cpu",
+                            "gpu"
+                        ],
+                        "os_type": "Windows",
+                        "size": 40
+                    },
+                    {
+                        "os_id": "a3d02045-4cb7-446a-92da-ee57b8480fd3",
+                        "os_version": "10",
+                        "os_bit": 64,
+                        "display_name": "Windows 10 64位",
+                        "username": "admin",
+                        "support_gpu_driver": "Geforce",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Windows",
+                        "size": 40
+                    },
+                    {
+                        "os_id": "3c64a1e9-b629-4c35-8be0-c352b1cf586e",
+                        "os_version": "2019",
+                        "os_bit": 64,
+                        "display_name": "Windows 2019 64位",
+                        "username": "administrator",
+                        "support_gpu_driver": "Datacenter",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Windows",
+                        "size": 40
+                    },
+                    {
+                        "os_id": "906a60f8-e77d-432c-aa58-21f7d087d77d",
+                        "os_version": "2019",
+                        "os_bit": 64,
+                        "display_name": "Windows 2019 64位",
+                        "username": "administrator",
+                        "support_gpu_driver": "Geforce",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Windows",
+                        "size": 40
+                    }
+                ],
+                "Ubuntu": [
+                    {
+                        "os_id": "abde20c0-7f39-4e0d-8b58-231afa989561",
+                        "os_version": "18.04",
+                        "os_bit": 64,
+                        "display_name": "Ubuntu 18.04 64位",
+                        "username": "root",
+                        "support_gpu_driver": "Datacenter",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Ubuntu",
+                        "size": 24
+                    },
+                    {
+                        "os_id": "f0473737-2ed0-4a75-a540-fc2fd0a18b47",
+                        "os_version": "18.04",
+                        "os_bit": 64,
+                        "display_name": "Ubuntu 18.04 64位",
+                        "username": "root",
+                        "support_gpu_driver": "Geforce",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Ubuntu",
+                        "size": 24
+                    },
+                    {
+                        "os_id": "51d9f8ab-ef6c-4b12-8980-825b6dcd58d8",
+                        "os_version": "20.04",
+                        "os_bit": 64,
+                        "display_name": "Ubuntu 20.04 64位",
+                        "username": "root",
+                        "support_gpu_driver": "Geforce",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Ubuntu",
+                        "size": 24
+                    },
+                    {
+                        "os_id": "7d54c51a-b411-43c2-a9da-d0f2b5990688",
+                        "os_version": "20.04",
+                        "os_bit": 64,
+                        "display_name": "Ubuntu 20.04 64位",
+                        "username": "root",
+                        "support_gpu_driver": "",
+                        "support_type": [
+                            "cpu"
+                        ],
+                        "os_type": "Ubuntu",
+                        "size": 24
+                    },
+                    {
+                        "os_id": "db1dba9b-6939-4d56-8520-382dcf1465a2",
+                        "os_version": "20.04",
+                        "os_bit": 64,
+                        "display_name": "Ubuntu 20.04 64位",
+                        "username": "root",
+                        "support_gpu_driver": "Datacenter",
+                        "support_type": [
+                            "gpu"
+                        ],
+                        "os_type": "Ubuntu",
+                        "size": 24
+                    }
+                ]
+            }
+        },
+        "private": {
+            "name": "自定义镜像",
+            "os_template_type": "private",
+            "os_versions": {
+                "Centos": [
+                    {
+                        "os_id": "",
+                        "os_version": "7.4",
+                        "os_bit": 64,
+                        "display_name": "自定义镜像 7.4 64位",
+                        "username": "root",
+                        "support_gpu_driver": "",
+                        "support_type": [
+                            "cpu"
+                        ],
+                        "os_type": "Centos",
+                        "size": 24
+                    }
+                ]
+            }
+        }
+    }
+}
+```
+
+### 4.CreateInstance
+
+**Action**: CreateInstance
+
+**描述:**创建云服务器
+
+**请求URL**：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/create_ecs
+
+**请求方法：**POST
+
+**请求参数**
+
+| 参数            | 要求 | 类型   | 说明                                                         |
+| --------------- | ---- | ------ | ------------------------------------------------------------ |
+| az_id           | 必选 | string | 可用区id                                                     |
+| ecs_family_name | 必选 | string | 规格族名称                                                   |
+| cpu             | 必选 | int    | cpu                                                          |
+| ram             | 必选 | int    | 内存                                                         |
+| gpu             | 可选 | int    | 显卡数量，默认为0                                            |
+| num             | 可选 | int    | 购买数量，默认为1（一次最多100台，配额可调整）               |
+| billing_method  | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| duration        | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍 |
+| is_to_month     | 可选 | int    | 是否算价到月底 1:是  0:否 默认为0                            |
+| is_auto_renewal | 可选 | int    | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
+| os_id           | 必选 | string | 镜像id                                                       |
+| utc_time        | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
+| system_disk     | 必选 | dict   | 系统盘信息，示例：{<br/>        "disk_feature":"local", # 盘类型<br/>         "size":50 # 盘大小<br/>    } |
+| data_disk       | 可选 | list   | 数据盘信息，示例：[{<br/>        "disk_feature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘<br/>        "is_follow_delete":1, # 是否随实例删除,不传默认随实例删除<br/>         "size":50 # 盘大小<br/>    }] |
+| vpc_info        | 必选 | dict   | vpc信息，示例:{<br/>        "vpc_id":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1", # vpc id<br/>        "vpc_segment_address":"10.1.0.0/16"  # vpc网关地址<br/>    } |
+| subnet_info     | 必选 | dict   | 私有网络信息，示例：{<br/>        "subnet_id":"2cee7596-bbbb-11ec-a287-debf4cca37ce", # 子网id<br/>        "subnet_ip":[] # 子网ip<br/>    } |
+| pubnet_info     | 可选 | list   | 公网信息{<br/>    "subnet_id":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "subnet_ip":[<br/>    ],<br/>    "ip_type":"",两种类型 # 出网网关:"default_gateway",虚拟网关：”virtual“<br/>    "eip_ids":[<br/>    ]<br/>} |
+| dns_list        | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+| ecs_name        | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
+| start_number    | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
+| password        | 必选 | string | 登录密码                                                     |
+
+**返回参数**
+
+| 参数     | 类型   | 示例                                 | 说明   |
+| -------- | ------ | ------------------------------------ | ------ |
+| event_id | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id |
+
+**请求示例**
+
+```python
+def create_ecs():
+    """
+    创建云服务器
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/create_ecs'
+    action = "CreateInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "az_id":"16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "ecs_family_name":"极速渲染型re3",
+        "cpu":12    
+        "ram":24,
+        "gpu":1,
+        "num":1,
+        "billing_method":"0",
+        "os_id":"2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",
+         "system_disk":{
+            "disk_feature":"local",
+            "size":50
+        },
+        "data_disk": {
+            "disk_feature": "ssd",
+            "size": 48,
+            "is_follow_delete": 0  
+        },   
+        "vpc_info":{
+            "vpc_id":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",
+            "vpc_segment_address":"10.1.0.0/16"
+        },
+        "subnet_info":{
+            "subnet_id":"2cee7596-bbbb-11ec-a287-debf4cca37ce",
+            "subnet_ip":""
+        },
+                "ecs_name":"",
+                "start_number":0,
+                "password":"123QWEqwe",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "msg": "创建云服务器成功",
+    "data": {
+        "event_id": "d0b1d5b7-7549-41dc-972c-c40270b53bd7"
+    }
+}
+```
+
+### 5.ModifyInstanceName
+
+**Action**: ModifyInstanceName
+
+**描述**： 修改云服务器名称
+
+**请求**URL：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/change_ecs_name
+
+**请求方法**：POST 
+
+**请求参数**
+
+| 参数   | 要求 | 类型   | 说明           |
+| ------ | ---- | ------ | -------------- |
+| ecs_id | 必选 | string | 云服务器实例ID |
+| name   | 必选 | string | 新实例名称     |
+
+**返回参数**：
+
+| 名称   | 类型   | 示例值               | 描述           |
+| ------ | ------ | -------------------- | -------------- |
+| ecs_id | string | ins-5ruc2dbp15drl152 | 云服务器实例ID |
+| name   | string | test                 | 新实例名称     |
+
+**请求示例**
+
+```python
+def change_ecs_name():
+    """
+    修改云服务器实例名称
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/change_ecs_name'
+    action = "ModifyInstanceName"
+    method = "POST"
+    param = {}
+    body = {
+    	"ecs_id":"ins-ajgaioirpwvdjynj",
+        "name":"测试测试1",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "修改实例名称成功！",
+    "data": {
+        "ecs_id": "ins-5ruc2dbp15drl151",
+        "name": "测试测试1"
+    }
+}
+```
+
+### 6.DescribeInstanceList
+
+**Action**: DescribeInstanceList
+
+**描述**: 获取云服务器列表
+
+**请求**URL: cdsapi.capitalonline.net/ecs/v1/open_api/ecs/ecs_list
+
+**请求方法**:GET
+
+**请求参数**
+
+| 参数        | 要求 | 类型   | 说明                                         |
+| ----------- | ---- | ------ | -------------------------------------------- |
+| region_id   | 可选 | string | 地域id                                       |
+| az_id       | 可选 | string | 可用区的id                                   |
+| vpc_id      | 可选 | string | vpc id                                       |
+| search_info | 可选 | string | 搜索信息（可传实例id或者实例名称或者私网ip） |
+| page_index  | 可选 | int    | 当前页号（分页参数不传返回所有数据）         |
+| page_size   | 可选 | int    | 每页数据条数                                 |
+
+**返回参数**
+
+| 参数                | 类型     | 示例                | 说明                               |
+| ------------------- | -------- | ------------------- | ---------------------------------- |
+| ecs_list            | list     | []                  | 云服务器列表                       |
+| status              | string   | shutdown            | 云服务器状态码                     |
+| status_display      | string   | 已关机              | 云服务器状态                       |
+| private_net         | string   | 10.10.10.10         | 私网ip                             |
+| pub_net             | string   | 10.10.10.11         | 默认虚拟出网网关ip                 |
+| virtual_net         | list     | []                  | 其他线路出网网关ip列表             |
+| eip_info            | dict     | {}                  | 出网网关ip和公网ip对应字典         |
+| conf_name           | string   | 电信                | 网络带宽运营商，如电信、移动、联通 |
+| eip_ip              | string   | 111.111.111.111     | 公网ip                             |
+| create_time         | datetime | 2022-07-22 16:41:28 | 创建时间                           |
+| ecs_family_name     | string   | 专业渲染型rp3       | 规格族名称                         |
+| cpu_size            | int      | 16                  | cpu大小                            |
+| ram_size            | int      | 32                  | 内存大小                           |
+| is_gpu              | bool     | true                | 是否是gpu类型                      |
+| gpu_size            | int      | 1                   | 显卡数量                           |
+| card_name           | string   | NVIDIA RTX A5000    | 显卡型号                           |
+| billing_method_name | string   | 包年包月            | 计费方式名称                       |
+| end_bill_time       | datetime | 2022-08-22 16:41:28 | 到期时间                           |
+| is_auto_renewal     | string   | 0                   | 到期是否自动续约                   |
+| os_name             | string   | Centos 7.4 64位     | 镜像名称                           |
+| system_disk_type    | string   | SSD云盘             | 系统盘类型                         |
+| system_disk_size    | int      | 24                  | 系统盘大小                         |
+
+**请求示例**
+
+```json
+{
+    "page_index": 1,
+    "page_size":20,
+    "search_info": "实例名称1",
+    "az_id": "16e6e380-729d-11ec-b62a-1e00e202ff80"
+}
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取云服务器列表成功！",
+    "data": {
+        "ecs_list": [
+            {
+                "ecs_id": "ins-xzlmpkgr1jd9e0",
+                "ecs_name": "测试测试1",
+                "vpc_id": "0d555bbe-0986-11ed-a29c-",
+                "vpc_name": "测试",
+                "status": "running",
+                "status_display": "运行中",
+                "az_id": "09a38804-c1ee-11ec-bd22-4641dfd57315",
+                "az_name": "宿迁B",
+                "region_id": "39c6ed64-8d5f-11ec-9247-5293695d0ddd",
+                "region_name": "宿迁",
+                "private_net": "10.10.10.10",
+                "pub_net": "",
+                "virtual_net": [],
+                "eip_info": {
+                    "10.3.0.6": {
+                        "conf_name": "电信",
+                        "eip_ip": "111.111.111.111"
+                    }
+                },
+                "create_time": "2022-07-22 16:41:28",
+                "end_bill_time": "2022-08-01 00:00:00",
+                "is_auto_renewal": "0",
+                "ecs_family_name": "GPU专业渲染型rp3",
+                "is_gpu": true,
+                "card_name": "NVIDIA RTX A5000",
+                "cpu_size": 16,
+                "ram_size": 32,
+                "gpu_size": 1,
+                "billing_method_name": "包年包月",
+                "billing_method": "1",
+                "os_type": "Centos",
+                "os_version": "7.4",
+                "os_name": "Centos 7.4 64位",
+                "os_bit": 64,
+                "customer_id": "E036042",
+                "system_disk_type": "SSD云盘",
+                "system_disk_feature": "ssd",
+                "system_disk_size": 24,
+                "support_gpu_driver": "DataCenter",
+                "spec_family_id": "bd1a7a0a-f29f-11ec-a66c-7a4c8683bd6c"
+            }
+        ]
+    }
+}
+```
+
+### 7.DescribePrice
+
+**Action**: DescribePrice
+
+**描述**：获取云服务器价格
+
+**请求**URL：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_price
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数             | 要求 | 类型   | 说明                                                         |
+| ---------------- | ---- | ------ | ------------------------------------------------------------ |
+| az_id            | 必选 | string | 可用区id                                                     |
+| ecs_family_name  | 可选 | string | 云服务器规格族名称,例：GPU渲染型GN6-01                       |
+| cpu              | 必选 | int    | cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| ram              | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| gpu              | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| billing_method   | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| duration         | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
+| is_to_month      | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| system_disk_info | 必选 | dict   | 系统盘信息{"disk_feature":"ssd","size":40}                   |
+| disk_feature     | 必选 | string | 盘类型,如："ssd","local"                                     |
+| data_disk_info   | 可选 | list   | 数据盘信息[{"disk_feature":"ssd","size":40}]                 |
+| number           | 可选 | int    | 购买数量，默认为1                                            |
+
+**返回参数**
+
+|     参数     |  类型  |                             示例                             |      说明      |
+| :----------: | :----: | :----------------------------------------------------------: | :------------: |
+|  price_unit  | string |                              天                              |  价格时间单位  |
+| price_symbol | string |                              ￥                              |    币种符号    |
+| total_price  | float  |                          100.34079                           | 总价,单位为元  |
+| system_disk  |  dict  | {<br/>                "disk_feature": "SSD",<br/>                "price": 2.66688,<br/>                "size":10<br/>            } | 系统盘价格信息 |
+|  data_disk   |  list  |                              []                              | 数据盘价格信息 |
+|    price     | float  |                            3.3336                            | 价格,单位为元  |
+
+**请求示例**
+
+```python
+def get_ecs_price():
+    """
+    获取云服务器价格
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_price'
+    action = "DescribePrice"
+    method = "POST"
+    param = {}
+    body = {
+        "az_id":"16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "ecs_family_name":"GPU专业渲染型rp3",
+        "cpu":16,
+        "ram":32,
+        "gpu":1,
+        "billing_method":"0",
+        "duration":12,
+        "system_disk_info":{
+            "disk_feature":"ssd",
+            "size":10
+        },
+        "number": 2,
+        "data_disk_info":[
+            {
+                "disk_feature":"ssd",
+                "size":10
+            }
+        ]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取计费信息成功！",
+    "data": {
+        "price_unit": "天",
+        "price_symbol": "￥",
+        "total_price": 100.34079,
+        "disk": {
+            "system_disk": {
+                "disk_feature": "SSD",
+                "price": 2.66688,
+                "size":10
+            },
+            "data_disk": [
+                {
+                    "disk_feature": "SSD",
+                    "price": 3.3336,
+                    "size":10
+                }
+            ]
+        }
+    }
+}
+```
+
+### 8.DescribeInstance
+
+**Action**: DescribeInstance
+
+**描述**：获取云服务器配置详情
+
+**请求URL**: cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_detail
+
+**请求方法**:GET
+
+**请求参数**
+
+| 参数   | 要求 | 类型   | 说明       |
+| ------ | ---- | ------ | ---------- |
+| ecs_id | 必选 | string | 云服务器id |
+
+**返回参数**
+
+| 参数            | 类型     | 示例                                                         | 说明                |
+| --------------- | -------- | ------------------------------------------------------------ | ------------------- |
+| ecs_id          | string   | "ins-abcr50fvgj45fgqw"                                       | 云服务器id          |
+| ecs_name        | string   | "test1.计算-6"                                               | 云服务器名称        |
+| region_id       | string   | "abcr50fvgj45fgqw"                                           | 地域id              |
+| region_name     | string   | "北京"                                                       | 地域名称            |
+| az_id           | string   | "abcr50fvgj45fgqw"                                           | 可用区id            |
+| az_name         | string   | "可用区A"                                                    | 可用区名称          |
+| status          | string   | "running"                                                    | 状态码              |
+| status_display  | string   | "运行中"                                                     | 状态                |
+| is_gpu          | int      | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
+| create_time     | datetime | 2022-07-22 16:41:28                                          | 创建时间            |
+| end_bill_time   | datetime | 2022-08-22 16:41:28                                          | 到期时间            |
+| is_auto_renewal | string   | 1                                                            | 是否自动续约        |
+| time_zone       | sting    | UTC                                                          | 时区                |
+| ecs_rule        | dict     | {<br/>            "name": "CPU密集计算型I3",  //  规格族名称<br/>      "cpu_num": 1,<br/>      "cpu_unit": "核",<br/>      "ram": 1,<br/>      "gpu": 0,<br/>      "gpu_unit": "个",<br/>      "ram_unit": "GiB"<br/> } | 规格                |
+| os_info         | dict     | {<br/>      "os_id": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "name": "create-image1",<br/>      "system": "Centos",<br/>      "bite": 64,<br/>      "version": "7.4",<br/>      "unit": "位"<br/>    } | 系统信息            |
+| disk            | dict     | {<br/>      "system_disk_conf": {<br/>        "is_follow_delete": true,<br/>        "disk_type": "system",<br/>        "name": "ssd_20220721",<br/>        "size": 24,<br/>        "ecs_goods_id": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "disk_iops": 2520,<br/>        "band_mbps": 96,<br/>        "ebs_goods_id": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "unit": "GB",<br/>        "id": "disk-dj3g8odrnwqdrybj",<br/>        "disk_feature": "ssd",<br/>        "disk_name": "ssd云盘"<br/>      },<br/>      "data_disk_conf": [] | 硬盘信息            |
+| pipe            | dict     | {<br/>      "vpc_name": "GPU服务器",<br/>      "vpc_id": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "subnet_id": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "subnet_name": "test-kvm",<br/>      "create_time": "2022-04-14 14:21:52",<br/>      "private_net": "10.1.128.53",<br/>      "pub_net": "",<br/>      "virtual_net": [],<br/>      "eip_info": {<br/>        "10.1.128.53": {<br/>          "conf_name": "",<br/>          "eip_ip": "",<br/>          "current_use_qos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
+| billing_info    | dict     | {<br/>      "billing_method": "1",<br/>      "billing_method_status": "包年包月",<br/>      "billing_status": "正常",<br/>      "bill_cycle_id": "month"<br/>    } | 计费信息            |
+
+**请求示例**
+
+```python
+def get_ecs_detail():
+    """
+    获取云服务器详情
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_detail'
+    action = "DescribeInstance"
+    method = "GET"
+    param = {
+        "ecs_id":"ins-ajgaioirpwvdjynj"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取云服务器详情成功！",
+    "data": {
+        "ecs_id": "ins-ajgaioirpwvdjynj",
+        "ecs_name": "宿迁",
+        "region_id": "3af19bf4-729c-11ec-b62a-1e00e202ff80",
+        "region_name": "宿迁",
+        "az_id": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "az_name": "宿迁A",
+        "status": "running",
+        "status_display": "运行中",
+        "create_time": "2022-07-21 15:30:22",
+        "duration": 1,
+        "end_bill_time": "2022-08-21 15:37:18",
+        "is_auto_renewal": "1",
+        "time_zone": "UTC",
+        "is_gpu": false,
+        "ecs_rule": {
+            "name": "CPU密集计算型I3",
+            "cpu_num": 1,
+            "cpu_unit": "核",
+            "ram": 1,
+            "gpu": 0,
+            "gpu_unit": "个",
+            "ram_unit": "GiB"
+        },
+        "os_info": {
+            "os_id": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",
+            "name": "create-image1",
+            "system": "Centos",
+            "bite": 64,
+            "version": "7.4",
+            "unit": "位"
+        },
+        "disk": {
+            "system_disk_conf": {   // 系统盘信息
+                "is_follow_delete": true,  // 是否随实例删除
+                "disk_type": "system",
+                "name": "ssd_20220721",  
+                "size": 24,
+                "disk_iops": 2520,  //iops大小
+                "band_mbps": 96,  // 吞吐量
+                "unit": "GB",
+                "id": "disk-dj3g8odrnwqdrybj",  //系统盘id
+                "disk_feature": "ssd",  //盘类型
+                "disk_name": "ssd云盘"  //盘名称
+            },
+            "data_disk_conf": []
+        },
+        "pipe": {
+            "vpc_name": "GPU服务器",
+            "vpc_id": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",
+            "subnet_id": "2cee7596-bbbb-11ec-a287-debf4cca37ce",
+            "subnet_name": "test-kvm",
+            "create_time": "2022-04-14 14:21:52",
+            "private_net": "10.1.128.53",
+            "pub_net": "",
+            "virtual_net": [],
+            "eip_info": {
+                "10.1.128.53": {
+                    "conf_name": "",
+                    "eip_ip": "",
+                    "current_use_qos": ""
+                }
+            }
+        },
+        "billing_info": {
+            "billing_method": "1",
+            "billing_method_status": "包年包月", //计费方式
+            "billing_status": "正常",  //计费状态
+            "bill_cycle_id": "month"  //计费周期: "month": 月，"year": 年
+        }
+    }
+}
+```
+
+### 9.DeleteInstance
+
+**Action**: DeleteInstance
+
+**描述**：删除云服务器
+
+**请求**URL: cdsapi.capitalonline.net/ecs/v1/open_api/ecs/delete_ecs
+
+**请求方法**： POST
+
+**请求参数**
+
+| 参数    | 要求 | 类型 | 说明           |
+| ------- | ---- | ---- | -------------- |
+| ecs_ids | 必选 | list | 云服务器id列表 |
+
+**返回参数**
+
+| 参数     | 类型   | 示例   | 说明 |
+| -------- | ------ | ------ | ---- |
+| event_id | string | 事件id |      |
+
+**请求示例**
+
+```python
+def delete_ecs():
+    """
+    删除云服务器
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/delete_ecs'
+    action = "DeleteInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "ecs_ids": ["ins-5922pyermmx7wbtg"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "删除云服务器成功！",
+    "data": {
+        "event_id": "47be5182-0ca8-11ed-bd9c-62b5fae1caf2"
+    }
+}
+```
+
+### 10.OperateInstance
+
+**Action**: OperateInstance
+
+**描述**：批量操作云服务器开、关机、重启
+
+**请求**URL： cdsapi.capitalonline.net/ecs/v1/open_api/ecs/operate_ecs
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数    | 要求 | 类型   | 说明                                                         |
+| ------- | ---- | ------ | ------------------------------------------------------------ |
+| ecs_ids | 必选 | list   | 云服务器id列表                                               |
+| op_type | 必选 | string | 操作类型："start_up_ecs": 开机,"shutdown_ecs":关机,"restart_ecs":重启，"compel_shutdown_ecs":强制关机 |
+
+**返回参数**
+
+| 参数     | 类型 | 示例 | 说明   |
+| -------- | ---- | ---- | ------ |
+| event_id |      |      | 事件id |
+
+**请求示例**
+
+```python
+def operate_ecs():
+    """
+   	批量操作云服务器
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/operate_ecs'
+    action = "OperateInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "ecs_ids": ["ins-ajgaioirpwvdjynj"],
+        "op_type": "shutdown_ecs"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "批量操作云服务器成功！",
+    "data": {
+        "event_id": "7e782a16-0bc9-11ed-a942-92d3bb445445"
+    }
+}
+```
+
+### 11.ModifyInstancePassword
+
+**Action**: ModifyInstancePassword
+
+**描述**： 修改实例管理员用户密码
+
+**请求**URL：cdsapi.capitalonline.net/ecs/v1/open_api/ecs/ecs_reset_password
+
+**请求方法**: POST 
+
+**请求参数**
+
+| 参数     | 要求 | 类型   | 说明           |
+| -------- | ---- | ------ | -------------- |
+| ecs_ids  | 必选 | list   | 云服务器id列表 |
+| password | 必选 | string | 新密码         |
+
+**返回参数**：
+
+| 名称     | 类型   | 示例值     | 描述   |
+| -------- | ------ | ---------- | ------ |
+| event_id | string | "event_id" | 事件id |
+
+**请求示例**
+
+```python
+def ecs_reset_password():
+    """
+   	云服务器管理员用户密码修改
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/ecs_reset_password'
+    action = "ModifyInstancePassword"
+    method = "POST"
+    param = {}
+    body = {
+        "ecs_ids": ["ins-vjugdoyrtwrdpy5j"],
+        "password": "KVMV587!\t",
+        "check_code": "308880"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "云服务器管理员用户密码修改成功！",
+    "data": {
+        "event_id": "fd97952e-0c9c-11ed-bd9c-62b5fae1caf2"
+    }
+}
+```
+
+### 12.DescribeInstanceStatus
+
+**Action**: DescribeInstanceStatus
+
+**描述**：批量获取云服务器状态
+
+**请求**URL: cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_status
+
+**请求方法**: GET
+
+**请求参数**
+
+| 参数    | 要求 | 类型 | 说明         |
+| ------- | ---- | ---- | ------------ |
+| ecs_ids | 必选 | list | 云服务器列表 |
+
+**返回参数**
+
+| 参数           | 类型   | 示例    | 说明                          |
+| -------------- | ------ | ------- | ----------------------------- |
+| ecs_status     | dict   | {}      | 云服务器状态字典，key为实例id |
+| status         | string | running | 状态码                        |
+| status_display | string | 运行中  | 状态                          |
+
+**请求示例**
+
+```python
+def get_ecs_status():
+    """
+   	批量获取云服务器状态
+    """
+    ecs_url = 'http://cdsapi.capitalonline.net/ecs/v1/open_api/ecs/get_ecs_status'
+    action = "DescribeInstanceStatus"
+    method = "POST"
+    param = {
+        "az_id": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "ecs_ids": ["ins-3j62nodr5w2daycj", "ins-ajgaioirpwvdjynj"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "code_msg": "success",
+    "message": "获取云服务器状态成功！",
+    "data": {
+        "ecs_status": {
+            "ins-3j62nodr5w2daycj": {
+                "status": "running",
+                "status_display": "运行中"
+            },
+            "ins-ajgaioirpwvdjynj": {
+                "status": "running",
+                "status_display": "运行中"
+            }
+        }
+    }
+}
 ```
 
 ## 其他公共接口
