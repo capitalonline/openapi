@@ -12397,7 +12397,7 @@ def bindAccounts():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:  GET
+**请求方法**：GET
 
 **返回参数**：
 
@@ -12966,11 +12966,11 @@ def image_info():
 
 **Action**: CreateInstance
 
-**描述:**创建云服务器
+**描述**:  创建云服务器
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法：**POST
+**请求方法**：POST
 
 **请求参数**
 
@@ -13066,7 +13066,7 @@ def create_ecs():
 
 **Action**: ModifyInstanceName
 
-**描述**： 修改云服务器名称
+**描述**：修改云服务器名称
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
@@ -13129,7 +13129,7 @@ def change_ecs_name():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:GET
+**请求方法**：GET
 
 **请求参数**
 
@@ -13257,7 +13257,7 @@ def ecs_list():
 
 ### 7.DescribePrice
 
-**Action**: DescribePrice
+**Action**：DescribePrice
 
 **描述**：获取云服务器价格
 
@@ -13612,7 +13612,7 @@ def operate_ecs():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:  POST 
+**请求方法**：POST 
 
 **请求参数**
 
@@ -13668,7 +13668,7 @@ def ecs_reset_password():
 **描述**：批量获取云服务器状态
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:   POST
+**请求方法**：POST
 
 **请求参数**
 
