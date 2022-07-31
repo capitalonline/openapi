@@ -13174,7 +13174,7 @@ def change_ecs_name():
 
 **请求示例**
 
-```json
+```python
 def ecs_list():
     """
     获取云服务器列表
