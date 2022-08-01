@@ -12364,37 +12364,6 @@ def bindAccounts():
 
 ## 弹性云服务器ECS相关
 
-**错误码**
-
-| **HttpCode** | 错误码                                     | 错误信息                                                     | 描述                                                     |
-| ------------ | ------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------- |
-| 400          | ParamParseError                            | Parameter parsing error.                                     | 请求参数解析错误                                         |
-| 400          | InvalidParameter                           | The parameter is not valid.                                  | 参数不合法                                               |
-| 400          | MissingParameter                           | Missing required parameter.                                  | 缺少必需的参数                                           |
-| 400          | InvalidParameter.IsNull                    | Required parameter is empty.                                 | 必需的参数为空                                           |
-| 400          | UnsupportedHTTPMethod                      | Action does not correspond to the request method.            | http请求方式不支持                                       |
-| 400          | UnsupportedAction                          | Unsupported action.                                          | Action不在可选范围内                                     |
-| 400          | MaxEcsCountExceed                          | Exceeding the maximum number of ECS available.               | 云服务器创建数量大于当前可创建数量                       |
-| 400          | InvalidInstanceSpec.ValueNotSupported      | The specified InstanceSpec does not exist or beyond the permitted range. | 指定的实例规格参数不存在                                 |
-| 400          | InvalidInstanceType.ValueNotSupported      | The specified InstanceType does not exist or beyond the permitted range. | 指定的实例规格族类型不存在，或者没有权限操作此规格的实例 |
-| 400          | MaxDiskSizeExceed                          | The specified disk size exceeds the maximum capacity of the disk. | 指定的盘规格超出最大限制                                 |
-| 400          | MinDiskSizeLess                            | The specified disk size is below the minimum capacity of the disk. | 指定的盘规格低于最小限制                                 |
-| 400          | InvalidDiskSize.ValueNotSupported          | The specified DiskSize does not exist or beyond the permitted range. | 指定的盘规格不存在，或者没有权限操作此规格               |
-| 400          | UnSupportedMixingLocalAndEbs               | Mixing local disks and cloud disks is not supported.         | 不支持盘本地盘和云盘混用                                 |
-| 403          | InvalidOperation                           | The operation fails to pass the inspection and is invalid.   | 操作未通过校验，无法进行                                 |
-| 403          | InvalidOperation.VpcMismatch               | The operation is invalid. The resources of the operation are not in the same VPC. | 批量操作资源需要在相同vpc下                              |
-| 403          | InvalidOperation.AzMismatch                | The operation is invalid.The resources of the operation are not in the same zone. | 批量操作资源需要在相同可用区下                           |
-| 403          | InvalidOperation.InstanceStatusUnsupported | The instance state does not support the specified operation. | 实例状态不支持执行指定操作                               |
-| 404          | InvalidUser.NotFound                       | The user information under the customer name does not exist. | 未获取到客户名下用户信息                                 |
-| 404          | InvalidAccount.NotFound                    | Customer information does not exist                          | 未获取到客户信息                                         |
-| 404          | InvalidRegion.NotFound                     | The specified region does not exist.                         | 指定的地域不存在                                         |
-| 404          | InvalidAvailableZone.NotFound              | The specified available zone does not exist.                 | 指定的可用区不存在                                       |
-| 404          | InvalidEcsId.NotFound                      | The specified instance does not exist.                       | 指定的实例不存在                                         |
-| 404          | InvalidVpc.NotFound                        | The specified vpc does not exist.                            | 指定的Vpc不存在                                          |
-| 404          | InvalidImage.NotFound                      | The specified image does not exist.                          | 指定的镜像不存在                                         |
-| 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
-| 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
-
 ### 1.DescribeRegions
 
 **Action**: DescribeRegions
@@ -12432,6 +12401,7 @@ def region_az_info():
     action = "DescribeRegions"
     method = "GET"
     param = {}
+    # get_signature函数为顶部认证方式中3.获取签名代码示例函数
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.get(url)
     result = json.loads(resp.content)
@@ -13744,7 +13714,38 @@ def change_ecs_name():
 }
 ```
 
+**错误码**
 
+| **HttpCode** | 错误码                                     | 错误信息                                                     | 描述                                                     |
+| ------------ | ------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------- |
+| 400          | ParamParseError                            | Parameter parsing error.                                     | 请求参数解析错误                                         |
+| 400          | InvalidParameter                           | The parameter is not valid.                                  | 参数不合法                                               |
+| 400          | MissingParameter                           | Missing required parameter.                                  | 缺少必需的参数                                           |
+| 400          | InvalidParameter.IsNull                    | Required parameter is empty.                                 | 必需的参数为空                                           |
+| 400          | UnsupportedHTTPMethod                      | Action does not correspond to the request method.            | http请求方式不支持                                       |
+| 400          | UnsupportedAction                          | Unsupported action.                                          | Action不在可选范围内                                     |
+| 400          | MaxEcsCountExceed                          | Exceeding the maximum number of ECS available.               | 云服务器创建数量大于当前可创建数量                       |
+| 400          | InvalidInstanceSpec.ValueNotSupported      | The specified InstanceSpec does not exist or beyond the permitted range. | 指定的实例规格参数不存在                                 |
+| 400          | InvalidInstanceType.ValueNotSupported      | The specified InstanceType does not exist or beyond the permitted range. | 指定的实例规格族类型不存在，或者没有权限操作此规格的实例 |
+| 400          | MaxDiskSizeExceed                          | The specified disk size exceeds the maximum capacity of the disk. | 指定的盘规格超出最大限制                                 |
+| 400          | MinDiskSizeLess                            | The specified disk size is below the minimum capacity of the disk. | 指定的盘规格低于最小限制                                 |
+| 400          | InvalidDiskSize.ValueNotSupported          | The specified DiskSize does not exist or beyond the permitted range. | 指定的盘规格不存在，或者没有权限操作此规格               |
+| 400          | UnSupportedMixingLocalAndEbs               | Mixing local disks and cloud disks is not supported.         | 不支持盘本地盘和云盘混用                                 |
+| 403          | InvalidOperation                           | The operation fails to pass the inspection and is invalid.   | 操作未通过校验，无法进行                                 |
+| 403          | InvalidOperation.VpcMismatch               | The operation is invalid. The resources of the operation are not in the same VPC. | 批量操作资源需要在相同vpc下                              |
+| 403          | InvalidOperation.AzMismatch                | The operation is invalid.The resources of the operation are not in the same zone. | 批量操作资源需要在相同可用区下                           |
+| 403          | InvalidOperation.InstanceStatusUnsupported | The instance state does not support the specified operation. | 实例状态不支持执行指定操作                               |
+| 404          | InvalidUser.NotFound                       | The user information under the customer name does not exist. | 未获取到客户名下用户信息                                 |
+| 404          | InvalidAccount.NotFound                    | Customer information does not exist                          | 未获取到客户信息                                         |
+| 404          | InvalidRegion.NotFound                     | The specified region does not exist.                         | 指定的地域不存在                                         |
+| 404          | InvalidAvailableZone.NotFound              | The specified available zone does not exist.                 | 指定的可用区不存在                                       |
+| 404          | InvalidEcsId.NotFound                      | The specified instance does not exist.                       | 指定的实例不存在                                         |
+| 404          | InvalidVpc.NotFound                        | The specified vpc does not exist.                            | 指定的Vpc不存在                                          |
+| 404          | InvalidImage.NotFound                      | The specified image does not exist.                          | 指定的镜像不存在                                         |
+| 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
+| 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
+
+### 
 
 ## 其他公共接口
 
