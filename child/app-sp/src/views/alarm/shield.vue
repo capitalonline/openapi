@@ -118,6 +118,7 @@ export default class Shield extends Vue{
     private handleSelectionChange(val){
         this.multipleSelection = val;
     }
+    //
     private handle(val:string,row:any={}){
         if(Object.keys(row).length>0){
             this.multipleSelection=[row];
