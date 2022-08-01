@@ -12516,17 +12516,16 @@ def region_az_info():
 
 **返回参数**
 
-| 参数             | 类型     | 示例                                 | 说明           |
-| ---------------- | -------- | ------------------------------------ | -------------- |
-| EcsFamilyInfo    | dict     | {}                                   | 计算类型族信息 |
-| EcsFamilyName    | string   | 极速渲染型re3                        | 规格族名称     |
-| SpecList         | list     | []                                   | 规格列表       |
-| Cpu              | interger | 16                                   | Cpu大小        |
-| Ram              | interger | 32                                   | 内存大小       |
-| Gpu              | interger | 1                                    | 显卡数量       |
-| GpuShowType      | string   | NVIDIA RTX 3090                      | 显卡型号       |
-| GpuTypeId        | string   | da67104f-c8e3-462b-99fc-1329c2872675 | 显卡类型id     |
-| SupportGpuDriver | string   | Geforce                              | 显卡驱动类型   |
+| 参数             | 类型     | 示例            | 说明           |
+| ---------------- | -------- | --------------- | -------------- |
+| EcsFamilyInfo    | dict     | {}              | 计算类型族信息 |
+| EcsFamilyName    | string   | 极速渲染型re3   | 规格族名称     |
+| SpecList         | list     | []              | 规格列表       |
+| Cpu              | interger | 16              | Cpu大小        |
+| Ram              | interger | 32              | 内存大小       |
+| Gpu              | interger | 1               | 显卡数量       |
+| GpuShowType      | string   | NVIDIA RTX 3090 | 显卡型号       |
+| SupportGpuDriver | string   | Geforce         | 显卡驱动类型   |
 
 **请求示例**
 
@@ -13433,19 +13432,19 @@ def describe_event():
 
 | 参数              | 要求 | 类型     | 说明                                                         |
 | ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | 必选 | string   | 规格族名称                                                   |
+| AvailableZoneCode | 必选 | string   | 可用区code(取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 必选 | string   | 规格族名称(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
 | Cpu               | 必选 | interger | Cpu                                                          |
 | Ram               | 必选 | interger | 内存                                                         |
 | Gpu               | 可选 | interger | 显卡数量，默认为0                                            |
 | Number            | 可选 | interger | 购买数量，默认为1（默认批量最大值为100台）                   |
 | BillingMethod     | 必选 | string   | 计费方式："0": 按需  "1":包年包月                            |
 | Password          | 必选 | string   | 登录密码                                                     |
-| ImageId           | 必选 | string   | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
+| ImageId           | 必选 | string   | 镜像id或者镜像名称(取**DescribeImage**返回值中的ImageName或者ImageId) |
 | SystemDisk        | 必选 | dict     | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
 | VpcInfo           | 必选 | dict     | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
 | SubnetInfo        | 必选 | dict     | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list     | 公网信息{<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
+| PubnetInfo        | 可选 | list     | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
 | Name              | 可选 | string   | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
 | StartNumber       | 可选 | interger | 云服务器名称编号起始数字，不需要服务器编号可不传             |
 | Duration          | 可选 | interger | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
