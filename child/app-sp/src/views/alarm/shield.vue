@@ -93,7 +93,8 @@ export default class Shield extends Vue{
         let res:any = await Service.get_shield_list({
             page:this.current,
             pageSize:this.size,
-            name:this.search_data.name
+            name:this.search_data.name,
+            enable:this.search_data.enable ? Number(this.search_data.enable):undefined
         })
         if(res.code==='Success'){
             this.list = res.data.datas;
