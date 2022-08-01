@@ -57,6 +57,10 @@ import ShieldDetail from './shieldDetail.vue';
 export default class Shield extends Vue{
     private search:any = {
         name:{placeholder:'请输入屏蔽名称'},
+        enable:{placeholder:'请选择屏蔽状态',list:[
+            {type:'1',label:'屏蔽中'},
+            {type:'2',label:'已停用'}
+        ]},
     }
     private list=[{productType:'1'}]
     private current:number = 1
@@ -89,7 +93,8 @@ export default class Shield extends Vue{
         let res:any = await Service.get_shield_list({
             page:this.current,
             pageSize:this.size,
-            name:this.search_data.name
+            name:this.search_data.name,
+            enable:this.search_data.enable ? Number(this.search_data.enable):undefined
         })
         if(res.code==='Success'){
             this.list = res.data.datas;
