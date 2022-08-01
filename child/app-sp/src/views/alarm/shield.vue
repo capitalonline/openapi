@@ -85,6 +85,7 @@ export default class Shield extends Vue{
         stop:'停用',
         del:'删除',
     }
+    //
     created() {
         this.getShieldList();
         this.authList = this.$store.state.auth_info[this.$route.name]
