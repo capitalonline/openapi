@@ -13426,7 +13426,7 @@ def describe_event():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法：**POST
+**请求方法**：POST
 
 **请求参数**
 
