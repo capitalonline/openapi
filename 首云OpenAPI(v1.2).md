@@ -181,15 +181,16 @@
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
        * [3.DescribeImage](#3describeimage)
-       * [4.CreateInstance](#4createinstance)
-       * [5.ModifyInstanceName](#5modifyinstancename)
-       * [6.DescribeInstanceList](#6describeinstancelist)
-       * [7.DescribePrice](#7describeprice)
-       * [8.DescribeInstance](#8describeinstance)
-       * [9.DeleteInstance](#9deleteinstance)
+       * [4.DescribeInstanceList](#4describeinstancelist)
+       * [5.DescribePrice](#5describeprice)
+       * [6.DescribeInstance](#6describeinstance)
+       * [7.DescribeInstanceStatus](#7describeinstancestatus)
+       * [8.DescribeEvent](#8describeevent)
+       * [9.CreateInstance](#9createinstance)
        * [10.OperateInstance](#10operateinstance)
-       * [11.ModifyInstancePassword](#11modifyinstancepassword)
-       * [12.DescribeInstanceStatus](#12describeinstancestatus)
+       * [11.DeleteInstance](#11deleteinstance)
+       * [12.ModifyInstancePassword](#13modifyinstancepassword)
+       * [13.ModifyInstanceName](#13modifyinstancename)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -12362,20 +12363,6 @@ def bindAccounts():
 ```
 
 ## 弹性云服务器ECS相关
-
-* [1.DescribeRegions](#1describeregions)
-* [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
-* [3.DescribeImage](#3describeimage)
-* [4.DescribeInstanceList](#4describeinstancelist)
-* [5.DescribePrice](#5describeprice)
-* [6.DescribeInstance](#6describeinstance)
-* [7.DescribeInstanceStatus](#7describeinstancestatus)
-* [8.DescribeEvent](#8describeevent)
-* [9.CreateInstance](#9createinstance)
-* [10.OperateInstance](#10operateinstance)
-* [11.DeleteInstance](#11deleteinstance)
-* [12.ModifyInstancePassword](#13modifyinstancepassword)
-* [13.ModifyInstanceName](#13modifyinstanceName)
 
 **错误码**
 
