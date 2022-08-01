@@ -13448,7 +13448,7 @@ def create_ecs():
         "Gpu":1,
         "Number":1,
         "BillingMethod":"0",
-        "ImageId":"2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",
+        "ImageId":"Windows 10 64位-GPU-Geforce",
         "SystemDisk":{
             "DiskFeature":"local",
             "Size":50
