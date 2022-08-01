@@ -12509,10 +12509,10 @@ def region_az_info():
 
 **请求参数**
 
-| 参数              | 要求 | 类型   | 说明                                    |
-| ----------------- | ---- | ------ | --------------------------------------- |
-| AvailableZoneCode | 必选 | string | 可用区code                              |
-| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月 |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月                      |
 
 **返回参数**
 
@@ -12663,9 +12663,9 @@ def ecs_family_info():
 
 **请求参数**
 
-| 参数              | 要求 | 类型   | 说明       |
-| ----------------- | ---- | ------ | ---------- |
-| AvailableZoneCode | 必选 | string | 可用区code |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
 
 **返回参数**
 
@@ -12932,7 +12932,6 @@ def image_info():
 
 | 参数              | 要求 | 类型     | 说明                                         |
 | ----------------- | ---- | -------- | -------------------------------------------- |
-| RegionId          | 可选 | string   | 地域id                                       |
 | AvailableZoneCode | 可选 | string   | 可用区code                                   |
 | VpcId             | 可选 | string   | vpc id                                       |
 | SearchInfo        | 可选 | string   | 搜索信息（可传实例id或者实例名称或者私网ip） |
@@ -13065,8 +13064,8 @@ def ecs_list():
 
 | 参数              | 要求 | 类型     | 说明                                                         |
 | ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code                                                   |
-| EcsFamilyName     | 可选 | string   | 云服务器规格族名称,例：Ram渲染型GN6-01                       |
+| AvailableZoneCode | 必选 | string   | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 可选 | string   | 云服务器规格族名称,例：Ram渲染型GN6-01(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
 | Cpu               | 必选 | interger | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Ram               | 必选 | interger | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Gpu               | 可选 | interger | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
@@ -13422,7 +13421,7 @@ def describe_event():
 
 **Action**: CreateInstance
 
-**描述:**创建云服务器
+**描述**：创建云服务器
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
