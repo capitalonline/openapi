@@ -103,6 +103,7 @@ export default class Shield extends Vue{
         }
     }
     private fn_search(data:any={}){
+        this.current = 1
         this.search_data = {...data}
         this.getShieldList()
     }
