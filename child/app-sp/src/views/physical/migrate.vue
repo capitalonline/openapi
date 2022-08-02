@@ -152,18 +152,10 @@ export default class Migrate extends Vue{
         this.list=this.rows[0].ecs_list;
     }
     private getMsg(item){
-        if(!['已关机','运行中'].includes(item.status)){
-            return '待迁移的云主机需为CPU型或已关机的GPU型'
+        if(item.is_gpu || Object.keys(item.disk_info.system)[0]==='local'){
+            return '仅支持关机迁移'
         }else{
-            if(item.is_gpu){
-                return '仅支持关机迁移'
-            }else{
-                if(Object.keys(item.disk_info.system)[0]!=='local'){//云盘
-                    return '仅CPU云盘类型的虚机支持运行状态迁移'
-                }else{
-                    return '仅支持关机迁移'
-                }
-            }
+            return '仅运行中和已关机状态下迁移'
         }
         
     }
