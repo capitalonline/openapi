@@ -29,7 +29,7 @@
                     <el-table-column prop="ecs_id" label="实例名称/实例ID">
                         <template slot-scope="scope">
                             <div>{{scope.row.name}} / </div>
-                            <el-tooltip :content="'待迁移的云主机需为CPU型或已关机的GPU型'" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
+                            <el-tooltip :content="getMsg(scope.row)" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
                                 <div>{{scope.row.ecs_id}}</div>
                             </el-tooltip>
                             <span v-else>{{scope.row.ecs_id}}</span>
@@ -127,24 +127,20 @@ export default class Migrate extends Vue{
     private physical_list:any=[]
     private recommend=[];
     private useable_list:any=[];
-    private tipMsg:string=''
     created() {
         this.get_recommended_host()
         let status_list = this.rows[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
         let list:any=[]
         status_list.map(item=>{
             if(item.is_gpu && item.status==='已关机'){
-                this.tipMsg = '仅支持关机迁移'
                 list.push(item.ecs_id)
             }else if(!item.is_gpu && item.disk_info.system){
                 if(Object.keys(item.disk_info.system)[0]!=='local'){//cpu云盘
                     if(['已关机','运行中'].includes(item.status)){//cpu云盘
-                        this.tipMsg = '仅CPU云盘类型的虚机支持运行状态迁移'
                         list.push(item.ecs_id)
                     }
                 }else{//cpu本地盘
                     if(item.status==='已关机'){
-                        this.tipMsg = '仅支持关机迁移'
                         list.push(item.ecs_id)
                     }
                 }
@@ -154,6 +150,22 @@ export default class Migrate extends Vue{
         console.log('this.useable_list',this.useable_list);
         
         this.list=this.rows[0].ecs_list;
+    }
+    private getMsg(item){
+        if(!['已关机','运行中'].includes(item.status)){
+            return '待迁移的云主机需为CPU型或已关机的GPU型'
+        }else{
+            if(item.is_gpu){
+                return '仅支持关机迁移'
+            }else{
+                if(Object.keys(item.disk_info.system)[0]!=='local'){//云盘
+                    return '仅CPU云盘类型的虚机支持运行状态迁移'
+                }else{
+                    return '仅支持关机迁移'
+                }
+            }
+        }
+        
     }
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
