@@ -29,7 +29,7 @@
                     <el-table-column prop="ecs_id" label="实例名称/实例ID">
                         <template slot-scope="scope">
                             <div>{{scope.row.name}} / </div>
-                            <el-tooltip :content="'待迁移的云主机需为CPU型或已关机的GPU型'" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
+                            <el-tooltip :content="getMsg(scope.row)" effect="light" v-if="!useable_list.includes(scope.row.ecs_id)">
                                 <div>{{scope.row.ecs_id}}</div>
                             </el-tooltip>
                             <span v-else>{{scope.row.ecs_id}}</span>
@@ -64,25 +64,25 @@
                 <div class="recommend" v-if="recommend.length>0">
                     <div v-for="item in recommend" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
                         {{item.host_name}}
-                        <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                        <el-tooltip :content="item.cpu_usage ? (parseFloat(item.cpu_usage)).toFixed(2)+'%' : '0.00%'" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.cpu_usage" />
                                 <div>CPU</div>
                             </div>
                         </el-tooltip>
-                        <el-tooltip :content="(parseFloat(item.memory_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                        <el-tooltip :content="item.memory_usage ? (parseFloat(item.memory_usage)).toFixed(2)+'%' : '0.00%'" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.memory_usage" />
                                 <div>内存</div>
                             </div>
                         </el-tooltip>
-                        <el-tooltip :content="(parseFloat(item.local_storage_usage)).toFixed(2)+'%'" placement="bottom" effect="light">
+                        <el-tooltip :content="item.local_storage_usage ? (parseFloat(item.local_storage_usage)).toFixed(2)+'%' : '0.00%'" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.local_storage_usage" />
                                 <div>本地存储</div>
                             </div>
                         </el-tooltip>
-                        <el-tooltip :content="`${item.used_gpu_num} / ${item.total_gpu_num}`" placement="bottom" effect="light">
+                        <el-tooltip :content="`${item.used_gpu_num ? item.used_gpu_num : 0} / ${item.total_gpu_num ? item.total_gpu_num : 0}`" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.total_gpu_num===0 ? 0 : Number((item.used_gpu_num / item.total_gpu_num).toFixed(2))*100" />
                                 <div>显卡</div>
@@ -91,52 +91,6 @@
                     </div>
                 </div>
                 <div v-else class="error_message m-top10">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
-                <!-- <div class="m-bottom10 flex-host">
-                    <span class="m-right10">物理机:</span>
-                    <div>
-                        <el-select 
-                            v-model="physical" 
-                            filterable 
-                            :filter-method="get_recommended_host" 
-                            @visible-change="change_physical"
-                            placeholder="请选择"
-                            multiple 
-                        >
-                            <el-option
-                                v-for="item in recommend"
-                                :key="item.host_id"
-                                :label="item.host_name"
-                                :value="item.host_id"
-                                
-                            >
-                                <span>{{item.host_name}}</span>
-                                <el-tooltip :content="(parseFloat(item.cpu)).toFixed(2)+'%'" placement="bottom" effect="light">
-                                    <span><CustomIcon :hei="item.cpu" />CPU</span>
-                                </el-tooltip>
-                                <el-tooltip :content="(parseFloat(item.ram)).toFixed(2)+'%'" placement="bottom" effect="light">
-                                    <span><CustomIcon :hei="item.ram" />内存</span>
-                                </el-tooltip> 
-                                
-                            </el-option>
-                        </el-select>
-                        <div class="error_message m-top10" v-if="recommend.length===0">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
-                    </div>
-                    
-                </div> -->
-                <!-- <div class="m-right10 flex-base">
-                    <span class="m-right10">迁移推荐:</span>
-                    <div>
-                        <div v-for="item in recommend" :key="item.host_id">
-                            {{item.host_name}}
-                            <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="top" effect="light">
-                                <span><CustomIcon :hei="item.cpu_usage" />CPU</span>
-                            </el-tooltip>
-                            <el-tooltip :content="(parseFloat(item.memory_usage)).toFixed(2)+'%'" placement="top" effect="light">
-                                <span><CustomIcon :hei="item.memory_usage" />内存</span>
-                            </el-tooltip>
-                        </div>
-                    </div>
-                </div> -->
             </div>
             
         </div>
@@ -172,22 +126,45 @@ export default class Migrate extends Vue{
     private physical:Array<string>=[]
     private physical_list:any=[]
     private recommend=[];
-    private useable_list:any=[]
+    private useable_list:any=[];
     created() {
         this.get_recommended_host()
-        if(this.rows[0].host_purpose==='GPU'){
-            this.useable_list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu).map(inn=>inn.ecs_id)
-        }else{
-            this.useable_list=this.rows[0].ecs_list.map(item=>item.ecs_id)
-        }//可以进行迁移的云主机
+        let status_list = this.rows[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
+        let list:any=[]
+        status_list.map(item=>{
+            if(item.is_gpu && item.status==='已关机'){
+                list.push(item.ecs_id)
+            }else if(!item.is_gpu && item.disk_info.system){
+                if(Object.keys(item.disk_info.system)[0]!=='local'){//cpu云盘
+                    if(['已关机','运行中'].includes(item.status)){//cpu云盘
+                        list.push(item.ecs_id)
+                    }
+                }else{//cpu本地盘
+                    if(item.status==='已关机'){
+                        list.push(item.ecs_id)
+                    }
+                }
+            }
+        })
+        this.useable_list=list//可以进行迁移的云主机
+        console.log('this.useable_list',this.useable_list);
+        
         this.list=this.rows[0].ecs_list;
+    }
+    private getMsg(item){
+        if(item.is_gpu || Object.keys(item.disk_info.system)[0]==='local'){
+            return '仅支持关机迁移'
+        }else{
+            return '仅运行中和已关机状态下迁移'
+        }
+        
     }
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
-            return true
+            return true;
         }else{
-            return false
-        }
+            return false;
+        } 
     }
     private judge(){
         let cpu:any=this.physical_list.filter(item=>item.host_purpose==='CPU')
