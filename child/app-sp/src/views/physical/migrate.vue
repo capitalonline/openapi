@@ -167,6 +167,7 @@ export default class Migrate extends Vue{
         }
         
     }
+    //
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
             return true;
