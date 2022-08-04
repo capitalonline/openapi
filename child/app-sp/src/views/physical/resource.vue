@@ -18,9 +18,9 @@
             <el-table
                 :data="rows"
                 border
-                max-height="300"
+                max-height="253"
             >
-                <el-table-column prop="host_name" label="主机名"></el-table-column>
+                <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
                 <el-table-column prop="az_name" label="主机名"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>

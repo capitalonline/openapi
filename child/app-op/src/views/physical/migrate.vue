@@ -1,0 +1,242 @@
+<template>
+  <div>
+     <el-dialog
+      title="迁移"
+      :visible.sync="visible_sync"
+      width="1140px"
+      :destroy-on-close="true"
+      custom-class="upload"
+      :close-on-click-modal="false"
+      @close="back"
+    >
+        <div class="migrate">
+            <div class="left">
+                <div class="m-bottom10">
+                    <el-checkbox v-model="checked" :indeterminate="isIndeterminate" @change="handleCheckAllChange"></el-checkbox>
+                    {{rows[0].host_name}}(<span class="num_message">{{selected.length}}</span>/{{list.length}})
+                </div>
+                <el-table
+                    :data="list"
+                    ref="table"
+                    border
+                    :show-header="false"
+                    max-height="500"
+                    @selection-change="handleSelectionChange"
+                >
+                    <el-table-column type="selection"></el-table-column>
+                    <el-table-column prop="ecs_id" label=""></el-table-column>
+                    <el-table-column prop="status" label=""></el-table-column>
+                    <el-table-column prop="genre" label=""></el-table-column>
+                </el-table>
+                <div class="error_message m-top10" v-if="selected.length===0">请选择虚拟机</div>
+            </div>
+            <div class="center">
+                <div>迁移至</div>
+                <div>------------></div>
+            </div>
+            <div class="right">
+                <h4>目的主机:</h4>
+                <div class="m-bottom20">
+                    <span class="m-right10">可用区:</span>
+                    <span>{{rows[0].az_name}}</span>
+                </div>
+                <div class="m-bottom10 flex-host">
+                    <span class="m-right10">物理机:</span>
+                    <div>
+                        <el-select 
+                            v-model="physical" 
+                            filterable 
+                            :filter-method="get_physical_list" 
+                            @visible-change="change_physical"
+                            placeholder="请选择"
+                            multiple 
+                        >
+                            <el-option
+                                v-for="item in physical_list"
+                                :key="item.host_id"
+                                :label="item.host_name"
+                                :value="item.host_id"
+                                
+                            >
+                                <span>{{item.host_name}}</span>
+                                <!-- <el-tooltip :content="(parseFloat(item.cpu)).toFixed(2)+'%'" placement="bottom" effect="light">
+                                    <span><CustomIcon :hei="item.cpu" />CPU</span>
+                                </el-tooltip>
+                                <el-tooltip :content="(parseFloat(item.ram)).toFixed(2)+'%'" placement="bottom" effect="light">
+                                    <span><CustomIcon :hei="item.ram" />内存</span>
+                                </el-tooltip> -->
+                                
+                            </el-option>
+                        </el-select>
+                    </div>
+                    
+                </div>
+                <div class="m-right10 flex-between">
+                    <span class="m-right10 m-top20">迁移推荐:</span>
+                    <div>
+                        <div v-for="item in recommend" :key="item.host_id">
+                            {{item.host_id}}
+                            <el-tooltip :content="(parseFloat(item.cpu_usage)).toFixed(2)+'%'" placement="top" effect="light">
+                                <span><CustomIcon :hei="item.cpu_usage" />CPU</span>
+                            </el-tooltip>
+                            <el-tooltip :content="(parseFloat(item.memory_usage)).toFixed(2)+'%'" placement="top" effect="light">
+                                <span><CustomIcon :hei="item.memory_usage" />内存</span>
+                            </el-tooltip>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button @click="back('0')">取消</el-button>
+        </span>
+    </el-dialog>
+
+
+    </div>
+</template>
+
+<script lang="ts">
+import { Component, Emit, Prop, Vue,PropSync,Watch } from 'vue-property-decorator';
+import Service from '../../https/physical/list';
+import CustomIcon from './customIcon.vue'
+import moment from 'moment';
+import {Table} from 'element-ui'
+@Component({
+    components:{
+        CustomIcon
+    }
+})
+export default class Migrate extends Vue{
+    $message;
+    @PropSync('visible') visible_sync!:Boolean;
+    @Prop({default:()=>[]})rows!:any
+    private list:any= this.rows[0].ecs_list
+    private selected:any=[];
+    private checked:Boolean=false;
+    private isIndeterminate:Boolean=false
+    private physical:Array<string>=[]
+    private physical_list:any=[]
+    private recommend=[]
+    created() {
+        this.get_physical_list()
+        this.get_recommended_host()
+        if(this.rows[0].host_purpose==='GPU'){
+            this.list=this.rows[0].ecs_list.filter(item=>(item.is_gpu && item.status==="已关机") || !item.is_gpu)
+        }else{
+            this.list=this.rows[0].ecs_list
+        }
+    }
+    //关闭面板时重新获取实例列表
+    private change_physical(val){
+        if(!val){
+            this.get_physical_list()
+        }
+    }
+    @Watch("physical")
+    private watch_physical(nv){
+        this.judge()
+    }
+    private judge(){
+        let cpu:any=this.physical_list.filter(item=>item.host_purpose==='CPU')
+        let cpu_ids:any=cpu.map(item=>item.host_id)
+        let len = [...new Set([...cpu_ids,...this.physical])].length
+        if(this.selected.some(item=>item.is_gpu) && len<[...cpu_ids,...this.physical].length){//选中的云主机中存在gpu云主机，选中的目的主机中存在非gpu的物理机
+            this.$message.warning('GPU云主机不能被迁移到非GPU物理机上')
+            this.physical=[]
+        }
+    }
+    private async get_physical_list(val:string=""){
+        let res:any=await Service.get_host_list({
+            host_name:val,
+            az_id:this.rows[0].pod__az_id,
+            page_index:1,
+            page_size:20,
+        })
+        if(res.code==="Success"){
+            this.physical_list = res.data.host_list.filter(item=>
+                item.host_id!==this.rows[0].host_id 
+                && item.machine_status==="online" && this.rows[0].gpu_model===item.gpu_model);
+        }
+    }
+    private async get_recommended_host(){
+        let res:any=await Service.recommended_host({
+            host_id:this.rows[0].host_id,
+            is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
+            gpu_card_name:this.rows[0].gpu_real_name
+        })
+        if(res.code==="Success"){
+            this.recommend = res.data.data;
+        }
+    }
+    private handleCheckAllChange(val){
+        const table = this.$refs.table as Table
+        val ? table.toggleAllSelection() : table.clearSelection()
+        this.isIndeterminate = false;
+    }
+    private handleSelectionChange(val){
+        this.selected=val
+        this.checked = val.length === this.list.length;
+        this.isIndeterminate = val.length > 0 && val.length < this.list.length;
+        this.judge()
+    }
+    private async confirm(){
+        if(this.selected.length===0){
+            return;
+        }
+        let res:any=await Service.migrate({
+            ecs_ids:this.selected.map(item=>item.ecs_id),
+            start_host_id:this.rows[0].host_id,
+            end_host_ids:this.physical,
+            is_gpu:this.rows[0].host_purpose==='GPU' ? '1' : '0',
+        })
+        if(res.code==="Success"){
+            this.$message.success(`物理机迁移任务下发成功！`)
+            this.back("1")
+        }else{
+            this.back("0")
+        }
+    }
+    @Emit("close")
+    private back(val){
+        this.visible_sync=false
+    }
+  
+}
+</script>
+<style lang="scss" scope>
+.migrate{
+    display: flex;
+    .custom-label{
+        display: none;
+    }
+    .left{
+        flex: 1;
+    }
+    .center{
+        width: 180px;
+        margin-top: 58px;
+        padding: 0 20px;
+    }
+    .right{
+        min-width:400px;
+        .flex-host{
+            display:flex
+        }
+    }
+
+    
+    
+}
+
+
+</style>
+<style lang="scss">
+.migrate{
+    li.el-select-dropdown__item.hover{
+        display: flex !important;
+    }
+}
+</style>

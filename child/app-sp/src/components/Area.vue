@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select v-model="value">
+        <el-select v-model="value" popper-class="area-sp">
             <el-option v-for="item in area_list" :key="item.region_group_id" :label="value" :value="value" class="item">
                 <div class="area-btn">
                     <span class="label">{{item.region_group_name}}</span>
@@ -53,16 +53,18 @@ export default class Area extends Vue{
 }
 </script>
 <style lang="scss">
-.area-btn{
-  .el-radio-group{
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
-li.el-select-dropdown__item.item {
-    min-height: 80px !important;
-    height: auto;
-    padding-bottom: 10px;
+.area-sp{
+    .area-btn{
+        .el-radio-group{
+            display: flex !important;
+            flex-wrap: wrap;
+        }
+    }
+    li.el-select-dropdown__item.item {
+        min-height: 80px !important;
+        height: auto;
+        padding-bottom: 10px;
+    }
 }
 </style>
 <style lang="scss" scoped>

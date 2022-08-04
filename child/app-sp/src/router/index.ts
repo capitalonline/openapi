@@ -4,6 +4,18 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 const routes: RouteConfig[] = [
   {
+    path: '/overview',
+    name: 'overview',
+    component: () => import('../views/overview/index.vue'),
+    meta: {menu: 'overview'}
+  },
+  // {
+  //   path: '/pod',
+  //   name: 'pod_list',
+  //   component: () => import('../views/pod/list.vue'),
+  //   meta: {meta: 'pod_list'}
+  // },
+  {
     path: '/instance',
     name: 'instance_list',
     component: () => import('../views/instance/list.vue'),
@@ -22,15 +34,15 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
-    path: '/instance/gpu/monitor/',
-    name: 'gpu_monitor',
-    component: () => import('../views/instance/monitor.vue'),
-    meta: {menu: 'gpu_monitor'}
-  },
-  {
     path:'/alarmInfo',
     name:'alarm_info',
-    component:()=>import('../views/alarm/info.vue'),
+    component:()=>import('../views/alarm/alarmInfo.vue'),
+    meta:{menu:'alarm_info'}
+  },
+  {
+    path:'/alarmInfo/create',
+    name:'alarm_create',
+    component:()=>import('../views/alarm/createShield.vue'),
     meta:{menu:'alarm_info'}
   },
   {
@@ -94,6 +106,12 @@ const routes: RouteConfig[] = [
     meta:{menu:'mirror_list'}
   },
   {
+    path:'/privateMirror',
+    name:'private_mirror_list',
+    component:()=>import('../views/mirror/privateMirror.vue'),
+    meta:{menu:'private_mirror_list'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
@@ -134,6 +152,12 @@ const routes: RouteConfig[] = [
     name: 'pod_list',
     component: () => import('../views/pod/list.vue'),
     meta: {meta: 'pod_list'}
+  },
+  {
+    path: '/message',
+    name: 'message_list',
+    component: () => import('../views/message/list.vue'),
+    meta: {meta: 'message_list'}
   },
   {
     path: '/404',

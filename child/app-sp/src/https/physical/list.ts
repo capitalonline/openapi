@@ -103,6 +103,18 @@ export default{
     get_host_list_field(req){
         return service(getHostOptions('GET','/host/get_host_list_field/',req))
     },
+    //获取业务测试任务列表
+    get_task_list(req){
+        return service(getHostOptions('GET','/host/business_test_task/',req))
+    },
+    //业务测试下发
+    create_test_task(req){
+        return service(getHostOptions('POST','/host/create_test_task/',req))
+    },
+    //获取筛选字段
+    get_host_filter_item(req){
+        return service(getHostOptions('POST','/host/get_host_filter_item/',req))
+    },
     
     
 

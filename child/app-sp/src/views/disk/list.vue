@@ -233,7 +233,7 @@ export default class extends Vue {
   ]
   created() {
     this.get_disk_state();
-    this.getDiskList()
+    this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
 
@@ -246,6 +246,13 @@ export default class extends Vue {
   //     this.close_disk()
   //   }
   // }
+  @Watch("$store.state.pod_id")
+  private watch_pod(nv){
+    if(!nv){
+      return;
+    }
+    this.search(this.req_data)
+  }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
@@ -263,6 +270,7 @@ export default class extends Vue {
     }
     const {req_data}=this
     let res:any = await Service.get_disk_list({
+      pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
       status:req_data.status || '',
@@ -305,6 +313,7 @@ export default class extends Vue {
     }
   }
   private search(data:any={}){
+    this.FnClearTimer()
     this.current = 1;
     this.req_data = {...data,...this.filter_obj};
     this.getDiskList()

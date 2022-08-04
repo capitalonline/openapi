@@ -10,9 +10,9 @@ import './assets/common.scss';
 import { getUserInfo } from '../src/init';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
-
+import Clipboard from 'v-clipboard';
 Vue.use(ElementUI)
-
+// Vue.use(Clipboard)
 Vue.config.productionTip = false;
 
 let router = null;
@@ -49,20 +49,7 @@ function render (props: prop = {}) {
       next()
     }
   })
-  // Sentry.init({
-  //   Vue,
-  //   dsn: 'http://807ce19725244499a99480d12cef58be@sentry.yun-paas.net:9000/14',
-  //   integrations: [
-  //     new Integrations.BrowserTracing({
-  //       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-  //       tracingOrigins: ['http://cloudos-sp-front.gic.test/', /^\//]
-  //     })
-  //   ],
-  //   // Set tracesSampleRate to 1.0 to capture 100%
-  //   // of transactions for performance monitoring.
-  //   // We recommend adjusting this value in production
-  //   tracesSampleRate: 1.0
-  // });
+
   instance = new Vue({
     router,
     store,
@@ -72,18 +59,20 @@ function render (props: prop = {}) {
 
 // 独立运行时
 if (!window.__POWERED_BY_QIANKUN__) {
+  store.commit('SET_QIANKUN', false)
   getUserInfo().then(() => {
     render();
   })
 }
 
 export async function bootstrap () {
-  console.log('bootstrap')
 }
 
-export async function mount (props: any) {
-  console.log('mount', props)
-  await getUserInfo()
+export function mount (props: any) {
+  store.commit('SET_QIANKUN', true)
+  props.onGlobalStateChange((state, prev) => {
+    store.commit('SET_AUTH_INFO', state.permission_dict);
+  }, true);
   render(props)
 }
 

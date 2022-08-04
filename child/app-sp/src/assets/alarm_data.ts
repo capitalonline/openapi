@@ -188,6 +188,14 @@ export const productList = [
         id:'ecs',
         name:'云服务器'
     },
+    {
+        id:'host',
+        name:'宿主机'
+    },
+    {
+        id:'nas',
+        name:'文件存储'
+    },
     // {
     //     id:'gpu',
     //     name:'GPU'

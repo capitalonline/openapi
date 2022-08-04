@@ -1,22 +1,46 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import Home from '../views/Home.vue';
-
 Vue.use(VueRouter);
-
 const routes: RouteConfig[] = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home,
+    path:'/',
+    redirect:'/az'
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: '/az',
+    name: 'az_list',
+    component: () => import('../views/az/list.vue'),
+    meta: {label: '可用区管理', meta: 'az_list'}
+  },
+  {
+    path: '/pod',
+    name: 'pod_list',
+    component: () => import('../views/pod/list.vue'),
+    meta: {label: 'POD管理', meta: 'pod_list'}
+  },
+  {
+    path:'/physical',
+    name:'physical_list',
+    component:()=>import('../views/physical/list.vue'),
+    meta: {label: '物理资源管理', menu:'physical_list'},
+  },
+  {
+    path: '/instance',
+    name: 'instance_list',
+    component: () => import('../views/instance/list.vue'),
+    meta: {label: '云服务器管理', menu: 'instance_list'},
+  },
+  {
+    path: '/instance/create',
+    name: 'instance_create',
+    component: () => import('../views/instance/create.vue'),
+    meta: {label: '云服务器创建', menu: 'instance_list', hidden: true}
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('../views/404.vue'),
+    meta: {menu: '404', no_auth: true, hidden: true}
   },
 ];
 
