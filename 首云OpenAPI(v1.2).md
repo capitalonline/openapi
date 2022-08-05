@@ -12412,7 +12412,6 @@ def region_az_info():
     action = "DescribeRegions"
     method = "GET"
     param = {}
-    # get_signature函数为顶部认证方式中3.获取签名代码示例函数
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.get(url)
     result = json.loads(resp.content)
@@ -12497,16 +12496,16 @@ def region_az_info():
 
 **返回参数**
 
-| 参数             | 类型     | 示例            | 说明           |
-| ---------------- | -------- | --------------- | -------------- |
-| EcsFamilyInfo    | dict     | {}              | 计算类型族信息 |
-| EcsFamilyName    | string   | 极速渲染型re3   | 规格族名称     |
-| SpecList         | list     | []              | 规格列表       |
-| Cpu              | interger | 16              | Cpu大小        |
-| Ram              | interger | 32              | 内存大小       |
-| Gpu              | interger | 1               | 显卡数量       |
-| GpuShowType      | string   | NVIDIA RTX 3090 | 显卡型号       |
-| SupportGpuDriver | string   | Geforce         | 显卡驱动类型   |
+| 参数             | 类型   | 示例            | 说明               |
+| ---------------- | ------ | --------------- | ------------------ |
+| EcsFamilyInfo    | dict   | {}              | 计算类型族信息字典 |
+| EcsFamilyName    | string | 极速渲染型re3   | 规格族名称         |
+| SpecList         | list   | []              | 规格列表           |
+| Cpu              | int    | 16              | Cpu大小            |
+| Ram              | int    | 32              | 内存大小           |
+| Gpu              | int    | 1               | 显卡数量           |
+| GpuShowType      | string | NVIDIA RTX 3090 | 显卡型号           |
+| SupportGpuDriver | string | Geforce         | 显卡驱动类型       |
 
 **请求示例**
 
@@ -12650,20 +12649,20 @@ def ecs_family_info():
 
 **返回参数**
 
-| 参数             | 类型     | 示例                                 | 说明                                                         |
-| ---------------- | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| Public           | dict     | {}                                   | 公共镜像信息字典                                             |
-| Private          | dict     | {}                                   | 私有镜像信息字典                                             |
-| OsVersions       | dict     | {}                                   | 镜像类型字典                                                 |
-| ImageId          | string   | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
-| ImageName        | string   | create-image1                        | 镜像名称                                                     |
-| OsType           | string   | Centos                               | 系统类型                                                     |
-| OsVersion        | string   | 7.4                                  | 镜像版本                                                     |
-| OsBit            | string   | 64                                   | 镜像系统位数                                                 |
-| Size             | interger | 24                                   | 镜像大小（单位：GB）                                         |
-| Username         | string   | root                                 | 系统用户名                                                   |
-| SupportType      | list     | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
-| SupportGpuDriver | string   | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
+| 参数             | 类型   | 示例                                 | 说明                                                         |
+| ---------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Public           | dict   | {}                                   | 公共镜像信息字典                                             |
+| Private          | dict   | {}                                   | 私有镜像信息字典                                             |
+| OsVersions       | dict   | {}                                   | 镜像类型字典                                                 |
+| ImageId          | string | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
+| ImageName        | string | create-image1                        | 镜像名称                                                     |
+| OsType           | string | Centos                               | 系统类型                                                     |
+| OsVersion        | string | 7.4                                  | 镜像版本                                                     |
+| OsBit            | string | 64                                   | 镜像系统位数                                                 |
+| Size             | int    | 24                                   | 镜像大小（单位：GB）                                         |
+| Username         | string | root                                 | 系统用户名                                                   |
+| SupportType      | list   | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
+| SupportGpuDriver | string | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
 
 **请求示例**
 
@@ -12911,21 +12910,21 @@ def image_info():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                         |
-| ----------------- | ---- | -------- | -------------------------------------------- |
-| AvailableZoneCode | 可选 | string   | 可用区code                                   |
-| VpcId             | 可选 | string   | vpc id                                       |
-| SearchInfo        | 可选 | string   | 搜索信息（可传实例id或者实例名称或者私网ip） |
-| PageNumber        | 可选 | interger | 当前页数（分页参数不传返回所有数据）         |
-| PageSize          | 可选 | interger | 每页数据条数（分页参数不传返回所有数据）     |
+| 参数              | 要求 | 类型   | 说明                                         |
+| ----------------- | ---- | ------ | -------------------------------------------- |
+| AvailableZoneCode | 可选 | string | 可用区code                                   |
+| VpcId             | 可选 | string | vpc id                                       |
+| SearchInfo        | 可选 | string | 搜索信息（可传实例id或者实例名称或者私网ip） |
+| PageNumber        | 可选 | int    | 当前页数（分页参数不传返回所有数据）         |
+| PageSize          | 可选 | int    | 每页数据条数（分页参数不传返回所有数据）     |
 
 **返回参数**
 
 | 参数              | 类型     | 示例                | 说明                               |
 | ----------------- | -------- | ------------------- | ---------------------------------- |
-| PageNumber        | interger | 1                   | 当前页数                           |
-| PageSize          | interger | 1                   | 每页数据条数                       |
-| TotalCount        | interger | 10                  | 总记录数                           |
+| PageNumber        | int      | 1                   | 当前页数                           |
+| PageSize          | int      | 1                   | 每页数据条数                       |
+| TotalCount        | int      | 10                  | 总记录数                           |
 | EcsList           | list     | []                  | 云服务器列表                       |
 | Status            | string   | shutdown            | 云服务器状态码                     |
 | StatusDisplay     | string   | 已关机              | 云服务器状态                       |
@@ -12937,17 +12936,17 @@ def image_info():
 | EipIp             | string   | 111.111.111.111     | 公网ip                             |
 | CreateTime        | datetime | 2022-07-22 16:41:28 | 创建时间                           |
 | EcsFamilyName     | string   | 专业渲染型rp3       | 规格族名称                         |
-| CpuSize           | interger | 16                  | Cpu大小                            |
-| RamSize           | interger | 32                  | 内存大小                           |
+| CpuSize           | int      | 16                  | Cpu大小                            |
+| RamSize           | int      | 32                  | 内存大小                           |
 | IsGpu             | bool     | true                | 是否是gpu类型                      |
-| GpuSize           | interger | 1                   | 显卡数量                           |
+| GpuSize           | int      | 1                   | 显卡数量                           |
 | CardName          | string   | NVIDIA RTX A5000    | 显卡型号                           |
 | BillingMethodName | string   | 包年包月            | 计费方式名称                       |
 | EndBillTime       | datetime | 2022-08-22 16:41:28 | 到期时间                           |
 | IsAutoRenewal     | string   | 0                   | 到期是否自动续约                   |
 | ImageName         | string   | Centos 7.4 64位     | 镜像名称                           |
 | SystemDiskType    | string   | SSD云盘             | 系统盘类型                         |
-| SystemDiskSize    | interger | 24                  | 系统盘大小                         |
+| SystemDiskSize    | int      | 24                  | 系统盘大小                         |
 
 **请求示例**
 
@@ -13043,20 +13042,20 @@ def ecs_list():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                                         |
-| ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | 可选 | string   | 云服务器规格族名称,例：Ram渲染型GN6-01(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
-| Cpu               | 必选 | interger | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| Ram               | 必选 | interger | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| Gpu               | 可选 | interger | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| BillingMethod     | 必选 | string   | 计费方式："0": 按需  "1":包月                                |
-| Duration          | 可选 | interger | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
-| IsToMonth         | 可选 | interger | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| SystemDiskInfo    | 必选 | dict     | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
-| DiskFeature       | 必选 | string   | 盘类型,如："ssd","local"                                     |
-| DataDiskInfo      | 可选 | list     | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
-| Number            | 可选 | interger | 购买数量，默认为1                                            |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 可选 | string | 云服务器规格族名称,例：Ram渲染型GN6-01                       |
+| Cpu               | 必选 | int    | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Ram               | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Gpu               | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
+| DiskFeature       | 必选 | string | 盘类型,如："ssd","local"                                     |
+| DataDiskInfo      | 可选 | list   | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
+| Number            | 可选 | int    | 购买数量，默认为1                                            |
 
 **返回参数**
 
@@ -13146,14 +13145,14 @@ def get_ecs_price():
 | AzName        | string   | "可用区A"                                                    | 可用区名称          |
 | Status        | string   | "running"                                                    | 状态码              |
 | StatusDisplay | string   | "运行中"                                                     | 状态                |
-| IsGpu         | interger | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
+| IsGpu         | int      | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
 | CreateTime    | datetime | 2022-07-22 16:41:28                                          | 创建时间            |
 | EndBillTime   | datetime | 2022-08-22 16:41:28                                          | 到期时间            |
 | IsAutoRenewal | string   | 1                                                            | 是否自动续约        |
 | TimeZone      | sting    | UTC                                                          | 时区                |
-| EcsRule       | dict     | {<br/>            "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
+| EcsRule       | dict     | {<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
 | OsInfo        | dict     | {<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    } | 系统信息            |
-| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd",<br/>        "DiskName": "ssd云盘"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
+| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/>        "EcsGoodsId": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "EbsGoodsId": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "Unit": "GB",<br/>        "Id": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd",<br/>        "DiskName": "ssd云盘"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
 | Pipe          | dict     | {<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": {<br/>        "10.1.128.53": {<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
 | BillingInfo   | dict     | {<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    } | 计费信息            |
 
@@ -13216,18 +13215,19 @@ def get_ecs_detail():
             "Version": "7.4"
         },
         "Disk": {
-            "SystemDiskConf": {   //系统盘信息字典
-                "IsFollowDelete": true,  //是否随实例删除
-                "Name": "ssd_20220721",  //盘名称
+            "SystemDiskConf": {   // 系统盘信息
+                "ReleaseWithInstance": true,  // 是否随实例删除
+                "DiskType": "system",
+                "Name": "ssd_20220721",  
                 "Size": 24,
                 "DiskIops": 2520,  //iops大小
                 "BandMbps": 96,  // 吞吐量
                 "Unit": "GB",
-                "DiskId": "disk-dj3g8odrnwqdrybj",  //系统盘id
+                "Id": "disk-dj3g8odrnwqdrybj",  //系统盘id
                 "DiskFeature": "ssd",  //盘类型
-                "DiskName": "ssd云盘"  //盘类型名称
+                "DiskName": "ssd云盘"  //盘名称
             },
-            "DataDiskConf": []  //数据盘信息列表
+            "DataDiskConf": []
         },
         "Pipe": {
             "VpcName": "Ram服务器",
@@ -13401,7 +13401,7 @@ def describe_event():
 
 **Action**: CreateInstance
 
-**描述**：创建云服务器
+**描述:**创建云服务器
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
@@ -13409,29 +13409,29 @@ def describe_event():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                                         |
-| ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code(取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | 必选 | string   | 规格族名称(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
-| Cpu               | 必选 | interger | Cpu                                                          |
-| Ram               | 必选 | interger | 内存                                                         |
-| Gpu               | 可选 | interger | 显卡数量，默认为0                                            |
-| Number            | 可选 | interger | 购买数量，默认为1（默认批量最大值为100台）                   |
-| BillingMethod     | 必选 | string   | 计费方式："0": 按需  "1":包年包月                            |
-| Password          | 必选 | string   | 登录密码                                                     |
-| ImageId           | 必选 | string   | 镜像id或者镜像名称(取**DescribeImage**返回值中的ImageName或者ImageId) |
-| SystemDisk        | 必选 | dict     | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
-| VpcInfo           | 必选 | dict     | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
-| SubnetInfo        | 必选 | dict     | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list     | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
-| Name              | 可选 | string   | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
-| StartNumber       | 可选 | interger | 云服务器名称编号起始数字，不需要服务器编号可不传             |
-| Duration          | 可选 | interger | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
-| IsToMonth         | 可选 | interger | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| IsAutoRenewal     | 可选 | interger | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
-| UtcTime           | 可选 | interger | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
-| DataDisk          | 可选 | list     | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
-| DnsList           | 可选 | list     | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 必选 | string | 规格族名称(可取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
+| Cpu               | 必选 | int    | Cpu                                                          |
+| Ram               | 必选 | int    | 内存                                                         |
+| Gpu               | 可选 | int    | 显卡数量，默认为0                                            |
+| Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| Password          | 必选 | string | 登录密码                                                     |
+| ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
+| SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
+| VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
+| SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
+| PubnetInfo        | 可选 | list   | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
+| Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
+| StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
+| Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| IsAutoRenewal     | 可选 | int    | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
+| UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
+| DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
+| DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
 
 **返回参数**
 
@@ -13616,7 +13616,7 @@ def delete_ecs():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:  POST 
+**请求方法**：  POST 
 
 **请求参数**
 
@@ -13723,6 +13723,8 @@ def change_ecs_name():
     "RequestId": "7cafad69fb02ea43ae0fb92699600d5c"
 }
 ```
+
+
 
 **错误码**
 
