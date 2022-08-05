@@ -138,7 +138,7 @@ export default class Migrate extends Vue{
         }//可以进行迁移的云主机
         this.list=this.rows[0].ecs_list;
     }
-    //关闭面板时重新获取实例列表
+    //关闭面板时重新获取实例列表  
     private change_physical(val){
         if(!val){
             this.get_physical_list()
