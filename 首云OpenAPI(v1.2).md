@@ -191,6 +191,17 @@
        * [11.DeleteInstance](#11deleteinstance)
        * [12.ModifyInstancePassword](#13modifyinstancepassword)
        * [13.ModifyInstanceName](#13modifyinstancename)
+     * [云盘EBS相关](#云盘ebs相关)
+       * [1.CreateDisk](#1createdisk-1)
+       * [2.DeleteDisk](#2deletedisk)
+       * [3.DetachDisk](#3detachdisk-1)
+       * [4.AttachDisk](#4attachdisk)
+       * [5.ExtendDisk](#5extenddisk)
+       * [6.DescribeDiskQuota](#6describediskquota)
+       * [7.DescribeDiskList](#7describedisklist)
+       * [8.DescribeDisk](#8describedisk)
+       * [9.DescribeEcsAttachDisks](#9describeecsattachdisks)
+       * [10.DescribeEvent](#10describeevent)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -12401,7 +12412,6 @@ def region_az_info():
     action = "DescribeRegions"
     method = "GET"
     param = {}
-    # get_signature函数为顶部认证方式中3.获取签名代码示例函数
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.get(url)
     result = json.loads(resp.content)
@@ -12486,16 +12496,16 @@ def region_az_info():
 
 **返回参数**
 
-| 参数             | 类型     | 示例            | 说明           |
-| ---------------- | -------- | --------------- | -------------- |
-| EcsFamilyInfo    | dict     | {}              | 计算类型族信息 |
-| EcsFamilyName    | string   | 极速渲染型re3   | 规格族名称     |
-| SpecList         | list     | []              | 规格列表       |
-| Cpu              | interger | 16              | Cpu大小        |
-| Ram              | interger | 32              | 内存大小       |
-| Gpu              | interger | 1               | 显卡数量       |
-| GpuShowType      | string   | NVIDIA RTX 3090 | 显卡型号       |
-| SupportGpuDriver | string   | Geforce         | 显卡驱动类型   |
+| 参数             | 类型   | 示例            | 说明               |
+| ---------------- | ------ | --------------- | ------------------ |
+| EcsFamilyInfo    | dict   | {}              | 计算类型族信息字典 |
+| EcsFamilyName    | string | 极速渲染型re3   | 规格族名称         |
+| SpecList         | list   | []              | 规格列表           |
+| Cpu              | int    | 16              | Cpu大小            |
+| Ram              | int    | 32              | 内存大小           |
+| Gpu              | int    | 1               | 显卡数量           |
+| GpuShowType      | string | NVIDIA RTX 3090 | 显卡型号           |
+| SupportGpuDriver | string | Geforce         | 显卡驱动类型       |
 
 **请求示例**
 
@@ -12639,20 +12649,20 @@ def ecs_family_info():
 
 **返回参数**
 
-| 参数             | 类型     | 示例                                 | 说明                                                         |
-| ---------------- | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| Public           | dict     | {}                                   | 公共镜像信息字典                                             |
-| Private          | dict     | {}                                   | 私有镜像信息字典                                             |
-| OsVersions       | dict     | {}                                   | 镜像类型字典                                                 |
-| ImageId          | string   | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
-| ImageName        | string   | create-image1                        | 镜像名称                                                     |
-| OsType           | string   | Centos                               | 系统类型                                                     |
-| OsVersion        | string   | 7.4                                  | 镜像版本                                                     |
-| OsBit            | string   | 64                                   | 镜像系统位数                                                 |
-| Size             | interger | 24                                   | 镜像大小（单位：GB）                                         |
-| Username         | string   | root                                 | 系统用户名                                                   |
-| SupportType      | list     | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
-| SupportGpuDriver | string   | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
+| 参数             | 类型   | 示例                                 | 说明                                                         |
+| ---------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Public           | dict   | {}                                   | 公共镜像信息字典                                             |
+| Private          | dict   | {}                                   | 私有镜像信息字典                                             |
+| OsVersions       | dict   | {}                                   | 镜像类型字典                                                 |
+| ImageId          | string | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
+| ImageName        | string | create-image1                        | 镜像名称                                                     |
+| OsType           | string | Centos                               | 系统类型                                                     |
+| OsVersion        | string | 7.4                                  | 镜像版本                                                     |
+| OsBit            | string | 64                                   | 镜像系统位数                                                 |
+| Size             | int    | 24                                   | 镜像大小（单位：GB）                                         |
+| Username         | string | root                                 | 系统用户名                                                   |
+| SupportType      | list   | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
+| SupportGpuDriver | string | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
 
 **请求示例**
 
@@ -12900,21 +12910,21 @@ def image_info():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                         |
-| ----------------- | ---- | -------- | -------------------------------------------- |
-| AvailableZoneCode | 可选 | string   | 可用区code                                   |
-| VpcId             | 可选 | string   | vpc id                                       |
-| SearchInfo        | 可选 | string   | 搜索信息（可传实例id或者实例名称或者私网ip） |
-| PageNumber        | 可选 | interger | 当前页数（分页参数不传返回所有数据）         |
-| PageSize          | 可选 | interger | 每页数据条数（分页参数不传返回所有数据）     |
+| 参数              | 要求 | 类型   | 说明                                         |
+| ----------------- | ---- | ------ | -------------------------------------------- |
+| AvailableZoneCode | 可选 | string | 可用区code                                   |
+| VpcId             | 可选 | string | vpc id                                       |
+| SearchInfo        | 可选 | string | 搜索信息（可传实例id或者实例名称或者私网ip） |
+| PageNumber        | 可选 | int    | 当前页数（分页参数不传返回所有数据）         |
+| PageSize          | 可选 | int    | 每页数据条数（分页参数不传返回所有数据）     |
 
 **返回参数**
 
 | 参数              | 类型     | 示例                | 说明                               |
 | ----------------- | -------- | ------------------- | ---------------------------------- |
-| PageNumber        | interger | 1                   | 当前页数                           |
-| PageSize          | interger | 1                   | 每页数据条数                       |
-| TotalCount        | interger | 10                  | 总记录数                           |
+| PageNumber        | int      | 1                   | 当前页数                           |
+| PageSize          | int      | 1                   | 每页数据条数                       |
+| TotalCount        | int      | 10                  | 总记录数                           |
 | EcsList           | list     | []                  | 云服务器列表                       |
 | Status            | string   | shutdown            | 云服务器状态码                     |
 | StatusDisplay     | string   | 已关机              | 云服务器状态                       |
@@ -12926,17 +12936,17 @@ def image_info():
 | EipIp             | string   | 111.111.111.111     | 公网ip                             |
 | CreateTime        | datetime | 2022-07-22 16:41:28 | 创建时间                           |
 | EcsFamilyName     | string   | 专业渲染型rp3       | 规格族名称                         |
-| CpuSize           | interger | 16                  | Cpu大小                            |
-| RamSize           | interger | 32                  | 内存大小                           |
+| CpuSize           | int      | 16                  | Cpu大小                            |
+| RamSize           | int      | 32                  | 内存大小                           |
 | IsGpu             | bool     | true                | 是否是gpu类型                      |
-| GpuSize           | interger | 1                   | 显卡数量                           |
+| GpuSize           | int      | 1                   | 显卡数量                           |
 | CardName          | string   | NVIDIA RTX A5000    | 显卡型号                           |
 | BillingMethodName | string   | 包年包月            | 计费方式名称                       |
 | EndBillTime       | datetime | 2022-08-22 16:41:28 | 到期时间                           |
 | IsAutoRenewal     | string   | 0                   | 到期是否自动续约                   |
 | ImageName         | string   | Centos 7.4 64位     | 镜像名称                           |
 | SystemDiskType    | string   | SSD云盘             | 系统盘类型                         |
-| SystemDiskSize    | interger | 24                  | 系统盘大小                         |
+| SystemDiskSize    | int      | 24                  | 系统盘大小                         |
 
 **请求示例**
 
@@ -13032,20 +13042,20 @@ def ecs_list():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                                         |
-| ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | 可选 | string   | 云服务器规格族名称,例：Ram渲染型GN6-01(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
-| Cpu               | 必选 | interger | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| Ram               | 必选 | interger | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| Gpu               | 可选 | interger | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| BillingMethod     | 必选 | string   | 计费方式："0": 按需  "1":包月                                |
-| Duration          | 可选 | interger | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
-| IsToMonth         | 可选 | interger | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| SystemDiskInfo    | 必选 | dict     | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
-| DiskFeature       | 必选 | string   | 盘类型,如："ssd","local"                                     |
-| DataDiskInfo      | 可选 | list     | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
-| Number            | 可选 | interger | 购买数量，默认为1                                            |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 可选 | string | 云服务器规格族名称,例：Ram渲染型GN6-01                       |
+| Cpu               | 必选 | int    | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Ram               | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Gpu               | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
+| DiskFeature       | 必选 | string | 盘类型,如："ssd","local"                                     |
+| DataDiskInfo      | 可选 | list   | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
+| Number            | 可选 | int    | 购买数量，默认为1                                            |
 
 **返回参数**
 
@@ -13135,14 +13145,14 @@ def get_ecs_price():
 | AzName        | string   | "可用区A"                                                    | 可用区名称          |
 | Status        | string   | "running"                                                    | 状态码              |
 | StatusDisplay | string   | "运行中"                                                     | 状态                |
-| IsGpu         | interger | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
+| IsGpu         | int      | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
 | CreateTime    | datetime | 2022-07-22 16:41:28                                          | 创建时间            |
 | EndBillTime   | datetime | 2022-08-22 16:41:28                                          | 到期时间            |
 | IsAutoRenewal | string   | 1                                                            | 是否自动续约        |
 | TimeZone      | sting    | UTC                                                          | 时区                |
-| EcsRule       | dict     | {<br/>            "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
+| EcsRule       | dict     | {<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
 | OsInfo        | dict     | {<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    } | 系统信息            |
-| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd",<br/>        "DiskName": "ssd云盘"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
+| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/><br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
 | Pipe          | dict     | {<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": {<br/>        "10.1.128.53": {<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
 | BillingInfo   | dict     | {<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    } | 计费信息            |
 
@@ -13205,18 +13215,28 @@ def get_ecs_detail():
             "Version": "7.4"
         },
         "Disk": {
-            "SystemDiskConf": {   //系统盘信息字典
-                "IsFollowDelete": true,  //是否随实例删除
-                "Name": "ssd_20220721",  //盘名称
+            "SystemDiskConf": {   // 系统盘信息
+                "ReleaseWithInstance": 1,  // 是否随实例删除
+                "DiskType": "system",
+                "Name": "ssd_20220721",  
                 "Size": 24,
                 "DiskIops": 2520,  //iops大小
                 "BandMbps": 96,  // 吞吐量
                 "Unit": "GB",
                 "DiskId": "disk-dj3g8odrnwqdrybj",  //系统盘id
-                "DiskFeature": "ssd",  //盘类型
-                "DiskName": "ssd云盘"  //盘类型名称
+                "DiskFeature": "ssd"  //盘类型
             },
-            "DataDiskConf": []  //数据盘信息列表
+            "DataDiskConf": [
+                "ReleaseWithInstance": 0,  // 不随实例删除
+                "DiskType": "data",
+                "Name": "ssd_20220721",  
+                "Size": 24,
+                "DiskIops": 2520,  //iops大小
+                "BandMbps": 96,  // 吞吐量
+                "Unit": "GB",
+                "Id": "disk-dj3g8odrnwqdrybj",  //数据盘id
+                "DiskFeature": "ssd"  //盘类型
+            ]
         },
         "Pipe": {
             "VpcName": "Ram服务器",
@@ -13390,7 +13410,7 @@ def describe_event():
 
 **Action**: CreateInstance
 
-**描述**：创建云服务器
+**描述:**创建云服务器
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
@@ -13398,29 +13418,29 @@ def describe_event():
 
 **请求参数**
 
-| 参数              | 要求 | 类型     | 说明                                                         |
-| ----------------- | ---- | -------- | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string   | 可用区code(取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | 必选 | string   | 规格族名称(取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
-| Cpu               | 必选 | interger | Cpu                                                          |
-| Ram               | 必选 | interger | 内存                                                         |
-| Gpu               | 可选 | interger | 显卡数量，默认为0                                            |
-| Number            | 可选 | interger | 购买数量，默认为1（默认批量最大值为100台）                   |
-| BillingMethod     | 必选 | string   | 计费方式："0": 按需  "1":包年包月                            |
-| Password          | 必选 | string   | 登录密码                                                     |
-| ImageId           | 必选 | string   | 镜像id或者镜像名称(取**DescribeImage**返回值中的ImageName或者ImageId) |
-| SystemDisk        | 必选 | dict     | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
-| VpcInfo           | 必选 | dict     | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
-| SubnetInfo        | 必选 | dict     | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list     | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
-| Name              | 可选 | string   | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
-| StartNumber       | 可选 | interger | 云服务器名称编号起始数字，不需要服务器编号可不传             |
-| Duration          | 可选 | interger | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
-| IsToMonth         | 可选 | interger | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| IsAutoRenewal     | 可选 | interger | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
-| UtcTime           | 可选 | interger | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
-| DataDisk          | 可选 | list     | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
-| DnsList           | 可选 | list     | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 必选 | string | 规格族名称(可取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
+| Cpu               | 必选 | int    | Cpu                                                          |
+| Ram               | 必选 | int    | 内存                                                         |
+| Gpu               | 可选 | int    | 显卡数量，默认为0                                            |
+| Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| Password          | 必选 | string | 登录密码                                                     |
+| ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
+| SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
+| VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
+| SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
+| PubnetInfo        | 可选 | list   | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
+| Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
+| StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
+| Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| IsAutoRenewal     | 可选 | int    | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
+| UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
+| DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
+| DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
 
 **返回参数**
 
@@ -13605,7 +13625,7 @@ def delete_ecs():
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
-**请求方法**:  POST 
+**请求方法**：  POST 
 
 **请求参数**
 
@@ -13713,6 +13733,8 @@ def change_ecs_name():
 }
 ```
 
+
+
 **错误码**
 
 | **HttpCode** | 错误码                                     | 错误信息                                                     | 描述                                                     |
@@ -13744,7 +13766,721 @@ def change_ecs_name():
 | 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
 | 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
 
-### 
+## 云盘EBS相关
+
+**云盘状态(Status)说明**
+
+| code       | 说明     |
+| ---------- | -------- |
+| building   | 创建中   |
+| build_fail | 创建失败 |
+| running    | 使用中   |
+| mounting   | 挂载中   |
+| unmounting | 卸载中   |
+| waiting    | 待挂载   |
+| updating   | 更新中   |
+| error      | 错误     |
+
+### 1.CreateDisk
+
+**Action**: CreateDisk
+
+**描述**:  创建一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数                | 说明                                                         | 类型   | 是否必传 | 示例                        |
+| ------------------- | ------------------------------------------------------------ | ------ | -------- | --------------------------- |
+| AvailableZoneCode   | 可用区Code                                                   | string | 是       | CN_Suqian_A                 |
+| EcsId               | 挂载到云主机的实例id(字段有值并且有效时表示挂载到该实例，云盘只能挂载至同一可用区的实例上) | string | 否       | ins-72ys37squwzemjlx        |
+| ReleaseWithInstance | 是否随实例删除，1:是,0:否(挂载实例字段有效时，本字段有意义，如果挂载到实例，默认为1) | int    | 否       | 1                           |
+| DiskName            | 设置的云盘名称，不传则提供默认名称(名称规则：2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头) | string | 否       | ssd-20220802                |
+| DiskFeature         | 盘类型(目前只支持SSD)                                        | string | 是       | SSD                         |
+| Size                | 盘容量，单位:GB,容量为8的倍数，且最小24GB起。                | int    | 是       | 24                          |
+| Number              | 创建数量，不传默认为1                                        | int    | 否       | 5                           |
+| BillingMethod       | 计费方式 ，0:按需计费,1:包年包月                             | string | 否       | 默认为0，目前只支持按需计费 |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+
+**请求示例：**
+
+```python
+def create_disk():
+    """
+    创建云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "CreateDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "AvailableZoneCode":"CN_Hohhot_B",
+        "DiskName":"",
+        "DiskFeature":"SSD",
+        "Size":32,
+        "Number":1,
+        "BillingMethod":"0"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘创建任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 2.DeleteDisk
+
+**Action**: DeleteDisk
+
+**描述**:  删除一块或多块云盘(数据盘)
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数    | 说明       | 类型 | 是否必传 | 示例               |
+| ------- | ---------- | ---- | -------- | ------------------ |
+| DiskIds | 云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def delete_disk():
+    """
+    删除云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DeleteDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content, json=body)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘删除任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 3.DetachDisk
+
+**Action**: DetachDisk
+
+**描述**：卸载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数    | 说明             | 类型 | 是否必传 | 示例               |
+| ------- | ---------------- | ---- | -------- | ------------------ |
+| DiskIds | 卸载的云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def detach_disk():
+    """
+    卸载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DetachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘卸载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 4.AttachDisk
+
+**Action**: AttachDisk
+
+**描述**：挂载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数                | 说明                               | 类型   | 是否必传 | 示例                 |
+| ------------------- | ---------------------------------- | ------ | -------- | -------------------- |
+| DiskIds             | 挂载的云盘id列表                   | list   | 是       | ["disk1", "disk2"]   |
+| EcsId               | 挂载的目标实例id                   | string | 是       | ins-cplc7w0rfmy7sb1g |
+| ReleaseWithInstance | 是否随实例删除,默认为1。1:是, 0:否 | int    | 否       | 1                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def attach_disk():
+    """
+    挂载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "AttachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+        "EcsId":"ins-cplc7w0rfmy7sb1g"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘挂载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 5.ExtendDisk
+
+**Action**: ExtendDisk
+
+**描述**：云盘扩容（系统盘或者数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数         | 说明                                                         | 类型   | 是否必传 | 示例                  |
+| ------------ | ------------------------------------------------------------ | ------ | -------- | --------------------- |
+| DiskId       | 扩容的云盘id                                                 | string | 是       | disk-w2bcmplru0s6cchy |
+| ExtendedSize | 扩容目标容量,单位:GB，目标容量必须大于扩容前容量，且必须为8的倍数。 | int    | 是       | 64                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def extend_disk():
+    """
+    扩容云盘接口
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "ExtendDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskId":"disk-w2bcmplru0s6cchy",
+        "ExtendedSize":64
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "云盘扩容任务下发成功！",
+    "Data": {
+        "EventId": "24f4cbee-13c0-11ed-9d3b-6a3e8fbcc464"
+    }
+}
+```
+
+### 6.DescribeDiskQuota
+
+**Action**: DescribeDiskQuota
+
+**描述**：获取云盘配额
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 是       | CN_Suqian_A |
+
+**返回参数**
+
+| 参数        | 类型   | 示例 | 说明             |
+| ----------- | ------ | ---- | ---------------- |
+| QuotaList   | list   | []   | 配额列表         |
+| TotalQuota  | int    | 0    | 总配额,单位:GB   |
+| UsedQuota   | int    | 0    | 已用配额,单位:GB |
+| FreeQuota   | int    | 0    | 剩余配额,单位:GB |
+| DiskFeature | string | SSD  | 云盘类型         |
+
+**请求示例**
+
+```python
+def describe_disk_quota():
+    """
+    获取云盘配额
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskQuota"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘配额成功！",
+    "Data": {
+        "QuotaList": [
+            {
+                "TotalQuota": 10240,
+                "UsedQuota": 9760,
+                "FreeQuota": 480,
+                "DiskFeature": "SSD"
+            }
+        ]
+    },
+    "RequestId": "2759cebe146211edb481e454e81c0d47"
+}
+```
+
+### 7.DescribeDiskList
+
+**Action**: DescribeDiskList
+
+**描述**：获取云盘列表
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
+| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
+| PageNumber        | 页码       | int    | 否       | 1           |
+| PageSize          | 每页记录数 | int    | 否       | 20          |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| PageNumber          | int    | 1                     | 当前页数                   |
+| PageSize            | int    | 1                     | 每页数据条数               |
+| TotalCount          | int    | 10                    | 总记录数                   |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk_list():
+    """
+    获取云盘列表
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskList"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘列表成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    },
+    "PageNumber": 1,
+    "PageSize": 1,
+    "TotalCount": 1
+}
+```
+
+### 8.DescribeDisk
+
+**Action**: DescribeDisk
+
+**描述**：获取云盘详情
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数   | 说明   | 类型   | 是否必传 | 示例                  |
+| ------ | ------ | ------ | -------- | --------------------- |
+| DiskId | 云盘id | string | 是       | disk-qpv6gojrhlsru7lj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk():
+    """
+    获取云盘详情
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDisk"
+    method = "GET"
+    param = {
+        "DiskId":"disk-qpv6gojrhlsru7lj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘详情成功！",
+    "Data": {
+        "DiskInfo": {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",  // 挂载的实例，未挂载为空
+                "EcsName": "disk-Ubuntu-013",    // 挂载的实例，未挂载为空
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+    }
+}
+```
+
+### 9.DescribeEcsAttachDisks
+
+**Action**: DescribeEcsAttachDisks
+
+**描述**：获取实例挂载的云盘信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数  | 说明     | 类型   | 是否必传 | 示例                 |
+| ----- | -------- | ------ | -------- | -------------------- |
+| EcsId | 云主机id | string | 是       | ins-z684q1prultrf7rj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_ecs_attach_disk():
+    """
+    获取实例挂载的云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEcsAttachDisks"
+    method = "GET"
+    param = {
+        "EcsId":"ins-z684q1prultrf7rj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取实例挂载的云盘信息成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    }
+}
+```
+
+### 10.DescribeEvent
+
+**Action**: DescribeEvent
+
+**描述**：获取事件信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数    | 说明   | 类型   | 是否必传 | 示例                                 |
+| ------- | ------ | ------ | -------- | ------------------------------------ |
+| EventId | 事件id | string | 是       | 2d01ed16-1231-11ed-b805-ae32005fa3a1 |
+
+**返回参数**
+
+| 名称               | 类型   | 示例值                               | 描述                       |
+| ------------------ | ------ | ------------------------------------ | -------------------------- |
+| EventId            | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2 | 事件id                     |
+| EventStatus        | string | success                              | 事件状态                   |
+| EventStatusDisplay | string | 成功                                 | 事件中文名称               |
+| EventType          | string | unmount_disk                         | 事件类型                   |
+| EventTypeDisplay   | string | 卸载云盘                             | 事件类型中文名称           |
+| CreateTime         | string | 2022-01-16 17:17:20                  | 创建时间                   |
+| TaskList           | list   | []                                   | 事件下的任务列表           |
+| TaskId             | string | 3e54d714-8f09-11ec-a494-d2a2d83b77e2 | 任务id                     |
+| Status             | string | success                              | 任务状态                   |
+| StatusDisplay      | string | 成功                                 | 任务中文状态               |
+| ResourceId         | string | disk-y6yknvvr64mvn06a                | 任务对应的资源id           |
+| UpdateTime         | string | 2022-01-16 17:17:25                  | 任务更新时间               |
+| EndTime            | string | 2022-01-16 17:17:30                  | 任务完成时间，未完成则为空 |
+| ResourceType       | string | disk                                 | 资源类型                   |
+| ResourceDisplay    | string | 云盘                                 | 资源类型中文名称           |
+| TaskType           | string | unmount_disk                         | 任务类型                   |
+| TaskTypeDisplay    | string | 卸载云盘                             | 任务类型中文名称           |
+
+**请求示例**
+
+```python
+def describe_event():
+    """
+    获取事件信息
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEvent"
+    method = "GET"
+    param = {
+        "EventId":"2d01ed16-1231-11ed-b805-ae32005fa3a1"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取事件信息成功！",
+    "Data": {
+        "EventId": "2d01ed16-1231-11ed-b805-ae32005fa3a1",
+        "EventStatus": "success",
+        "EventStatusDisplay": "成功",
+        "EventType": "unmount_disk",
+        "EventTypeDisplay": "卸载云盘",
+        "CreateTime": "2022-08-02 15:03:13",
+        "TaskList": [
+            {
+                "TaskId": "eaea8708-13c5-11ed-9210-3296060c3fb9",
+                "Status": "success",
+                "StatusDisplay": "成功",
+                "ResourceId": "disk-y6yknvvr64mvn06a",
+                "CreateTime": "2022-08-04 15:20:28",
+                "UpdateTime": "2022-08-04 15:20:41",
+                "EndTime": "2022-08-04 15:20:41",
+                "ResourceType": "disk",
+                "ResourceDisplay": "云盘",
+                "TaskType": "unmount_disk",
+                "TaskTypeDisplay": "卸载云盘"
+            }
+        ]
+    }
+}
+```
 
 ## 其他公共接口
 
