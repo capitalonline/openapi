@@ -191,6 +191,17 @@
        * [11.DeleteInstance](#11deleteinstance)
        * [12.ModifyInstancePassword](#13modifyinstancepassword)
        * [13.ModifyInstanceName](#13modifyinstancename)
+     * [云盘EBS相关](#云盘ebs相关)
+       * [1.CreateDisk](#1createdisk)
+       * [2.DeleteDisk](#2deletedisk)
+       * [3.DetachDisk](#3detachdisk)
+       * [4.AttachDisk](#4attachdisk)
+       * [5.ExtendDisk](#5extenddisk)
+       * [6.DescribeDiskQuota](#6describediskquota)
+       * [7.DescribeDiskList](#7describedisklist)
+       * [8.DescribeDisk](#8describedisk)
+       * [9.DescribeEcsAttachDisks](#9describeecsattachdisks)
+       * [10.DescribeEvent](#10describeevent)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -13744,7 +13755,723 @@ def change_ecs_name():
 | 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
 | 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
 
-### 
+## 云盘EBS相关
+
+**云盘状态(Status)说明**
+
+| code       | 说明     |
+| ---------- | -------- |
+| building   | 创建中   |
+| build_fail | 创建失败 |
+| running    | 使用中   |
+| mounting   | 挂载中   |
+| unmounting | 卸载中   |
+| waiting    | 待挂载   |
+| updating   | 更新中   |
+| error      | 错误     |
+
+### 1.CreateDisk
+
+**Action**: CreateDisk
+
+**描述**:  创建一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数                | 说明                                                         | 类型   | 是否必传 | 示例                        |
+| ------------------- | ------------------------------------------------------------ | ------ | -------- | --------------------------- |
+| AvailableZoneCode   | 可用区Code                                                   | string | 是       | CN_Suqian_A                 |
+| EcsId               | 挂载到云主机的实例id(字段有值并且有效时表示挂载到该实例，云盘只能挂载至同一可用区的实例上) | string | 否       | ins-72ys37squwzemjlx        |
+| ReleaseWithInstance | 是否随实例删除，1:是,0:否(挂载实例字段有效时，本字段有意义，如果挂载到实例，默认为1) | int    | 否       | 1                           |
+| DiskName            | 设置的云盘名称，不传则提供默认名称(名称规则：2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头) | string | 否       | ssd-20220802                |
+| DiskFeature         | 盘类型(目前只支持SSD)                                        | string | 是       | SSD                         |
+| Size                | 盘容量，单位:GB,容量为8的倍数，且最小24GB起。                | int    | 是       | 24                          |
+| Number              | 创建数量，不传默认为1                                        | int    | 否       | 5                           |
+| BillingMethod       | 计费方式 ，0:按需计费,1:包年包月                             | string | 否       | 默认为0，目前只支持按需计费 |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+
+**请求示例：**
+
+```python
+def create_disk():
+    """
+    创建云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "CreateDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "AvailableZoneCode":"CN_Hohhot_B",
+        "DiskName":"",
+        "DiskFeature":"SSD",
+        "Size":32,
+        "Number":1,
+        "BillingMethod":"0"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘创建任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 2.DeleteDisk
+
+**Action**: DeleteDisk
+
+**描述**:  删除一块或多块云盘(数据盘)
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数    | 说明       | 类型 | 是否必传 | 示例               |
+| ------- | ---------- | ---- | -------- | ------------------ |
+| DiskIds | 云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def delete_disk():
+    """
+    删除云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DeleteDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content, json=body)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘删除任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 3.DetachDisk
+
+**Action**: DetachDisk
+
+**描述**：卸载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数    | 说明             | 类型 | 是否必传 | 示例               |
+| ------- | ---------------- | ---- | -------- | ------------------ |
+| DiskIds | 卸载的云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def detach_disk():
+    """
+    卸载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DetachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘卸载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 4.AttachDisk
+
+**Action**: AttachDisk
+
+**描述**：挂载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数                | 说明                               | 类型   | 是否必传 | 示例                 |
+| ------------------- | ---------------------------------- | ------ | -------- | -------------------- |
+| DiskIds             | 挂载的云盘id列表                   | list   | 是       | ["disk1", "disk2"]   |
+| EcsId               | 挂载的目标实例id                   | string | 是       | ins-cplc7w0rfmy7sb1g |
+| ReleaseWithInstance | 是否随实例删除,默认为1。1:是, 0:否 | int    | 否       | 1                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def attach_disk():
+    """
+    挂载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "AttachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+        "EcsId":"ins-cplc7w0rfmy7sb1g"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘挂载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 5.ExtendDisk
+
+**Action**: ExtendDisk
+
+**描述**：云盘扩容（系统盘或者数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数         | 说明                                                         | 类型   | 是否必传 | 示例                  |
+| ------------ | ------------------------------------------------------------ | ------ | -------- | --------------------- |
+| DiskId       | 扩容的云盘id                                                 | string | 是       | disk-w2bcmplru0s6cchy |
+| ExtendedSize | 扩容目标容量,单位:GB，目标容量必须大于扩容前容量，且必须为8的倍数。 | int    | 是       | 64                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def extend_disk():
+    """
+    扩容云盘接口
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "ExtendDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskId":"disk-w2bcmplru0s6cchy",
+        "ExtendedSize":64
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "云盘扩容任务下发成功！",
+    "Data": {
+        "EventId": "24f4cbee-13c0-11ed-9d3b-6a3e8fbcc464"
+    }
+}
+```
+
+### 6.DescribeDiskQuota
+
+**Action**: DescribeDiskQuota
+
+**描述**：获取云盘配额
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 是       | CN_Suqian_A |
+
+**返回参数**
+
+| 参数        | 类型   | 示例 | 说明             |
+| ----------- | ------ | ---- | ---------------- |
+| QuotaList   | list   | []   | 配额列表         |
+| TotalQuota  | int    | 0    | 总配额,单位:GB   |
+| UsedQuota   | int    | 0    | 已用配额,单位:GB |
+| FreeQuota   | int    | 0    | 剩余配额,单位:GB |
+| DiskFeature | string | SSD  | 云盘类型         |
+
+**请求示例**
+
+```python
+def describe_disk_quota():
+    """
+    获取云盘配额
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskQuota"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘配额成功！",
+    "Data": {
+        "QuotaList": [
+            {
+                "TotalQuota": 10240,
+                "UsedQuota": 9760,
+                "FreeQuota": 480,
+                "DiskFeature": "SSD"
+            }
+        ]
+    },
+    "RequestId": "2759cebe146211edb481e454e81c0d47"
+}
+```
+
+### 7.DescribeDiskList
+
+**Action**: DescribeDiskList
+
+**描述**：获取云盘列表
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
+| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
+| PageNumber        | 页码       | int    | 否       | 1           |
+| PageSize          | 每页记录数 | int    | 否       | 20          |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| PageNumber          | int    | 1                     | 当前页数                   |
+| PageSize            | int    | 1                     | 每页数据条数               |
+| TotalCount          | int    | 10                    | 总记录数                   |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk_list():
+    """
+    获取云盘列表
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskList"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘列表成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    },
+    "PageNumber": 1,
+    "PageSize": 1,
+    "TotalCount": 1
+}
+```
+
+### 8.DescribeDisk
+
+**Action**: DescribeDisk
+
+**描述**：获取云盘详情
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数   | 说明   | 类型   | 是否必传 | 示例                  |
+| ------ | ------ | ------ | -------- | --------------------- |
+| DiskId | 云盘id | string | 是       | disk-qpv6gojrhlsru7lj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk():
+    """
+    获取云盘详情
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDisk"
+    method = "GET"
+    param = {
+        "DiskId":"disk-qpv6gojrhlsru7lj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘详情成功！",
+    "Data": {
+        "DiskInfo": {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",  // 挂载的实例，未挂载为空
+                "EcsName": "disk-Ubuntu-013",    // 挂载的实例，未挂载为空
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+    }
+}
+```
+
+### 9.DescribeEcsAttachDisks
+
+**Action**: DescribeEcsAttachDisks
+
+**描述**：获取实例挂载的云盘信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数  | 说明     | 类型   | 是否必传 | 示例                 |
+| ----- | -------- | ------ | -------- | -------------------- |
+| EcsId | 云主机id | string | 是       | ins-z684q1prultrf7rj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_ecs_attach_disk():
+    """
+    获取实例挂载的云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEcsAttachDisks"
+    method = "GET"
+    param = {
+        "EcsId":"ins-z684q1prultrf7rj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取实例挂载的云盘信息成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    }
+}
+```
+
+### 10.DescribeEvent
+
+**Action**: DescribeEvent
+
+**描述**：获取事件信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数    | 说明   | 类型   | 是否必传 | 示例                                 |
+| ------- | ------ | ------ | -------- | ------------------------------------ |
+| EventId | 事件id | string | 是       | 2d01ed16-1231-11ed-b805-ae32005fa3a1 |
+
+**返回参数**
+
+| 名称               | 类型   | 示例值                               | 描述                       |
+| ------------------ | ------ | ------------------------------------ | -------------------------- |
+| EventId            | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2 | 事件id                     |
+| EventStatus        | string | success                              | 事件状态                   |
+| EventStatusDisplay | string | 成功                                 | 事件中文名称               |
+| EventType          | string | unmount_disk                         | 事件类型                   |
+| EventTypeDisplay   | string | 卸载云盘                             | 事件类型中文名称           |
+| CreateTime         | string | 2022-01-16 17:17:20                  | 创建时间                   |
+| TaskList           | list   | []                                   | 事件下的任务列表           |
+| TaskId             | string | 3e54d714-8f09-11ec-a494-d2a2d83b77e2 | 任务id                     |
+| Status             | string | success                              | 任务状态                   |
+| StatusDisplay      | string | 成功                                 | 任务中文状态               |
+| ResourceId         | string | disk-y6yknvvr64mvn06a                | 任务对应的资源id           |
+| UpdateTime         | string | 2022-01-16 17:17:25                  | 任务更新时间               |
+| EndTime            | string | 2022-01-16 17:17:30                  | 任务完成时间，未完成则为空 |
+| ResourceType       | string | disk                                 | 资源类型                   |
+| ResourceDisplay    | string | 云盘                                 | 资源类型中文名称           |
+| TaskType           | string | unmount_disk                         | 任务类型                   |
+| TaskTypeDisplay    | string | 卸载云盘                             | 任务类型中文名称           |
+
+**请求示例**
+
+```python
+def describe_event():
+    """
+    获取事件信息
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEvent"
+    method = "GET"
+    param = {
+        "EventId":"2d01ed16-1231-11ed-b805-ae32005fa3a1"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取事件信息成功！",
+    "Data": {
+        "EventId": "2d01ed16-1231-11ed-b805-ae32005fa3a1",
+        "EventStatus": "success",
+        "EventStatusDisplay": "成功",
+        "EventType": "unmount_disk",
+        "EventTypeDisplay": "卸载云盘",
+        "CreateTime": "2022-08-02 15:03:13",
+        "TaskList": [
+            {
+                "TaskId": "eaea8708-13c5-11ed-9210-3296060c3fb9",
+                "Status": "success",
+                "StatusDisplay": "成功",
+                "ResourceId": "disk-y6yknvvr64mvn06a",
+                "CreateTime": "2022-08-04 15:20:28",
+                "UpdateTime": "2022-08-04 15:20:41",
+                "EndTime": "2022-08-04 15:20:41",
+                "ResourceType": "disk",
+                "ResourceDisplay": "云盘",
+                "TaskType": "unmount_disk",
+                "TaskTypeDisplay": "卸载云盘"
+            }
+        ]
+    }
+}
+```
+
+
 
 ## 其他公共接口
 
