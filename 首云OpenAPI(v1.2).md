@@ -192,9 +192,9 @@
        * [12.ModifyInstancePassword](#13modifyinstancepassword)
        * [13.ModifyInstanceName](#13modifyinstancename)
      * [云盘EBS相关](#云盘ebs相关)
-       * [1.CreateDisk](#1createdisk)
+       * [1.CreateDisk](#1createdisk-1)
        * [2.DeleteDisk](#2deletedisk)
-       * [3.DetachDisk](#3detachdisk)
+       * [3.DetachDisk](#3detachdisk-1)
        * [4.AttachDisk](#4attachdisk)
        * [5.ExtendDisk](#5extenddisk)
        * [6.DescribeDiskQuota](#6describediskquota)
@@ -14470,8 +14470,6 @@ def describe_event():
     }
 }
 ```
-
-
 
 ## 其他公共接口
 
