@@ -13152,7 +13152,7 @@ def get_ecs_price():
 | TimeZone      | sting    | UTC                                                          | 时区                |
 | EcsRule       | dict     | {<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
 | OsInfo        | dict     | {<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    } | 系统信息            |
-| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/>        "EcsGoodsId": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "EbsGoodsId": "395cb12b-f053-11eb-88c7-30c9ab46699c",<br/>        "Unit": "GB",<br/>        "Id": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd",<br/>        "DiskName": "ssd云盘"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
+| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/><br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
 | Pipe          | dict     | {<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": {<br/>        "10.1.128.53": {<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
 | BillingInfo   | dict     | {<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    } | 计费信息            |
 
@@ -13216,18 +13216,27 @@ def get_ecs_detail():
         },
         "Disk": {
             "SystemDiskConf": {   // 系统盘信息
-                "ReleaseWithInstance": true,  // 是否随实例删除
+                "ReleaseWithInstance": 1,  // 是否随实例删除
                 "DiskType": "system",
                 "Name": "ssd_20220721",  
                 "Size": 24,
                 "DiskIops": 2520,  //iops大小
                 "BandMbps": 96,  // 吞吐量
                 "Unit": "GB",
-                "Id": "disk-dj3g8odrnwqdrybj",  //系统盘id
-                "DiskFeature": "ssd",  //盘类型
-                "DiskName": "ssd云盘"  //盘名称
+                "DiskId": "disk-dj3g8odrnwqdrybj",  //系统盘id
+                "DiskFeature": "ssd"  //盘类型
             },
-            "DataDiskConf": []
+            "DataDiskConf": [
+                "ReleaseWithInstance": 0,  // 不随实例删除
+                "DiskType": "data",
+                "Name": "ssd_20220721",  
+                "Size": 24,
+                "DiskIops": 2520,  //iops大小
+                "BandMbps": 96,  // 吞吐量
+                "Unit": "GB",
+                "Id": "disk-dj3g8odrnwqdrybj",  //数据盘id
+                "DiskFeature": "ssd"  //盘类型
+            ]
         },
         "Pipe": {
             "VpcName": "Ram服务器",
