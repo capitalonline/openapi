@@ -27,7 +27,11 @@
     - [DescribeSslInfo](#describesslinfo)
 * [刷新预取](#刷新预取)
     - [PrefetchFile](#prefetchfile)
+    - [PrefetchList](#PrefetchList)
+    - [PrefetchStatus](#PrefetchStatus)
     - [ContentRefresh](#contentrefresh)
+    - [CacheList](#CacheList)
+    - [CacheStatus](#CacheStatus)
 * [用量统计](#用量统计)
     - [FlowStatistics](#flowstatistics)
     - [DosageAnalysis](#dosageanalysis)
@@ -65,7 +69,12 @@ CDN产品提供以下相关API接口。
 | API            | 描述     |
 | -------------- | -------- |
 | PrefetchFile   | 预取文件 |
+| PrefetchList   | 预取文件分页列表查询 |
+| PrefetchStatus   | 预取文件进度查询 |
 | ContentRefresh | 内容刷新 |
+| CacheList   | 缓存刷新分页列表查询 |
+| CacheStatus   | 缓存刷新进度查询 |
+
 
 ### 用量统计
 
