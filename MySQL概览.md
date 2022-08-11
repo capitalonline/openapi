@@ -6,32 +6,52 @@ MySQL 公开API目录
       - [实例](#实例)
       - [账号](#账号)
       - [备份](#备份)
-      - [恢复](#恢复)
       - [只读实例](#只读实例)
       - [监控](#监控)
+      - [参数](#参数)
       - [错误码](#错误码)
     - [访问地址](#访问地址)
     - [1.DescribeRegions](#1describeregions)
     - [2.DescribeAvailableDBConfig](#2describeavailabledbconfig)
+      - [DataObj](#dataobj)
+      - [ProductObj](#productobj)
+      - [ArchitectureObj](#architectureobj)
+      - [ComputeRoleObj](#computeroleobj)
+      - [StandardObj](#standardobj)
+      - [AttachDiskObj](#attachdiskobj)
+      - [CpuRamObj](#cpuramobj)
+      - [NetworkLinkObj](#networklinkobj)
     - [3.CreateDBInstance](#3createdbinstance)
     - [4.DescribeDBInstances](#4describedbinstances)
     - [5.CreatePrivilegedAccount](#5createprivilegedaccount)
-    - [6.DescribeModifiableDBSpec](#6describemodifiabledbspec)
-    - [7.ModifyDBInstanceSpec](#7modifydbinstancespec)
-    - [8.DeleteDBInstance](#8deletedbinstance)
-    - [9.DescribeAvailableReadOnlyConfig](#9describeavailablereadonlyconfig)
-    - [10.CreateReadOnlyDBInstance](#10createreadonlydbinstance)
-    - [11.CreateBackup](#11createbackup)
-    - [12.DescribeBackups](#12describebackups)
-    - [13.DeleteBackup](#13deletebackup)
-    - [14.DownloadBackup](#14downloadbackup)
-    - [15.StartBatchRollback](#15startbatchrollback)
-    - [16.DescribeRollbackRangeTime](#16describerollbackrangetime)
-    - [17.StartBatchRollbackToTemporaryDBInstance](#17startbatchrollbacktotemporarydbinstance)
-    - [18.DescribeTemporaryDBInstances](#18describetemporarydbinstances)
-    - [19.RegularizeTemporaryDBInstances](#19regularizetemporarydbinstances)
-    - [20.DeleteTemporaryDBInstances](#20deletetemporarydbinstances)
+    - [6.ModifyDbPrivilege](#6modifydbprivilege)
+      - [OperationsObj](#operationsobj)
+    - [7.DeleteDbPrivilege](#7deletedbprivilege)
+    - [8.DescribeDbPrivileges](#8describedbprivileges)
+      - [查询权限DataObj](#查询权限dataobj)
+    - [9.DescribeDBAccount](#9describedbaccount)
+      - [查询用户DataObj](#查询用户dataobj)
+      - [DatabasePrivilegesObj](#databaseprivilegesobj)
+    - [10.DeleteDBAccount](#10deletedbaccount)
+    - [11.DescribeModifiableDBSpec](#11describemodifiabledbspec)
+    - [12.ModifyDBInstanceSpec](#12modifydbinstancespec)
+    - [13.DeleteDBInstance](#13deletedbinstance)
+    - [14.DescribeAvailableReadOnlyConfig](#14describeavailablereadonlyconfig)
+    - [15.CreateReadOnlyDBInstance](#15createreadonlydbinstance)
+    - [16.CreateBackup](#16createbackup)
+    - [17.DescribeBackups](#17describebackups)
+    - [18.DeleteBackup](#18deletebackup)
+    - [19.DownloadBackup](#19downloadbackup)
+    - [20.ModifyDbBackupPolicy](#20modifydbbackuppolicy)
+      - [DataBackupsObj](#databackupsobj)
     - [21.DescribeDBInstancePerformance](#21describedbinstanceperformance)
+    - [22.DescribeDBParameter](#22describedbparameter)
+      - [查询参数DataObj](#查询参数dataobj)
+      - [ParametersObj](#parametersobj)
+    - [23.DescribeDBParameterModifyHistory](#23describedbparametermodifyhistory)
+      - [查询参数修改历史DataObj](#查询参数修改历史dataobj)
+    - [24.ModifyDBParameter](#24modifydbparameter)
+      - [修改参数ParametersObj](#修改参数parametersobj)
 
 ### API概览
 
@@ -51,29 +71,24 @@ MySQL 公开API目录
 
 #### 账号
 
-| API                     | 描述           |
-| ----------------------- | -------------- |
-| CreatePrivilegedAccount | 创建高权限账号 |
+| API                     | 描述                   |
+| ----------------------- | ---------------------- |
+| CreatePrivilegedAccount | 创建账号               |
+| ModifyDbPrivilege       | 修改普通账号数据库权限 |
+| DeleteDbPrivilege       | 删除普通账号数据库权限 |
+| DescribeDbPrivileges    | 获取普通账号详细权限   |
+| DescribeDBAccount       | 获取账号列表           |
+| DeleteDBAccount         | 删除账号               |
 
 #### 备份
 
-| API             | 描述                 |
-| --------------- | -------------------- |
-| CreateBackup    | 为实例创建一个备份集 |
-| DescribeBackups | 查看备份集列表       |
-| DeleteBackup    | 删除数据备份文件     |
-| DownloadBackup  | 获取备份下载地址     |
-
-#### 恢复
-
-| API                                     | 描述                                                      |
-| --------------------------------------- | --------------------------------------------------------- |
-| DescribeRollbackRangeTime               | 查询可恢复时间（主从版适用）                              |
-| StartBatchRollback                      | 集群版数据库恢复（覆盖性恢复）                            |
-| StartBatchRollbackToTemporaryDBInstance | 主从版数据库恢复（7天内任意时间点的恢复，恢复到临时实例） |
-| DescribeTemporaryDBInstances            | 获取某个主实例的临时实例列表                              |
-| RegularizeTemporaryDBInstances          | 临时实例转正                                              |
-| DeleteTemporaryDBInstances              | 删除临时实例                                              |
+| API                  | 描述                                  |
+| -------------------- | ------------------------------------- |
+| CreateBackup         | 为实例创建一个备份集                  |
+| DescribeBackups      | 查看备份集列表                        |
+| DeleteBackup         | 删除数据备份文件                      |
+| DownloadBackup       | 获取备份下载地址                      |
+| ModifyDbBackupPolicy | 修改云数据库MySQL高可用版自动备份设置 |
 
 #### 只读实例
 
@@ -87,6 +102,14 @@ MySQL 公开API目录
 | API                           | 描述                      |
 | ----------------------------- | ------------------------- |
 | DescribeDBInstancePerformance | 获取云数据库MySQL监控指标 |
+
+#### 参数
+
+| API                              | 描述                              |
+| -------------------------------- | --------------------------------- |
+| DescribeDBParameter              | 获取云数据库MySQL参数列表         |
+| DescribeDBParameterModifyHistory | 获取云数据库MySQL参数修改历史记录 |
+| ModifyDBParameter                | 修改云数据库MySQL参数             |
 
 #### 错误码
 
@@ -309,42 +332,6 @@ def get_mysql_zones():
 | :------- | :--- | :----- | -------- |
 | RegionId | 是   | string | 站点编号 |
 
-**返回参数：**
-
-| 参数名           | 类型   | 说明                                                         |
-| :--------------- | :----- | ------------------------------------------------------------ |
-| Message          | string | 信息描述                                                     |
-| Code             | string | 状态码                                                       |
-| TaskId           | string | 任务Id                                                       |
-| Data             | dict   | 数据                                                         |
-| Products         | list   | 该类产品支持的产品列表                                       |
-| ProductName      | string | 产品名称                                                     |
-| SubProductName   | string | 子产品名称                                                   |
-| Version          | string | 产品支持的版本                                               |
-| Architectures    | string | 产品支持的架构                                               |
-| ArchitectureName | string | 架构名称                                                     |
-| NetworkLinks     | list   | 此架构支持的链路类型                                         |
-| DescDetail       | string | 链路类型描述                                                 |
-| LinkType         | string | 链路类型“英文”                                               |
-| Name             | string | 链路类型“中文”                                               |
-| ComputeRoles     | list   | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
-| Standards        | dict   | 该类型支持的规格                                             |
-| CpuRam           | list   | 支持的规格列表                                               |
-| CPU              | int    | 规格CPU大小                                                  |
-| RAM              | int    | 规格RAM大小                                                  |
-| Name             | string | 规格名称                                                     |
-| PaasGoodsId      | int    | 具体的产品编号，根据产品编号确定购买哪一种规格               |
-| AttachDisk       | list   | 该类型规格能够添加的磁盘类型列表                             |
-| DiskMax          | int    | 单次支持最大规格的磁盘                                       |
-| DiskValue        | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
-| BasicIops        | string | 基础的磁盘的iops                                             |
-| DiskUnit         | string | 磁盘规格单位                                                 |
-| DiskName         | string | 磁盘类型名称                                                 |
-| DiskMaxExpand    | string | 磁盘最大可扩容大小                                           |
-| DiskMin          | string | 磁盘最小大小                                                 |
-| DiskStep         | string | 磁盘扩容大小                                                 |
-| EnginesType      | string | 引擎类型                                                     |
-
 **请求示例：**
 
 ```python
@@ -364,6 +351,86 @@ def get_mysql_spec_info():
     print(result)
 ```
 
+**返回参数：**
+
+| 参数名  | 类型                | 说明                                                   |
+| :------ | :------------------ | ------------------------------------------------------ |
+| Code    | string              | 状态码                                                 |
+| Data    | [DataObj](#DataObj) | 可购买的MySQL产品类型以及规格数据对象                  |
+| Message | string              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+| TaskId  | string              | 任务Id, 暂时不支持根据任务查询任务状态                 |
+
+#### DataObj
+
+| 参数名      | 类型                              | 说明                   |
+| :---------- | :-------------------------------- | ---------------------- |
+| ProductName | string                            | 产品名称,比如mysql     |
+| Products    | list of [ProductObj](#ProductObj) | 该类产品支持的产品列表 |
+| RegionId    | string                            | 站点编号               |
+
+#### ProductObj
+
+| 参数名        | 类型                                        | 说明               |
+| :------------ | :------------------------------------------ | ------------------ |
+| Architectures | list of [ArchitectureObj](#ArchitectureObj) | 产品支持的架构列表 |
+| Version       | string                                      | 产品支持的版本     |
+
+#### ArchitectureObj
+
+| 参数名           | 类型                                      | 说明                                                         |
+| :--------------- | :---------------------------------------- | ------------------------------------------------------------ |
+| ArchitectureName | string                                    | 架构名称                                                     |
+| ArchitectureType | int                                       | 架构类型：<br/>0-基础版<br/>1-主从版                         |
+| ComputeRoles     | list of [ComputeRoleObj](#ComputeRoleObj) | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
+| EnginesType      | string                                    | 引擎类型                                                     |
+| NetworkLinks     | list of [NetworkLinkObj](#NetworkLinkObj) | 此架构支持的链路类型                                         |
+| SubProductName   | string                                    | 子产品名称，比如：MySQL 高可用版、MySQL 基础版               |
+
+#### ComputeRoleObj
+
+| 参数名      | 类型                        | 说明                                                       |
+| :---------- | :-------------------------- | ---------------------------------------------------------- |
+| ComputeName | string                      | 计算类型名称， 比如：通用型                                |
+| ComputeType | int                         | 支持的计算类型(目前仅支持通用型计算类型)：<br>0-通用型<br> |
+| Standards   | [StandardObj](#StandardObj) | 该类型支持的规格                                           |
+
+#### StandardObj
+
+| 参数名     | 类型                                    | 说明                             |
+| :--------- | :-------------------------------------- | -------------------------------- |
+| AttachDisk | list of [AttachDiskObj](#AttachDiskObj) | 该类型规格能够添加的磁盘类型列表 |
+| CpuRam     | list of [CpuRamObj](#CpuRamObj)         | 支持的规格列表                   |
+
+#### AttachDiskObj
+
+| 参数名        | 类型   | 说明                                                         |
+| :------------ | :----- | ------------------------------------------------------------ |
+| BasicIops     | string | 基础的磁盘的iops                                             |
+| DiskMax       | int    | 单次支持扩容到最大磁盘容量为2000                             |
+| DiskMaxExpand | string | 磁盘最大可扩容大小                                           |
+| DiskMin       | string | 磁盘容量支持的最小值，起步为100                              |
+| DiskName      | string | 磁盘类型名称，包含SSD和性能型<br />SSD：SSD磁盘，磁盘IOPS默认为5000，可购买IOPS性能包<br />性能型：普通SSD盘，磁盘IOPS限定在3000 |
+| DiskStep      | string | 磁盘扩容步长，步长大小=100                                   |
+| DiskUnit      | string | 磁盘容量单位：GB                                             |
+| DiskValue     | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
+
+#### CpuRamObj
+
+| 参数名      | 类型   | 说明                                           |
+| :---------- | :----- | ---------------------------------------------- |
+| CPU         | int    | 核心数量，单位：个                             |
+| Name        | string | 规格名称                                       |
+| PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
+| RAM         | int    | 内存大小，单位：GB                             |
+
+#### NetworkLinkObj
+
+| 参数名     | 类型   | 说明           |
+| :--------- | :----- | -------------- |
+| DescDetail | string | 链路类型描述   |
+| LinkType   | string | 链路类型“英文” |
+| Name       | string | 链路类型“中文” |
+
 **返回示例：**
 
 ```json
@@ -371,134 +438,62 @@ def get_mysql_spec_info():
     "Code": "Success",
     "Data": {
         "ProductName": "mysql",
-        "Products": [{
-            "Architectures": [{
-                "ArchitectureName": "集群",
-                "ComputeRoles": [{
-                    "ComputeName": "高性能型",
-                    "Standards": {
-                        "AttachDisk": [{
-                            "BasicIops": "3000",
-                            "DiskMax": 2000,
-                            "DiskMaxExpand": 2000,
-                            "DiskMin": 100,
-                            "DiskName": "性能型",
-                            "DiskStep": 100,
-                            "DiskUnit": "G",
-                            "DiskValue": "high_disk"
-                        }],
-                        "CpuRam": [{
-                            "CPU": 2,
-                            "Name": "2C4G",
-                            "PaasGoodsId": 6002,
-                            "RAM": 4
-                        }, {
-                            "CPU": 4,
-                            "Name": "4C8G",
-                            "PaasGoodsId": 6005,
-                            "RAM": 8
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C16G",
-                            "PaasGoodsId": 6008,
-                            "RAM": 16
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C32G",
-                            "PaasGoodsId": 6014,
-                            "RAM": 32
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C64G",
-                            "PaasGoodsId": 6473,
-                            "RAM": 64
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C24G",
-                            "PaasGoodsId": 6011,
-                            "RAM": 24
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C48G",
-                            "PaasGoodsId": 6470,
-                            "RAM": 48
-                        }, {
-                            "CPU": 10,
-                            "Name": "10C96G",
-                            "PaasGoodsId": 6476,
-                            "RAM": 96
-                        }, {
-                            "CPU": 10,
-                            "Name": "10C128G",
-                            "PaasGoodsId": 6479,
-                            "RAM": 128
-                        }]
+        "Products": [
+            {
+                "Architectures": [
+                    {
+                        "ArchitectureName": "主从",
+                        "ArchitectureType": 1,
+                        "ComputeRoles": [
+                            {
+                                "ComputeName": "通用型",
+                                "ComputeType": 0,
+                                "Standards": {
+                                    "AttachDisk": [
+                                        {
+                                            "BasicIops": "",
+                                            "DiskMax": 2000,
+                                            "DiskMaxExpand": 2000,
+                                            "DiskMin": 100,
+                                            "DiskName": "SSD",
+                                            "DiskStep": 100,
+                                            "DiskUnit": "G",
+                                            "DiskValue": "ssd_disk"
+                                        }
+                                    ],
+                                    "CpuRam": [
+                                        {
+                                            "CPU": 1,
+                                            "Name": "1C2G",
+                                            "PaasGoodsId": 17060,
+                                            "RAM": 2
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "EnginesType": [],
+                        "NetworkLinks": [
+                            {
+                                "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
+                                "LinkType": "default_link",
+                                "Name": "默认链路"
+                            }
+                        ],
+                        "SubProductName": "MySQL高可用版"
                     }
-                }],
-                "EnginesType": [],
-                "NetworkLinks": [{
-                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
-                    "LinkType": "default_link",
-                    "Name": "默认链路"
-                }],
-                "SubProductName": "MySQL 集群版"
-            }],
-            "Version": "5.6.35"
-        }, {
-            "Architectures": [{
-                "ArchitectureName": "主从",
-                "ComputeRoles": [{
-                    "ComputeName": "高性能型",
-                    "Standards": {
-                        "AttachDisk": [{
-                            "BasicIops": "3000",
-                            "DiskMax": 2000,
-                            "DiskMaxExpand": 2000,
-                            "DiskMin": 100,
-                            "DiskName": "性能型",
-                            "DiskStep": 100,
-                            "DiskUnit": "G",
-                            "DiskValue": "high_disk"
-                        }],
-                        "CpuRam": [{
-                            "CPU": 2,
-                            "Name": "2C4G",
-                            "PaasGoodsId": 6704,
-                            "RAM": 4
-                        }, {
-                            "CPU": 4,
-                            "Name": "4C8G",
-                            "PaasGoodsId": 6707,
-                            "RAM": 8
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C16G",
-                            "PaasGoodsId": 6710,
-                            "RAM": 16
-                        }, {
-                            "CPU": 8,
-                            "Name": "8C32G",
-                            "PaasGoodsId": 6716,
-                            "RAM": 32
-                        }]
-                    }
-                }],
-                "EnginesType": [],
-                "NetworkLinks": [{
-                    "DescDetail": "默认链路：服务实例占用VDC私有网络IP地址，适用于对延迟敏感类型的应用。",
-                    "LinkType": "default_link",
-                    "Name": "默认链路"
-                }],
-                "SubProductName": "MySQL 高可用版\n"
-            }],
-            "Version": "5.7.24"
-        }],
+                ],
+                "Version": "8.0"
+            }
+        ],
         "RegionId": "*******"
     },
-    "Message": "Success.",
+    "Message": "success",
     "TaskId": ""
 }
 ```
+
+
 
 ### 3.CreateDBInstance
 
@@ -512,16 +507,18 @@ def get_mysql_spec_info():
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                           |
-| :----------- | :--- | :----- | ---------------------------------------------- |
-| RegionId     | 是   | string | 站点编号                                       |
-| VdcId        | 是   | string | 数据中心的编号                                 |
-| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配IP |
-| InstanceName | 是   | string | 实例名称                                       |
-| PaasGoodsId  | 是   | int    | 产品的规格编号                                 |
-| DiskType     | 是   | string | 磁盘类型 只能选择支持的磁盘类型                |
-| DiskValue    | 是   | int    | 磁盘大小                                       |
-| Amount       | 否   | int    | 购买的数量，一次最多购买三个                   |
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| RegionId     | 是   | string | 站点编号                                                     |
+| VdcId        | 是   | string | 数据中心的编号                                               |
+| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配IP               |
+| InstanceName | 是   | string | 实例名称                                                     |
+| PaasGoodsId  | 是   | int    | 产品的规格编号                                               |
+| DiskType     | 是   | string | 磁盘类型 只能选择支持的磁盘类型                              |
+| DiskValue    | 是   | int    | 磁盘大小                                                     |
+| TimeZone     | 否   | string | 实例的UTC时区，默认值根据地域不同变化，输入参数范围：<br />["-12:00","-11:00","-10:00","-09:00","-08:00","-07:00","-06:00","-05:00","-04:00","-03:00","-02:00","-01:00","+00:00","+01:00","+02:00","+03:00","+04:00","+05:00","+05:30","+06:00","+07:00","+08:00","+09:00","+10:00","+11:00","+12:00","+13:00",] |
+| Amount       | 否   | int    | 购买的数量，一次最多购买10个                                 |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
 
 **返回参数：**
 
@@ -549,9 +546,10 @@ def create_mysql():
         "VdcId": "******",
         "BasePipeId": "******",
         "InstanceName": "******",
-        "PaasGoodsId": "******",
+        "PaasGoodsId": ******,
         "DiskType": "******",
         "DiskValue": 100,
+        "ServicePort": 6033,
         "Password": "******",
         "Amount": 1
     }
@@ -601,7 +599,6 @@ def create_mysql():
 | Data            | list   | 数据                             |
 | RelationService | dict   | 相关联的服务实例                 |
 | DisplayName     | string | 站点名称                         |
-| CloneServices   | list   | 克隆的临时实例列表               |
 | VdcName         | string | 数据中心名称                     |
 | IP              | string | 数据库的连接的IP                 |
 | Port            | int    | 连接的端口                       |
@@ -621,6 +618,7 @@ def create_mysql():
 | InstanceUuid    | string | 实例编号                         |
 | InstanceName    | string | 实例名称                         |
 | CreatedTime     | string | 实例创建时间                     |
+| ResourceId      | string | 账单ID，查询账单时的唯一标识     |
 
 **请求示例：**
 
@@ -647,7 +645,6 @@ def get_mysql_instances_list():
 {
     "Code": "Success",
     "Data": [{
-        "CloneServices": null,
         "Cpu": 4,
         "CreatedTime": "2020-05-03 22:16:22",
         "Disks": 200,
@@ -694,7 +691,7 @@ def get_mysql_instances_list():
 
 **Action：CreatePrivilegedAccount**
 
-**描述：** 创建高权限账号
+**描述：** 创建用户账号
 
 **请求地址：cdsapi.capitalonline.net/mysql**
 
@@ -707,7 +704,7 @@ def get_mysql_instances_list():
 | InstanceUuid | 是   | string | 要初始化的实例编号                                           |
 | AccountName  | 是   | string | 账户名称                                                     |
 | Password     | 是   | string | 账户密码                                                     |
-| AccountType  | 是   | string | 账户类型，目前只支持创建高权限用户，值为 "Super"，注意：一个实例只能有一个高权限账号 |
+| AccountType  | 是   | string | 账户类型，支持创建高权限用户与普通用户。取值范围：</br>高权限用户："Super"</br>普通用户："Normal"</br>注意：一个实例只能有一个高权限账号 |
 | Description  | 否   | string | 账户描述，不传默认为空                                       |
 
 **返回参数：**
@@ -755,7 +752,370 @@ def create_mysql_super_account(instance_uuid, ):
 }
 ```
 
-### 6.DescribeModifiableDBSpec
+### 6.ModifyDbPrivilege
+
+**Action：ModifyDbPrivilege**
+
+**描述：** 更新（添加、修改）云数据库MySQL普通用户权限
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** POST 
+
+**请求参数：**
+
+| 参数名         | 必选 | 类型                                    | 说明                         |
+| :------------- | :--- | :-------------------------------------- | ---------------------------- |
+| InstanceUuid   | 是   | string                                  | 要更新用户权限的实例编号     |
+| AccountName    | 是   | string                                  | 普通用户的账号名称           |
+| Operations     | 是   | list of [Operations](#OperationsObj)    | 账号赋权数据库与对应权限列表 |
+| ExtraPrivilege | 否   | [ExtraPrivilegeObj](#ExtraPrivilegeObj) | 附加权限                     |
+
+#### OperationsObj
+
+| 参数名    | 必选 | 类型   | 说明                                                         |
+| :-------- | :--- | :----- | ------------------------------------------------------------ |
+| DBName    | 是   | string | 需要赋权的数据库名称                                         |
+| Privilege | 是   | string | 数据库对应账号权限。<br />ReadWrite：读写权限<br />DMLOnly：仅DML<br />ReadOnly：只读权限<br />DDLOnly：仅DDL |
+
+#### ExtraPrivilegeObj
+
+| 参数名    | 必选 | 类型   | 说明                                                         |
+| --------- | ---- | ------ | ------------------------------------------------------------ |
+| AllCreate | 否   | string | 普通账号全局create权限，默认false，取值范围：["ture","false"] |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+
+**请求示例：**
+
+```python
+def modify_mysql_privilege(instance_uuid):
+    """
+    更新（添加、修改）云数据库MySQL普通用户权限
+    :param instance_uuid: 实例编号
+    """
+    action = "ModifyDbPrivilege"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "AccountName": "pt",
+        "Operations": [{
+            "DBName": "test2",
+            "Privilege": "ReadWrite"
+        }, {
+            "DBName": "test1",
+            "Privilege": "DDLOnly"
+    	}],
+        "ExtraPrivilege": {
+            "AllCreate": "true"
+        }
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Message": "Success."
+}
+```
+
+### 7.DeleteDbPrivilege
+
+**Action：DeleteDbPrivilege**
+
+**描述：** 删除云数据库MySQL普通用户权限。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型           | 说明                     |
+| :----------- | :--- | :------------- | ------------------------ |
+| InstanceUuid | 是   | string         | 要删除用户权限的实例编号 |
+| AccountName  | 是   | string         | 普通用户的账号名称       |
+| DBNames      | 是   | list of string | 需要删除权限的数据库名称 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | -------- |
+| Code    | string | 状态码   |
+| Message | string | 信息描述 |
+
+**请求示例：**
+
+```python
+def delete_user_privilege(instance_uuid):
+    """
+    删除云数据库MySQL普通用户权限
+    :param instance_uuid: 实例编号
+    """
+    action = "DeleteDbPrivilege"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": instance_uuid,
+        "AccountName": "pt",
+        "DBNames": ["test"]
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Message": "success"
+}
+```
+
+### 8.DescribeDbPrivileges
+
+**Action：DescribeDbPrivileges**
+
+**描述：** 获取云数据库MySQL普通用户详细权限。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+无
+
+**返回参数：**
+
+| 参数名  | 类型                        | 说明                                                   |
+| :------ | :-------------------------- | ------------------------------------------------------ |
+| Code    | string                      | 状态码                                                 |
+| Data    | [DataObj](#查询权限dataobj) | MySQL普通用户权限明细数据集合                          |
+| Message | string                      | 返回调用接口状态信息和code相对应，比如：Success, Error |
+
+#### 查询权限DataObj
+
+| 参数名    | 类型   | 说明                  |
+| :-------- | :----- | --------------------- |
+| ReadWrite | string | 读写权限详细权限说明  |
+| DMLOnly   | string | 仅DML权限详细权限说明 |
+| ReadOnly  | string | 只读权限详细权限说明  |
+| DDLOnly   | string | 仅DDL权限详细权限说明 |
+
+**请求示例：**
+
+```python
+def get_mysql_user_privileges():
+    """
+    获取云数据库MySQL普通用户详细权限
+    """
+    action = "DescribeDbPrivileges"
+    method = "GET"
+    param = {
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "DDLOnly": "CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE",
+        "DMLOnly": "SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, SHOW VIEW, EVENT, TRIGGER",
+        "ReadOnly": "SELECT, LOCK TABLES, SHOW VIEW",
+        "ReadWrite": "SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EVENT, TRIGGER"
+    },
+    "Message": "success"
+}
+```
+
+### 9.DescribeDBAccount
+
+**Action：DescribeDBAccount**
+
+**描述：** 获取云数据库MySQL用户
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** GET 
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| :----------- | :--- | :----- | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 参数名  | 类型                                | 说明                 |
+| :------ | :---------------------------------- | :------------------- |
+| Message | string                              | 信息描述             |
+| Code    | string                              | 状态码               |
+| Data    | list of [DataObj](#查询用户dataobj) | 实例当前用户列表信息 |
+
+#### 查询用户DataObj
+
+| 参数名             | 类型                                                    | 说明                                                         |
+| :----------------- | :------------------------------------------------------ | :----------------------------------------------------------- |
+| AccountType        | string                                                  | 账号类型<br />高权限用户："Super"<br/>普通用户："Normal"     |
+| ServiceId          | string                                                  | 账号所属实例编号                                             |
+| AccountStatus      | string                                                  | 账号状态<br/>processing：处理中<br/>available：已激活<br/>unavailable：未激活 |
+| AccountName        | string                                                  | 账号名称                                                     |
+| AccountDescription | string                                                  | 账号描述                                                     |
+| DatabasePrivileges | list of [DatabasePrivilegesObj](#databaseprivilegesobj) | 数据库权限详情                                               |
+| ExtraPrivilege     | [ExtraPrivilegeObj](#查询用户ExtraPrivilegeObj)         | 附加权限                                                     |
+
+#### DatabasePrivilegesObj
+
+| 参数名                 | 类型   | 说明                                                         |
+| :--------------------- | :----- | :----------------------------------------------------------- |
+| AccountPrivilegeType   | string | 数据库对应账号权限。<br/>ReadWrite：读写权限<br/>DMLOnly：仅DML<br/>ReadOnly：只读权限<br/>DDLOnly：仅DDL |
+| DBName                 | string | 已授权数据库名称                                             |
+| TableName              | string | 已授权数据表名称                                             |
+| AccountPrivilegeDetail | string | 账号权限详情                                                 |
+
+#### 查询用户ExtraPrivilegeObj
+
+| 参数名    | 类型   | 说明                                                         |
+| --------- | ------ | ------------------------------------------------------------ |
+| AllCreate | string | 普通账号全局create权限，默认false，取值范围：["ture","false"] |
+
+**请求示例：**
+
+```python
+def get_mysql_account():
+    """
+    获取云数据库MySQL用户
+    """
+    action = "DescribeDBAccount"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "AccountDescription": "",
+        "AccountName": "admin",
+        "AccountStatus": "available",
+        "AccountType": "Super",
+        "DatabasePrivileges": null,
+        "ExtraPrivilege": null,
+        "ServiceId": "********************"
+    }, {
+        "AccountDescription": "",
+        "AccountName": "pt",
+        "AccountStatus": "available",
+        "AccountType": "Normal",
+        "DatabasePrivileges": [{
+            "AccountPrivilegeDetail": "CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE",
+            "AccountPrivilegeType": "DDLOnly",
+            "DBName": "test",
+            "TableName": "*"
+        }],
+        "ExtraPrivilege": {
+            "AllCreate": "true"
+        },
+        "ServiceId": "********************"
+    }],
+    "Message": "success"
+}
+```
+
+### 10.DeleteDBAccount
+
+**Action：DeleteDBAccount**
+
+**描述：** 删除云数据库MySQL用户
+
+**请求地址：cdsapi.capitalonline.net/mysql**
+
+**请求方法：** POST 
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明             |
+| ------------ | ---- | ------ | ---------------- |
+| InstanceUuid | 是   | string | 实例编号         |
+| AccountName  | 是   | string | 需删除的账号名称 |
+
+**返回参数：**
+
+| 参数名  | 类型   | 说明     |
+| :------ | :----- | :------- |
+| Message | string | 信息描述 |
+| Code    | string | 状态码   |
+| Data    | Object | 数据     |
+| TaskId  | string | 任务编号 |
+
+**请求示例：**
+
+```python
+def delete_user(instance_uuid):
+    """
+    删除云数据库MySQL用户
+    :param instance_uuid: 实例编号
+    """
+    action = "DeleteDBAccount"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": "**************",
+        "AccountName": "root",
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Success",
+    "TaskId": ""
+}
+```
+
+### 11.DescribeModifiableDBSpec
 
 **Action：DescribeModifiableDBSpec**
 
@@ -856,7 +1216,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 }
 ```
 
-### 7.ModifyDBInstanceSpec
+### 12.ModifyDBInstanceSpec
 
 **Action：ModifyDBInstanceSpec**
 
@@ -873,7 +1233,7 @@ def get_mysql_modifiable_spec(instance_uuid):
 | InstanceUuid | 是   | string | 要修改配置的实例编号                                         |
 | PaasGoodsId  | 否   | int    | 变更后规格的商品编号                                         |
 | DiskType     | 否   | string | 磁盘类型，磁盘的添加类型。只能跟最开始购买时候类型一致。不能一个实例加多种类型磁盘，比如最开始添加高性能磁盘，后面也只能选择添加高性能磁盘 |
-| DiskValue    | 否   | string | 磁盘大小                                                     |
+| DiskValue    | 否   | string | 新增磁盘大小                                                     |
 
 **返回参数：**
 
@@ -919,7 +1279,7 @@ def modify_mysql_spec(instance_uuid, ):
 }
 ```
 
-### 8.DeleteDBInstance
+### 13.DeleteDBInstance
 
 **Action：DeleteDBInstance**
 
@@ -976,7 +1336,7 @@ def delete_mysql(instance_uuid, ):
 }
 ```
 
-### 9.DescribeAvailableReadOnlyConfig
+### 14.DescribeAvailableReadOnlyConfig
 
 **Action：DescribeAvailableReadOnlyConfig**
 
@@ -994,28 +1354,56 @@ def delete_mysql(instance_uuid, ):
 
 **返回参数：**
 
-| 参数名           | 类型   | 说明                                                         |
-| :--------------- | :----- | ------------------------------------------------------------ |
-| Message          | string | 信息描述                                                     |
-| Code             | string | 状态码                                                       |
-| Data             | dict   | 数据                                                         |
-| SubProductName   | string | 子产品的名称                                                 |
-| Version          | string | 产品支持的版本                                               |
-| Architectures    | string | 产品支持的架构                                               |
-| ArchitectureName | string | 架构名称                                                     |
-| ProductId        | string | 产品的id                                                     |
-| ProductType      | string | 产品类型                                                     |
-| ComputeRoles     | list   | 支持的计算类型，不通的类型支持不通的规格和支持的添加不通类型的硬盘 |
-| Standards        | dict   | 该类型支持的规格                                             |
-| CpuRam           | list   | 支持的规格信息，以及以下商品规格支持的磁盘类型               |
-| PaasGoodsId      | int    | 具体的产品编号，用户确定购买哪一种规格(创建服务时候使用)     |
-| AttachDisk       | list   | 该类型规格能够添加的磁盘类型                                 |
-| DiskMax          | int    | 单次支持最大规格的磁盘                                       |
-| DiskValue        | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用)     |
-| AttachDisk       | string | 该类型规格能够添加的磁盘类型                                 |
-| BasicIops        | string | 基础的磁盘的iops                                             |
-| DiskUnit         | string | 磁盘规格                                                     |
-| DiskName         | string | 磁盘类型名称                                                 |
+| 参数名  | 类型                                | 说明                                                   |
+| ------- | ----------------------------------- | ------------------------------------------------------ |
+| Code    | string                              | 状态码                                                 |
+| Data    | [DataObj](#查询只读实例规格DataObj) | 可购买的MySQL只读实例规格数据对象                      |
+| Message | string                              | 返回调用接口状态信息和code相对应，比如：Success, Error |
+
+#### 查询只读实例规格DataObj
+
+| 参数名           | 类型                                                        | 说明                                                         |
+| ---------------- | ----------------------------------------------------------- | ------------------------------------------------------------ |
+| ArchitectureName | string                                                      | 架构名称                                                     |
+| ComputeRoles     | list of [ComputeRolesObj](#查询只读实例规格ComputeRolesObj) | 支持的计算类型，不同的计算类型支持不同规格，并支持添加不同类型的硬盘 |
+| SubProductName   | string                                                      | 子产品名称，比如：MySQL 只读实例                             |
+| Version          | string                                                      | 产品支持的版本                                               |
+
+#### 查询只读实例规格ComputeRolesObj
+
+| 参数名      | 类型                                        | 说明                        |
+| ----------- | ------------------------------------------- | --------------------------- |
+| ComputeName | string                                      | 计算类型名称， 比如：通用型 |
+| Standards   | [StandardObj](#查询只读实例规格StandardObj) | 该类型支持的规格            |
+
+#### 查询只读实例规格StandardObj
+
+| 参数名     | 类型                                                    | 说明                             |
+| ---------- | ------------------------------------------------------- | -------------------------------- |
+| AttachDisk | list of [AttachDiskObj](#查询只读实例规格AttachDiskObj) | 该类型规格能够添加的磁盘类型列表 |
+| CpuRam     | list of [CpuRamObj](#查询只读实例规格CpuRamObj)         | 支持的规格列表                   |
+
+#### 查询只读实例规格AttachDiskObj
+
+| 参数名        | 类型   | 说明                                                         |
+| ------------- | ------ | ------------------------------------------------------------ |
+| BasicIops     | string | 基础的磁盘的iops                                             |
+| DiskMax       | int    | 单次支持扩容到最大磁盘容量为2000                             |
+| DiskMaxExpand | int    | 磁盘最大可扩容大小                                           |
+| DiskMin       | int    | 磁盘容量支持的最小值，起步为100                              |
+| DiskName      | string | 磁盘类型名称，包含SSD和性能型 SSD：SSD磁盘，磁盘IOPS默认为5000，可购买IOPS性能包 性能型：普通SSD盘，磁盘IOPS限定在3000 |
+| DiskStep      | int    | 磁盘扩容步长，步长大小=100                                   |
+| DiskUnit      | string | 磁盘容量单位：GB                                             |
+| DiskValue     | string | 磁盘类型,用于创建服务实例指定磁盘类型 (创建服务时候使用      |
+
+#### 查询只读实例规格CpuRamObj
+
+| 参数名      | 类型   | 说明                                           |
+| ----------- | ------ | ---------------------------------------------- |
+| CPU         | int    | 核心数量，单位：个                             |
+| Name        | string | 规格名称                                       |
+| PaasGoodsId | int    | 具体的产品编号，根据产品编号确定购买哪一种规格 |
+| RAM         | int    | 内存大小，单位：GB                             |
 
 **请求示例：**
 
@@ -1043,46 +1431,70 @@ def get_mysql_modifiable_spec(instance_uuid):
 {
     "Code": "Success",
     "Data": {
-        "AttachDisk": [{
-            "BasicIops": "3000",
-            "DiskMax": 2000,
-            "DiskMaxExpand": 2000,
-            "DiskMin": 100,
-            "DiskName": "性能型",
-            "DiskStep": 100,
-            "DiskUnit": "G",
-            "DiskValue": "high_disk"
+        "ArchitectureName": "主从",
+        "ComputeRoles": [{
+            "ComputeName": "通用型",
+            "Standards": {
+                "AttachDisk": [{
+                    "BasicIops": "",
+                    "DiskMax": 4000,
+                    "DiskMaxExpand": 2000,
+                    "DiskMin": 100,
+                    "DiskName": "SSD",
+                    "DiskStep": 100,
+                    "DiskUnit": "G",
+                    "DiskValue": "ssd_disk"
+                }, {
+                    "BasicIops": "",
+                    "DiskMax": 4000,
+                    "DiskMaxExpand": 2000,
+                    "DiskMin": 100,
+                    "DiskName": "性能型",
+                    "DiskStep": 100,
+                    "DiskUnit": "G",
+                    "DiskValue": "high_disk"
+                }],
+                "CpuRam": [{
+                    "CPU": 2,
+                    "Name": "2C4G",
+                    "PaasGoodsId": 15686,
+                    "RAM": 4
+                }, {
+                    "CPU": 4,
+                    "Name": "4C8G",
+                    "PaasGoodsId": 15688,
+                    "RAM": 8
+                }, {
+                    "CPU": 4,
+                    "Name": "4C16G",
+                    "PaasGoodsId": 15690,
+                    "RAM": 16
+                }, {
+                    "CPU": 8,
+                    "Name": "8C16G",
+                    "PaasGoodsId": 15692,
+                    "RAM": 16
+                }, {
+                    "CPU": 8,
+                    "Name": "8C32G",
+                    "PaasGoodsId": 15694,
+                    "RAM": 32
+                }, {
+                    "CPU": 16,
+                    "Name": "16C64G",
+                    "PaasGoodsId": 15696,
+                    "RAM": 64
+                }]
+            }
         }],
-        "CpuRam": [{
-            "CPU": 2,
-            "N": "2C4G",
-            "PaasGoodsId": "******",
-            "RAM": 4
-        }, {
-            "CPU": 4,
-            "Name": "4C8G",
-            "PaasGoodsId": "******",
-            "RAM": 8
-        }, {
-            "CPU": 8,
-            "Name": "8C16G",
-            "PaasGoodsId": "******",
-            "RAM": 16
-        }, {
-            "CPU": 8,
-            "Name": "8C32G",
-            "PaasGoodsId": "******",
-            "RAM": 32
-        }],
-        "ProductName": "MySQL 高可用版\n",
-        "RegionId": "******"
+        "SubProductName": "MySQL 只读实例",
+        "Version": "8.0"
     },
-    "Message": "Success.",
-    "TaskId": ""
+    "Message": "获取只读规格列表成功。"
 }
 ```
 
-### 10.CreateReadOnlyDBInstance
+### 15.CreateReadOnlyDBInstance
 
 **Action：CreateReadOnlyDBInstance**
 
@@ -1094,15 +1506,16 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                     |
-| :----------- | :--- | :----- | ---------------------------------------- |
-| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例         |
-| InstanceName | 是   | string | 只读实例名称                             |
-| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格   |
-| DiskType     | 是   | string | 磁盘类型                                 |
-| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例 |
-| TestGroupId  | 否   | int    | 是否使用测试组计费                       |
-| Amount       | 否   | int    | 购买的数量一次最多购买三个               |
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例                             |
+| InstanceName | 是   | string | 只读实例名称                                                 |
+| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格                       |
+| DiskType     | 是   | string | 磁盘类型                                                     |
+| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例                     |
+| TestGroupId  | 否   | int    | 是否使用测试组计费                                           |
+| Amount       | 否   | int    | 购买的数量一次最多购买三个                                   |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
 
 **返回参数：**
 
@@ -1128,7 +1541,8 @@ def create_mysql_for_readonly(instance_uuid):
     body = {
         "InstanceUuid": instance_uuid,
         "InstanceName": "mysql_for_readonly",
-        "PaasGoodsId": "6707",
+        "PaasGoodsId": 6707,
+        "ServicePort": 6033,
         "DiskType": "high_disk",
         "DiskValue": 400,  # 磁盘大小必须大于主实例
         "Amount": 1
@@ -1145,7 +1559,7 @@ def create_mysql_for_readonly(instance_uuid):
     "TaskId": "***********"
 }
 ```
-### 11.CreateBackup
+### 16.CreateBackup
 
 **Action：CreateBackup**
 
@@ -1157,11 +1571,12 @@ def create_mysql_for_readonly(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                           |
-| :----------- | :--- | :----- | ------------------------------ |
-| InstanceUuid | 是   | string | 实例编号                       |
-| BackupType   | 是   | string | 备份类型（目前只支持物理备份） |
-| Desc         | 否   | string | 备份的描述,不传默认为空字符串  |
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| InstanceUuid | 是   | string | 实例编号                                                     |
+| BackupType   | 是   | string | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| Desc         | 否   | string | 备份的描述,不传默认为空字符串                                |
+| DBList       | 否   | list   | 当备份类型为逻辑备份时，用于指定数据库备份，<br />不填默认为整个实例备份 |
 
 **返回参数：**
 
@@ -1187,7 +1602,11 @@ def create_backup(instance_uuid):
     body = {
         "InstanceUuid": instance_uuid,
         "BackupType": "physical-backup",  # 目前只支持物理备份
-        "Desc": "test-openapi-python"
+        "Desc": "test-openapi-python",
+        "DBList":[
+            "test1",
+            "test2"
+        ]
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -1205,7 +1624,7 @@ def create_backup(instance_uuid):
 }
 ```
 
-### 12.DescribeBackups
+### 17.DescribeBackups
 
 **Action：DescribeBackups**
 
@@ -1223,19 +1642,20 @@ def create_backup(instance_uuid):
 
 **返回参数：**
 
-| 参数名     | 类型   | 说明                           |
-| :--------- | :----- | ------------------------------ |
-| Message    | string | 信息描述                       |
-| Code       | string | 状态码                         |
-| Data       | dict   | 数据                           |
-| BackupId   | string | 备份id                         |
-| Status     | string | 备份状态                       |
-| BackupType | string | 备份类型（全备份）             |
-| StartTime  | string | 开始时间                       |
-| EndTime    | string | 结束时间                       |
-| BackupMode | string | 备份策略（自动备份、手动备份） |
-| BackupSize | string | 备份文件大小，单位字节         |
-| Desc       | string | 备份描述                       |
+| 参数名         | 类型   | 说明                                                         |
+| :------------- | :----- | ------------------------------------------------------------ |
+| Message        | string | 信息描述                                                     |
+| Code           | string | 状态码                                                       |
+| Data           | dict   | 数据                                                         |
+| BackupId       | string | 备份id                                                       |
+| Status         | string | 备份状态                                                     |
+| BackupType     | string | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| StartTime      | string | 开始时间                                                     |
+| EndTime        | string | 结束时间                                                     |
+| BackupMode     | string | 备份策略（自动备份、手动备份）                               |
+| BackupSize     | string | 备份文件大小，单位字节                                       |
+| Desc           | string | 备份描述                                                     |
+| BackupStrategy | string | 备份范围，取值范围：<br />整个实例："instance"<br />指定数据库："db" |
 
 **请求示例：**
 
@@ -1266,12 +1686,13 @@ def get_mysql_backups(instance_uuid):
         "BackupId": "**************************",
         "BackupMode": "auto",
         "BackupSize": 677496,
-        "BackupType": "physical-backup",
+        "BackupType": "logical-backup",
         "Desc": "",
         "EndTime": "2020-06-18 04:10:13",
         "InstanceId": "**************************",
         "StartTime": "2020-06-18 04:09:59",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"db"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1281,7 +1702,8 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-17 04:10:22",
         "InstanceId": "**************************",
         "StartTime": "2020-06-17 04:10:08",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1291,7 +1713,8 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-16 04:10:17",
         "InstanceId": "**************************",
         "StartTime": "2020-06-16 04:10:03",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }, {
         "BackupId": "**************************",
         "BackupMode": "manual",
@@ -1301,13 +1724,14 @@ def get_mysql_backups(instance_uuid):
         "EndTime": "2020-06-15 15:04:59",
         "InstanceId": "**************************",
         "StartTime": "2020-06-15 15:04:41",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     }],
     "Message": "Success."
 }
 ```
 
-### 13.DeleteBackup
+### 18.DeleteBackup
 
 **Action：DeleteBackup**
 
@@ -1366,7 +1790,7 @@ def delete_backup(instance_uuid, backupid):
 }
 ```
 
-### 14.DownloadBackup
+### 19.DownloadBackup
 
 **Action：DownloadBackup**
 
@@ -1385,21 +1809,22 @@ def delete_backup(instance_uuid, backupid):
 
 **返回参数：**
 
-| 参数名                    | 类型      | 说明                                                     |
-| :------------------------ | :-------- | -------------------------------------------------------- |
-| Message                   | string    | 信息描述                                                 |
-| Code                      | string    | 状态码                                                   |
-| Data                      | dict      | 数据                                                     |
-| BackupId                  | string    | 备份编号                                                 |
-| Status                    | string    | 备份状态                                                 |
-| BackupType                | string    | 备份的类型（全备份）                                     |
-| StartTime                 | string    | 备份的开始时间                                           |
-| EndTime                   | string    | 备份的结束时间                                           |
-| BackupMode                | ststringr | 备份策略（自动或者手动备份）                             |
-| BackupSize                | string    | 备份文件大小，单位字节                                   |
-| Desc                      | string    | 备份的描述（手动备份可以自定义内容），自动备份为空字符串 |
-| BackupDownloadUrl         | string    | 公网下载地址                                             |
-| BackupIntranetDownloadUrl | string    | 内网下载地址                                             |
+| 参数名                    | 类型      | 说明                                                         |
+| :------------------------ | :-------- | ------------------------------------------------------------ |
+| Message                   | string    | 信息描述                                                     |
+| Code                      | string    | 状态码                                                       |
+| Data                      | dict      | 数据                                                         |
+| BackupId                  | string    | 备份编号                                                     |
+| Status                    | string    | 备份状态                                                     |
+| BackupType                | string    | 备份类型，取值范围：<br />物理全备份："physical-backup"<br/>逻辑备份："logical-backup" |
+| StartTime                 | string    | 备份的开始时间                                               |
+| EndTime                   | string    | 备份的结束时间                                               |
+| BackupMode                | ststringr | 备份策略（自动或者手动备份）                                 |
+| BackupSize                | string    | 备份文件大小，单位字节                                       |
+| Desc                      | string    | 备份的描述（手动备份可以自定义内容），自动备份为空字符串     |
+| BackupDownloadUrl         | string    | 公网下载地址                                                 |
+| BackupIntranetDownloadUrl | string    | 内网下载地址                                                 |
+| BackupStrategy            | string    | 备份范围，取值范围：<br />整个实例："instance"<br />指定数据库："db" |
 
 **请求示例：**
 
@@ -1433,23 +1858,24 @@ def get_backup_describe(instance_uuid, backupid):
         "BackupIntranetDownloadUrl": "http://88.***************",
         "BackupMode": "auto",
         "BackupSize": 68140,
-        "BackupType": "full-backup",
+        "BackupType": "physical-backup",
         "Desc": "",
         "EndTime": "2020-06-18 04:00:26",
         "InstanceId": "***************",
         "StartTime": "2020-06-18 04:00:06",
-        "Status": "finished"
+        "Status": "finished",
+        "BackupStrategy":"instance"
     },
     "Message": "Success.",
     "TaskId": ""
 }
 ```
 
-### 15.StartBatchRollback
+### 20.ModifyDbBackupPolicy
 
-**Action：StartBatchRollback**
+**Action：ModifyDbBackupPolicy**
 
-**描述：** 集群版数据库恢复（覆盖性恢复）
+**描述：** 修改云数据库MySQL高可用版自动备份设置。
 
 **请求地址：** cdsapi.capitalonline.net/mysql
 
@@ -1457,37 +1883,47 @@ def get_backup_describe(instance_uuid, backupid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明           |
-| :----------- | :--- | :----- | -------------- |
-| InstanceUuid | 是   | string | 实例编号       |
-| BackupId     | 是   | string | 选择的备份编号 |
+| 参数名       | 必选 | 类型                                     | 说明                     |
+| :----------- | :--- | :--------------------------------------- | ------------------------ |
+| InstanceUuid | 是   | string                                   | 要修改备份设置的实例编号 |
+| DataBackups  | 是   | object of [DataBackups](#DataBackupsObj) | 备份设置                 |
+
+#### DataBackupsObj
+
+| 参数名   | 必选 | 类型           | 说明                                                         |
+| :------- | :--- | :------------- | ------------------------------------------------------------ |
+| TimeSlot | 是   | string         | 备份时间段，以整点开始，整点结束，间隔为一小时。<br />输入参数范围：["00:00-01:00","01:00-02:00","02:00-03:00","03:00-04:00","04:00-05:00","05:00-06:00","06:00-07:00","07:00-08:00","08:00-09:00","09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00","13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00","17:00-18:00","18:00-19:00","19:00-20:00","20:00-21:00","21:00-22:00","22:00-23:00","23:00-24:00"] |
+| DateList | 是   | list of string | 备份周期，输入参数范围：["0","1","2","3","4","5","6"]，0为星期日，1为星期一，以此类推 |
+| Sign     | 是   | int            | 自动备份开关，关闭：0 ，开启：1                              |
 
 **返回参数：**
 
 | 参数名  | 类型   | 说明     |
 | :------ | :----- | -------- |
-| Message | string | 信息描述 |
 | Code    | string | 状态码   |
-| Data    | dict   | 数据     |
-| TaskId  | string | 任务编号 |
+| Message | string | 信息描述 |
 
 **请求示例：**
 
 ```python
-def start_batch_rollback(instance_uuid, backupid):
+def modify_mysql_backup_policy(instance_uuid):
     """
-    MySQL集群备份恢复
-    :param backupid: 备份编号
+    修改云数据库MySQL高可用版自动备份设置
     :param instance_uuid: 实例编号
     """
-    action = "StartBatchRollback"
+    action = "ModifyDbBackupPolicy"
     method = "POST"
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
     body = {
         "InstanceUuid": instance_uuid,
-        "BackupId": backupid,
+        "DataBackups": {
+            "TimeSlot": "13:00-14:00",
+            "DateList": ["0", "1", "2", "3", "4", "5", "6"],
+            "Sign": 1
+        }
     }
+
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     print(result)
@@ -1498,329 +1934,7 @@ def start_batch_rollback(instance_uuid, backupid):
 ```json
 {
     "Code": "Success",
-    "Data": {},
-    "Message": "Success.",
-    "TaskId": "***********"
-}
-```
-
-### 16.DescribeRollbackRangeTime
-
-**Action：DescribeRollbackRangeTime**
-
-**描述：** 查询可恢复时间（主从版适用）
-
-**请求地址：** cdsapi.capitalonline.net/mysql
-
-**请求方法：** GET
-
-**请求参数：**
-
-| 参数名       | 必选 | 类型   | 说明     |
-| :----------- | :--- | :----- | -------- |
-| InstanceUuid | 是   | string | 实例编号 |
-
-**返回参数：**
-
-| 参数名          | 类型   | 说明     |
-| :-------------- | :----- | -------- |
-| Message         | string | 信息描述 |
-| Code            | string | 状态码   |
-| Data            | dict   | 数据     |
-| LeftBorderTime  | 是     | string   |
-| RightBorderTime | 是     | string   |
-
-**请求示例：**
-
-```python
-def get_time_range(instance_uuid):
-    """
-    获取备份支持的时间范围(主从实例支持的时间范围)
-    :param instance_uuid: 实例编号
-    """
-    action = "DescribeRollbackRangeTime"
-    method = "GET"
-    param = { "InstanceUuid": instance_uuid}
-    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
-    body = {}
-    res = requests.get(url)
-    result = json.loads(res.content)
-    print(result)
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Data": {
-        "LeftBorderTime": "2020-06-23 09:32:31",
-        "RightBorderTime": "2020-06-23 16:25:17"
-    },
-    "Message": "success",
-    "TaskId": ""
-}
-```
-
-### 17.StartBatchRollbackToTemporaryDBInstance
-
-**Action：StartBatchRollbackToTemporaryDBInstance**
-
-**描述：** 主从版数据库恢复（7天内任意时间点的恢复，恢复到临时实例）
-
-**请求地址：** cdsapi.capitalonline.net/mysql
-
-**请求方法：** POST
-
-**请求参数：**
-
-| 参数名                | 必选 | 类型   | 说明                                                   |
-| :-------------------- | :--- | :----- | ------------------------------------------------------ |
-| InstanceUuid          | 是   | string | 实例编号                                               |
-| SelectTime            | 是   | string | 选择恢复的时间点（使用查询可恢复时间接口查询时间范围） |
-| TemporaryInstanceName | 是   | string | 临时实例服务名称                                       |
-
-**返回参数：**
-
-| 参数名  | 类型   | 说明     |
-| :------ | :----- | -------- |
-| Message | string | 信息描述 |
-| Code    | string | 状态码   |
-| Data    | dict   | 数据     |
-| TaskId  | string | 任务编号 |
-
-**请求示例：**
-
-```python
-def create_temp_instance(instance_uuid,select_time,temporary_instance_name):
-    """
-    主从实例回滚时间点到临时实例
-    :param instance_uuid: 要恢复的实例名称
-    :param select_time: 选择恢复的时间点 格式："2020-06-10 05:53:57"（必须在支持范围之内）
-    :param temporary_instance_name: 临时实例的名称
-    :return:
-    """
-    action = "StartBatchRollbackToTemporaryDBInstance"
-    method = "POST"
-    param = {}
-    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
-    body = {
-            "InstanceUuid": instance_uuid,
-            "SelectTime":select_time,
-            "TemporaryInstanceName":temporary_instance_name}
-    res = requests.post(url,json=body)
-    result = json.loads(res.content)
-    print(result)
-    
-#调用例子
-create_temp_instance(instance_uuid="****************",select_time="2020-06-10 05:53:57",temporary_instance_name="***********")  #获取恢复支持的时间范围
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Data": {},
-    "Message": "任务已下发,请等待执行",
-    "TaskId": "***********"
-}
-```
-
-### 18.DescribeTemporaryDBInstances
-
-**Action：DescribeTemporaryDBInstances**
-
-**描述：** 获取某个主实例的临时实例列表
-
-**请求地址：** cdsapi.capitalonline.net/mysql
-
-**请求方法：** GET
-
-**请求参数：**
-
-| 参数名       | 必选 | 类型   | 说明     |
-| :----------- | :--- | :----- | -------- |
-| InstanceUuid | 是   | string | 实例编号 |
-
-**返回参数：**
-
-| 参数名                | 类型   | 说明                              |
-| :-------------------- | :----- | --------------------------------- |
-| Message               | string | 信息描述                          |
-| Code                  | string | 状态码                            |
-| Data                  | dict   | 数据                              |
-| Status                | string | 实例状态                          |
-| StatusStr             | string | 实例状态中文                      |
-| SelectRecoveryTime    | string | 该临时实例恢复的时间点            |
-| CreateTime            | string | 临时实例创建时间                  |
-| TemporaryInstanceUuid | string | 临时实例编号（转正/删除时候用到） |
-| Progress              | string | 临时实例创建进度                  |
-| TemporaryInstanceName | string | 临时实例名称                      |
-| Ip                    | string | 临时实例IP                        |
-| Port                  | string | 临时实例端口                      |
-
-**请求示例：**
-
-```python
-def get_temp_instance(instance_uuid):
-    """
-    获取临时实例列表
-    :param instance_uuid: 实例编号
-    """
-    action = "DescribeTemporaryDBInstances"
-    method = "GET"
-    param = {"InstanceUuid": instance_uuid}
-    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
-    body = {}
-    res = requests.get(url)
-    result = json.loads(res.content)
-    print(result)
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Data": [{
-        "CreateTime": "2020-06-23 15:56:17",
-        "Ip": "*********",
-        "Port": "6033",
-        "SelectRecoveryTime": "2020-06-23 13:52:51",
-        "Status": "RUNNING",
-        "StatusStr": "运行中",
-        "TemporaryInstanceName": "**********",
-        "TemporaryInstanceUuid": "**********"
-    },{
-        "CreateTime": "2020-06-24 11:30:21",
-        "Ip": "",
-        "Port": "",
-        "SelectRecoveryTime": "2020-06-24 11:20:48",
-        "Status": "CREATING",
-        "StatusStr": "创建中",
-        "TemporaryInstanceName": "*********",
-        "TemporaryInstanceUuid": "*********"
-    }],
     "Message": "success"
-}
-```
-
-### 19.RegularizeTemporaryDBInstances
-
-**Action：RegularizeTemporaryDBInstances**
-
-**描述：** 临时实例转正
-
-**请求地址：** cdsapi.capitalonline.net/mysql
-
-**请求方法：** POST
-
-**请求参数：**
-
-| 参数名                | 必选 | 类型   | 说明                   |
-| :-------------------- | :--- | :----- | ---------------------- |
-| InstanceUuid          | 是   | string | 主实例编号             |
-| TemporaryInstanceUuid | 是   | string | 主实例下的临时实例编号 |
-
-**返回参数：**
-
-| 参数名  | 类型   | 说明     |
-| :------ | :----- | -------- |
-| Message | string | 信息描述 |
-| Code    | string | 状态码   |
-
-**请求示例：**
-
-```python
-def ragularization_temp_instance(instance_uuid,temporary_instance_id):
-    """
-    临时实例转正
-    :param instance_uuid: 实例编号
-    :param temporary_instance_id: 主实例的临时实例编号
-    """
-    action = "RagularizeTemporaryDBInstances"
-    method = "POST"
-    param = {}
-    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
-    body = {"InstanceUuid": instance_uuid,"TemporaryInstanceUuid":temporary_instance_id}
-    res = requests.post(url,json=body)
-    result = json.loads(res.content)
-    print(result)
-
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Data": None,
-    "Message": "临时实例转正操作成功",
-    "TaskId": ""
-}
-```
-
-### 20.DeleteTemporaryDBInstances
-
-**Action：DeleteTemporaryDBInstances**
-
-**描述：** 删除临时实例
-
-**请求地址：** cdsapi.capitalonline.net/mysql
-
-**请求方法：** POST
-
-**请求参数：**
-
-| 参数名                | 必选 | 类型   | 说明                   |
-| :-------------------- | :--- | :----- | ---------------------- |
-| InstanceUuid          | 是   | string | 实例编号               |
-| TemporaryInstanceUuid | 是   | string | 主实例下的临时实例编号 |
-
-**返回参数：**
-
-| 参数名  | 类型   | 说明     |
-| :------ | :----- | -------- |
-| Message | string | 信息描述 |
-| Code    | string | 状态码   |
-| Data    | dict   | 数据     |
-| TaskId  | string | 任务编号 |
-
-**请求示例：**
-
-```python
-def delete_temp_instance(instance_uuid,temporary_instance_id):
-    """
-    删除临时实例
-    :param instance_uuid: 实例编号
-    :param temporary_instance_id: 删除的实例编号
-    """
-    action = "DeleteTemporaryDBInstances"
-    method = "POST"
-    param = {}
-    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
-    body = {"InstanceUuid": instance_uuid,"TemporaryInstanceUuid":temporary_instance_id}
-    res = requests.post(url,json=body)
-    result = json.loads(res.content)
-    print(result)
-
-
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Data": {},
-    "Message": "删除任务已经下发，请等待执行完成。",
-    "TaskId": "**********************"
 }
 ```
 
@@ -1949,3 +2063,234 @@ def get_instance_Performance(instance_uuid, metric_key, start_time, end_time):
 }
 ```
 
+### 22.DescribeDBParameter
+
+**Action：DescribeDBParameter**
+
+**描述：** 获取云数据库MySQL参数列表。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| ------------ | ---- | ------ | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+
+**返回参数：**
+
+| 名称    | 类型                        | 描述     |
+| :------ | :-------------------------- | :------- |
+| Message | string                      | 信息描述 |
+| Code    | string                      | 状态码   |
+| Data    | [DataObj](#查询参数dataobj) | 数据     |
+
+#### 查询参数DataObj
+
+| 名称       | 类型                                    | 描述     |
+| :--------- | :-------------------------------------- | :------- |
+| Parameters | list of [ParametersObj](#parametersobj) | 参数信息 |
+
+#### ParametersObj
+
+| 名称         | 类型   | 描述         |
+| :----------- | :----- | :----------- |
+| DefaultValue | string | 参数默认值   |
+| CurrentValue | string | 运行参数值   |
+| Description  | string | 参数描述     |
+| IsModify     | string | 是否可修改   |
+| CheckingCode | string | 可修改参数值 |
+| IsRestart    | string | 是否重启     |
+| Name         | string | 参数名       |
+
+**请求示例：**
+
+```python
+def get_mysql_parameter_info():
+    """
+    获取MySQL参数列表
+    """
+    action = "DescribeDBParameter"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Parameters": [{
+            "CheckingCode": "[10-84]",
+            "CurrentValue": "84",
+            "DefaultValue": "84",
+            "Description": "Maximum length of words that are stored in an InnoDB FULLTEXT index.",
+            "IsModify": "true",
+            "IsRestart": "true",
+            "Name": "innodb_ft_max_token_size"
+        }]
+    },
+    "Message": "success"
+}
+```
+
+### 23.DescribeDBParameterModifyHistory
+
+**Action：DescribeDBParameterModifyHistory**
+
+**描述：** 获取云数据库MySQL参数修改历史。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明     |
+| ------------ | ---- | ------ | -------- |
+| InstanceUuid | 是   | string | 实例编号 |
+| StartTime    | 是   | string | 开始时间 |
+| EndTime      | 是   | string | 结束时间 |
+
+**返回参数：**
+
+| 名称    | 类型                                | 描述     |
+| :------ | :---------------------------------- | :------- |
+| Message | string                              | 信息描述 |
+| Code    | string                              | 状态码   |
+| Data    | [DataObj](#查询参数修改历史dataobj) | 数据     |
+
+#### 查询参数修改历史DataObj
+
+| 名称              | 类型   | 描述           |
+| :---------------- | :----- | :------------- |
+| IsValid           | bool   | 是否生效       |
+| ModifyTime        | string | 变更时间       |
+| ModifyRole        | string | 操作者         |
+| OldParameterValue | string | 变更前的参数值 |
+| NewParameterValue | string | 变更后的参数值 |
+| StatusMessage     | string | 状态描述       |
+| ParameterName     | string | 参数名         |
+
+**请求示例：**
+
+```python
+def get_mysql_parameter_history():
+    """
+    获取MySQL参数修改历史
+    """
+    action = "DescribeDBParameterModifyHistory"
+    method = "GET"
+    param = {
+        "InstanceUuid": "********************",
+        "StartTime": "2022-02-01 17:16:08",
+        "EndTime": "2022-02-18 17:16:08"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.content)
+    result = json.dumps(result)  # json格式化
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [{
+        "IsValid": ture,
+        "ModifyRole": "用户",
+        "ModifyTime": "2022-02-17 15:34:06",
+        "NewParameterValue": "74.43",
+        "OldParameterValue": "74.43",
+        "ParameterName": "innodb_max_dirty_pages_pct",
+        "StatusMessage": "已生效"
+    }],
+    "Message": "success"
+}
+```
+
+### 24.ModifyDBParameter
+
+**Action：ModifyDBParameter**
+
+**描述：** 修改云数据库MySQL参数。
+
+**请求地址：** cdsapi.capitalonline.net/mysql
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型                                            | 说明       |
+| ------------ | ---- | ----------------------------------------------- | ---------- |
+| InstanceUuid | 是   | string                                          | 实例编号   |
+| Parameters   | 是   | list of [ParametersObj](#修改参数parametersobj) | 待修改参数 |
+
+#### 修改参数ParametersObj
+
+| 参数名 | 必选 | 类型   | 说明     |
+| ------ | ---- | ------ | -------- |
+| Name   | 是   | string | 参数名称 |
+| Value  | 是   | string | 参数值   |
+
+**返回参数：**
+
+| 名称    | 类型   | 描述                 |
+| :------ | :----- | :------------------- |
+| Message | string | 信息描述             |
+| Code    | string | 状态码               |
+| Data    | dict   | 参数修改历史查询数据 |
+| TaskId  | string | 任务编号             |
+
+**请求示例：**
+
+```python
+def modify_mysql_parameter(instance_uuid):
+    """
+    修改云数据库MySQL参数
+    :param instance_uuid: 实例编号
+    """
+    action = "ModifyDBParameter"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
+    body = {
+        "InstanceUuid": "************",
+        "Parameters": [
+            {
+                "Name": "back_log",
+                "Value": "345"
+            }, {
+                "Name": "connect_timeout",
+                "Value": "145"
+            }
+        ]
+    }
+
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "Parameter configuration is being configured",
+    "TaskId": "42a73680-af4d-498e-b6a2-416fec04ca44"
+}
+```

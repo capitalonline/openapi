@@ -100,6 +100,7 @@ func doHttpPost(action, url, method string, reqBody []byte) CommonReturn {
 
 	signedURL := getSignedURL(action, url, method, reqBody)
 	req, _ := http.NewRequest(method, signedURL, bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
