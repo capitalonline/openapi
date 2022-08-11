@@ -1298,6 +1298,185 @@ def prefetch_file():
 | msg    | string | 信息描述 |
 | data   | bool   | 数据信息 |
 
+### PrefetchStatus
+
+预取进度状态查询
+
+**Action：** PrefetchStatus
+
+**描述：** 预取进度状态查询
+
+**请求地址：**api.capitalonline.net/cdnapi/distribution/v4/prefetch/status
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名 | 必选 | 类型   | 说明                     |
+| :----- | :--- | :----- | ------------------------ |
+| id    | 是   | int | 文件预取唯一id |
+
+**填写说明：**
+
+1、可调用PrefetchList方法查询id
+
+**请求示例：**
+
+```python
+ def prefetch_status(self, id):
+        """
+        预取文件
+        """
+        # cdn_url = "http://cdsapi-gateway.gic.pre/cdnapi/distribution/v4/prefetch/status"
+        cdn_url = "http://api.capitalonline.net/cdnapi/distribution/v4/prefetch/status"
+        action = "PrefetchStatus"
+        method = "GET"
+        param = {
+            "id": id,
+        }
+        url = get_signature(action, self.ak, self.sk, method, cdn_url, param)
+        resp = requests.get(url)
+        result = json.loads(resp.content)
+        # result = json.dumps(result)
+        print(result)
+```
+
+**返回示例：**
+
+```json
+{
+	"code": 200,
+	"msg": "成功",
+	"data": {
+		"id": "3230460",
+		"status_id": "complete",
+		"process": 100,
+		"description": "",
+		"createtime": "2022-08-03T06:47:47.000Z",
+		"status_name": "完成"
+	}
+}
+```
+
+**返回参数说明：**
+
+| 参数名 | 类型   | 说明     |
+| :----- | ------ | -------- |
+| code   | int    | 状态码   |
+| msg    | string | 信息描述 |
+| data   | json   | 文件预取状态信息 |
+| id   | int    | 文件预取唯一id   |
+| status_id   | string    | 预取进度状态id，取值范围（complete 完成，refreshing 预取中，failed 错误，pending 待预取）   |
+| status_name   | string    | 预取进度状态名称   |
+| process   | flow    | 文件预取进度百分比   |
+| description   | string    | 描述   |
+| createtime   | datetime    | 创建时间   |  
+
+
+
+
+### PrefetchList
+
+分页查询文件预取列表
+
+**Action：** PrefetchList
+
+**描述：** 分页查询提交的文件预取列表
+
+**请求地址：**api.capitalonline.net/cdnapi/distribution/v4/prefetch/list
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名 | 必选 | 类型   | 说明                     |
+| :----- | :--- | :----- | ------------------------ |
+| pageindex    | 是   | int | 页索引，默认1 |
+| pagesize    | 是   | int | 最多显示记录数，默认2o |
+| project_id    | 否   | string | 项目id，用于分项目显示文件预取结果，默认不区分 |
+| url    | 否   | string | 模糊搜索搜索文件预取url |
+
+**填写说明：**
+
+1，按示例传参即可
+
+**请求示例：**
+
+```python
+    def prefetch_list(self):
+        """
+        预取文件 list
+        """
+        #cdn_url = "http://cdsapi-gateway.gic.pre/cdnapi/distribution/v4/prefetch/list"
+        cdn_url = "http://api.capitalonline.net/cdnapi/distribution/v4/prefetch/list"
+        action = "PrefetchList"
+        method = "GET"
+        param = {
+            "pageindex": "1",
+            "pagesize": "20",
+            # "keyword": "create-domain-test123.cdscdntest.com"
+            #"project_id":"15233f9a-6104-11eb-a07a-3e582f550d79"
+        }
+        url = get_signature(action, self.ak, self.sk, method, cdn_url, param)
+        resp = requests.get(url)
+        result = json.loads(resp.content)
+        # result = json.dumps(result)
+        print(result)
+```
+
+**返回示例：**
+
+```json
+{
+	"code": 200,
+	"msg": "成功",
+	"data": {
+		"rows": [{
+			"id": 626742,
+			"accountid": 44712,
+			"url": "http://group2.cdscdntest.com/iso/CentOS-8.1.1911-x86_64-dvd1.iso",
+			"speedid": 73521,
+			"domainname": "group2.cdscdntest.com",
+			"createtime": "2021-02-02T09:31:14.000Z",
+			"updatetime": "2021-02-02T09:31:14.000Z",
+			"customerid": "E890856",
+			"userid": "cmyyuanzi@163.com",
+			"username": "cmy",
+			"statusid": "02",
+			"statusname": "已完成",
+			"remark": ""
+		}],
+		"totalcount": 1,
+		"pagesize": "20"
+	}
+}
+```
+
+**返回参数说明：**
+
+| 参数名 | 类型   | 说明     |
+| :----- | ------ | -------- |
+| code   | int    | 状态码   |
+| msg    | string | 信息描述 |
+| data   | json   | 数据信息 |  
+| rows   | array   | 数组 |                 
+| id   | int    | 文件预取唯一id   |
+| accountid   | int    | 用户id   |
+| url   | string    | 文件预取url   |
+| speedid   | int    | 加速域名主键   |
+| domainname   | string    | 加速域名   |      
+| createtime   | datetime    | 创建时间   |     
+| updatetime   | datetime    | 修改时间   |     
+| customerid   | string    | 客户ID   |     
+| userid   | int    | 用户ID   |     
+| username   | string    | 用户名称   |     
+| statusid   | string    | 文件预取状态id   |     
+| statusname   | string    | 文件预取状态名称   |    
+| totalcount   | int    | 总记录数   |  
+| pagesize   | int    |   每页最多显示记录数 | 
+
+
+
 ### ContentRefresh
 
 内容刷新功能可从各加速节点上清除指定的目录或者文件缓存，使得用户请求重新回源获取，当您希望用户及时看到最新版本的文件可以采用此手动缓存刷新方式。
@@ -1363,6 +1542,184 @@ def content_refresh():
 | code   | int    | 状态码   |
 | msg    | string | 信息描述 |
 | data   | bool   | 数据信息 |
+
+
+### CacheStatus
+
+缓存刷新进度查询
+
+**Action：** CacheStatus
+
+**描述：** 缓存刷新进度查询
+
+**请求地址：**api.capitalonline.net/cdnapi/distribution/v4/cache/status
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名 | 必选 | 类型   | 说明                     |
+| :----- | :--- | :----- | ------------------------ |
+| id    | 是   | int | 缓存刷新唯一id |
+
+**填写说明：**
+
+1、可调用CacheList方法查询id
+
+**请求示例：**
+
+```python
+def cache_status(self, id):
+    """
+    缓存刷新状态查询
+    """
+    # cdn_url = "http://cdsapi-gateway.gic.pre/cdnapi/distribution/v4/cache/status"
+    cdn_url = "http://api.capitalonline.net/cdnapi/distribution/v4/cache/status"
+    action = "CacheStatus"
+    method = "GET"
+    param = {
+        "id": id,
+    }
+    url = get_signature(action, self.ak, self.sk, method, cdn_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    # result = json.dumps(result)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+	"code": 200,
+	"msg": "成功",
+	"data": {
+		"id": "5987556",
+		"status_id": "complete",
+		"process": 100,
+		"description": "",
+		"createtime": "2022-08-03T06:47:31.000Z",
+		"status_name": "完成"
+	}
+}
+```
+
+**返回参数说明：**
+
+| 参数名 | 类型   | 说明     |
+| :----- | ------ | -------- |
+| code   | int    | 状态码   |
+| msg    | string | 信息描述 |
+| data   | json   | 缓存刷新状态信息 |
+| id   | int    | 缓存刷新唯一id   |
+| status_id   | string    | 缓存刷新进度状态id，取值范围（complete 完成，refreshing 刷新中，failed 错误，pending 待刷新）   |
+| process   | flow    | 进度百分比   |
+| status_name   | string    | 缓存刷新进度状态名称   |
+| description   | string    | 描述   |
+| createtime   | datetime    | 创建时间   |  
+
+
+
+
+### CacheList
+
+分页查询缓存刷新列表
+
+**Action：** CacheList
+
+**描述：** 分页查询缓存刷新列表
+
+**请求地址：**api.capitalonline.net/cdnapi/distribution/v4/cache/list
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名 | 必选 | 类型   | 说明                     |
+| :----- | :--- | :----- | ------------------------ |
+| pageindex    | 是   | int | 页索引，默认1 |
+| pagesize    | 是   | int | 每页最多显示记录数，默认2o |
+| project_id    | 否   | string | 项目id，用于分项目显示缓存刷新结果，默认不区分 |
+| url    | 否   | int | 模糊搜索缓存刷新url |
+
+**填写说明：**
+
+1，按示例传参即可
+
+**请求示例：**
+
+```python
+    def cache_list(self):
+        """
+        缓存刷新 list
+        """
+        # cdn_url = "http://cdsapi-gateway.gic.pre/cdnapi/distribution/v4/cache/list"
+        cdn_url = "http://api.capitalonline.net/cdnapi/distribution/v4/cache/list"
+        action = "CacheList"
+        method = "GET"
+        param = {
+            "pageindex": "1",
+            "pagesize": "10",
+            # "keyword": "create-domain-test123.cdscdntest.com"
+        }
+        url = get_signature(action, self.ak, self.sk, method, cdn_url, param)
+        resp = requests.get(url)
+        result = json.loads(resp.content)
+        # result = json.dumps(result)
+        print(result)
+```
+
+**返回示例：**
+
+```json
+{
+	"code": 200,
+	"msg": "成功",
+	"data": {
+		"rows": [{
+			"id": 5987556,
+			"accountid": 44712,
+			"speedid": 85787,
+			"domainname": "cmygic2test.cdscdntest.com",
+			"url": "http://cmygic2test.cdscdntest.com/boom20m55s.mp4",
+			"createtime": "2022-08-03T06:47:31.000Z",
+			"updatetime": "2022-08-03T06:47:31.000Z",
+			"customerid": "E890856",
+			"userid": "cmyyuanzi@163.com",
+			"username": "cmy",
+			"statusid": "02",
+			"statusname": "已完成",
+			"remark": ""
+		}],
+		"totalcount": 262,
+		"pagesize": "10"
+	}
+}
+```
+
+**返回参数说明：**
+
+| 参数名 | 类型   | 说明     |
+| :----- | ------ | -------- |
+| code   | int    | 状态码   |
+| msg    | string | 信息描述 |
+| data   | json   | 数据信息 |  
+| rows   | array   | 数组 |                 
+| id   | int    | 缓存刷新唯一id   |
+| accountid   | int    | 用户id   |
+| url   | string    | 缓存刷新url   |
+| speedid   | int    | 加速域名主键   |
+| domainname   | string    | 加速域名   |      
+| createtime   | datetime    | 创建时间   |     
+| updatetime   | datetime    | 修改时间   |     
+| customerid   | string    | 客户ID   |     
+| userid   | int    | 用户ID   |     
+| username   | string    | 用户名称   |     
+| statusid   | string    | 刷新状态id   |     
+| statusname   | string    | 刷新状态名称   |     
+| totalcount   | int    | 总记录数   |  
+| pagesize   | int    |   每页最多显示记录数 |  
+
 
 ## 用量统计
 
