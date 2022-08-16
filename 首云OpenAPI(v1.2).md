@@ -13351,8 +13351,9 @@ def get_ecs_status():
 | 名称         | 类型   | 示例值                                 | 描述                       |
 | ------------ | ------ | -------------------------------------- | -------------------------- |
 | EventId      | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2   | 事件id                     |
-| EventStatus  | string | 成功                                   | 事件状态                   |
-| EventType    | string | 创建云服务器                           | 事件名称                   |
+| EventStatus  | string | success                                   | 事件状态                   |
+| EventType    | string | create_ecs                           | 事件类型                   |
+| EventTypeDisplay    | string | 创建云服务器                           | 事件类型中文名称      |
 | CreateTime   | string | "2022-01-16 17:17:20"                  | 创建时间                   |
 | TaskList     | list   | []                                     | 事件下的任务列表           |
 | TaskId       | string | "3e54d714-8f09-11ec-a494-d2a2d83b77e2" | 任务id                     |
@@ -13360,8 +13361,9 @@ def get_ecs_status():
 | ResourceId   | string | "ins-klkyifuqgmq4cxes"                 | 资源id                     |
 | UpdateTime   | string | "2022-01-16 17:17:25"                  | 任务更新时间               |
 | EndTime      | string | "2022-01-16 17:17:30"                  | 任务完成时间，未完成则为空 |
-| ResourceType | string | 云服务器                               | 任务资源类型               |
-| TaskType     | string | 创建云服务器                           | 任务类型                   |
+| ResourceType | string | ecs                               | 任务资源类型               |
+| TaskType     | string | create_ecs                           | 任务类型                   |
+| TaskTypeDisplay     | string | 创建云服务器                           | 任务类型中文名称 |
 
 **请求示例**
 
