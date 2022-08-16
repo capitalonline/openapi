@@ -13298,11 +13298,12 @@ def get_ecs_status():
     ecs_url = 'http://api.capitalonline.net/ecs/v1'
     action = "DescribeInstanceStatus"
     method = "POST"
-    param = {
+    param = {}
+    body = {
         "EcsIds": ["ins-3j62nodr5w2daycj", "ins-ajgaioirpwvdjynj"]
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.get(url)
+    resp = requests.post(url, json=body)
     result = json.loads(resp.content)
     return result
 ```
