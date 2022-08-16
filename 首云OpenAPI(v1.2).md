@@ -13270,6 +13270,7 @@ def get_ecs_detail():
 **Action**: DescribeInstanceStatus
 
 **描述**：批量获取云服务器状态
+
 **请求地址**：api.capitalonline.net/ecs/v1
 
 **请求方法**:   POST
@@ -13386,20 +13387,25 @@ def describe_event():
     "Code": "Success",
     "Msg": "获取事件信息成功！",
     "Data": {
-        "EventId": "3de9d9f0-8f09-11ec-a494-d2a2d83b77e2",
-        "EventStatus": "失败",
-        "EventType": "创建云服务器",
-        "CreateTime": "2022-02-16 17:17:20",
+        "EventId": "2d01ed16-1231-11ed-b805-ae32005fa3a1",
+        "EventStatus": "success",
+        "EventStatusDisplay": "成功",
+        "EventType": "create_ecs",
+        "EventTypeDisplay": "创建云服务器",
+        "CreateTime": "2022-08-02 15:03:13",
         "TaskList": [
             {
-                "TaskId": "3e54d714-8f09-11ec-a494-d2a2d83b77e2",
-                "Status": "失败",
+                "TaskId": "eaea8708-13c5-11ed-9210-3296060c3fb9",
+                "Status": "success",
+                "StatusDisplay": "成功",
                 "ResourceId": "ins-klkyifuqgmq4cxes",
-                "CreateTime": "2022-02-16 17:17:20",
-                "UpdateTime": "2022-02-17 16:51:49",
-                "EndTime": "2022-02-17 16:51:49",
-                "ResourceType": "云服务器",
-                "TaskType": "创建云服务器"
+                "CreateTime": "2022-08-04 15:20:28",
+                "UpdateTime": "2022-08-04 15:20:41",
+                "EndTime": "2022-08-04 15:20:41",
+                "ResourceType": "ecs",
+                "ResourceDisplay": "云服务器",
+                "TaskType": "create_ecs",
+                "TaskTypeDisplay": "创建云服务器"
             }
         ]
     },
@@ -13411,7 +13417,7 @@ def describe_event():
 
 **Action**: CreateInstance
 
-**描述:**创建云服务器
+**描述**：创建云服务器
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
