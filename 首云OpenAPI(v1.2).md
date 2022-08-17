@@ -107,6 +107,11 @@
        * [22.DescribeIPInfo](#22describeipinfo)
        * [23.NetEIPInfo](#23neteipinfo)
        * [24.ReserveIPAndBindEIP](#24reserveipandbindeip)
+       * [25.DescribeSubnetIp](#25describesubnetIp)
+       * [26.CreateVLINK](#26createvlink)
+       * [27.DeleteVLINK](#27deletevlink)
+       * [28.VLINKAddVM](#28vlinkaddvm)
+       * [29.VLINKDeleteVM](#29vlinkdeletevm)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
@@ -5927,6 +5932,325 @@ def eip_batch_bind_and_reserve_ip():
                 "Description": "手动保留并绑定"
             }
         ]
+    }
+    res = requests.post(url, json=body)
+```
+### 25.DescribeSubnetIp
+
+​	**Action:DescribeSubnetIp**
+
+​	**描述：** 查询子网IP使用信息
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| NetId | string | 是 | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| Data | dict | {} | 返回数据 |
+| UnusedList | list | ["10.0.0.5"] | 未使用ip列表 |
+| UnusedNum | int | 1 | 未使用ip个数 |
+| UsedList | list | [{"IP": "10.6.0.1","Usage": "路由使用"}] | 已使用ip列表 |
+| IP | strintg | "10.6.0.1" | ip地址 |
+| Usage | string | "路由使用" | ip使用说明 |
+| UsedNum | int | 1 | 已使用ip个数 |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "UnusedList": [
+            "10.0.0.5"
+        ],
+        "UnusedNum": 1,
+        "UsedList": [
+            {
+                "IP": "10.6.0.1",
+                "Usage": "路由使用"
+            }
+        ],
+        "UsedNum": 1
+    },
+    "Message": "success"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def ip_usage():
+    action = 'DescribeSubnetIp'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "NetId": "22390f70-af37-11ec-8944-1200cba86117"
+    }
+    res = requests.post(url, json=body)
+```
+
+### 26.CreateVLINK
+
+​	**Action:CreateVLINK**
+
+​	**描述：** 子网开启VLINK （仅云平台节点支持）
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| SubnetId | string | 是 | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
+| PipeId | string | 是 | "563a0440-f842-11ec-9e17-8a1baacec6bd" | 私网ID |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| Data    | dict   | {}                                     | 返回数据 |
+| VLINKId | string | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId  |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "VLINKId": "6ee7bd2e-1857-11ed-90cd-5a683b26c272"
+    },
+    "Message": "开启Vlink成功"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def vlink_create():
+    action = 'CreateVLINK'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SubnetId": "ea78d6a8-17a8-11ed-a00d-66cd58aefd0f",
+        "PipeId": "56397648-1468-11ed-be4c-2acc8142a3ee",
+    }
+    res = requests.post(url, json=body)
+```
+### 27.DeleteVLINK
+
+​	**Action:DeleteVLINK**
+
+​	**描述：** 子网关闭VLINK （仅云平台节点支持）
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| Data    | dict   | {}                                     | 返回数据 |
+| VLINKId | string | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId  |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "VLINKId": "6ee7bd2e-1857-11ed-90cd-5a683b26c272"
+    },
+    "Message": "关闭Vlink成功"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def vlink_delete():
+    action = 'DeleteVLINK'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VLINKId": "6ee7bd2e-1857-11ed-90cd-5a683b26c272"
+    }
+    res = requests.post(url, json=body)
+```
+### 28.VLINKAddVM
+
+​	**Action:VLINKAddVM**
+
+​	**描述：** 子网下主机加入VLINK （仅云平台节点支持）
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
+| VMIdList | list | 是 | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
+| Password | string | 否 | "****" | 云主机密码 |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| TaskId | string | "20635952" | 任务ID |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Msg": "批量添加云主机网卡任务已下发，请等待任务执行"
+    },
+    "Message": "云主机加入Vlink任务已下发成功!",
+    "TaskId": "20635952"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def vlink_add_vm():
+    action = 'VLINKAddVM'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VLINKId": "86fc6e6c-1859-11ed-90cd-5a683b26c272",
+        "VMIdList": ["4d20118d-c58e-455b-b361-d1a95b4632d6"],
+        "Password": "***@@@"
+    }
+    res = requests.post(url, json=body)
+```
+### 29.VLINKDeleteVM
+
+​	**Action:VLINKDeleteVM**
+
+​	**描述：** 子网下主机退出VLINK （仅云平台节点支持）
+
+​	**请求地址:** cdsapi.capitalonline.net/vpc
+
+​	**请求方法：POST**
+
+​	**请求参数：**
+
+
+| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
+| -------------- |------| -------- |---------------|---------------------|
+| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
+| VMIdList | list | 是 | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
+
+​	**返回参数：**
+
+| 名称   | 类型     | 示例值     | 描述 |
+| :----- |--------|:--------|:--|
+| Code   | string | Success | 错误码 |
+| Message   | string | Success | 信息 |
+| TaskId | string | "20635953" | 任务ID |
+
+
+​	**错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+​	**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Msg": "批量删除云主机网卡任务已下发，请等待任务执行"
+    },
+    "Message": "云主机退出Vlink任务已下发成功!",
+    "TaskId": "20635970"
+}
+```
+
+​	**代码调用示例**
+
+```python
+
+def vlink_delete():
+    action = 'VLINKDeleteVM'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VLINKId": "86fc6e6c-1859-11ed-90cd-5a683b26c272",
+        "VMIdList": ["4d20118d-c58e-455b-b361-d1a95b4632d6"]
     }
     res = requests.post(url, json=body)
 ```
