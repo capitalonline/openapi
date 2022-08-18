@@ -85,6 +85,9 @@
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
           </template>
+          <template #default="scope" v-else-if="item.prop==='backend_type'">
+            <span>{{backendObj[scope.row.backend_type]}}</span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
               <el-tooltip
@@ -234,6 +237,16 @@ export default class PhysicalList extends Vue {
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[]
+  private backendList:any=[
+    {value:'block',text:'云盘'},
+    {value:'local',text:'本地盘'},
+    {value:'local,block',text:'云盘/本地盘'}
+  ]
+  private backendObj:any={
+    'block':'云盘',
+    'local':'本地盘',
+    'local,block':'云盘/本地盘'
+  }
   created() {
       this.getFamilyList()
       this.get_host_list_field()
@@ -320,6 +333,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
       }
+      if(item.prop==='backend_type'){
+        item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
+      }
       return item;
     })
   }
@@ -354,6 +370,7 @@ export default class PhysicalList extends Vue {
       ecs_family_id,
       cpu_model,
       net_model,
+      backend_type
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -377,6 +394,7 @@ export default class PhysicalList extends Vue {
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
+      backend_type:backend_type ? backend_type[0] : undefined,
       ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
     })
     if(res.code==="Success"){
@@ -441,7 +459,8 @@ export default class PhysicalList extends Vue {
       host_belong,
       cpu_model,
       net_model,
-      ecs_family_id
+      ecs_family_id,
+      backend_type
     }=this.search_data
     let obj = {//缺少规格族字段筛选
         az_id,
@@ -457,6 +476,7 @@ export default class PhysicalList extends Vue {
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
         host_type:host_type ? host_type[0] : undefined,
+        backend_type:backend_type ? backend_type[0] : undefined,
         ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
