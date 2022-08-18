@@ -12699,6 +12699,28 @@ def bindAccounts():
 
 ## 弹性云服务器ECS相关
 
+**云服务器ECS状态(Status)说明**
+
+| code             | 说明       |
+| ---------------- | ---------- |
+| building         | 创建中     |
+| running          | 运行中     |
+| restarting       | 重启中     |
+| shutting_down    | 关机中     |
+| shutdown         | 已关机     |
+| starting_up      | 开机中     |
+| deleting         | 删除中     |
+| deleted          | 已删除     |
+| destroying       | 销毁中     |
+| destroy          | 已销毁     |
+| recovering       | 恢复中     |
+| updating         | 更新中     |
+| error            | 错误       |
+| failed           | 创建失败   |
+| recycling        | 回收中     |
+| cancel_recycling | 取消回收中 |
+| creating_image   | 定制镜像中 |
+
 ### 1.DescribeRegions
 
 **Action**: DescribeRegions
