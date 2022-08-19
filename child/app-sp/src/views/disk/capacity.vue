@@ -117,6 +117,7 @@ export default class Capacity extends Vue{
     private showResetVolume={}
     private volumeInfo:any=[];
     private usedVolume:any={}
+    private diskRules:any={}
     created() {
         this.list = JSON.parse(this.$route.query.list)
         this.get_customer_name()
@@ -127,7 +128,8 @@ export default class Capacity extends Vue{
         const resData: any = await ECS_Service.get_customer_name({customer_id: this.list[0].customer_id});
         if (resData.code == 'Success') {
             this.price_unit = resData.data.area_id;
-            this.get_disk_info()
+            this.getDiskRules()
+            // this.get_disk_info()
         }
     }
     private getTotalSize(type){//获取扩容的容量
@@ -140,6 +142,23 @@ export default class Capacity extends Vue{
         for(let i in this.showResetVolume){
             this.volumeInfo.push({feature : i,add:this.getTotalSize(i),remain:this.showResetVolume[i] - this.getTotalSize(i)})
         }        
+    }
+    private async getDiskRules(){
+        let res:any = await Create.getDiskRules({
+            disk_ids:this.list.map(item=>item.disk_id),
+            customer_id:this.list[0].customer_id,
+            az_id:this.list[0].az_id,
+            billing_method:'0'
+        })
+        if(res.code==='Success'){
+            this.billing_info = res.data.billing_info;
+            this.diskRules = res.data.disk_rules
+            let obj = {};
+            this.list.map(item=>{
+                obj[item.disk_feature] = item.disk_id;
+            })
+            this.get_disk_limit(Object.keys(obj))
+        }
     }
     private async get_disk_info(){
         let res:any = await Create.get_disk_type({
@@ -174,7 +193,8 @@ export default class Capacity extends Vue{
             }
             this.$nextTick(()=>{
                 this.list.map(item=>{//初始化
-                    item.disk_info = item.disk_type==="data" ? this.data_disk_info[item.feature] : this.system_disk_info[item.feature];
+                    item.disk_info = this.diskRules[item.disk_id]
+                    // item.disk_info = item.disk_type==="data" ? this.data_disk_info[item.feature] : this.system_disk_info[item.feature];
                     item.capacity_size = item.size;
                     item.capacity_iops = getIops(item.disk_info,item.size).iops;
                     item.capacity_throughput = getIops(item.disk_info,item.size).throughput;

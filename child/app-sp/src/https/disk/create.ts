@@ -27,4 +27,8 @@ export default{
     get_disk_detail(req) {
         return service(getEcsOptions('GET', '/ebs/get_disk_detail/', req))
     },
+    //获取云盘详情
+    getDiskRules(req) {
+        return service(getEcsOptions('POST', '/ebs/disk_rules/', req))
+    },
 }
