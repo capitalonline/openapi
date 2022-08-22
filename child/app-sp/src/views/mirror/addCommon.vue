@@ -177,10 +177,11 @@ export default class AddCommon extends Vue{
         path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
     }
     created(){
-        this.get_mirror_type();
-        this.get_disk_list()
         if(this.oper_info.os_id){
             this.rules.path_md5=[{required:false, message: '请输入MD5', trigger: 'change' }]
+        }else{
+            this.get_mirror_type();
+            this.get_disk_list()
         }
     }
     private validate_name(rule, value, callback){
