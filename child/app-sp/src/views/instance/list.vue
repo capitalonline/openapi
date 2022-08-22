@@ -251,7 +251,7 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
+          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
             <el-button type="text" class="not-clickable">制作公共镜像</el-button>
           </el-tooltip>
           <el-button
