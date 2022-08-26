@@ -68,6 +68,7 @@ export default class UpdateAttribute extends Vue{
     @Prop({default:()=>[]}) rows!:any
     private type:String="";
     private use:String = "";
+    private backend:string=''
     private host_types=[]
     private host_uses=[];
     private customer_id:any=[];
@@ -76,7 +77,6 @@ export default class UpdateAttribute extends Vue{
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
-    private backend:string=''
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
@@ -98,7 +98,7 @@ export default class UpdateAttribute extends Vue{
             this.host_types = res.data;
             this.type = this.host_types[0].type
             this.host_uses = this.host_types[0].list;
-            this.use = this.host_uses[0].use_type
+            this.use = this.host_uses[0].use_type;
         }
         
     }

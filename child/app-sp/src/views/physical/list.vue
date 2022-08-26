@@ -730,7 +730,6 @@ export default class PhysicalList extends Vue {
     this.fn_search(this.search_data)
   }
   private async FnExpand(row,expandedRows){
-    // console.log("FnExpand",row,expandedRows.length,this.expand_rows.length)
     //上一次与这一次的差别，如果上一次多，则这一次为关闭，如果上一次少，则这一次为增加,如果相等，则为上一次关闭一个，然后再打开一个
     let expandedRowIds = expandedRows.map(item=>item.host_id);
     if(expandedRowIds.includes(row.host_id) && row.ecs_list.length>0){
