@@ -357,6 +357,11 @@ export default class PhysicalList extends Vue {
     'ecs_num','host_type_ch','host_purpose_ch','host_attribution__name','host_source',
     'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','create_time'
   ]
+  private backendList:any=[
+    {value:'block',text:'云盘'},
+    {value:'local',text:'本地盘'},
+    {value:'local,block',text:'云盘/本地盘'}
+  ]
   private backendObj:any={
     'block':'云盘',
     'local':'本地盘',
