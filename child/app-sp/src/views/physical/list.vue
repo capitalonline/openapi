@@ -132,6 +132,9 @@
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span>
           </template>
+          <template #default="scope" v-else-if="item.prop==='backend_type'">
+            <span>{{backendObj[scope.row.backend_type]}}</span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
               <el-tooltip
@@ -196,6 +199,7 @@
       <template v-if="visible && oper_type==='business_test'">
         <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
+      
       <custom-list-item 
         :visible.sync="custom_visible" 
         :all_item="all_item"
@@ -353,6 +357,11 @@ export default class PhysicalList extends Vue {
     'ecs_num','host_type_ch','host_purpose_ch','host_attribution__name','host_source',
     'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','create_time'
   ]
+  private backendObj:any={
+    'block':'云盘',
+    'local':'本地盘',
+    'local,block':'云盘/本地盘'
+  }
   created() {
       this.get_host_list_field()
       this.get_room_list()
