@@ -24,9 +24,9 @@ var (
 
 func percentEncode(str string) string {
 	str = url.QueryEscape(str)
-	strings.Replace(str, "+", "%20", -1)
-	strings.Replace(str, "*", "%2A", -1)
-	strings.Replace(str, "%7E", "~", -1)
+	str = strings.Replace(str, "+", "%20", -1)
+	str = strings.Replace(str, "*", "%2A", -1)
+	str = strings.Replace(str, "%7E", "~", -1)
 	return str
 }
 
