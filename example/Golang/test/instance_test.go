@@ -1,7 +1,7 @@
 package test
 
 import (
-	"OpenAPI-GO/model"
+	"example/model"
 	"fmt"
 	"testing"
 )
