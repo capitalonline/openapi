@@ -22,8 +22,8 @@ type acInfo struct {
 		Currency string  `json:"Currency"`
 		Month    string  `json:"Month"`
 	} `json:"CostRecords"`
-	CreditLine         int     `json:"CreditLine"`
-	MasterTotalBalance int     `json:"MasterTotalBalance"`
+	CreditLine         float64 `json:"CreditLine"`
+	MasterTotalBalance float64 `json:"MasterTotalBalance"`
 	MasterTotalCost    float64 `json:"MasterTotalCost"`
 	RechargeCount      int     `json:"RechargeCount"`
 	RechargeRecord     []struct {
@@ -47,7 +47,7 @@ type bill struct {
 		VdcID        string  `json:"VdcId"`
 		VdcName      string  `json:"VdcName"`
 	} `json:"BillInfo"`
-	TotalMasterCost int     `json:"TotalMasterCost"`
+	TotalMasterCost float64 `json:"TotalMasterCost"`
 	TotalViceCost   float64 `json:"TotalViceCost"`
 }
 type billInfo struct {
@@ -55,14 +55,14 @@ type billInfo struct {
 		Configuration string   `json:"Configuration"`
 		CostDetail    string   `json:"CostDetail"`
 		CreateTime    string   `json:"CreateTime"`
-		EndTime       int      `json:"EndTime"`
+		EndTime       string   `json:"EndTime"`
 		IPs           []string `json:"IPs"`
 		PayDesc       string   `json:"PayDesc"`
 		PayType       string   `json:"PayType"`
 		RegionID      string   `json:"RegionId"`
 		ResourceID    string   `json:"ResourceId"`
 		ResourceName  string   `json:"ResourceName"`
-		StartTime     int      `json:"StartTime"`
+		StartTime     string   `json:"StartTime"`
 		Status        string   `json:"Status"`
 		TotalCost     float64  `json:"TotalCost"`
 		UnitPrice     float64  `json:"UnitPrice"`
@@ -74,27 +74,27 @@ type billInfo struct {
 type billDetail struct {
 	BeginTime  string `json:"BeginTime"`
 	BillDetail []struct {
-		APP       string `json:"APP"`
-		BeginTime string `json:"BeginTime"`
-		BillType  string `json:"BillType"`
-		CloudID   string `json:"CloudId"`
-		Config    string `json:"Config"`
-		Currency  string `json:"Currency"`
-		EndTime   string `json:"EndTime"`
-		GoodsType string `json:"GoodsType"`
-		Label     string `json:"Label"`
-		Product   string `json:"Product"`
-		Project   string `json:"Project"`
-		Resource  string `json:"Resource"`
-		Site      string `json:"Site"`
-		TotalCost string `json:"TotalCost"`
+		APP       string  `json:"APP"`
+		BeginTime string  `json:"BeginTime"`
+		BillType  string  `json:"BillType"`
+		CloudID   string  `json:"CloudId"`
+		Config    string  `json:"Config"`
+		Currency  string  `json:"Currency"`
+		EndTime   string  `json:"EndTime"`
+		GoodsType string  `json:"GoodsType"`
+		Label     string  `json:"Label"`
+		Product   string  `json:"Product"`
+		Project   string  `json:"Project"`
+		Resource  string  `json:"Resource"`
+		Site      string  `json:"Site"`
+		TotalCost float64 `json:"TotalCost"`
 	} `json:"BillDetail"`
 	EndTime      string `json:"EndTime"`
 	TotalRecords int    `json:"TotalRecords"`
 	TotalSummary struct {
 		Currency   string  `json:"Currency"`
-		MasterCost int     `json:"MasterCost"`
-		ToDeduct   int     `json:"ToDeduct"`
+		MasterCost float64 `json:"MasterCost"`
+		ToDeduct   float64 `json:"ToDeduct"`
 		TotalCost  float64 `json:"TotalCost"`
 		ViceCost   float64 `json:"ViceCost"`
 	} `json:"TotalSummary"`
@@ -104,9 +104,8 @@ func DescribeBill() (CommonReturn, error) {
 	action := "DescribeBill"
 	method := "GET"
 	body, err := json.Marshal(map[string]interface{}{
-		"DateFrom": "2019.09.02",
-		"DateTo":   "2019.09.03",
-		"Currency": "CN",
+		"DateFromTo": "2022.08.02 - 2022.08.03",
+		"Currency":   "CN",
 	})
 	res := doHttpPost(action, BillsUrl, method, body)
 	fmt.Printf(">>>>>>> request result: %v", res)
@@ -133,8 +132,8 @@ func DescribeBillDetail() (CommonReturn, error) {
 	action := "DescribeBillDetail"
 	method := "GET"
 	body, err := json.Marshal(map[string]interface{}{
-		"DateFrom":    "2021.10.01",
-		"DateTo":      "2021.10.31",
+		"DateFrom":    "2022.07.01",
+		"DateTo":      "2022.07.03",
 		"ProjectName": "默认项目组",
 	})
 	res := doHttpPost(action, BillsUrl, method, body)
