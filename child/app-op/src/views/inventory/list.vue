@@ -1,6 +1,11 @@
 <template>
     <div>
         <action-block :search_option="searchDom"  @fn-search="search" @fn-filter="FnFilter"></action-block>
+        <div class="text-right m-bottom10">
+            <el-tooltip content="导出" placement="bottom" effect="light">
+                <el-button type="text" @click="exportList" ><svg-icon icon="export" class="export"></svg-icon></el-button>
+            </el-tooltip>
+        </div>
         <el-table
             :data="list"
             border
@@ -20,12 +25,20 @@
            <el-table-column prop="cpu_allocate" label="已分配CPU逻辑核数(核)" sortable='custom'></el-table-column>
            <el-table-column prop="ram_allocate" label="已分配内存量(GB)" sortable='custom'></el-table-column>
            <el-table-column prop="gpu_allocate" label="已分配GPU总数量(块)" sortable='custom'></el-table-column>
-           <el-table-column prop="locak_disk_storage_allocate" label="已分配本地盘容量" sortable='custom'></el-table-column>
+           <el-table-column prop="local_disk_allocate" label="已分配本地盘容量" sortable='custom'>
+                <template slot-scope="scope">
+                   <span>{{`${scope.row.local_disk_allocate}${scope.row.local_disk_storage_unit}`}}</span>
+                </template>
+           </el-table-column>
            <el-table-column prop="gpu_fault" label="GPU故障数量(块)" sortable='custom'></el-table-column>
            <el-table-column prop="cpu_available" label="剩余物理CPU逻辑核数(核)" sortable='custom'></el-table-column>
            <el-table-column prop="ram_available" label="剩余内存量(GB)" sortable='custom'></el-table-column>
            <el-table-column prop="gpu_available" label="剩余GPU数量(块)" sortable='custom'></el-table-column>
-           <el-table-column prop="local_disk_storage_available" label="剩余本地盘容量" sortable='custom'></el-table-column>
+           <el-table-column prop="local_disk_available" label="剩余本地盘容量" sortable='custom'>
+                <template slot-scope="scope">
+                   <span>{{`${scope.row.local_disk_available}${scope.row.local_disk_storage_unit}`}}</span>
+                </template>
+           </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -44,10 +57,12 @@ import {Vue,Component,Watch} from 'vue-property-decorator';
 import Service from '../../https/inventory/list';
 import iService from '../../https/instance/create';
 import ActionBlock from '@/components/search/actionBlock.vue';
-import {trans} from '../../utils/transIndex'
+import {trans} from '../../utils/transIndex';
+import svgIcon from '@/components/svgIcon/index.vue';
 @Component({
     components:{
-        ActionBlock
+        ActionBlock,
+        svgIcon
     }
 })
 export default class Inventory extends Vue{
@@ -70,7 +85,7 @@ export default class Inventory extends Vue{
         this.authList = this.$store.state.auth_info[this.$route.name];        
         this.getRegion()
         this.getHostProductName()
-        // this.getInventoryList()
+        this.getInventoryList()
     }
     private async getRegion(){
         this.searchDom.region_id.list=[]
@@ -115,16 +130,17 @@ export default class Inventory extends Vue{
         this.getInventoryList()
     }
     private async getInventoryList(){
-        let res:any= Service.get_inventory_list({
+        let res:any=await Service.get_inventory_list({
             region_id:this.search_info.region_id,
             az_id:this.search_info.az_id,
             host_product_name:this.search_info.host_product_name ? this.search_info.host_product_name.join(',') : undefined,
-            [this.sortLable ? `sort_${this.sortLable}` : '']:this.sortLable ? this.sort : undefined,
+            [this.sortLable ? `sort_${this.sortLable}` : '']:this.sortLable ? this.sort.toString() : undefined,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
         })
         if(res.code==='Success'){
-            this.list = res.data.spec_stock_list;
+            
+            this.list = res.data.product_stock_list;
             this.pageInfo.total = res.data.page_info.count
         }
     }
@@ -141,6 +157,16 @@ export default class Inventory extends Vue{
         this.sortLable=obj.prop
         this.sort =obj.order==="descending" ? '1' : obj.order==="ascending" ? '0' : undefined
         this.getInventoryList()
+    }
+    private exportList(){
+        let str=''
+        for(let i in this.search_info){
+            if(this.search_info[i]){
+                str=str + `${i}=${Array.isArray(this.search_info[i]) ? this.search_info[i].join(',') : this.search_info[i]}&`
+            }
+        }
+        let query=str==='' ? '' : `?${str.slice(0,str.length-1)}`
+        window.location.href = `/ecs_business/v1/stock/host_stock_download/${query}`
     }
     
 }
