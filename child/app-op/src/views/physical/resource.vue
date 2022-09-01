@@ -24,11 +24,11 @@
                 <el-table-column prop="az_name" label="区域"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
-                <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
+                <el-table-column prop="host_attribution_name" label="主机归属"></el-table-column>
             </el-table>
             <div class="ecs-belong m-top20">
                 <span class="m-right20">设置主机归属：</span>
-                <el-select v-model="ecs_id" placeholder="请选择">
+                <el-select v-model="ecs_id" placeholder="请选择" multiple>
                     <el-option
                     v-for="item in ecs_list"
                     :key="item.host_attribution_id"
@@ -37,6 +37,7 @@
                     </el-option>
                 </el-select>
             </div>
+            <div v-if="ecs_id.length===0" class="error_message error">请选择主机归属</div>
             
         </div>
         <span slot="footer" class="dialog-footer">
@@ -66,21 +67,24 @@ export default class Resource extends Vue{
   @Prop({default:()=>[]}) rows!:any
   private alert_title = `是否确定对以下${this.rows.length}台物理机执行分配资源操作吗？`
   private ecs_list:any=[];
-  private ecs_id:string="";
+  private ecs_id:any=[];
   created() {
       this.get_host_attribution()
   }
   private async get_host_attribution (){
       let res:any =await Service.get_host_attribution({})
       if(res.code==="Success"){
-          this.ecs_list = res.data.host_attribution_list
-          this.ecs_id = this.ecs_list[0].host_attribution_id;
+          this.ecs_list = res.data.host_attribution_list;
+          // this.ecs_id = this.ecs_list[0].host_attribution_id.split(',');
       }
   }
   private async confirm(){
+    if(!this.ecs_id || this.ecs_id.length===0){
+      return;
+    }
     let res:any=await Service.set_host_attribution({
         host_ids:this.rows.map(item=>item.host_id),
-        host_attribution_id:this.ecs_id
+        host_attribution_id:this.ecs_id.join(',')
     })
     if(res.code==="Success"){
       if(res.data.fail_host_list.length>0){
@@ -108,5 +112,9 @@ export default class Resource extends Vue{
 .ecs-belong{
     text-align: center;
 }
-
+.error{
+  text-align: center;
+  margin-left: 10px;
+  margin-top: 5px;
+}
 </style>

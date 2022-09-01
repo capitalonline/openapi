@@ -125,7 +125,7 @@ export default class PrivateMirror extends Vue{
         {text:'Geforce',value:'Geforce'},
     ];
     private disk_type:any=[{text:'系统盘',value:'system'},{text:'数据盘',value:'data'}];
-    private storage_list:any=[{value:'local',text:'本地盘'}]
+    private storage_list:any=[{value:'local',text:'本地盘'},{value:'block',text:'云盘'}]
     private status_list:any=[];
     private visible:boolean=false;
     private oper_type:String="";
