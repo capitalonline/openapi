@@ -27,7 +27,7 @@
            <el-table-column prop="gpu_allocate" label="已分配GPU总数量(块)" sortable='custom'></el-table-column>
            <el-table-column prop="local_disk_allocate" label="已分配本地盘容量" sortable='custom'>
                 <template slot-scope="scope">
-                   <span>{{`${scope.row.local_disk_allocate}${scope.row.local_disk_storage_unit}`}}</span>
+                   <span>{{`${scope.row.local_disk_allocate}${scope.row.local_disk_allocate_unit}`}}</span>
                 </template>
            </el-table-column>
            <el-table-column prop="gpu_fault" label="GPU故障数量(块)" sortable='custom'></el-table-column>
@@ -36,7 +36,7 @@
            <el-table-column prop="gpu_available" label="剩余GPU数量(块)" sortable='custom'></el-table-column>
            <el-table-column prop="local_disk_available" label="剩余本地盘容量" sortable='custom'>
                 <template slot-scope="scope">
-                   <span>{{`${scope.row.local_disk_available}${scope.row.local_disk_storage_unit}`}}</span>
+                   <span>{{`${scope.row.local_disk_available}${scope.row.local_disk_available_unit}`}}</span>
                 </template>
            </el-table-column>
         </el-table>
@@ -113,7 +113,7 @@ export default class Inventory extends Vue{
             this.searchDom.host_product_name.list=[]
             res.data.host_product_list.map(item=>{
                 this.searchDom.host_product_name.list.push({
-                    type:item.host_product_id,
+                    type:item.name,
                     label:item.name
                 })
             })

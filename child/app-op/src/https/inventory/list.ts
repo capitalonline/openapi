@@ -15,4 +15,8 @@ export default{
     get_product_host_name(req){
         return service(getEcsOptions('GET','/host/host_product_list/',req))
     },
+    //获取客户信息
+    get_customer_sell_info(req){
+        return service(getEcsOptions('GET','/stock/get_customer_sell_info/',req))
+    },
 }

@@ -1,6 +1,11 @@
 <template>
     <div>
         <action-block :search_option="searchDom"  @fn-search="search" @fn-filter="FnFilter"></action-block>
+        <div class="text-right m-bottom10">
+            <el-tooltip content="导出" placement="bottom" effect="light">
+                <el-button type="text" @click="exportList" ><svg-icon icon="export" class="export"></svg-icon></el-button>
+            </el-tooltip>
+        </div>
         <el-table
             :data="list"
             border
@@ -12,14 +17,26 @@
            <el-table-column prop="spec_family_name" label="实例规格族"></el-table-column>
            <el-table-column prop="cpu" label="vcpu (核)" sortable='custom'></el-table-column>
            <el-table-column prop="ram" label="内存(GB)" sortable='custom'></el-table-column>
-           <el-table-column prop="gpu" label="GPU" sortable='custom'>
-               <template slot-scope="scope">
-                   <span>{{`${scope.row.local_disk_storage}${scope.row.local_disk_storage_unit}`}}</span>
-               </template>
-           </el-table-column>
+           <el-table-column prop="gpu" label="GPU" sortable='custom'></el-table-column>
            <el-table-column prop="instance_sell_num" label="已售实例数量" sortable='custom'></el-table-column>
-           <el-table-column prop="customer_sell_num" label="已售客户数量" sortable='custom'></el-table-column>
-           <el-table-column prop="available_num" label="剩余可售数量" sortable='custom'></el-table-column>
+           <el-table-column prop="customer_sell_num" label="已售客户数量" sortable='custom'>
+                <template slot-scope="scope">
+                    <el-button type="text" @click="detail(scope.row)">{{scope.row.customer_sell_num}}</el-button>
+                </template>
+           </el-table-column>
+           <el-table-column prop="available_num" label="剩余可售数量" sortable='custom'>
+            <template slot-scope="scope">
+                <el-tooltip placement="top" effect="light">
+                    <div slot="content">
+                        <el-table :data="scope.row.availableNumList" >
+                            <el-table-column prop="name" label="主机归属"></el-table-column>
+                            <el-table-column prop="num" label="剩余可售量"></el-table-column>
+                        </el-table>
+                    </div>
+                    <span>{{scope.row.available_num}}</span>
+                </el-tooltip>
+            </template>
+           </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -30,6 +47,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="pageInfo.total">
         </el-pagination>
+        <template v-if="visible">
+            <Customer :visible.sync="visible" :info="operateInfo"></Customer>
+        </template>
     </div>
 </template>
 
@@ -37,11 +57,16 @@
 import {Vue,Component,Watch} from 'vue-property-decorator';
 import Service from '../../https/inventory/list';
 import iService from '../../https/instance/create';
+import ListService from '../../https/instance/list'
 import ActionBlock from '@/components/search/actionBlock.vue';
-import {trans} from '../../utils/transIndex'
+import {trans,deal_list} from '../../utils/transIndex'
+import svgIcon from '@/components/svgIcon/index.vue';
+import Customer from './customer.vue';
 @Component({
     components:{
-        ActionBlock
+        ActionBlock,
+        svgIcon,
+        Customer
     }
 })
 export default class ProductInventory extends Vue{
@@ -49,6 +74,8 @@ export default class ProductInventory extends Vue{
     private sort:string=undefined;
     private sortLable:string=''
     private authList:any=[];
+    private visible:boolean=false;
+    private operateInfo:any={}
     private pageInfo:any={
         page_index:1,
         page_size:20,
@@ -65,7 +92,8 @@ export default class ProductInventory extends Vue{
         this.authList = this.$store.state.auth_info[this.$route.name];        
         this.getRegion()
         this.getHostProductName()
-        // this.getProductInventoryList()
+        this.getFamilyList()
+        this.getProductInventoryList()
     }
     private async getRegion(){
         this.searchDom.region_id.list=[]
@@ -93,11 +121,19 @@ export default class ProductInventory extends Vue{
             this.searchDom.host_product_name.list=[]
             res.data.host_product_list.map(item=>{
                 this.searchDom.host_product_name.list.push({
-                    type:item.host_product_id,
+                    type:item.name,
                     label:item.name
                 })
             })
             this.pageInfo.total = res.data.page_info.count
+        }
+    }
+    private async getFamilyList(){
+        let res:any =await ListService.get_family_data();
+        if(res.code==='Success'){
+        let key_list=['spec_family_id','name'];
+        let label_list=['type','label']
+        this.searchDom.spec_family_id.list =deal_list(res.data.spec_family_list,label_list,key_list);
         }
     }
     private FnFilter(val){
@@ -109,7 +145,7 @@ export default class ProductInventory extends Vue{
         this.getProductInventoryList()
     }
     private async getProductInventoryList(){
-        let res:any= Service.get_product_inventory_list({
+        let res:any= await Service.get_product_inventory_list({
             region_id:this.search_info.region_id,
             az_id:this.search_info.az_id,
             host_product_name:this.search_info.host_product_name ? this.search_info.host_product_name.join(',') : undefined,
@@ -120,7 +156,15 @@ export default class ProductInventory extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.spec_stock_list;
-            this.pageInfo.total = res.data.page_info.count
+            this.pageInfo.total = res.data.page_info.count;
+            this.list.map(item=>{
+                item.availableNumList= [
+                    {name:'云主机',num:item.cloud_vm_sale_num},
+                    {name:'云桌面',num:item.cloud_desktop_sale_num},
+                    {name:'文件存储',num:item.nas_host_sale_num},
+                ];
+                return item;
+            })
         }
     }
     private handleCurrentChange(cur){
@@ -136,6 +180,20 @@ export default class ProductInventory extends Vue{
         this.sortLable=obj.prop
         this.sort =obj.order==="descending" ? '1' : obj.order==="ascending" ? '0' : undefined
         this.getProductInventoryList()
+    }
+    private exportList(){
+        let str=''
+        for(let i in this.search_info){
+            if(this.search_info[i]){
+                str=str + `${i}=${Array.isArray(this.search_info[i]) ? this.search_info[i].join(',') : this.search_info[i]}&`
+            }
+        }
+        let query=str==='' ? '' : `?${str.slice(0,str.length-1)}`
+        window.location.href = `/ecs_business/v1/stock/spec_stock_download/${query}`
+    }
+    private detail(row){
+        this.visible=true;
+        this.operateInfo=row
     }
     
 }
