@@ -32,7 +32,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="transfer_vm_host_name" label="宿主机名称"></el-table-column>
-            <el-table-column prop="transfer_vm_status_cn" label="状态"></el-table-column>
+            <el-table-column prop="status_cn" label="状态"></el-table-column>
             <el-table-column prop="vpc_id" label="VPC ID/名称">
                 <template slot-scope="scope">
                     <div>{{scope.row.vpc_id}}</div>
@@ -47,18 +47,18 @@
             </el-table-column>
             <el-table-column prop="transfer_vm_vpc_ip" label="VPC IP/存储网IP">
                 <template slot-scope="scope">
-                    <div>{{scope.row.transfer_vm_vpc_ip}}</div>
-                    <div>{{scope.row.transfer_vm_storage_ip}}</div>
+                    <div>VPC IP:{{scope.row.transfer_vm_vpc_ip}}</div>
+                    <div>存储网IP:{{scope.row.transfer_vm_storage_ip}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="transfer_vm_conf_cpu " label="CPU"></el-table-column>
+            <el-table-column prop="transfer_vm_conf_cpu" label="CPU"></el-table-column>
             <el-table-column prop="transfer_vm_conf_mem" label="内存"></el-table-column>
-            <el-table-column prop="os_type" label="操作系统"></el-table-column>
+            <el-table-column prop="transfer_vm_os_type" label="操作系统"></el-table-column>
             <el-table-column prop="transfer_vm_image" label="镜像名称"></el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('record')">远程链接</el-button> 
-                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">监控</el-button> 
+                    <!-- <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('record')">远程链接</el-button>  -->
+                    <el-button type="text" @click="FnToMonitor(scope.row.transfer_vm_id)" :disabled="!auth_list.includes('monitor')">监控</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>
             </el-table-column>
@@ -106,6 +106,7 @@ export default class CommonMirror extends Vue{
     private visible:boolean=false
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
+        console.log('this.auth_list',this.auth_list)
         this.search()
     }
     @Watch('visible')
@@ -146,9 +147,8 @@ export default class CommonMirror extends Vue{
         this.current = cur
         this.getVmList()
     }
-    private capacity(row){
-        this.visible=true;
-        this.operateInfo=row
+    private FnToMonitor(id) {
+        this.$router.push("/instance/monitor/" + id);
     }
     
 }

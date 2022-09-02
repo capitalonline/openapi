@@ -17,16 +17,16 @@
             :data="list" 
             border 
         >
-            <el-table-column prop="customer_id " label="客户ID"></el-table-column>
-            <el-table-column prop="customer_name " label="客户名称"></el-table-column>
-            <el-table-column prop="nas_id" label="文件系统ID/名称">
+            <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+            <el-table-column prop="customer_name" label="客户名称"></el-table-column>
+            <el-table-column prop="nas_id" label="文件系统ID/名称" width="120px">
                 <template slot-scope="scope">
                     <div>
                         <el-tooltip 
                             :content="scope.row.nas_id" 
                             placement="bottom" 
                             effect="light">
-                                <span class="id-cell clickble">{{ scope.row.nas_id }}</span>
+                                <span class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
                         </el-tooltip>
                         <Clipboard :content="scope.row.nas_id" v-if="scope.row.nas_id"></Clipboard>
                     </div>
@@ -55,33 +55,42 @@
             <el-table-column prop="mount_path" label="挂载地址" width="180">
                 <template slot-scope="scope">
                     <el-tooltip 
-                        :content="scope.row.mount_path " 
+                        :content="scope.row.mount_path[0]" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.mount_path  }}</span>
+                            <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
                     </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path " v-if="scope.row.mount_path "></Clipboard>                
+                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                
                 </template>
             </el-table-column>
-            <el-table-column prop="path_name" label="使用量/总容量"  width="140">
-                <template slot-scope="scope">
-                   <span></span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="space_use_rate " label="空间使用率"></el-table-column>
+            <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
+            <el-table-column prop="used_percent " label="空间使用率"></el-table-column>
             <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
             <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column>
             <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
                 <template slot-scope="scope">
-                   <span>{{`${scope.row.transfer_vm_vpc_ip}/${scope.row.transfer_vm_storage_ip}`}}</span>
+                   <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
+                   <div>存储网:{{scope.row.transfer_vm_storage_ip}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
-            <el-table-column prop="status_ch" label="状态"></el-table-column>
-            <el-table-column prop="create_time" label="创建时间"></el-table-column>
+            <el-table-column prop="billing_method" label="计费方式">
+                <template slot-scope="scope">
+                    <span>{{feeInfo[scope.row.billing_method]}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="status_ch" label="状态">
+                <template slot-scope="scope">
+                    <span :class="scope.row.status">{{scope.row.status_ch}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="create_time" label="创建时间">
+                <template slot-scope="scope">
+                    <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('record')">扩容</el-button> 
+                    <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('file_capacity')">扩容</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">删除</el-button>  -->
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>
@@ -96,6 +105,9 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
+        <template v-if="visible">
+            <capacity :visible.sync="visible" :info="operateInfo"></capacity>
+        </template>
     </div>
 </template>
 <script lang="ts">
@@ -105,14 +117,18 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/filesystem/list';
 import moment from 'moment';
 import Clipboard from '../../components/clipboard.vue'
+import Capacity from './capacity.vue'
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
-        Clipboard
+        Clipboard,
+        Capacity
     }
 })
-export default class CommonMirror extends Vue{
+export default class List extends Vue{
+    private moment = moment;
+    private units=['B','KB','MB','GB','TB','PB','EB','ZB']
     private search_option:Object={
         customer_id:{placeholder:'请输入客户ID'},
         customer_name:{placeholder:'请输入客户名称'},
@@ -128,7 +144,13 @@ export default class CommonMirror extends Vue{
     private search_data:any={};
     private auth_list:any=[];
     private operateInfo:any={}
+    private clear=null
     private visible:boolean=false
+    private feeInfo={
+      '0':'按需计费',
+      '1':'包年包月',
+      '2':'按次计费',
+    }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.search()
@@ -143,39 +165,98 @@ export default class CommonMirror extends Vue{
     private watch_pod(){
         this.search(this.search_data)
     }
-    private async getNasList(){
+    private async getNasList(loading:boolean=true){
+        if(!loading){
+            this.$store.commit("setLoading",false)
+        }
         let res:any = await Service.get_nas_list({
             ...this.search_data,
+            pod_id:this.$store.state.pod_id,
             page_index:this.current,
             page_size:this.size
         })
         if(res.code==="Success"){
             this.list = res.data.nas_list;
             this.total = res.data.page.count
-            
+            this.getFileUse(false)
         }
+        this.FnSetTimer()
+    }
+    private FnSetTimer(){
+      if(this.clear){
+        this.FnClearTimer()
+      }
+      this.clear = setTimeout(()=>{
+        this.getNasList(false)
+      },1000*60)
+    }
+    private FnClearTimer(){
+      if(this.clear){
+        clearTimeout(this.clear)
+      }
+    }
+    private async getFileUse(loading:boolean=true){
+      if(!loading){
+        this.$store.commit("setLoading",false)
+      }
+      let res:any = await Service.get_file_use({
+        region_id:this.list[0].region_id,
+        volume_ids:this.list.map(item=>item.nas_id)
+      })
+      if(res.code==='Success'){
+        this.list.map(item=>{
+          let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
+          let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
+          this.$set(item,'used_percent',res.data[item.nas_id].used && res.data[item.nas_id].total ? `${(Number(res.data[item.nas_id].used) / Number(res.data[item.nas_id].total)).toFixed(2)}%` : '0.00%')
+          this.$set(item,'use_total_size',`${size} / ${total}`)
+        })
+      }
     }
     private search(data:any={}){
+        this.FnClearTimer()
         this.current = 1;
         this.search_data={...data}
         this.getNasList()
     }
     private refresh(){
+        this.FnClearTimer()
         this.getNasList()
     }
     private handleSizeChange(size){
+        this.FnClearTimer()
         this.size = size
         this.getNasList()
     }
     private handleCurrentChange(cur){
+        this.FnClearTimer()
         this.current = cur
         this.getNasList()
     }
+    private detail(id){
+        this.FnClearTimer()
+        this.$router.push({
+            path:'fielsystem/detail',
+            query:{
+                id
+            }
+        })
+    }
     private capacity(row){
+        console.log('ccc')
+        this.FnClearTimer()
         this.visible=true;
         this.operateInfo=row
     }
-    
+    private computeUnit(value,num=0){
+        if(value>=1024){
+            return this.computeUnit(value/1024,++num)
+        }else{
+            return value.toFixed(2) + this.units[num];
+        }        
+    }
+    beforeDestroy() {
+        this.FnClearTimer()
+    }
 }
 </script>
 <style lang="scss" scoped>

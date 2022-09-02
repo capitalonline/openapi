@@ -1,6 +1,7 @@
 import qs from 'qs';
 const BASE = "/ecs_business/v1";
 const MONITOR_BASE = "/monitor/api/v1/metric";
+const USED_BASE = "/monitor/api/v1";
 const ALARM_BASE = '/alarm/api/v1';
 const GPU_MONITOR_BASE = "/gpu_monitor/api/v1/metric";
 const NAS_BASE = "/nas_union_business/v1"
@@ -39,4 +40,7 @@ export const getHostOptions = (met:(string | any), url: string, data: any = null
 }
 export const getNasOptions = (met:(string | any), url: string, data: any = null) => {
     return getOptions(NAS_BASE, met, url, data)
+}
+export const getUsedOptions = (met:(string | any), url: string, data: any = null) => {
+    return getOptions(USED_BASE, met, url, data)
 }

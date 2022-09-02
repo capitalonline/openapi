@@ -112,6 +112,12 @@ const routes: RouteConfig[] = [
     meta:{menu:'filesystem_list'}
   },
   {
+    path:'/fielsystem/detail',
+    name:'file_detail',
+    component:()=>import('../views/filesystem/detail.vue'),
+    meta:{menu:'filesystem_list'}
+  },
+  {
     path:'/vm',
     name:'vm_list',
     component:()=>import('../views/filesystem/vm.vue'),
