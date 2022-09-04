@@ -1,6 +1,13 @@
 <template>
     <div >
         <time-group :type="true" @fn-emit="getTime"></time-group>
+        <el-card class="m-bottom20">
+            <disk-chart
+                :chart_id="'use'"
+                :data="chartData"
+                :title="`空间用量(GB)`"
+            ></disk-chart>
+        </el-card>
         <el-card class="m-bottom20 m-top10">
             <disk-chart
                 :chart_id="'iops'"
@@ -12,23 +19,17 @@
             <disk-chart
                 :chart_id="'bandwidth'"
                 :data="chartData"
-                :title="`吞吐量(${chartData.bytes && chartData.bytes.unit ?chartData.bytes.unit : ''})`"
+                :title="`带宽(MB/s)`"
             ></disk-chart>
         </el-card>
-        <el-card class="m-bottom20">
-            <disk-chart
-                :chart_id="'use'"
-                :data="chartData"
-                :title="`空间使用率(${chartData.spaceUse && chartData.spaceUse.unit ?chartData.spaceUse.unit : ''})`"
-            ></disk-chart>
-        </el-card>
+        
         
     </div>
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,Watch} from 'vue-property-decorator';
 import Service from '../../https/filesystem/list';
-import TimeGroup from '../../components/timeGroup.vue'
+import TimeGroup from '../../components/search/timeGroup.vue'
 import DiskChart from '../../components/chart/disk-chart.vue';
 import moment from 'moment'
 @Component({
@@ -46,6 +47,7 @@ export default class Monitor extends Vue{
     private chartData:any={};
     private getTime(val){
         this.time = val;
+        console.log('this.time',this.time)
         this.get_info()
     }
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
@@ -64,7 +66,7 @@ export default class Monitor extends Vue{
         }
         let req_data={
             volume_id:this.info.id,
-            region:this.info.region_id,
+            regions:this.info.region_id,
             start_time: moment(this.time[0] as any).utc().unix(),
             end_time:moment(this.time[1] as any).utc().unix(),
         }
@@ -75,7 +77,7 @@ export default class Monitor extends Vue{
         ]).then(res=>{
             this.chartData={
                 iops:{
-                    time:res[0].data.map(item=>item.time_at),
+                    time:res[0].data.map(item=>moment.unix(item.time_at)),
                     unit:res[0].data.unit,
                     series:[
                         {
@@ -90,7 +92,7 @@ export default class Monitor extends Vue{
                     ]
                 },
                 bandwidth:{
-                    time:res[1].data.map(item=>item.time_at),
+                    time:res[1].data.map(item=>moment.unix(item.time_at)),
                     unit:res[1].data.unit,
                     series:[
                         {
@@ -104,7 +106,7 @@ export default class Monitor extends Vue{
                     ]
                 },
                 use:{
-                    time:res[2].data.map(item=>item.time_at),
+                    time:res[2].data.map(item=>moment.unix(item.time_at)),
                     unit:res[2].data.unit,
                     series:[
                         {

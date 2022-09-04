@@ -13,7 +13,7 @@ export default{
     },
     //文件系统扩容
     capacity(req){
-        return service(getNasOptions('POST','/nas/expansion/',req))
+        return service(getNasOptions('POST','/nas/expansion_nas/',req))
     },
     //中转机列表
     get_vm_list(req){

@@ -64,7 +64,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
-            <el-table-column prop="used_percent " label="空间使用率"></el-table-column>
+            <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
             <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
             <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column>
             <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
@@ -90,7 +90,10 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('file_capacity')">扩容</el-button> 
+                    <el-tooltip placement="right" v-if="scope.row.status!=='running' || !auth_list.includes('file_capacity')" effect="light" content="只有运行中的文件系统才可以扩容">
+                        <span type="text" class="not-clickable">扩容</span> 
+                    </el-tooltip>
+                    <el-button type="text" v-else @click="capacity(scope.row)">扩容</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">删除</el-button>  -->
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>
@@ -167,7 +170,7 @@ export default class List extends Vue{
     }
     private async getNasList(loading:boolean=true){
         if(!loading){
-            this.$store.commit("setLoading",false)
+            this.$store.commit('SET_LOADING', false);
         }
         let res:any = await Service.get_nas_list({
             ...this.search_data,
@@ -197,7 +200,7 @@ export default class List extends Vue{
     }
     private async getFileUse(loading:boolean=true){
       if(!loading){
-        this.$store.commit("setLoading",false)
+        this.$store.commit("SET_LOADING",false)
       }
       let res:any = await Service.get_file_use({
         region_id:this.list[0].region_id,
@@ -207,7 +210,10 @@ export default class List extends Vue{
         this.list.map(item=>{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
-          this.$set(item,'used_percent',res.data[item.nas_id].used && res.data[item.nas_id].total ? `${(Number(res.data[item.nas_id].used) / Number(res.data[item.nas_id].total)).toFixed(2)}%` : '0.00%')
+        //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
+          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? Number(res.data[item.nas_id].used/res.data[item.nas_id].total).toFixed(6) : 0.00
+          console.log('num',num)
+          this.$set(item,'used_percent',`${num}%`)
           this.$set(item,'use_total_size',`${size} / ${total}`)
         })
       }

@@ -28,7 +28,7 @@
                         </el-tooltip>
                         <Clipboard :content="scope.row.transfer_vm_id" v-if="scope.row.transfer_vm_id"></Clipboard>
                     </div>
-                    <div>{{scope.row.nas_name}}</div>
+                    <div>{{scope.row.transfer_vm_name}}</div>
                 </template>
             </el-table-column>
             <el-table-column prop="transfer_vm_host_name" label="宿主机名称"></el-table-column>
@@ -58,7 +58,7 @@
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
                     <!-- <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('record')">远程链接</el-button>  -->
-                    <el-button type="text" @click="FnToMonitor(scope.row.transfer_vm_id)" :disabled="!auth_list.includes('monitor')">监控</el-button> 
+                    <el-button type="text" @click="FnToMonitor(scope.row)" :disabled="!auth_list.includes('monitor')">监控</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>
             </el-table-column>
@@ -147,8 +147,18 @@ export default class CommonMirror extends Vue{
         this.current = cur
         this.getVmList()
     }
-    private FnToMonitor(id) {
-        this.$router.push("/instance/monitor/" + id);
+    private FnToMonitor(row) {
+        sessionStorage.setItem('vm_monitor',JSON.stringify({
+            ...row,
+            hostId:row.transfer_vm_id,
+            ip:row.transfer_vm_storage_ip,
+            instanceType:'vm',
+            os:'linux',
+            region_id:row.region_id,
+            replica:row.az_id,
+            id:row.transfer_vm_id
+        }))
+        this.$router.push("/instance/monitor/" + row.transfer_vm_id);
     }
     
 }

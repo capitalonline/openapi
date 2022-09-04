@@ -11,8 +11,8 @@
         <div>
             <span class="label">扩容后容量:</span>
             <span>
-                <el-input-number v-model="size"></el-input-number>
-                <el-select v-model="unit">
+                <el-input-number v-model="size" :min="min" :max="unit==='TB' ? 64 : 64*1024" @change="change" @blur="change"></el-input-number>
+                <el-select v-model="unit" @change="changeUnit" :disabled="configInfo.total.value && configInfo.total.value.slice(-2)==='TB'" >
                     <el-option v-for="item in unitList" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
             </span>
@@ -46,7 +46,8 @@ export default class RollBack extends Vue{
     private unit:string=''
     private unitList:any=['GB','TB'];
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
-    private clear=null
+    private clear=null;
+    private min:number=0
     created() {
         for(let i in this.configInfo){
             this.configInfo[i].value = this.info[i]
@@ -71,18 +72,68 @@ export default class RollBack extends Vue{
     }
     private async getFileUse(loading:boolean=true){
       if(!loading){
-        this.$store.commit("setLoading",false)
+        this.$store.commit("SET_LOADING",false)
       }
       let res:any = await Service.get_file_use({
         region_id:this.info.region_id,
         volume_ids:[this.info.nas_id]
       })
       if(res.code==='Success'){
-        let id:string = this.info.nas_id
-        this.configInfo.total.used  = this.computeUnit(res.data[id]&& res.data[id].used ? res.data[id].used : 0);
-        this.configInfo.total.value = this.computeUnit(res.data[id]&& res.data[id].total ? (res.data[id].total) : 0);
+            let id:string = this.info.nas_id
+            this.configInfo.used.value  = this.computeUnit(res.data[id]&& res.data[id].used ? res.data[id].used : 0);
+            this.configInfo.total.value = this.computeUnit(res.data[id]&& res.data[id].total ? (res.data[id].total) : 0);
+            let oldUnit:string = this.configInfo.total.value.slice(-2)
+            this.size = Math.ceil(Number(this.configInfo.total.value.slice(0,-2)))
+            this.min=this.size
+            console.log('###',oldUnit,this.size,this.configInfo.total.value.slice)
+            if(['GB','TB'].includes(oldUnit)){
+                this.unit = oldUnit
+            }else{
+                this.unit = 'GB'
+            }
+            
+        } 
+        this.FnSetTimer();
+    }
+    /**
+     
+     */
+    // private get min(){
+    //     let oldUnit:string = this.configInfo.total.value.slice(-2)
+    //     let size = Math.ceil(Number(this.configInfo.total.value.slice(0,-2)))
+    //     if(oldUnit===this.unit){
+    //         return size
+    //     }else if(this.unit==='TB'){//不等的情况下，原来的总量单位一定比TB小
+    //         return oldUnit==='GB' ? Math.ceil(Number(size)/1024) : 0
+    //     }else{//this.unit==='GB',如果原来总量的单位是TB，那已经不允许更改单位，那就符合第一种条件
+    //         return size
+    //     }
+    // }
+    private change(){
+        if(!this.size){
+            this.size = this.min
         }
-    } 
+    }
+    private changeUnit(){
+        let oldUnit:string = this.configInfo.total.value.slice(-2);
+        let originSize:number = Number(this.configInfo.total.value.slice(0,-2))
+        if(this.unit==='TB'){
+            if(oldUnit==='TB'){
+                this.size = Math.min(this.size,64);
+                this.min = Math.ceil(originSize)//min不用变
+            }else{//那一定比TB小,size的容量不用改
+                this.size = oldUnit==='GB' ? Math.ceil(originSize/1024) : 1;
+                this.min = this.size
+            }
+        }else{//GB
+            if(oldUnit==='TB'){//原来容量为TB，改变后的单位为GB，不可能为这个单位
+                
+            }else{//原来的单位比GB小或是一样
+                this.size = Math.max(this.size,Math.ceil(originSize))
+                this.min = oldUnit==='GB' ? Math.ceil(originSize) : 1
+            }
+        }
+    }
     private computeUnit(value,num=0){
         if(value>=1024){
             return this.computeUnit(value/1024,++num)
@@ -91,10 +142,17 @@ export default class RollBack extends Vue{
         }        
     }
     private async confirm(){
+        if(!this.unit){
+            return;
+        }
+        const {region_id,az_id,nas_id,customer_id}=this.info
         let res:any = await Service.capacity({
-            snapshot_id:this.info.snapshot_id,
-            disk_id:this.info.disk_id,
-            after_ecs_start:this.check
+            region_id,
+            az_id,
+            nas_id,
+            size:this.size,
+            unit:this.unit,
+            customer_id
         })
         if(res.code==='Success'){
             this.$message.success(res.message)

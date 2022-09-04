@@ -40,7 +40,9 @@
                 </el-card>
             </el-tab-pane>
             <el-tab-pane label="文件系统监控" name="monitor">
-
+                <template v-if="activeName==='monitor'">
+                    <Monitor :info="{'id':$route.query.id,'region_id':detailInfo.region_id}"></Monitor>
+                </template>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -52,9 +54,11 @@ import Service from '../../https/filesystem/list';
 import moment from 'moment';
 import backHeader from '@/components/backHeader.vue';
 import detail from '@/https/event/detail';
+import Monitor from './monitor.vue';
 @Component({
     components:{
-        backHeader
+        backHeader,
+        Monitor
     }
 })
 export default class NasDetail extends Vue{
@@ -82,6 +86,8 @@ export default class NasDetail extends Vue{
         config:{label:'虚拟机配置',value:''},
         transfer_vm_host_name:{label:'所在宿主机',value:''},
     }
+    private units=['B','KB','MB','GB','TB','PB','EB','ZB']
+    private clear=null
     private feeInfo={
       '0':'按需计费',
       '1':'包年包月',
@@ -96,7 +102,8 @@ export default class NasDetail extends Vue{
             nas_id:this.$route.query.id
         })
         if(res.code==="Success"){
-            this.detailInfo = res.data
+            this.detailInfo = res.data;
+            this.getFileUse()
             for(let i in this.fileInfo){
                 if(i==='az_name'){
                     this.fileInfo[i].value=res.data.region_name ? `${res.data.region_name}-${res.data.az_name}` : '--'
@@ -116,6 +123,44 @@ export default class NasDetail extends Vue{
                 
             }
         }
+    }
+    private FnSetTimer(){
+      if(this.clear){
+        this.FnClearTimer()
+      }
+      this.clear = setTimeout(()=>{
+        this.getFileUse(false)
+      },1000*60)
+    }
+    private FnClearTimer(){
+      if(this.clear){
+        clearTimeout(this.clear)
+      }
+    }
+    private async getFileUse(loading:boolean=true){
+      if(!loading){
+        this.$store.commit("SET_LOADING",false)
+      }
+      let res:any = await Service.get_file_use({
+        region_id:this.detailInfo.region_id,
+        volume_ids:[this.detailInfo.nas_id]
+      })
+      if(res.code==='Success'){
+            let id:string = this.detailInfo.nas_id
+            let size  = this.computeUnit(res.data[id]&& res.data[id].used ? res.data[id].used : 0);
+            let total = this.computeUnit(res.data[id]&& res.data[id].total ? (res.data[id].total) : 0);
+            this.fileInfo.used.value  = `${size} / ${total}`
+        }
+    }
+    private computeUnit(value,num=0){
+        if(value>=1024){
+            return this.computeUnit(value/1024,++num)
+        }else{
+            return value.toFixed(2) + this.units[num];
+        }        
+    }
+    beforeDestroy() {
+        this.FnClearTimer()
     }
     private FnToMonitor(id) {
         this.$router.push("/instance/monitor/" + id);
