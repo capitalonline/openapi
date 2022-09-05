@@ -24,7 +24,7 @@
                             :content="scope.row.transfer_vm_id" 
                             placement="bottom" 
                             effect="light">
-                                <span class="id-cell clickble">{{ scope.row.transfer_vm_id }}</span>
+                                <span class="id-cell num_message">{{ scope.row.transfer_vm_id }}</span>
                         </el-tooltip>
                         <Clipboard :content="scope.row.transfer_vm_id" v-if="scope.row.transfer_vm_id"></Clipboard>
                     </div>
@@ -32,16 +32,20 @@
                 </template>
             </el-table-column>
             <el-table-column prop="transfer_vm_host_name" label="宿主机名称"></el-table-column>
-            <el-table-column prop="status_cn" label="状态"></el-table-column>
+            <el-table-column prop="status_cn" label="状态">
+                <template slot-scope="scope">
+                    <span :class="scope.row.status">{{scope.row.status_cn}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="vpc_id" label="VPC ID/名称">
                 <template slot-scope="scope">
-                    <div>{{scope.row.vpc_id}}</div>
+                    <div class="not-clickable">{{scope.row.vpc_id}}</div>
                     <div>{{scope.row.vpc_name}}</div>
                 </template>
             </el-table-column>
             <el-table-column prop="subnet_id" label="子网ID/子网名称">
                 <template slot-scope="scope">
-                    <div>{{scope.row.subnet_id}}</div>
+                    <div class="not-clickable">{{scope.row.subnet_id}}</div>
                     <div>{{scope.row.subnet_name}}</div>
                 </template>
             </el-table-column>

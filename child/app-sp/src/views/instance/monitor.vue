@@ -457,13 +457,21 @@ export default class Monitor extends Vue{
     this.default_tab = Object.keys(this.tab_list)[0];
     console.log('ddd',this.default_tab)
     this.source_name = this.$route.name;
-    if(sessionStorage.getItem){
-      Vue.delete(this.tab_list, 'gpu')
+    if(sessionStorage.getItem('vm_monitor')){
+      Vue.delete(this.tab_list, 'gpu');
+      let vm_info = JSON.parse(sessionStorage.getItem('vm_monitor'))
+      this.detail_info.ecs_name.value = vm_info.transfer_vm_name;
+      this.detail_info.ecs_id.value = vm_info.transfer_vm_id;
+      this.detail_info.az_name.value = vm_info.region_name+'-'+vm_info.az_name;
+      this.detail_info.system_disk_conf.value = vm_info.transfer_vm_conf_system_disk_type ? `${vm_info.transfer_vm_conf_system_disk_type}  ${vm_info.transfer_vm_conf_system_disk_size}${vm_info.transfer_vm_conf_system_disk_unit}` : ''
+      this.detail_info.os_info.value = vm_info.transfer_vm_image;
+      this.detail_info.private_net.value = `${vm_info.transfer_vm_vpc_ip}（vpc ip）<br> ${vm_info.transfer_vm_storage_ip }（存储网 ip）`
+      this.detail_info.status.value = vm_info.status_cn;
     }
     if (this.source_name === 'monitor' && !sessionStorage.getItem('vm_monitor')) {
       this.FnGetDetail();
     }
-  }
+  }transfer_vm_conf_system_disk_size
   private destroyed() {
     sessionStorage.removeItem('vm_monitor')
   }

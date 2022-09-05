@@ -76,7 +76,7 @@ export default class Monitor extends Vue{
             Service.get_use({...req_data}),
         ]).then(res=>{
             this.chartData={
-                iops:{
+                iops:res[0].data && res[0].data.length>0 ? {
                     time:res[0].data.map(item=>moment.unix(item.time_at)),
                     unit:res[0].data.unit,
                     series:[
@@ -90,8 +90,8 @@ export default class Monitor extends Vue{
                         },
                         
                     ]
-                },
-                bandwidth:{
+                }:null,
+                bandwidth:res[1].data && res[1].data.length>0 ? {
                     time:res[1].data.map(item=>moment.unix(item.time_at)),
                     unit:res[1].data.unit,
                     series:[
@@ -104,8 +104,8 @@ export default class Monitor extends Vue{
                             data:res[1].data.map(item=>item.bandwidth_write)
                         }
                     ]
-                },
-                use:{
+                }:null,
+                use:res[2].data && res[2].data.length>0 ? {
                     time:res[2].data.map(item=>moment.unix(item.time_at)),
                     unit:res[2].data.unit,
                     series:[
@@ -133,7 +133,7 @@ export default class Monitor extends Vue{
                             return '<div>'+list.join('<br>')+'</div>'
                         }
                     }
-                } 
+                }:null 
             }
             
         })
