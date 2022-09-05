@@ -126,6 +126,7 @@ export default class CommonMirror extends Vue{
     private async getVmList(){
         let res:any = await Service.get_vm_list({
             ...this.search_data,
+            pod_id:this.$store.state.pod_id,
             page_index:this.current,
             page_size:this.size
         })
