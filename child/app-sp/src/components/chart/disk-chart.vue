@@ -116,7 +116,7 @@ export default class Charts extends Vue{
                 type: 'value'
             },
             series: [],
-            tooltip:{
+            tooltip:this.data[this.chart_id].tooltip ? this.data[this.chart_id].tooltip : {
                 trigger: 'axis',
             }
         }

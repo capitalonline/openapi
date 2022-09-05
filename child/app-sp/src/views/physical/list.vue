@@ -132,6 +132,9 @@
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span>
           </template>
+          <template #default="scope" v-else-if="item.prop==='backend_type'">
+            <span>{{backendObj[scope.row.backend_type]}}</span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
               <el-tooltip
@@ -196,6 +199,7 @@
       <template v-if="visible && oper_type==='business_test'">
         <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
+      
       <custom-list-item 
         :visible.sync="custom_visible" 
         :all_item="all_item"
@@ -354,6 +358,16 @@ export default class PhysicalList extends Vue {
     'ecs_num','host_type_ch','host_purpose_ch','host_attribution__name','host_source',
     'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','create_time'
   ]
+  private backendList:any=[
+    {value:'block',text:'云盘'},
+    {value:'local',text:'本地盘'},
+    {value:'local,block',text:'云盘/本地盘'}
+  ]
+  private backendObj:any={
+    'block':'云盘',
+    'local':'本地盘',
+    'local,block':'云盘/本地盘'
+  }
   created() {
       this.get_host_list_field()
       this.get_room_list()
@@ -441,6 +455,9 @@ export default class PhysicalList extends Vue {
       }
       if(item.prop==='machine_status_name'){
         item = Object.assign(item,{},{column_key:'machine_status',list:this.machine_list})
+      }
+      if(item.prop==='backend_type'){
+        item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
       }
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
@@ -704,7 +721,7 @@ export default class PhysicalList extends Vue {
   //校验列表项是否存在此项
   private judgeColumns(){
     let keys = Object.keys(this.filter_data)
-    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source']
+    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type']
     keys.map(item=>{
       if(!temp.includes(item)){
         delete(this.filter_data[item])

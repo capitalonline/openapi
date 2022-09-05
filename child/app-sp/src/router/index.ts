@@ -112,6 +112,24 @@ const routes: RouteConfig[] = [
     meta:{menu:'private_mirror_list'}
   },
   {
+    path:'/fielsystem',
+    name:'filesystem_list',
+    component:()=>import('../views/filesystem/list.vue'),
+    meta:{menu:'filesystem_list'}
+  },
+  {
+    path:'/fielsystem/detail',
+    name:'file_detail',
+    component:()=>import('../views/filesystem/detail.vue'),
+    meta:{menu:'filesystem_list'}
+  },
+  {
+    path:'/vm',
+    name:'vm_list',
+    component:()=>import('../views/filesystem/vm.vue'),
+    meta:{menu:'vm_list'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),

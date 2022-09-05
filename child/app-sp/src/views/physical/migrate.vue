@@ -15,6 +15,8 @@
                     <el-checkbox v-model="checked" :indeterminate="isIndeterminate" @change="handleCheckAllChange" :disabled="useable_list.length===0"></el-checkbox>
                     {{rows[0].host_name}}(<span class="num_message">{{selected.length}}</span>/{{list.length}})
                     <span class="warning_message">(若是GPU型云主机，建议单选虚拟机)</span>
+                    <el-button type="text" @click="getHostList"><svg-icon :icon="'refresh'"></svg-icon></el-button>
+
                 </div>
                 <el-table
                     :data="list"
@@ -39,8 +41,8 @@
                     <el-table-column prop="genre" label="计算规格"></el-table-column>
                     <el-table-column prop="genre" label="存储" width="130px">
                         <template slot-scope="scope">
-                            <div>系统盘：{{Object.keys(scope.row.disk_info.system)[0]}} {{scope.row.disk_info.system[Object.keys(scope.row.disk_info.system)[0]]}}{{scope.row.disk_info.unit}}</div>
-                            <div v-if="Object.keys(scope.row.disk_info.data).length>0" class="data-item">
+                            <div v-if="scope.row.disk_info">系统盘：{{Object.keys(scope.row.disk_info.system)[0]}} {{scope.row.disk_info.system[Object.keys(scope.row.disk_info.system)[0]]}}{{scope.row.disk_info.unit}}</div>
+                            <div v-if="scope.row.disk_info && Object.keys(scope.row.disk_info.data).length>0" class="data-item">
                                 数据盘：
                                 <!-- <div v-for="(name,i) in scope.row.disk_info.data" :key="i">{{i}}</div> -->
                                 <div v-for="(item,i) in scope.row.disk_info.data" :key="i">{{i}} {{item}}{{scope.row.disk_info.unit}}</div>
@@ -107,12 +109,14 @@
 <script lang="ts">
 import { Component, Emit, Prop, Vue,PropSync,Watch } from 'vue-property-decorator';
 import Service from '../../https/physical/list';
-import CustomIcon from './customIcon.vue'
+import CustomIcon from './customIcon.vue';
+import svgIcon from '@/components/svgIcon/index.vue';
 import moment from 'moment';
 import {Table} from 'element-ui'
 @Component({
     components:{
-        CustomIcon
+        CustomIcon,
+        svgIcon
     }
 })
 export default class Migrate extends Vue{
@@ -128,13 +132,17 @@ export default class Migrate extends Vue{
     private recommend=[];
     private useable_list:any=[];
     created() {
-        this.get_recommended_host()
-        let status_list = this.rows[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
+        this.get_recommended_host();
+        this.setUsableList(this.rows)      
+        this.list=this.rows[0].ecs_list;
+    }
+    private setUsableList(data){
+        let status_list = data[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
         let list:any=[]
         status_list.map(item=>{
             if(item.is_gpu && item.status==='已关机'){
                 list.push(item.ecs_id)
-            }else if(!item.is_gpu && item.disk_info.system){
+            }else if(!item.is_gpu &&item.disk_info && item.disk_info.system){
                 if(Object.keys(item.disk_info.system)[0]!=='local'){//cpu云盘
                     if(['已关机','运行中'].includes(item.status)){//cpu云盘
                         list.push(item.ecs_id)
@@ -146,20 +154,33 @@ export default class Migrate extends Vue{
                 }
             }
         })
-        this.useable_list=list//可以进行迁移的云主机
-        console.log('this.useable_list',this.useable_list);
+        this.useable_list=list//可以进行迁移的云主机  
+    }
+    private async getHostList(){
+        // this.$store.commit("SET_LOADING", false);
+        let res:any=await Service.get_host_list({
+            host_name:this.rows[0].host_name
+        })
+        if(res.code==='Success'){
+            this.list = res.data.host_list[0].ecs_list;
+            this.setUsableList(res.data.host_list) 
+        }
         
-        this.list=this.rows[0].ecs_list;
     }
     private getMsg(item){
-        if(item.is_gpu || Object.keys(item.disk_info.system)[0]==='local'){
+        if(item.is_gpu || (item.disk_info && Object.keys(item.disk_info.system)[0]==='local')){
             return '仅支持关机迁移'
         }else{
             return '仅运行中和已关机状态下迁移'
         }
-        
     }
-    //
+    // //关闭面板时重新获取实例列表  
+    // private change_physical(val){
+    //     if(!val){
+    //         this.get_physical_list()
+    //     }
+        
+    // }
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
             return true;
@@ -243,6 +264,10 @@ export default class Migrate extends Vue{
     }
     .left{
         flex: 1;
+        .el-button--text{
+            float: right;
+            margin-right: 10px;
+        }
     }
     .center{
         width: 100px;
@@ -258,6 +283,9 @@ export default class Migrate extends Vue{
     .flex-base{
         display: flex;
         align-items: baseline;
+    }
+    .status{
+        margin-right: 5px;
     }
 }
 .recommend{

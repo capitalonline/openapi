@@ -32,6 +32,11 @@ module.exports = {
           '^/gpu_monitor/api': '/api'
         }
       },
+      '/nas_union_business': {
+        target: 'http://cloudos-nas-union-business.gic.test',
+        // target:'http://10.131.171.83:2222',
+        changeOrigin: true,
+      },
       '/alarm/api': {
         target: ' http://cloudos-metricsalarm.gic.test',
         // target:'http://10.131.162.69:8001',
