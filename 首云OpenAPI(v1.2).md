@@ -386,7 +386,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PrivateIp          | list   | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}] |内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。|
-| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIC4gVGhlIHRpbWUgaXMgbm93ICQoZGF0ZSAtUikiISB8IHRlZSAvcm9vdC91c2VyZGF0YV90ZXN0LnR4dA=="]                                                         | 用户自定义数据，格式必须为base64编码                         |
+| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                                         | 用户自定义数据，格式必须为base64编码                         |
 
 
 
@@ -879,7 +879,7 @@ def add_disk(vm_id):
 | Password   | string | 是       | EcsV587!                             | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
 | PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
 | ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
-| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIC4gVGhlIHRpbWUgaXMgbm93ICQoZGF0ZSAtUikiISB8IHRlZSAvcm9vdC91c2VyZGF0YV90ZXN0LnR4dA=="]                                 | 用户自定义数据，格式必须为base64编码                         |
+| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                 | 用户自定义数据，格式必须为base64编码                         |
 
 ​	**返回参数：**
 
