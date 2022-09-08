@@ -368,14 +368,14 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
-| Password           | string   | 否       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
+| Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
-| Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
-| Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
+| Cpu                | int      | 是       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
+| Ram                | int      | 是       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
 | ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
@@ -386,6 +386,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PrivateIp          | list   | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}] |内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。|
+| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIC4gVGhlIHRpbWUgaXMgbm93ICQoZGF0ZSAtUikiISB8IHRlZSAvcm9vdC91c2VyZGF0YV90ZXN0LnR4dA=="]                                                         | 用户自定义数据，格式必须为base64编码                         |
 
 
 
@@ -726,7 +727,7 @@ def update_vm(vm_id):
 | 名称       | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
 | ---------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| DataDisks  | string | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
+| DataDisks  | list | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
 
 ​	**返回参数：**
 
@@ -878,6 +879,7 @@ def add_disk(vm_id):
 | Password   | string | 是       | EcsV587!                             | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
 | PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
 | ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
+| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIC4gVGhlIHRpbWUgaXMgbm93ICQoZGF0ZSAtUikiISB8IHRlZSAvcm9vdC91c2VyZGF0YV90ZXN0LnR4dA=="]                                 | 用户自定义数据，格式必须为base64编码                         |
 
 ​	**返回参数：**
 
@@ -907,13 +909,14 @@ def add_disk(vm_id):
 ​	**调用代码示例:**
 
 ```python
-def reset_os(vm_id, os_id):
+def reset_os(vm_id, os_id, passwd):
     action = "ResetImage"
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {
         "InstanceId": vm_id,
-        "ImageId": os_id
+        "ImageId": os_id,
+        "Password":  passwd
     }
     res = requests.post(url, json=body)
     result = json.loads(res.ocntent)
@@ -957,7 +960,7 @@ def reset_os(vm_id, os_id):
 | VdcId                   | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                   |
 | RegionId                | string   | CN_Beijing_A                                                 | RegionId：Vdc所属的可用区 |
 | SystemDisk              | list     | []                                                           | 系统盘                    |
-| DataDisks               | string   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
+| DataDisks               | list   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
 | PublicNetworkInterface  | string   |                                                              | 公网网卡信息              |
 | PrivateNetworkInterface | string   |                                                              | 私网网卡信息              |
 | Cpu                     | int      | 4                                                            | Cpu信息                   |
@@ -1040,12 +1043,12 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {}
-    if vm_id:
-        body.update({"InstanceId": vm_id})
+    if instance_id:
+        body.update({"InstanceId": instance_id})
     if vdc_id:
         body.update({"VdcId": vdc_id})
     if pub_ip:
-        body.update({"PubIp": pub_ip})
+        body.update({"PublicIp": pub_ip})
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
@@ -1361,7 +1364,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1402,7 +1405,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1454,7 +1457,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **返回示例：**
 
@@ -1488,7 +1491,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1530,7 +1533,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 
 **返回示例：**
@@ -1891,13 +1894,13 @@ def down_card(InterfaceId, InstanceId):
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
-| Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
-| Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
-| InstanceType       | string   | 否       | Standard                                                     |                                                              |
-| ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
+| Cpu                | int      | 是       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
+| Ram                | int      | 是       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
+| InstanceType       | string   | 是       | Standard                                                     |                                                              |
+| ImageId            | string   | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
+| SystemDisk         | Dict     | 是       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
-| Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
+| Amount             | integer  | 是       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 
 **返回参数：**
 
@@ -15218,8 +15221,10 @@ def get_status(task_id):
 
 | 模板大类型       | 模板类型                             | 中文名称                               |
 |-------------|----------------------------------| -------------------------------------- |
-| Rocky Linux | RockyLinux_8.5_64                |                                        |
+| Anolis OS   | AnolisOS_8.6_64                |                                        |
+| Rocky Linux | RockyLinux_9.0_64                |                                        |
 |             | RockyLinux_8.6_64                |                                        |
+|             | RockyLinux_8.5_64                |                                        |
 | Centos      | Centos_Stream_8                   |                                        |
 |             | Centos_8.2_64                    |                                        |
 |             | Centos_8.1_64                    |                                        |
@@ -15433,7 +15438,7 @@ def descrive_public_qos(vdc_id):
 ​	**请求代码**
 
 ```python
-def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
+def descrive_vm(instance_id=None, vdc_id=None, pub_ip=None):
     """
     根据vm_id、vdc_id或者公网ip获取主机信息
     @params: vm_id: 通过主机ID
@@ -15444,12 +15449,12 @@ def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {}
-    if vm_id:
-        body.update({"InstanceId": vm_id})
+    if instance_id:
+        body.update({"InstanceId": instance_id})
     if vdc_id:
         body.update({"VdcId": vdc_id})
     if pub_ip:
-        body.update({"PubIp": pub_ip})
+        body.update({"PublicIp": pub_ip})
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
@@ -15616,7 +15621,7 @@ def modify_vm_charge_type(vm_id, ):
     """
     修改云主机实例计费方式，只允许按需计费转换为包年包月
     """
-    action = ""
+    action = "ModifyInstanceChargeType"
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {
@@ -15701,7 +15706,7 @@ def create_template(vm_id):
         "DisplayName": "模板名称",
         "PowerOn": False
     }
-    res = requests.get(url, json=body)
+    res = requests.post(url, json=body)
     result = json.loads(res.content)
     print(result)
 ```
