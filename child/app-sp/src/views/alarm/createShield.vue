@@ -159,6 +159,7 @@
                         v-model="shieldData.timeRange"
                         :clearable="false"
                         type="datetimerange"
+                        popper-class="date-time"
                         :editable="false"
                         @blur="changeDate"
                         :picker-options="FnRangePicker()"
@@ -378,7 +379,8 @@ export default class CreateShield extends Vue{
             disabledDate:(time)=>{
                 return this.minDate && !this.maxDate ? time.getTime() < Date.now() - 8.64e7 : false
             },
-            selectableRange:`${str}-23:59:59`
+            // selectableRange:[`${str}-23:59:59`,'18:30:00-20:32:00']
+            // selectableRange:[`06:00:00-08:59:59`,'18:30:00-20:32:00']
         }
     }
     private changeScope(){
@@ -527,5 +529,13 @@ export default class CreateShield extends Vue{
 .confirm{
     float: right;
     margin-bottom: 10px;
+}
+
+</style>
+<style lang="scss">
+.date-time{
+    button.el-button.el-picker-panel__link-btn.el-button--text.el-button--mini{
+        display: none;
+    }
 }
 </style>
