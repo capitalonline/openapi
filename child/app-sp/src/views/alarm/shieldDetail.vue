@@ -2,7 +2,7 @@
     <el-dialog
       :title="'屏蔽详情'"
       :visible.sync="visibleSync"
-      width="400"
+      width="800px"
       :destroy-on-close="true"
       :close-on-click-modal="false"
     >
@@ -47,7 +47,12 @@ export default class ShieldDetail extends Vue{
             this.info.shield_mechanism_ch.value = res.data.shield_mechanism_ch;
             this.info.effective_scope_ch.value = res.data.effective_scope_ch;
             this.info.conditions.value = res.data.conditions;
-            this.info.shield_time_ch.value = res.data.shield_time_ch + '<br>' + '<div v-if="res.data.shield_start_time" class="m-top10">'+res.data.shield_start_time+'——'+res.data.shield_end_time+'</div>';
+            let obj={
+                0:'<div class="m-top10">'+res.data.shield_start_time+'——'+res.data.shield_end_time+'</div>',
+                1:'<div class="m-top10">'+res.data.shield_end_time+'</div>',
+                2:''
+            }
+            this.info.shield_time_ch.value = res.data.shield_time_ch + '<br>' + obj[res.data.shield_time];
         }
     }
 }

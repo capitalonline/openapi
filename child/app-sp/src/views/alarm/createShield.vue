@@ -153,7 +153,7 @@ import Service from '../../https/alarm/list';
 import CreateService from '../../https/instance/create'
 import BackHeader from '../../components/backHeader.vue';
 import Customer from '../../components/customerInput.vue';
-import {alarm_type} from '../../assets/alarm_data.ts';
+// import {alarm_type} from '../../assets/alarm_data.ts';
 import HostService from '../../https/physical/list'
 import {deal_list} from '../../utils/transIndex'
 import moment from 'moment';
@@ -192,7 +192,7 @@ export default class CreateShield extends Vue{
         alertname:[],
         region:[],
         az:[],
-        severity:[
+        serverity:[
             {
                 id:'2',
                 name:'严重',

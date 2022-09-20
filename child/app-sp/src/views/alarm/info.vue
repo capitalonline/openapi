@@ -49,9 +49,9 @@
             </el-table-column>
             <el-table-column prop="action" label="操作栏">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="detail(scope.row)">详情</el-button>
-                    <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1">屏蔽</el-button>
-                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0">停止屏蔽</el-button>
+                    <el-button type="text" @click="detail(scope.row)" :disabled="!authList.includes('infoDetail')">详情</el-button>
+                    <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1 || !(authList.includes('alarm_create') && authList.includes('edit'))">屏蔽</el-button>
+                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0 || !authList.includes('stop')">停止屏蔽</el-button>
                 </template>
             </el-table-column>
         </el-table>
