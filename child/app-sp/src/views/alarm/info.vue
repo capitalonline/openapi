@@ -51,7 +51,7 @@
                 <template slot-scope="scope">
                     <el-button type="text" @click="detail(scope.row)">详情</el-button>
                     <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1">屏蔽</el-button>
-                    <el-button type="text" @click="stopShield(scope.row)" :disabled="scope.row.enable===0">停止屏蔽</el-button>
+                    <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0">停止屏蔽</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -209,9 +209,9 @@ export default class Contact extends Vue{
         this.$msgbox({
           title: '提示',
           message: h('p', null, [
-            h('span', null, `确定停止`),
+            h('span', null, `确定停止${row.shieldName}`),
             h('i', { style: 'color: #455cc6' },),
-            h('span', null, ' 这些屏蔽策略吗? ')
+            h('span', null, ' 屏蔽策略吗? ')
           ]),
           showCancelButton: true,
           confirmButtonText: '确定',

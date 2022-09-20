@@ -231,7 +231,7 @@ export default class CreateShield extends Vue{
             this.shieldData.scope = res.data.effective_scope;
             this.shieldData.timeScope = res.data.shield_time;
             if(this.shieldData.timeScope===0){
-                this.shieldData.timeRange = [res.data.shield_start_time,res.data.shield_end_time];
+                this.shieldData.timeRange =  res.data.shield_start_time!=='' && res.data.shield_end_time!=='' ? [res.data.shield_start_time,res.data.shield_end_time] : [];
             }else if(this.shieldData.timeScope===1){
                 this.shieldData.endTime = res.data.shield_end_time;
             }
@@ -241,11 +241,12 @@ export default class CreateShield extends Vue{
                 let obj = {
                     label:item.condition_object,
                     oper:item.operator,
-                    value:len.length===0 ? '' : len.length===1 ? len[0] : len
-                }                
+                    value:['customer_id','to_group','alertname'].includes(item.condition_object) ? len : len[0],
+                    id:item.id
+                }   
                 list.push(obj)
             })
-            this.shieldData.condition=[...list]
+            this.shieldData.condition=[...list];
         }
     }
     private async get_create_info(){
@@ -362,7 +363,8 @@ export default class CreateShield extends Vue{
                     list.push({
                         condition_object:item.label,
                         operator:item.oper,
-                        condition_value:Array.isArray(item.value) ? item.value.join(',') : item.value
+                        condition_value:Array.isArray(item.value) ? item.value.join(',') : item.value,
+                        id:this.edit_id?item.id : undefined,
                     })
                     return item;
                 })
