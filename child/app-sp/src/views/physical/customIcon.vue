@@ -1,6 +1,6 @@
 <template>
     <div class="total">
-        <div class="used" :style="{height:hei===0 ? 0 : hei+'%',background:hei>=0 && hei< 50 ? '#67c23a' : hei < 80 ? 'yellow' : 'red'}"></div>
+        <div class="used" :style="{height:(!hei || hei===0) ? 0 : hei+'%',background:hei>=0 && hei< 50 ? '#67c23a' : hei < 80 ? 'yellow' : 'red'}"></div>
     </div>
 </template>
 <script lang="ts">
@@ -15,10 +15,11 @@ export default class CustomIcon extends Vue{
     .total{
         height: 32px;
         width:18px;
-        background: #f0f0f0;
+        background: rgb(241,241,241);
         position: relative;
         display: inline-block;
         margin:0 10px;
+        margin-bottom: 5px;
         .used{
             width: 100%;
             position: absolute;

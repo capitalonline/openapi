@@ -251,7 +251,7 @@
             @click="FnToVnc(scope.row.ecs_id)"
             >远程连接</el-button
           >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror')">
+          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
             <el-button type="text" class="not-clickable">制作公共镜像</el-button>
           </el-tooltip>
           <el-button
@@ -1171,10 +1171,10 @@ export default class App extends Vue {
     }
   }
   private async FnGetStatus() {
-    if (this.$store.state.status_list.length > 0) {
-      this.ecs_status_list = this.$store.state.status_list;
-      // this.search_con.status.list = this.$store.state.status_list;
-    } else {
+    // if (this.$store.state.status_list.length > 0) {
+    //   this.ecs_status_list = this.$store.state.status_list;
+    //   // this.search_con.status.list = this.$store.state.status_list;
+    // } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
         this.ecs_status_list = [];
@@ -1184,9 +1184,9 @@ export default class App extends Vue {
             value: key
           });
         }
-        this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
+        // this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
       }
-    }
+    // }
   }
   private async get_az_list() {
     const res = await EcsService.get_region_az_list({});

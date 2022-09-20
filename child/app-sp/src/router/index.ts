@@ -41,7 +41,7 @@ const routes: RouteConfig[] = [
   },
   {
     path:'/alarmInfo/create',
-    name:'alarm_info',
+    name:'alarm_create',
     component:()=>import('../views/alarm/createShield.vue'),
     meta:{menu:'alarm_info'}
   },

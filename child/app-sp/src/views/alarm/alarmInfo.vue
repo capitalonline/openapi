@@ -23,6 +23,6 @@ import Shield from './shield.vue';
     }
 })
 export default class AlarmInfo extends Vue{
-    private activeName:String='2'
+    private activeName:String='1'
 }
 </script>

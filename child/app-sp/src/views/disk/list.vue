@@ -429,10 +429,12 @@ export default class extends Vue {
   //恢复或销毁云盘
   private restore(str:string){
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return item.status ==='deleted' && !item.is_follow_delete
+      return item.status ==='deleted' && !item.ecs_id
+      // return item.status ==='deleted' && !item.is_follow_delete
     })
     const fail_state:boolean = this.mount_id.every((item,index,arr)=>{
-      return (item.status ==='deleted' && !item.is_follow_delete) || item.status ==='build_fail'
+      return (item.status ==='deleted' && !item.ecs_id) || item.status ==='build_fail'
+      // return (item.status ==='deleted' && !item.is_follow_delete) || item.status ==='build_fail'
     })
     if(str==="restore"){
       if(!flag){
@@ -501,7 +503,8 @@ export default class extends Vue {
     }else if(label==="restore"){
       return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
     }else if(label==="destroy"){
-      return ((obj.status==="deleted" && obj.is_follow_delete===false) || obj.status ==='build_fail') && this.auth_list.includes(label)
+      return ((obj.status==="deleted" && !obj.ecs_id) || obj.status ==='build_fail') && this.auth_list.includes(label)
+      // return ((obj.status==="deleted" && obj.is_follow_delete===false) || obj.status ==='build_fail') && this.auth_list.includes(label)
     }else if(label==="disk_capacity"){
       return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting" && this.auth_list.includes('disk_capacity')
     }else if(label==="edit_attr"){
