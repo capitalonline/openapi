@@ -69,7 +69,8 @@ export default class Shield extends Vue{
     private search_data:any = {};
     private multipleSelection:any=[];
     private operateType:string='';
-    private moment = moment
+    private moment = moment;
+    private visible:boolean=false
     private headerOperateBtns={
         alarm_create:'创建屏蔽',
         del:'删除',
@@ -126,12 +127,13 @@ export default class Shield extends Vue{
                 id:row.id
             }})
         }else if(val==='detail'){
-            this.$router.push({
-                path:'/alarmInfo/detail',
-                query:{
-                    id:row.id
-                }
-            })
+            this.visible=true
+            // this.$router.push({
+            //     path:'/alarmInfo/detail',
+            //     query:{
+            //         id:row.id
+            //     }
+            // })
         }else if(['apply','stop'].includes(val)){
             this.apply()
         }else if(val==='del'){
@@ -154,9 +156,9 @@ export default class Shield extends Vue{
             //flag为true时不能操作
             let applyFlag = list.some(item=>item.enable===1 || this.judgeDeadTime(item.shield_end_time))
             flag = !applyFlag
-        }else if(type==='stop'){
+        }else if(['stop','detail'].includes(type)){
             flag = !list.some(item=>item.enable===0)
-        }else if(type==='del'){
+        }else if(['edit','del'].includes(type)){
             flag = !list.some(item=>item.enable===1)
         }
         return flag

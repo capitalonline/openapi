@@ -38,71 +38,74 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item prop="condition" label="条件">
-                    <div v-for="(con,index) in shieldData.condition" :key="con.label">
-                        <el-select v-model="con.label" @change="changeLabel(index)">
-                            <el-option
-                                v-for="item in conditionList"
-                                :disabled="selectedIds.includes(item.label)"
-                                :key="item.label"
-                                :label="item.name"
-                                :value="item.label"
-                            >
-                            </el-option>
-                        </el-select>
-                        <el-select v-model="con.oper" class="m-left10 m-right10">
-                            <el-option
-                                v-for="item in operateIcon"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id"
-                            >
-                            </el-option>
-                        </el-select>
-                        <template v-if="['id'].includes(con.label)">
-                            <el-input v-model="con.value" class="w-420" />
-                        </template>
-                        <template v-else-if="['customer_id'].includes(con.label)">
-                            <div class="w-420">
-                                <customer :customers="[]"  @FnCustomer="FnCustomer"></customer>
-                            </div>
-                        </template>
-                        <template v-else-if="['to_group','alertname'].includes(con.label)">
-                            <!--策略和规则-->
-                            <el-select
-                                v-model="con.value" 
-                                class="w-420"
-                                filterable
-                                multiple
-                                :filter-method="con.label==='to_group'? getStrategyInfo : getRuleInfo"
-                                @visible-change="changeValue($event,con.label)"
-                            >
+                    <div class="content">
+                        <div v-for="(con,index) in shieldData.condition" :key="con.label"  class="item">
+                            <el-select v-model="con.label" @change="changeLabel(index)">
                                 <el-option
-                                    v-for="item in labelContent[con.label]"
-                                    :key="item.id"
+                                    v-for="item in conditionList"
+                                    :disabled="selectedIds.includes(item.label)"
+                                    :key="item.label"
                                     :label="item.name"
-                                    :value="item.name"
+                                    :value="item.label"
                                 >
                                 </el-option>
                             </el-select>
-                        </template>
-                        <template v-else>
-                            <el-select
-                                v-model="con.value" 
-                                class="w-420"
-                            >
+                            <el-select v-model="con.oper" class="m-left10 m-right10">
                                 <el-option
-                                    v-for="item in labelContent[con.label]"
+                                    v-for="item in operateIcon"
                                     :key="item.id"
                                     :label="item.name"
                                     :value="item.id"
                                 >
                                 </el-option>
                             </el-select>
-                        </template>
-                        <el-button type="text" @click="delCondition(con.label)" v-if="index!==0"><i class="el-icon-remove"></i></el-button>
+                            <template v-if="['id'].includes(con.label)">
+                                <el-input v-model="con.value" class="w-420" />
+                            </template>
+                            <template v-else-if="['customer_id'].includes(con.label)">
+                                <div class="w-420">
+                                    <customer :customers="con.value"  @FnCustomer="FnCustomer"></customer>
+                                </div>
+                            </template>
+                            <template v-else-if="['to_group','alertname'].includes(con.label)">
+                                <!--策略和规则-->
+                                <el-select
+                                    v-model="con.value" 
+                                    class="w-420"
+                                    filterable
+                                    multiple
+                                    :filter-method="con.label==='to_group'? getStrategyInfo : getRuleInfo"
+                                    @visible-change="changeValue($event,con.label)"
+                                >
+                                    <el-option
+                                        v-for="item in labelContent[con.label]"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.name"
+                                    >
+                                    </el-option>
+                                </el-select>
+                            </template>
+                            <template v-else>
+                                <el-select
+                                    v-model="con.value" 
+                                    class="w-420"
+                                >
+                                    <el-option
+                                        v-for="item in labelContent[con.label]"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.name"
+                                    >
+                                    </el-option>
+                                </el-select>
+                            </template>
+                            <el-button type="text" @click="delCondition(con.label)" v-if="shieldData.condition.length>1"><i class="el-icon-remove"></i></el-button>
+                            <div v-if="!con.value || con.value.length===0" class="error_message err">请输入或选择条件值</div>
+                        </div>
+                         <el-button type="text" @click="addCondition" v-if="shieldData.condition.length < conditionList.length"><i class="el-icon-circle-plus"></i></el-button>
+
                     </div>
-                    <el-button type="text" @click="addCondition"><i class="el-icon-circle-plus"></i></el-button>
-                        
                     
                 </el-form-item>
                 <el-form-item prop="time" label="静默时间">
@@ -136,11 +139,12 @@
                         placeholder="选择时间">
                     </el-date-picker>
                 </div>
-                
+                <div class="time error_message m-top10" v-if="(Number(shieldData.timeScope)===0 && shieldData.timeRange.length===0) || (Number(shieldData.timeScope)===1 && !shieldData.endTime)">请选择时间</div>
             </el-form>
+            <el-button type="primary" class="confirm" @click="confirm">确定</el-button>
+
         </el-card>
         
-        <el-button type="primary" @click="confirm">确定</el-button>
     </div>
 </template>
 <script lang="ts">
@@ -149,11 +153,9 @@ import Service from '../../https/alarm/list';
 import CreateService from '../../https/instance/create'
 import BackHeader from '../../components/backHeader.vue';
 import Customer from '../../components/customerInput.vue';
-// import {alarm_type} from '../../assets/alarm_data.ts';
+import {alarm_type} from '../../assets/alarm_data.ts';
 import HostService from '../../https/physical/list'
-import {deal_list} from '../../utils/transIndex';
-import svgIcon from '@/components/svgIcon/index.vue';
-import MarkTip from '@/components/markTip.vue';
+import {deal_list} from '../../utils/transIndex'
 import moment from 'moment';
 @Component({
     components:{
@@ -184,9 +186,7 @@ export default class CreateShield extends Vue{
     private IDConditionList:any=[]
     private timeScopeList:any=[];
     private operateIcon:any=[{id:0,name:'等于'},{id:1,name:'正则'}];
-    private customerList:any=[];
-    private minDate:any='';
-    private maxDate:any=''
+    private customerList:any=[]
     private labelContent:any={
         to_group:[],
         alertname:[],
@@ -212,19 +212,10 @@ export default class CreateShield extends Vue{
             {required:true,message:'请输入屏蔽名称',trigger:'blur'},
             { pattern:/^[\u4e00-\u9fa5_a-zA-Z0-9-_:()\u002E]{2,60}$/,message:'名称长度应为2-60个字符',trigger:'blur' }
         ],
-        condition:[{required:true,message:'请输入屏蔽条件',validator:this.validCondition}]
-    }
-    private validCondition(rule, value, callback){
-        if(this.shieldData.condition.some(item=>!item.value || item.value.length===0)){            
-            return callback(new Error('请输入屏蔽条件'))
-        }else{
-            return callback()
-        }
     }
     created() {
         if(this.$route.query && this.$route.query.id){
             this.edit_id = this.$route.query.id as string;
-            this.getDetail()
         }
         this.get_create_info();
         this.getRegionAz();
@@ -235,27 +226,24 @@ export default class CreateShield extends Vue{
     private async getDetail(){        
         let res:any = await Service.shield_detail({id:this.edit_id})
         if(res.code==='Success'){
-            
             this.shieldData.name = res.data.shield_name;
             this.shieldData.mechanism = res.data.shield_mechanism;
             this.shieldData.scope = res.data.effective_scope;
-            // this.shieldData.conditions.value = res.data.conditions;
-            this.shieldData.timeScope = res.data.shield_time_ch;
-            if(this.shieldData.timeScope==='特定时间范围'){
+            this.shieldData.timeScope = res.data.shield_time;
+            if(this.shieldData.timeScope===0){
                 this.shieldData.timeRange = [res.data.shield_start_time,res.data.shield_end_time];
-            }else if(this.shieldData.timeScope==='特定时间为止'){
+            }else if(this.shieldData.timeScope===1){
                 this.shieldData.endTime = res.data.shield_end_time;
             }
-            let list:any=[]
+            let list:any=[];
             res.data.conditions.map(item=>{
-                console.log('item.condition_value',item.condition_value.split(','));
-                
                 let len = item.condition_value.split(',')
-                list.push({
+                let obj = {
                     label:item.condition_object,
                     oper:item.operator,
                     value:len.length===0 ? '' : len.length===1 ? len[0] : len
-                })
+                }                
+                list.push(obj)
             })
             this.shieldData.condition=[...list]
         }
@@ -267,23 +255,15 @@ export default class CreateShield extends Vue{
             this.scopeList = [...res.data.shield_scope];
             this.conditionList = res.data.condition_object;
             this.timeScopeList = res.data.shield_time;
-            this.IDConditionList = res.data.condition_object.filter(item=>item.label==='id')
-            
-            // if(!this.edit_id){
-            this.shieldData.mechanism = this.mechanismList[0]?.id;
-            this.shieldData.scope = this.scopeList[0]?.id;   
-            if(Number(this.shieldData.scope)===3){
-                this.conditionList = this.conditionList.filter(item=>item.label!=='id');
-            }             
-            this.shieldData.condition[0].label =Number(this.shieldData.scope)===3 ? this.conditionList[0]?.label :this.IDConditionList[0]?.label
-            this.shieldData.condition[0].oper = this.operateIcon[0].id
-            this.shieldData.timeScope = this.timeScopeList[0]?.id
-            if(this.edit_id){
+            if(!this.edit_id){
+                this.shieldData.mechanism = this.mechanismList[0]?.id;
+                this.shieldData.scope = this.scopeList[0]?.id
+                this.shieldData.condition[0].label =this.conditionList[0]?.label
+                this.shieldData.condition[0].oper = this.operateIcon[0].id
+                this.shieldData.timeScope = this.timeScopeList[0]?.id
+            }else{
                 this.getDetail()
             }
-            // }else{
-                
-            // }
             
         }
     }
@@ -370,6 +350,12 @@ export default class CreateShield extends Vue{
         let form = this.$refs.form as any;
         form.validate(async valid=>{
             if(valid){
+                if((Number(this.shieldData.timeScope)===0 && this.shieldData.timeRange.length===0) || (Number(this.shieldData.timeScope)===1 && !this.shieldData.endTime)){
+                    return;
+                }
+                if(this.shieldData.condition.some(item=>!item.value ||item.value.length===0)){
+                    return;
+                }
                 console.log('this.shieldData',this.shieldData)
                 let list = []
                 this.shieldData.condition.map(item=>{
@@ -380,19 +366,20 @@ export default class CreateShield extends Vue{
                     })
                     return item;
                 })
-                // let res:any = await Service[this.edit_id? 'edit_shield' :'create_shield']({
-                //     id:this.edit_id ? this.edit_id : undefined,
-                //     shield_name:this.shieldData.name,
-                //     shield_mechanism:Number(this.shieldData.mechanism),
-                //     effective_scope:Number(this.shieldData.scope),
-                //     shield_time:Number(this.shieldData.timeScope),
-                //     shield_start_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[0]).format('YYYY-MM-DD HH:mm:ss'):undefined,
-                //     shield_end_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[1]).format('YYYY-MM-DD HH:mm:ss'):Number(this.shieldData.timeScope)===1 ? moment(this.shieldData.endTime).format('YYYY-MM-DD HH:mm:ss') :undefined,
-                //     conditions:list
-                // })
-                // if(res.code==='Success'){
-
-                // }
+                let res:any = await Service[this.edit_id? 'edit_shield' :'create_shield']({
+                    id:this.edit_id ? this.edit_id : undefined,
+                    shield_name:this.shieldData.name,
+                    shield_mechanism:Number(this.shieldData.mechanism),
+                    effective_scope:Number(this.shieldData.scope),
+                    shield_time:Number(this.shieldData.timeScope),
+                    shield_start_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[0]).format('YYYY-MM-DD HH:mm:ss'):undefined,
+                    shield_end_time:Number(this.shieldData.timeScope)===0 ? moment(this.shieldData.timeRange[1]).format('YYYY-MM-DD HH:mm:ss'):Number(this.shieldData.timeScope)===1 ? moment(this.shieldData.endTime).format('YYYY-MM-DD HH:mm:ss') :undefined,
+                    conditions:list
+                })
+                if(res.code==='Success'){
+                    this.$message.success(res.message)
+                    this.$router.go(-1)
+                }
             }
         })
     }
@@ -413,5 +400,23 @@ export default class CreateShield extends Vue{
 }
 .time{
     margin-left: 100px;
+}
+
+.content{
+    background: #f5f6fa;
+    padding: 20px;
+    .item{
+        position: relative;
+        margin-bottom: 12px;
+        .err{
+            position: absolute;
+            margin-top: -12px;
+            margin-left: 410px;
+        }
+    }
+}
+.confirm{
+    float: right;
+    margin-bottom: 10px;
 }
 </style>

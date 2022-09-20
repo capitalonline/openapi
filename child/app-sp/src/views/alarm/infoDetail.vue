@@ -2,7 +2,7 @@
     <el-dialog
       :title="'详情'"
       :visible.sync="visibleSync"
-      width="800px"
+      width="400"
       :destroy-on-close="true"
       :close-on-click-modal="false"
     >
