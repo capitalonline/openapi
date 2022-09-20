@@ -133,7 +133,7 @@ export default class Index extends Vue{
                             const temp_obj={
                                 metricID:inn.metricID[1],
                                 metricCondition:lev.range,
-                                metricValue:parseInt(lev.num),
+                                metricValue:Number(lev.num),
                                 metricPeriod:parseInt(lev.cycle_time),
                                 metricPeriodNum:parseInt(lev.cycle_num),
                                 level:parseInt(lev.alram_type),
