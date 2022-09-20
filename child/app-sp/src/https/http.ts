@@ -56,7 +56,6 @@ instance.interceptors.response.use(
     if (loadingCount <= 0) {
       loadingInstance.close();
     }
-    console.log("error",error)
     if(error.response.status == 401) {
     } else {
       
