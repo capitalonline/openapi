@@ -119,6 +119,10 @@ export default{
     create_shield(req){
         return service(getAlarmOptions('POST','/shield',req))
     },
+    //编辑告警策略
+    edit_shield(req){
+        return service(getAlarmOptions('PUT','/shield',req))
+    },
     //获取屏蔽详情
     shield_detail(req){
         return service(getAlarmOptions('GET','/shield',req))
