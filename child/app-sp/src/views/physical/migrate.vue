@@ -136,34 +136,10 @@ export default class Migrate extends Vue{
         this.setUsableList(this.rows)      
         this.list=this.rows[0].ecs_list;
     }
-    private setUsableList(data){
-        let status_list = data[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
-        let list:any=[]
-        status_list.map(item=>{
-            if(item.is_gpu && item.status==='已关机'){
-                list.push(item.ecs_id)
-            }else if(!item.is_gpu &&item.disk_info && item.disk_info.system){
-                if(Object.keys(item.disk_info.system)[0]!=='local'){//cpu云盘
-                    if(['已关机','运行中'].includes(item.status)){//cpu云盘
-                        list.push(item.ecs_id)
-                    }
-                }else{//cpu本地盘
-                    if(item.status==='已关机'){
-                        list.push(item.ecs_id)
-                    }
-                }
-            }
-        })
-        this.useable_list=list//可以进行迁移的云主机  
-    }
-    private async getHostList(){
-        // this.$store.commit("SET_LOADING", false);
-        let res:any=await Service.get_host_list({
-            host_name:this.rows[0].host_name
-        })
-        if(res.code==='Success'){
-            this.list = res.data.host_list[0].ecs_list;
-            this.setUsableList(res.data.host_list) 
+    //关闭面板时重新获取实例列表  
+    private change_physical(val){
+        if(!val){
+            this.get_physical_list()
         }
     }
     private getMsg(item){
