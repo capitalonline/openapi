@@ -19,12 +19,12 @@
             </el-table-column>
             <el-table-column prop="updated_time" label="修改时间">
                 <template slot-scope="scope">
-                    <span>{{moment(scope.row.updated_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
+                    <span>{{moment(scope.row.created_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operation" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" v-for="(item,i) in operateBtns" :key="item" :disabled="!FnDisable(i,scope.row) || !authList.includes(i)" @click="handle(i,scope.row)">{{item}}</el-button>
+                    <el-button type="text" v-for="(item,i) in operateBtns" :key="item" :disabled="!FnDisable(i,scope.row)" @click="handle(i,scope.row)">{{item}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -69,9 +69,7 @@ export default class Shield extends Vue{
     private search_data:any = {};
     private multipleSelection:any=[];
     private operateType:string='';
-    private moment = moment;
-    private visible:boolean=false;
-    private authList:any=[]
+    private moment = moment
     private headerOperateBtns={
         alarm_create:'创建屏蔽',
         del:'删除',
@@ -86,8 +84,7 @@ export default class Shield extends Vue{
         del:'删除',
     }
     created() {
-        this.getShieldList();
-        this.authList = this.$store.state.auth_info[this.$route.name]
+        this.getShieldList()
     }
     private async getShieldList(){
         let res:any = await Service.get_shield_list({
@@ -102,7 +99,6 @@ export default class Shield extends Vue{
         }
     }
     private fn_search(data:any={}){
-        this.current = 1
         this.search_data = {...data}
         this.getShieldList()
     }
@@ -118,18 +114,24 @@ export default class Shield extends Vue{
         this.multipleSelection = val;
     }
     private handle(val:string,row:any={}){
+        console.log('row',row,this.$store.state.auth_info);
         if(Object.keys(row).length>0){
             this.multipleSelection=[row];
         }
         this.operateType=val
-        if(val==='alarm_create'){
+        if(val==='create'){
             this.$router.push('/alarmInfo/create')
         }else if(val==='edit'){
             this.$router.push({path:'/alarmInfo/create',query:{
                 id:row.id
             }})
         }else if(val==='detail'){
-            this.visible=true
+            this.$router.push({
+                path:'/alarmInfo/detail',
+                query:{
+                    id:row.id
+                }
+            })
         }else if(['apply','stop'].includes(val)){
             this.apply()
         }else if(val==='del'){
@@ -152,9 +154,9 @@ export default class Shield extends Vue{
             //flag为true时不能操作
             let applyFlag = list.some(item=>item.enable===1 || this.judgeDeadTime(item.shield_end_time))
             flag = !applyFlag
-        }else if(['stop'].includes(type)){
+        }else if(type==='stop'){
             flag = !list.some(item=>item.enable===0)
-        }else if(['edit','del'].includes(type)){
+        }else if(type==='del'){
             flag = !list.some(item=>item.enable===1)
         }
         return flag

@@ -1,26 +1,25 @@
 <template>
-    <el-dialog
-      :title="'屏蔽详情'"
-      :visible.sync="visibleSync"
-      width="800px"
-      :destroy-on-close="true"
-      :close-on-click-modal="false"
-    >
-        <div class="box">
+    <div class="detail">
+        <back-header :title="'屏蔽详情'" back_url="/alarmInfo"></back-header>
+        <el-card>
             <el-descriptions title="" :column="1" labelClassName='label'>
                 <el-descriptions-item v-for="(item,i) in info" :key="i" :label="item.label">
-                    <span v-html="item.value"></span>
-                    <!-- <span v-else>
-                        <span v-for="inn in item.value" :key="inn.id" class="item"><span class="item-label">{{inn.condition_object_ch}} : </span>{{inn.condition_value}}<br></span>
-                    </span> -->
+                    <span v-html="item.value" v-if="i!=='conditions'"></span>
+                    <span v-else>
+                        <span v-for="inn in item.value" :key="inn.id">{{inn.condition_object_ch}} : {{inn.id}}<br></span>
+                    </span>
                 </el-descriptions-item>
             </el-descriptions>
-            <el-table :data="conditions" border class="m-top10">
-                <el-table-column prop="condition_object_ch" label="条件对象" align="center"></el-table-column>
-                <el-table-column prop="condition_value" label="取值" align="center"></el-table-column>
-            </el-table>
-        </div>
-    </el-dialog>  
+        </el-card>
+        
+        <!-- <div v-for="(item,i) in info" :key="i" class="item">
+            <span>{{item.label}}:</span>
+            <span v-html="item.value" v-if="i!=='conditions'"></span>
+            <span v-else>
+                <div v-for="inn in item.value" :key="inn.id">{{inn.condition_object_ch}} : {{inn.id}}</div>
+            </span>
+        </div> -->
+    </div>
 </template>
 <script lang="ts">
 import {Vue,Component,PropSync,Prop} from 'vue-property-decorator';
@@ -43,6 +42,7 @@ export default class ShieldDetail extends Vue{
     private conditions:any=[]
     private id:string=this.detaiId
     created() {
+        this.id = this.$route.query.id as string;
         this.detail()
     }
     private async detail(){        
@@ -64,22 +64,7 @@ export default class ShieldDetail extends Vue{
 }
 </script>
 <style lang="scss">
-.box{
-    max-height: 500px;
-    overflow-y: auto;
-
-}
 .label{
     width:100px;
-}
-.item{
-    display: block;
-    margin-bottom: 10px;
-    .item-label{
-        display: inline-block;
-        width: 78px;
-        text-align: right;
-        margin-right: 30px;
-    }
 }
 </style>
