@@ -11858,7 +11858,7 @@ def queryVms():
 | accountName  | string | “”                                     | 所属用户名称                                                 |
 | accountEmail | string | “”                                     | 用户邮箱                                                     |
 | expireTime   | string | “2098-12-31T16:00:00.000+0000”         | 包月到期时间                                                 |
-| status       | string | “using”                                | 状态 : configuring(“配置中”), rebooting(“重启中”), starting(“开机中”), using(“已开机”), stoping(“关机中”), stop(“已关机”), deleteing(“删除中”), deleted(“已删除”),dataMoving(“云桌面迁移中”),error(“错误”),asNeedExpiring(“欠费关机中”),asNeedExpired(“已欠费”),asMonthExpiring(“到期关机中”),asMonthExpired(“已到期”),logicalDeleted(“逻辑删除”),destroying(“欠费到期删除中”),destroy(“欠费到期已删除”),invisibleError(“回收错误”) |
+| status       | string | “using”                                | 状态 : configuring(“配置中”), rebooting(“重启中”), starting(“开机中”), using(“已开机”), stoping(“关机中”), stop(“已关机”), deleteing(“删除中”), deleted(“已删除”),dataMoving(“云桌面迁移中”),error(“错误”),asNeedExpiring(“欠费关机中”),asNeedExpired(“已欠费”),asMonthExpiring(“到期关机中”),asMonthExpired(“已到期”),logicalDeleted(“逻辑删除”),destroying(“欠费到期删除中”),destroy(“欠费到期已删除”),invisibleError(“回收错误”),netErr("网络异常") |
 
    **错误码:**
 
@@ -12699,6 +12699,83 @@ def bindAccounts():
         print("request error: %s" % result.get("Message"))
     return result
 ```
+
+### 31.ConfigNet
+
+   **Action: ConfigNet**
+
+  **描述：** 配置云桌面网络（批量）
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：POST**
+
+   **请求参数：**
+
+| 名称      | 类型   | 是否必须 | 示例                                     | 描述         |
+| --------- | ------ | -------- | ---------------------------------------- | ------------ |
+| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid     |
+| vmIds     | array  | 是       | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | vm Ids       |
+
+   **返回参数：**
+
+| 名称           | 类型   | 示例                                   | 描述                      |
+| -------------- | ------ | -------------------------------------- | ------------------------- |
+| Code           | string | Success                                | 返回状态码: Success: 成功 |
+| Message            | string | null                                   | 返回信息                  |
+| Data           | obejct | {}                                     | 返回数据                  |
+| taskId         | string | “8eb19f5b-fd44-4225-94f5-0f9e39e56695” | 任务id                    |
+| vmIds           | array | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面id                  |
+| requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 请求uuid                  |
+| requestContent | string | “”                                     | 请求参数                  |
+
+   **错误码:**
+
+| 错误码 | 错误信息              | 描述                  |
+| ------ | --------------------- | --------------------- |
+| 10003  | 传入参数不符合要求    | 传入参数不符合要求    |
+| 10005  | 账户数据异常          | 账户数据异常          |
+| 13002  | GPU云桌面执行操作失败 | GPU云桌面执行操作失败 |
+
+   **返回示例:**
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "requestContent": "{\"customerId\":\"CDS01236\",\"requestId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"userFrom\":\"cdsapi\",\"userId\":\"681137\",\"vmIds\":[\"gcw-ecb427c719754291959c4073cff0217a\"]}",
+        "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
+        "taskId": "gcw-750f5ef099254fe599a994641d266195",
+        "vmIds": [
+            "gcw-ecb427c719754291959c4073cff0217a"
+        ]
+    },
+    "Message": ""
+}
+```
+
+   **请求调用示例**
+
+```python
+def configNet():
+    '''
+    配置云桌面网络
+    :return:
+    '''
+    action = "ConfigNet"
+    method = "POST"
+    body = {
+        "vmIds":[ "gcw-ecb427c719754291959c4073cff0217a"],
+        "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e"
+    }
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print ("request error: %s" % result.get("Message"))
+    return result
+```
+
 
 ## 弹性云服务器ECS相关
 
