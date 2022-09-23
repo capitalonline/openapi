@@ -3492,10 +3492,9 @@ def modify_public_qos(publicId, qos):
 
 ​	**返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| 名称 | 类型     | 示例值  | 描述   |
+| :--- | -------- | :------ | :----- |
+| Code | Interger | Success | 错误码 |
 
 ​	**错误码：**
 
@@ -3507,8 +3506,7 @@ def modify_public_qos(publicId, qos):
 
 ```json
 {
-"Code":"Success",
-"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376",
+"Code":"Success"
 }
 ```
 
