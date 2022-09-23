@@ -4893,7 +4893,7 @@ def describe_eip(regin_code, key, page, vpc_id, az_code):
 | RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
 | AvailableZoneCode | string | 边缘节点：是 / 云平台节点: 否 |  | VPC可用区code, 见附件五(云平台节点EIP不传此字段/边缘节点必传)     |
 | BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | 是 | BandwIdth | 计费方案 |
+| BillScheme | string | 是 | BandwIdth | 计费方案<br/>BandwIdth（固定带宽，默认）<br/>BandwIdthMonth（固定带宽包月，默认） |
 | Qos | int | 是 | 5 | 带宽大小 |
 | Size | int | 是 | 1 | 创建个数 |
 | Description | string | 否 | test | EIP描述 |
@@ -5342,7 +5342,7 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 | AvailableZoneCode | string | 是 | CN_Hongkong_A | VPC可用区code, 见附件五     |
 | Name | string | 是 | 香港共享带宽 | 共享带宽名称 |
 | BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | 是 | BandwIdth | 计费方案 |
+| BillScheme | string | 是 | BandwIdth | 计费方案<br/>BandwIdth_Shared（固定带宽） |
 | Qos | int | 是 | 5 | 带宽大小 |
 
 
