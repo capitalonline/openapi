@@ -182,6 +182,31 @@
        * [28.ChangeAccount](#28ChangeAccount)
        * [29.UnbindAccounts](#29UnbindAccounts)
        * [30.BindAccounts](#30BindAccounts)
+     * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
+       * [1.DescribeRegions](#1describeregions)
+       * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
+       * [3.DescribeImage](#3describeimage)
+       * [4.DescribeInstanceList](#4describeinstancelist)
+       * [5.DescribePrice](#5describeprice)
+       * [6.DescribeInstance](#6describeinstance)
+       * [7.DescribeInstanceStatus](#7describeinstancestatus)
+       * [8.DescribeEvent](#8describeevent)
+       * [9.CreateInstance](#9createinstance)
+       * [10.OperateInstance](#10operateinstance)
+       * [11.DeleteInstance](#11deleteinstance)
+       * [12.ModifyInstancePassword](#13modifyinstancepassword)
+       * [13.ModifyInstanceName](#13modifyinstancename)
+     * [云盘EBS相关](#云盘ebs相关)
+       * [1.CreateDisk](#1createdisk-1)
+       * [2.DeleteDisk](#2deletedisk)
+       * [3.DetachDisk](#3detachdisk-1)
+       * [4.AttachDisk](#4attachdisk)
+       * [5.ExtendDisk](#5extenddisk)
+       * [6.DescribeDiskQuota](#6describediskquota)
+       * [7.DescribeDiskList](#7describedisklist)
+       * [8.DescribeDisk](#8describedisk)
+       * [9.DescribeEcsAttachDisks](#9describeecsattachdisks)
+       * [10.DescribeEvent](#10describeevent)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -275,7 +300,7 @@
 ```python
 def percentEncode(str):
   	"""将特殊转义字符替换"""
-    res = urllib.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
+    res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
     res = res.replace('%7E', '~')
@@ -311,7 +336,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
     D['Signature'] = signature
-    url = url + '/?' + urllib.urlencode(D)
+    url = url + '/?' + urllib.parse.urlencode(D)
     return url
 ```
 
@@ -343,14 +368,14 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
-| Password           | string   | 否       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
+| Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
-| Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
-| Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
+| Cpu                | int      | 是       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
+| Ram                | int      | 是       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
 | InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
 | ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
@@ -361,6 +386,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | PrivateIp          | list   | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}] |内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
 | UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。|
+| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                                         | 用户自定义数据，格式必须为base64编码                         |
 
 
 
@@ -435,7 +461,7 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create vm error: %s" % result.get("Message"))
+        print("create vm error: %s" % result.get("Message"))
     return result.get("TaskId")
 ```
 
@@ -497,7 +523,7 @@ def delete_instance(vm_ids):
     res = requests.post(url,json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     return True
 ```
@@ -683,7 +709,7 @@ def update_vm(vm_id):
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
-    print result
+    print(result)
 ```
 
 ### 7.CreateDisk
@@ -701,7 +727,7 @@ def update_vm(vm_id):
 | 名称       | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
 | ---------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| DataDisks  | string | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
+| DataDisks  | list | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
 
 ​	**返回参数：**
 
@@ -853,6 +879,7 @@ def add_disk(vm_id):
 | Password   | string | 是       | EcsV587!                             | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
 | PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
 | ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
+| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                 | 用户自定义数据，格式必须为base64编码                         |
 
 ​	**返回参数：**
 
@@ -882,17 +909,18 @@ def add_disk(vm_id):
 ​	**调用代码示例:**
 
 ```python
-def reset_os(vm_id, os_id):
+def reset_os(vm_id, os_id, passwd):
     action = "ResetImage"
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {
         "InstanceId": vm_id,
-        "ImageId": os_id
+        "ImageId": os_id,
+        "Password":  passwd
     }
     res = requests.post(url, json=body)
     result = json.loads(res.ocntent)
-    print result
+    print(result)
 ```
 
 ### 11.DescribeInstances
@@ -932,7 +960,7 @@ def reset_os(vm_id, os_id):
 | VdcId                   | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                   |
 | RegionId                | string   | CN_Beijing_A                                                 | RegionId：Vdc所属的可用区 |
 | SystemDisk              | list     | []                                                           | 系统盘                    |
-| DataDisks               | string   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
+| DataDisks               | list   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
 | PublicNetworkInterface  | string   |                                                              | 公网网卡信息              |
 | PrivateNetworkInterface | string   |                                                              | 私网网卡信息              |
 | Cpu                     | int      | 4                                                            | Cpu信息                   |
@@ -1015,16 +1043,16 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {}
-    if vm_id:
-        body.update({"InstanceId": vm_id})
+    if instance_id:
+        body.update({"InstanceId": instance_id})
     if vdc_id:
         body.update({"VdcId": vdc_id})
     if pub_ip:
-        body.update({"PubIp": pub_ip})
+        body.update({"PublicIp": pub_ip})
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vm error."
+        print("get vm error.")
         return None
     return result.get("Data")
 ```
@@ -1090,8 +1118,8 @@ def up_card(InterfaceId, InstanceId):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "up card error."
-        print result.get("Message")
+        print("up card error.")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -1153,8 +1181,8 @@ def down_card(InterfaceId, InstanceId):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "down card error."
-        print result.get("Message")
+        print("down card error.")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -1336,7 +1364,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1377,7 +1405,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1429,7 +1457,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **返回示例：**
 
@@ -1463,7 +1491,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 **错误码：**
 
@@ -1505,7 +1533,7 @@ def down_card(InterfaceId, InstanceId):
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
-| TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
+| Message | string   |  | 提示信息 |
 
 
 **返回示例：**
@@ -1866,13 +1894,13 @@ def down_card(InterfaceId, InstanceId):
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
-| Cpu                | int      | 否       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
-| Ram                | int      | 否       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
-| InstanceType       | string   | 否       | Standard                                                     |                                                              |
-| ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
+| Cpu                | int      | 是       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
+| Ram                | int      | 是       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
+| InstanceType       | string   | 是       | Standard                                                     |                                                              |
+| ImageId            | string   | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
+| SystemDisk         | Dict     | 是       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5 }        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
 | DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk" },{  "Size": 50,  "Type": "high_disk" }] |                                                              |
-| Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
+| Amount             | integer  | 是       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 
 **返回参数：**
 
@@ -3052,7 +3080,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vdc info error."
+        print("get vdc info error.")
         return None
     data = result.get("Data")
     return data
@@ -3136,7 +3164,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "create vdc error."
+        print("create vdc error.")
         return None
     task_id = result.get("TaskId")
     return task_id
@@ -3352,7 +3380,7 @@ def modify_public_qos(publicId, qos):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
     task_id = result.get("TaskId")
     return task_id
 ```
@@ -3958,7 +3986,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create GPN error: %s" % result.get("Message"))
+        print("create GPN error: %s" % result.get("Message"))
     return result.get("TaskId")
 ```
 
@@ -6557,7 +6585,7 @@ def describe_bms_images():
 | CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
 | CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
 | SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
-| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     | 
+| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     |
 | PortMode            | string | 否      | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上|
 
 **返回数据：**
@@ -10068,7 +10096,7 @@ def queryTask():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10153,7 +10181,7 @@ def querySites():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10250,7 +10278,7 @@ def queryProducts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10403,7 +10431,7 @@ def queryImages():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10487,7 +10515,7 @@ def queryVmPrice():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10573,7 +10601,7 @@ def updateOrder():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10660,7 +10688,7 @@ def renewalOrder():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10691,6 +10719,7 @@ def renewalOrder():
 | Data      | list   | []                                     | 返回数据                                                     |
 | accountId | string | “7e7ba91e-4357-470a-9609-ce60d9d7e38f” | 用户id                                                       |
 | name      | string | “miao123”                              | 用户的名称                                                   |
+| password     | string | “CDS—GCW666”                         | 用户密码      |
 | email     | string | “”                                     | 邮箱                                                         |
 | remark    | string | “miao123”                              | 备注                                                         |
 | bindNum   | int    | 0                                      | 已绑定云桌面的数量                                           |
@@ -10712,6 +10741,7 @@ def renewalOrder():
             "bindNum": 0,
             "email": "17716313367@163.com",
             "name": "miao123",
+            "password": "CDS—GCW666",
             "remark": "miao123"
         }
     ],
@@ -10735,7 +10765,7 @@ def querySubAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10754,6 +10784,7 @@ def querySubAccounts():
 | 名称      | 类型   | 是否必须 | 示例                                    | 描述                                                         |
 | --------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
+| password     | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合        |
 | email     | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name      | string | 是       | miao123                                 | 用户的名称                                                   |
 | remark    | string | 否       | “miao123”                               | 备注，，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
@@ -10804,7 +10835,7 @@ def createSubAccount():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return resul
 ```
 
@@ -10824,6 +10855,7 @@ def createSubAccount():
 | ------------------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId           | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
 | createAccountParams | list   | 是       | []                                      | 账户参数                                                     |
+| password            | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合 |
 | email               | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name                | string | 是       | “miao123”                               | 用户的名称                                                   |
 | remark              | string | 否       | “miao123”                               | 备注，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
@@ -10896,7 +10928,7 @@ def createSubAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -10964,7 +10996,7 @@ def changeSubAccountName():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11032,7 +11064,7 @@ def changeSubAccountRemark():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11106,7 +11138,7 @@ def createDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11180,7 +11212,7 @@ def supplyDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11333,7 +11365,7 @@ def getDefaultNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11476,7 +11508,7 @@ def getCustomNet():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11615,7 +11647,7 @@ def getLineBillingScheme():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11716,7 +11748,7 @@ def getEipPrice():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11786,7 +11818,7 @@ def queryVms():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11876,7 +11908,7 @@ def queryVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11905,7 +11937,7 @@ def queryVm():
 | Data       | list     | []       | 返回数据                  |
 | vmName     | string   | “”       | 云桌面的名称              |
 | billMethod | int      | “”       | 计费类型                  |
-| expireTime | string   | “”       | 包月到期时间              | 
+| expireTime | string   | “”       | 包月到期时间              |
 | status     | string   | “”       | 状态                      |
 
    **错误码:**
@@ -11946,7 +11978,7 @@ def queryExpireVms():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -11981,8 +12013,8 @@ def queryExpireVms():
 | qos            | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
 | vpcId          | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
-| vGatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
-| vGatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
+| vgatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
+| vgatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
 
    **返回参数：**
 
@@ -12060,7 +12092,7 @@ def createVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12140,7 +12172,7 @@ def operateVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12216,7 +12248,7 @@ def rebuildVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12292,7 +12324,7 @@ def deleteVm():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12358,7 +12390,7 @@ def changeVmName():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12424,7 +12456,7 @@ def updateVmLabels():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12490,7 +12522,7 @@ def changeAccount():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12576,7 +12608,7 @@ def unbindAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
@@ -12664,8 +12696,2148 @@ def bindAccounts():
     result = json.loads(res.content)
     print(result)
     if result.get("Code") != "Success":
-        print ("request error: %s" % result.get("Message"))
+        print("request error: %s" % result.get("Message"))
     return result
+```
+
+## 弹性云服务器ECS相关
+
+**云服务器ECS状态(Status)说明**
+
+| code             | 说明       |
+| ---------------- | ---------- |
+| building         | 创建中     |
+| running          | 运行中     |
+| restarting       | 重启中     |
+| shutting_down    | 关机中     |
+| shutdown         | 已关机     |
+| starting_up      | 开机中     |
+| deleting         | 删除中     |
+| deleted          | 已删除     |
+| destroying       | 销毁中     |
+| destroy          | 已销毁     |
+| recovering       | 恢复中     |
+| updating         | 更新中     |
+| error            | 错误       |
+| failed           | 创建失败   |
+| recycling        | 回收中     |
+| cancel_recycling | 取消回收中 |
+| creating_image   | 定制镜像中 |
+
+### 1.DescribeRegions
+
+**Action**: DescribeRegions
+
+**描述**：获取弹性云服务器ECS可售的地域可用区信息
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**:  GET
+
+**返回参数**：
+
+| 名称              | 类型   | 示例值                               | 描述               |
+| ----------------- | ------ | ------------------------------------ | ------------------ |
+| CodeMsg           | string | success                              | 返回码对应基础信息 |
+| Message           | string | 获取地域可用区信息成功               | 返回详细描述信息   |
+| RequestId         | string | b9bb7e27c75656112db63b8213672843     | 请求标识uuid       |
+| RegionGroupName   | string | 中国                                 | 大区名称           |
+| RegionList        | list   | []                                   | 地域列表           |
+| RegionId          | string | 39c6ed64-8d5f-11ec-9247-5293695d0ddd | 地域id             |
+| RegionCode        | string | CN_Huhhot                            | 地域code           |
+| RegionName        | string | 呼和浩特                             | 地域名称           |
+| AzId              | string | f7c3c7a6-8d5f-11ec-9311-5293695d0ddd | 可用区id           |
+| AvailableZoneCode | string | CN_Hohhot_B                          | 可用区code         |
+| AzName            | string | 呼和浩特B                            | 可用区名称         |
+
+**请求示例**
+
+```python
+def region_az_info():
+    """
+    获取地区可用区信息
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeRegions"
+    method = "GET"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取地域可用区信息成功！",
+    "Data": [
+        {
+            "RegionGroupId": "408fd19e-fa78-11e6-bd9a-30b49e091019",
+            "RegionGroupName": "中国",
+            "RegionList": [
+                {
+                    "RegionId": "cdc9be22-a6f8-11eb-be28-ca1003d55bcc",
+                    "RegionName": "呼和浩特",
+                    "AzList": [
+                        {
+                            "AzId": "e5aa47be-da46-11ec-bad2-defff767b3b5",
+                            "AzName": "呼和浩特B",
+                            "AvailableZoneCode": "CN_Hohhot_B"
+                        }
+                    ],
+                    "RegionCode": "CN_Huhhot"
+                },
+                {
+                    "RegionId": "bd477d6e-7f42-11ec-9e90-36a0465df1a6",
+                    "RegionName": "东莞",
+                    "AzList": [
+                        {
+                            "AzId": "ab806602-7f44-11ec-a36f-325a386f61c1",
+                            "AzName": "东莞A",
+                            "AvailableZoneCode": "CN_Dongguan_A"
+                        }
+                    ],
+                    "RegionCode": "CN_Dongguan"
+                },
+                {
+                    "RegionId": "39c6ed64-8d5f-11ec-9247-5293695d0ddd",
+                    "RegionName": "宿迁",
+                    "AzList": [
+                        {
+                            "AzId": "f7c3c7a6-8d5f-11ec-9311-5293695d0ddd",
+                            "AzName": "宿迁A",
+                            "AvailableZoneCode": "CN_Suqian_A"
+                        },
+                        {
+                            "AzId": "09a38804-c1ee-11ec-bd22-4641dfd57315",
+                            "AzName": "宿迁B",
+                            "AvailableZoneCode": "CN_Suqian_B"
+                        }
+                    ],
+                    "RegionCode": "CN_Suqian"
+                }
+            ]
+        }
+    ],
+    "RequestId": "8749860c118311ed843bc2b5d7e451cd"
+}
+```
+
+### 2.DescribeEcsFamilyInfo
+
+**Action**: DescribeEcsFamilyInfo
+
+**描述**：获取弹性云服务器ECS计算类型规格信息
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月                      |
+
+**返回参数**
+
+| 参数             | 类型   | 示例            | 说明               |
+| ---------------- | ------ | --------------- | ------------------ |
+| EcsFamilyInfo    | dict   | {}              | 计算类型族信息字典 |
+| EcsFamilyName    | string | 极速渲染型re3   | 规格族名称         |
+| SpecList         | list   | []              | 规格列表           |
+| Cpu              | int    | 16              | Cpu大小            |
+| Ram              | int    | 32              | 内存大小           |
+| Gpu              | int    | 1               | 显卡数量           |
+| GpuShowType      | string | NVIDIA RTX 3090 | 显卡型号           |
+| SupportGpuDriver | string | Geforce         | 显卡驱动类型       |
+
+**请求示例**
+
+```python
+def ecs_family_info():
+    """
+    获取计算类型族
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeEcsFamilyInfo"
+    method = "GET"
+    param = {
+        "AvailableZoneCode": "CN_Hohhot_B",
+        "BillingMethod": "0"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云服务器类型成功！",
+    "Data": {
+        "EcsFamilyInfo": [
+            {
+                "EcsFamilyName": "Cpu计算型C4",
+                "SpecList": [
+                    {
+                        "GpuShowType": "",
+                        "GpuTypeId": "",
+                        "Cpu": 2,
+                        "Ram": 4,
+                        "Gpu": 0,
+                        "SupportGpuDriver": ""
+                    },
+                    {
+                        "GpuShowType": "",
+                        "GpuTypeId": "",
+                        "Cpu": 4,
+                        "Ram": 8,
+                        "Gpu": 0,
+                        "SupportGpuDriver": ""
+                    }
+                ]
+            },
+            {
+                "EcsFamilyName": "Cpu计算型C3",
+                "SpecList": [
+                    {
+                        "GpuShowType": "",
+                        "GpuTypeId": "",
+                        "Cpu": 4,
+                        "Ram": 8,
+                        "Gpu": 0,
+                        "SupportGpuDriver": ""
+                    }
+                ]
+            },
+            {
+                "EcsFamilyName": "Cpu密集计算型I3",
+                "SpecList": [
+                    {
+                        "GpuShowType": "",
+                        "GpuTypeId": "",
+                        "Cpu": 4,
+                        "Ram": 4,
+                        "Gpu": 0,
+                        "SupportGpuDriver": ""
+                    }
+                ]
+            },
+            {
+                "EcsFamilyName": "专业渲染型rp3",
+                "SpecList": [
+                    {
+                        "GpuShowType": "NVIDIA RTX A5000",
+                        "GpuTypeId": "6d103608-79ba-11ec-b4f5-0456e530f43e",
+                        "Cpu": 16,
+                        "Ram": 32,
+                        "Gpu": 1,
+                        "SupportGpuDriver": "Datacenter"
+                    },
+                    {
+                        "GpuShowType": "NVIDIA RTX A5000",
+                        "GpuTypeId": "6d103608-79ba-11ec-b4f5-0456e530f43e",
+                        "Cpu": 32,
+                        "Ram": 64,
+                        "Gpu": 2,
+                        "SupportGpuDriver": "Datacenter"
+                    }
+                ]
+            },
+            {
+                "EcsFamilyName": "专业渲染型rp2",
+                "SpecList": [
+                    {
+                        "GpuShowType": "NVIDIA RTX A5000",
+                        "GpuTypeId": "6d103608-79ba-11ec-b4f5-0456e530f43e",
+                        "Cpu": 16,
+                        "Ram": 32,
+                        "Gpu": 1,
+                        "SupportGpuDriver": "Datacenter"
+                    },
+                    {
+                        "GpuShowType": "NVIDIA RTX A5000",
+                        "GpuTypeId": "6d103608-79ba-11ec-b4f5-0456e530f43e",
+                        "Cpu": 32,
+                        "Ram": 64,
+                        "Gpu": 2,
+                        "SupportGpuDriver": "Datacenter"
+                    }
+                ]
+            }
+        ]
+    },
+    "RequestId": "f73056a01050e1626a1a9f5b5ae6143d"
+}
+```
+
+### 3.DescribeImage
+
+**Action**: DescribeImage
+
+**描述**：获取镜像信息
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+
+**返回参数**
+
+| 参数             | 类型   | 示例                                 | 说明                                                         |
+| ---------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Public           | dict   | {}                                   | 公共镜像信息字典                                             |
+| Private          | dict   | {}                                   | 私有镜像信息字典                                             |
+| OsVersions       | dict   | {}                                   | 镜像类型字典                                                 |
+| ImageId          | string | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
+| ImageName        | string | create-image1                        | 镜像名称                                                     |
+| OsType           | string | Centos                               | 系统类型                                                     |
+| OsVersion        | string | 7.4                                  | 镜像版本                                                     |
+| OsBit            | string | 64                                   | 镜像系统位数                                                 |
+| Size             | int    | 24                                   | 镜像大小（单位：GB）                                         |
+| Username         | string | root                                 | 系统用户名                                                   |
+| SupportType      | list   | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
+| SupportGpuDriver | string | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
+
+**请求示例**
+
+```python
+def image_info():
+    """
+    获取镜像信息
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeImage"
+    method = "GET"
+    param = {
+        "AvailableZoneCode": ""
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取镜像信息成功！",
+    "Data": {
+        "Public": {
+            "Name": "公共镜像",
+            "OsTemplateType": "public",
+            "OsVersions": {
+                "Centos": [
+                    {
+                        "ImageId": "ee300237-0ef4-40a9-ad79-7470262d4a2f",
+                        "OsVersion": "7.4",
+                        "OsBit": 64,
+                        "ImageName": "Centos 7.4 64位",
+                        "Username": "root",
+                        "SupportGpuDriver": "",
+                        "SupportType": [
+                            "cpu"
+                        ],
+                        "OsType": "Centos",
+                        "Size": 20
+                    },
+                    {
+                        "ImageId": "b2624c3c-d28e-4586-bf1a-20db4be3f680",
+                        "OsVersion": "7.4",
+                        "OsBit": 64,
+                        "ImageName": "Centos 7.4 64位-GPU-Datacenter",
+                        "Username": "root",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Centos",
+                        "Size": 20
+                    },
+                    {
+                        "ImageId": "38e4c433-9ce9-407a-90a2-28082bbe4a71",
+                        "OsVersion": "8.2",
+                        "OsBit": 64,
+                        "ImageName": "Centos 8.2 64位-GPU-Datacenter",
+                        "Username": "root",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Centos",
+                        "Size": 24
+                    },
+                    {
+                        "ImageId": "2421999f-b22d-44e5-a6f9-b37e6c968ca0",
+                        "OsVersion": "8.2",
+                        "OsBit": 64,
+                        "ImageName": "Centos 8.2 64位-GPU-Geforce",
+                        "Username": "root",
+                        "SupportGpuDriver": "Geforce",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Centos",
+                        "Size": 24
+                    }
+                ],
+                "Windows": [
+                    {
+                        "ImageId": "9587d78b-9501-445e-881b-38cbf01dd414",
+                        "OsVersion": "10",
+                        "OsBit": 64,
+                        "ImageName": "Windows 10 64位-GPU-Datacenter",
+                        "Username": "admin",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "cpu",
+                            "gpu"
+                        ],
+                        "OsType": "Windows",
+                        "Size": 40
+                    },
+                    {
+                        "ImageId": "a3d02045-4cb7-446a-92da-ee57b8480fd3",
+                        "OsVersion": "10",
+                        "OsBit": 64,
+                        "ImageName": "Windows 10 64位-GPU-Geforce",
+                        "Username": "admin",
+                        "SupportGpuDriver": "Geforce",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Windows",
+                        "Size": 40
+                    },
+                    {
+                        "ImageId": "3c64a1e9-b629-4c35-8be0-c352b1cf586e",
+                        "OsVersion": "2019",
+                        "OsBit": 64,
+                        "ImageName": "Windows 2019 64位-GPU-Datacenter",
+                        "Username": "administrator",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Windows",
+                        "Size": 40
+                    },
+                    {
+                        "ImageId": "906a60f8-e77d-432c-aa58-21f7d087d77d",
+                        "OsVersion": "2019",
+                        "OsBit": 64,
+                        "ImageName": "Windows 2019 64位-GPU-Geforce",
+                        "Username": "administrator",
+                        "SupportGpuDriver": "Geforce",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Windows",
+                        "Size": 40
+                    }
+                ],
+                "Ubuntu": [
+                    {
+                        "ImageId": "abde20c0-7f39-4e0d-8b58-231afa989561",
+                        "OsVersion": "18.04",
+                        "OsBit": 64,
+                        "ImageName": "Ubuntu 18.04 64位-GPU-Datacenter",
+                        "Username": "root",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Ubuntu",
+                        "Size": 24
+                    },
+                    {
+                        "ImageId": "f0473737-2ed0-4a75-a540-fc2fd0a18b47",
+                        "OsVersion": "18.04",
+                        "OsBit": 64,
+                        "ImageName": "Ubuntu 18.04 64位-GPU-Geforce",
+                        "Username": "root",
+                        "SupportGpuDriver": "Geforce",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Ubuntu",
+                        "Size": 24
+                    },
+                    {
+                        "ImageId": "51d9f8ab-ef6c-4b12-8980-825b6dcd58d8",
+                        "OsVersion": "20.04",
+                        "OsBit": 64,
+                        "ImageName": "Ubuntu 20.04 64位-GPU-Geforce",
+                        "Username": "root",
+                        "SupportGpuDriver": "Geforce",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Ubuntu",
+                        "Size": 24
+                    },
+                    {
+                        "ImageId": "7d54c51a-b411-43c2-a9da-d0f2b5990688",
+                        "OsVersion": "20.04",
+                        "OsBit": 64,
+                        "ImageName": "Ubuntu 20.04 64位",
+                        "Username": "root",
+                        "SupportGpuDriver": "",
+                        "SupportType": [
+                            "cpu"
+                        ],
+                        "OsType": "Ubuntu",
+                        "Size": 24
+                    },
+                    {
+                        "ImageId": "db1dba9b-6939-4d56-8520-382dcf1465a2",
+                        "OsVersion": "20.04",
+                        "OsBit": 64,
+                        "ImageName": "Ubuntu 20.04 64位-GPU-Datacenter",
+                        "Username": "root",
+                        "SupportGpuDriver": "Datacenter",
+                        "SupportType": [
+                            "gpu"
+                        ],
+                        "OsType": "Ubuntu",
+                        "Size": 24
+                    }
+                ]
+            }
+        },
+        "Private": {
+            "Name": "自定义镜像",
+            "OsTemplateType": "private",
+            "OsVersions": {
+                "Centos": [
+                    {
+                        "ImageId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7",
+                        "OsVersion": "7.4",
+                        "OsBit": 64,
+                        "ImageName": "nasCentos 7.4 64位",
+                        "Username": "root",
+                        "SupportGpuDriver": "",
+                        "SupportType": [
+                            "cpu"
+                        ],
+                        "OsType": "Centos",
+                        "Size": 24
+                    }
+                ]
+            }
+        }
+    },
+    "RequestId": "0343bc60-e876-11eb-aa87-30c9ab46699c"
+}
+```
+
+### 4.DescribeInstanceList
+
+**Action**: DescribeInstanceList
+
+**描述**: 获取云服务器列表
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数              | 要求 | 类型   | 说明                                         |
+| ----------------- | ---- | ------ | -------------------------------------------- |
+| AvailableZoneCode | 可选 | string | 可用区code                                   |
+| VpcId             | 可选 | string | vpc id                                       |
+| SearchInfo        | 可选 | string | 搜索信息（可传实例id或者实例名称或者私网ip） |
+| PageNumber        | 可选 | int    | 当前页数（分页参数不传返回所有数据）         |
+| PageSize          | 可选 | int    | 每页数据条数（分页参数不传返回所有数据）     |
+
+**返回参数**
+
+| 参数              | 类型     | 示例                | 说明                               |
+| ----------------- | -------- | ------------------- | ---------------------------------- |
+| PageNumber        | int      | 1                   | 当前页数                           |
+| PageSize          | int      | 1                   | 每页数据条数                       |
+| TotalCount        | int      | 10                  | 总记录数                           |
+| EcsList           | list     | []                  | 云服务器列表                       |
+| Status            | string   | shutdown            | 云服务器状态码                     |
+| StatusDisplay     | string   | 已关机              | 云服务器状态                       |
+| PrivateNet        | string   | 10.10.10.10         | 私网ip                             |
+| PubNet            | string   | 10.10.10.11         | 默认虚拟出网网关ip                 |
+| VirtualNet        | list     | []                  | 其他线路出网网关ip列表             |
+| EipInfo           | dict     | {}                  | 出网网关ip和公网ip对应字典         |
+| ConfName          | string   | 电信                | 网络带宽运营商，如电信、移动、联通 |
+| EipIp             | string   | 111.111.111.111     | 公网ip                             |
+| CreateTime        | datetime | 2022-07-22 16:41:28 | 创建时间                           |
+| EcsFamilyName     | string   | 专业渲染型rp3       | 规格族名称                         |
+| CpuSize           | int      | 16                  | Cpu大小                            |
+| RamSize           | int      | 32                  | 内存大小                           |
+| IsGpu             | bool     | true                | 是否是gpu类型                      |
+| GpuSize           | int      | 1                   | 显卡数量                           |
+| CardName          | string   | NVIDIA RTX A5000    | 显卡型号                           |
+| BillingMethodName | string   | 包年包月            | 计费方式名称                       |
+| EndBillTime       | datetime | 2022-08-22 16:41:28 | 到期时间                           |
+| IsAutoRenewal     | string   | 0                   | 到期是否自动续约                   |
+| ImageName         | string   | Centos 7.4 64位     | 镜像名称                           |
+| SystemDiskType    | string   | SSD云盘             | 系统盘类型                         |
+| SystemDiskSize    | int      | 24                  | 系统盘大小                         |
+
+**请求示例**
+
+```python
+def ecs_list():
+    """
+    获取云服务器列表
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeInstanceList"
+    method = "GET"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "CodeMsg": "success",
+    "Message": "获取云服务器列表成功！",
+    "Data": {
+        "EcsList": [
+            {
+                "EcsId": "ins-tevgfaaronl12h11",
+                "EcsName": "openAPI-MPUB--101",
+                "VpcId": "9a25d704-fe63-11ec-a994-2e3db9adf607",
+                "VpcName": "呼和浩特B-VPC",
+                "Status": "running",
+                "StatusDisplay": "运行中",
+                "AzId": "e5aa47be-da46-11ec-bad2-defff767b3b5",
+                "AzName": "呼和浩特B",
+                "RegionId": "cdc9be22-a6f8-11eb-be28-ca1003d55bcc",
+                "RegionName": "呼和浩特",
+                "PrivateNet": "10.15.100.147",
+                "PubNet": "10.15.1.40",
+                "VirtualNet": [],
+                "EipInfo": {
+                    "10.15.100.147": {
+                        "ConfName": "",
+                        "EipIp": ""
+                    },
+                    "10.15.1.40": {
+                        "ConfName": "移动",
+                        "EipIp": "117.161.233.90"
+                    }
+                },
+                "CreateTime": "2022-07-31 14:14:59",
+                "EndBillTime": "2099-01-01 00:00:00",
+                "IsAutoRenewal": "1",
+                "IsGpu": false,
+                "CardName": "",
+                "CpuSize": 4,
+                "RamSize": 4,
+                "GpuSize": 0,
+                "BillingMethodName": "按需计费",
+                "BillingMethod": "0",
+                "OsType": "Centos",
+                "OsVersion": "7.4",
+                "ImageName": "Centos 7.4 64位",
+                "OsBit": 64,
+                "CustomerId": "E104616",
+                "SystemDiskType": "本地盘",
+                "SystemDiskFeature": "local",
+                "SystemDiskSize": 50,
+                "SupportGpuDriver": "",
+                "SpecFamilyId": "bd1a7a0a-f29f-11ec-a66c-7a4c8683bd6c",
+                "EcsFamilyName": "CPU密集计算型I3"
+            }
+        ]
+    },
+    "PageNumber": 1,
+    "PageSize": 1,
+    "TotalCount": 6,
+    "RequestId": "0343bc60-e876-11eb-aa87-30c9ab46699c"
+
+}
+```
+
+### 5.DescribePrice
+
+**Action**: DescribePrice
+
+**描述**：获取云服务器价格
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 可选 | string | 云服务器规格族名称,例：Ram渲染型GN6-01                       |
+| Cpu               | 必选 | int    | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Ram               | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| Gpu               | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
+| DiskFeature       | 必选 | string | 盘类型,如："ssd","local"                                     |
+| DataDiskInfo      | 可选 | list   | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
+| Number            | 可选 | int    | 购买数量，默认为1                                            |
+
+**返回参数**
+
+|    参数     |  类型  |  示例  |     说明      |
+| :---------: | :----: | :----: | :-----------: |
+|  PriceUnit  | string |   天   | 价格时间单位  |
+| PriceSymbol | string |   ￥   |   币种符号    |
+| TotalPrice  | float  | 100.34 | 总价,单位为元 |
+
+**请求示例**
+
+```python
+def get_ecs_price():
+    """
+    获取云服务器价格
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribePrice"
+    method = "POST"
+    param = {}
+    body = {
+        "AvailableZoneCode":"CN_Hohhot_B",
+        "EcsFamilyName":"Ram专业渲染型rp3",
+        "Cpu":16,
+        "Ram":32,
+        "Gpu":1,
+        "BillingMethod":"0",
+        "Duration":12,
+        "SystemDiskInfo":{
+            "DiskFeature":"ssd",
+            "Size":10
+        },
+        "Number": 2,
+        "DataDiskInfo":[
+            {
+                "DiskFeature":"ssd",
+                "Size":10
+            }
+        ]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "CodeMsg": "success",
+    "Msg": "获取计费信息成功！",
+    "Data": {
+        "PriceUnit": "天",
+        "PriceSymbol": "￥",
+        "TotalPrice": 9.34
+    }
+}
+```
+
+### 6.DescribeInstance
+
+**Action**: DescribeInstance
+
+**描述**：获取云服务器配置详情 
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数  | 要求 | 类型   | 说明       |
+| ----- | ---- | ------ | ---------- |
+| EcsId | 必选 | string | 云服务器id |
+
+**返回参数**
+
+| 参数          | 类型     | 示例                                                         | 说明                |
+| ------------- | -------- | ------------------------------------------------------------ | ------------------- |
+| EcsId         | string   | "ins-abcr50fvgj45fgqw"                                       | 云服务器id          |
+| EcsName       | string   | "test1.计算-6"                                               | 云服务器名称        |
+| RegionId      | string   | "abcr50fvgj45fgqw"                                           | 地域id              |
+| RegionName    | string   | "北京"                                                       | 地域名称            |
+| AzId          | string   | "abcr50fvgj45fgqw"                                           | 可用区id            |
+| AzName        | string   | "可用区A"                                                    | 可用区名称          |
+| Status        | string   | "running"                                                    | 状态码              |
+| StatusDisplay | string   | "运行中"                                                     | 状态                |
+| IsGpu         | int      | 1:是 0:不是                                                  | 是否是gpu型云服务器 |
+| CreateTime    | datetime | 2022-07-22 16:41:28                                          | 创建时间            |
+| EndBillTime   | datetime | 2022-08-22 16:41:28                                          | 到期时间            |
+| IsAutoRenewal | string   | 1                                                            | 是否自动续约        |
+| TimeZone      | sting    | UTC                                                          | 时区                |
+| EcsRule       | dict     | {<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
+| OsInfo        | dict     | {<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    } | 系统信息            |
+| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/><br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
+| Pipe          | dict     | {<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": {<br/>        "10.1.128.53": {<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
+| BillingInfo   | dict     | {<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    } | 计费信息            |
+
+**请求示例**
+
+```python
+def get_ecs_detail():
+    """
+    获取云服务器详情
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeInstance"
+    method = "GET"
+    param = {
+        "EcsId":"ins-ajgaioirpwvdjynj"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "CodeMsg": "success",
+    "Message": "获取云服务器详情成功！",
+    "Data": {
+        "EcsId": "ins-ajgaioirpwvdjynj",
+        "EcsName": "宿迁",
+        "RegionId": "3af19bf4-729c-11ec-b62a-1e00e202ff80",
+        "RegionName": "宿迁",
+        "AzId": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+        "AzName": "宿迁A",
+        "Status": "running",
+        "StatusDisplay": "运行中",
+        "CreateTime": "2022-07-21 15:30:22",
+        "Duration": 1,
+        "EndBillTime": "2022-08-21 15:37:18",
+        "IsAutoRenewal": "1",
+        "TimeZone": "UTC",
+        "IsRam": false,
+        "EcsRule": {
+            "Name": "Cpu密集计算型I3",
+            "CpuNum": 1,
+            "CpuUnit": "核",
+            "Ram": 1,
+            "Gpu": 0,
+            "RamUnit": "个",
+            "GpuUnit": "GiB"
+        },
+        "OsInfo": {
+            "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",
+            "ImageName": "create-image1",
+            "OsType": "Centos",
+            "Bit": 64,
+            "Version": "7.4"
+        },
+        "Disk": {
+            "SystemDiskConf": {   // 系统盘信息
+                "ReleaseWithInstance": 1,  // 是否随实例删除
+                "DiskType": "system",
+                "Name": "ssd_20220721",  
+                "Size": 24,
+                "DiskIops": 2520,  //iops大小
+                "BandMbps": 96,  // 吞吐量
+                "Unit": "GB",
+                "DiskId": "disk-dj3g8odrnwqdrybj",  //系统盘id
+                "DiskFeature": "ssd"  //盘类型
+            },
+            "DataDiskConf": [
+                "ReleaseWithInstance": 0,  // 不随实例删除
+                "DiskType": "data",
+                "Name": "ssd_20220721",  
+                "Size": 24,
+                "DiskIops": 2520,  //iops大小
+                "BandMbps": 96,  // 吞吐量
+                "Unit": "GB",
+                "Id": "disk-dj3g8odrnwqdrybj",  //数据盘id
+                "DiskFeature": "ssd"  //盘类型
+            ]
+        },
+        "Pipe": {
+            "VpcName": "Ram服务器",
+            "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",
+            "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",
+            "SubnetName": "test-kvm",
+            "CreateTime": "2022-04-14 14:21:52",
+            "PrivateNet": "10.1.128.53",
+            "PubNet": "",
+            "VirtualNet": [],
+            "EipInfo": {
+                "10.1.128.53": {
+                    "ConfName": "",
+                    "EipIp": "",
+                    "CurrentUseQos": ""
+                }
+            }
+        },
+        "BillingInfo": {
+            "BillingMethod": "1",
+            "BillingMethodName": "包年包月", //计费方式
+            "BillingStatus": "正常",  //计费状态
+            "BillCycleId": "month"  //计费周期: "month": 月，"year": 年
+        }
+    }
+}
+```
+
+### 7.DescribeInstanceStatus
+
+**Action**: DescribeInstanceStatus
+
+**描述**：批量获取云服务器状态
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**:   POST
+
+**请求参数**
+
+| 参数   | 要求 | 类型 | 说明         |
+| ------ | ---- | ---- | ------------ |
+| EcsIds | 必选 | list | 云服务器列表 |
+
+**返回参数**
+
+| 参数          | 类型   | 示例    | 说明                          |
+| ------------- | ------ | ------- | ----------------------------- |
+| EcsStatus     | dict   | {}      | 云服务器状态字典，key为实例id |
+| Status        | string | running | 状态码                        |
+| StatusDisplay | string | 运行中  | 状态                          |
+
+**请求示例**
+
+```python
+def get_ecs_status():
+    """
+       批量获取云服务器状态
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeInstanceStatus"
+    method = "POST"
+    param = {}
+    body = {
+        "EcsIds": ["ins-3j62nodr5w2daycj", "ins-ajgaioirpwvdjynj"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Message": "获取云服务器状态成功！",
+    "Data": {
+        "EcsStatus": {
+            "ins-3j62nodr5w2daycj": {
+                "Status": "running",
+                "StatusDisplay": "运行中"
+            },
+            "ins-ajgaioirpwvdjynj": {
+                "Status": "running",
+                "StatusDisplay": "运行中"
+            }
+        }
+    }
+}
+```
+
+### 8.DescribeEvent
+
+**Action**: DescribeEvent
+
+**描述**： 获取事件信息
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET 
+
+**请求参数**
+
+| 参数    | 要求 | 类型   | 说明   |
+| ------- | ---- | ------ | ------ |
+| EventId | 必选 | string | 事件id |
+
+**返回参数**：
+
+| 名称         | 类型   | 示例值                                 | 描述                       |
+| ------------ | ------ | -------------------------------------- | -------------------------- |
+| EventId      | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2   | 事件id                     |
+| EventStatus  | string | success                                   | 事件状态                   |
+| EventType    | string | create_ecs                           | 事件类型                   |
+| EventTypeDisplay    | string | 创建云服务器                           | 事件类型中文名称      |
+| CreateTime   | string | "2022-01-16 17:17:20"                  | 创建时间                   |
+| TaskList     | list   | []                                     | 事件下的任务列表           |
+| TaskId       | string | "3e54d714-8f09-11ec-a494-d2a2d83b77e2" | 任务id                     |
+| Status       | string | 成功                                   | 任务状态                   |
+| ResourceId   | string | "ins-klkyifuqgmq4cxes"                 | 资源id                     |
+| UpdateTime   | string | "2022-01-16 17:17:25"                  | 任务更新时间               |
+| EndTime      | string | "2022-01-16 17:17:30"                  | 任务完成时间，未完成则为空 |
+| ResourceType | string | ecs                               | 任务资源类型               |
+| TaskType     | string | create_ecs                           | 任务类型                   |
+| TaskTypeDisplay     | string | 创建云服务器                           | 任务类型中文名称 |
+
+**请求示例**
+
+```python
+def describe_event():
+    """
+    查询事件信息
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeEvent"
+    method = "GET"
+    param = {"EventId": "3de9d9f0-8f09-11ec-a494-d2a2d83b77e2"}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取事件信息成功！",
+    "Data": {
+        "EventId": "2d01ed16-1231-11ed-b805-ae32005fa3a1",
+        "EventStatus": "success",
+        "EventStatusDisplay": "成功",
+        "EventType": "create_ecs",
+        "EventTypeDisplay": "创建云服务器",
+        "CreateTime": "2022-08-02 15:03:13",
+        "TaskList": [
+            {
+                "TaskId": "eaea8708-13c5-11ed-9210-3296060c3fb9",
+                "Status": "success",
+                "StatusDisplay": "成功",
+                "ResourceId": "ins-klkyifuqgmq4cxes",
+                "CreateTime": "2022-08-04 15:20:28",
+                "UpdateTime": "2022-08-04 15:20:41",
+                "EndTime": "2022-08-04 15:20:41",
+                "ResourceType": "ecs",
+                "ResourceDisplay": "云服务器",
+                "TaskType": "create_ecs",
+                "TaskTypeDisplay": "创建云服务器"
+            }
+        ]
+    },
+    "RequestId": "a00aa52e119211ed93f1c2b5d7e451cd"
+}
+```
+
+### 9.CreateInstance
+
+**Action**: CreateInstance
+
+**描述**：创建云服务器
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数              | 要求 | 类型   | 说明                                                         |
+| ----------------- | ---- | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | 必选 | string | 规格族名称(可取**DescribeEcsFamilyInfo**接口返回值EcsFamilyName) |
+| Cpu               | 必选 | int    | Cpu                                                          |
+| Ram               | 必选 | int    | 内存                                                         |
+| Gpu               | 可选 | int    | 显卡数量，默认为0                                            |
+| Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| Password          | 必选 | string | 登录密码                                                     |
+| ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
+| SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
+| VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
+| SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
+| PubnetInfo        | 可选 | list   | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
+| Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
+| StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
+| Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
+| IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
+| IsAutoRenewal     | 可选 | int    | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
+| UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
+| DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
+| DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id |
+
+**请求示例**
+
+```python
+def create_ecs():
+    """
+    创建云服务器
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "CreateInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "AvailableZoneCode":"CN_Hohhot_B",
+        "EcsFamilyName":"极速渲染型re3",
+        "Cpu":12,    
+        "Ram":24,
+        "Gpu":1,
+        "Number":1,
+        "BillingMethod":"0",
+        "ImageId":"Windows 10 64位-GPU-Geforce",
+        "SystemDisk":{
+            "DiskFeature":"local",
+            "Size":50
+        },
+        "DataDisk": {
+            "DiskFeature": "ssd",
+            "Size": 48,
+            "ReleaseWithInstance": 0  
+        },   
+        "VpcInfo":{
+            "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"
+        },
+        "SubnetInfo":{
+            "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce"
+        },
+        "Name":"",
+        "StartNumber":0,
+        "Password":"123QWEqwe"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "创建云服务器任务下发成功",
+    "Data": {
+        "EventId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7"
+    }
+}
+```
+
+### 10.OperateInstance
+
+**Action**: OperateInstance
+
+**描述**：批量操作云服务器开、关机、重启
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数   | 要求 | 类型   | 说明                                                         |
+| ------ | ---- | ------ | ------------------------------------------------------------ |
+| EcsIds | 必选 | list   | 云服务器id列表                                               |
+| OpType | 必选 | string | 操作类型：<br/>开机:"start_up_ecs" <br/>关机:"shutdown_ecs"<br/>重启:"restart_ecs"<br/>强制关机:"hard_shutdown_ecs" |
+
+**返回参数**
+
+| 参数    | 类型   | 示例 | 说明   |
+| ------- | ------ | ---- | ------ |
+| EventId | string |      | 事件id |
+
+**请求示例**
+
+```python
+def operate_ecs():
+    """
+       批量操作云服务器
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "OperateInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "EcsIds": ["ins-ajgaioirpwvdjynj"],
+        "OpType": "shutdown_ecs"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "code": "Success",
+    "CodeMsg": "success",
+    "Message": "批量操作云服务器任务下发成功！",
+    "Data": {
+        "EventId": "7e782a16-0bc9-11ed-a942-92d3bb445445"
+    }
+}
+```
+
+### 11.DeleteInstance
+
+**Action**: DeleteInstance
+
+**描述**：删除云服务器
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数   | 要求 | 类型 | 说明           |
+| ------ | ---- | ---- | -------------- |
+| EcsIds | 必选 | list | 云服务器id列表 |
+
+**返回参数**
+
+| 参数    | 类型   | 示例   | 说明 |
+| ------- | ------ | ------ | ---- |
+| EventId | string | 事件id |      |
+
+**请求示例**
+
+```python
+def delete_ecs():
+    """
+    删除云服务器
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DeleteInstance"
+    method = "POST"
+    param = {}
+    body = {
+        "EcsIds": ["ins-5922pyermmx7wbtg"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "CodeMsg": "success",
+    "Msg": "删除云服务器任务下发成功！",
+    "Data": {
+        "EventId": "47be5182-0ca8-11ed-bd9c-62b5fae1caf2"
+    }
+}
+```
+
+### 12.ModifyInstancePassword
+
+**Action**: ModifyInstancePassword
+
+**描述**： 修改实例管理员用户密码
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：  POST 
+
+**请求参数**
+
+| 参数     | 要求 | 类型   | 说明           |
+| -------- | ---- | ------ | -------------- |
+| EcsIds   | 必选 | list   | 云服务器id列表 |
+| Password | 必选 | string | 新密码         |
+
+**返回参数**：
+
+| 名称    | 类型   | 示例值    | 描述   |
+| ------- | ------ | --------- | ------ |
+| EventId | string | "EventId" | 事件id |
+
+**请求示例**
+
+```python
+def ecs_reset_password():
+    """
+       云服务器管理员用户密码修改
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "ModifyInstancePassword"
+    method = "POST"
+    param = {}
+    body = {
+        "EcsIds": ["ins-vjugdoyrtwrdpy5j"],
+        "Password": "KVMV587!\t"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "CodeMsg": "success",
+    "Msg": "云服务器管理员用户密码修改任务下发成功！",
+    "Data": {
+        "EventId": "fd97952e-0c9c-11ed-bd9c-62b5fae1caf2"
+    }
+}
+```
+
+### 13.ModifyInstanceName
+
+**Action**: ModifyInstanceName
+
+**描述**： 修改云服务器名称
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST 
+
+**请求参数**
+
+| 参数  | 要求 | 类型   | 说明           |
+| ----- | ---- | ------ | -------------- |
+| EcsId | 必选 | string | 云服务器实例ID |
+| Name  | 必选 | string | 新实例名称     |
+
+**返回参数**：
+
+| 名称  | 类型   | 示例值               | 描述           |
+| ----- | ------ | -------------------- | -------------- |
+| EcsId | string | ins-5ruc2dbp15drl152 | 云服务器实例ID |
+| Name  | string | test                 | 新实例名称     |
+
+**请求示例**
+
+```python
+def change_ecs_name():
+    """
+    修改云服务器实例名称
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "ModifyInstanceName"
+    method = "POST"
+    param = {}
+    body = {
+       "EcsId":"ins-ajgaioirpwvdjynj",
+       "Name":"测试测试1",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "修改实例名称成功！",
+    "Data": {
+        "EcsId": "ins-7tusfmrri849r9tv",
+        "Name": "create-error0731"
+    },
+    "RequestId": "7cafad69fb02ea43ae0fb92699600d5c"
+}
+```
+
+
+
+**错误码**
+
+| **HttpCode** | 错误码                                     | 错误信息                                                     | 描述                                                     |
+| ------------ | ------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------- |
+| 400          | ParamParseError                            | Parameter parsing error.                                     | 请求参数解析错误                                         |
+| 400          | InvalidParameter                           | The parameter is not valid.                                  | 参数不合法                                               |
+| 400          | MissingParameter                           | Missing required parameter.                                  | 缺少必需的参数                                           |
+| 400          | InvalidParameter.IsNull                    | Required parameter is empty.                                 | 必需的参数为空                                           |
+| 400          | UnsupportedHTTPMethod                      | Action does not correspond to the request method.            | http请求方式不支持                                       |
+| 400          | UnsupportedAction                          | Unsupported action.                                          | Action不在可选范围内                                     |
+| 400          | MaxEcsCountExceed                          | Exceeding the maximum number of ECS available.               | 云服务器创建数量大于当前可创建数量                       |
+| 400          | InvalidInstanceSpec.ValueNotSupported      | The specified InstanceSpec does not exist or beyond the permitted range. | 指定的实例规格参数不存在                                 |
+| 400          | InvalidInstanceType.ValueNotSupported      | The specified InstanceType does not exist or beyond the permitted range. | 指定的实例规格族类型不存在，或者没有权限操作此规格的实例 |
+| 400          | MaxDiskSizeExceed                          | The specified disk size exceeds the maximum capacity of the disk. | 指定的盘规格超出最大限制                                 |
+| 400          | MinDiskSizeLess                            | The specified disk size is below the minimum capacity of the disk. | 指定的盘规格低于最小限制                                 |
+| 400          | InvalidDiskSize.ValueNotSupported          | The specified DiskSize does not exist or beyond the permitted range. | 指定的盘规格不存在，或者没有权限操作此规格               |
+| 400          | UnSupportedMixingLocalAndEbs               | Mixing local disks and cloud disks is not supported.         | 不支持盘本地盘和云盘混用                                 |
+| 403          | InvalidOperation                           | The operation fails to pass the inspection and is invalid.   | 操作未通过校验，无法进行                                 |
+| 403          | InvalidOperation.VpcMismatch               | The operation is invalid. The resources of the operation are not in the same VPC. | 批量操作资源需要在相同vpc下                              |
+| 403          | InvalidOperation.AzMismatch                | The operation is invalid.The resources of the operation are not in the same zone. | 批量操作资源需要在相同可用区下                           |
+| 403          | InvalidOperation.InstanceStatusUnsupported | The instance state does not support the specified operation. | 实例状态不支持执行指定操作                               |
+| 404          | InvalidUser.NotFound                       | The user information under the customer name does not exist. | 未获取到客户名下用户信息                                 |
+| 404          | InvalidAccount.NotFound                    | Customer information does not exist                          | 未获取到客户信息                                         |
+| 404          | InvalidRegion.NotFound                     | The specified region does not exist.                         | 指定的地域不存在                                         |
+| 404          | InvalidAvailableZone.NotFound              | The specified available zone does not exist.                 | 指定的可用区不存在                                       |
+| 404          | InvalidEcsId.NotFound                      | The specified instance does not exist.                       | 指定的实例不存在                                         |
+| 404          | InvalidVpc.NotFound                        | The specified vpc does not exist.                            | 指定的Vpc不存在                                          |
+| 404          | InvalidImage.NotFound                      | The specified image does not exist.                          | 指定的镜像不存在                                         |
+| 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
+| 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
+
+## 云盘EBS相关
+
+**云盘状态(Status)说明**
+
+| code       | 说明     |
+| ---------- | -------- |
+| building   | 创建中   |
+| build_fail | 创建失败 |
+| running    | 使用中   |
+| mounting   | 挂载中   |
+| unmounting | 卸载中   |
+| waiting    | 待挂载   |
+| updating   | 更新中   |
+| error      | 错误     |
+
+### 1.CreateDisk
+
+**Action**: CreateDisk
+
+**描述**:  创建一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数                | 说明                                                         | 类型   | 是否必传 | 示例                        |
+| ------------------- | ------------------------------------------------------------ | ------ | -------- | --------------------------- |
+| AvailableZoneCode   | 可用区Code                                                   | string | 是       | CN_Suqian_A                 |
+| EcsId               | 挂载到云主机的实例id(字段有值并且有效时表示挂载到该实例，云盘只能挂载至同一可用区的实例上) | string | 否       | ins-72ys37squwzemjlx        |
+| ReleaseWithInstance | 是否随实例删除，1:是,0:否(挂载实例字段有效时，本字段有意义，如果挂载到实例，默认为1) | int    | 否       | 1                           |
+| DiskName            | 设置的云盘名称，不传则提供默认名称(名称规则：2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头) | string | 否       | ssd-20220802                |
+| DiskFeature         | 盘类型(目前只支持SSD)                                        | string | 是       | SSD                         |
+| Size                | 盘容量，单位:GB,容量为8的倍数，且最小24GB起。                | int    | 是       | 24                          |
+| Number              | 创建数量，不传默认为1                                        | int    | 否       | 5                           |
+| BillingMethod       | 计费方式 ，0:按需计费,1:包年包月                             | string | 否       | 默认为0，目前只支持按需计费 |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+
+**请求示例：**
+
+```python
+def create_disk():
+    """
+    创建云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "CreateDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "AvailableZoneCode":"CN_Hohhot_B",
+        "DiskName":"",
+        "DiskFeature":"SSD",
+        "Size":32,
+        "Number":1,
+        "BillingMethod":"0"
+    }
+
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘创建任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 2.DeleteDisk
+
+**Action**: DeleteDisk
+
+**描述**:  删除一块或多块云盘(数据盘)
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数    | 说明       | 类型 | 是否必传 | 示例               |
+| ------- | ---------- | ---- | -------- | ------------------ |
+| DiskIds | 云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def delete_disk():
+    """
+    删除云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DeleteDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content, json=body)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘删除任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 3.DetachDisk
+
+**Action**: DetachDisk
+
+**描述**：卸载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数    | 说明             | 类型 | 是否必传 | 示例               |
+| ------- | ---------------- | ---- | -------- | ------------------ |
+| DiskIds | 卸载的云盘id列表 | list | 是       | ["disk1", "disk2"] |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def detach_disk():
+    """
+    卸载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DetachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘卸载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+### 4.AttachDisk
+
+**Action**: AttachDisk
+
+**描述**：挂载一块或多块云盘（数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数                | 说明                               | 类型   | 是否必传 | 示例                 |
+| ------------------- | ---------------------------------- | ------ | -------- | -------------------- |
+| DiskIds             | 挂载的云盘id列表                   | list   | 是       | ["disk1", "disk2"]   |
+| EcsId               | 挂载的目标实例id                   | string | 是       | ins-cplc7w0rfmy7sb1g |
+| ReleaseWithInstance | 是否随实例删除,默认为1。1:是, 0:否 | int    | 否       | 1                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def attach_disk():
+    """
+    挂载云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "AttachDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskIds":["disk1", "disk2"],
+        "EcsId":"ins-cplc7w0rfmy7sb1g"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",  
+    "Msg": "云盘挂载任务下发成功！", 
+    "Data": {
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+    }
+}
+```
+
+
+
+### 5.ExtendDisk
+
+**Action**: ExtendDisk
+
+**描述**：云盘扩容（系统盘或者数据盘）
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数**：
+
+| 参数         | 说明                                                         | 类型   | 是否必传 | 示例                  |
+| ------------ | ------------------------------------------------------------ | ------ | -------- | --------------------- |
+| DiskId       | 扩容的云盘id                                                 | string | 是       | disk-w2bcmplru0s6cchy |
+| ExtendedSize | 扩容目标容量,单位:GB，目标容量必须大于扩容前容量，且必须为8的倍数。 | int    | 是       | 64                    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+
+**请求示例**
+
+```python
+def extend_disk():
+    """
+    扩容云盘接口
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "ExtendDisk"
+    method = "POST"
+    param = {}
+    body = {
+        "DiskId":"disk-w2bcmplru0s6cchy",
+        "ExtendedSize":64
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "云盘扩容任务下发成功！",
+    "Data": {
+        "EventId": "24f4cbee-13c0-11ed-9d3b-6a3e8fbcc464"
+    }
+}
+```
+
+### 6.DescribeDiskQuota
+
+**Action**: DescribeDiskQuota
+
+**描述**：获取云盘配额
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 是       | CN_Suqian_A |
+
+**返回参数**
+
+| 参数        | 类型   | 示例 | 说明             |
+| ----------- | ------ | ---- | ---------------- |
+| QuotaList   | list   | []   | 配额列表         |
+| TotalQuota  | int    | 0    | 总配额,单位:GB   |
+| UsedQuota   | int    | 0    | 已用配额,单位:GB |
+| FreeQuota   | int    | 0    | 剩余配额,单位:GB |
+| DiskFeature | string | SSD  | 云盘类型         |
+
+**请求示例**
+
+```python
+def describe_disk_quota():
+    """
+    获取云盘配额
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskQuota"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘配额成功！",
+    "Data": {
+        "QuotaList": [
+            {
+                "TotalQuota": 10240,
+                "UsedQuota": 9760,
+                "FreeQuota": 480,
+                "DiskFeature": "SSD"
+            }
+        ]
+    },
+    "RequestId": "2759cebe146211edb481e454e81c0d47"
+}
+```
+
+### 7.DescribeDiskList
+
+**Action**: DescribeDiskList
+
+**描述**：获取云盘列表
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数              | 说明       | 类型   | 是否必传 | 示例        |
+| ----------------- | ---------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
+| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
+| PageNumber        | 页码       | int    | 否       | 1           |
+| PageSize          | 每页记录数 | int    | 否       | 20          |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| PageNumber          | int    | 1                     | 当前页数                   |
+| PageSize            | int    | 1                     | 每页数据条数               |
+| TotalCount          | int    | 10                    | 总记录数                   |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk_list():
+    """
+    获取云盘列表
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDiskList"
+    method = "GET"
+    param = {
+        "AvailableZoneCode":"CN_Hohhot_B"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘列表成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    },
+    "PageNumber": 1,
+    "PageSize": 1,
+    "TotalCount": 1
+}
+```
+
+### 8.DescribeDisk
+
+**Action**: DescribeDisk
+
+**描述**：获取云盘详情
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数   | 说明   | 类型   | 是否必传 | 示例                  |
+| ------ | ------ | ------ | -------- | --------------------- |
+| DiskId | 云盘id | string | 是       | disk-qpv6gojrhlsru7lj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_disk():
+    """
+    获取云盘详情
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeDisk"
+    method = "GET"
+    param = {
+        "DiskId":"disk-qpv6gojrhlsru7lj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云盘详情成功！",
+    "Data": {
+        "DiskInfo": {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",  // 挂载的实例，未挂载为空
+                "EcsName": "disk-Ubuntu-013",    // 挂载的实例，未挂载为空
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+    }
+}
+```
+
+### 9.DescribeEcsAttachDisks
+
+**Action**: DescribeEcsAttachDisks
+
+**描述**：获取实例挂载的云盘信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数  | 说明     | 类型   | 是否必传 | 示例                 |
+| ----- | -------- | ------ | -------- | -------------------- |
+| EcsId | 云主机id | string | 是       | ins-z684q1prultrf7rj |
+
+**返回参数**
+
+| 参数                | 类型   | 示例                  | 说明                       |
+| ------------------- | ------ | --------------------- | -------------------------- |
+| DiskList            | list   | []                    | 云盘列表                   |
+| RegionCode          | string | CN_Suqian             | 地域Code                   |
+| AvailableZoneCode   | string | CN_Suqian_A           | 可用区Code                 |
+| DiskId              | string | disk-qpv6gojrhlsru7lj | 云盘ID                     |
+| DiskName            | string | ssd_20220802          | 云盘名称                   |
+| Status              | string | running               | 状态code                   |
+| StatusDisplay       | string | 使用中                | 状态说明                   |
+| DiskFeature         | string | SSD                   | 盘类型                     |
+| Size                | int    | 40                    | 盘容量,单位:GB             |
+| Property            | string | system                | system:系统盘 data：数据盘 |
+| BillingMethod       | string | 0                     | 0:按需计费, 1:包年包月     |
+| EcsId               | string | ins-r6g0posrclxrw7dj  | 挂载的实例，未挂载为空     |
+| EcsName             | string | test-ntp-ygh          | 挂载实例的名称，未挂载为空 |
+| ReleaseWithInstance | int    | 1                     | 是否随实例删除，1:是，0:否 |
+
+**请求示例**
+
+```python
+def describe_ecs_attach_disk():
+    """
+    获取实例挂载的云盘
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEcsAttachDisks"
+    method = "GET"
+    param = {
+        "EcsId":"ins-z684q1prultrf7rj"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取实例挂载的云盘信息成功！",
+    "Data": {
+        "DiskList": [
+            {
+                "DiskId": "disk-khpw24dr6wcyfzxh",
+                "DiskName": "ssd_20220804_01",
+                "Size": 64,
+                "EcsId": "ins-z684q1prultrf7rj",
+                "EcsName": "disk-Ubuntu-013",
+                "BillingMethod": "0",
+                "ReleaseWithInstance": 1,
+                "RegionCode": "CN_Huhhot",
+                "AvailableZoneCode": "CN_Hohhot_B",
+                "Status": "running",
+                "StatusDisplay": "使用中",
+                "DiskFeature": "SSD",
+                "Property": "system"
+            }
+        ]
+    }
+}
+```
+
+### 10.DescribeEvent
+
+**Action**: DescribeEvent
+
+**描述**：获取事件信息
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数    | 说明   | 类型   | 是否必传 | 示例                                 |
+| ------- | ------ | ------ | -------- | ------------------------------------ |
+| EventId | 事件id | string | 是       | 2d01ed16-1231-11ed-b805-ae32005fa3a1 |
+
+**返回参数**
+
+| 名称               | 类型   | 示例值                               | 描述                       |
+| ------------------ | ------ | ------------------------------------ | -------------------------- |
+| EventId            | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2 | 事件id                     |
+| EventStatus        | string | success                              | 事件状态                   |
+| EventStatusDisplay | string | 成功                                 | 事件中文名称               |
+| EventType          | string | unmount_disk                         | 事件类型                   |
+| EventTypeDisplay   | string | 卸载云盘                             | 事件类型中文名称           |
+| CreateTime         | string | 2022-01-16 17:17:20                  | 创建时间                   |
+| TaskList           | list   | []                                   | 事件下的任务列表           |
+| TaskId             | string | 3e54d714-8f09-11ec-a494-d2a2d83b77e2 | 任务id                     |
+| Status             | string | success                              | 任务状态                   |
+| StatusDisplay      | string | 成功                                 | 任务中文状态               |
+| ResourceId         | string | disk-y6yknvvr64mvn06a                | 任务对应的资源id           |
+| UpdateTime         | string | 2022-01-16 17:17:25                  | 任务更新时间               |
+| EndTime            | string | 2022-01-16 17:17:30                  | 任务完成时间，未完成则为空 |
+| ResourceType       | string | disk                                 | 资源类型                   |
+| ResourceDisplay    | string | 云盘                                 | 资源类型中文名称           |
+| TaskType           | string | unmount_disk                         | 任务类型                   |
+| TaskTypeDisplay    | string | 卸载云盘                             | 任务类型中文名称           |
+
+**请求示例**
+
+```python
+def describe_event():
+    """
+    获取事件信息
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "DescribeEvent"
+    method = "GET"
+    param = {
+        "EventId":"2d01ed16-1231-11ed-b805-ae32005fa3a1"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取事件信息成功！",
+    "Data": {
+        "EventId": "2d01ed16-1231-11ed-b805-ae32005fa3a1",
+        "EventStatus": "success",
+        "EventStatusDisplay": "成功",
+        "EventType": "unmount_disk",
+        "EventTypeDisplay": "卸载云盘",
+        "CreateTime": "2022-08-02 15:03:13",
+        "TaskList": [
+            {
+                "TaskId": "eaea8708-13c5-11ed-9210-3296060c3fb9",
+                "Status": "success",
+                "StatusDisplay": "成功",
+                "ResourceId": "disk-y6yknvvr64mvn06a",
+                "CreateTime": "2022-08-04 15:20:28",
+                "UpdateTime": "2022-08-04 15:20:41",
+                "EndTime": "2022-08-04 15:20:41",
+                "ResourceType": "disk",
+                "ResourceDisplay": "云盘",
+                "TaskType": "unmount_disk",
+                "TaskTypeDisplay": "卸载云盘"
+            }
+        ]
+    }
+}
 ```
 
 ## 其他公共接口
@@ -12798,7 +14970,7 @@ def get_region_goods(site_code):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get site goods error."
+        print( "get site goods error.")
         return None
     data = result.get("Data")
     wan_goods = data.get("WanGoods")
@@ -12872,7 +15044,7 @@ def get_status(task_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "task status error."
+        print("task status error.")
         return None
     return result.get("Data")
 ```
@@ -13049,8 +15221,10 @@ def get_status(task_id):
 
 | 模板大类型       | 模板类型                             | 中文名称                               |
 |-------------|----------------------------------| -------------------------------------- |
-| Rocky Linux | RockyLinux_8.5_64                |                                        |
+| Anolis OS   | AnolisOS_8.6_64                |                                        |
+| Rocky Linux | RockyLinux_9.0_64                |                                        |
 |             | RockyLinux_8.6_64                |                                        |
+|             | RockyLinux_8.5_64                |                                        |
 | Centos      | Centos_Stream_8                   |                                        |
 |             | Centos_8.2_64                    |                                        |
 |             | Centos_8.1_64                    |                                        |
@@ -13157,7 +15331,7 @@ def get_status(task_id):
 ```python
 def percentEncode(str):
   	"""转换特殊符号"""
-    res = urllib.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
+    res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
     res = res.replace('%7E', '~')
@@ -13193,7 +15367,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     h = hmac.new(access_key_secret, stringToSign, sha1)
     signature = base64.encodestring(h.digest()).strip()
     D['Signature'] = signature
-    url = url + '/?' + urllib.urlencode(D)
+    url = url + '/?' + urllib.parse.urlencode(D)
     return url
 ```
 
@@ -13224,7 +15398,7 @@ def descrive_public_qos(vdc_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vdc info error."
+        print("get vdc info error.")
     data = result.get("Data")
     if len(data) > 0:
         vdcInfo = data[0]
@@ -13264,7 +15438,7 @@ def descrive_public_qos(vdc_id):
 ​	**请求代码**
 
 ```python
-def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
+def descrive_vm(instance_id=None, vdc_id=None, pub_ip=None):
     """
     根据vm_id、vdc_id或者公网ip获取主机信息
     @params: vm_id: 通过主机ID
@@ -13275,16 +15449,16 @@ def descrive_vm(vm_id=None, vdc_id=None, pub_ip=None):
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {}
-    if vm_id:
-        body.update({"InstanceId": vm_id})
+    if instance_id:
+        body.update({"InstanceId": instance_id})
     if vdc_id:
         body.update({"VdcId": vdc_id})
     if pub_ip:
-        body.update({"PubIp": pub_ip})
+        body.update({"PublicIp": pub_ip})
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "get vm error."
+        print("get vm error.")
         return None
     return result.get("Data")
 ```
@@ -13372,7 +15546,7 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print ("create vm error: %s" % result.get("Message"))
+        print("create vm error: %s" % result.get("Message"))
         return None
     return result.get("TaskId")
 ```
@@ -13415,7 +15589,7 @@ def modify_public_qos(publicId, qos):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     task_id = result.get("TaskId")
     return task_id
@@ -13447,7 +15621,7 @@ def modify_vm_charge_type(vm_id, ):
     """
     修改云主机实例计费方式，只允许按需计费转换为包年包月
     """
-    action = ""
+    action = "ModifyInstanceChargeType"
     method = "POST"
     url = get_signature(action, AK, AccessKeySecret, method, CCS_URL)
     body = {
@@ -13459,7 +15633,7 @@ def modify_vm_charge_type(vm_id, ):
     res = requests.post(url, json=body)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print result.get("Message")
+        print(result.get("Message"))
         return None
     return True
 ```
@@ -13494,7 +15668,7 @@ def get_status(task_id):
     res = requests.get(url)
     result = json.loads(res.content)
     if result.get("Code") != "Success":
-        print "task status error."
+        print("task status error.")
         return None
     return result.get("Data")
 ```
@@ -13532,9 +15706,9 @@ def create_template(vm_id):
         "DisplayName": "模板名称",
         "PowerOn": False
     }
-    res = requests.get(url, json=body)
+    res = requests.post(url, json=body)
     result = json.loads(res.content)
-    print result
+    print(result)
 ```
 
 ​	**返回示例**

@@ -24,9 +24,9 @@ var (
 
 func percentEncode(str string) string {
 	str = url.QueryEscape(str)
-	strings.Replace(str, "+", "%20", -1)
-	strings.Replace(str, "*", "%2A", -1)
-	strings.Replace(str, "%7E", "~", -1)
+	str = strings.Replace(str, "+", "%20", -1)
+	str = strings.Replace(str, "*", "%2A", -1)
+	str = strings.Replace(str, "%7E", "~", -1)
 	return str
 }
 
@@ -100,6 +100,7 @@ func doHttpPost(action, url, method string, reqBody []byte) CommonReturn {
 
 	signedURL := getSignedURL(action, url, method, reqBody)
 	req, _ := http.NewRequest(method, signedURL, bytes.NewBuffer(reqBody))
+	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
