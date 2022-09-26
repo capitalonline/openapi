@@ -69,6 +69,11 @@
           :data="gpu_temperature"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_frequency"
+          :data="gpu_frequency"
+          class="item"
+        ></line-echart>
       </div>
     </div>
   </div>
@@ -201,6 +206,14 @@ export default class Monitor extends Vue{
     resize: 0,
     legend: []
   }
+  private gpu_frequency = {
+    title: 'GPU主频',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: []
+  }
   private default_date_timer = [];
 
   private FnGetTimer(timer) {
@@ -304,11 +317,11 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
-  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
     let index = 0;
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
-          item.data.metricInfo = item.data.metricInfo || item.data.device;
+          item.data.metricInfo = item.data.metricInfo || item.data.device ||item.data.gpuName;
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
@@ -353,6 +366,7 @@ export default class Monitor extends Vue{
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
     this.gpu_temperature.legend = []
+    this.gpu_frequency.legend = []
     if (resData.code === 'Success') {
       ecs_list = resData.data.ecs_list.filter(item => {
         return item.status !== 'destroy' && (this.host_info.host_purpose === 'GPU' ? true : item.is_gpu)
@@ -403,6 +417,26 @@ export default class Monitor extends Vue{
     })).then(resData => {
       this.FnHandleMoreData('gpu_temperature', resData)
     })
+    Promise.all([Service.get_gpu(type, {queryType: 'gpu_clocks_graphics', ...reqData}),
+      Service.get_gpu(type, {queryType: 'gpu_clocks_memory', ...reqData})
+    ]).then(resData => {
+      this.FnHandleDubleData('gpu_frequency', resData)
+    })
+    // Promise.all(ecs_list.map(item => {
+    //   this.gpu_frequency.legend.push(item.ecs_name)
+    //   return Service.get_gpu(type, {
+    //     queryType: 'gpu_clocks_graphics',
+    //     hostId: item.ecs_id,
+    //     region: reqData.region,
+    //     replica: reqData.replica,
+    //     ip: item.private_net,
+    //     instanceType: 'host',
+    //     start: reqData.start,
+    //     end: reqData.end
+    //   })
+    // })).then(resData => {
+    //   this.FnHandleMoreData('gpu_frequency', resData)
+    // })
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
