@@ -1,8 +1,8 @@
 <template>
     <div class="ecs-snapshot">
-        <search-bar :search_option="search_option" @fn-search = "FnSearch" :action_icon_option="action_btns" @fn-icon="operateIcon">
-            
-        </search-bar>
+        <template v-if="type!=='detail'">
+            <search-bar :search_option="search_option" @fn-search = "FnSearch" :action_icon_option="action_btns" @fn-icon="operateIcon"></search-bar>
+        </template>
         <!-- <list-table ref="list_table"></list-table> -->
         <el-table
             ref="snapshot_table"
@@ -27,8 +27,8 @@
                             popper-class="tooltip-width"
                             effect="light">
                             <div slot="content">{{scope.row.snapshot_name}}</div>
-                            <div class="name-cell num_message">
-                                <pre>{{ scope.row.snapshot_name }}</pre>
+                            <div class="num_message">
+                                <pre>{{ scope.row.snapshot_name }}</pre> 
                             </div>
                         </el-tooltip>
                     </div>
@@ -37,9 +37,8 @@
                         :content="scope.row.snapshot_id" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.snapshot_id }}</span>
+                            <span>{{ scope.row.snapshot_id }}</span>
                         </el-tooltip>
-                        <Clipboard :content="scope.row.snapshot_id"></Clipboard>
                     </div>
                 </template>
                 <template #default="scope" v-else-if="item.prop==='disk_id'">
@@ -49,8 +48,8 @@
                             popper-class="tooltip-width"
                             effect="light">
                             <div slot="content">{{scope.row.disk_name}}</div>
-                            <div class="name-cell num_message">
-                                <pre>{{ scope.row.disk_name }}</pre>
+                            <div>
+                                <pre class="num_message">{{ scope.row.disk_name }}</pre>
                             </div>
                         </el-tooltip>
                     </div>
@@ -59,24 +58,27 @@
                         :content="scope.row.disk_id" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.disk_id }}</span>
+                            <span>{{ scope.row.disk_id }}</span>
                         </el-tooltip>
-                        <Clipboard :content="scope.row.disk_id"></Clipboard>
                     </div>
                 </template>
-                <template #default="scope" v-else-if="item.prop==='disk_type'">
-                    <span>{{diskObj[scope.row.disk_type]}}</span>
-                </template>
                 <template #default="scope" v-else-if="item.prop==='disk_size'">
+                    <span>{{scope.row.disk_type==='data' ? '数据盘' : '系统盘'}}/</span>
                     <span>{{scope.row.disk_size}}GB</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='az_name'">
+                    <span>{{scope.row.region_name}}-{{scope.row.az_name}}</span>
                 </template>
                 <template #default="scope" v-else-if="item.prop==='snapshot_status_cn'">
                     <span :class="scope.row.snapshot_status">{{scope.row.snapshot_status_cn}}</span>
                 </template>
+                <template #default="scope" v-else-if="item.prop==='disk_status_cn'">
+                    <span :class="scope.row.disk_status">{{scope.row.disk_status_cn}}</span>
+                </template>
             </el-table-column>
              <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text">详情</el-button>
+                    <el-button type="text">操作记录</el-button>
                 </template>
              </el-table-column>
         </el-table>
@@ -118,19 +120,12 @@ export default class Snapshot extends Vue {
             {text:'系统盘',value:'system'},
             {text:'数据盘',value:'data'}
         ]
-    private search_option:any=this.type==='list'? {
-        az_id:{type:'az_id'},
-        value:{type:'input-with-select',placeholder:'请选择',list:[
-            {value:'snapshot_info',label:'快照名称/ID'},
-            {value:'disk_info',label:'云盘名称/ID'},
-            {value:'instance_info',label:'实例名称/ID'},
-        ]}
-    }:{
-        az_id:{type:'az_id'},
-        value:{type:'input-with-select',placeholder:'请选择',list:[
-            {value:'snapshot_id',label:'快照ID'},
-            {value:'snapshot_name',label:'快照名称'},
-        ]}
+    private search_option:any={
+        snapshot_id:{placeholder:'请输入快照ID'},
+        snapshot_name:{placeholder:'请输入快照名称'},
+        disk_id:{placeholder:'请输入云盘ID'},
+        customer_id:{placeholder:'请输入客户ID'},
+        customer_name:{placeholder:'请输入客户名称'},
     }
     private column_list=this.type==='list'? [
         {prop:'customer_id',label:'客户ID'},
@@ -146,9 +141,6 @@ export default class Snapshot extends Vue {
         {prop:'op_source',label:'创建来源'},
     ] : [
         {prop:'snapshot_id',label:'快照名称/ID'},
-        {prop:'disk_id',label:'云盘名称/ID'},
-        {prop:'snapshot_id',label:'快照名称/ID'},
-        // {prop:'disk_size',label:'所属盘容量'},
         {prop:'create_time',label:'创建时间'},
         {prop:'retention_time',label:'保留时间'},
         {prop:'snapshot_status_cn',label:'状态'},
@@ -216,16 +208,10 @@ export default class Snapshot extends Vue {
             });
         }
         const data = this.search_data;
-        let search_name:string=this.type!=='list' ? 'snapshot_id' : 'snapshot_info'
         let res:any = await Service.get_snapshot_list({
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
-            [data.sel_value ? data.sel_value : search_name]:data.value ? data.value : undefined,
-            region_id:data.region_id ? data.region_id :undefined,
-            az_id:data.az_id ? data.az_id :undefined,
-            snapshot_chains_id:this.type!=='list' ? this.snapshot_chains_id : undefined,
-            status:this.type==='list' ? this.filterInfo.snapshot_status_cn ? this.filterInfo.snapshot_status_cn[0] : undefined : undefined,
-            disk_type:this.type==='list' ? this.filterInfo.disk_type ? this.filterInfo.disk_type[0] : undefined : undefined,
+            ...this.search_data
         })
         if(res.code==='Success'){
             this.list = res.data.snapshot_list;

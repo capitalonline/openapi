@@ -76,6 +76,12 @@ const routes: RouteConfig[] = [
     meta:{menu:'snapshot_list'}
   },
   {
+    path:'/chain/detail',
+    name:'snapshot_detail',
+    component:()=>import('../views/snapshot/chains-detail.vue'),
+    meta:{menu:'snapshot_list'}
+  },
+  {
     path:'/disk/create',
     name:'disk_create',
     component:()=>import('../views/disk/create.vue'),

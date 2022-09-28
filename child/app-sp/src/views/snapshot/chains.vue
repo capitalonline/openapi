@@ -18,7 +18,7 @@
                         :content="scope.row.snapshot_chains_id" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.snapshot_chains_id }}</span>
+                            <span>{{ scope.row.snapshot_chains_id }}</span>
                         </el-tooltip>
                         <!-- <Clipboard :content="scope.row.snapshot_chains_id"></Clipboard> -->
                     </div>
@@ -31,7 +31,7 @@
                                 popper-class="tooltip-width"
                                 effect="light">
                                 <div slot="content">{{scope.row.instance_name}}</div>
-                                <div class="name-cell num_message">
+                                <div class="num_message">
                                     <pre>{{ scope.row.instance_name }}</pre>
                                 </div>
                             </el-tooltip>
@@ -41,11 +41,8 @@
                             :content="scope.row.instance_id" 
                             placement="bottom" 
                             effect="light">
-                                <span class="id-cell">{{ scope.row.instance_id }}</span>
+                                <span>{{ scope.row.instance_id }}</span>
                             </el-tooltip>
-                            <template v-if="scope.row.instance_id">
-                                <Clipboard :content="scope.row.instance_id"></Clipboard>
-                            </template>
                         </div>
                     </template>
                     <span v-else>-</span>
@@ -58,7 +55,7 @@
                             popper-class="tooltip-width"
                             effect="light">
                             <div slot="content">{{scope.row.disk_name}}</div>
-                            <div class="name-cell num_message">
+                            <div class="num_message">
                                 <pre>{{ scope.row.disk_name }}</pre>
                             </div>
                         </el-tooltip>
@@ -68,16 +65,23 @@
                         :content="scope.row.disk_id" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.disk_id }}</span>
+                            <span>{{ scope.row.disk_id }}</span>
                         </el-tooltip>
-                        <Clipboard :content="scope.row.disk_id"></Clipboard>
+                        <!-- <Clipboard :content="scope.row.disk_id"></Clipboard> -->
                     </div>
                 </template>
-                <template #default="scope" v-else-if="item.prop==='disk_type'">
-                    <span>{{diskObj[scope.row.disk_type]}}</span>
-                </template>
                 <template #default="scope" v-else-if="item.prop==='disk_size'">
+                    <span>{{scope.row.disk_type==='data' ? '数据盘' : '系统盘'}}/</span>
                     <span>{{scope.row.disk_size}}GB</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='disk_status_cn'">
+                    <span :class="scope.row.disk_status">{{scope.row.disk_status_cn}}</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='az_name'">
+                    <span>{{scope.row.region_name}}-{{scope.row.az_name}}</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='snapshot_size'">
+                    <span>{{Number(scope.row.snapshot_size)=== 0 ? '0.00' :scope.row.snapshot_size }}GB</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operate" label="操作">
@@ -131,14 +135,17 @@ export default class Chains extends Vue {
         data:'数据盘'
     }
     private column_list=[
+        {prop:'customer_id',label:'客户ID'},
+        {prop:'customer_name',label:'客户名称'},
         {prop:'snapshot_chains_id',label:'快照链ID'},
         {prop:'instance_id',label:'实例名称/ID'},
         {prop:'disk_id',label:'云盘名称/ID'},
-        {prop:'disk_type',label:'源云盘属性'},
+        {prop:'disk_status_cn',label:'云盘状态'},
+        {prop:'disk_size',label:'属性/容量'},
         {prop:'az_name',label:'可用区'},
-        {prop:'disk_size',label:'源云盘容量'},
         {prop:'snapshot_number',label:'快照数量'},
         {prop:'snapshot_size',label:'快照容量'},
+        {prop:'billing_method_display',label:'计费方式'},
     ]
     
     private list:any=[]
