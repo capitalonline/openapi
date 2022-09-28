@@ -91,6 +91,11 @@
           :data="gpu_temperature"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_frequency"
+          :data="gpu_frequency"
+          class="item"
+        ></line-echart>
       </div>
     </el-card>
   </div>
@@ -231,6 +236,15 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0
+  }
+  private gpu_frequency = {
+    title: 'GPU主频',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    line_name: ['GPU核心频率', '显存频率'],
+    type: 'double_line'
   }
   private default_date_timer = [];
   // @Watch('$route',{immediate:true,deep:true})
@@ -404,11 +418,11 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
-  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
     let index = 0;
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
-          item.data.metricInfo = item.data.metricInfo || item.data.device;
+          item.data.metricInfo = item.data.metricInfo || item.data.device || item.data.gpuName
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
@@ -421,12 +435,15 @@ export default class Monitor extends Vue{
             }
           }
           if (item.data.yValues) {
+            console.log('1',this[type].yValue)
             this[type].yValue.push(...item.data.yValues);
+            console.log('2',this[type].yValue)
           }
         }
         index++;
       })
       this[type].resize++;
+      console.log('####',this[type])
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
@@ -451,6 +468,18 @@ export default class Monitor extends Vue{
     })
     Service.get_gpu(type, Object.assign({queryType: 'temperature'}, reqData)).then(resData => {
       this.FnHandleSingleData('gpu_temperature', resData);
+    })
+    Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
+      Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
+    ]).then(resData => {
+      console.log('resData',resData)
+      resData.map(item=>{
+        if(item.data.yValues && item.data.yValues.length>0){
+          item.data.yValues = [item.data.yValues]
+        }
+        return item;
+      })
+      this.FnHandleDubleData('gpu_frequency', resData)
     })
   }
   private created() {

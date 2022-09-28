@@ -69,6 +69,11 @@
           :data="gpu_temperature"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_frequency"
+          :data="gpu_frequency"
+          class="item"
+        ></line-echart>
       </div>
     </div>
   </div>
@@ -201,6 +206,16 @@ export default class Monitor extends Vue{
     resize: 0,
     legend: []
   }
+  private gpu_frequency = {
+    title: 'GPU主频',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: [],
+    line_name: ['GPU核心频率', '显存频率'],
+    type: 'double_line'
+  }
   private default_date_timer = [];
 
   private FnGetTimer(timer) {
@@ -304,11 +319,11 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
-  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
     let index = 0;
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
-          item.data.metricInfo = item.data.metricInfo || item.data.device;
+          item.data.metricInfo = item.data.metricInfo || item.data.device ||item.data.gpuName;
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
@@ -345,12 +360,14 @@ export default class Monitor extends Vue{
   private async FnGetGpuInfo(type, reqData) {
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
-      host_id: this.host_id
+      host_id: this.host_id,
+      pod_id:this.$store.state.pod_id
     })
     let ecs_list = []
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
     this.gpu_temperature.legend = []
+    this.gpu_frequency.legend = []
     if (resData.code === 'Success') {
       ecs_list = resData.data.ecs_list.filter(item => {
         return item.status !== 'destroy' && (this.host_info.host_purpose === 'GPU' ? true : item.is_gpu)
@@ -400,6 +417,45 @@ export default class Monitor extends Vue{
       })
     })).then(resData => {
       this.FnHandleMoreData('gpu_temperature', resData)
+    })
+    let proList = []
+    ecs_list.forEach((item:any)=>{
+      // console.log('item',item.ecs_name)
+      // this.gpu_frequency.legend.push(item.ecs_name);
+      // this.gpu_frequency.legend.push(item.ecs_name);
+      let data={
+        hostId: item.ecs_id,
+        region: reqData.region,
+        replica: reqData.replica,
+        ip: item.private_net,
+        instanceType: 'vm',
+        start: reqData.start,
+        end: reqData.end
+      }
+      proList.push(Service.get_gpu(type, {
+        queryType: 'gpu_clocks_graphics',
+        ...data
+      }))
+      proList.push(Service.get_gpu(type, {
+        queryType: 'gpu_clocks_memory',
+        ...data
+      }))
+    })
+    Promise.all(proList).then(resData => {
+      resData.map(item=>{
+        if(item.data.yValues && item.data.yValues.length>0){
+          item.data.yValues = [item.data.yValues];
+        }
+        let list=[]
+        ecs_list.forEach((inn:any)=>{
+          item.data.gpuName && item.data.gpuName.forEach((gpu:any)=>{
+            list.push(inn.ecs_name+'-'+gpu)
+          })
+        })
+        item.data.gpuName = list
+        return item;
+      })
+      this.FnHandleDubleData('gpu_frequency', resData)
     })
   }
   private created() {
