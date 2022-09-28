@@ -433,6 +433,7 @@ def get_redis_config():
 | Password     | 是   | string | Redis数据库密码                                |
 | TestGroupId  | 否   | int    | 是否使用测试组计费                             |
 | Amount       | 否   | int    | 购买的数量一次最多购买三个                     |
+| ServicePort  | 否   | int    | Redis实例端口，默认9736，取值范围：1024-65535（9100、9121、9122、16379无效）     |
 
 **返回参数**：
 
@@ -462,6 +463,7 @@ def create_redis():
         "BasePipeId": "*******",
         "InstanceName": "*******",
         "PaasGoodsId": "*******",
+        "ServicePort": 9736,
         "Password": "*******",
     }
 
