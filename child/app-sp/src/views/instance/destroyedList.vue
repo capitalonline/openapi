@@ -45,7 +45,12 @@
             >
           </template>
         </el-table-column>
-        
+        <el-table-column prop="os_name" label="操作系统"></el-table-column>
+        <el-table-column prop="host_name" label="系统盘">
+          <template #default="scope">
+            <span>{{`${scope.row.system_disk_type}  ${scope.row.system_disk_size}${scope.row.system_disk_unit}`}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="host_name" label="所属物理机" sortable="custom">
         </el-table-column>
         <el-table-column prop="update_time" label="销毁时间">
@@ -830,9 +835,12 @@
               this.search_billing_method == ""
                 ? "no"
                 : this.search_billing_method,
-            op_source: this.search_op_source
+            op_source: this.search_op_source,
+            spec_family_ids:JSON.stringify(this.search_ecs_goods_name),
           },
-          this.search_reqData
+          this.search_reqData,
+          
+
         )
       );
       if (resData) {

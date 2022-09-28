@@ -22,7 +22,7 @@
         </el-dialog>
       </div>
       <div>
-        <action-block :search_option="['physical','message'].includes(type) ?{...search,...physical_option} :search" @fn-search="fn_search"></action-block>
+        <action-block :search_option="['physical','message'].includes(type) ?{...search} :search" @fn-search="fn_search"></action-block>
         <div class="icon m-bottom10" v-if="['physical','message'].includes(type)">
           <el-tooltip content="刷新" placement="bottom" effect="light">
             <el-button type="text" @click="getOperateRecordList"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
@@ -117,16 +117,16 @@ export default class InsDetail extends Vue{
     state:{list:this.state_list,placeholder:'请选择状态'},
     content:{placeholder:'请输入操作内容'},
   }
-  private physical_option:any={
-    time:{
-      type:'datetimerange',
-      placeholder:['开始时间','结束时间'],
-      clearable:false,
-      width:360,
-      dis_day:31,
-      defaultTime:[moment(new Date()).format("YYYY-MM-DD 00:00:00"),moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
-    },
-  }
+  // private physical_option:any={
+  //   time:{
+  //     type:'datetimerange',
+  //     placeholder:['开始时间','结束时间'],
+  //     clearable:false,
+  //     width:360,
+  //     dis_day:31,
+  //     defaultTime:[moment(new Date()).format("YYYY-MM-DD 00:00:00"),moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
+  //   },
+  // }
   private record_list:any = []
   private current:number = 1
   private size:number = 20
@@ -164,8 +164,8 @@ export default class InsDetail extends Vue{
     }
     if(this.type==='physical'){
       res = await p_service.record({
-        start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-        end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        // start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+        // end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         ...req
       })
     }else if(this.type==='message'){
@@ -173,8 +173,8 @@ export default class InsDetail extends Vue{
         os_id:this.record_id,
         status:data.state || '',
         content_type:data.content,
-        start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-        end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        // start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+        // end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         page_size:this.size,                                                                         
         page_index:this.current,
         

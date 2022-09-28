@@ -2,13 +2,13 @@
     <el-dialog
         :title="oper_info.os_id? '编辑镜像' :'新增镜像'"
         :visible.sync="visible_sync"
-        width="700px"
+        width="800px"
         :destroy-on-close="true"
         :close-on-click-modal="false"
         custom-class="add-common"
         @close="cancel"
     >
-        <el-form :model="form_data" :rules="rules" ref="mirror_form" label-width="120px" class="demo-ruleForm" label-position="left" label-suffix=":">
+        <el-form :model="form_data" :rules="rules" ref="mirror_form" label-width="170px" class="demo-ruleForm" label-position="left" label-suffix=":">
             <el-form-item label="镜像ID" prop="id" v-if="oper_info.os_id">
                 <span>{{ form_data.id }}</span>
             </el-form-item>
@@ -45,12 +45,6 @@
                 </template>
                 
             </el-form-item>
-            <el-form-item label="存储类型" prop="backend_type">
-                <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span>
-                <el-select v-model="form_data.backend_type" v-else>
-                    <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
-                </el-select>
-            </el-form-item>
             <el-form-item label="可用区" prop="az_id">
                 <span v-if="oper_info.os_id">
                     <span class="az" v-for="item in oper_info.az_list" :key="item.az_id">{{item.az_name}}{{oper_info.az_list.length>0 ? ';' : ''}}</span>
@@ -59,33 +53,42 @@
                     <el-option v-for="item in az_list" :key="item.az_id" :label="item.az_name" :value=" item.az_id "></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="镜像文件类型" prop="os_file_type">
-                <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span>
-                <el-select v-model="form_data.os_file_type" v-else>
-                    <el-option v-for="item in file_type_list" :key="item" :label="item" :value=" item "></el-option>
+            <el-form-item label="存储类型" prop="backend_type">
+                <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
+                <el-select v-model="form_data.backend_type">
+                    <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="计算类型" prop="support_type">
-                <span v-if="oper_info.os_id">{{ form_data.support_type }}</span>
-                <el-select v-else v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
+                <!-- <span v-if="oper_info.os_id">{{ form_data.support_type }}</span> -->
+                <el-select v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
                     <el-option v-for="item in compute_type_list" :key="item" :label="item" :value=" item"></el-option>
                 </el-select>
-                <el-tooltip :content=" '若是标准镜像，选择第三项：GPU/CPU' " placement="right" effect="light" v-if="!oper_info.os_id">
+                <el-tooltip :content=" '若是标准镜像，选择第三项：CPU/GPU' " placement="right" effect="light" v-if="!oper_info.os_id">
                     <el-button type="text"><svg-icon icon="info" class="m-left10"></svg-icon></el-button>
                 </el-tooltip>
             </el-form-item>
             <el-form-item label="驱动类型" prop="support_gpu_driver" v-if="form_data.support_type==='GPU'">
-                <span v-if="oper_info.os_id">{{ form_data.support_gpu_driver }}</span>
-                <el-select v-else v-model="form_data.support_gpu_driver">
+                <!-- <span v-if="oper_info.os_id">{{ form_data.support_gpu_driver }}</span> -->
+                <el-select v-model="form_data.support_gpu_driver">
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
-            
-            <el-form-item label="MD5" prop="path_md5" >
-                <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span>
-                <el-input v-else type="textarea" autosize v-model="form_data.path_md5" :maxlength=" 256" show-word-limit resize="none"></el-input>
+            <el-form-item label="镜像文件类型" prop="os_file_type">
+                <!-- <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span> -->
+                <el-select v-model="form_data.os_file_type">
+                    <el-option v-for="item in file_type_list" :key="item" :label="item" :value=" item "></el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
+            <el-form-item label="MD5" prop="path_md5" >
+                <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
+                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="256" show-word-limit resize="none"></el-input>
+            </el-form-item>
+            <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
+                <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
+                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="512" show-word-limit resize="none"></el-input>
+            </el-form-item>
+            <!-- <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
                     v-model="form_data.upload_time"
                     type="date"
@@ -96,7 +99,7 @@
                     placeholder="选择日期">
                 </el-date-picker>
                 <div class="prompt_message date-prompt">请选择该镜像在对象存储文件名的日期</div>
-            </el-form-item>
+            </el-form-item> -->
             <!-- <div class="error_message file-tip" v-if=" os_file.length===0 && !oper_info.os_id ">未找到目标镜像文件，请上传</div>
             <el-form-item label="" prop="os_file" v-if="!oper_info.os_id">
                 <el-upload
@@ -143,8 +146,8 @@ export default class AddCommon extends Vue{
     private bit_list:Array<any>=[{id:32,name:'32位'},{id:64,name:'64位'}];
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
-    private compute_type_list:any=['GPU','CPU','GPU/CPU']
-    private drive_type_list:any=['DataCenter','Geforce'];
+    private compute_type_list:any=['GPU','CPU','CPU/GPU']
+    private drive_type_list:any=['Datacenter','Geforce'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
     private os_file:any=[];
@@ -164,6 +167,7 @@ export default class AddCommon extends Vue{
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
         upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
+        oss_file_name:''
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -175,14 +179,19 @@ export default class AddCommon extends Vue{
         support_type: [{ required: true, message: '请选择计算类型', trigger: 'change' }],
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
         path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
+        oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
     }
     created(){
-        if(this.oper_info.os_id){
-            this.rules.path_md5=[{required:false, message: '请输入MD5', trigger: 'change' }]
-        }else{
+        // if(this.oper_info.os_id){
+        //     this.rules.path_md5=[{required:false, message: '请输入MD5', trigger: 'change' }]
+        // }else{
+        //     this.get_mirror_type();
+        //     this.get_disk_list()
+        // }
+        if(!this.oper_info.os_id){
             this.get_mirror_type();
-            this.get_disk_list()
         }
+        this.get_disk_list()
     }
     private validate_name(rule, value, callback){
         if(!value){
@@ -216,7 +225,10 @@ export default class AddCommon extends Vue{
             for(let i in res.data){
                 this.storage_type_list.push({id:i,name:res.data[i]})
             }
-            this.form_data.backend_type = this.storage_type_list[0].id
+            if(!this.oper_info.os_id){
+                this.form_data.backend_type = this.storage_type_list[0].id
+            }
+            
         }
     }
     @Watch('form_data.backend_type')
@@ -271,7 +283,7 @@ export default class AddCommon extends Vue{
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
         if(nv==='iso'){
-            this.form_data.support_type='GPU/CPU'
+            this.form_data.support_type='CPU/GPU'
         }
     }
     // @Watch("form_data",{immediate:true,deep:true})
@@ -305,14 +317,19 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5,upload_time}=this.form_data
+        const {display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
                     let res:any = await Service.edit_pub_mirror({
                         os_id:this.oper_info.os_id,
                         display_name,
-                        customer_ids:customer_ids==='' ? [] : customer_ids.split(',')
+                        customer_ids:customer_ids==='' ? [] : customer_ids.split(','),
+                        backend_type,
+                        support_type,
+                        support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
+                        os_file_type,
+                        path_md5
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
@@ -333,7 +350,7 @@ export default class AddCommon extends Vue{
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
-                        upload_time:moment(upload_time).format('YYYY-MM-DD')
+                        oss_file_name
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)

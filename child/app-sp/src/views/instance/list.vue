@@ -118,7 +118,7 @@
         <template #default="scope">
           <div v-if="scope.row.private_net">
             {{ scope.row.private_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+            （vlan {{ scope.row.vlan ? scope.row.vlan[FnGetNet(scope.row.private_net)] : '' }}）
           </div>
         </template>
       </el-table-column>
@@ -135,7 +135,7 @@
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
             </span>
             {{ scope.row.pub_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+            （vlan {{ scope.row.vlan ? scope.row.vlan[FnGetNet(scope.row.pub_net)] : '' }}）
           </div>
           <div v-for="item in scope.row.virtual_net" :key="item">
             <span
@@ -147,7 +147,7 @@
               {{ scope.row.eip_info[item].conf_name }}
             </span>
             {{ item }}
-            （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
+            （vlan {{ scope.row.vlan ? scope.row.vlan[FnGetNet(item)] : '' }}）
           </div>
         </template>
       </el-table-column>
@@ -667,12 +667,14 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
+    console.log('this.search_status',this.search_status,this.ecs_status_list);
+    
     let reqData = {
       billing_method:
         this.search_billing_method == "" ? "no" : this.search_billing_method,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
-      status:this.search_status.join(','),
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
       [this.sort_prop_name]: this.sort_order,
       is_op:true,
       ...this.search_reqData
@@ -1179,10 +1181,18 @@ export default class App extends Vue {
       if (resData.code === "Success") {
         this.ecs_status_list = [];
         for (let key in resData.data) {
-          this.ecs_status_list.push({
-            text: resData.data[key],
-            value: key
-          });
+          if(key!=='destroy'){
+            this.ecs_status_list.push({
+              text: resData.data[key],
+              value: key
+            });
+          }
+          
+        }
+        if (this.$route.query.host_id) {
+          
+        } else {
+          this.FnSearch();
         }
         // this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
       }
@@ -1270,13 +1280,7 @@ export default class App extends Vue {
         text: this.billing_method_relation[key]
       });
     }
-    if (this.$route.query.host_id) {
-      // this.search_con.host_id.default_value = this.$route.query
-      //   .host_id as string;
-      // this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
-    } else {
-      this.FnSearch();
-    }
+    
   }
   private beforeDestroy() {
     this.FnClearTimer();
