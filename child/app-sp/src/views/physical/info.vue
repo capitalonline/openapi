@@ -40,7 +40,7 @@
                     <el-tooltip content='已分配的内存容量/该物理机总容量' placement='bottom' effect="light">
                         <div class="m-bottom10">已分配内存容量：<span class="destroy">{{detail_info.memory_allot}}</span> / {{detail_info.memory_total}}</div>
                     </el-tooltip>
-                    <el-tooltip content='已分配的显卡容量/该宿主机显卡总数量' placement='bottom' effect="light" v-if="detail_info.gpu_instance==='GPU'">
+                    <el-tooltip content='已分配的显卡容量/该宿主机显卡总数量' placement='bottom' effect="light" v-if="['GPU','CPU/GPU','vGPU'].includes(detail_info.gpu_instance)">
                         <div>已分配显卡：<span class="destroy">{{parseInt(detail_info.gpu_count) - parseInt(detail_info.gpu_free)}}</span> / {{detail_info.gpu_count}}</div>
                     </el-tooltip>
                 </div>
