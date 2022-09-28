@@ -489,6 +489,7 @@ import Recover from "./recover.vue";
 import MarkTip from "../../components/markTip.vue";
 import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
+import storage from '../../store/storage';
 @Component({
   components: {
     LabelBlock,
@@ -1237,11 +1238,12 @@ export default class App extends Vue {
         type: "application/octet-stream"
       });
       let reader = new FileReader();
+      let title = storage.get('pod_name') +'-'+ moment(new Date()).format('YYYYMMDD')
       reader.readAsText(blob, "utf-8");
       reader.onload = () => {
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "云服务器列表" + ".xlsx";
+        link.download = title + ".xlsx";
         link.click();
         window.URL.revokeObjectURL(link.href);
       };
