@@ -4,7 +4,7 @@
             <el-select placeholder="请选择物理机产品类型名称" :multiple="true" v-model="productList" @change="changeProductType">
                 <el-option v-for="item in hostTypes" :key="item.host_product_id" :value="item.host_product_id" :label="item.name"></el-option>
             </el-select>
-            <span class="m-left10">物理机总台数:<span class="num_message"> {{Object.keys(physicalInfo).length}} </span>台</span>
+            <span class="m-left10 m-right10">物理机总台数:<span class="num_message"> {{Object.keys(physicalInfo).length}} </span>台</span>
             <time-group :dis_day="366" :timeList="timeList" @fn-emit="FnGetTimer"></time-group>
         </div>
         <div class="chart-box">
