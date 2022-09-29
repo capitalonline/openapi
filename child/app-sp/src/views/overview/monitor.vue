@@ -1,8 +1,8 @@
 <template>
     <div class="m-bottom20">
         <div class="monitor">
-            <el-select placeholder="请选择物理机产品类型名称" v-model="productList" @change="changeProductType">
-                <el-option v-for="item in hostTypes" :key="item.host_product_id" :id="item" :label="item.name"></el-option>
+            <el-select placeholder="请选择物理机产品类型名称" :multiple="true" v-model="productList" @change="changeProductType">
+                <el-option v-for="item in hostTypes" :key="item.host_product_id" :value="item.host_product_id" :label="item.name"></el-option>
             </el-select>
             <span class="m-left10">物理机总台数:<span class="num_message"> {{Object.keys(physicalInfo).length}} </span>台</span>
             <time-group :dis_day="366" :timeList="timeList" @fn-emit="FnGetTimer"></time-group>
@@ -103,8 +103,11 @@ export default class OverViewMonitor extends Vue{
     private changeProductType(){
         // this.physicalList=[]
         this.physicalInfo={}
-        this.productList.map(item=>{
-            item.physicalInfo.map(inn=>{
+        console.log('this.productList',this.productList)
+        let list = this.hostTypes.filter(item=>this.productList.includes(item.host_product_id))
+        console.log('list',list)
+        list.map(item=>{
+            item.host_infos.map(inn=>{
                 this.physicalInfo[inn.host_name]={
                     hostIp:inn.host_ip,//一个物理机的管理网ip只有一个嘛
                     region:inn.region_id,
@@ -116,10 +119,14 @@ export default class OverViewMonitor extends Vue{
             
             // this.physicalList=[...this.physicalList,...item.host_infos]
         })
+        console.log('this.physicalInfo',this.physicalInfo)
         this.init()
     }
     private init(){
         //各个物理机产品之间的物理机会重复嘛
+        if(Object.keys(this.physicalInfo).length===0){
+            return;
+        }
         let values:any = Object.values(this.physicalInfo)
         let total:number = values.reduce((total,item)=>{
             return total+item.gpu_count
