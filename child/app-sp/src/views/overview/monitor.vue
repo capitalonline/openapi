@@ -34,7 +34,7 @@
     </div>
 </template>
 <script lang="ts">
-import {Vue,Component} from 'vue-property-decorator';
+import {Vue,Component,Watch} from 'vue-property-decorator';
 import TimeGroup from '@/components/search/timeGroup.vue';
 import LineEchart from '@/components/chart/list.vue';
 import Service from '../../https/overview';
@@ -87,6 +87,13 @@ export default class OverViewMonitor extends Vue{
 
     created() {
         this.getHostTypes()
+    }
+    @Watch("$store.state.pod_id")
+    private watch_pod(nv){
+      if(!nv){
+        return;
+      }
+      this.getHostTypes()
     }
     private async getHostTypes(){
         let res:any = await Service.get_host_type({

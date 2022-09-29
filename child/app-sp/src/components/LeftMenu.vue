@@ -129,6 +129,13 @@ export default class LeftMenu extends Vue {
         { name: 'project_list', label: "项目管理" },
       ]
     },
+    {
+      name: "destroyed",
+      label: "已销毁资源",
+      children: [
+        { name: 'ecs_deatroyed', label: "云服务器" },
+      ]
+    },
   ];
   private menu: Array<object> = [];
   private FnChangeUrl(name): void {
