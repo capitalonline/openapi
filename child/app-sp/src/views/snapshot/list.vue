@@ -1,16 +1,14 @@
 <template>
     <div class="ecs-snapshot">
-        <template v-if="type!=='detail'">
-            <search-bar :search_option="search_option" @fn-search = "FnSearch" :action_icon_option="action_btns" @fn-icon="operateIcon"></search-bar>
+        <template>
+            <search-bar :search_option="search_option" @fn-search = "FnSearch" :isShowBg="type==='list' ? true : false" :action_icon_option="action_btns" @fn-icon="operateIcon"></search-bar>
         </template>
         <!-- <list-table ref="list_table"></list-table> -->
         <el-table
             ref="snapshot_table"
             :data="list"
-            @selection-change="handleSelectionChange"
             @filter-change="handleFilter"
         >
-            <el-table-column type="selection" />
             <el-table-column 
                 v-for="item in column_list" 
                 :key="item.prop" 
@@ -78,7 +76,7 @@
             </el-table-column>
              <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text">操作记录</el-button>
+                    <el-button type="text" @click="record(scope.row)">操作记录</el-button>
                 </template>
              </el-table-column>
         </el-table>
@@ -91,12 +89,16 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="pageInfo.total">
         </el-pagination>
+        <template v-if="visible">
+            <Record :visible="visible" :record_id="multiSelect[0].snapshot_id" @close = "close" :type="'snapshot'" />
+        </template>
     </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch,Prop } from 'vue-property-decorator';
 import Service from '../../https/snapshot/list';
 import SvgIcon from '../../components/svgIcon/index.vue';
+import Record from '../instance/record.vue';
 // import Clipboard from '../../components/clipboard.vue';
 import SearchBar from '../../components/search/actionBlock.vue'
 // import { FnGetRegion } from "../../utils/getRegionInfo";
@@ -111,6 +113,7 @@ interface Page{
         SvgIcon,
         // Clipboard,
         SearchBar,
+        Record
     }
 })
 export default class Snapshot extends Vue {
@@ -120,13 +123,21 @@ export default class Snapshot extends Vue {
             {text:'系统盘',value:'system'},
             {text:'数据盘',value:'data'}
         ]
-    private search_option:any={
-        snapshot_id:{placeholder:'请输入快照ID'},
-        snapshot_name:{placeholder:'请输入快照名称'},
-        disk_id:{placeholder:'请输入云盘ID'},
+    private search_option:any=this.type==='list'? {
+        type:{placeholder:'请输入',list:[
+            {type:'snapshot_info',label:'快照名称/ID'},
+            {type:'disk_info',label:'云盘名称/ID'}
+        ],type:'composite',width:340},
         customer_id:{placeholder:'请输入客户ID'},
         customer_name:{placeholder:'请输入客户名称'},
+    }:{
+        type:{placeholder:'请输入',list:[
+            {type:'snapshot_id',label:'快照ID'},
+            {type:'snapshot_name',label:'快照名称'}
+        ],type:'composite',width:340},
     }
+    private visible:boolean=false;
+    private operate_type:string=''
     private column_list=this.type==='list'? [
         {prop:'customer_id',label:'客户ID'},
         {prop:'customer_name',label:'客户名称'},
@@ -161,7 +172,6 @@ export default class Snapshot extends Vue {
     private timer=null
     private list=[];
     private multiSelect:any=[];
-    private visible:boolean=false;
     private statusObj:any={
         msg:'',
         status:true
@@ -184,49 +194,53 @@ export default class Snapshot extends Vue {
         // this.getStatusList();
         this.getSnapshotList();
     }
-   
-    private FnSearch(data:any={}){        
+    @Watch("$store.state.pod_id")
+    private watch_pod(nv){
+      if(!nv){
+        return;
+      }
+      this.FnSearch(this.search_data)
+    }
+   private record(row){
+    this.multiSelect=[row]
+    this.visible=true
+   }
+   private close(){
+    this.multiSelect=[]
+    this.visible=false;
+   }
+    private FnSearch(data:any={}){ 
+        console.log('data',data)  
+        this     
         this.FnClearTimer()
         this.search_data = {...data};
         this.pageInfo.page_index=1;
         this.getSnapshotList()
     }
-    @Watch("visible")
-    private watch_visible(nv){
-        if(!nv){
-            this.getSnapshotList();
-            this.operateType='';
-            this.multiSelect=[]
-        }
-    }
+    // @Watch("visible")
+    // private watch_visible(nv){
+    //     if(!nv){
+    //         this.getSnapshotList();
+    //         this.operateType='';
+    //         this.multiSelect=[]
+    //     }
+    // }
     public async getSnapshotList(loading = true){
-        let multiple_selection = [];
         if (!loading) {
             this.$store.commit('SET_LOADING', false);
-            multiple_selection = this.multiSelect.map((row: any) => {
-                return row.snapshot_id;
-            });
         }
-        const data = this.search_data;
         let res:any = await Service.get_snapshot_list({
+            pod_id:this.$store.state.pod_id,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
-            ...this.search_data
+            customer_id:this.search_data.customer_id,
+            customer_name:this.search_data.customer_name,
+            [this.search_data.typesub]:this.search_data.type,
+            snapshot_chains_id:this.type!=='list' ? this.snapshot_chains_id : undefined,
         })
         if(res.code==='Success'){
             this.list = res.data.snapshot_list;
             this.pageInfo.total = res.data.page_info.count;
-            var rows = [];
-            if (multiple_selection.length > 0) {
-                rows = res.data.snapshot_list.filter(row => multiple_selection.includes(row.snapshot_id));
-            }
-            if (rows && rows.length > 0) {
-                this.$nextTick(() => {
-                    rows.forEach(row => {
-                        (this.$refs.snapshot_table as any).toggleRowSelection(row);
-                    })
-                })
-            }
         } 
         this.FnSetTimer()
     }
@@ -248,9 +262,6 @@ export default class Snapshot extends Vue {
         this.FnClearTimer()
         this.getSnapshotList(false)
     }
-    private handleSelectionChange(data){
-        this.multiSelect = data
-    }
     private handleFilter(obj:any){
         this.FnClearTimer()
         this.filterInfo={...this.filterInfo,...obj}
@@ -266,117 +277,6 @@ export default class Snapshot extends Vue {
         this.FnClearTimer()
         this.pageInfo = {...this.pageInfo,page_index:cur}
         this.getSnapshotList()
-    }
-    public del(){
-        this.FnClearTimer()
-        if(this.multiSelect.length===0){
-            this.$message.warning('请选择快照')
-            return;
-        }
-        if(this.multiSelect.some(item=>!['running','create_fail'].includes(item.snapshot_status))){
-            this.$message.warning('仅支持删除可用或创建失败的快照')
-            return;
-        }
-        this.visible=true;
-        this.operateType='del'
-
-    }
-    private getStatus(val,row){
-        let msg:string='';
-        let status:boolean=true
-        if(val==='rollback'){
-            if(row.snapshot_status!=='running'){
-                msg = `只有可用状态的快照才可以回滚云盘,当前快照状态${row.snapshot_status_cn}`;
-                status=false
-                // this.$message.warning(`只有可用状态的快照才可以回滚云盘,当前快照状态${row.snapshot_status_cn}`);
-                // return;
-            }
-            if(!['running','waiting'].includes(row.disk_status)){
-                msg =`只有待挂载或使用中的云盘才可以回滚云盘,当前云盘状态${row.disk_status_cn}`;
-                status=false
-                // this.$message.warning(`只有待挂载或使用中的云盘才可以回滚云盘,当前云盘状态${row.disk_status_cn}`);
-                // return;
-            }
-            if(row.disk_status==='running' && row.ecs_status!=='shutdown'){
-                msg = `使用中的云盘只有已关机的实例才可以回滚云盘,当前实例状态${row.ecs_status_cn}`;
-                status=false
-                // this.$message.warning(`使用中的云盘只有已关机的实例才可以回滚云盘,当前实例状态${row.ecs_status_cn}`);
-                // return;
-            }
-            // if(!(row.snapshot_status==='running' && ((row.disk_status==='running' && row.ecs_status==='shutdown') || row.disk_status==='waiting'))){
-            //     this.$message.warning('当前状态不支持回滚云盘')
-            //     return;
-            // }
-        }else if(val==='del'){
-            if(!['running','create_fail'].includes(row.snapshot_status)){
-                msg = '仅支持删除可用或创建失败的快照';
-                status=false
-                // this.$message.warning('仅支持删除可用或创建失败的快照')
-                // return;
-            }
-        }else{
-            if(row.snapshot_status!=='running'){
-                msg = '当前状态不支持修改快照名称';
-                status=false
-                // this.$message.warning('当前状态不支持修改快照名称')
-                // return;
-            }
-        }
-        return ({
-            msg,
-            status
-        })
-    }
-    private handle(val,row){
-        this.FnClearTimer()
-        // if(val==='rollback'){
-        //     if(row.snapshot_status!=='running'){
-        //         this.$message.warning(`只有可用状态的快照才可以回滚云盘,当前快照状态${row.snapshot_status_cn}`);
-        //         return;
-        //     }
-        //     if(!['running','waiting'].includes(row.disk_status)){
-        //         this.$message.warning(`只有待挂载或使用中的云盘才可以回滚云盘,当前云盘状态${row.disk_status_cn}`);
-        //         this.statusObj={
-        //             msg:`只有待挂载或使用中的云盘才可以回滚云盘,当前云盘状态${row.disk_status_cn}`,
-        //             status:false
-        //         }
-        //         return;
-        //     }
-        //     if(row.disk_status==='running' && row.ecs_status!=='shutdown'){
-        //         this.$message.warning(`使用中的云盘只有已关机的实例才可以回滚云盘,当前实例状态${row.ecs_status_cn}`);
-        //         this.statusObj={
-        //             msg:`使用中的云盘只有已关机的实例才可以回滚云盘,当前实例状态${row.ecs_status_cn}`,
-        //             status:false
-        //         }
-        //         return;
-        //     }
-        //     // if(!(row.snapshot_status==='running' && ((row.disk_status==='running' && row.ecs_status==='shutdown') || row.disk_status==='waiting'))){
-        //     //     this.$message.warning('当前状态不支持回滚云盘')
-        //     //     return;
-        //     // }
-        // }else if(val==='del'){
-        //     if(!['running','create_fail'].includes(row.snapshot_status)){
-        //         this.$message.warning('仅支持删除可用或创建失败的快照')
-        //         return;
-        //     }
-        // }else{
-        //     if(row.snapshot_status!=='running'){
-        //         this.$message.warning('当前状态不支持修改快照名称')
-        //         return;
-        //     }
-        // }
-        if(!this.getStatus(val,row).status){
-            this.$message.warning(this.getStatus(val,row).msg);
-            return
-        }
-        this.visible=true;
-        this.operateType=val
-        this.multiSelect = [row]
-    }
-    private create(val){
-        this.FnClearTimer()
-        this.operateType='create';
-        this.rollbackCheck = val
     }
     beforeDestroy() {
         this.FnClearTimer()

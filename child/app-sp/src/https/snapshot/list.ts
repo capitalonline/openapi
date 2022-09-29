@@ -1,5 +1,5 @@
 import service from '../http'
-import { getEcsOptions }from '../common'
+import { getEcsOptions,getAlarmOptions }from '../common'
 
 export default {
     get_snapshot_list(reqData) {
@@ -11,5 +11,13 @@ export default {
     chains_detail(reqData) {  // 快照链详情
         return service(getEcsOptions('GET', '/snapshot/snapshot_chains_detail/', reqData))
     },
-
+    record(reqData) {  // 快照链详情
+        return service(getEcsOptions('GET', '/snapshot/history_record/', reqData))
+    },
+    get_monitor_id(reqData) {  // 快照链详情
+        return service(getEcsOptions('GET', '/snapshot/snapshot_disk_ids/', reqData))
+    },
+    get_snapshot_info(reqData){
+        return service(getAlarmOptions('GET','/snapshot/snapshot_use_monitor', reqData))
+    }
 }

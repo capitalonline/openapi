@@ -9,11 +9,11 @@
             <template v-if="activeName==='second'">
                 <chains />
             </template></el-tab-pane>
-        <!-- <el-tab-pane label="快照容量" name="third">
+        <el-tab-pane label="快照容量" name="third">
             <template v-if="activeName==='third'">
                 <monitor />
             </template>
-        </el-tab-pane> -->
+        </el-tab-pane>
     </el-tabs>
 </template>
 <script lang="ts">
@@ -21,12 +21,12 @@ import { Component, Vue } from 'vue-property-decorator';
 import Service from '../../https/snapshot/list';
 import snapshot from './list.vue';
 import chains from './chains.vue';
-// import Monitor from './monitor.vue'
+import Monitor from './monitor.vue'
 @Component({
     components:{
         snapshot,
         chains,
-        // Monitor
+        Monitor
     }
 })
 export default class TabList extends Vue {

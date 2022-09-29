@@ -102,7 +102,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue,Watch } from 'vue-property-decorator';
 import Service from '../../https/snapshot/list';
 // import Clipboard from '../../components/clipboard.vue';
 import SearchBar from '../../components/search/actionBlock.vue'
@@ -121,12 +121,11 @@ interface Page{
 })
 export default class Chains extends Vue {
     private search_option:any={
-        az_id:{type:'az_id'},
-        value:{type:'input-with-select',placeholder:'请选择',list:[
-            {value:'snapshot_chains_info',label:'快照链名称/ID'},
-            {value:'disk_info',label:'云盘名称/ID'},
-            {value:'instance_info',label:'实例名称/ID'},
-        ]}
+        type:{placeholder:'请输入',list:[
+            {type:'snapshot_chains_info',label:'快照链名称/ID'},
+            {type:'disk_info',label:'云盘名称/ID'},
+            {type:'instance_info',label:'实例名称/ID'},
+        ],type:'composite',width:340},
     }
     private action_btns:Array<string>=['refresh']
     private tableHeight = 200
@@ -160,6 +159,13 @@ export default class Chains extends Vue {
         this.getSnapshotChainsList()
         // this.getSnapshotChainsList('created');
     }
+    @Watch("$store.state.pod_id")
+    private watch_pod(nv){
+      if(!nv){
+        return;
+      }
+      this.FnSearch(this.search_data)
+    }
     private FnSearch(data:any={}){
         this.FnClearTimer()
         this.search_data = {...data};
@@ -175,11 +181,10 @@ export default class Chains extends Vue {
             this.$store.commit('SET_LOADING', false);
         }
         let res:any = await Service.get_snapshot_chains_list({
+            pod_id:this.$store.state.pod_id,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
-            [this.search_data.sel_value ? this.search_data.sel_value : 'snapshot_info']:this.search_data.value ? this.search_data.value : undefined,
-            region_id:this.search_data.region_id ? this.search_data.region_id :undefined,
-            az_id:this.search_data.az_id ? this.search_data.az_id :undefined,
+            [this.search_data.typesub]:this.search_data.type,
         })
         if(res.code==='Success'){
             this.list = res.data.snapshot_list;

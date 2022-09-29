@@ -27,5 +27,6 @@ export default {
   },
   get_gpu(type, reqData) {
     return service(FnHandleOptions(type)('GET','/gpu_info', reqData))
-  }
+  },
+  
 }
