@@ -24,6 +24,8 @@ import {
   TooltipComponentOption,
   GridComponent,
   GridComponentOption,
+  DataZoomComponent,
+  DataZoomComponentOption,
   // 数据集组件
   DatasetComponent,
   DatasetComponentOption,
@@ -42,6 +44,7 @@ type ECOption = echarts.ComposeOption<
   | TooltipComponentOption
   | GridComponentOption
   | DatasetComponentOption
+  | DataZoomComponentOption
 >;
 
 // 注册必须的组件
@@ -50,6 +53,7 @@ echarts.use([
   TooltipComponent,
   GridComponent,
   DatasetComponent,
+  DataZoomComponent,
   TransformComponent,
   BarChart,
 //   LabelLayout,
@@ -76,6 +80,9 @@ export default class Charts extends Vue{
         xAxis: {},
         yAxis: {
             type: 'value'
+        },
+        grid: {
+            bottom: 90
         },
         tooltip:{},
         series: []
@@ -104,13 +111,22 @@ export default class Charts extends Vue{
                 type:'category',
                 data:x_time,
                 boundaryGap:false,
-                axisTick:{
-                    interval:0
-                },
-                axisLabel:{
-                    interval:0,
-                    rotate:x_time.length>13 ? 45 : 0
+            },
+            dataZoom: [
+                {
+                    type: 'inside',
+                    start: 50,
+                    end: 100,
+                    filterMode:'filter'
+                }, {
+                    type: 'slider',
+                    start: 50,
+                    end: 100,
+                    filterMode:'filter'
                 }
+            ],
+            grid: {
+                bottom: 90
             },
             yAxis: {
                 type: 'value'

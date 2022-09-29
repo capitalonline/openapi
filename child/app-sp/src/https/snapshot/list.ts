@@ -1,5 +1,5 @@
 import service from '../http'
-import { getEcsOptions,getAlarmOptions }from '../common'
+import { getEcsOptions,getSnapshotOptions }from '../common'
 
 export default {
     get_snapshot_list(reqData) {
@@ -18,6 +18,6 @@ export default {
         return service(getEcsOptions('GET', '/snapshot/snapshot_disk_ids/', reqData))
     },
     get_snapshot_info(reqData){
-        return service(getAlarmOptions('GET','/snapshot/snapshot_use_monitor', reqData))
+        return service(getSnapshotOptions('POST','/snapshot/snapshot_use_monitor', reqData))
     }
 }
