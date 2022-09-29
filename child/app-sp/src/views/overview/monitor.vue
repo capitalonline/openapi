@@ -4,7 +4,7 @@
             <el-select placeholder="请选择物理机产品类型名称" :multiple="true" v-model="productList" @change="changeProductType">
                 <el-option v-for="item in hostTypes" :key="item.host_product_id" :value="item.host_product_id" :label="item.name"></el-option>
             </el-select>
-            <span class="m-left10">物理机总台数:<span class="num_message"> {{Object.keys(physicalInfo).length}} </span>台</span>
+            <span class="m-left10 m-right10">物理机总台数:<span class="num_message"> {{Object.keys(physicalInfo).length}} </span>台</span>
             <time-group :dis_day="366" :timeList="timeList" @fn-emit="FnGetTimer"></time-group>
         </div>
         <div class="chart-box">
@@ -53,8 +53,8 @@ export default class OverViewMonitor extends Vue{
     private timeList={
         day: {label: '最近1天', time: 1000 * 60 * 60 * 24},
         week: {label: '最近7天', time: 1000 * 60 * 60* 24 * 7},
-        '30_day': {label: '最近30天', time: 1000 * 60 * 60* 24 * 14},
-        '90_day': {label: '最近90天', time: 1000 * 60 * 60* 24 * 14}
+        '30_day': {label: '最近30天', time: 1000 * 60 * 60* 24 * 30},
+        '90_day': {label: '最近90天', time: 1000 * 60 * 60* 24 * 90}
     }
     private cpu_used = {
         title: 'CPU使用率',
@@ -101,26 +101,21 @@ export default class OverViewMonitor extends Vue{
         this.init()
     }
     private changeProductType(){
-        // this.physicalList=[]
-        this.physicalInfo={}
-        console.log('this.productList',this.productList)
-        let list = this.hostTypes.filter(item=>this.productList.includes(item.host_product_id))
-        console.log('list',list)
-        list.map(item=>{
-            item.host_infos.map(inn=>{
-                this.physicalInfo[inn.host_name]={
-                    hostIp:inn.host_ip,//一个物理机的管理网ip只有一个嘛
-                    region:inn.region_id,
-                    az:inn.az_id,
-                    gpu_count:inn.gpu_count,//总量即卡的数量
-                    total_gpu_capacity:inn.total_gpu_capacity
-                }
+            this.physicalInfo={}
+            let list = this.hostTypes.filter(item=>this.productList.includes(item.host_product_id))
+            list.map(item=>{
+                item.host_infos.map(inn=>{
+                    this.physicalInfo[inn.host_name]={
+                        hostIp:inn.host_ip,//一个物理机的管理网ip只有一个嘛
+                        region:inn.region_id,
+                        az:inn.az_id,
+                    }
+                })
             })
-            
-            // this.physicalList=[...this.physicalList,...item.host_infos]
-        })
-        console.log('this.physicalInfo',this.physicalInfo)
-        this.init()
+            this.init()
+        
+        // this.physicalList=[]
+        
     }
     private init(){
         //各个物理机产品之间的物理机会重复嘛
@@ -128,9 +123,6 @@ export default class OverViewMonitor extends Vue{
             return;
         }
         let values:any = Object.values(this.physicalInfo)
-        let total:number = values.reduce((total,item)=>{
-            return total+item.gpu_count
-        },0)
         let req={
             hostIds:Object.keys(this.physicalInfo).join('|'),
             hostIps:values.map(item=>item.hostIp).join('|'),
@@ -140,14 +132,63 @@ export default class OverViewMonitor extends Vue{
             end:moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
         }
         Promise.all([
-            Service.get_cpu_percent({...req,totalCore:total}),//这个传总核数
-            Service.get_ram_percent({...req,total}),
-            Service.get_gpu_percent({...req,queryType:'memory',total}),
-            Service.get_gpu_percent({...req,queryType:'gpu',total}),
+            Service.get_cpu_percent({...req}),//这个传总核数
+            Service.get_ram_percent({...req}),
+            Service.get_gpu_percent({...req,queryType:'memory'}),
+            Service.get_gpu_percent({...req,queryType:'gpu'}),
         ]).then(res=>{
-
+            console.log('res',res)
+            let obj={
+                0:'cpu_used',
+                1:'memory_used',
+                2:'graphics_ram_used',
+                3:'graphics_card_used'
+            }
+            let showName={
+                sale:'已售量',
+                saleRate:'售卖率',
+                use:'实际使用量',
+                usage:'实际使用率'
+            }
+            res.map((item,index)=>{
+                let list:any=[];
+                let metric:any=[]
+                for(let i in item.data){
+                    if(i!=='xTime'){
+                        metric.push(showName[i])
+                        list.push({
+                            code:item.code,
+                            yValues:[item.data[i]],
+                            xTime:item.data.xTime,
+                        })
+                    }
+                }
+                list.map(inn=>inn.metricInfo = metric)
+                this.FnHandleDubleData(obj[index],list)
+            })
         })
     }
+    private FnHandleDubleData(type,resData) {
+        console.log('resData',resData)
+        let index = 0;
+        this[type].yValue=[]
+        resData.forEach((item: any) => {
+            if (item.code === 'Success') {
+            item.metricInfo = item.metricInfo;
+            if (index === 0) {
+                this[type].xTime = item.xTime;
+                this[type].legend = item.metricInfo;
+            } 
+            if (item.yValues) {
+                this[type].yValue.push(...item.yValues);
+            }
+            }
+            index++;
+        })
+        this[type].resize++;
+        console.log('this.type',this[type])
+  }
+
 }
 </script>
 <style lang="scss" scoped>

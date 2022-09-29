@@ -97,7 +97,8 @@
           <template v-else-if="item.prop === 'private_net'">
             <div v-if="scope.row.private_net">
               {{ scope.row.private_net }}
-              （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+              （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+              <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
             </div>
           </template>
           <template v-else-if="item.prop === 'virtual_net'">
@@ -112,7 +113,8 @@
                 {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
               </span>
               {{ scope.row.pub_net }}
-              （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+              （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
+              <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
             </div>
             <div v-for="item in scope.row.virtual_net" :key="item">
               <span
@@ -124,7 +126,8 @@
                 {{ scope.row.eip_info[item].conf_name }}
               </span>
               {{ item }}
-              （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
+              （vlan {{ scope.row.eip_info[item].vlan_id }}）
+              <!-- （vlan {{ scope.row.vlan[FnGetNet(item)] }}） -->
             </div>
           </template>
           <template v-else-if="item.prop === 'pub_net'">
@@ -1129,7 +1132,7 @@ export default class App extends Vue {
       reader.onload = () => {
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "云服务器列表" + ".xlsx";
+        link.download = '云服务器-'+moment(new Date()).format('YYYYMMDD') + ".xlsx";
         link.click();
         window.URL.revokeObjectURL(link.href);
       };
