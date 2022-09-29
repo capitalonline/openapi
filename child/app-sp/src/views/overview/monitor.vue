@@ -112,12 +112,8 @@ export default class OverViewMonitor extends Vue{
                     hostIp:inn.host_ip,//一个物理机的管理网ip只有一个嘛
                     region:inn.region_id,
                     az:inn.az_id,
-                    gpu_count:inn.gpu_count,//总量即卡的数量
-                    total_gpu_capacity:inn.total_gpu_capacity
                 }
             })
-            
-            // this.physicalList=[...this.physicalList,...item.host_infos]
         })
         console.log('this.physicalInfo',this.physicalInfo)
         this.init()
@@ -128,9 +124,6 @@ export default class OverViewMonitor extends Vue{
             return;
         }
         let values:any = Object.values(this.physicalInfo)
-        let total:number = values.reduce((total,item)=>{
-            return total+item.gpu_count
-        },0)
         let req={
             hostIds:Object.keys(this.physicalInfo).join('|'),
             hostIps:values.map(item=>item.hostIp).join('|'),
@@ -140,10 +133,10 @@ export default class OverViewMonitor extends Vue{
             end:moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
         }
         Promise.all([
-            Service.get_cpu_percent({...req,totalCore:total}),//这个传总核数
-            Service.get_ram_percent({...req,total}),
-            Service.get_gpu_percent({...req,queryType:'memory',total}),
-            Service.get_gpu_percent({...req,queryType:'gpu',total}),
+            Service.get_cpu_percent({...req}),//这个传总核数
+            Service.get_ram_percent({...req}),
+            Service.get_gpu_percent({...req,queryType:'memory'}),
+            Service.get_gpu_percent({...req,queryType:'gpu'}),
         ]).then(res=>{
 
         })
