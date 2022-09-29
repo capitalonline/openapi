@@ -25,16 +25,18 @@ import DatePicker from './DatePicker.vue';
 })
 export default class TimeGroup extends Vue {
   @Prop({default: ''}) private start_time!: string;
+  @Prop({default: ()=>({})}) timeList!: any;
+  @Prop({default: 31}) private dis_day!: number;
   private time_option = {
     placeholder: ['开始时间', '结束时间'],
     type: 'datetimerange',
     width: '360',
     clearable: false,
-    dis_day: 31,
+    dis_day: this.dis_day,
     min_date: this.start_time,
     defaultTime: []
   };
-  private time_list = {
+  private time_list = Object.keys(this.timeList).length>0 ? this.timeList : {
     hour: {label: '1小时', time: 1000 * 60 * 60},
     '6_hour': {label: '6小时', time: 1000 * 60 * 60 * 6},
     '12_hour': {label: '12小时', time: 1000 * 60 * 60 * 12},

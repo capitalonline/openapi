@@ -91,7 +91,6 @@ export default class OverView extends Vue{
 </script>
 <style lang="scss" scoped>
 .el-card{
-    width: 80%;
     margin: auto;
     margin-bottom: 20px;
     .title{
@@ -121,7 +120,7 @@ export default class OverView extends Vue{
 .error {
   color:#DA3B18;
 }
-.online,.online_maintenance, {
+.online,.online_maintenance{
   color:#2DA867;
 }
 </style>

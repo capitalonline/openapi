@@ -19,21 +19,21 @@ export default{
     get_cpu_percent(req){
         return service(getMonitorOptions('GET','/cpu_group_info',req))
     },
-    //获取内存使用率
+    // //获取内存使用率
     get_ram_percent(req){
         return service(getMonitorOptions('GET','/memory_group_info',req))
     },
-    //获取本地盘使用率
-    get_lcoal_percent(req){
-        return service(getMonitorOptions('GET','/host/host_product_list/',req))
-    },
+    // //获取本地盘使用率
+    // get_lcoal_percent(req){
+    //     return service(getMonitorOptions('GET','/host/host_product_list/',req))
+    // },
     //获取显卡使用率
     get_gpu_percent(req){
         return service(getMonitorOptions('GET','/gpu_group_info',req))
     },
     //获取显存使用率
-    get_gpu_capacity(req){
-        return service(getMonitorOptions('GET','/host/host_product_list/',req))
-    },  
+    // get_gpu_capacity(req){
+    //     return service(getMonitorOptions('GET','/host/host_product_list/',req))
+    // },  
 
 }
