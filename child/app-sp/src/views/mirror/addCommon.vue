@@ -224,6 +224,9 @@ export default class AddCommon extends Vue{
         if(res.code==="Success"){
             for(let i in res.data){
                 this.storage_type_list.push({id:i,name:res.data[i]})
+                if(this.oper_info.os_id && this.form_data.backend_type===res.data[i]){
+                    this.form_data.backend_type=i
+                }
             }
             if(!this.oper_info.os_id){
                 this.form_data.backend_type = this.storage_type_list[0].id

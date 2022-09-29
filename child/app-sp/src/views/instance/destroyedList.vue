@@ -836,7 +836,7 @@
                 ? "no"
                 : this.search_billing_method,
             op_source: this.search_op_source,
-            spec_family_ids:JSON.stringify(this.search_ecs_goods_name),
+            spec_family_ids:this.search_ecs_goods_name.join(','),
           },
           this.search_reqData,
           
