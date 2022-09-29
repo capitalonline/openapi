@@ -45,6 +45,13 @@ module.exports = {
           '^/alarm/api': '/api'
         }
       },
+      '/snapshot/api': {
+        target: ' http://cloudos-op-metricsapi.gic.test',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/snapshot/api': '/api'
+        }
+      },
       '/api': {
         target: 'http://cds-os-tasker.gic.test',
         ws: true,

@@ -1,5 +1,5 @@
 <template>
-  <div class="action-box">
+  <div class="action-box" :style="isShowBg ? {} : {background:'#fff',padding:0,margin:0,border:'none'}">
     <div class="search-box" ref="search" :class="{fold:!isOpen}">
       <div
         v-for="(value, key) in search_option"
@@ -91,6 +91,7 @@ export default class ActionBlock extends Vue {
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
   @Prop({ default: false }) private type!: boolean | string;
+  @Prop({ default: true }) private isShowBg: boolean;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
@@ -139,7 +140,7 @@ export default class ActionBlock extends Vue {
     for (let i in this.search_option) {
       if (["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
-      } else {
+      }else {
         this.search_value = {};
       }
     }
@@ -156,7 +157,15 @@ export default class ActionBlock extends Vue {
         );
         flag++;
       }
+      if(this.search_option[key].type==='composite' && this.search_option[key].list){
+        this.$set(
+          this.search_value,
+          key + 'sub',
+          this.search_option[key].list[0].type
+        );
+      }
     }
+    
     if (flag > 0 || this.type==='physical') {
       setTimeout(()=>{
         this.FnSearch()

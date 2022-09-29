@@ -65,8 +65,18 @@ export default class LeftMenu extends Vue {
       label: "云服务器管理"
     },
     {
-      name: "disk_list",
-      label: "云盘管理"
+      name: 'disk',
+      label: '云盘',
+      children: [
+        {
+          name: "disk_list",
+          label: "云盘管理"
+        },
+        {
+          name: "snapshot_list",
+          label: "快照管理"
+        },
+      ]
     },
     {
       name: 'mirror',

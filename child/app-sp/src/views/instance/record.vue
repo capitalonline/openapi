@@ -80,7 +80,8 @@ import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/instance/record_detail';
 import p_service from '../../https/physical/list';
-import m_service from '../../https/mirror/list'
+import m_service from '../../https/mirror/list';
+import snapshot_service from '../../https/snapshot/list'
 import moment from 'moment';
 import {deal_list} from '../../utils/transIndex';
 import SvgIcon from '../../components/svgIcon/index.vue'
@@ -175,6 +176,16 @@ export default class InsDetail extends Vue{
         content_type:data.content,
         start:data.time ? moment(data.time[0]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
         end:data.time ? moment(data.time[1]).format("YYYY-MM-DD HH:mm:ss") : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+        page_size:this.size,                                                                         
+        page_index:this.current,
+        
+      })
+    }else if(this.type==='snapshot'){
+      res = await snapshot_service.record({
+        cloud_id:this.record_id,
+        cloud_type:'snapshot',
+        status:data.state || '',
+        task_type:data.content,
         page_size:this.size,                                                                         
         page_index:this.current,
         
