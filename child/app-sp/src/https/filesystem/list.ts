@@ -19,6 +19,10 @@ export default{
     get_vm_list(req){
         return service(getNasOptions('POST','/nas/transfer_list/',req))
     },
+    //获取远程连接地址
+    get_vnc(req){
+        return service(getNasOptions('GET','/nas/compute_domain_info/',req))
+    },
     //获取IOPS监控信息
     get_iops(req){
         return service(getUsedOptions('GET','/nas/nas_iops_monitor',req))
@@ -35,5 +39,6 @@ export default{
     get_file_use(req){
         return service(getUsedOptions('POST','/nas/get_nas_use',req))
     },
+    
 
 }
