@@ -469,6 +469,7 @@ export default class Monitor extends Vue{
     Service.get_gpu(type, Object.assign({queryType: 'temperature'}, reqData)).then(resData => {
       this.FnHandleSingleData('gpu_temperature', resData);
     })
+    this.gpu_frequency.yValue = [];
     Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
       Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
     ]).then(resData => {
