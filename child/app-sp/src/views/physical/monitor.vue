@@ -284,6 +284,7 @@ export default class Monitor extends Vue{
   }
   private FnHandleMoreData(type, resData) { // 处理负载
     let index = 0;
+    this[type].yValue=[]
     resData.forEach((item: any) => {
       if (item.code === 'Success') {
         if (item.data.xTime) {
@@ -295,6 +296,7 @@ export default class Monitor extends Vue{
       index++;
     })
     this[type].resize++;
+    // console.log('FnHandleMoreData',this[type])
   }
   private FnGetDiskInfo(type, reqData) {
     Service.get_disk(type, { queryType: 'use', ...reqData }).then((resData: any) => {
@@ -342,6 +344,7 @@ export default class Monitor extends Vue{
         index++;
       })
       this[type].resize++;
+      console.log('####',this[type])
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
@@ -357,9 +360,7 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
-  private async FnGetGpuInfo(type, reqData) {
-    console.log('this.default_tab',this.default_tab);
-    
+  private async FnGetGpuInfo(type, reqData) {    
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
       host_id: this.host_id,
@@ -443,6 +444,7 @@ export default class Monitor extends Vue{
         ...data
       }))
     })
+    this.gpu_frequency.yValue = [];
     Promise.all(proList).then(resData => {
       resData.map(item=>{
         if(item.data.yValues && item.data.yValues.length>0){
