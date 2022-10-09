@@ -61,7 +61,7 @@
             <el-table-column prop="transfer_vm_image" label="镜像名称"></el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <!-- <el-button type="text" @click="capacity(scope.row)" :disabled="!auth_list.includes('record')">远程链接</el-button>  -->
+                    <el-button type="text" @click="FnVnc(scope.row.transfer_vm_id)" :disabled="!auth_list.includes('vnc')">远程链接</el-button> 
                     <el-button type="text" @click="FnToMonitor(scope.row)" :disabled="!auth_list.includes('monitor')">监控</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>
@@ -82,6 +82,7 @@
 import {Vue,Component,Prop,Watch} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
+import EcsService from "../../https/instance/list";
 import Service from '../../https/filesystem/list';
 import moment from 'moment';
 import Clipboard from '../../components/clipboard.vue'
@@ -151,6 +152,16 @@ export default class CommonMirror extends Vue{
     private handleCurrentChange(cur){
         this.current = cur
         this.getVmList()
+    }
+    private async FnVnc(id:string){
+        let resData: any = await EcsService.get_vnc_url({
+            ecs_id: id
+        });
+        if (resData.code === "Success") {
+            let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
+            let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
+            window.open(url);
+        }
     }
     private FnToMonitor(row) {
         sessionStorage.setItem('vm_monitor',JSON.stringify({
