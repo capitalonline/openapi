@@ -154,12 +154,11 @@ export default class CommonMirror extends Vue{
         this.getVmList()
     }
     private async FnVnc(id:string){
-        let resData: any = await EcsService.get_vnc_url({
-            ecs_id: id
+        let resData: any = await Service.get_vnc({
+            pod_id: this.$store.state.pod_id
         });
         if (resData.code === "Success") {
-            let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
-            let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
+            let url = `${resData.data.compute_domain}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
             window.open(url);
         }
     }
