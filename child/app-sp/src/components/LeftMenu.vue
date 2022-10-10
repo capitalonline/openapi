@@ -87,7 +87,7 @@ export default class LeftMenu extends Vue {
       label: '文件存储',
       children: [
         {
-          name: "not_filesystem",
+          name: "notFilesystem",
           label: "不可用文件系统"
         },
       ]

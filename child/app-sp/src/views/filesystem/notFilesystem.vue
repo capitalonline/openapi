@@ -5,14 +5,6 @@
                 <el-button type="primary" @click="destroy" :disabled="!auth_list.includes('add_mirror')">销毁</el-button>
             </template> -->
         </action-block>
-        <div class="icon m-bottom10">
-            <!-- <el-tooltip content="导出" placement="bottom" effect="light">
-                <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
-            </el-tooltip> -->
-            <el-tooltip content="刷新" placement="bottom" effect="light">
-                <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
-            </el-tooltip>
-        </div>
         <el-table 
             :data="list" 
             border 
@@ -54,25 +46,17 @@
             </el-table-column>
             <el-table-column prop="mount_path" label="挂载地址" width="180">
                 <template slot-scope="scope">
-                    <el-tooltip 
+                    <!-- <el-tooltip 
                         :content="scope.row.mount_path[0]" 
                         placement="bottom" 
                         effect="light">
                             <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
                     </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                
+                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                 -->
                 </template>
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
             <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
-            <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
-            <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column>
-            <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
-                <template slot-scope="scope">
-                   <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
-                   <div>存储网:{{scope.row.transfer_vm_storage_ip}}</div>
-                </template>
-            </el-table-column>
             <el-table-column prop="billing_method" label="计费方式">
                 <template slot-scope="scope">
                     <span>{{feeInfo[scope.row.billing_method]}}</span>
@@ -88,14 +72,9 @@
                     <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="operate" label="操作" width="120">
                 <template slot-scope="scope">
-                    <el-tooltip placement="right" v-if="scope.row.status!=='running' || !auth_list.includes('file_capacity')" effect="light" content="只有运行中的文件系统才可以扩容">
-                        <span type="text" class="not-clickable">扩容</span> 
-                    </el-tooltip>
-                    <el-button type="text" v-else @click="capacity(scope.row)">扩容</el-button> 
-                    <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">删除</el-button>  -->
-                    <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
+                    <el-button type="text" @click="visible=true">查看不可用原因</el-button> 
                 </template>
             </el-table-column>
         </el-table>
@@ -109,7 +88,17 @@
             :total="total">
         </el-pagination>
         <template v-if="visible">
-            <capacity :visible.sync="visible" :info="operateInfo"></capacity>
+            <el-dialog
+                title="查看文件系统不可用原因"
+                :visible.sync="visible"
+                width="30%"
+                :close-on-click-modal="false"
+                :destroy-on-close="true">
+                <span>这是一段信息</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="visible = false">确 定</el-button>
+                </span>
+            </el-dialog>
         </template>
     </div>
 </template>
@@ -120,13 +109,11 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/filesystem/list';
 import moment from 'moment';
 import Clipboard from '../../components/clipboard.vue'
-import Capacity from './capacity.vue'
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
         Clipboard,
-        Capacity
     }
 })
 export default class List extends Vue{
@@ -137,10 +124,8 @@ export default class List extends Vue{
         customer_name:{placeholder:'请输入客户名称'},
         nas_id:{placeholder:'请输入文件系统ID'},
         nas_name:{placeholder:'请输入文件系统名称'},
-        transfer_vm_id:{placeholder:'请输入中转虚拟机ID'},
-        transfer_vm_ip:{placeholder:'请输入中转虚拟机IP'},
     }
-    private list:Array<any>=[]
+    private list:Array<any>=[{customer_id:1}]
     private current:number = 1
     private size:number = 20
     private total:number = 0
@@ -156,7 +141,7 @@ export default class List extends Vue{
     }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
-        this.search()
+        // this.search()
     }
     @Watch('visible')
     private watch_visible(nv){
@@ -166,7 +151,7 @@ export default class List extends Vue{
     }
     @Watch('$store.state.pod_id')
     private watch_pod(){
-        this.search(this.search_data)
+        // this.search(this.search_data)
     }
     private async getNasList(loading:boolean=true){
         if(!loading){
