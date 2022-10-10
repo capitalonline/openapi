@@ -82,6 +82,16 @@ export default class LeftMenu extends Vue {
         }
       ]
     },
+    {
+      name: 'filesystem',
+      label: '文件存储',
+      children: [
+        {
+          name: "not_filesystem",
+          label: "不可用文件系统"
+        },
+      ]
+    },
     { name: 'event_list', label: "任务管理" },
     {
       name:'alarm_manage',
