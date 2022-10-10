@@ -82,7 +82,7 @@
             </el-form-item>
             <el-form-item label="MD5" prop="path_md5" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="256" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="512" show-word-limit resize="none"></el-input>
             </el-form-item>
             <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
