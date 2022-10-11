@@ -192,11 +192,16 @@
        * [6.DescribeInstance](#6describeinstance)
        * [7.DescribeInstanceStatus](#7describeinstancestatus)
        * [8.DescribeEvent](#8describeevent)
-       * [9.CreateInstance](#9createinstance)
-       * [10.OperateInstance](#10operateinstance)
-       * [11.DeleteInstance](#11deleteinstance)
-       * [12.ModifyInstancePassword](#13modifyinstancepassword)
-       * [13.ModifyInstanceName](#13modifyinstancename)
+       * [9.DescribeInstanceMonitor](#9describeinstancemonitor)
+       * [10.DescribeAccountSubject](#10describeaccountsubject)
+       * [11.CreateInstance](#11createinstance)
+       * [12.OperateInstance](#12operateinstance)
+       * [13.DeleteInstance](#13deleteinstance)
+       * [14.ModifyInstancePassword](#14modifyinstancepassword)
+       * [15.ModifyInstanceName](#15modifyinstancename)
+       * [16.CreateImage](#16createimage)
+       * [17.DeleteImage](#17deleteimage)
+       * [18.SyncImage](#18syncimage)
      * [云盘EBS相关](#云盘ebs相关)
        * [1.CreateDisk](#1createdisk-1)
        * [2.DeleteDisk](#2deletedisk)
@@ -242,7 +247,7 @@
 | 名称             | String | 是否必填 | 描述                                                         |
 | ---------------- | ------ | -------- | ------------------------------------------------------------ |
 | Action           | String | 是       | API 的动作名称                                               |
-| AccessKeyId      | String | 是       | 访问密钥 ID（位于用户中心-->用户安全-->密钥管理）                         |
+| AccessKeyId      | String | 是       | 访问密钥 ID（位于用户中心-->用户安全-->密钥管理）            |
 | Signature        | String | 是       | 您的签名                                                     |
 | SignatureMethod  | String | 是       | 签名方式。取值范围：HMAC-SHA1。                              |
 | SignatureVersion | String | 是       | 签名算法版本。取值范围：1.0。                                |
@@ -281,7 +286,7 @@
 1. 构造待签名字符串StringToSign。您可以同样使用percentEncode处理上一步构造的规范化请求字符串，规则如下：
 
    ```python
-   	canstring = ''
+       canstring = ''
      for k, v in sortedD:
          canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
      stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
@@ -300,7 +305,7 @@
 
 ```python
 def percentEncode(str):
-  	"""将特殊转义字符替换"""
+   """将特殊转义字符替换"""
     res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
@@ -355,39 +360,39 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
 ### 1.CreateInstance
 
-​	**Action：CreateInstance** 
+  **Action：CreateInstance** 
 
-​	**描述** 创建一台或多台按量付费或者包年包月云服务器。
+  **描述** 创建一台或多台按量付费或者包年包月云服务器。
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:** 
+  **请求参数:** 
 
 | 名称               | 类型     | 是否必选 | 示例                                                         | 描述                                                         |
 | ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | VdcId              | String   | 是       |                                                              | 云服务器所属虚拟数据中心                                     |
-| Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                                |
-| PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                |
-| InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                           |
+| Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)** |
+| PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                 |
+| InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                                             |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
 | Cpu                | int      | 是       | 4                                                            | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    默认选择可以购买的最小的 |
 | Ram                | int      | 是       | 8                                                            | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    默认选择可以购买的最小的 |
-| InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品          |
+| InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品 |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
-| ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}        | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
-| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] |      ssd支持IOPS,默认: "IOPS": 0                                                        |
+| ImagePassword      | string   | 否       | tpl-password                                                 | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项 |
+| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}         | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
+| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] | ssd支持IOPS,默认: "IOPS": 0                                  |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
-| PrivateIp          | list   | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}] |内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
-| UTC                | Bool   | 否       |   true                                                         | 是否设置时区为 UTC                                           |
-| WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。|
-| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                                         | 用户自定义数据，格式必须为base64编码                         |
+| PrivateIp          | list     | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}]        | 内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
+| UTC                | Bool     | 否       | true                                                         | 是否设置时区为 UTC                                           |
+| WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。 |
+| **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                 | 用户自定义数据，格式必须为base64编码                         |
 
 
 
@@ -468,28 +473,28 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
 
 ### 2.DeleteInstance
 
-​	**Action：** DeleteInstance
+  **Action：** DeleteInstance
 
-​	**描述：** 删除一台或者多台云服务器
+  **描述：** 删除一台或者多台云服务器
 
-​	**请求地址:** api.capitalonline.net/ccs
+  **请求地址:** api.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:**
+  **请求参数:**
 
 | 名称        | 类型 | 是否必选 | 示例值                                   | 描述                                          |
 | ----------- | ---- | -------- | ---------------------------------------- | --------------------------------------------- |
 | InstanceIds | list | 是       | ["f9053ea8-fc23-4032-8a7f-01def77b4cc0"] | 云服务器的编号，可以在DescribeInstances中获取 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -497,7 +502,7 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -507,7 +512,7 @@ def CreateInstance(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount)
 }
 ```
 
-​	**调用代码示例:**
+  **调用代码示例:**
 
 ```python
 def delete_instance(vm_ids):
@@ -531,28 +536,28 @@ def delete_instance(vm_ids):
 
 ### 3.StopInstance
 
-​	**Action:StopInstance**
+  **Action:StopInstance**
 
-​	**描述:** 云服务器关机
+  **描述:** 云服务器关机
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
 | ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -560,7 +565,7 @@ def delete_instance(vm_ids):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -571,28 +576,28 @@ def delete_instance(vm_ids):
 
 ### 4.RebootInstance
 
-​	**Action：RebootInstance**
+  **Action：RebootInstance**
 
-​	**描述：** 云服务器重启
+  **描述：** 云服务器重启
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
 | ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -600,7 +605,7 @@ def delete_instance(vm_ids):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -611,15 +616,15 @@ def delete_instance(vm_ids):
 
 ### 5.ModifyInstanceChargeType
 
-​	**Action：ModifyInstanceChargeType**
+  **Action：ModifyInstanceChargeType**
 
-​	**描述：** 云服务器变更计费方式
+  **描述：** 云服务器变更计费方式
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称               | 类型     | 是否必选 | 示例值                               | 描述                                                         |
 | ------------------ | -------- | -------- | ------------------------------------ | ------------------------------------------------------------ |
@@ -628,14 +633,14 @@ def delete_instance(vm_ids):
 | AutoRenew          | interger | 否       | 1                                    | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                    | 包年包月云主机购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -643,7 +648,7 @@ def delete_instance(vm_ids):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -654,31 +659,31 @@ def delete_instance(vm_ids):
 
 ### 6.ModifyInstanceSpec
 
-​	**Action：ModifyInstanceSpec**
+  **Action：ModifyInstanceSpec**
 
-​	**描述：** 云服务器配置升级，更新cpu/内存
+  **描述：** 云服务器配置升级，更新cpu/内存
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                                         |
-| ---------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| Cpu        | int    | 否       | 4                                    | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    <br />不填写默认不更改 |
-| Ram        | int    | 否       | 8                                    | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    <br />不填写默认不更改 |
-| InstanceType       | string   | 否       | Standard                                                     |          将要修改为新的主机类型                                    |
+| 名称         | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ------------ | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| InstanceId   | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出                 |
+| Cpu          | int    | 否       | 4                                    | cpu数量，单位（个）只可选[1,2,4,8,10,16,32]    <br />不填写默认不更改 |
+| Ram          | int    | 否       | 8                                    | 内存数量，单位（GB）只可选[1, 2, 4, 8, 12,  16, 24, 32, 48, 64, 96, 128]    <br />不填写默认不更改 |
+| InstanceType | string | 否       | Standard                             | 将要修改为新的主机类型                                       |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                                | 错误信息                                                     | 描述                           |
 | -------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -687,7 +692,7 @@ def delete_instance(vm_ids):
 | 400      | InvalidInstanceID.Malformed           | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 | 400      | InvalidInstanceType.ValueUnauthorized | The  specified InstanceType is not authorized.               | 指定的云主机规格未授权使用。   |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -696,7 +701,7 @@ def delete_instance(vm_ids):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 def update_vm(vm_id):
@@ -715,29 +720,29 @@ def update_vm(vm_id):
 
 ### 7.CreateDisk
 
-​	**Action：CreateDisk**
+  **Action：CreateDisk**
 
-​	**描述：** 云服务器增加一块或者多块硬盘
+  **描述：** 云服务器增加一块或者多块硬盘
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
 | ---------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 云服务器的编号，可以在查询云服务器详情中查出                 |
-| DataDisks  | list | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
+| DataDisks  | list   | 否       | [<br />{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5},<br />{  "Size": 200,  "Type": "high_disk" }<br />], | 数据盘列表，<br />Size：数据盘大小，<br />Type：数据盘类型，可选参数，<br />IOPS：IOPS包，可选参数,ssd类型可选，默认为0 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskID | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务ID |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                                    | 错误信息                                                     | 描述                           |
 | -------- | ----------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -746,7 +751,7 @@ def update_vm(vm_id):
 | 400      | InvalidInstanceID.Malformed               | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 | 400      | InvalidInstanceTypeDisk.ValueUnauthorized | The  specified Instance DiskType is not authorized.          | 指定的硬盘规格未授权使用。     |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -755,7 +760,7 @@ def update_vm(vm_id):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 def add_disk(vm_id):
@@ -774,31 +779,31 @@ def add_disk(vm_id):
 
 ### 8.ResizeDisk
 
-​	**Action：ResizeDisk**
+  **Action：ResizeDisk**
 
-​	**描述：** 扩容一块已经购买的硬盘
+  **描述：** 扩容一块已经购买的硬盘
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                               | 描述                                         |
 | ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
 | DiskId     | string | 是       | a67644ba-873f-11e9-bf49-0242ac1104e7 | 硬盘编号                                     |
 | DataSize   | int    | 是       | 100                                  | 硬盘扩容后的大小                             |
-| IOPS	     | int    |	否	| 5	                               | IOPS预置性能包个数，默认为0，ssd类型可选                          |
+| IOPS       | int    | 否       | 5                                    | IOPS预置性能包个数，默认为0，ssd类型可选     |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                                    | 错误信息                                                     | 描述                           |
 | -------- | ----------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -810,7 +815,7 @@ def add_disk(vm_id):
 | 403      | InvalidDiskSize.TooSmall                  | Specified new disk size is less than the original disk size. | 指定的新磁盘小于原始磁盘。     |
 | 400      | IncompleteParamter                        | Some fields can not be null in this request.                 | 请求中缺失参数。               |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -821,29 +826,29 @@ def add_disk(vm_id):
 
 ### 9.DeleteDisk
 
-​	**Action：DeleteDisk**
+  **Action：DeleteDisk**
 
-​	**描述：** 云服务器删除一块硬盘
+  **描述：** 云服务器删除一块硬盘
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                                                       | 描述                                         |
 | ---------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 云服务器的编号，可以在查询云服务器详情中查出 |
 | DiskIds    | List   | 是       | ["a67644ba-873f-11e9-bf49-0242ac1104e7","f9053ea8-fc23-4032-8a7f-01def77bq312"] | 硬盘编号                                     |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -851,7 +856,7 @@ def add_disk(vm_id):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -862,34 +867,34 @@ def add_disk(vm_id):
 
 ### 10.ResetImage
 
-​	**Action：ResetImage**
+  **Action：ResetImage**
 
-​	**描述：** 云服务器重装系统
+  **描述：** 云服务器重装系统
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                         |
-| ---------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
-| InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在查询云服务器详情中查出 |
-| ImageId    | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376 | 模板Id                                       |
-| ImagePassword  | string   | 否       | tpl-password                                                    | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项                     |
-| Password   | string | 是       | EcsV587!                             | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
-| PublicKey  | string | 否       |                                      | 云服务器公钥                                 |
-| ProductId  | string | 否       |                                      | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
-| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                                 | 用户自定义数据，格式必须为base64编码                         |
+| 名称          | 类型   | 是否必选 | 示例值                                       | 描述                                                         |
+| ------------- | ------ | -------- | -------------------------------------------- | ------------------------------------------------------------ |
+| InstanceId    | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | 云服务器的编号，可以在查询云服务器详情中查出                 |
+| ImageId       | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376         | 模板Id                                                       |
+| ImagePassword | string | 否       | tpl-password                                 | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项 |
+| Password      | string | 是       | EcsV587!                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)** |
+| PublicKey     | string | 否       |                                              | 云服务器公钥                                                 |
+| ProductId     | string | 否       |                                              | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
+| **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="] | 用户自定义数据，格式必须为base64编码                         |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                                | 错误信息                                                     | 描述                           |
 | -------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -898,7 +903,7 @@ def add_disk(vm_id):
 | 400      | InvalidInstanceId.Malformed           | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
 | 404      | InvalidLaunchTemplateVersion.NotFound | %s                                                           | 指定的模板版本未找到。         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -907,7 +912,7 @@ def add_disk(vm_id):
 }
 ```
 
-​	**调用代码示例:**
+  **调用代码示例:**
 
 ```python
 def reset_os(vm_id, os_id, passwd):
@@ -926,15 +931,15 @@ def reset_os(vm_id, os_id, passwd):
 
 ### 11.DescribeInstances
 
-​	**Action：DescribeInstances**
+  **Action：DescribeInstances**
 
-​	**描述：** 查询云服务器信息
+  **描述：** 查询云服务器信息
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型    | 是否必选 | 示例值                                 | 描述                                                         |
 | ---------- | ------- | -------- | -------------------------------------- | ------------------------------------------------------------ |
@@ -944,7 +949,7 @@ def reset_os(vm_id, os_id, passwd):
 | PublicIp   | array   | 否       | ["101.251.1.1"]                        | 公网Ip                                                       |
 | PageSize   | int     | 否       | 10                                     | 每页返回数量                                                 |
 
-​	**返回参数:**
+  **返回参数:**
 
 | 名称                    | 类型     | 示例值                                                       | 描述                      |
 | :---------------------- | -------- | :----------------------------------------------------------- | :------------------------ |
@@ -961,15 +966,15 @@ def reset_os(vm_id, os_id, passwd):
 | VdcId                   | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | Vdc编号                   |
 | RegionId                | string   | CN_Beijing_A                                                 | RegionId：Vdc所属的可用区 |
 | SystemDisk              | list     | []                                                           | 系统盘                    |
-| DataDisks               | list   | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
+| DataDisks               | list     | [ { "size": 100,  "type": "ssd_disk" }, {  "size": 200,  "type": "high_disk" } ], | 数据硬盘信息              |
 | PublicNetworkInterface  | string   |                                                              | 公网网卡信息              |
 | PrivateNetworkInterface | string   |                                                              | 私网网卡信息              |
 | Cpu                     | int      | 4                                                            | Cpu信息                   |
 | Ram                     | int      | 4                                                            | Ram信息                   |
 | Tags                    | list     | [{"TagId":"1234","TagName":"tag_abc"}]                       | 云主机资源的标签信息      |
-| CreateTime              | string   | 2022-06-01 12:30:00                                          | 云服务器创建时间      |
+| CreateTime              | string   | 2022-06-01 12:30:00                                          | 云服务器创建时间          |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                                | 错误信息                                                     | 描述                           |
 | -------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -978,7 +983,7 @@ def reset_os(vm_id, os_id, passwd):
 | 400      | InvalidInstanceID.Malformed           | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 | 404      | InvalidLaunchTemplateVersion.NotFound | %s                                                           | 指定的模板版本未找到。         |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -1030,7 +1035,7 @@ def reset_os(vm_id, os_id, passwd):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
@@ -1062,36 +1067,36 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
 
 ### 12.ConnectNetworkInterface
 
-​	**Action：ConnectNetworkInterface**
+  **Action：ConnectNetworkInterface**
 
-​	**描述：** 连接网卡
+  **描述：** 连接网卡
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值                               | 描述                                     |
 | ----------- | ------ | -------- | ------------------------------------ | ---------------------------------------- |
 | InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 网卡的编号，可以在查询云服务器详情中查出 |
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云主机ID                                 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                                     | 描述                           |
 | -------- | ---------------------------- | ------------------------------------------------------------ | ------------------------------ |
 | 403      | IncorrectInstanceStatus      | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid.        | 指定网卡ID参数格式错误         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -1100,7 +1105,7 @@ def descrive_instance(instance_id=None, vdc_id=None, pub_ip=None):
 }
 ```
 
-​	**代码调用示例：**
+  **代码调用示例：**
 
 ```python
 def up_card(InterfaceId, InstanceId):
@@ -1127,34 +1132,34 @@ def up_card(InterfaceId, InstanceId):
 
 ### 13.DisconnectNetworkInterface
 
-​	**Action：DisconnectNetworkInterface**
+  **Action：DisconnectNetworkInterface**
 
-​	**描述：** 断开网卡
+  **描述：** 断开网卡
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值                               |
 | ----------- | ------ | -------- | ------------------------------------ |
 | InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 |
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                                     | 描述                           |
 | -------- | ---------------------------- | ------------------------------------------------------------ | ------------------------------ |
 | 403      | IncorrectInstanceStatus      | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid.        | 指定网卡ID参数格式错误         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -1163,7 +1168,7 @@ def up_card(InterfaceId, InstanceId):
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
 def down_card(InterfaceId, InstanceId):
@@ -1192,38 +1197,38 @@ def down_card(InterfaceId, InstanceId):
 
 ### 14.ModifyIpAddress
 
-​	**Action：ModifyIpAddress**
+  **Action：ModifyIpAddress**
 
-​	**描述：** 为网卡绑定Ip地址或解绑Ip地址或修改Ip地址
+  **描述：** 为网卡绑定Ip地址或解绑Ip地址或修改Ip地址
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称        | 类型   | 是否必选 | 示例值                               | 描述                                         |
-| ----------- | ------ | -------- | ------------------------------------ | -------------------------------------------- |
-| InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22 | 云服务器编号                                 |
-| InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 网卡的编号，可以在查询云服务器详情中查出     |
-| Address     | string | 是       | 101.251.2.29                         | 要绑定或者修改的Ip地址，解绑Ip此处请填写None |
-| Password    | string | 是       | 123abc,.;                            | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)**                                |
+| 名称        | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22 | 云服务器编号                                                 |
+| InterfaceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 网卡的编号，可以在查询云服务器详情中查出                     |
+| Address     | string | 是       | 101.251.2.29                         | 要绑定或者修改的Ip地址，解绑Ip此处请填写None                 |
+| Password    | string | 是       | 123abc,.;                            | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)** |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                                     | 描述                           |
 | -------- | ---------------------------- | ------------------------------------------------------------ | ------------------------------ |
 | 403      | IncorrectInstanceStatus      | The   current status of the resource does not support this operation. | 该资源目前的状态不支持此操作。 |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid.        | 指定网卡ID参数格式错误         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -1234,15 +1239,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 15.DescribeInstanceMonitor
 
-​	**Action：DescribeInstanceMonitor**
+  **Action：DescribeInstanceMonitor**
 
-​	**描述：** 获取主机实例各个指标监控数据
+  **描述：** 获取主机实例各个指标监控数据
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
 | ----------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -1254,25 +1259,25 @@ def down_card(InterfaceId, InstanceId):
 | InterfaceId | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 网卡的编号，可以在查询云服务器详情中查出                     |
 | DiskId      | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 硬盘编号， 可以在查询云服务器详情中查出                      |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称       | 类型     | 示例值                               | 描述         |
-| :--------- | -------- | :----------------------------------- | ------------ |
-| Code       | Interger | Success                              | 错误码       |
-| Data       | Dict     | {}                                   | 返回数据列表 |
-| InstanceId | String   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 实例ID       |
-| Period     | String   | 60                                   | 数据粒度     |
+| 名称       | 类型     | 示例值                               | 描述                                                         |
+| :--------- | -------- | :----------------------------------- | ------------------------------------------------------------ |
+| Code       | Interger | Success                              | 错误码                                                       |
+| Data       | Dict     | {}                                   | 返回数据列表                                                 |
+| InstanceId | String   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 实例ID                                                       |
+| Period     | String   | 60                                   | 数据粒度                                                     |
 | DataPoints | list     | []                                   | 监控数据列表(各项指标单位：CPU/RAM: 百分比，网卡吞吐: Mbps，磁盘吞吐量: Kbps，磁盘IOPS: IOPS) |
-| Timestamp  | String   | 2019-10-09 15:30:00                  | 数据时间点   |
-| Value      | Float    | 49.67                                | 监控数据数值 |
+| Timestamp  | String   | 2019-10-09 15:30:00                  | 数据时间点                                                   |
+| Value      | Float    | 49.67                                | 监控数据数值                                                 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -1305,28 +1310,28 @@ def down_card(InterfaceId, InstanceId):
 
 ### 16.StartInstance
 
-​	**Action:StartInstance**
+  **Action:StartInstance**
 
-​	**描述:** 云服务器开机
+  **描述:** 云服务器开机
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
 | ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
 | InstanceId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -1334,7 +1339,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -1362,10 +1367,10 @@ def down_card(InterfaceId, InstanceId):
 
 **返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| Message | string   |  | 提示信息 |
+| 名称    | 类型     | 示例值  | 描述     |
+| :------ | -------- | :------ | :------- |
+| Code    | Interger | Success | 错误码   |
+| Message | string   |         | 提示信息 |
 
 **错误码：**
 
@@ -1403,10 +1408,10 @@ def down_card(InterfaceId, InstanceId):
 
 **返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| Message | string   |  | 提示信息 |
+| 名称    | 类型     | 示例值  | 描述     |
+| :------ | -------- | :------ | :------- |
+| Code    | Interger | Success | 错误码   |
+| Message | string   |         | 提示信息 |
 
 **错误码：**
 
@@ -1455,10 +1460,10 @@ def down_card(InterfaceId, InstanceId):
 
 **返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| Message | string   |  | 提示信息 |
+| 名称    | 类型     | 示例值  | 描述     |
+| :------ | -------- | :------ | :------- |
+| Code    | Interger | Success | 错误码   |
+| Message | string   |         | 提示信息 |
 
 **返回示例：**
 
@@ -1489,10 +1494,10 @@ def down_card(InterfaceId, InstanceId):
 
 **返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| Message | string   |  | 提示信息 |
+| 名称    | 类型     | 示例值  | 描述     |
+| :------ | -------- | :------ | :------- |
+| Code    | Interger | Success | 错误码   |
+| Message | string   |         | 提示信息 |
 
 **错误码：**
 
@@ -1531,10 +1536,10 @@ def down_card(InterfaceId, InstanceId):
 
 **返回参数：**
 
-| 名称   | 类型     | 示例值                               | 描述   |
-| :----- | -------- | :----------------------------------- | :----- |
-| Code   | Interger | Success                              | 错误码 |
-| Message | string   |  | 提示信息 |
+| 名称    | 类型     | 示例值  | 描述     |
+| :------ | -------- | :------ | :------- |
+| Code    | Interger | Success | 错误码   |
+| Message | string   |         | 提示信息 |
 
 
 **返回示例：**
@@ -1889,8 +1894,8 @@ def down_card(InterfaceId, InstanceId):
 **请求参数：**
 
 
-| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                                          |
-| ---------- | ------ | -------- | -------------------------------------- | --------------------------------------------- |
+| 名称               | 类型     | 是否必选 | 示例值                                                       | 描述                                                         |
+| ------------------ | -------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | RegionId           | String   | 是       | CN_Beijing_A                                                 | 区域id                                                       |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
@@ -1927,28 +1932,28 @@ def down_card(InterfaceId, InstanceId):
 
 ### 30.StopInstances
 
-​	**Action:StopInstances**
+  **Action:StopInstances**
 
-​	**描述:** 批量云服务器关机
+  **描述:** 批量云服务器关机
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
-| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| 名称        | 类型   | 是否必选 | 示例值                                                       | 描述                                                         |
+| ----------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0,bbf63749-0186-4c68-8adc-9bf584bc1376 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -1956,7 +1961,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -1967,28 +1972,28 @@ def down_card(InterfaceId, InstanceId):
 
 ### 31.StartInstances
 
-​	**Action:StartInstances**
+  **Action:StartInstances**
 
-​	**描述:** 批量云服务器开机
+  **描述:** 批量云服务器开机
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
-| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| 名称        | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
 | InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -1996,7 +2001,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -2007,28 +2012,28 @@ def down_card(InterfaceId, InstanceId):
 
 ### 32.RebootInstances
 
-​	**Action：RebootInstances**
+  **Action：RebootInstances**
 
-​	**描述：** 批量云服务器重启
+  **描述：** 批量云服务器重启
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                               | 描述                                          |
-| ---------- | ------ | -------- | ------------------------------------ | --------------------------------------------- |
+| 名称        | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
 | InstanceIds | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 云服务器的编号，可以在DescribeInstances中获取,多个使用逗号分隔 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -2036,7 +2041,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceId.Malformed | The specified parameter   "InstanceId" is not valid.         | 指定云服务器Id参数格式错误     |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -2047,24 +2052,24 @@ def down_card(InterfaceId, InstanceId):
 
 ### 33.BatchAddNetworkInterfaces
 
-​	**Action：BatchAddNetworkInterfaces**
+  **Action：BatchAddNetworkInterfaces**
 
-​	**描述：** 批量添加云服务器网卡
+  **描述：** 批量添加云服务器网卡
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
-| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
-| InstanceIds| list | 是         |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
-| PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe | 私网ID/公网ID(填写公网ID或私网ID)         |
-| VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
-| Password   | string | 是       | xxxx                                         | 主机密码                                    |
+| 名称               | 类型   | 是否必选 | 示例值                                     | 描述                                          |
+| ------------------ | ------ | -------- | ------------------------------------------ | --------------------------------------------- |
+| InstanceIds        | list   | 是       | ["76571028-e2a3-11e9-b","80-de55f62159fe"] | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId/PublicId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe       | 私网ID/公网ID(填写公网ID或私网ID)             |
+| VdcId              | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0       | Vdc编号                                       |
+| Password           | string | 是       | xxxx                                       | 主机密码                                      |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
@@ -2085,23 +2090,23 @@ def down_card(InterfaceId, InstanceId):
 
 ### 34.BatchDeleteNetworkInterfaces
 
-​	**Action：BatchDeleteNetworkInterfaces**
+  **Action：BatchDeleteNetworkInterfaces**
 
-​	**描述：** 批量删除云服务器网卡
+  **描述：** 批量删除云服务器网卡
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称       | 类型   | 是否必选 | 示例值                                        | 描述                                         |
-| ---------- | ------ | -------- | -------------------------------------------- | --------------------------------------------|
-| InstanceIds| list   | 是       |  ["76571028-e2a3-11e9-b","80-de55f62159fe"]  | 云服务器的编号，可以在DescribeInstances中获取 |
-| PrivateId/PublicId  | String | 是 | 50971028-e2a3-11e9-b380-de55f62159fe  | 私网ID/公网ID(填写公网ID或私网ID)                                |
-| VdcId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0         | Vdc编号                                     |
+| 名称               | 类型   | 是否必选 | 示例值                                     | 描述                                          |
+| ------------------ | ------ | -------- | ------------------------------------------ | --------------------------------------------- |
+| InstanceIds        | list   | 是       | ["76571028-e2a3-11e9-b","80-de55f62159fe"] | 云服务器的编号，可以在DescribeInstances中获取 |
+| PrivateId/PublicId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe       | 私网ID/公网ID(填写公网ID或私网ID)             |
+| VdcId              | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0       | Vdc编号                                       |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
@@ -2124,15 +2129,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 1.CreateSecurityGroup
 
-​	**Action：CreateSecurityGroup**
+  **Action：CreateSecurityGroup**
 
-​	**描述：** 创建网络安全组
+  **描述：** 创建网络安全组
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称              | 类型   | 是否必选 | 示例值 | 描述                       |
 | ----------------- | ------ | -------- | ------ | -------------------------- |
@@ -2140,7 +2145,7 @@ def down_card(InterfaceId, InstanceId):
 | Description       | String | 是       | 安全组 | 安全组描述                 |
 | SecurityGroupType | String | 是       | public | 安全组类型(public/private) |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2149,13 +2154,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String |         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2168,21 +2173,21 @@ def down_card(InterfaceId, InstanceId):
 
 ### 2.DeleteSecurityGroup
 
-​	**Action：DeleteSecurityGroup**
+  **Action：DeleteSecurityGroup**
 
-​	**描述：** 删除网络安全组
+  **描述：** 删除网络安全组
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
 | --------------- | ------ | -------- | ------------------------------------ | -------- |
 | SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2191,13 +2196,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String |         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2210,21 +2215,21 @@ def down_card(InterfaceId, InstanceId):
 
 ### 3.ForceDeleteSecurityGroup
 
-​	**Action：ForceDeleteSecurityGroup**
+  **Action：ForceDeleteSecurityGroup**
 
-​	**描述：** 强制删除网络安全组
+  **描述：** 强制删除网络安全组
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
 | --------------- | ------ | -------- | ------------------------------------ | -------- |
 | SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2233,13 +2238,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688881 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2252,22 +2257,22 @@ def down_card(InterfaceId, InstanceId):
 
 ### 4.DescribeSecurityGroupAttribute
 
-​	**Action：DescribeSecurityGroupAttribute**
+  **Action：DescribeSecurityGroupAttribute**
 
-​	**描述：** 查看网络安全组属性
+  **描述：** 查看网络安全组属性
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述         |
 | --------------- | ------ | -------- | ------------------------------------ | ------------ |
 | SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID     |
 | RuleId          | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组规则ID |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称                   | 类型   | 示例值              | 描述                    |
 | ---------------------- | ------ | ------------------- | ----------------------- |
@@ -2291,13 +2296,13 @@ def down_card(InterfaceId, InstanceId):
 | Description            | String | 描述                | 规则描述                |
 | CreateTime             | String | 2019-09-11 11:00:01 | 创建时间                |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2344,15 +2349,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 5.ModifySecurityGroupAttribute
 
-​	**Action：ModifySecurityGroupAttribute**
+  **Action：ModifySecurityGroupAttribute**
 
-​	**描述：** 修改网络安全组属性
+  **描述：** 修改网络安全组属性
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称              | 类型   | 是否必选 | 示例值                               | 描述         |
 | ----------------- | ------ | -------- | ------------------------------------ | ------------ |
@@ -2360,7 +2365,7 @@ def down_card(InterfaceId, InstanceId):
 | Description       | String | 是       | 修改安全组描述                       | 新安全组描述 |
 | SecurityGroupName | String | 是       | 安全组名称                           | 新安全组名称 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2369,13 +2374,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String |         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2388,15 +2393,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 6.DescribeSecurityGroups
 
-​	**Action：DescribeSecurityGroups**
+  **Action：DescribeSecurityGroups**
 
-​	**描述：** 网络安全组列表
+  **描述：** 网络安全组列表
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称              | 类型   | 是否必选 | 示例值 | 描述                                                        |
 | ----------------- | ------ | -------- | ------ | ----------------------------------------------------------- |
@@ -2404,7 +2409,7 @@ def down_card(InterfaceId, InstanceId):
 | Keyword           | String | 否       | test   | 查询关键字                                                  |
 | SecurityGroupId   | String | 否       | xxxx   | 安全组ID                                                    |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称               | 类型   | 示例值                   | 描述             |
 | ------------------ | ------ | ------------------------ | ---------------- |
@@ -2423,13 +2428,13 @@ def down_card(InterfaceId, InstanceId):
 | BindInterfaceCount | Int    | 2                        | 绑定网卡数量     |
 | SecurityGroupType  | String | private                  | 安全组类型       |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2468,15 +2473,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 7.AddSecurityGroupRule
 
-​	**Action：AddSecurityGroupRule**
+  **Action：AddSecurityGroupRule**
 
-​	**描述：** 添加网络安全组规则
+  **描述：** 添加网络安全组规则
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述                                                         |
 | --------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
@@ -2491,7 +2496,7 @@ def down_card(InterfaceId, InstanceId):
 | Protocol        | String | 是       | TCP                                  | 传输层协议。选填参数为:  ICMP、TCP、UDP。**注:如果协议为ICMP，不需要传递TargetPort、LocalPort参数。** |
 | RuleType        | String | 是       | ip                                   | 设置规则类型。选项: mac/ip                                   |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2500,13 +2505,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688348 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2519,22 +2524,22 @@ def down_card(InterfaceId, InstanceId):
 
 ### 8.RemoveSecurityGroupRule
 
-​	**Action：RemoveSecurityGroupRule**
+  **Action：RemoveSecurityGroupRule**
 
-​	**描述：** 删除网络安全组规则
+  **描述：** 删除网络安全组规则
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
 | --------------- | ------ | -------- | ------------------------------------ | -------- |
 | SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
 | RuleIds         | Array  | 是       | ["xxx", "xxx"]                       | 规则ID   |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2543,13 +2548,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688411 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2562,15 +2567,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 9.ModifySecurityGroupRule
 
-​	**Action：ModifySecurityGroupRule**
+  **Action：ModifySecurityGroupRule**
 
-​	**描述：** 修改网络安全组规则描述
+  **描述：** 修改网络安全组规则描述
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述       |
 | --------------- | ------ | -------- | ------------------------------------ | ---------- |
@@ -2578,7 +2583,7 @@ def down_card(InterfaceId, InstanceId):
 | RuleId          | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 规则ID     |
 | Description     | String | 是       | 新描述                               | 新修改描述 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2587,13 +2592,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String |         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2606,15 +2611,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 10.JoinSecurityGroup
 
-​	**Action：JoinSecurityGroup**
+  **Action：JoinSecurityGroup**
 
-​	**描述：** 主机实例加入安全组
+  **描述：** 主机实例加入安全组
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                                    | 描述     |
 | --------------- | ------ | -------- | ----------------------------------------- | -------- |
@@ -2624,7 +2629,7 @@ def down_card(InterfaceId, InstanceId):
 | PrivateId       | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 私网ID   |
 | PublicId        | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 公网ID   |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2633,13 +2638,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688564 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2652,15 +2657,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 11.LeaveSecurityGroup
 
-​	**Action：LeaveSecurityGroup**
+  **Action：LeaveSecurityGroup**
 
-​	**描述：** 实例解绑网络安全组
+  **描述：** 实例解绑网络安全组
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                                    | 描述     |
 | --------------- | ------ | -------- | ----------------------------------------- | -------- |
@@ -2670,7 +2675,7 @@ def down_card(InterfaceId, InstanceId):
 | PrivateId       | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 私网ID   |
 | PublicId        | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 公网ID   |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2679,13 +2684,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688573 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2698,15 +2703,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 12.ModifySecurityGroupRulePriority
 
-​	**Action：ModifySecurityGroupRulePriority**
+  **Action：ModifySecurityGroupRulePriority**
 
-​	**描述：** 修改安全组规则优先级
+  **描述：** 修改安全组规则优先级
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称            | 类型   | 是否必选 | 示例值                               | 描述                   |
 | --------------- | ------ | -------- | ------------------------------------ | ---------------------- |
@@ -2715,7 +2720,7 @@ def down_card(InterfaceId, InstanceId):
 | RuleId          | String | 是       | 76571028-e2a3-11e9-b380-de55f62159fe | (BindData中参数)规则ID |
 | Priority        | Int    | 否       | 1                                    | (BindData中参数)优先级 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2724,13 +2729,13 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688573 | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                              | 描述                   |
 | -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -2747,15 +2752,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 1.CreateTemplate
 
-​	**Action：** CreateTemplate
+  **Action：** CreateTemplate
 
-​	**描述：** 定制模板
+  **描述：** 定制模板
 
-​	**请求地址:**  cdsapi.capitalonline.net/ccs
+  **请求地址:**  cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:** 
+  **请求参数:** 
 
 | 名称             | 类型   | 是否必选 | 示例值 | 描述                                                         |
 | ---------------- | ------ | -------- | ------ | ------------------------------------------------------------ |
@@ -2766,7 +2771,7 @@ def down_card(InterfaceId, InstanceId):
 | InstanceUserName | String | 否       | root   | 云主机用户名, 如您的云主机使用的是公钥创建的方式，且未更改过密码，则无需填写用户名 如您修改过管理员权限默认账户，请填写修改后的名称。如用户名不一致，会导致创建云主机失败！ |
 
 
-​	**返回参数：** 
+  **返回参数：** 
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2775,7 +2780,7 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688573 | 任务ID   |
 
-​	**错误码：** 
+  **错误码：** 
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -2783,7 +2788,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例** 
+  **返回示例** 
 
 ```json
 {
@@ -2796,22 +2801,22 @@ def down_card(InterfaceId, InstanceId):
 
 ### 2.DeleteTemplate
 
-​	**Action：** DeleteTemplate
+  **Action：** DeleteTemplate
 
-​	**描述：** 删除模板
+  **描述：** 删除模板
 
-​	**请求地址:**  cdsapi.capitalonline.net/ccs
+  **请求地址:**  cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:** 
+  **请求参数:** 
 
-| 名称       | 类型   | 是否必选 | 示例值       | 描述       |
-| ---------- | ------ | -------- | ------------ | ---------- |
-| TemplateId | String | 是       | xxx          | 模板ID     |
+| 名称       | 类型   | 是否必选 | 示例值       | 描述   |
+| ---------- | ------ | -------- | ------------ | ------ |
+| TemplateId | String | 是       | xxx          | 模板ID |
 | RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
-​	**返回参数：** 
+  **返回参数：** 
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2820,7 +2825,7 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688573 | 任务ID   |
 
-​	**错误码：** 
+  **错误码：** 
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -2828,7 +2833,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例** 
+  **返回示例** 
 
 ```json
 {
@@ -2841,22 +2846,22 @@ def down_card(InterfaceId, InstanceId):
 
 ### 3.SyncTemplate
 
-​	**Action：** SyncTemplate
+  **Action：** SyncTemplate
 
-​	**描述：** 同步模板
+  **描述：** 同步模板
 
-​	**请求地址:**  cdsapi.capitalonline.net/ccs
+  **请求地址:**  cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:** 
+  **请求参数:** 
 
-| 名称       | 类型   | 是否必选 | 示例值       | 描述       |
-| ---------- | ------ | -------- | ------------ | ---------- |
-| TemplateId | String | 是       | xxx          | 模板ID     |
+| 名称       | 类型   | 是否必选 | 示例值       | 描述   |
+| ---------- | ------ | -------- | ------------ | ------ |
+| TemplateId | String | 是       | xxx          | 模板ID |
 | RegionId   | String | 是       | CN_Beijing_A | 区域ID |
 
-​	**返回参数：** 
+  **返回参数：** 
 
 | 名称    | 类型   | 示例值  | 描述     |
 | ------- | ------ | ------- | -------- |
@@ -2865,7 +2870,7 @@ def down_card(InterfaceId, InstanceId):
 | Data    | Object | {}      | 返回信息 |
 | TaskId  | String | 7688573 | 任务ID   |
 
-​	**错误码：** 
+  **错误码：** 
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -2873,7 +2878,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例** 
+  **返回示例** 
 
 ```json
 {
@@ -2886,15 +2891,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 4.DescribeTemplateInfo
 
-​	**Action：** DescribeTemplateInfo
+  **Action：** DescribeTemplateInfo
 
-​	**描述：** 模板信息
+  **描述：** 模板信息
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：POST** 
+  **请求方法：POST** 
 
-​	**请求参数:** 
+  **请求参数:** 
 
 | 名称       | 类型   | 是否必选 | 示例值 | 描述       |
 | ---------- | ------ | -------- | ------ | ---------- |
@@ -2902,7 +2907,7 @@ def down_card(InterfaceId, InstanceId):
 | PageSize   | Int    | 是       | 10     | 每一页大小 |
 | Keyword    | String | 否       | test   | 关键字查询 |
 
-​	**返回参数：** 
+  **返回参数：** 
 
 | 名称         | 类型   | 示例值              | 描述         |
 | ------------ | ------ | ------------------- | ------------ |
@@ -2921,7 +2926,7 @@ def down_card(InterfaceId, InstanceId):
 | RegionId     | String | CN_Beijing_C        | 区域ID       |
 | RegionName   | String | 北京-可用区C        | 区域名称     |
 
-​	**错误码：** 
+  **错误码：** 
 
 | httpcode | 错误码                      | 错误信息                                                     | 描述                           |
 | -------- | --------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -2929,7 +2934,7 @@ def down_card(InterfaceId, InstanceId):
 | 400      | InstanceNotFound            | the Instance has   deleted                                   | 指定的云服务器已被删除         |
 | 400      | InvalidInstanceID.Malformed | The specified parameter   "InstanceID" is not valid.         | 指定云服务器ID参数格式错误     |
 
-​	**返回示例** 
+  **返回示例** 
 
 ```json
 {
@@ -2972,15 +2977,15 @@ def down_card(InterfaceId, InstanceId):
 
 ### 1.DescribeVdc
 
-​	**Action：** DescribeVdc
+  **Action：** DescribeVdc
 
-​	**描述：** 查询虚拟数据中心(以下简称VDC)详细信息
+  **描述：** 查询虚拟数据中心(以下简称VDC)详细信息
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数:**
+  **请求参数:**
 
 | 名称       | 类型    | 是否必选 | 示例                                 | 描述                       |
 | ---------- | ------- | -------- | ------------------------------------ | -------------------------- |
@@ -2989,7 +2994,7 @@ def down_card(InterfaceId, InstanceId):
 | PageNumber | Integer | 否       | 1                                    | Vdc列表的页码              |
 | Keyword    | string  | 否       | Beijing                              | 查询关键字                 |
 
-​	**返回参数:**
+  **返回参数:**
 
 | 名称           | 类型     | 示例                                                         | 描述                                                         |
 | -------------- | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -3091,15 +3096,15 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 
 ### 2.CreateVdc
 
-​	**Action:CreateVdc**
+  **Action:CreateVdc**
 
-​	**描述：** 创建一个Vdc
+  **描述：** 创建一个Vdc
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称          | 类型   | 是否必选 | 示例值                                                       | 描述                                   |
 | ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
@@ -3107,14 +3112,14 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
 | PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码:**
+  **错误码:**
 
 | httpcode | 错误码                                        | 错误信息                                                     | 描述                           |
 | -------- | --------------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -3128,16 +3133,16 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 | 400      | InvalidPublicNetwork. Bandwich.Malformed      | The specified parameter   "PbulicNetwork.Bandwich" is not valid. | 指定的公网带宽大小格式错误。   |
 | 400      | InvalidPublicNetwork.Ip.Malformed             | The specified parameter   "PbulicNetwork.Ip" is not valid.   | 指定的公网Ip格式错误。         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
-	"Code":"Success",
-	"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
+   "Code":"Success",
+   "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
 }
 ```
 
-​	**代码请求示例:**
+  **代码请求示例:**
 
 ```python
 def create_vdc(site_code, wan_code, qos, vdc_name):
@@ -3175,28 +3180,28 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 
 ### 3.DeleteVdc
 
-​	**Action：DeleteVdc**
+  **Action：DeleteVdc**
 
-​	**描述：** 删除一个没有公网及没有加入gpn等其他产品的Vdc
+  **描述：** 删除一个没有公网及没有加入gpn等其他产品的Vdc
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称  | 类型   | 是否必选 | 示例值                               | 描述                               |
 | ----- | ------ | -------- | ------------------------------------ | ---------------------------------- |
 | VdcId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | Vdc的编号，可以在查询Vdc详情中查出 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                 | 错误信息                                                     | 描述                           |
 | -------- | ---------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -3204,7 +3209,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | 400      | VdcNotFound            | the Vdc has   deleted                                        | 指定的Vdc已被删除              |
 | 400      | InvalidVdcId.Malformed | The specified parameter   "VdcId" is not valid.              | 指定VdcId参数格式错误          |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
@@ -3216,15 +3221,15 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 
 ### 4.CreatePublicNetwork
 
-​	**Action:CreatePublicNetwork**
+  **Action:CreatePublicNetwork**
 
-​	**描述：** 给一个Vdc增加公网带宽和Ip
+  **描述：** 给一个Vdc增加公网带宽和Ip
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数:**
+  **请求参数:**
 
 | 名称           | 类型   | 是否必选 | 示例值                               | 描述                                                         |
 | -------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
@@ -3237,14 +3242,14 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | AutoRenew      | int    | 是       |                                      | 带宽类型为流量包和95峰值时，是否自动续费，1为自动续费（默认），0为不自动续费 |
 | FloatBandwidth | int    | 是       |                                      | 公网类型为95峰值时，带宽大小的封顶带宽，为空时，默认为带宽大小的120% |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码:**
+  **错误码:**
 
 | httpcode | 错误码                                        | 错误信息                                                     | 描述                           |
 | -------- | --------------------------------------------- | ------------------------------------------------------------ | ------------------------------ |
@@ -3256,50 +3261,50 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | 400      | InvalidPublicNetwork. Bandwich.Malformed      | The specified parameter   "PbulicNetwork.Bandwich" is not valid. | 指定的公网带宽大小格式错误。   |
 | 400      | InvalidPublicNetwork.Ip.Malformed             | The specified parameter   "PbulicNetwork.Ip" is not valid.   | 指定的公网Ip格式错误。         |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
-	"Code":"Success,
-	"TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
+   "Code":"Success,
+   "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
 }
 ```
 
 ### 5.CreatePrivateNetwork
 
-​	**Action:CreatePrivateNetwork**
+  **Action:CreatePrivateNetwork**
 
-​	**描述：** 给一个Vdc创建一个私网
+  **描述：** 给一个Vdc创建一个私网
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称    | 类型   | 是否必选 | 示例值                               | 描述                            |
 | ------- | ------ | -------- | ------------------------------------ | ------------------------------- |
 | VdcId   | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 云服务器所属的Vdc               |
 | Name    | string | 否       | siwang1                              | 私网名称，默认不写名称是私网1/2 |
-| Type    | string | 否       | manual                               | 私网类型(auto/manual)，默认auto  |
+| Type    | string | 否       | manual                               | 私网类型(auto/manual)，默认auto |
 | Address | string | 否       | 192.168.0.0                          | 私网地址                        |
 | Mask    | string | 否       | 16                                   | 私网掩码                        |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                     | 错误信息                                           | 描述                   |
 | -------- | -------------------------- | -------------------------------------------------- | ---------------------- |
 | 400      | InvalidVDCID.Malformed     | The specified parameter   "VDCID" is not valid.    | 指定VDCID参数格式错误  |
 | 400      | QuotaExceed.PrivateNetwork | The   maximum number of PrivateNetwork is exceeded | 创建的私网数量超出限制 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
@@ -3308,7 +3313,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 def create_private(vdc_id):
@@ -3317,7 +3322,7 @@ def create_private(vdc_id):
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL)
     body = {
         "VdcId": vdc_id,
-      	"Name": "私网"
+       "Name": "私网"
     }
     res = requests.post(url, json=body)
     result = json.loads(res.content)
@@ -3325,35 +3330,35 @@ def create_private(vdc_id):
 
 ### 6.ModifyPublicNetwork
 
-​	**Action:ModifyPublicNetwork**
+  **Action:ModifyPublicNetwork**
 
-​	**描述：** 变更Vdc的公网带宽大小或者类型
+  **描述：** 变更Vdc的公网带宽大小或者类型
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称     | 类型   | 是否必选 | 示例值                               | 描述     |
 | -------- | ------ | -------- | ------------------------------------ | -------- |
 | PublicId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网id   |
 | Qos      | string | 是       | 100                                  | 带宽大小 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型   | 示例值                               | 描述   |
 | :----- | ------ | :----------------------------------- | :----- |
 | Code   | string | Success                              | 错误码 |
 | TaskId | string | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                           | 错误信息                                                  | 描述                   |
 | -------- | -------------------------------- | --------------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicNetworkID.Malformed | The specified parameter   "PublicNetworkID" is not valid. | 指定公网ID参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
@@ -3362,7 +3367,7 @@ def create_private(vdc_id):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 def modify_public_qos(publicId, qos):
@@ -3388,44 +3393,44 @@ def modify_public_qos(publicId, qos):
 
 ### 7.AddPublicIp
 
-​	**Action:AddPublicIp**
+  **Action:AddPublicIp**
 
-​	**描述：** 为已经购买的公网增加一个公网Ip段
+  **描述：** 为已经购买的公网增加一个公网Ip段
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称     | 类型     | 是否必选 | 示例值                               | 描述                                  |
 | -------- | -------- | -------- | ------------------------------------ | ------------------------------------- |
 | PublicId | string   | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网id                                |
 | Number   | Interger | 是       | 8                                    | 购买的Ip数量，可选参数:{4,8,16,32,64} |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                            | 错误信息                                                   | 描述                   |
 | -------- | --------------------------------- | ---------------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicNetwork.IP.Malformed | The specified parameter   "PbulicNetwork.IP" is not valid. | 指定的公网IP格式错误。 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```
 {
 "Code":"Success",
 "TaskId":"bbf63749-0186-4c68-8adc-9bf584bc1376"
-}	
+}  
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 
@@ -3433,34 +3438,34 @@ def modify_public_qos(publicId, qos):
 
 ### 8.DeletePublicIp
 
-​	**Action:DeletePublicIp**
+  **Action:DeletePublicIp**
 
-​	**描述：** 删除Vdc公网下的一个Ip段
+  **描述：** 删除Vdc公网下的一个Ip段
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称      | 类型   | 是否必选 | 示例值                               | 描述         |
 | --------- | ------ | -------- | ------------------------------------ | ------------ |
 | SegmentId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网Ip段的Id |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                | 错误信息                                       | 描述                 |
 | -------- | --------------------- | ---------------------------------------------- | -------------------- |
 | 400      | InvalidIpId.Malformed | The specified parameter   "IpId" is not valid. | 指定IpId参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -3469,7 +3474,7 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
-​	**代码调用示例:**
+  **代码调用示例:**
 
 ```python
 
@@ -3477,33 +3482,33 @@ def modify_public_qos(publicId, qos):
 
 ### 9.DeletePublicNetwork
 
-​	**Action:DeletePublicNetwork**
+  **Action:DeletePublicNetwork**
 
-​	**描述：** 删除Vdc下已经创建的公网Ip及带宽
+  **描述：** 删除Vdc下已经创建的公网Ip及带宽
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称     | 类型   | 是否必选 | 示例值                               | 描述   |
 | -------- | ------ | -------- | ------------------------------------ | ------ |
 | PublicId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网Id |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称 | 类型     | 示例值  | 描述   |
 | :--- | -------- | :------ | :----- |
 | Code | Interger | Success | 错误码 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicID.Malformed | The specified parameter   "PublicID" is not valid. | 指定公网ID参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -3513,34 +3518,34 @@ def modify_public_qos(publicId, qos):
 
 ### 10.DeletePrivateNetwork
 
-​	**Action:DeletePrivateNetwork**
+  **Action:DeletePrivateNetwork**
 
-​	**描述：** 删除Vdc下已经创建的私网
+  **描述：** 删除Vdc下已经创建的私网
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称      | 类型   | 是否必选 | 示例值                               | 描述   |
 | --------- | ------ | -------- | ------------------------------------ | ------ |
 | PrivateId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 私网Id |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称   | 类型     | 示例值                               | 描述   |
 | :----- | -------- | :----------------------------------- | :----- |
 | Code   | Interger | Success                              | 错误码 |
 | TaskId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 任务Id |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                     | 错误信息                                            | 描述                   |
 | -------- | -------------------------- | --------------------------------------------------- | ---------------------- |
 | 400      | InvalidPrivateId.Malformed | The specified parameter   "PrivateID" is not valid. | 指定私网Id参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -3551,34 +3556,34 @@ def modify_public_qos(publicId, qos):
 
 ### 11.RenewPublicNetwork
 
-​	**Action:RenewPublicNetwork**
+  **Action:RenewPublicNetwork**
 
-​	**描述：** 修改公网的自动续约为开或者关
+  **描述：** 修改公网的自动续约为开或者关
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称      | 类型     | 是否必选 | 示例值                               | 描述                                             |
 | --------- | -------- | -------- | ------------------------------------ | ------------------------------------------------ |
 | PublicId  | string   | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网Id                                           |
 | AutoRenew | Interger | 是       | 1                                    | 是否自动续费，1为自动续费（默认），0为不自动续费 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称 | 类型     | 示例值  | 描述   |
 | :--- | -------- | :------ | :----- |
 | Code | Interger | Success | 错误码 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                            | 描述                   |
 | -------- | ------------------------- | --------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicId.Malformed | The specified parameter   "PrivateID" is not valid. | 指定公网Id参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -3589,34 +3594,34 @@ def modify_public_qos(publicId, qos):
 
 ### 12.DescribeBandwidthTraffic
 
-​	**Action:DescribeBandwidthTraffic**
+  **Action:DescribeBandwidthTraffic**
 
-​	**描述：** 获取网络最近五分钟流量
+  **描述：** 获取网络最近五分钟流量
 
-​	**请求地址:** cdsapi.capitalonline.net/network
+  **请求地址:** cdsapi.capitalonline.net/network
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称      | 类型   | 是否必选 | 示例值                               | 描述                                                     |
 | --------- | ------ | -------- | ------------------------------------ | -------------------------------------------------------- |
 | NetworkId | string | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 网络Id(若查询公网即为PublicId， 若查询私网即为PrivateId) |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称 | 类型     | 示例值  | 描述     |
 | :--- | -------- | :------ | :------- |
 | Code | Interger | Success | 错误码   |
 | Data | string   | {}      | 返回数据 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicId.Malformed | The specified parameter   "PublicId" is not valid. | 指定公网Id参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -3644,10 +3649,10 @@ def modify_public_qos(publicId, qos):
 
 **请求参数:**
 
-|  名称  |  类型  | 是否必选 | 示例 |   描述   |
-| :----: | :----: | :------: | :--: | :------: |
-| GpnId  | String |    否    | 55271ebc-135d-11eb-97aa-0242ac110002 | GPN编号 |
-| Key    | String |    否    | 中美互联 | 关键词 |
+| 名称  |  类型  | 是否必选 |                 示例                 |  描述   |
+| :---: | :----: | :------: | :----------------------------------: | :-----: |
+| GpnId | String |    否    | 55271ebc-135d-11eb-97aa-0242ac110002 | GPN编号 |
+|  Key  | String |    否    |               中美互联               | 关键词  |
 
 **返回参数:**
 
@@ -4077,46 +4082,46 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 ### 1.DescribeVPC
 
-​	**Action:DescribeVPC**
+  **Action:DescribeVPC**
 
-​	**描述：** 查询私有网络(以下简称VPC)信息
+  **描述：** 查询私有网络(以下简称VPC)信息
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| PageNumber           | int    | 否       | 1           | 列表页码。起始值：1, 默认值：1                                                             |
-| Keyword           | string | 否       | vpc名称       | 查询关键字 |
+| 名称       | 类型   | 是否必选 | 示例值      | 描述                           |
+| ---------- | ------ | -------- | ----------- | ------------------------------ |
+| RegionCode | string | 是       | CN_Hongkong | VPC区域code, 见附件五          |
+| PageNumber | int    | 否       | 1           | 列表页码。起始值：1, 默认值：1 |
+| Keyword    | string | 否       | vpc名称     | 查询关键字                     |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | Success                              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| Total | int      | 11                                    | VPC总数     |
-| VPCList | list     | []                                   | VPC信息列表   |
-| VPCId | string   | 9304b130-e25b-11ec-a12c-823092f7a5bd | VPC ID    |
-| VPCNmae | string   | test                                 | VPC名称     |
+| 名称       | 类型     | 示例值                               | 描述        |
+| :--------- | -------- | :----------------------------------- | :---------- |
+| Code       | string   | Success                              | 错误码      |
+| Message    | string   | Success                              | 信息        |
+| Data       | dict     | {}                                   | 返回数据    |
+| Total      | int      | 11                                   | VPC总数     |
+| VPCList    | list     | []                                   | VPC信息列表 |
+| VPCId      | string   | 9304b130-e25b-11ec-a12c-823092f7a5bd | VPC ID      |
+| VPCNmae    | string   | test                                 | VPC名称     |
 | VPCSegment | string   | 10.15.0.0/16                         | VPC网段     |
-| Status | string   | ok                                   | VPC状态     |
+| Status     | string   | ok                                   | VPC状态     |
 | RegionCode | string   | CN_Hongkong                          | VPC区域code |
-| CreateTime | datetime | 2022-06-02 18:05:47                  | 创建时间      |
+| CreateTime | datetime | 2022-06-02 18:05:47                  | 创建时间    |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -4146,7 +4151,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
 def describe_vpc(regin_code, key, page):
@@ -4164,48 +4169,48 @@ def describe_vpc(regin_code, key, page):
 
 ### 2.CreateVPC
 
-​	**Action:CreateVPC**
+  **Action:CreateVPC**
 
-​	**描述：** 创建一个VPC
+  **描述：** 创建一个VPC
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 
-| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
-| -------------- |--------| -------- |---------------|------------------|
-| RegionCode          | string | 是       | CN_Hongkong   | VPC区域code, 见附件五  |
-| VPCName           | string | 是       | name          | VPC名称            |
-| VPCSegment           | string | 是       | 10.15.0.0/16  | VPC网段            |
-| VPCSegmentType           | string | 是       | auto/manual   | 使用推荐网段或手动分配      |
-| SubnetList           | list   | 是       | []            | 创建VPC必须创建一个子网    |
-| AvailableZoneCode           | string   | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
-| SubnetName           | string   | 是       | 子网1            | 子网名称             |
-| SubnetSegment           | string   | 是       | 10.15.1.0/24           | 子网网段             |
+| 名称              | 类型   | 是否必选 | 示例值        | 描述                    |
+| ----------------- | ------ | -------- | ------------- | ----------------------- |
+| RegionCode        | string | 是       | CN_Hongkong   | VPC区域code, 见附件五   |
+| VPCName           | string | 是       | name          | VPC名称                 |
+| VPCSegment        | string | 是       | 10.15.0.0/16  | VPC网段                 |
+| VPCSegmentType    | string | 是       | auto/manual   | 使用推荐网段或手动分配  |
+| SubnetList        | list   | 是       | []            | 创建VPC必须创建一个子网 |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
+| SubnetName        | string | 是       | 子网1         | 子网名称                |
+| SubnetSegment     | string | 是       | 10.15.1.0/24  | 子网网段                |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述         |
-| :----- |----------|:-------------------------------------|:-----------|
-| Code   | string   | Success                              | 错误码        |
-| Message   | string   | Success                              | 信息         |
-| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 创建VPC任务ID  |
-| Data | dict     | {}                                   | 返回数据       |
-| SubnetIdList | list     | []                                   | 创建子网ID列表     |
+| 名称         | 类型   | 示例值                               | 描述               |
+| :----------- | ------ | :----------------------------------- | :----------------- |
+| Code         | string | Success                              | 错误码             |
+| Message      | string | Success                              | 信息               |
+| TaskId       | string | d7706342-e566-11ec-89a8-0ad447efda1e | 创建VPC任务ID      |
+| Data         | dict   | {}                                   | 返回数据           |
+| SubnetIdList | list   | []                                   | 创建子网ID列表     |
 | SubnetTaskId | list   | []                                   | 创建子网任务ID列表 |
-| VPCId | string   | d76df710-e566-11ec-89a8-0ad447efda1e      | VPC ID     |
+| VPCId        | string | d76df710-e566-11ec-89a8-0ad447efda1e | VPC ID             |
 
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 
 ```json
@@ -4226,7 +4231,7 @@ def describe_vpc(regin_code, key, page):
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
 def create_vpc():
@@ -4236,69 +4241,68 @@ def create_vpc():
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-	"RegionCode": "CN_Hongkong",
-	"VPCName": "OPENAPI_VPC1",
-	"VPCSegment": "10.15.0.0/16",
-	"VPCSegmentType": "auto",
-	"SubnetList": [{
-			"AvailableZoneCode": "CN_Hongkong_A",
-			"SubnetName": "子网1",
-			"SubnetSegment": "10.15.1.0/24"
-		    }
-	    ]
+   "RegionCode": "CN_Hongkong",
+   "VPCName": "OPENAPI_VPC1",
+   "VPCSegment": "10.15.0.0/16",
+   "VPCSegmentType": "auto",
+   "SubnetList": [{
+         "AvailableZoneCode": "CN_Hongkong_A",
+         "SubnetName": "子网1",
+         "SubnetSegment": "10.15.1.0/24"
+          }
+       ]
 
     }
     res = requests.post(url, json=body)
 ```
+
 ### 3.DeleteVPC
 
-​	**Action:DeleteVPC**
+  **Action:DeleteVPC**
 
-​	**描述：** 删除一个VPC
+  **描述：** 删除一个VPC
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型     | 是否必选 | 示例值           | 描述         |
-| -------------- |--------| -------- |---------------|------------|
-| VPCId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的VPC ID |
-
-​	**返回参数：**
-
-| 名称   | 类型       | 示例值                                  | 描述    |
-| :----- |----------|:-------------------------------------|:------|
-| Code   | string   | Success                              | 错误码   |
-| Message   | string   | Success                              | 信息    |
-| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称  | 类型   | 是否必选 | 示例值                               | 描述           |
+| ----- | ------ | -------- | ------------------------------------ | -------------- |
+| VPCId | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e | 要删除的VPC ID |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值                               | 描述   |
+| :------ | ------ | :----------------------------------- | :----- |
+| Code    | string | Success                              | 错误码 |
+| Message | string | Success                              | 信息   |
+| TaskId  | string | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
-
 {
-	"Code": "Success",
-	"Data": {},
-	"Message": "您的VPC删除任务已下发成功!",
-	"TaskId": "98087aa4-e571-11ec-991d-0ad447efda1e"
+   "Code": "Success",
+   "Data": {},
+   "Message": "您的VPC删除任务已下发成功!",
+   "TaskId": "98087aa4-e571-11ec-991d-0ad447efda1e"
 }
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def delete_vpc(vpc_id):
     action = 'DeleteVPC'
     method = "POST"
@@ -4313,45 +4317,45 @@ def delete_vpc(vpc_id):
 
 ### 4.DescribeSubNet
 
-​	**Action:DescribeSubNet**
+  **Action:DescribeSubNet**
 
-​	**描述：** 查询子网信息
+  **描述：** 查询子网信息
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                |
-| -------------- |--------|------|-------------|-------------------|
-| RegionCode          | string | 是    | CN_Hongkong | VPC区域code, 见附件五   |
-| Keyword          | string | 否    | name        | 查询关键字 名称/ID       |
-| PageNumber          | string | 否    | 1           | 列表页码。起始值：1, 默认值：1 |
-| VPCId          | string | 否    | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID            |
-| AvailableZoneCode          | string | 否    | CN_Hongkong | VPC可用区code, 见附件五  |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述      |
-| :----- |--------|:--------|:--------|
-| Code   | string | Success | 错误码     |
-| Message   | string | Success | 信息      |
-| Data | dict   | {}      | 返回信息    |
-| Total | int    | 1       | 总数      |
-| SubnetList | list   | []      | 子网列表    |
-| SubnetId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 子网ID    |
-| SubnetName | string | 子网1      | 子网名称    |
-| SubnetSegment | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 子网网段    |
-| UsedIPNum | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 已用IP数量  |
-| VPCId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC ID  |
-| VPCName | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC名称   |
-| AvailableZoneCode | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 可用区code |
+  **请求参数：**
 
 
-​	**错误码：**
+
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                           |
+| ----------------- | ------ | -------- | ------------------------------------ | ------------------------------ |
+| RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五          |
+| Keyword           | string | 否       | name                                 | 查询关键字 名称/ID             |
+| PageNumber        | string | 否       | 1                                    | 列表页码。起始值：1, 默认值：1 |
+| VPCId             | string | 否       | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID                         |
+| AvailableZoneCode | string | 否       | CN_Hongkong                          | VPC可用区code, 见附件五        |
+
+  **返回参数：**
+
+| 名称              | 类型   | 示例值                               | 描述       |
+| :---------------- | ------ | :----------------------------------- | :--------- |
+| Code              | string | Success                              | 错误码     |
+| Message           | string | Success                              | 信息       |
+| Data              | dict   | {}                                   | 返回信息   |
+| Total             | int    | 1                                    | 总数       |
+| SubnetList        | list   | []                                   | 子网列表   |
+| SubnetId          | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 子网ID     |
+| SubnetName        | string | 子网1                                | 子网名称   |
+| SubnetSegment     | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 子网网段   |
+| UsedIPNum         | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 已用IP数量 |
+| VPCId             | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | VPC ID     |
+| VPCName           | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | VPC名称    |
+| AvailableZoneCode | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 可用区code |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
@@ -4392,10 +4396,9 @@ def delete_vpc(vpc_id):
 
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def describe_subnet(region_code, key, page, vpc_id, az_code):
     action = 'DescribeSubnet'
     method = "POST"
@@ -4410,74 +4413,74 @@ def describe_subnet(region_code, key, page, vpc_id, az_code):
     }
     res = requests.post(url, json=body)
 ```
+
 ### 5.CreateSubNet
 
-​	**Action:CreateSubNet**
+  **Action:CreateSubNet**
 
-​	**描述：** 创建一个子网
+  **描述：** 创建一个子网
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
-| -------------- |--------| -------- |---------------|------------------|
-| VPCId          | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1   | VPC ID           |
-| SubnetList           | list   | 是       | []            | 创建VPC必须创建一个子网    |
-| AvailableZoneCode           | string   | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
-| SubnetName           | string   | 是       | 子网1            | 子网名称             |
-| SubnetSegment           | string   | 是       | 10.15.1.0/24           | 子网网段             |
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                    |
+| ----------------- | ------ | -------- | ------------------------------------ | ----------------------- |
+| VPCId             | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID                  |
+| SubnetList        | list   | 是       | []                                   | 创建VPC必须创建一个子网 |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| SubnetName        | string | 是       | 子网1                                | 子网名称                |
+| SubnetSegment     | string | 是       | 10.15.1.0/24                         | 子网网段                |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述         |
-| :----- |----------|:-------------------------------------|:-----------|
-| Code   | string   | Success                              | 错误码        |
-| Message   | string   | Success                              | 信息         |
-| Data | dict     | {}                                   | 返回数据       |
-| TaskIdList | list     | []                                   | 创建子网ID列表     |
-| SubnetTaskId | list   | []                                   | 创建子网任务ID列表 |
+| 名称         | 类型   | 示例值  | 描述               |
+| :----------- | ------ | :------ | :----------------- |
+| Code         | string | Success | 错误码             |
+| Message      | string | Success | 信息               |
+| Data         | dict   | {}      | 返回数据           |
+| TaskIdList   | list   | []      | 创建子网ID列表     |
+| SubnetTaskId | list   | []      | 创建子网任务ID列表 |
 
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": {
-		"SubnetIdList": ["354f920c-e577-11ec-8d74-cabfed3cc5e1"],
-		"TaskIdList": ["354f04cc-e577-11ec-8d74-cabfed3cc5e1"]
-	},
-	"Message": "您的子网创建任务已下发成功"
+   "Code": "Success",
+   "Data": {
+      "SubnetIdList": ["354f920c-e577-11ec-8d74-cabfed3cc5e1"],
+      "TaskIdList": ["354f04cc-e577-11ec-8d74-cabfed3cc5e1"]
+   },
+   "Message": "您的子网创建任务已下发成功"
 }
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def create_subnet():
     action = 'CreateSubnet'
     method = "POST"
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-	"VPCId": "0266c864-e573-11ec-a09a-cabfed3cc5e1",
-	"SubnetList": [{
-			"AvailableZoneCode": "CN_Hongkong_A",
-			"SubnetName": "子网3",
-			"SubnetSegment": "10.15.3.0/24"
-		}
-	]
+   "VPCId": "0266c864-e573-11ec-a09a-cabfed3cc5e1",
+   "SubnetList": [{
+         "AvailableZoneCode": "CN_Hongkong_A",
+         "SubnetName": "子网3",
+         "SubnetSegment": "10.15.3.0/24"
+      }
+   ]
 }
     json.dumps(body)
     res = requests.post(url, json=body)
@@ -4485,52 +4488,51 @@ def create_subnet():
 
 ### 6.DeleteSubNet
 
-​	**Action:DeleteSubNet**
+  **Action:DeleteSubNet**
 
-​	**描述：** 删除一个子网
+  **描述：** 删除一个子网
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型     | 是否必选 | 示例值           | 描述               |
-| -------------- |--------| -------- |---------------|------------------|
-| SubnetId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的子网ID         |
-
-​	**返回参数：**
-
-| 名称   | 类型       | 示例值                                  | 描述    |
-| :----- |----------|:-------------------------------------|:------|
-| Code   | string   | Success                              | 错误码   |
-| Message   | string   | Success                              | 信息    |
-| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称     | 类型   | 是否必选 | 示例值                               | 描述           |
+| -------- | ------ | -------- | ------------------------------------ | -------------- |
+| SubnetId | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e | 要删除的子网ID |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值                               | 描述   |
+| :------ | ------ | :----------------------------------- | :----- |
+| Code    | string | Success                              | 错误码 |
+| Message | string | Success                              | 信息   |
+| TaskId  | string | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": {},
-	"Message": "您的子网删除任务已下发成功!",
-	"TaskId": "0e6b73d2-e571-11ec-991d-0ad447efda1e"
+   "Code": "Success",
+   "Data": {},
+   "Message": "您的子网删除任务已下发成功!",
+   "TaskId": "0e6b73d2-e571-11ec-991d-0ad447efda1e"
 }
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def delete_subnet(subnet_id):
     action = 'DeleteSubnet'
     method = "POST"
@@ -4545,45 +4547,45 @@ def delete_subnet(subnet_id):
 
 ### 7.DescribeVirtualGateWay
 
-​	**Action:DescribeVirtualGateWay**
+  **Action:DescribeVirtualGateWay**
 
-​	**描述：** 查询虚拟出网网关
+  **描述：** 查询虚拟出网网关
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                |
-| -------------- |--------|------|-------------|-------------------|
-| RegionCode          | string | 是    | CN_Hongkong | VPC区域code, 见附件五   |
-| Keyword          | string | 否    | name        | 查询关键字 名称/ID       |
-| PageNumber          | string | 否    | 1           | 列表页码。起始值：1, 默认值：1 |
-| VPCId          | string | 否    | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID            |
-| AvailableZoneCode          | string | 否    | CN_Hongkong | VPC可用区code, 见附件五  |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述      |
-| :----- |--------|:--------|:--------|
-| Code   | string | Success | 错误码     |
-| Message   | string | Success | 信息      |
-| Data | dict   | {}      | 返回信息    |
-| Total | int    | 1       | 总数      |
-| VirtualGateWayList | list   | []      | 虚拟出网网关列表 |
-| VirtualGateWayId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 虚拟出网网关ID |
-| VirtualGateWayName | string | test-gx      | 虚拟出网网关名称 |
-| VirtualGateWaySegment | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 虚拟出网网关网段 |
-| UsedIPNum | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 已经IP数量  |
-| VPCId | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC ID  |
-| VPCName | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | VPC名称   |
-| AvailableZoneCode | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1      | 可用区code |
+  **请求参数：**
 
 
-​	**错误码：**
+
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                           |
+| ----------------- | ------ | -------- | ------------------------------------ | ------------------------------ |
+| RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五          |
+| Keyword           | string | 否       | name                                 | 查询关键字 名称/ID             |
+| PageNumber        | string | 否       | 1                                    | 列表页码。起始值：1, 默认值：1 |
+| VPCId             | string | 否       | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID                         |
+| AvailableZoneCode | string | 否       | CN_Hongkong                          | VPC可用区code, 见附件五        |
+
+  **返回参数：**
+
+| 名称                  | 类型   | 示例值                               | 描述             |
+| :-------------------- | ------ | :----------------------------------- | :--------------- |
+| Code                  | string | Success                              | 错误码           |
+| Message               | string | Success                              | 信息             |
+| Data                  | dict   | {}                                   | 返回信息         |
+| Total                 | int    | 1                                    | 总数             |
+| VirtualGateWayList    | list   | []                                   | 虚拟出网网关列表 |
+| VirtualGateWayId      | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 虚拟出网网关ID   |
+| VirtualGateWayName    | string | test-gx                              | 虚拟出网网关名称 |
+| VirtualGateWaySegment | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 虚拟出网网关网段 |
+| UsedIPNum             | int    | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 已经IP数量       |
+| VPCId                 | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | VPC ID           |
+| VPCName               | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | VPC名称          |
+| AvailableZoneCode     | string | 026f4386-e573-11ec-a09a-cabfed3cc5e1 | 可用区code       |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
@@ -4592,30 +4594,29 @@ def delete_subnet(subnet_id):
 
 ```json
 {
-	"Code": "Success",
-	"Data": {
-		"Total": 1,
-		"VirtualGateWayList": [{
-			"AvailableZoneCode": "CN_DaBieShan_A",
-			"Status": "ok",
-			"Type": "电信",
-			"UsedIPNum": 16,
-			"VPCId": "e0e6c470-7f4f-11ec-b3e8-d2aace4aaab9",
-			"VPCName": "test-gx",
-			"VirtualGateWayId": "7be91556-7fe4-11ec-a733-d2aace4aaab9",
-			"VirtualGateWayName": "test-dainxin-02",
-			"VirtualGateWaySegment": "10.4.230.0/24"
-		}]
-	},
-	"Message": "success"
+   "Code": "Success",
+   "Data": {
+      "Total": 1,
+      "VirtualGateWayList": [{
+         "AvailableZoneCode": "CN_DaBieShan_A",
+         "Status": "ok",
+         "Type": "电信",
+         "UsedIPNum": 16,
+         "VPCId": "e0e6c470-7f4f-11ec-b3e8-d2aace4aaab9",
+         "VPCName": "test-gx",
+         "VirtualGateWayId": "7be91556-7fe4-11ec-a733-d2aace4aaab9",
+         "VirtualGateWayName": "test-dainxin-02",
+         "VirtualGateWaySegment": "10.4.230.0/24"
+      }]
+   },
+   "Message": "success"
 }
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def describe_virtual_gateway(regin_code, key, page, vpc_id, az_code):
     action = 'DescribeVirtualGateWay'
     method = "POST"
@@ -4632,76 +4633,76 @@ def describe_virtual_gateway(regin_code, key, page, vpc_id, az_code):
     res = requests.post(url, json=body)
     result = res.json()
 ```
+
 ### 8.CreateVirtualGateWay
 
-​	**Action:CreateVirtualGateWay**
+  **Action:CreateVirtualGateWay**
 
-​	**描述：** 创建一个虚拟出网网关
+  **描述：** 创建一个虚拟出网网关
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称                 | 类型     | 是否必选 | 示例值                                  | 描述               |
-|--------------------|--------| -------- |--------------------------------------|------------------|
-| VPCId              | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID           |
-| VirtualGateWayList | list   | 是       | []                                   |                  |
-| AvailableZoneCode  | string   | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
-| VirtualGateWayName | string   | 是       | 虚拟出网网关1                              | 虚拟出网网关名称         |
-| VirtualGateWaySegment      | string   | 是       | 10.15.1.0/24                         | 虚拟出网网关网段         |
-| Type               | string   | 是       | 联通                                   | 带宽CODE           |
+| 名称                  | 类型   | 是否必选 | 示例值                               | 描述                    |
+| --------------------- | ------ | -------- | ------------------------------------ | ----------------------- |
+| VPCId                 | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID                  |
+| VirtualGateWayList    | list   | 是       | []                                   |                         |
+| AvailableZoneCode     | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| VirtualGateWayName    | string | 是       | 虚拟出网网关1                        | 虚拟出网网关名称        |
+| VirtualGateWaySegment | string | 是       | 10.15.1.0/24                         | 虚拟出网网关网段        |
+| Type                  | string | 是       | 联通                                 | 带宽CODE                |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述         |
-| :----- |----------|:-------------------------------------|:-----------|
-| Code   | string   | Success                              | 错误码        |
-| Message   | string   | Success                              | 信息         |
-| Data | dict     | {}                                   | 返回数据       |
-| TaskIdList | list     | []                                   | 创建子虚拟出网网关任务ID列表     |
-| VirtualGateWayIdList | list   | []                                   | 创建子虚拟出网网关ID列表 |
+| 名称                 | 类型   | 示例值  | 描述                         |
+| :------------------- | ------ | :------ | :--------------------------- |
+| Code                 | string | Success | 错误码                       |
+| Message              | string | Success | 信息                         |
+| Data                 | dict   | {}      | 返回数据                     |
+| TaskIdList           | list   | []      | 创建子虚拟出网网关任务ID列表 |
+| VirtualGateWayIdList | list   | []      | 创建子虚拟出网网关ID列表     |
 
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": {
-		"TaskIdList": ["b1730f48-e640-11ec-8fd4-8a20ea9a3e7b"],
-		"VirtualGateWayIdList": ["b173bc4a-e640-11ec-8fd4-8a20ea9a3e7b"]
-	},
-	"Message": "您的虚拟出网网关创建任务已下发成功"
+   "Code": "Success",
+   "Data": {
+      "TaskIdList": ["b1730f48-e640-11ec-8fd4-8a20ea9a3e7b"],
+      "VirtualGateWayIdList": ["b173bc4a-e640-11ec-8fd4-8a20ea9a3e7b"]
+   },
+   "Message": "您的虚拟出网网关创建任务已下发成功"
 }
 ```
 
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def create_virtual_gateway():
     action = 'CreateVirtualGateWay'
     method = "POST"
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-	"VPCId": "170d5f32-9922-11ec-91ec-02fde40489da",
-	"VirtualGateWayList": [{
-			"AvailableZoneCode": "CN_DaBieShan_A",
-			"VirtualGateWayName": "虚拟出网网关1",
-			"VirtualGateWaySegment": "10.6.1.0/24",
+   "VPCId": "170d5f32-9922-11ec-91ec-02fde40489da",
+   "VirtualGateWayList": [{
+         "AvailableZoneCode": "CN_DaBieShan_A",
+         "VirtualGateWayName": "虚拟出网网关1",
+         "VirtualGateWaySegment": "10.6.1.0/24",
             "Type": "Bandwidth_CMCC"
-		}
-	]
+      }
+   ]
 }
     json.dumps(body)
     res = requests.post(url, json=body)
@@ -4709,51 +4710,50 @@ def create_virtual_gateway():
 
 ### 9.DeleteVirtualGateWay
 
-​	**Action:DeleteVirtualGateWay**
+  **Action:DeleteVirtualGateWay**
 
-​	**描述：** 删除一个虚拟出网网关
+  **描述：** 删除一个虚拟出网网关
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型     | 是否必选 | 示例值           | 描述           |
-| -------------- |--------| -------- |---------------|--------------|
-| VirtualGateWayId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 要删除的虚拟出网网关ID |
-
-​	**返回参数：**
-
-| 名称   | 类型       | 示例值                                  | 描述    |
-| :----- |----------|:-------------------------------------|:------|
-| Code   | string   | Success                              | 错误码   |
-| Message   | string   | Success                              | 信息    |
-| TaskId | string     | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID  |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称             | 类型   | 是否必选 | 示例值                               | 描述                   |
+| ---------------- | ------ | -------- | ------------------------------------ | ---------------------- |
+| VirtualGateWayId | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e | 要删除的虚拟出网网关ID |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值                               | 描述   |
+| :------ | ------ | :----------------------------------- | :----- |
+| Code    | string | Success                              | 错误码 |
+| Message | string | Success                              | 信息   |
+| TaskId  | string | d7706342-e566-11ec-89a8-0ad447efda1e | 任务ID |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": {},
-	"Message": "您的虚拟出网网关删除任务已下发成功!",
-	"TaskId": "05205da2-e642-11ec-8fd4-8a20ea9a3e7b"
+   "Code": "Success",
+   "Data": {},
+   "Message": "您的虚拟出网网关删除任务已下发成功!",
+   "TaskId": "05205da2-e642-11ec-8fd4-8a20ea9a3e7b"
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def delete_virtual_gateway(virtual_gateway_id):
     action = 'DeleteVirtualGateWay'
     method = "POST"
@@ -4768,60 +4768,60 @@ def delete_virtual_gateway(virtual_gateway_id):
 
 ### 10.DescribeEIP
 
-​	**Action:DescribeEIP**
+  **Action:DescribeEIP**
 
-​	**描述：** 查询EIP
+  **描述：** 查询EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| AvailableZoneCode | string | 边缘节点：是 / 云平台节点：不传 | CN_Hongkong_A | VPC可用区code, 见附件五(云平台节点EIP不包含此字段)                                                           |
-| Keyword           | string | 否       | eip地址 | 查询关键字 |
+| 名称              | 类型   | 是否必选                        | 示例值        | 描述                                               |
+| ----------------- | ------ | ------------------------------- | ------------- | -------------------------------------------------- |
+| RegionCode        | string | 是                              | CN_Hongkong   | VPC区域code, 见附件五                              |
+| AvailableZoneCode | string | 边缘节点：是 / 云平台节点：不传 | CN_Hongkong_A | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| Keyword           | string | 否                              | eip地址       | 查询关键字                                         |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | Success                              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| Total | int      | 4                                   | EIP总数  |
-| EIPList | list     | []                                   | EIP信息列表 |
-| Id | string | 22597c56-e646-11ec-97e2-7687d6f44ced | EIP ID |
-| IP | string | 118.186.70.138 | EIP 地址 |
-| RegionCode | string | CN_Hongkong | VPC区域code |
-| AvailableZoneCode | string   | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
-| Status | string | ok                                   | EIP 状态 |
-| Description | string   | test                                 | EIP 描述信息 |
-| IsBind | bool | True                     | EIP是否绑定了子网ip |
-| CreateTime | datetime | 2022-06-02 18:05:47                  | 创建时间      |
-| BandwidthInfo | dict | {} | EIP带宽信息 |
-| Id | string | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID |
-| Name | string | "" | 共享带宽名称(云平台节点，加入了共享带宽的EIP会有此字段) |
-| Qos | int | 10 | 带宽大小（Mbps） |
-| AvailableZoneCode | string | "" | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
-| BandwidthType | string | Bandwidth_China_Telecom |  |
-| BillScheme | string | BandwIdth |  |
-| Status | string | ok | 带宽状态 |
-| CreateTime | string | 2022-06-02 18:05:47 | 带宽创建时间 |
-| BindResourceInfo | dict | {} | EIP绑定的子网ip信息 |
-| SubnetId | string | d9b88a1e-aa54-11ec-a512-06d5ff412043 | 子网ID（边缘节点，此处为虚拟出网网关ID） |
-| SubnetIP | string | 10.3.2.4 | 子网IP（边缘节点，此处为虚拟出网网关IP） |
+| 名称              | 类型     | 示例值                               | 描述                                                    |
+| :---------------- | -------- | :----------------------------------- | :------------------------------------------------------ |
+| Code              | string   | Success                              | 错误码                                                  |
+| Message           | string   | Success                              | 信息                                                    |
+| Data              | dict     | {}                                   | 返回数据                                                |
+| Total             | int      | 4                                    | EIP总数                                                 |
+| EIPList           | list     | []                                   | EIP信息列表                                             |
+| Id                | string   | 22597c56-e646-11ec-97e2-7687d6f44ced | EIP ID                                                  |
+| IP                | string   | 118.186.70.138                       | EIP 地址                                                |
+| RegionCode        | string   | CN_Hongkong                          | VPC区域code                                             |
+| AvailableZoneCode | string   | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段)      |
+| Status            | string   | ok                                   | EIP 状态                                                |
+| Description       | string   | test                                 | EIP 描述信息                                            |
+| IsBind            | bool     | True                                 | EIP是否绑定了子网ip                                     |
+| CreateTime        | datetime | 2022-06-02 18:05:47                  | 创建时间                                                |
+| BandwidthInfo     | dict     | {}                                   | EIP带宽信息                                             |
+| Id                | string   | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID                                                  |
+| Name              | string   | ""                                   | 共享带宽名称(云平台节点，加入了共享带宽的EIP会有此字段) |
+| Qos               | int      | 10                                   | 带宽大小（Mbps）                                        |
+| AvailableZoneCode | string   | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段)      |
+| BandwidthType     | string   | Bandwidth_China_Telecom              |                                                         |
+| BillScheme        | string   | BandwIdth                            |                                                         |
+| Status            | string   | ok                                   | 带宽状态                                                |
+| CreateTime        | string   | 2022-06-02 18:05:47                  | 带宽创建时间                                            |
+| BindResourceInfo  | dict     | {}                                   | EIP绑定的子网ip信息                                     |
+| SubnetId          | string   | d9b88a1e-aa54-11ec-a512-06d5ff412043 | 子网ID（边缘节点，此处为虚拟出网网关ID）                |
+| SubnetIP          | string   | 10.3.2.4                             | 子网IP（边缘节点，此处为虚拟出网网关IP）                |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -4888,7 +4888,6 @@ def delete_virtual_gateway(virtual_gateway_id):
    **代码调用示例**
 
 ```python
-
 def describe_eip(regin_code, key, page, vpc_id, az_code):
     action = 'DescribeEIP'
     method = "POST"
@@ -4904,44 +4903,44 @@ def describe_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 11.CreateEIP
 
-​	**Action:CreateEIP**
+  **Action:CreateEIP**
 
-​	**描述：** 创建一个EIP
+  **描述：** 创建一个EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| AvailableZoneCode | string | 边缘节点：是 / 云平台节点: 否 |  | VPC可用区code, 见附件五(云平台节点EIP不传此字段/边缘节点必传)     |
-| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | 是 | BandwIdth | 计费方案<br/>BandwIdth（固定带宽，默认）<br/>BandwIdthMonth（固定带宽包月，默认） |
-| Qos | int | 是 | 5 | 带宽大小 |
-| Size | int | 是 | 1 | 创建个数 |
-| Description | string | 否 | test | EIP描述 |
+| 名称              | 类型   | 是否必选                      | 示例值                  | 描述                                                         |
+| ----------------- | ------ | ----------------------------- | ----------------------- | ------------------------------------------------------------ |
+| RegionCode        | string | 是                            | CN_Hongkong             | VPC区域code, 见附件五                                        |
+| AvailableZoneCode | string | 边缘节点：是 / 云平台节点: 否 |                         | VPC可用区code, 见附件五(云平台节点EIP不传此字段/边缘节点必传) |
+| BandwidthType     | string | 是                            | Bandwidth_China_Telecom | 带宽类型                                                     |
+| BillScheme        | string | 是                            | BandwIdth               | 计费方案<br/>BandwIdth（固定带宽，默认）<br/>BandwIdthMonth（固定带宽包月，默认） |
+| Qos               | int    | 是                            | 5                       | 带宽大小                                                     |
+| Size              | int    | 是                            | 1                       | 创建个数                                                     |
+| Description       | string | 否                            | test                    | EIP描述                                                      |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | Success                              | 信息        |
-| Data | list | [{"EIPId":"abcd", "IP": "1.1.1.1"}] | 返回数据      |
-| EIPId | string | abcd                                | EIP ID |
-| IP | string | 1.1.1.1                            | EIP 地址 |
+| 名称    | 类型   | 示例值                              | 描述     |
+| :------ | ------ | :---------------------------------- | :------- |
+| Code    | string | Success                             | 错误码   |
+| Message | string | Success                             | 信息     |
+| Data    | list   | [{"EIPId":"abcd", "IP": "1.1.1.1"}] | 返回数据 |
+| EIPId   | string | abcd                                | EIP ID   |
+| IP      | string | 1.1.1.1                             | EIP 地址 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -4961,7 +4960,6 @@ def describe_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def create_eip(regin_code, key, page, vpc_id, az_code):
     action = 'CreateEIP'
     method = "POST"
@@ -4982,39 +4980,39 @@ def create_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 12.UpdateEIP
 
-​	**Action:UpdateEIP**
+  **Action:UpdateEIP**
 
-​	**描述：** 变更EIP
+  **描述：** 变更EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| EIPId     | string | 是       | abcd   | EIP ID                                                       |
-| Description | string | 否       | test | 描述                                               |
-| Qos        | int | 否       | 5 | 带宽大小（Mbps） |
+| 名称        | 类型   | 是否必选 | 示例值 | 描述             |
+| ----------- | ------ | -------- | ------ | ---------------- |
+| EIPId       | string | 是       | abcd   | EIP ID           |
+| Description | string | 否       | test   | 描述             |
+| Qos         | int    | 否       | 5      | 带宽大小（Mbps） |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 修改成功                          | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | abcd                                | 修改带宽任务ID |
+| 名称    | 类型   | 示例值   | 描述           |
+| :------ | ------ | :------- | :------------- |
+| Code    | string | Success  | 错误码         |
+| Message | string | 修改成功 | 信息           |
+| Data    | dict   | {}       | 返回数据       |
+| TaskId  | string | abcd     | 修改带宽任务ID |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5029,7 +5027,6 @@ def create_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def update_eip(regin_code, key, page, vpc_id, az_code):
     action = 'UpdateEIP'
     method = "POST"
@@ -5046,35 +5043,35 @@ def update_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 13.DeleteEIP
 
-​	**Action:DeleteEIP**
+  **Action:DeleteEIP**
 
-​	**描述：** 删除一个EIP
+  **描述：** 删除一个EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| EIPId      | string | 是   | abcd   | EIP ID                                                        |
+| 名称  | 类型   | 是否必选 | 示例值 | 描述   |
+| ----- | ------ | -------- | ------ | ------ |
+| EIPId | string | 是       | abcd   | EIP ID |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | Success                              | 信息        |
+| 名称    | 类型   | 示例值  | 描述   |
+| :------ | ------ | :------ | :----- |
+| Code    | string | Success | 错误码 |
+| Message | string | Success | 信息   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5088,7 +5085,6 @@ def update_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def delete_eip(regin_code, key, page, vpc_id, az_code):
     action = 'DeleteEIP'
     method = "POST"
@@ -5101,39 +5097,39 @@ def delete_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 14.BindEIP
 
-​	**Action:BindEIP**
+  **Action:BindEIP**
 
-​	**描述：** 绑定EIP到子网IP
+  **描述：** 绑定EIP到子网IP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| EIPId     | string | 是       | abcd     | EIP ID                                                       |
-| NetId      | string | 是      | aaaa       | 子网ID （边缘节点为虚拟出网网关ID）                                        |
-| IP         | string | 是    | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP） |
+| 名称  | 类型   | 是否必选 | 示例值   | 描述                                |
+| ----- | ------ | -------- | -------- | ----------------------------------- |
+| EIPId | string | 是       | abcd     | EIP ID                              |
+| NetId | string | 是       | aaaa     | 子网ID （边缘节点为虚拟出网网关ID） |
+| IP    | string | 是       | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP）  |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 任务下发成功              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | aaaa                                | 任务ID   |
+| 名称    | 类型   | 示例值       | 描述     |
+| :------ | ------ | :----------- | :------- |
+| Code    | string | Success      | 错误码   |
+| Message | string | 任务下发成功 | 信息     |
+| Data    | dict   | {}           | 返回数据 |
+| TaskId  | string | aaaa         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5148,7 +5144,6 @@ def delete_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def bind_eip(regin_code, key, page, vpc_id, az_code):
     action = 'BindEIP'
     method = "POST"
@@ -5165,39 +5160,39 @@ def bind_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 15.UnbindEIP
 
-​	**Action:UnbindEIP**
+  **Action:UnbindEIP**
 
-​	**描述：** EIP从子网IP解绑
+  **描述：** EIP从子网IP解绑
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| EIPId     | string | 是       | abcd     | EIP ID                                                       |
-| NetId      | string | 是      | aaaa       | 子网ID （边缘节点为虚拟出网网关ID）                                        |
-| IP         | string | 是    | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP） |
+| 名称  | 类型   | 是否必选 | 示例值   | 描述                                |
+| ----- | ------ | -------- | -------- | ----------------------------------- |
+| EIPId | string | 是       | abcd     | EIP ID                              |
+| NetId | string | 是       | aaaa     | 子网ID （边缘节点为虚拟出网网关ID） |
+| IP    | string | 是       | 10.0.0.4 | 子网IP（边缘节点为虚拟出网网关IP）  |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 任务下发成功              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | aaaa                                | 任务ID   |
+| 名称    | 类型   | 示例值       | 描述     |
+| :------ | ------ | :----------- | :------- |
+| Code    | string | Success      | 错误码   |
+| Message | string | 任务下发成功 | 信息     |
+| Data    | dict   | {}           | 返回数据 |
+| TaskId  | string | aaaa         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5212,7 +5207,6 @@ def bind_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def unbind_eip(regin_code, key, page, vpc_id, az_code):
     action = 'UnbindEIP'
     method = "POST"
@@ -5229,50 +5223,50 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 16.DescribeBandwidth
 
-​	**Action:DescribeBandwidth**
+  **Action:DescribeBandwidth**
 
-​	**描述：** 查询共享带宽
+  **描述：** 查询共享带宽
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| RegionCode          | string | 否      | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| AvailableZoneCode | string | 否 | CN_Hongkong_A | 列表页码。起始值：1, 默认值：1                                                             |
-| Keyword           | string | 否       | eip地址 | 查询关键字 |
+| 名称              | 类型   | 是否必选 | 示例值        | 描述                           |
+| ----------------- | ------ | -------- | ------------- | ------------------------------ |
+| RegionCode        | string | 否       | CN_Hongkong   | VPC区域code, 见附件五          |
+| AvailableZoneCode | string | 否       | CN_Hongkong_A | 列表页码。起始值：1, 默认值：1 |
+| Keyword           | string | 否       | eip地址       | 查询关键字                     |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | Success                              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| Total | int      | 4                                   | 共享带宽总数 |
-| BandwidthList | list     | []                                   | 共享带宽信息列表 |
-| BandwidthInfo | dict | {} | EIP带宽信息 |
-| Id | string | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID |
-| Name | string | "" | 共享带宽名称 |
-| Qos | int | 10 | 带宽大小（Mbps） |
-| RegionCode | string | “” | VPC区域code, 见附件五 |
-| AvailableZoneCode | string | "" | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
-| BandwidthType | string | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | BandwIdth | 计费方案 |
-| Status | string | ok | 带宽状态 |
-| CreateTime | string | 2022-06-02 18:05:47 | 带宽创建时间 |
+| 名称              | 类型   | 示例值                               | 描述                                               |
+| :---------------- | ------ | :----------------------------------- | :------------------------------------------------- |
+| Code              | string | Success                              | 错误码                                             |
+| Message           | string | Success                              | 信息                                               |
+| Data              | dict   | {}                                   | 返回数据                                           |
+| Total             | int    | 4                                    | 共享带宽总数                                       |
+| BandwidthList     | list   | []                                   | 共享带宽信息列表                                   |
+| BandwidthInfo     | dict   | {}                                   | EIP带宽信息                                        |
+| Id                | string | 2232dede-e646-11ec-97e2-7687d6f44ced | 带宽ID                                             |
+| Name              | string | ""                                   | 共享带宽名称                                       |
+| Qos               | int    | 10                                   | 带宽大小（Mbps）                                   |
+| RegionCode        | string | “”                                   | VPC区域code, 见附件五                              |
+| AvailableZoneCode | string | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| BandwidthType     | string | Bandwidth_China_Telecom              | 带宽类型                                           |
+| BillScheme        | string | BandwIdth                            | 计费方案                                           |
+| Status            | string | ok                                   | 带宽状态                                           |
+| CreateTime        | string | 2022-06-02 18:05:47                  | 带宽创建时间                                       |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5335,7 +5329,6 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
     action = 'DescribeBandwidth'
     method = "POST"
@@ -5352,42 +5345,42 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 
 ### 17.CreateBandwidth
 
-​	**Action:CreateBandwidth**
+  **Action:CreateBandwidth**
 
-​	**描述：** 创建一个共享带宽
+  **描述：** 创建一个共享带宽
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| AvailableZoneCode | string | 是 | CN_Hongkong_A | VPC可用区code, 见附件五     |
-| Name | string | 是 | 香港共享带宽 | 共享带宽名称 |
-| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | 是 | BandwIdth | 计费方案<br/>BandwIdth_Shared（固定带宽） |
-| Qos | int | 是 | 5 | 带宽大小 |
+| 名称              | 类型   | 是否必选 | 示例值                  | 描述                                      |
+| ----------------- | ------ | -------- | ----------------------- | ----------------------------------------- |
+| RegionCode        | string | 是       | CN_Hongkong             | VPC区域code, 见附件五                     |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A           | VPC可用区code, 见附件五                   |
+| Name              | string | 是       | 香港共享带宽            | 共享带宽名称                              |
+| BandwidthType     | string | 是       | Bandwidth_China_Telecom | 带宽类型                                  |
+| BillScheme        | string | 是       | BandwIdth               | 计费方案<br/>BandwIdth_Shared（固定带宽） |
+| Qos               | int    | 是       | 5                       | 带宽大小                                  |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 创建成功                            | 信息        |
-| Data | list | [{"bandwidth_id":"abcd"}] | 返回数据      |
+| 名称        | 类型   | 示例值                               | 描述       |
+| :---------- | ------ | :----------------------------------- | :--------- |
+| Code        | string | Success                              | 错误码     |
+| Message     | string | 创建成功                             | 信息       |
+| Data        | list   | [{"bandwidth_id":"abcd"}]            | 返回数据   |
 | BandwidthId | string | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 共享带宽ID |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5406,7 +5399,6 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def create_bandwidth(regin_code, key, page, vpc_id, az_code):
     action = 'CreateBandwidth'
     method = "POST"
@@ -5427,38 +5419,38 @@ def create_bandwidth(regin_code, key, page, vpc_id, az_code):
 
 ### 18.UpdateBandwidth
 
-​	**Action:UpdateBandwidth**
+  **Action:UpdateBandwidth**
 
-​	**描述：** 变更共享带宽
+  **描述：** 变更共享带宽
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
-| Qos   | int | 是      | 5      | 共享带宽大小（Mbps）      |
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                 |
+| ----------- | ------ | -------- | ------ | -------------------- |
+| BandwidthId | string | 是       | abcd   | 共享带宽ID           |
+| Qos         | int    | 是       | 5      | 共享带宽大小（Mbps） |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 任务下发成功              | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | aaaa                                | 任务ID   |
+| 名称    | 类型   | 示例值       | 描述     |
+| :------ | ------ | :----------- | :------- |
+| Code    | string | Success      | 错误码   |
+| Message | string | 任务下发成功 | 信息     |
+| Data    | dict   | {}           | 返回数据 |
+| TaskId  | string | aaaa         | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5473,7 +5465,6 @@ def create_bandwidth(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def update_bandwidth(regin_code, key, page, vpc_id, az_code):
     action = 'UpdateBandwidth'
     method = "POST"
@@ -5490,36 +5481,36 @@ def update_bandwidth(regin_code, key, page, vpc_id, az_code):
 
 ### 19.DeleteBandwidth
 
-​	**Action:DeleteBandwidth**
+  **Action:DeleteBandwidth**
 
-​	**描述：** 删除一个共享带宽
+  **描述：** 删除一个共享带宽
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
+| 名称        | 类型   | 是否必选 | 示例值 | 描述       |
+| ----------- | ------ | -------- | ------ | ---------- |
+| BandwidthId | string | 是       | abcd   | 共享带宽ID |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 删除成功 | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
+| 名称    | 类型   | 示例值   | 描述     |
+| :------ | ------ | :------- | :------- |
+| Code    | string | Success  | 错误码   |
+| Message | string | 删除成功 | 信息     |
+| Data    | dict   | {}       | 返回数据 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5533,7 +5524,6 @@ def update_bandwidth(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def delete_bandwidth(regin_code, key, page, vpc_id, az_code):
     action = 'DeleteBandwidth'
     method = "POST"
@@ -5548,38 +5538,38 @@ def delete_bandwidth(regin_code, key, page, vpc_id, az_code):
 
 ### 20.BandwidthAddEIP
 
-​	**Action:BandwidthAddEIP**
+  **Action:BandwidthAddEIP**
 
-​	**描述：** 共享带宽添加EIP
+  **描述：** 共享带宽添加EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| BandwidthId | string | 是       | abcd     | 共享带宽ID                                                 |
-| EIPIdList | array | 是 | ["a", "b"] | EIP ID列表 |
+| 名称        | 类型   | 是否必选 | 示例值     | 描述       |
+| ----------- | ------ | -------- | ---------- | ---------- |
+| BandwidthId | string | 是       | abcd       | 共享带宽ID |
+| EIPIdList   | array  | 是       | ["a", "b"] | EIP ID列表 |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 删除成功 | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | 0915ce44-e6fe-11ec-9721-bafaaf87d540 | 任务id |
+| 名称    | 类型   | 示例值                               | 描述     |
+| :------ | ------ | :----------------------------------- | :------- |
+| Code    | string | Success                              | 错误码   |
+| Message | string | 删除成功                             | 信息     |
+| Data    | dict   | {}                                   | 返回数据 |
+| TaskId  | string | 0915ce44-e6fe-11ec-9721-bafaaf87d540 | 任务id   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5595,7 +5585,6 @@ def delete_bandwidth(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def bandwidth_add_eip(regin_code, key, page, vpc_id, az_code):
     action = 'BandwidthAddEIP'
     method = "POST"
@@ -5610,42 +5599,42 @@ def bandwidth_add_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 21.BandwidthRemoveEIP
 
-​	**Action:BandwidthRemoveEIP**
+  **Action:BandwidthRemoveEIP**
 
-​	**描述：** 共享带宽移除EIP
+  **描述：** 共享带宽移除EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
-| 名称           | 类型     | 是否必选 | 示例值         | 描述                                                                           |
-| -------------- |--------| -------- |-------------|------------------------------------------------------------------------------|
-| EIPIdList | array | 是       | ["abcd"] | EIP列表                                                      |
-| Delete | bool | 是 | False | 是否直接删除EIP，（否则需要为EIP新购独享底宽， 以下参数必传） |
-| RegionCode          | string | 是       | CN_Hongkong | VPC区域code, 见附件五                                                              |
-| BandwidthType | string | 是     | Bandwidth_China_Telecom | 带宽类型 |
-| BillScheme | string | 是 | BandwIdth | 计费方案 |
-| Qos | int | 是 | 5 | 带宽大小 |
+| 名称          | 类型   | 是否必选 | 示例值                  | 描述                                                         |
+| ------------- | ------ | -------- | ----------------------- | ------------------------------------------------------------ |
+| EIPIdList     | array  | 是       | ["abcd"]                | EIP列表                                                      |
+| Delete        | bool   | 是       | False                   | 是否直接删除EIP，（否则需要为EIP新购独享底宽， 以下参数必传） |
+| RegionCode    | string | 是       | CN_Hongkong             | VPC区域code, 见附件五                                        |
+| BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型                                                     |
+| BillScheme    | string | 是       | BandwIdth               | 计费方案                                                     |
+| Qos           | int    | 是       | 5                       | 带宽大小                                                     |
 
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型       | 示例值                                  | 描述        |
-| :----- |----------|:-------------------------------------|:----------|
-| Code   | string   | Success                              | 错误码       |
-| Message   | string   | 删除成功 | 信息        |
-| Data | dict     | {}                                   | 返回数据      |
-| TaskId | string | abcd | 任务ID |
+| 名称    | 类型   | 示例值   | 描述     |
+| :------ | ------ | :------- | :------- |
+| Code    | string | Success  | 错误码   |
+| Message | string | 删除成功 | 信息     |
+| Data    | dict   | {}       | 返回数据 |
+| TaskId  | string | abcd     | 任务ID   |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5661,7 +5650,6 @@ def bandwidth_add_eip(regin_code, key, page, vpc_id, az_code):
    **代码调用示例**
 
 ```python
-
 def bandwidth_remove_eip(regin_code, key, page, vpc_id, az_code):
     action = 'BandwidthRemoveEIP'
     method = "POST"
@@ -5680,98 +5668,97 @@ def bandwidth_remove_eip(regin_code, key, page, vpc_id, az_code):
 
 ### 22.DescribeIPInfo
 
-​	**Action:DescribeIPInfo**
+  **Action:DescribeIPInfo**
 
-​	**描述：** 查询子网/虚拟出网网关/公网 IP 信息
+  **描述：** 查询子网/虚拟出网网关/公网 IP 信息
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型     | 是否必选 | 示例值           | 描述                            |
-| -------------- |--------| -------- |---------------|-------------------------------|
-| NetId          | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e   | 子网/虚拟出网网关/公网 ID               |
-| IPType          | string | 是       | subnet   | subnet/virtual_gateway/pubnet |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
-| SegmentNum | int    | 1       | 网段数量 |
-| SegmentList | list    | []      | 网段列表 |
-| NetSignal | string    | 10.15.1.*      | IP匹配 |
-| IPList | list    | []      | 网段列表 |
-| IPAddress | string    | 10.15.1.2      | 地址 |
-| IPMask | int    | 24      | 掩码 |
-| IPStatus | int    | 1      | IP状态 1使用/0未使用 |
-| IPUsage | string    |已标记,用处: 路由使用      | IP用途 |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称   | 类型   | 是否必选 | 示例值                               | 描述                          |
+| ------ | ------ | -------- | ------------------------------------ | ----------------------------- |
+| NetId  | string | 是       | 0e6b73d2-e571-11ec-991d-0ad447efda1e | 子网/虚拟出网网关/公网 ID     |
+| IPType | string | 是       | subnet                               | subnet/virtual_gateway/pubnet |
+
+  **返回参数：**
+
+| 名称        | 类型   | 示例值                | 描述                 |
+| :---------- | ------ | :-------------------- | :------------------- |
+| Code        | string | Success               | 错误码               |
+| Message     | string | Success               | 信息                 |
+| SegmentNum  | int    | 1                     | 网段数量             |
+| SegmentList | list   | []                    | 网段列表             |
+| NetSignal   | string | 10.15.1.*             | IP匹配               |
+| IPList      | list   | []                    | 网段列表             |
+| IPAddress   | string | 10.15.1.2             | 地址                 |
+| IPMask      | int    | 24                    | 掩码                 |
+| IPStatus    | int    | 1                     | IP状态 1使用/0未使用 |
+| IPUsage     | string | 已标记,用处: 路由使用 | IP用途               |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": {
-		"SegmentList": [{
-			"IPList": [{
-					"IPAddress": "10.15.1.1",
-					"IPMask": 24,
-					"IPStatus": 1,
-					"IPUsage": "已标记,用处: 路由使用"
-				},
-				{
-					"IPAddress": "10.15.1.2",
-					"IPMask": 24,
-					"IPStatus": 1,
-					"IPUsage": "已标记,用处: 路由使用"
-				},
-				{
-					"IPAddress": "10.15.1.3",
-					"IPMask": 24,
-					"IPStatus": 1,
-					"IPUsage": "已标记,用处: 路由使用"
-				},
-				{
-					"IPAddress": "10.15.1.4",
-					"IPMask": 24,
-					"IPStatus": 0
-				},
-				{
-					"IPAddress": "10.15.1.5",
-					"IPMask": 24,
-					"IPStatus": 0
-				},
-				{
-					"IPAddress": "10.15.1.254",
-					"IPMask": 24,
-					"IPStatus": 1,
-					"IPUsage": "已标记,用处: 系统占用"
-				}
-			],
-			"NetSignal": "10.15.1.*"
-		}],
-		"SegmentNum": 1
-	},
-	"Message": "success"
+   "Code": "Success",
+   "Data": {
+      "SegmentList": [{
+         "IPList": [{
+               "IPAddress": "10.15.1.1",
+               "IPMask": 24,
+               "IPStatus": 1,
+               "IPUsage": "已标记,用处: 路由使用"
+            },
+            {
+               "IPAddress": "10.15.1.2",
+               "IPMask": 24,
+               "IPStatus": 1,
+               "IPUsage": "已标记,用处: 路由使用"
+            },
+            {
+               "IPAddress": "10.15.1.3",
+               "IPMask": 24,
+               "IPStatus": 1,
+               "IPUsage": "已标记,用处: 路由使用"
+            },
+            {
+               "IPAddress": "10.15.1.4",
+               "IPMask": 24,
+               "IPStatus": 0
+            },
+            {
+               "IPAddress": "10.15.1.5",
+               "IPMask": 24,
+               "IPStatus": 0
+            },
+            {
+               "IPAddress": "10.15.1.254",
+               "IPMask": 24,
+               "IPStatus": 1,
+               "IPUsage": "已标记,用处: 系统占用"
+            }
+         ],
+         "NetSignal": "10.15.1.*"
+      }],
+      "SegmentNum": 1
+   },
+   "Message": "success"
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def ip_list(net_id, net_type):
     action = 'DescribeIPInfo'
     method = "POST"
@@ -5787,78 +5774,77 @@ def ip_list(net_id, net_type):
 
 ### 23.NetEIPInfo
 
-​	**Action:NetEIPInfo**
+  **Action:NetEIPInfo**
 
-​	**描述：** 查询子网/虚拟出网网关 下的EIP
+  **描述：** 查询子网/虚拟出网网关 下的EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| NetIdList          | list | 是       |["c3e41e00-a1a9-11ec-9d42-569f891b3cb6"]   | 子网/虚拟出网网关 ID  列表 |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
-| Data | list    | []      | 返回数据 |
-| NetId | string    | 2e4fb57a-a43d-11ec-a3b5-fefaa522c9da      | IP匹配 |
-| NetName | string    | test     | 子网/虚拟出网网关 名称 |
-| NetType | string    | subnet/vir      | 类型  子网/虚拟出网网关  |
-| IPNum | string    | 10.8.5.0      | 子网/虚拟出网网关 网络号 |
-| IPMask | int    | 24      | 子网/虚拟出网网关 掩码 |
-| EIP_INFO_LIST | list   |    []  | EIP列表 |
-| EIP | string   |   118.186.70.143  | EIP IP |
-| EIPId | string   |    2e4fb57a-a43d-11ec-a3b5-fefaa522c9da  | EIP ID |
-| Qos | int   |   20 | EIP 带宽 |
-| Status | string   |   ok  | EIP 状态 |
-| BandwidthType | string   |   ok  | EIP 带宽类型 |
-| BillScheme | string   |   ok  | EIP 带宽计费方案 |
-| ReginCode | string   |   ok  | EIP Region Code |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称      | 类型 | 是否必选 | 示例值                                   | 描述                       |
+| --------- | ---- | -------- | ---------------------------------------- | -------------------------- |
+| NetIdList | list | 是       | ["c3e41e00-a1a9-11ec-9d42-569f891b3cb6"] | 子网/虚拟出网网关 ID  列表 |
+
+  **返回参数：**
+
+| 名称          | 类型   | 示例值                               | 描述                     |
+| :------------ | ------ | :----------------------------------- | :----------------------- |
+| Code          | string | Success                              | 错误码                   |
+| Message       | string | Success                              | 信息                     |
+| Data          | list   | []                                   | 返回数据                 |
+| NetId         | string | 2e4fb57a-a43d-11ec-a3b5-fefaa522c9da | IP匹配                   |
+| NetName       | string | test                                 | 子网/虚拟出网网关 名称   |
+| NetType       | string | subnet/vir                           | 类型  子网/虚拟出网网关  |
+| IPNum         | string | 10.8.5.0                             | 子网/虚拟出网网关 网络号 |
+| IPMask        | int    | 24                                   | 子网/虚拟出网网关 掩码   |
+| EIP_INFO_LIST | list   | []                                   | EIP列表                  |
+| EIP           | string | 118.186.70.143                       | EIP IP                   |
+| EIPId         | string | 2e4fb57a-a43d-11ec-a3b5-fefaa522c9da | EIP ID                   |
+| Qos           | int    | 20                                   | EIP 带宽                 |
+| Status        | string | ok                                   | EIP 状态                 |
+| BandwidthType | string | ok                                   | EIP 带宽类型             |
+| BillScheme    | string | ok                                   | EIP 带宽计费方案         |
+| ReginCode     | string | ok                                   | EIP Region Code          |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Data": [{
-		"EIP_INFO_LIST": [{
-			"BandwidthType": "电信",
-			"BillScheme": "固定带宽",
-			"EIP": "118.186.70.143",
-			"EIPId": "2e4fb57a-a43d-11ec-a3b5-fefaa522c9da",
-			"Qos": 20,
-			"ReginCode": "CN_Hongkong",
-			"Status": "error"
-		}],
-		"IPMask": 24,
-		"IPNum": "10.8.5.0",
-		"NetId": "c3e41e00-a1a9-11ec-9d42-569f891b3cb6",
-		"NetName": "20220312-泽宁子网测试",
-		"NetType": "subnet"
-	}],
-	"Message": "success"
+   "Code": "Success",
+   "Data": [{
+      "EIP_INFO_LIST": [{
+         "BandwidthType": "电信",
+         "BillScheme": "固定带宽",
+         "EIP": "118.186.70.143",
+         "EIPId": "2e4fb57a-a43d-11ec-a3b5-fefaa522c9da",
+         "Qos": 20,
+         "ReginCode": "CN_Hongkong",
+         "Status": "error"
+      }],
+      "IPMask": 24,
+      "IPNum": "10.8.5.0",
+      "NetId": "c3e41e00-a1a9-11ec-9d42-569f891b3cb6",
+      "NetName": "20220312-泽宁子网测试",
+      "NetType": "subnet"
+   }],
+   "Message": "success"
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def net_eip_info():
     action = 'NetEIPInfo'
     method = "POST"
@@ -5869,55 +5855,55 @@ def net_eip_info():
     }
     res = requests.post(url, json=body)
 ```
+
 ### 24.ReserveIPAndBindEIP
 
-​	**Action:ReserveIPAndBindEIP**
+  **Action:ReserveIPAndBindEIP**
 
-​	**描述：** 保留IP并绑定EIP
+  **描述：** 保留IP并绑定EIP
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| AvailableZoneCode | string | 是 | CN_Hongkong_A | VPC可用区code, 见附件五 |
-| Ips        | list | 是       |   | ip信息 |
-| NetId | string | 是 |3e229ff2-ee26-11ec-8a3f-f64faa0dae79 | 虚拟出网网关ID |
-| AddressList | array | 是 |["172.18.2.0"] | 虚拟出网网关IP地址列表 |
-| EIPList | array | 是 |["114.112.38.17"] | EIP地址列表 |
-| Description | string | 是 |手动保留并绑定 | 描述 |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                    |
+| ----------------- | ------ | -------- | ------------------------------------ | ----------------------- |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| Ips               | list   | 是       |                                      | ip信息                  |
+| NetId             | string | 是       | 3e229ff2-ee26-11ec-8a3f-f64faa0dae79 | 虚拟出网网关ID          |
+| AddressList       | array  | 是       | ["172.18.2.0"]                       | 虚拟出网网关IP地址列表  |
+| EIPList           | array  | 是       | ["114.112.38.17"]                    | EIP地址列表             |
+| Description       | string | 是       | 手动保留并绑定                       | 描述                    |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述   |
+| :------ | ------ | :------ | :----- |
+| Code    | string | Success | 错误码 |
+| Message | string | Success | 信息   |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
-	"Code": "Success",
-	"Message": "任务下发成功"
+   "Code": "Success",
+   "Message": "任务下发成功"
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def eip_batch_bind_and_reserve_ip():
     action = 'ReserveIPAndBindEIP'
     method = "POST"
@@ -5936,45 +5922,46 @@ def eip_batch_bind_and_reserve_ip():
     }
     res = requests.post(url, json=body)
 ```
+
 ### 25.DescribeSubnetIp
 
-​	**Action:DescribeSubnetIp**
+  **Action:DescribeSubnetIp**
 
-​	**描述：** 查询子网IP使用信息
+  **描述：** 查询子网IP使用信息
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| NetId | string | 是 | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
-| Data | dict | {} | 返回数据 |
-| UnusedList | list | ["10.0.0.5"] | 未使用ip列表 |
-| UnusedNum | int | 1 | 未使用ip个数 |
-| UsedList | list | [{"IP": "10.6.0.1","Usage": "路由使用"}] | 已使用ip列表 |
-| IP | strintg | "10.6.0.1" | ip地址 |
-| Usage | string | "路由使用" | ip使用说明 |
-| UsedNum | int | 1 | 已使用ip个数 |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称  | 类型   | 是否必选 | 示例值                                 | 描述   |
+| ----- | ------ | -------- | -------------------------------------- | ------ |
+| NetId | string | 是       | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
+
+  **返回参数：**
+
+| 名称       | 类型    | 示例值                                   | 描述         |
+| :--------- | ------- | :--------------------------------------- | :----------- |
+| Code       | string  | Success                                  | 错误码       |
+| Message    | string  | Success                                  | 信息         |
+| Data       | dict    | {}                                       | 返回数据     |
+| UnusedList | list    | ["10.0.0.5"]                             | 未使用ip列表 |
+| UnusedNum  | int     | 1                                        | 未使用ip个数 |
+| UsedList   | list    | [{"IP": "10.6.0.1","Usage": "路由使用"}] | 已使用ip列表 |
+| IP         | strintg | "10.6.0.1"                               | ip地址       |
+| Usage      | string  | "路由使用"                               | ip使用说明   |
+| UsedNum    | int     | 1                                        | 已使用ip个数 |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -5996,10 +5983,9 @@ def eip_batch_bind_and_reserve_ip():
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def ip_usage():
     action = 'DescribeSubnetIp'
     method = "POST"
@@ -6013,39 +5999,39 @@ def ip_usage():
 
 ### 26.CreateVLINK
 
-​	**Action:CreateVLINK**
+  **Action:CreateVLINK**
 
-​	**描述：** 子网开启VLINK （仅云平台节点支持）
+  **描述：** 子网开启VLINK （仅云平台节点支持）
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| SubnetId | string | 是 | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
-| PipeId | string | 是 | "563a0440-f842-11ec-9e17-8a1baacec6bd" | 私网ID |
+| 名称     | 类型   | 是否必选 | 示例值                                 | 描述   |
+| -------- | ------ | -------- | -------------------------------------- | ------ |
+| SubnetId | string | 是       | "489a0440-f842-11ec-9e17-8a1baacec6bd" | 子网ID |
+| PipeId   | string | 是       | "563a0440-f842-11ec-9e17-8a1baacec6bd" | 私网ID |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
+| 名称    | 类型   | 示例值                                 | 描述     |
+| :------ | ------ | :------------------------------------- | :------- |
+| Code    | string | Success                                | 错误码   |
+| Message | string | Success                                | 信息     |
 | Data    | dict   | {}                                     | 返回数据 |
 | VLINKId | string | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId  |
 
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -6057,10 +6043,9 @@ def ip_usage():
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def vlink_create():
     action = 'CreateVLINK'
     method = "POST"
@@ -6072,40 +6057,41 @@ def vlink_create():
     }
     res = requests.post(url, json=body)
 ```
+
 ### 27.DeleteVLINK
 
-​	**Action:DeleteVLINK**
+  **Action:DeleteVLINK**
 
-​	**描述：** 子网关闭VLINK （仅云平台节点支持）
+  **描述：** 子网关闭VLINK （仅云平台节点支持）
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
+  **请求参数：**
 
 
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
+| 名称    | 类型   | 是否必选 | 示例值                                 | 描述    |
+| ------- | ------ | -------- | -------------------------------------- | ------- |
+| VLINKId | string | 是       | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
 
-​	**返回参数：**
+  **返回参数：**
 
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
+| 名称    | 类型   | 示例值                                 | 描述     |
+| :------ | ------ | :------------------------------------- | :------- |
+| Code    | string | Success                                | 错误码   |
+| Message | string | Success                                | 信息     |
 | Data    | dict   | {}                                     | 返回数据 |
 | VLINKId | string | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId  |
 
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -6117,10 +6103,9 @@ def vlink_create():
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def vlink_delete():
     action = 'DeleteVLINK'
     method = "POST"
@@ -6131,41 +6116,42 @@ def vlink_delete():
     }
     res = requests.post(url, json=body)
 ```
+
 ### 28.VLINKAddVM
 
-​	**Action:VLINKAddVM**
+  **Action:VLINKAddVM**
 
-​	**描述：** 子网下主机加入VLINK （仅云平台节点支持）
+  **描述：** 子网下主机加入VLINK （仅云平台节点支持）
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
-| VMIdList | list | 是 | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
-| Password | string | 否 | "****" | 云主机密码 |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
-| TaskId | string | "20635952" | 任务ID |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称     | 类型   | 是否必选 | 示例值                                   | 描述         |
+| -------- | ------ | -------- | ---------------------------------------- | ------------ |
+| VLINKId  | string | 是       | "6ee7bd2e-1857-11ed-90cd-5a683b26c272"   | VLINKId      |
+| VMIdList | list   | 是       | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
+| Password | string | 否       | "****"                                   | 云主机密码   |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值     | 描述   |
+| :------ | ------ | :--------- | :----- |
+| Code    | string | Success    | 错误码 |
+| Message | string | Success    | 信息   |
+| TaskId  | string | "20635952" | 任务ID |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -6178,10 +6164,9 @@ def vlink_delete():
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def vlink_add_vm():
     action = 'VLINKAddVM'
     method = "POST"
@@ -6194,40 +6179,41 @@ def vlink_add_vm():
     }
     res = requests.post(url, json=body)
 ```
+
 ### 29.VLINKDeleteVM
 
-​	**Action:VLINKDeleteVM**
+  **Action:VLINKDeleteVM**
 
-​	**描述：** 子网下主机退出VLINK （仅云平台节点支持）
+  **描述：** 子网下主机退出VLINK （仅云平台节点支持）
 
-​	**请求地址:** cdsapi.capitalonline.net/vpc
+  **请求地址:** cdsapi.capitalonline.net/vpc
 
-​	**请求方法：POST**
+  **请求方法：POST**
 
-​	**请求参数：**
-
-
-| 名称           | 类型   | 是否必选 | 示例值           | 描述                  |
-| -------------- |------| -------- |---------------|---------------------|
-| VLINKId | string | 是 | "6ee7bd2e-1857-11ed-90cd-5a683b26c272" | VLINKId |
-| VMIdList | list | 是 | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
-
-​	**返回参数：**
-
-| 名称   | 类型     | 示例值     | 描述 |
-| :----- |--------|:--------|:--|
-| Code   | string | Success | 错误码 |
-| Message   | string | Success | 信息 |
-| TaskId | string | "20635953" | 任务ID |
+  **请求参数：**
 
 
-​	**错误码：**
+| 名称     | 类型   | 是否必选 | 示例值                                   | 描述         |
+| -------- | ------ | -------- | ---------------------------------------- | ------------ |
+| VLINKId  | string | 是       | "6ee7bd2e-1857-11ed-90cd-5a683b26c272"   | VLINKId      |
+| VMIdList | list   | 是       | ["4d20118d-c58e-455b-b361-d1a95b4632d6"] | 云主机ID列表 |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值     | 描述   |
+| :------ | ------ | :--------- | :----- |
+| Code    | string | Success    | 错误码 |
+| Message | string | Success    | 信息   |
+| TaskId  | string | "20635953" | 任务ID |
+
+
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                   |
 | -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
 
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -6240,10 +6226,9 @@ def vlink_add_vm():
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
-
 def vlink_delete():
     action = 'VLINKDeleteVM'
     method = "POST"
@@ -6563,37 +6548,37 @@ def describe_bms_images():
 
 **请求参数：**
 
-| 名称               | 类型   | 是否必须 | 示例                                        | 描述                                                         |
-| ------------------ | ------ | -------- | ------------------------------------------- | ------------------------------------------------------------ |
-| RegionId           | string | 是       | CN_Beijing_F                                | 可用区编号                                                   |
-| VdcId              | string | 是       | f4a1ec63-a2c3-4979-a4bf-86f546054e6f        | 虚拟数据中心ID                                               |
-| Password           | string | 是       | MengYou&&Cds-2019                           | 密码                                                         |
-| InstanceName       | string | 是       | shouduzaixbms                               | 主机名称                                                     |
-| AssignHostNo       | string | 否       | 001                                         | 主机编号，编号至少三位，不足三位自动补全                     |
-| InstanceChargeType | string | 是       | PostPaid                                    | 付费方式，取值范围： PrePaid：预付费，包年包月, PostPaid：按需计费 |
-| AutoRenew          | int    | 是       | 1                                           | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费     |
-| PrepaidMonth       | int    | 是       | 1                                           | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
-| ComputeId          | string | 是       | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469        | 规格配置ID                                                   |
-| GoodsId            | int    | 是       | 7955                                        | 商品ID                                                       |
-| ImageId            | string | 是       | d6012cd8-b672-11e9-9265-525400b97470        | 镜像ID                                                       |
-| EnableMonitor      | boolean | 否      | True                                            | 是否开启监控, True为开启，False为关闭，默认为关闭。            |
-| PipeIds            | list   | 是       | `["9fd88912-b668-11e9-a140-0242ac110002",]` | 网段主键ID列表                                               |
-| Amount             | int    | 是       | 10                                          | 指定创建裸金属服务器的数量，取值范围：1-100                  |
-| Raid               | string | 否       | 1                                           | 数据盘自定义Raid,支持 0, 1, 5, 10                             |
-| CustomPartition    | list   | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
-| CustomPartitionSize | list   | 否      | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
-| SubjectId           | string  | 否     |  68327                                      | 测试金ID  |
-| IsBond              | int     | 否     |  1                                         |  网卡是否做bond， 0：不做（默认），1：做                     |
-| PortMode            | string | 否      | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上|
+| 名称                | 类型    | 是否必须 | 示例                                        | 描述                                                         |
+| ------------------- | ------- | -------- | ------------------------------------------- | ------------------------------------------------------------ |
+| RegionId            | string  | 是       | CN_Beijing_F                                | 可用区编号                                                   |
+| VdcId               | string  | 是       | f4a1ec63-a2c3-4979-a4bf-86f546054e6f        | 虚拟数据中心ID                                               |
+| Password            | string  | 是       | MengYou&&Cds-2019                           | 密码                                                         |
+| InstanceName        | string  | 是       | shouduzaixbms                               | 主机名称                                                     |
+| AssignHostNo        | string  | 否       | 001                                         | 主机编号，编号至少三位，不足三位自动补全                     |
+| InstanceChargeType  | string  | 是       | PostPaid                                    | 付费方式，取值范围： PrePaid：预付费，包年包月, PostPaid：按需计费 |
+| AutoRenew           | int     | 是       | 1                                           | 包年包月是否自动续费，1为自动续费（默认），0为不自动续费     |
+| PrepaidMonth        | int     | 是       | 1                                           | 包年包月购买月数，输入0为购买到月底，输入1为到月底后在购买一个自然月，默认为0。 |
+| ComputeId           | string  | 是       | f7d3b7b4-e77d-47ac-aa37-8c9e3304e469        | 规格配置ID                                                   |
+| GoodsId             | int     | 是       | 7955                                        | 商品ID                                                       |
+| ImageId             | string  | 是       | d6012cd8-b672-11e9-9265-525400b97470        | 镜像ID                                                       |
+| EnableMonitor       | boolean | 否       | True                                        | 是否开启监控, True为开启，False为关闭，默认为关闭。          |
+| PipeIds             | list    | 是       | `["9fd88912-b668-11e9-a140-0242ac110002",]` | 网段主键ID列表                                               |
+| Amount              | int     | 是       | 10                                          | 指定创建裸金属服务器的数量，取值范围：1-100                  |
+| Raid                | string  | 否       | 1                                           | 数据盘自定义Raid,支持 0, 1, 5, 10                            |
+| CustomPartition     | list    | 否       | ["/","swap", "/aaa"]                        | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义 |
+| CustomPartitionSize | list    | 否       | [100,  128,  300 ]                          | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小 |
+| SubjectId           | string  | 否       | 68327                                       | 测试金ID                                                     |
+| IsBond              | int     | 否       | 1                                           | 网卡是否做bond， 0：不做（默认），1：做                      |
+| PortMode            | string  | 否       | trunk                                       | 交换机端口模式， 注：access模式的一个端口只能对应一个网络，IP绑定在物理网卡上；trunk模式的一个端口可以对应多个网络，IP绑定在虚拟网卡上 |
 
 **返回数据：**
 
-| 名称    | 类型   | 示例                                     | 描述                      |
-| ------- | ------ | ---------------------------------------- | ------------------------- |
-| Code    | string | Success                                  | 返回状态码: Success: 成功 |
-| Message | string | 订单创建成功，任务已下发，请等待......   | 返回信息                  |
-| Data    | object | {}                                       | 返回数据                  |
-| taskId |  string | "f232d398-a77c-11e9-9d43-0242ac110003" | 返回主任务Id                |
+| 名称    | 类型   | 示例                                   | 描述                      |
+| ------- | ------ | -------------------------------------- | ------------------------- |
+| Code    | string | Success                                | 返回状态码: Success: 成功 |
+| Message | string | 订单创建成功，任务已下发，请等待...... | 返回信息                  |
+| Data    | object | {}                                     | 返回数据                  |
+| taskId  | string | "f232d398-a77c-11e9-9d43-0242ac110003" | 返回主任务Id              |
 
 
 
@@ -7016,14 +7001,14 @@ def operat_bms_power(id, state):
 
 **请求参数**: 
 
-| 名称        | 类型   | 是否必选 | 示例值                               | 描述     |
-| ----------- | ------ | -------- | ------------------------------------ | -------- |
-| BaremetalId | string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID |
-| ImageId     | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID   |
-| Password    | string | 是       | capitalonline                        | 密码     |
-| Raid               | string | 否       | 1                      | 数据盘自定义Raid,支持 0, 1, 5, 10                             |
-| CustomPartition    | list   | 否       | ["/","swap", "/aaa"]   | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义      |
-| CustomPartitionSize | list   | 否      | [100,  128,  300 ]     | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小      |
+| 名称                | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ------------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| BaremetalId         | string | 是       | d226f190-f942-4257-8f3e-9cce8dfc0f2b | 裸金属ID                                                     |
+| ImageId             | string | 是       | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID                                                       |
+| Password            | string | 是       | capitalonline                        | 密码                                                         |
+| Raid                | string | 否       | 1                                    | 数据盘自定义Raid,支持 0, 1, 5, 10                            |
+| CustomPartition     | list   | 否       | ["/","swap", "/aaa"]                 | 系统盘自定义分区，第一个必须是"/" 分区，swap分区可选，/aaa分区为自定义 |
+| CustomPartitionSize | list   | 否       | [100,  128,  300 ]                   | 系统盘自定义分区大小，单位GB，与自定义分区列表中对应分区的大小 |
 
 
 **返回参数**
@@ -7205,7 +7190,7 @@ def update_bms_order(id, renewal):
         "BaremetalId": id,
         "AutoRenewal": renewal,
         "Duration": 2,
-	    "IsToMonth": 1
+       "IsToMonth": 1
     }
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
     res = requests.post(url, json=param)
@@ -7224,27 +7209,27 @@ def update_bms_order(id, renewal):
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | ------------------------------------ | ------------ |
-| TaskId      | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 创建裸金属服务器返回的TaskId |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述                         |
+| ------ | ------ | -------- | ------------------------------------ | ---------------------------- |
+| TaskId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 创建裸金属服务器返回的TaskId |
 
 **返回数据：**
 
-| 名称    | 类型   | 示例                                     | 描述              |
-| ------- | ------ | ---------------------------------------- | ----------------- |
-| Code    | string | Success                                  | 错误码            |
-| Message | string | Success                                  | 提示信息          |
-| Data    | object | {}                                       | 返回数据          |
-| BareMetalIds | list | ["27f262ec-92fd-4a77-ba78-6f682b7533e3"] | 裸金属服务器的编号id |
-| Status | string | succeed / init                            | 任务状态: succeed（完成）, init(进行中)   |
+| 名称         | 类型   | 示例                                     | 描述                                    |
+| ------------ | ------ | ---------------------------------------- | --------------------------------------- |
+| Code         | string | Success                                  | 错误码                                  |
+| Message      | string | Success                                  | 提示信息                                |
+| Data         | object | {}                                       | 返回数据                                |
+| BareMetalIds | list   | ["27f262ec-92fd-4a77-ba78-6f682b7533e3"] | 裸金属服务器的编号id                    |
+| Status       | string | succeed / init                           | 任务状态: succeed（完成）, init(进行中) |
 
 **错误码：**
 
-| httpcode | 错误码           | 错误信息                                      | 描述                      |
-| -------- | ---------------- | --------------------------------------------- | ------------------------- |
-| 400      | ParameterInvalid | The parameter "TaskId" is required.      | 参数TaskId是必选项。 |
-| 400      | ParameterIsEmpty | The parameter "TaskId" cannot be empty.  | 参数TaskId不能为空。 |
-| 400      | DataNotExists    | Please check that the parameters are correct. | 请检查参数是否正确。      |
+| httpcode | 错误码           | 错误信息                                      | 描述                 |
+| -------- | ---------------- | --------------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "TaskId" is required.           | 参数TaskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "TaskId" cannot be empty.       | 参数TaskId不能为空。 |
+| 400      | DataNotExists    | Please check that the parameters are correct. | 请检查参数是否正确。 |
 
  **返回示例**
 
@@ -7285,26 +7270,26 @@ def describe_bms_task(TaskId):
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | ------------------------------------ | ------------ |
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述                                       |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------ |
 | BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 按需裸金属服务器的编号id（删除前请先关机） |
 
 **返回数据：**
 
-| 名称    | 类型   | 示例                                     | 描述              |
-| ------- | ------ | ---------------------------------------- | ----------------- |
-| Code    | string | Success                                  | 错误码            |
-| Message | string | Success                                  | 提示信息          |
-| Data    | object | {}                                       | 返回数据          |
+| 名称    | 类型   | 示例    | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | string | Success | 错误码   |
+| Message | string | Success | 提示信息 |
+| Data    | object | {}      | 返回数据 |
 
 
 **错误码：**
 
-| httpcode | 错误码           | 错误信息                                      | 描述                      |
-| -------- | ---------------- | --------------------------------------------- | ------------------------- |
-| 400      | ParameterInvalid | The parameter "BaremetalId" is required.      | 参数BaremetalId是必选项。 |
-| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty.  | 参数BaremetalId不能为空。 |
-| 400      | LogicError       | 选择中包含有（非按需计费／非关机状态）的主机       | 只能删除按需计费和关机状态的主机     |
+| httpcode | 错误码           | 错误信息                                     | 描述                             |
+| -------- | ---------------- | -------------------------------------------- | -------------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.     | 参数BaremetalId是必选项。        |
+| 400      | ParameterIsEmpty | The parameter "BaremetalId" cannot be empty. | 参数BaremetalId不能为空。        |
+| 400      | LogicError       | 选择中包含有（非按需计费／非关机状态）的主机 | 只能删除按需计费和关机状态的主机 |
 
  **返回示例**
 
@@ -7345,33 +7330,33 @@ def delete_bms_instance(BaremetalId):
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
-| Name     | string | 是       | disk-hk-A                 | 创建的磁盘名字 |
-| Size     | int | 是       | 200                 | 磁盘大小，单位G |
-| Num     | int | 是       | 1                 | 创建磁盘的数量 |
-| GoodsId     | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376                 | 商品ID |
+| 名称     | 类型   | 是否必须 | 示例                                 | 描述            |
+| -------- | ------ | -------- | ------------------------------------ | --------------- |
+| RegionId | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 可用区id        |
+| Name     | string | 是       | disk-hk-A                            | 创建的磁盘名字  |
+| Size     | int    | 是       | 200                                  | 磁盘大小，单位G |
+| Num      | int    | 是       | 1                                    | 创建磁盘的数量  |
+| GoodsId  | string | 是       | bbf63749-0186-4c68-8adc-9bf584bc1376 | 商品ID          |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| DiskInfo     | list   | []                                 | 包含磁盘id、任务id         |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
-| DiskId | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 产品配置Id         |
+| 名称     | 类型   | 示例                                 | 描述                      |
+| -------- | ------ | ------------------------------------ | ------------------------- |
+| Code     | string | Success                              | 返回状态码: Success: 成功 |
+| Message  | string | null                                 | 返回信息                  |
+| Data     | object | {}                                   | 返回数据                  |
+| DiskInfo | list   | []                                   | 包含磁盘id、任务id        |
+| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
+| DiskId   | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 产品配置Id                |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| httpcode | 错误码           | 错误信息                                  | 描述                   |
+| -------- | ---------------- | ----------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid | The parameter "RegionId" is required.     | 参数RegionId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "RegionId" cannot be empty. | 参数RegionId不能为空。 |
 
  **返回示例**
 
@@ -7389,7 +7374,9 @@ def delete_bms_instance(BaremetalId):
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def create_disk():
    action = "CreateDisk"
@@ -7405,6 +7392,7 @@ def create_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
  ```
+
 ### 2.AttachDisk
 
 **Action: AttachDisk**
@@ -7417,29 +7405,29 @@ def create_disk():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| InstanceId     | string | 是       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机资源id |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述           |
+| ---------- | ------ | -------- | ------------------------------------ | -------------- |
+| InstanceId | string | 是       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0 | 挂载主机资源id |
+| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id         |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "InstanceId" is required.              | 	参数InstanceId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "InstanceId" cannot be empty.          | 	参数InstanceId不能为空。     |
+| httpcode | 错误码           | 错误信息                                    | 描述                     |
+| -------- | ---------------- | ------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid | The parameter "InstanceId" is required.     | 参数InstanceId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "InstanceId" cannot be empty. | 参数InstanceId不能为空。 |
 
  **返回示例**
 
@@ -7456,7 +7444,9 @@ def create_disk():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def attack_disk():
    action = "AttachDisk"
@@ -7469,6 +7459,7 @@ def attack_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
  ```
+
 ### 3.DetachDisk
 
 **Action: DetachDisk**
@@ -7481,28 +7472,28 @@ def attack_disk():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| DiskId | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7519,7 +7510,9 @@ def attack_disk():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def detack_disk():
    action = "DetachDisk"
@@ -7531,6 +7524,7 @@ def detack_disk():
    res = requests.post(url, json=param)
    result = json.loads(res.content)
  ```
+
 ### 4.DeleteDisk
 
 **Action: DeleteDisk**
@@ -7543,28 +7537,28 @@ def detack_disk():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| DiskId | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7581,7 +7575,9 @@ def detack_disk():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def delete_disk():
    action = "DeleteDisk"
@@ -7606,23 +7602,24 @@ def delete_disk():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| RegionId     | string | 否       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
-| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
-| InstanceId     | string | 否       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0                 | 挂载主机id |
-| Name     | string | 否       | test1                 | 创建的磁盘名字 |
-| PageNumber     | string | 否       | 1                 | Disk列表页码 |
-| PageSize     | string | 否       | 10                 | 每页返回数量；默认50 |
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述                 |
+| ---------- | ------ | -------- | ------------------------------------ | -------------------- |
+| RegionId   | string | 否       | 35304122-8504-400c-a61c-56ba244c5dda | 可用区id             |
+| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id               |
+| InstanceId | string | 否       | d95423a8-f3fb-11ea-800c-f0d4e2e923e0 | 挂载主机id           |
+| Name       | string | 否       | test1                                | 创建的磁盘名字       |
+| PageNumber | string | 否       | 1                                    | Disk列表页码         |
+| PageSize   | string | 否       | 10                                   | 每页返回数量；默认50 |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
+| 名称    | 类型   | 示例    | 描述                      |
+| ------- | ------ | ------- | ------------------------- |
+| Code    | string | Success | 返回状态码: Success: 成功 |
+| Message | string | null    | 返回信息                  |
+| Data    | object | {}      | 返回数据                  |
+
 | Total        | int | 20                                                      | 返回数据的条数         
 | DiskList    | list    | []                                                         | 磁盘列表 |
 | DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |
@@ -7642,9 +7639,9 @@ def delete_disk():
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParametersIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数不能为空。     |
+| httpcode | 错误码            | 错误信息                                  | 描述           |
+| -------- | ----------------- | ----------------------------------------- | -------------- |
+| 400      | ParametersIsEmpty | The parameter "RegionId" cannot be empty. | 参数不能为空。 |
 
  **返回示例**
 
@@ -7671,7 +7668,9 @@ def delete_disk():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_disks():
    action = "DescribeDisks"
@@ -7700,32 +7699,32 @@ def describe_disks():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                 | 磁盘id |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| DiskId | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0                         | 磁盘id                                                     |
-| Use          | int    | 200                                                           | 磁盘已使用大小；单位G                                                      |
-| Size          | int    | 500                                                           | 磁盘总容量；单位G                                                     |
-| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| DiskId  | string | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id                    |
+| Use     | int    | 200                                  | 磁盘已使用大小；单位G     |
+| Size    | int    | 500                                  | 磁盘总容量；单位G         |
+| Ratio   | string | 40%                                  | 使用百分比                |
 
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7741,7 +7740,9 @@ def describe_disks():
    }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_diskUsage():
    action = "DescribeDiskUsage"
@@ -7765,33 +7766,33 @@ def describe_diskUsage():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda     | 可用区id |
-| PoolName     | string | 是       | nvme_pool                 | 存储池名字 |
+| 名称     | 类型   | 是否必须 | 示例                                 | 描述       |
+| -------- | ------ | -------- | ------------------------------------ | ---------- |
+| RegionId | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 可用区id   |
+| PoolName | string | 是       | nvme_pool                            | 存储池名字 |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| PoolName  | string | nvme_pool                         | 存储池名字                                                     |
-| Use          | int    | 200                                                           | 存储池已使用大小；单位G                                                      |
-| Size          | int    | 500                                                           | 存储池总容量；单位G                                                     |
-| Ratio       | string | 40%                                                        | 使用百分比                                                      |                                          |                                                 |
+| 名称     | 类型   | 示例      | 描述                      |
+| -------- | ------ | --------- | ------------------------- |
+| Code     | string | Success   | 返回状态码: Success: 成功 |
+| Message  | string | null      | 返回信息                  |
+| Data     | object | {}        | 返回数据                  |
+| PoolName | string | nvme_pool | 存储池名字                |
+| Use      | int    | 200       | 存储池已使用大小；单位G   |
+| Size     | int    | 500       | 存储池总容量；单位G       |
+| Ratio    | string | 40%       | 使用百分比                |
 
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| httpcode | 错误码           | 错误信息                                  | 描述                   |
+| -------- | ---------------- | ----------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid | The parameter "RegionId" is required.     | 参数RegionId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "RegionId" cannot be empty. | 参数RegionId不能为空。 |
 
  **返回示例**
 
@@ -7807,7 +7808,9 @@ def describe_diskUsage():
    }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_poolUsage():
     action = "DescribePoolUsage"
@@ -7832,29 +7835,29 @@ def describe_poolUsage():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| Iops     | int | 是       | 1000                 | iops |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述   |
+| ------ | ------ | -------- | ------------------------------------ | ------ |
+| DiskId | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id |
+| Iops   | int    | 是       | 1000                                 | iops   |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7867,7 +7870,9 @@ def describe_poolUsage():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def change_iops():
    action = "ChangeIops"
@@ -7893,29 +7898,29 @@ def change_iops():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| Bw     | int | 是       | 1000                 | 增加的iops |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述       |
+| ------ | ------ | -------- | ------------------------------------ | ---------- |
+| DiskId | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id     |
+| Bw     | int    | 是       | 1000                                 | 增加的iops |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7928,7 +7933,9 @@ def change_iops():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def change_bandwidth():
    action = "ChangeBandwidth"
@@ -7955,29 +7962,29 @@ def change_bandwidth():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| Size     | int | 是       | 500                 | 增加的容量 |
+| 名称   | 类型   | 是否必须 | 示例                                 | 描述       |
+| ------ | ------ | -------- | ------------------------------------ | ---------- |
+| DiskId | string | 否       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id     |
+| Size   | int    | 是       | 500                                  | 增加的容量 |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -7990,7 +7997,9 @@ def change_bandwidth():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_diskUsage():
    action = "DescribeDiskUsage"
@@ -8016,29 +8025,29 @@ def describe_diskUsage():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| DiskId     | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0     | 磁盘id |
-| SnapshotName     | string | 是       | disk-hk-A-snap1                 | 创建快照的名字 |
+| 名称         | 类型   | 是否必须 | 示例                                 | 描述           |
+| ------------ | ------ | -------- | ------------------------------------ | -------------- |
+| DiskId       | string | 是       | 0767874e-f3fb-11ea-800c-f0d4e2e923e0 | 磁盘id         |
+| SnapshotName | string | 是       | disk-hk-A-snap1                      | 创建快照的名字 |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
-| SnapshotId   | string | c000ba4c-f404-11ea-800c-f0d4e2e923e0                     | 快照id           |
+| 名称       | 类型   | 示例                                 | 描述                      |
+| ---------- | ------ | ------------------------------------ | ------------------------- |
+| Code       | string | Success                              | 返回状态码: Success: 成功 |
+| Message    | string | null                                 | 返回信息                  |
+| Data       | object | {}                                   | 返回数据                  |
+| TaskId     | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
+| SnapshotId | string | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | 快照id                    |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "DiskId" is required.              | 	参数DiskId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "DiskId" cannot be empty.          | 	参数DiskId不能为空。     |
+| httpcode | 错误码           | 错误信息                                | 描述                 |
+| -------- | ---------------- | --------------------------------------- | -------------------- |
+| 400      | ParameterInvalid | The parameter "DiskId" is required.     | 参数DiskId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "DiskId" cannot be empty. | 参数DiskId不能为空。 |
 
  **返回示例**
 
@@ -8052,7 +8061,9 @@ def describe_diskUsage():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def create_snapshot():
    action = "CreateSnapshot"
@@ -8079,29 +8090,29 @@ def create_snapshot():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| Name     | string | 是       | dish-hk-B     | 克隆生成的新磁盘名字 |
-| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述                 |
+| ---------- | ------ | -------- | ------------------------------------ | -------------------- |
+| Name       | string | 是       | dish-hk-B                            | 克隆生成的新磁盘名字 |
+| SnapshotId | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | 快照id               |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
-| DiskId   | string | d4965bac-f405-11ea-800c-f0d4e2e923e0                     | 克隆生成的新磁盘id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
+| DiskId  | string | d4965bac-f405-11ea-800c-f0d4e2e923e0 | 克隆生成的新磁盘id        |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+| httpcode | 错误码           | 错误信息                                    | 描述                     |
+| -------- | ---------------- | ------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid | The parameter "SnapshotId" is required.     | 参数SnapshotId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "SnapshotId" cannot be empty. | 参数SnapshotId不能为空。 |
 
  **返回示例**
 
@@ -8115,7 +8126,9 @@ def create_snapshot():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def clone_snapshot():
    action = "CloneSnapshot"
@@ -8141,27 +8154,27 @@ def clone_snapshot():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述   |
+| ---------- | ------ | -------- | ------------------------------------ | ------ |
+| SnapshotId | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | 快照id |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+| httpcode | 错误码           | 错误信息                                    | 描述                     |
+| -------- | ---------------- | ------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid | The parameter "SnapshotId" is required.     | 参数SnapshotId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "SnapshotId" cannot be empty. | 参数SnapshotId不能为空。 |
 
 
  **返回示例**
@@ -8175,7 +8188,9 @@ def clone_snapshot():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def delete_snapshot():
    action = "DeleteSnapshot"
@@ -8201,27 +8216,27 @@ def delete_snapshot():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| SnapshotId     | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0                 | 快照id |
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述   |
+| ---------- | ------ | -------- | ------------------------------------ | ------ |
+| SnapshotId | string | 是       | c000ba4c-f404-11ea-800c-f0d4e2e923e0 | 快照id |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| TaskId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 任务流id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| TaskId  | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 任务流id                  |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "SnapshotId" is required.              | 	参数SnapshotId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "SnapshotId" cannot be empty.          | 	参数SnapshotId不能为空。     |
+| httpcode | 错误码           | 错误信息                                    | 描述                     |
+| -------- | ---------------- | ------------------------------------------- | ------------------------ |
+| 400      | ParameterInvalid | The parameter "SnapshotId" is required.     | 参数SnapshotId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "SnapshotId" cannot be empty. | 参数SnapshotId不能为空。 |
 
 
  **返回示例**
@@ -8235,7 +8250,9 @@ def delete_snapshot():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def rollback_snapshot():
    action = "RollbackSnapshot"
@@ -8260,30 +8277,30 @@ def rollback_snapshot():
 
 **请求参数：**
 
-| 名称        | 类型   | 是否必须 | 示例                                 | 描述         |
-| ----------- | ------ | -------- | --------------------------------- | ------------ |
-| RegionId     | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda                 | 可用区id |
-| Bw     | int | 是       | 2000                 | 带宽 |
-| Iops     | int | 是       | 8000                 | iops |
-| Type     | string | 是       | ssd                 | 磁盘类型 |
+| 名称     | 类型   | 是否必须 | 示例                                 | 描述     |
+| -------- | ------ | -------- | ------------------------------------ | -------- |
+| RegionId | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 可用区id |
+| Bw       | int    | 是       | 2000                                 | 带宽     |
+| Iops     | int    | 是       | 8000                                 | iops     |
+| Type     | string | 是       | ssd                                  | 磁盘类型 |
 
 
 **返回数据：**
 
-| 名称        | 类型   |  示例                                | 描述          |
-| ----------- | ----- |  ---------------------------------- | ------------ |
-| Code        | string | Success                            | 返回状态码: Success: 成功 |
-| Message     | string | null                               | 返回信息 |
-| Data        | object | {}                                 | 返回数据            |
-| GoodsId   | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0                     | 商品id           |
+| 名称    | 类型   | 示例                                 | 描述                      |
+| ------- | ------ | ------------------------------------ | ------------------------- |
+| Code    | string | Success                              | 返回状态码: Success: 成功 |
+| Message | string | null                                 | 返回信息                  |
+| Data    | object | {}                                   | 返回数据                  |
+| GoodsId | string | 127d4ac3-f3fc-11ea-800c-f0d4e2e923e0 | 商品id                    |
 
 
 **错误码：**
 
-| httpcode | 错误码                      | 错误信息                                           | 描述                     |
-| -------- | -------------------------- | -------------------------------------------------- | ------------------------ |
-| 400      | ParameterInvalid           | The parameter "RegionId" is required.              | 	参数RegionId是必选项。      |
-| 400      | ParameterIsEmpty           | The parameter "RegionId" cannot be empty.          | 	参数RegionId不能为空。     |
+| httpcode | 错误码           | 错误信息                                  | 描述                   |
+| -------- | ---------------- | ----------------------------------------- | ---------------------- |
+| 400      | ParameterInvalid | The parameter "RegionId" is required.     | 参数RegionId是必选项。 |
+| 400      | ParameterIsEmpty | The parameter "RegionId" cannot be empty. | 参数RegionId不能为空。 |
 
  **返回示例**
 
@@ -8296,7 +8313,9 @@ def rollback_snapshot():
     }
 }
 ```
+
  **代码调用示例**
+
  ```python
 def describe_goodsId():
    action = "DescribeGoodsId"
@@ -8318,7 +8337,7 @@ def describe_goodsId():
 
    **Action: DescribeBill**
 
-​	**描述：** 查询账单
+  **描述：** 查询账单
 
    **请求地址:** cdsapi.capitalonline.net/billing
 
@@ -8350,13 +8369,13 @@ def describe_goodsId():
 | CreateTime      | String   | 2019-10-23 12:40:04                  | 创建时间         |
 | DeleteTime      | String   |                                      | 删除时间         |
 
-​	**错误码:**
+  **错误码:**
 
 | httpcode | 错误码                    | 错误信息                                            | 描述                   |
 | -------- | ------------------------- | --------------------------------------------------- | ---------------------- |
 | 400      | InvalidPublicId.Malformed | The specified parameter   "PrivateID" is not valid. | 指定公网Id参数格式错误 |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -8464,7 +8483,7 @@ def describe_goodsId():
 
    **Action: DescribeBillInfo**
 
-​	**描述：** 查询账单
+  **描述：** 查询账单
 
    **请求地址:** cdsapi.capitalonline.net/billing
 
@@ -8504,7 +8523,7 @@ def describe_goodsId():
 | UnitPrice     | Float    | 0.01417548                                                   | 资源单价         |
 | IPs           | List     | []                                                           | IP列表           |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -8543,7 +8562,7 @@ def describe_goodsId():
 
    **Action: DescribeBillDetail**
 
-​	**描述：** 查询账单
+  **描述：** 查询账单
 
    **请求地址:** cdsapi.capitalonline.net/billing
 
@@ -8588,7 +8607,7 @@ def describe_goodsId():
 | BeginTime    | string   | 开始时间                         |
 | EndTime      | string   | 结束时间                         |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -9720,7 +9739,7 @@ def describe_goodsId():
 
    **Action: DescribeAccountInfo**
 
-​	**描述：** 查询主账户余额，充值记录已经消费概况
+  **描述：** 查询主账户余额，充值记录已经消费概况
 
    **请求地址:** cdsapi.capitalonline.net/billing
 
@@ -9752,7 +9771,7 @@ def describe_goodsId():
 | Currency           | string   | 币种             |
 | Amount             | float    | 主账户月消费金额 |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -9833,7 +9852,7 @@ def describe_goodsId():
 | Message | string | uid不存在 | 错误信息     |
 | Data    | string | []        | 客户计量信息 |
 
-​	**错误码:**
+  **错误码:**
 
 | httpcode | 错误码                  | 错误信息         | 描述               |
 | -------- | ----------------------- | ---------------- | ------------------ |
@@ -9841,7 +9860,7 @@ def describe_goodsId():
 | 400      | InvalidParamater        | uid不存在        | uid不存在          |
 | 400      | InvalidParameter.IsNull | 缺少必要参数     | 缺少必要参数       |
 
-​	**返回示例:**
+  **返回示例:**
 
 ```json
 {
@@ -9859,7 +9878,7 @@ def describe_goodsId():
 }
 ```
 
-​	**请求调用示例**
+  **请求调用示例**
 
 ```python
 def get_metering(end_time, uid=None):
@@ -9884,7 +9903,9 @@ def get_metering(end_time, uid=None):
     print(result)
     return result.get("Data")
 ```
+
 ## 网络告警相关
+
 ### 1.GetWanAlarmReceiver
 
    **Action: GetWanAlarmReceiver**
@@ -9897,31 +9918,32 @@ def get_metering(end_time, uid=None):
 
    **请求参数：**
 
-| 名称    | 类型   | 是否必选 | 示例值     | 描述                         |
-| ------- | ------ | -------- | ---------- | ---------------------------- |
-| ObjGroupId | string | 否       | "6541d60c-d71f-11ec-b673-0242ac110033" | 获取特定监控组或全部告警联系人，获取全部告警联系人传递空字符串  |
+| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                                                         |
+| ---------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| ObjGroupId | string | 否       | "6541d60c-d71f-11ec-b673-0242ac110033" | 获取特定监控组或全部告警联系人，获取全部告警联系人传递空字符串 |
 
    **返回参数：**
 
-| 名称    | 类型   | 示例值    | 描述         |
-| :------ | ------ | :-------- | :----------- |
-| Code    | string | Success   | 错误码       |
-| Message | string | 获取联系人成功 | 错误信息     |
-| Data    | object | []        | 告警联系人数据列表 |
-| ReceiverId       | string | 40abe08e-5073-11e9-b148-0242ac1103aa| 告警联系人ID |
-| ReceiverMail     | string | san.zhang@capitalonline.net              | 告警联系人邮件 |
-| ReceiverName     | string | zhangsan                            | 告警联系人手机联系方式code+手机号 |
-| ReceiverTel      | string | (+86)13322221111                    | 告警联系人名称 |
-| UsedByNow        | bool   | False                               | 告警联系人是否在当前监控组 |
-| UsedByOther      | bool   | True                                | 其他监控组是否使用该告警联系人 |
+| 名称         | 类型   | 示例值                               | 描述                              |
+| :----------- | ------ | :----------------------------------- | :-------------------------------- |
+| Code         | string | Success                              | 错误码                            |
+| Message      | string | 获取联系人成功                       | 错误信息                          |
+| Data         | object | []                                   | 告警联系人数据列表                |
+| ReceiverId   | string | 40abe08e-5073-11e9-b148-0242ac1103aa | 告警联系人ID                      |
+| ReceiverMail | string | san.zhang@capitalonline.net          | 告警联系人邮件                    |
+| ReceiverName | string | zhangsan                             | 告警联系人手机联系方式code+手机号 |
+| ReceiverTel  | string | (+86)13322221111                     | 告警联系人名称                    |
+| UsedByNow    | bool   | False                                | 告警联系人是否在当前监控组        |
+| UsedByOther  | bool   | True                                 | 其他监控组是否使用该告警联系人    |
 
    **错误码:**
 
-| httpcode | 错误码                  | 错误信息         | 描述               |
-| -------- | ----------------------- | ---------------- | ------------------ |
-| 400      | InvalidParameter.IsNull | 缺少必要参数     | 缺少必要参数       |
+| httpcode | 错误码                  | 错误信息     | 描述         |
+| -------- | ----------------------- | ------------ | ------------ |
+| 400      | InvalidParameter.IsNull | 缺少必要参数 | 缺少必要参数 |
 
    **返回示例:**
+
 ```json
 {
     "Code":"Success",
@@ -9971,28 +9993,28 @@ def get_all_receivers():
 
    **请求参数：**
 
-| 名称    | 类型   | 是否必选 | 示例值     | 描述                         |
-| ------- | ------ | -------- | ---------- | ---------------------------- |
-| ReceiverId | string | 是       | "a09855ea-15f6-11ec-bd9c-ce61e0b35aaa" | 联系人ID |
-| Email | string | 否       | san.zhang@capitalonline.net | 联系人邮箱 |
-| Mobile | string | 否       | 13322221111| 联系人手机号 |
-| Code | string | 否      | +86 | 可选择值 +86（国内)、+1 |
+| 名称       | 类型   | 是否必选 | 示例值                                 | 描述                    |
+| ---------- | ------ | -------- | -------------------------------------- | ----------------------- |
+| ReceiverId | string | 是       | "a09855ea-15f6-11ec-bd9c-ce61e0b35aaa" | 联系人ID                |
+| Email      | string | 否       | san.zhang@capitalonline.net            | 联系人邮箱              |
+| Mobile     | string | 否       | 13322221111                            | 联系人手机号            |
+| Code       | string | 否       | +86                                    | 可选择值 +86（国内)、+1 |
 
 
    **返回参数：**
 
-| 名称    | 类型   | 示例值    | 描述         |
-| :------ | ------ | :-------- | :----------- |
-| Code    | string | Success   | 错误码       |
-| Message | string | 获取联系人成功 | 错误信息     |
-| Data    | object | {}        |  |
+| 名称    | 类型   | 示例值         | 描述     |
+| :------ | ------ | :------------- | :------- |
+| Code    | string | Success        | 错误码   |
+| Message | string | 获取联系人成功 | 错误信息 |
+| Data    | object | {}             |          |
 
    **错误码:**
 
-| httpcode | 错误码                  | 错误信息         | 描述               |
-| -------- | ----------------------- | ---------------- | ------------------ |
-| 400      | Parameter Error | 邮箱格式异常     | 邮箱格式异常       |
-| 400      | Parameter Error | 手机格式异常     | 邮箱格式异常       |
+| httpcode | 错误码          | 错误信息     | 描述         |
+| -------- | --------------- | ------------ | ------------ |
+| 400      | Parameter Error | 邮箱格式异常 | 邮箱格式异常 |
+| 400      | Parameter Error | 手机格式异常 | 邮箱格式异常 |
 
    **返回示例:**
 
@@ -10065,6 +10087,7 @@ def update_receiver():
 | 10006  | 参数错误           | 参数错误，任务不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10136,6 +10159,7 @@ def queryTask():
 |        |          |      |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10225,6 +10249,7 @@ def querySites():
 | 12000  | 查询商品规格信息失败 | 查询商品规格信息失败 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10323,11 +10348,12 @@ def queryProducts():
 
    **错误码:**
 
-| 错误码 | 错误信息 | 描述                                   |
-| :----- | :------- | :------------------------------------- |
+| 错误码 | 错误信息 | 描述                                    |
+| :----- | :------- | :-------------------------------------- |
 | 10006  | 参数错误 | 1、无对应商品规格信息 2、无对应站点信息 |
 
    **返回示例:**
+
 ```json
 {
     "code": "Success",
@@ -10460,7 +10486,7 @@ def queryImages():
 | 名称           | 类型   | 示例                                 | 描述                                                         |
 | -------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
 | Code           | string | Success                              | 返回状态码: Success: 成功                                    |
-| Message            | string | null                                 | 返回信息                                                     |
+| Message        | string | null                                 | 返回信息                                                     |
 | Data           | object | {}                                   | 返回数据                                                     |
 | tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
 | areaId         | string | CN                                   | 币种                                                         |
@@ -10476,6 +10502,7 @@ def queryImages():
 | 10006  | 参数错误           | 参数错误，无对应站点信息                                |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10542,7 +10569,7 @@ def queryVmPrice():
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
 | Code           | string | Success                                  | 返回状态码: Success: 成功 |
-| Message            | string | null                                     | 返回信息                  |
+| Message        | string | null                                     | 返回信息                  |
 | Data           | object | {}                                       | 返回数据                  |
 | successVmIds   | array  | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | 按需转包年包月成功 vmIds  |
 | failedVmIds    | array  | []                                       | 按需转包年包月失败 vmIds  |
@@ -10561,6 +10588,7 @@ def queryVmPrice():
 | 10006  | 参数错误                                                     | 参数错误，对应云桌面不存在                                   |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10629,7 +10657,7 @@ def updateOrder():
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
 | Code           | string | Success                                  | 返回状态码: Success: 成功 |
-| Message            | string | null                                     | 返回信息                  |
+| Message        | string | null                                     | 返回信息                  |
 | Data           | object | {}                                       | 返回数据                  |
 | successVmIds   | array  | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | 续约成功 vmIds            |
 | failedVmIds    | array  | []                                       | 续约失败 vmIds            |
@@ -10647,6 +10675,7 @@ def updateOrder():
 | 10006  | 参数错误                                                     | 参数错误，对应云桌面不存在                                   |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10713,11 +10742,11 @@ def renewalOrder():
 | 名称      | 类型   | 示例                                   | 描述                                                         |
 | --------- | ------ | -------------------------------------- | ------------------------------------------------------------ |
 | Code      | string | Success                                | 返回状态码: Success: 成功                                    |
-| Message       | string | null                                   | 返回信息                                                     |
+| Message   | string | null                                   | 返回信息                                                     |
 | Data      | list   | []                                     | 返回数据                                                     |
 | accountId | string | “7e7ba91e-4357-470a-9609-ce60d9d7e38f” | 用户id                                                       |
 | name      | string | “miao123”                              | 用户的名称                                                   |
-| password     | string | “CDS—GCW666”                         | 用户密码      |
+| password  | string | “CDS—GCW666”                           | 用户密码                                                     |
 | email     | string | “”                                     | 邮箱                                                         |
 | remark    | string | “miao123”                              | 备注                                                         |
 | bindNum   | int    | 0                                      | 已绑定云桌面的数量                                           |
@@ -10730,6 +10759,7 @@ def renewalOrder():
 |        |          |      |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10782,18 +10812,18 @@ def querySubAccounts():
 | 名称      | 类型   | 是否必须 | 示例                                    | 描述                                                         |
 | --------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
-| password     | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合        |
+| password  | string | 否       | “CDS—GCW666”                            | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合 |
 | email     | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name      | string | 是       | miao123                                 | 用户的名称                                                   |
 | remark    | string | 否       | “miao123”                               | 备注，，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
+| 名称    | 类型   | 示例    | 描述                      |
+| ------- | ------ | ------- | ------------------------- |
+| Code    | string | Success | 返回状态码: Success: 成功 |
+| Message | string | null    | 返回信息                  |
+| Data    | obejct | {}      | 返回数据                  |
 
    **错误码:**
 
@@ -10804,6 +10834,7 @@ def querySubAccounts():
 | 11000  | 创建用户错误       | 创建用户错误       |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10853,7 +10884,7 @@ def createSubAccount():
 | ------------------- | ------ | -------- | --------------------------------------- | ------------------------------------------------------------ |
 | requestId           | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid                                                     |
 | createAccountParams | list   | 是       | []                                      | 账户参数                                                     |
-| password            | string | 否       | “CDS—GCW666”                         | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合 |
+| password            | string | 否       | “CDS—GCW666”                            | 用户密码，不传会自动生成默认密码：需8-20位，必须为数字、小写字母、大写字母组合 |
 | email               | string | 是       | “17716313367@[163.com](http://163.com)” | 用户邮箱                                                     |
 | name                | string | 是       | “miao123”                               | 用户的名称                                                   |
 | remark              | string | 否       | “miao123”                               | 备注，子账户备注长度应长度不大于30位，支持汉字、英文、数字、符号 |
@@ -10863,7 +10894,7 @@ def createSubAccount():
 | 名称       | 类型   | 示例                                                       | 描述                      |
 | ---------- | ------ | ---------------------------------------------------------- | ------------------------- |
 | Code       | string | Success                                                    | 返回状态码: Success: 成功 |
-| Message        | string | null                                                       | 返回信息                  |
+| Message    | string | null                                                       | 返回信息                  |
 | Data       | obejct | {}                                                         | 返回数据                  |
 | failedNum  | int    | 0                                                          | 失败数量                  |
 | successNum | int    | 1                                                          | 成功数量                  |
@@ -10882,6 +10913,7 @@ def createSubAccount():
 | 11003  | 批量创建用户失败   | 批量创建用户失败   |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -10942,30 +10974,32 @@ def createSubAccounts():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                    | 描述     |
-| --------- | ------ | -------- | --------------------------------------- | -------- |
-| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”  | 请求uuid |
-| email     | string | 是       | “17716313367@163.com” | 账户邮箱 |
-| name      | string | 是       | “miao23456”                             | 用户名   |
+| 名称      | 类型   | 是否必须 | 示例                                   | 描述     |
+| --------- | ------ | -------- | -------------------------------------- | -------- |
+| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 请求uuid |
+| email     | string | 是       | “17716313367@163.com”                  | 账户邮箱 |
+| name      | string | 是       | “miao23456”                            | 用户名   |
 
    **返回参数：**
 
 | 名称      | 类型   | 示例    | 描述                      |
 | --------- | ------ | ------- | ------------------------- |
 | Code      | string | Success | 返回状态码: Success: 成功 |
-| Message       | string | null    | 返回信息                  |
+| Message   | string | null    | 返回信息                  |
 | Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
    **错误码:**
 
-| 错误码 | 错误信息           | 描述                |
-| ------ | ------------------ | ------------------- |
-| 10003  | 传入参数不符合要求 | 传入参数不符合要求  |
-| 10211  | 修改用户名失败     | 修改用户名失败      |
+| 错误码 | 错误信息           | 描述               |
+| ------ | ------------------ | ------------------ |
+| 10003  | 传入参数不符合要求 | 传入参数不符合要求 |
+| 10211  | 修改用户名失败     | 修改用户名失败     |
+
 | 10006  | 参数错误           | 参数错误,无对应账户
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11021,7 +11055,7 @@ def changeSubAccountName():
 | 名称      | 类型   | 示例    | 描述                      |
 | --------- | ------ | ------- | ------------------------- |
 | Code      | string | Success | 返回状态码: Success: 成功 |
-| Message       | string | null    | 返回信息                  |
+| Message   | string | null    | 返回信息                  |
 | Data      | obejct | {}      | 返回数据                  |
 | requestId | string |         | “”                        |
 
@@ -11034,6 +11068,7 @@ def changeSubAccountName():
 | 10006  | 参数错误           | 参数错误，无对应账户 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11105,6 +11140,7 @@ def changeSubAccountRemark():
 | 10006  | 参数错误           | 参数错误，对应站点信息不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11179,6 +11215,7 @@ def createDefaultNet():
 | 10006  | 参数错误           | 参数错误，对应站点信息不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11277,6 +11314,7 @@ def supplyDefaultNet():
 | 10006  | 参数错误                | 参数错误,无对应站点信息 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11424,6 +11462,7 @@ def getDefaultNet():
 | 10006  | 参数错误                | 参数错误,无对应站点信息 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11557,6 +11596,7 @@ def getCustomNet():
 | 10006  | 参数错误           | 参数错误,对应站点信息不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11694,6 +11734,7 @@ def getLineBillingScheme():
 | 10006  | 参数错误           | 参数错误,无对应站点信息 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11767,18 +11808,18 @@ def getEipPrice():
 | siteId     | string | 否       | “32e6fd62-9bac-11ec-875a-2a8d1f4e167e” | 节点id                   |
 | productId  | string | 否       | “745f6546-dc5f-492f-82d1-9eb47cd9fa2d” | 规格                     |
 | billMethod | string | 否       | “1”                                    | 计费模式 1包年包月 0按需 |
-| email      | string | 否       | “cds@163.com”        | 用户邮箱                 |
+| email      | string | 否       | “cds@163.com”                          | 用户邮箱                 |
 | vpcId      | string | 否       | “b4754c79-93fe-4662-a747-5581d23b8877” | VPC id                   |
 | vpcName    | string | 否       | “保定-云桌面默认VPC”                   | VPC name                 |
 
    **返回参数：**
 
-| 名称  | 类型   | 示例                                     | 描述                      |
-| ----- | ------ | ---------------------------------------- | ------------------------- |
-| Code  | string | Success                                  | 返回状态码: Success: 成功 |
-| Message   | string | null                                     | 返回信息                  |
-| Data  | object | {}                                       | 返回数据                  |
-| vmIds | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
+| 名称    | 类型   | 示例                                     | 描述                      |
+| ------- | ------ | ---------------------------------------- | ------------------------- |
+| Code    | string | Success                                  | 返回状态码: Success: 成功 |
+| Message | string | null                                     | 返回信息                  |
+| Data    | object | {}                                       | 返回数据                  |
+| vmIds   | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 
    **错误码:**
 
@@ -11841,7 +11882,7 @@ def queryVms():
 | 名称         | 类型   | 示例                                   | 描述                                                         |
 | ------------ | ------ | -------------------------------------- | ------------------------------------------------------------ |
 | Code         | string | Success                                | 返回状态码: Success: 成功                                    |
-| Message          | string | null                                   | 返回信息                                                     |
+| Message      | string | null                                   | 返回信息                                                     |
 | Data         | object | {}                                     | 返回数据                                                     |
 | vmName       | string | “openapi_test_2”                       | 云桌面的名称                                                 |
 | siteId       | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 区域                                                         |
@@ -11866,6 +11907,7 @@ def queryVms():
 | 10006  | 参数错误           | 参数错误，对应云桌面不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -11928,15 +11970,15 @@ def queryVm():
 
    **返回参数：**
 
-| 名称   | 类型 | 示例 | 描述                  |
-| ---------- | -------- | -------- | ------------------------- |
-| Code       | string   | Success  | 返回状态码: Success: 成功 |
-| Message        | string   | null     | 返回信息                  |
-| Data       | list     | []       | 返回数据                  |
-| vmName     | string   | “”       | 云桌面的名称              |
-| billMethod | int      | “”       | 计费类型                  |
-| expireTime | string   | “”       | 包月到期时间              |
-| status     | string   | “”       | 状态                      |
+| 名称       | 类型   | 示例    | 描述                      |
+| ---------- | ------ | ------- | ------------------------- |
+| Code       | string | Success | 返回状态码: Success: 成功 |
+| Message    | string | null    | 返回信息                  |
+| Data       | list   | []      | 返回数据                  |
+| vmName     | string | “”      | 云桌面的名称              |
+| billMethod | int    | “”      | 计费类型                  |
+| expireTime | string | “”      | 包月到期时间              |
+| status     | string | “”      | 状态                      |
 
    **错误码:**
 
@@ -11945,6 +11987,7 @@ def queryVm():
 |        |          |      |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12018,9 +12061,9 @@ def queryExpireVms():
 
 | 名称           | 类型   | 示例                                     | 描述                      |
 | -------------- | ------ | ---------------------------------------- | ------------------------- |
-| Code           | string | Success                                | 返回状态码: Success: 成功 |
-| Message            | string | null                                   | 返回信息                  |
-| Data           | obejct | {}                                     | 返回数据                  |
+| Code           | string | Success                                  | 返回状态码: Success: 成功 |
+| Message        | string | null                                     | 返回信息                  |
+| Data           | obejct | {}                                       | 返回数据                  |
 | taskId         | string | “53b150e2-bb27-4db1-8dc6-650eaba66fc2”   | 任务id                    |
 | vmIds          | list   | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 | requestId      | string | “6ca9ed98-27c8-4431-995f-59cc6d743dab”   | 请求uuid                  |
@@ -12041,6 +12084,7 @@ def queryExpireVms():
 | 10006  | 参数错误                                                     | 参数错误，无对应商品信息                                     |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12116,9 +12160,9 @@ def createVm():
 
 | 名称           | 类型   | 示例                                      | 描述                      |
 | -------------- | ------ | ----------------------------------------- | ------------------------- |
-| Code           | string | Success                                | 返回状态码: Success: 成功 |
-| Message            | string | null                                   | 返回信息                  |
-| Data           | obejct | {}                                     | 返回数据                  |
+| Code           | string | Success                                   | 返回状态码: Success: 成功 |
+| Message        | string | null                                      | 返回信息                  |
+| Data           | obejct | {}                                        | 返回数据                  |
 | taskId         | string | “10e0284f-6ce5-4cb0-a61e-4858865d9295”    | 任务id                    |
 | vmIds          | array  | [ “a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
 | requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”    | 请求uuid                  |
@@ -12197,7 +12241,7 @@ def operateVm():
 | 名称           | 类型   | 示例                                   | 描述                      |
 | -------------- | ------ | -------------------------------------- | ------------------------- |
 | Code           | string | Success                                | 返回状态码: Success: 成功 |
-| Message            | string | null                                   | 返回信息                  |
+| Message        | string | null                                   | 返回信息                  |
 | Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “0b4b8f52-def3-466f-ac37-d1069590cbe9” | 任务id                    |
 | vmId           | string | “a8d09bab-64d4-4549-9c8c-0efe19423e5e” | 云桌面id                  |
@@ -12217,6 +12261,7 @@ def operateVm():
 | 10008  | 系统内数据错误                                   | 系统内数据错误,商品信息查询失败                  |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12272,7 +12317,7 @@ def rebuildVm():
 | 名称           | 类型   | 示例                                   | 描述                      |
 | -------------- | ------ | -------------------------------------- | ------------------------- |
 | Code           | string | Success                                | 返回状态码: Success: 成功 |
-| Message            | string | null                                   | 返回信息                  |
+| Message        | string | null                                   | 返回信息                  |
 | Data           | obejct | {}                                     | 返回数据                  |
 | taskId         | string | “8eb19f5b-fd44-4225-94f5-0f9e39e56695” | 任务id                    |
 | vmId           | string | “a8d09bab-64d4-4549-9c8c-0efe19423e5e” | 云桌面id                  |
@@ -12290,6 +12335,7 @@ def rebuildVm():
 | 10006  | 参数错误              | 参数错误,云桌面不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12346,11 +12392,11 @@ def deleteVm():
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
+| 名称    | 类型   | 示例    | 描述                      |
+| ------- | ------ | ------- | ------------------------- |
+| Code    | string | Success | 返回状态码: Success: 成功 |
+| Message | string | null    | 返回信息                  |
+| Data    | obejct | {}      | 返回数据                  |
 
    **错误码:**
 
@@ -12360,6 +12406,7 @@ def deleteVm():
 | 10006  | 参数错误           | 参数错误,云桌面不存在 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12412,11 +12459,11 @@ def changeVmName():
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
+| 名称    | 类型   | 示例    | 描述                      |
+| ------- | ------ | ------- | ------------------------- |
+| Code    | string | Success | 返回状态码: Success: 成功 |
+| Message | string | null    | 返回信息                  |
+| Data    | obejct | {}      | 返回数据                  |
 
    **错误码:**
 
@@ -12426,6 +12473,7 @@ def changeVmName():
 | 13015  | 更新云桌面备注失败 | 更新云桌面备注失败 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12478,11 +12526,11 @@ def updateVmLabels():
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
+| 名称    | 类型   | 示例    | 描述                      |
+| ------- | ------ | ------- | ------------------------- |
+| Code    | string | Success | 返回状态码: Success: 成功 |
+| Message | string | null    | 返回信息                  |
+| Data    | obejct | {}      | 返回数据                  |
 
    **错误码:**
 
@@ -12492,6 +12540,7 @@ def updateVmLabels():
 | 13011  | 换绑GPU云桌面实例失败 | 对没有绑定用户的云桌面在已开机和已关机的状态下都可以绑定用户，对于已经绑定用户的云桌面仅在已关机的状态下可以换绑用户 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12543,16 +12592,16 @@ def changeAccount():
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
-| failedNum | int | 2      | 解绑失败数               |
-| successNum | int | 1      | 解绑成功数            |
-| failedMsgs | list | []      | 解绑失败错误信息          |
-| messsage | string |  对应云桌面不存在     | 失败原因描述              |
-| vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
+| 名称       | 类型   | 示例                                 | 描述                      |
+| ---------- | ------ | ------------------------------------ | ------------------------- |
+| Code       | string | Success                              | 返回状态码: Success: 成功 |
+| Message    | string | null                                 | 返回信息                  |
+| Data       | obejct | {}                                   | 返回数据                  |
+| failedNum  | int    | 2                                    | 解绑失败数                |
+| successNum | int    | 1                                    | 解绑成功数                |
+| failedMsgs | list   | []                                   | 解绑失败错误信息          |
+| messsage   | string | 对应云桌面不存在                     | 失败原因描述              |
+| vmId       | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498 | 失败云桌面ID              |
 
    **错误码:**
 
@@ -12562,6 +12611,7 @@ def changeAccount():
 | 13012  | 解绑GPU云桌面实例失败 | 仅支持已关机状态的云桌面执行解绑用户操作 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12630,16 +12680,16 @@ def unbindAccounts():
 
    **返回参数：**
 
-| 名称 | 类型   | 示例    | 描述                      |
-| ---- | ------ | ------- | ------------------------- |
-| Code | string | Success | 返回状态码: Success: 成功 |
-| Message  | string | null    | 返回信息                  |
-| Data | obejct | {}      | 返回数据                  |
-| failedNum | int | 2      | 绑定失败数               |
-| successNum | int | 1      | 绑定成功数            |
-| failedMsgs | list | []      | 绑定失败错误信息          |
-| messsage | string |  对应云桌面不存在     | 失败原因描述              |
-| vmId | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498      |失败云桌面ID               |
+| 名称       | 类型   | 示例                                 | 描述                      |
+| ---------- | ------ | ------------------------------------ | ------------------------- |
+| Code       | string | Success                              | 返回状态码: Success: 成功 |
+| Message    | string | null                                 | 返回信息                  |
+| Data       | obejct | {}                                   | 返回数据                  |
+| failedNum  | int    | 2                                    | 绑定失败数                |
+| successNum | int    | 1                                    | 绑定成功数                |
+| failedMsgs | list   | []                                   | 绑定失败错误信息          |
+| messsage   | string | 对应云桌面不存在                     | 失败原因描述              |
+| vmId       | string | 3b9e2d0c-a3a6-4817-9238-afffbbadd498 | 失败云桌面ID              |
 
    **错误码:**
 
@@ -12649,6 +12699,7 @@ def unbindAccounts():
 | 13013  | 绑定GPU云桌面实例失败 | 绑定GPU云桌面实例失败 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -12710,22 +12761,22 @@ def bindAccounts():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                     | 描述         |
-| --------- | ------ | -------- | ---------------------------------------- | ------------ |
-| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid     |
-| vmIds     | array  | 是       | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | vm Ids       |
+| 名称      | 类型   | 是否必须 | 示例                                     | 描述     |
+| --------- | ------ | -------- | ---------------------------------------- | -------- |
+| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid |
+| vmIds     | array  | 是       | [“1f08cc62-c24b-46dd-b190-bf139d00ee82”] | vm Ids   |
 
    **返回参数：**
 
-| 名称           | 类型   | 示例                                   | 描述                      |
-| -------------- | ------ | -------------------------------------- | ------------------------- |
-| Code           | string | Success                                | 返回状态码: Success: 成功 |
-| Message            | string | null                                   | 返回信息                  |
-| Data           | obejct | {}                                     | 返回数据                  |
-| taskId         | string | “8eb19f5b-fd44-4225-94f5-0f9e39e56695” | 任务id                    |
-| vmIds           | array | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面id                  |
-| requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 请求uuid                  |
-| requestContent | string | “”                                     | 请求参数                  |
+| 名称           | 类型   | 示例                                     | 描述                      |
+| -------------- | ------ | ---------------------------------------- | ------------------------- |
+| Code           | string | Success                                  | 返回状态码: Success: 成功 |
+| Message        | string | null                                     | 返回信息                  |
+| Data           | obejct | {}                                       | 返回数据                  |
+| taskId         | string | “8eb19f5b-fd44-4225-94f5-0f9e39e56695”   | 任务id                    |
+| vmIds          | array  | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面id                  |
+| requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid                  |
+| requestContent | string | “”                                       | 请求参数                  |
 
    **错误码:**
 
@@ -12736,6 +12787,7 @@ def bindAccounts():
 | 13002  | GPU云桌面执行操作失败 | GPU云桌面执行操作失败 |
 
    **返回示例:**
+
 ```json
 {
     "Code": "Success",
@@ -13772,22 +13824,22 @@ def get_ecs_status():
 
 **返回参数**：
 
-| 名称         | 类型   | 示例值                                 | 描述                       |
-| ------------ | ------ | -------------------------------------- | -------------------------- |
-| EventId      | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2   | 事件id                     |
-| EventStatus  | string | success                                   | 事件状态                   |
-| EventType    | string | create_ecs                           | 事件类型                   |
-| EventTypeDisplay    | string | 创建云服务器                           | 事件类型中文名称      |
-| CreateTime   | string | "2022-01-16 17:17:20"                  | 创建时间                   |
-| TaskList     | list   | []                                     | 事件下的任务列表           |
-| TaskId       | string | "3e54d714-8f09-11ec-a494-d2a2d83b77e2" | 任务id                     |
-| Status       | string | 成功                                   | 任务状态                   |
-| ResourceId   | string | "ins-klkyifuqgmq4cxes"                 | 资源id                     |
-| UpdateTime   | string | "2022-01-16 17:17:25"                  | 任务更新时间               |
-| EndTime      | string | "2022-01-16 17:17:30"                  | 任务完成时间，未完成则为空 |
-| ResourceType | string | ecs                               | 任务资源类型               |
-| TaskType     | string | create_ecs                           | 任务类型                   |
-| TaskTypeDisplay     | string | 创建云服务器                           | 任务类型中文名称 |
+| 名称             | 类型   | 示例值                                 | 描述                       |
+| ---------------- | ------ | -------------------------------------- | -------------------------- |
+| EventId          | string | 3de9d9f0-8f09-11ec-a494-d2a2d83b77e2   | 事件id                     |
+| EventStatus      | string | success                                | 事件状态                   |
+| EventType        | string | create_ecs                             | 事件类型                   |
+| EventTypeDisplay | string | 创建云服务器                           | 事件类型中文名称           |
+| CreateTime       | string | "2022-01-16 17:17:20"                  | 创建时间                   |
+| TaskList         | list   | []                                     | 事件下的任务列表           |
+| TaskId           | string | "3e54d714-8f09-11ec-a494-d2a2d83b77e2" | 任务id                     |
+| Status           | string | 成功                                   | 任务状态                   |
+| ResourceId       | string | "ins-klkyifuqgmq4cxes"                 | 资源id                     |
+| UpdateTime       | string | "2022-01-16 17:17:25"                  | 任务更新时间               |
+| EndTime          | string | "2022-01-16 17:17:30"                  | 任务完成时间，未完成则为空 |
+| ResourceType     | string | ecs                                    | 任务资源类型               |
+| TaskType         | string | create_ecs                             | 任务类型                   |
+| TaskTypeDisplay  | string | 创建云服务器                           | 任务类型中文名称           |
 
 **请求示例**
 
@@ -13839,7 +13891,151 @@ def describe_event():
 }
 ```
 
-### 9.CreateInstance
+### 9.DescribeInstanceMonitor
+
+**Action**: DescribeInstanceMonitor
+
+**描述**： 云服务器监控信息
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数         | 要求 | 类型   | 说明                                                         |
+| ------------ | ---- | ------ | ------------------------------------------------------------ |
+| EcsId        | 必选 | string | 实例ID                                                       |
+| TimeInterval | 可选 | string | 当前时间某个时间段的监控时间，单位为小时 (默认1小时)         |
+| StartTime    | 可选 | string | 当前时间附近时间间隔                                         |
+| EndTime      | 可选 | string | 获取数据的结束时间点(默认当前时间为结束时间)                 |
+| Indicators   | 可选 | list   | 监控指标('CpuUsage', 'CPU使用率'), ('MemoryUsage', '内存使用率'), ('Load', '系统平均负载'), ('NetworkRate', '网络吞吐量'), ('DiskUsage', '磁盘使用率'), ('DiskThroughput', '磁盘吞吐量'), ('DiskIops', '磁盘iops'), ('GpuUsage', 'GPU使用率'), ('GpuMemoryUsage', '显存使用率'), ('GpuTemperature', 'GPU温度') 不填默认监控所有指标 |
+
+**返回参数**
+
+| 参数   | 类型   | 示例                     | 说明                                                         |
+| ------ | ------ | ------------------------ | ------------------------------------------------------------ |
+| Data   | dict   | {}                       | 由监控指标的Key和值组成，CPU使用率：CpuUsage； 内存使用率： MemoryUsage；系统平均负载：Load1M、Load5M、Load15M；'网络吞吐量：NetworkOutrate、NetworkInrate；磁盘使用率：DiskUsage； 磁盘吞吐量： DiskReadThroughput、DiskWriteThroughput；磁盘Iops：DiskReadIops、DiskWriteIops； GPU使用率：GpuUsage； 显存使用率：GpuMemoryUsage； GPU温度：GpuTemperature |
+| Time   | list   | ["2022-09-03  01:29:28"] | 时间数组，与值数组一一对应                                   |
+| Value  | list   | [0.33]                   | 值数组，与时间数组一一对应                                   |
+| Device | string | “”                       | 设备                                                         |
+| Unit   | string | ”%“                      | 值数组内的数据单位                                           |
+
+**请求示例**
+
+```python
+def instance_monitor():
+    """
+    云服务器监控
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeInstanceMonitor"
+    method = "POST"
+    body = {
+        "EcsId":"XXX",
+        "StartTime":"2022-09-03  01:29:28",
+        "EndTime":"2022-09-03  01:29:28",
+        "Indicators":["CpuUsage"]
+    }
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取云服务器监控信息成功！",
+    "Data": {
+        "CpuUsage": {
+            "Unit": "%",
+            "Device": null,
+            "Time": [
+                "2022-09-15 09:05:45"
+            ],
+            "Value": [
+                0.1
+            ]
+        }
+    },
+    "RequestId": "94fa404a34d511eda939e454e81c0d47"
+}
+```
+
+### 10.DescribeAccountSubject
+
+**Action**: DescribeAccountSubject
+
+**描述**:获取客户测试账户
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**返回参数：**
+
+| 名称      | 类型   | 示例值                           | 描述               |
+| --------- | ------ | -------------------------------- | ------------------ |
+| CodeMsg   | string | success                          | 返回码对应基础信息 |
+| Message   | string | 获取地域可用区信息成功           | 返回详细描述信息   |
+| RequestId | string | b9bb7e27c75656112db63b8213672843 | 请求标识uuid       |
+| Name      | string | BMSTEST                          | 测试账户名称       |
+| Income    | float  | 3000.0                           | 总测试金额         |
+| Duration  | int    | 302                              | 测试项目时长(天)   |
+| BeginTime | string | "2022-03-02"                     | 测试项目开始时间   |
+| EndTime   | string | "2023-01-11"                     | 测试项目截至时间   |
+
+**请求示例：**
+
+```python
+def describe_account_subject():
+    """
+    获取客户测试账户
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeAccountSubject"
+    method = "GET"
+    param={}
+    body={}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**：
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取测试账户信息成功！",
+    "Data": [
+        {
+            "Name": "BMSTEST",
+            "Balance": 0.0,
+            "Income": 3000.0,
+            "Duration": 365,
+            "BeginTime": "2022-01-11",
+            "EndTime": "2023-01-11"
+        },
+        {
+            "Name": "kvmtest",
+            "Balance": 1000.01,
+            "Income": 1100.01,
+            "Duration": 302,
+            "BeginTime": "2022-03-02",
+            "EndTime": "2022-12-29"
+        }
+    ],
+    "RequestId": "df93f6d51bc5e95c89a96fc976964523"
+}
+```
+
+### 11.CreateInstance
 
 **Action**: CreateInstance
 
@@ -13938,7 +14134,7 @@ def create_ecs():
 }
 ```
 
-### 10.OperateInstance
+### 12.OperateInstance
 
 **Action**: OperateInstance
 
@@ -13995,7 +14191,7 @@ def operate_ecs():
 }
 ```
 
-### 11.DeleteInstance
+### 13.DeleteInstance
 
 **Action**: DeleteInstance
 
@@ -14050,7 +14246,7 @@ def delete_ecs():
 }
 ```
 
-### 12.ModifyInstancePassword
+### 14.ModifyInstancePassword
 
 **Action**: ModifyInstancePassword
 
@@ -14107,7 +14303,7 @@ def ecs_reset_password():
 }
 ```
 
-### 13.ModifyInstanceName
+### 15.ModifyInstanceName
 
 **Action**: ModifyInstanceName
 
@@ -14166,7 +14362,170 @@ def change_ecs_name():
 }
 ```
 
+### **16.CreateImage**
 
+**Action**: CreateImage
+
+**描述**:创建私有镜像
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数  | 要求 | 类型   | 说明     |
+| ----- | ---- | ------ | -------- |
+| EcsId | 必选 | string | 实例ID   |
+| Name  | 必选 | string | 镜像名称 |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                   | 说明   |
+| ------- | ------ | -------------------------------------- | ------ |
+| EventId | string | "d0b1d5b7-7549-41dc-972c-c40270b53bd7" | 事件id |
+
+**请求示例**
+
+```python
+def create_image():
+    """
+    创建私有镜像
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "CreateImage"
+    method = "POST"
+    param={}
+    body = {
+        "EcsId":"ins-xx",
+        "Name":"私有镜像xx"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code":"Success",
+    "Msg":"创建私有镜像成功",
+    "Data":{
+        "EventId":"d0b1d5b7-7549-41dc-972c-c40270b53bd7" 
+    }
+}
+```
+
+### 17.DeleteImage
+
+**Action**: DeleteImage
+
+**描述**:删除节点镜像
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数               | 要求 | 类型   | 说明                                         |
+| ------------------ | ---- | ------ | -------------------------------------------- |
+| ImageId            | 必选 | string | 实例ID                                       |
+| AvailableZoneCodes | 可选 | list   | 删除的可用区code，不填时默认删除所有节点镜像 |
+
+**返回参数：**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id |
+
+**请求示例：**
+
+```python
+def delete_image():
+    """
+    删除节点镜像
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DeleteImage"
+    method = "POST"
+    param={}
+    body={"ImageId":"img-jx9w92oq9gmmkjnb"}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "删除节点镜像成功!",
+    "Data": {
+        "EventId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7"
+    }
+}
+```
+
+### 18.SyncImage
+
+**Action**: SyncImage
+
+**描述**:同步镜像到目标节点
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数               | 要求 | 类型   | 说明                         |
+| ------------------ | ---- | ------ | ---------------------------- |
+| ImageId            | 必选 | string | 实例ID                       |
+| AvailableZoneCodes | 必选 | list   | 同步镜像到目标可用区code列表 |
+
+**返回参数：**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id |
+
+**请求示例：**
+
+```python
+def sync_image():
+    """
+    同步私有镜像
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "SyncImage"
+    method = "POST"
+    param={}
+    body={
+        "ImageId":"img-jx9w92oq9gmmkjnb",
+        "AvailableZoneCodes": ["CN_Beijing_A"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "同步私有镜像成功！",
+    "Data": {
+        "EventId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7"
+    }
+}
+```
 
 **错误码**
 
@@ -14919,34 +15278,34 @@ def describe_event():
 
 ### 1.DescribeAvailableResource
 
-​	**Action：DescribeAvailableResource**
+  **Action：DescribeAvailableResource**
 
-​	**描述：** 查询可用区下网络类型计费方式和云服务器类型
+  **描述：** 查询可用区下网络类型计费方式和云服务器类型
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称     | 类型   | 是否必选 | 示例值       | 描述       |
 | -------- | ------ | -------- | ------------ | ---------- |
 | RegionId | string | 是       | CN_Beijing_A | 可用区编号 |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称 | 类型     | 示例值  | 描述   |
 | :--- | -------- | :------ | :----- |
 | Code | Interger | Success | 错误码 |
 | Data | string   |         |        |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                    | 错误信息                                           | 描述                     |
 | -------- | ------------------------- | -------------------------------------------------- | ------------------------ |
 | 400      | InvalidRegionID.Malformed | The specified parameter   "RegionID" is not valid. | 指定可用区ID参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -15028,7 +15387,7 @@ def describe_event():
 }
 ```
 
-​	**请求调用示例**
+  **请求调用示例**
 
 ```python
 def get_region_goods(site_code):
@@ -15057,21 +15416,21 @@ def get_region_goods(site_code):
 
 ### 2.**DescribeTask**
 
-​	**Action：DescribeTask**
+  **Action：DescribeTask**
 
-​	**描述：** 查询任务状态
+  **描述：** 查询任务状态
 
-​	**请求地址:** cdsapi.capitalonline.net/ccs
+  **请求地址:** cdsapi.capitalonline.net/ccs
 
-​	**请求方法：GET**
+  **请求方法：GET**
 
-​	**请求参数：**
+  **请求参数：**
 
 | 名称   | 类型   | 是否必选 | 示例值                               | 描述d  |
 | ------ | ------ | -------- | ------------------------------------ | ------ |
 | TaskId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 任务Id |
 
-​	**返回参数：**
+  **返回参数：**
 
 | 名称       | 类型     | 示例值                               | 描述                                                         |
 | :--------- | -------- | :----------------------------------- | :----------------------------------------------------------- |
@@ -15081,13 +15440,13 @@ def get_region_goods(site_code):
 | TaskId     | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 任务Id                                                       |
 | Status     | string   | finish                               | 任务执行的状态[NEW,DOING,FINISH,ERROR],分别对应新增，正在执行，完成，错误 |
 
-​	**错误码：**
+  **错误码：**
 
 | httpcode | 错误码                  | 错误信息                                         | 描述                       |
 | -------- | ----------------------- | ------------------------------------------------ | -------------------------- |
 | 400      | InvalidTaskID.Malformed | The specified parameter   "TaskID" is not valid. | 指定云服务器ID参数格式错误 |
 
-​	**返回示例：**
+  **返回示例：**
 
 ```json
 {
@@ -15102,7 +15461,7 @@ def get_region_goods(site_code):
 }
 ```
 
-​	**代码调用示例**
+  **代码调用示例**
 
 ```python
 def get_status(task_id):
@@ -15128,107 +15487,107 @@ def get_status(task_id):
 
 #### 可用区名称
 
-| 可用区名称 | RegionId          | 是否支持裸金属 | 所在大区 |
-| ---------- | ----------------- | -------------- | -------- |
-| 北京A      | CN_Beijing_A      | 否             | 中国大陆 |
-| 北京B      | CN_Beijing_B      | 否             | 中国大陆 |
-| 北京C      | CN_Beijing_C      | 否             | 中国大陆 |
-| 北京E      | CN_Beijing_E      | 否             | 中国大陆 |
-| 北京H      | CN_Beijing_H      | 否             | 中国大陆 |
-| 北京I      | CN_Beijing_I      | 是             | 中国大陆 |
-| 北京J      | CN_Beijing_J      | 是             | 中国大陆 |
-| 达拉斯A    | US_Dallas_A       | 否             | 北美地区 |
-| 达拉斯B    | US_Dallas_B       | 否             | 北美地区 |
-| 达拉斯C    | US_Dallas_C       | 否             | 北美地区 |
-| 达拉斯D    | US_Dallas_D       | 是             | 北美地区 |
-| 达拉斯E    | US_Dallas_E       | 是             | 北美地区 |
-| 达拉斯F    | US_Dallas_F       | 是             | 北美地区 |
-| 达拉斯G    | US_Dallas_G       | 否             | 北美地区 |
-| 达拉斯H    | US_Dallas_H       | 是             | 北美地区 |
-| 达拉斯I    | US_Dallas_I       | 否             | 北美地区 |
-| 达拉斯J    | US_Dallas_J       | 否             | 北美地区 |
-| 迈阿密A    | US_Miami_A       | 否             | 北美地区 |
-| 德国A      | EUR_Germany_A     | 否             | 欧洲地区 |
-| 德国B      | EUR_Germany_B     | 否             | 欧洲地区 |
-| 东京A      | APAC_Tokyo_A      | 否             | 亚太地区 |
-| 广州A      | CN_Guangzhou_A    | 否             | 中国大陆 |
-| 荷兰A      | EUR_Netherlands_A | 否             | 欧洲地区 |
-| 洛杉矶A    | US_LosAngeles_A   | 否             | 北美地区 |
-| 上海A      | CN_Shanghai_A     | 否             | 中国大陆 |
-| 上海C      | CN_Shanghai_C     | 否             | 中国大陆 |
-| 首尔A      | APAC_Seoul_A      | 否             | 亚太地区 |
-| 台北A      | CN_Taipei_A       | 否             | 中国大陆 |
-| 无锡A      | CN_Wuxi_A         | 否             | 中国大陆 |
-| 无锡B      | CN_Wuxi_B         | 是             | 中国大陆 |
-| 香港A      | CN_Hongkong_A     | 否             | 中国大陆 |
-| 新加坡A    | APAC_Singapore_A  | 否             | 亚太地区 |
-| 新加坡B    | APAC_Singapore_B  | 否             | 亚太地区 |
-| 新加坡C    | APAC_Singapore_C  | 否             | 亚太地区 |
-| 新加坡D    | APAC_Singapore_D  | 否             | 亚太地区 |
-| 孟买A      | APAC_Mumbai_A     | 否             | 亚太地区 |
+| 可用区名称    | RegionId          | 是否支持裸金属 | 所在大区 |
+| ------------- | ----------------- | -------------- | -------- |
+| 北京A         | CN_Beijing_A      | 否             | 中国大陆 |
+| 北京B         | CN_Beijing_B      | 否             | 中国大陆 |
+| 北京C         | CN_Beijing_C      | 否             | 中国大陆 |
+| 北京E         | CN_Beijing_E      | 否             | 中国大陆 |
+| 北京H         | CN_Beijing_H      | 否             | 中国大陆 |
+| 北京I         | CN_Beijing_I      | 是             | 中国大陆 |
+| 北京J         | CN_Beijing_J      | 是             | 中国大陆 |
+| 达拉斯A       | US_Dallas_A       | 否             | 北美地区 |
+| 达拉斯B       | US_Dallas_B       | 否             | 北美地区 |
+| 达拉斯C       | US_Dallas_C       | 否             | 北美地区 |
+| 达拉斯D       | US_Dallas_D       | 是             | 北美地区 |
+| 达拉斯E       | US_Dallas_E       | 是             | 北美地区 |
+| 达拉斯F       | US_Dallas_F       | 是             | 北美地区 |
+| 达拉斯G       | US_Dallas_G       | 否             | 北美地区 |
+| 达拉斯H       | US_Dallas_H       | 是             | 北美地区 |
+| 达拉斯I       | US_Dallas_I       | 否             | 北美地区 |
+| 达拉斯J       | US_Dallas_J       | 否             | 北美地区 |
+| 迈阿密A       | US_Miami_A        | 否             | 北美地区 |
+| 德国A         | EUR_Germany_A     | 否             | 欧洲地区 |
+| 德国B         | EUR_Germany_B     | 否             | 欧洲地区 |
+| 东京A         | APAC_Tokyo_A      | 否             | 亚太地区 |
+| 广州A         | CN_Guangzhou_A    | 否             | 中国大陆 |
+| 荷兰A         | EUR_Netherlands_A | 否             | 欧洲地区 |
+| 洛杉矶A       | US_LosAngeles_A   | 否             | 北美地区 |
+| 上海A         | CN_Shanghai_A     | 否             | 中国大陆 |
+| 上海C         | CN_Shanghai_C     | 否             | 中国大陆 |
+| 首尔A         | APAC_Seoul_A      | 否             | 亚太地区 |
+| 台北A         | CN_Taipei_A       | 否             | 中国大陆 |
+| 无锡A         | CN_Wuxi_A         | 否             | 中国大陆 |
+| 无锡B         | CN_Wuxi_B         | 是             | 中国大陆 |
+| 香港A         | CN_Hongkong_A     | 否             | 中国大陆 |
+| 新加坡A       | APAC_Singapore_A  | 否             | 亚太地区 |
+| 新加坡B       | APAC_Singapore_B  | 否             | 亚太地区 |
+| 新加坡C       | APAC_Singapore_C  | 否             | 亚太地区 |
+| 新加坡D       | APAC_Singapore_D  | 否             | 亚太地区 |
+| 孟买A         | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B(已下线) | APAC_Mumbai_B     | 否             | 亚太地区 |
-| 孟买C      | APAC_Mumbai_C     | 是             | 亚太地区 |
-| 弗吉尼亚A   | US_Virginia_A     | 是             | 北美地区 |
-| 德国C       | EUR_Germany_C    | 是              | 欧洲地区|
-| 达拉斯L    | US_Dallas_L       | 是               | 北美地区 |
-| 新加坡E    | APAC_Singapore_E  | 是               | 亚太地区 |
-| 呼和浩特A      | CN_Huhehaote_A     | 是          | 中国大陆 |
-| 圣保罗A      | SR_SaintPaul_A     | 是          | 南美地区 |
-| 苏州A      | CN_Suzhou_A     | 是          | 中国大陆 |
-| 雅加达A      | APAC_Jakarta_A     | 是          | 亚太地区 |
-| 胡志明A      | APAC_HoChiMinh_A     | 是          | 亚太地区 |
-| 马赛A      | EUR_Marseilles_A | 是             | 欧洲地区 |
+| 孟买C         | APAC_Mumbai_C     | 是             | 亚太地区 |
+| 弗吉尼亚A     | US_Virginia_A     | 是             | 北美地区 |
+| 德国C         | EUR_Germany_C     | 是             | 欧洲地区 |
+| 达拉斯L       | US_Dallas_L       | 是             | 北美地区 |
+| 新加坡E       | APAC_Singapore_E  | 是             | 亚太地区 |
+| 呼和浩特A     | CN_Huhehaote_A    | 是             | 中国大陆 |
+| 圣保罗A       | SR_SaintPaul_A    | 是             | 南美地区 |
+| 苏州A         | CN_Suzhou_A       | 是             | 中国大陆 |
+| 雅加达A       | APAC_Jakarta_A    | 是             | 亚太地区 |
+| 胡志明A       | APAC_HoChiMinh_A  | 是             | 亚太地区 |
+| 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
 
 ## 附件二
 
 #### 主机类型
 
-| 计算类型配置名称 | 计算类型ID  |
-| ---------------- | ----------- |
-| IO增强型         | IO          |
-| 高性能型         | High        |
-| 标准型           | Standard    |
-| 通用型           | General     |
-| 均衡型           | Balance     |
-| 紧凑型           | Compact     |
-| 内存型           | Memory      |
-| 独享型           | Exclusive   |
-| 高I/O型          | HighIO      |
-| 计算型           | Compute     |
-| G2.通用型        | G2_General  |
-| G2.计算型        | G2_Compute  |
-| G2.内存型        | G2_Memory   |
-| G2L.通用型       | G2L_General |
-| G2L.计算型       | G2L_Compute |
-| G2L.内存型       | G2L_Memory  |
-| G2L.密集计算型   | G2L_Dense   |
-| 密集计算型ic3 |	CCS.IC3  |
-| 计算型c3	   |  CCS.C3  |
-| 通用型g3	   |  CCS.G3  |
-| 内存型r3	   |  CCS.R3  |
-| 密集计算型ic2 |	CCS.iC2  |
-| 计算型c2	   |  CCS.C2  |
-| 通用型g2	   |  CCS.G2  |
-| 内存型r2	   |  CCS.R2  |
-| 密集计算型ic1 |	CCS.IC1  |
-| 计算型c1	   |  CCS.C1  |
-| 通用型g1	   |  CCS.G1  |
-| 内存型r1	   |  CCS.R1  |
-|高主频计算型hfc3	|CCS.HFC3​|
-|高主频通用型hfg3	|CCS.HFG3​|
-|高主频内存型hfr3	|CCS.HFR3​|
-|密集计算型ic3v2 |CCS.IC3V2​|
-|计算型c3v2	      |CCS.C3V2​|
-|通用型g3v2	      |CCS.G3V2 |
-|内存型r3v2	      |CCS.R3V2 |
-|密集计算型ic2v2  | CCS.IC2V2 |
-|计算型c2v2	      |CCS.C2V2 |
-|通用型g2v2	      |CCS.G2V2 |
-|内存型r2v2	      |CCS.R2V2 |
-|密集计算型ic1v2  | CCS.IC1V2 |
-|计算型c1v2	     |CCS.C1V2 |
-|通用型g1v2	     |CCS.G1V2 |
-|内存型r1v2	     |CCS.R1V2 |
+| 计算类型配置名称          | 计算类型ID  |
+| ------------------------- | ----------- |
+| IO增强型                  | IO          |
+| 高性能型                  | High        |
+| 标准型                    | Standard    |
+| 通用型                    | General     |
+| 均衡型                    | Balance     |
+| 紧凑型                    | Compact     |
+| 内存型                    | Memory      |
+| 独享型                    | Exclusive   |
+| 高I/O型                   | HighIO      |
+| 计算型                    | Compute     |
+| G2.通用型                 | G2_General  |
+| G2.计算型                 | G2_Compute  |
+| G2.内存型                 | G2_Memory   |
+| G2L.通用型                | G2L_General |
+| G2L.计算型                | G2L_Compute |
+| G2L.内存型                | G2L_Memory  |
+| G2L.密集计算型            | G2L_Dense   |
+| 密集计算型ic3             | CCS.IC3     |
+| 计算型c3                  | CCS.C3      |
+| 通用型g3                  | CCS.G3      |
+| 内存型r3                  | CCS.R3      |
+| 密集计算型ic2             | CCS.iC2     |
+| 计算型c2                  | CCS.C2      |
+| 通用型g2                  | CCS.G2      |
+| 内存型r2                  | CCS.R2      |
+| 密集计算型ic1             | CCS.IC1     |
+| 计算型c1                  | CCS.C1      |
+| 通用型g1                  | CCS.G1      |
+| 内存型r1                  | CCS.R1      |
+| 高主频计算型hfc3          | CCS.HFC3    |
+| 高主频通用型hfg3          | CCS.HFG3    |
+| 高主频内存型hfr3          | CCS.HFR3    |
+| 密集计算型ic3v2           | CCS.IC3V2   |
+| 计算型c3v2                | CCS.C3V2    |
+| 通用型g3v2                | CCS.G3V2    |
+| 内存型r3v2                | CCS.R3V2    |
+| 密集计算型ic2v2           | CCS.IC2V2   |
+| 计算型c2v2                | CCS.C2V2    |
+| 通用型g2v2                | CCS.G2V2    |
+| 内存型r2v2                | CCS.R2V2    |
+| 密集计算型ic1v2           | CCS.IC1V2   |
+| 计算型c1v2                | CCS.C1V2    |
+| 通用型g1v2                | CCS.G1V2    |
+| 内存型r1v2                | CCS.R1V2    |
 | 计算网络增强型c3ne        | CCS.C3NE3   |
 | 通用网络增强型g3ne        | CCS.G3NE3   |
 | 内存网络增强型r3ne        | CCS.R3NE3   |
@@ -15266,41 +15625,41 @@ def get_status(task_id):
 
 #### 带宽类型
 
-| 带宽类型       | 带宽ID                             |
-| -------------- | ---------------------------------- |
-| 移动           | Bandwidth_CMCC                     |
-| 联通           | Bandwidth_China_Unicom             |
-| 菲律宾优化带宽 | Southeast_Asia_Optimizes_Bandwidth |
-| IPv6测试       | Test_Ipv6                          |
-| 日本本地带宽   | Bandwidth_Japan_Locally            |
-| 韩国本地带宽   | Bandwidth_Korea_Locally            |
-| BGP            | Bandwidth_BGP                      |
-| 韩国优化       | Bandwidth_Korea_Optimized          |
-| 台湾优化       | Bandwidth_Taiwai_Optimized         |
-| 电信           | Bandwidth_China_Telecom            |
-| 双线BGP        | Bandwidth_Tow_Line_BGP             |
-| 客户专用带宽   | Customer_Specific_Bandwidth        |
-| VIP专用带宽    | Bandwidth_VIP_Dedicated            |
-| 全球优化BGP    | Globally_Optimized_BGP             |
-| BGP优化        | Bandwidth_BGP_Optimized            |
-| 华东BGP        | Bandwidth_East_China_BGP            |
-| 华北BGP        | Bandwidth_North_China_BGP            |
-| 东南亚优化BGP        | Bandwidth_SoutheastAsia_Optimization_BGP     |
-| 标准BGP | Bandwidth_Standard_BGP |
-| BGP(多线) | Bandwidth_Multi_ISP_BGP |
-| BGP(经济型多线) | Bandwidth_Multi_ISP_Economy_BGP |
+| 带宽类型        | 带宽ID                                   |
+| --------------- | ---------------------------------------- |
+| 移动            | Bandwidth_CMCC                           |
+| 联通            | Bandwidth_China_Unicom                   |
+| 菲律宾优化带宽  | Southeast_Asia_Optimizes_Bandwidth       |
+| IPv6测试        | Test_Ipv6                                |
+| 日本本地带宽    | Bandwidth_Japan_Locally                  |
+| 韩国本地带宽    | Bandwidth_Korea_Locally                  |
+| BGP             | Bandwidth_BGP                            |
+| 韩国优化        | Bandwidth_Korea_Optimized                |
+| 台湾优化        | Bandwidth_Taiwai_Optimized               |
+| 电信            | Bandwidth_China_Telecom                  |
+| 双线BGP         | Bandwidth_Tow_Line_BGP                   |
+| 客户专用带宽    | Customer_Specific_Bandwidth              |
+| VIP专用带宽     | Bandwidth_VIP_Dedicated                  |
+| 全球优化BGP     | Globally_Optimized_BGP                   |
+| BGP优化         | Bandwidth_BGP_Optimized                  |
+| 华东BGP         | Bandwidth_East_China_BGP                 |
+| 华北BGP         | Bandwidth_North_China_BGP                |
+| 东南亚优化BGP   | Bandwidth_SoutheastAsia_Optimization_BGP |
+| 标准BGP         | Bandwidth_Standard_BGP                   |
+| BGP(多线)       | Bandwidth_Multi_ISP_BGP                  |
+| BGP(经济型多线) | Bandwidth_Multi_ISP_Economy_BGP          |
 
 ## 附件四
 
 #### 公共模板
 
-| 模板大类型       | 模板类型                             | 中文名称                               |
-|-------------|----------------------------------| -------------------------------------- |
-| Anolis OS   | AnolisOS_8.6_64                |                                        |
+| 模板大类型  | 模板类型                         | 中文名称                               |
+| ----------- | -------------------------------- | -------------------------------------- |
+| Anolis OS   | AnolisOS_8.6_64                  |                                        |
 | Rocky Linux | RockyLinux_9.0_64                |                                        |
 |             | RockyLinux_8.6_64                |                                        |
 |             | RockyLinux_8.5_64                |                                        |
-| Centos      | Centos_Stream_8                   |                                        |
+| Centos      | Centos_Stream_8                  |                                        |
 |             | Centos_8.2_64                    |                                        |
 |             | Centos_8.1_64                    |                                        |
 |             | Centos_8.0_64                    |                                        |
@@ -15312,12 +15671,12 @@ def get_status(task_id):
 |             | Centos_7.3_64                    |                                        |
 |             | Centos_7.2_64                    |                                        |
 |             | Centos_6.10_64                   |                                        |
-| 	           | Centos_6.9_64	                   |                                         |
-| 	           | Centos_6.8_64	                   |                                         |
-| 	           | Centos_6.7_64	                   |                                         |
+|             | Centos_6.9_64                    |                                        |
+|             | Centos_6.8_64                    |                                        |
+|             | Centos_6.7_64                    |                                        |
 |             | Centos_6.6_64                    |                                        |
-| 	           | Centos_6.5_64	                   |                                         |
-| 	           | Centos_6.4_64	                   |                                         |
+|             | Centos_6.5_64                    |                                        |
+|             | Centos_6.4_64                    |                                        |
 |             | Centos_5.9_64                    |                                        |
 | Debian      | Debian_10.2_64                   |                                        |
 |             | Debian_9.11_64                   |                                        |
@@ -15326,23 +15685,23 @@ def get_status(task_id):
 |             | Debian_7.4_64                    |                                        |
 | Redhat      | Redhat_7.4_64                    |                                        |
 |             | Redhat_6.5_64                    |                                        |
-| Ubuntu      | Ubuntu_20.04_64	                 |                                        |
-|             | Ubuntu_18.04_64	                 |                                        |
+| Ubuntu      | Ubuntu_20.04_64                  |                                        |
+|             | Ubuntu_18.04_64                  |                                        |
 |             | Ubuntu_16.04_64                  |                                        |
 |             | Ubuntu_14.04_64                  |                                        |
-| Windows     | Windows_2019_Datacenter_64_CN    | Windows 2019 数据中心版 64位 中文版     |
+| Windows     | Windows_2019_Datacenter_64_CN    | Windows 2019 数据中心版 64位 中文版    |
 |             | Windows_2019_Datacenter_64_EN    | Windows 2019 数据中心版 64位 英文版    |
-|             | Windows_2016_Datacenter_64_EN    | Windows 2016 数据中心版 64位 英文版   |
-|             | Windows_2016_Datacenter_64_CN    | Windows 2016 数据中心版 64位 中文版   |
-|             | Windows_2012_Standard_64_EN      | Windows 2012 标准版 64位 英文版   |
-|             | Windows_2012_Standard_64_CN      | Windows 2012 标准版 64位 中文版   |
-|             | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版   |
-|             | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版   |
-|             | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版  |
+|             | Windows_2016_Datacenter_64_EN    | Windows 2016 数据中心版 64位 英文版    |
+|             | Windows_2016_Datacenter_64_CN    | Windows 2016 数据中心版 64位 中文版    |
+|             | Windows_2012_Standard_64_EN      | Windows 2012 标准版 64位 英文版        |
+|             | Windows_2012_Standard_64_CN      | Windows 2012 标准版 64位 中文版        |
+|             | Windows_2012_R2_Standard_64_EN   | Windows 2012 R2 标准版 64位 英文版     |
+|             | Windows_2012_R2_Standard_64_CN   | Windows 2012 R2 标准版 64位 中文版     |
+|             | Windows_2012_R2_Datacenter_64_EN | Windows 2012 R2 数据中心版 64位 英文版 |
 |             | Windows_2012_R2_Datacenter_64_CN | Windows 2012 R2 数据中心版 64位 中文版 |
-|             | Windows_2012_Datacenter_64_EN    | Windows 2012 数据中心版 64位 英文版 |
-|             | Windows_2012_Datacenter_64_CN    | Windows 2012 数据中心版 64位 中文版 |
-|             | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版 |
+|             | Windows_2012_Datacenter_64_EN    | Windows 2012 数据中心版 64位 英文版    |
+|             | Windows_2012_Datacenter_64_CN    | Windows 2012 数据中心版 64位 中文版    |
+|             | Windows_2008_R2_Enterprise_64_CN | Windows 2008 R2 企业版 64位 中文版     |
 
 
 
@@ -15353,59 +15712,59 @@ def get_status(task_id):
 
 #### 私有网络区域名称
 
-| 区域名称 | RegionCode    | 区域类型  | 所在大区 |
-| ---------- |---------------|-------|------|
-|东莞| CN_Dongguan   | 边缘节点  | 中国大陆 |
-|中卫| CN_Zhongwei   | 边缘节点  | 中国大陆 |
-|保定| CN_Baoding    | 边缘节点  | 中国大陆 |
-|呼和浩特| CN_Huhhot     | 边缘节点  | 中国大陆 |
-|娄底| CN_Loudi      | 边缘节点  | 中国大陆 |
-|宿迁| CN_Suqian     | 边缘节点  | 中国大陆 |
-|洛阳| CN_Luoyang    | 边缘节点  | 中国大陆 |
-|济南| CN_Jinan      | 边缘节点  | 中国大陆 |
-|眉山| CN_Meishan    | 边缘节点  | 中国大陆 |
-|福州| CN_Fuzhou     | 边缘节点  | 中国大陆 |
-|衢州| CN_Quzhou     | 边缘节点  | 中国大陆 |
-|襄阳| CN_Xiangyang  | 边缘节点  | 中国大陆 |
-|西安| CN_Xian       | 边缘节点  | 中国大陆 |
-|贵阳| CN_Guiyang    | 边缘节点  | 中国大陆 |
-|重庆两江| CN_Liangjiang | 边缘节点  | 中国大陆 |
-|金华| CN_Jinhua     | 边缘节点  | 中国大陆 |
-|中国香港| CN_HongKong   | 云平台节点 | 亚太地区 |
+| 区域名称 | RegionCode    | 区域类型   | 所在大区 |
+| -------- | ------------- | ---------- | -------- |
+| 东莞     | CN_Dongguan   | 边缘节点   | 中国大陆 |
+| 中卫     | CN_Zhongwei   | 边缘节点   | 中国大陆 |
+| 保定     | CN_Baoding    | 边缘节点   | 中国大陆 |
+| 呼和浩特 | CN_Huhhot     | 边缘节点   | 中国大陆 |
+| 娄底     | CN_Loudi      | 边缘节点   | 中国大陆 |
+| 宿迁     | CN_Suqian     | 边缘节点   | 中国大陆 |
+| 洛阳     | CN_Luoyang    | 边缘节点   | 中国大陆 |
+| 济南     | CN_Jinan      | 边缘节点   | 中国大陆 |
+| 眉山     | CN_Meishan    | 边缘节点   | 中国大陆 |
+| 福州     | CN_Fuzhou     | 边缘节点   | 中国大陆 |
+| 衢州     | CN_Quzhou     | 边缘节点   | 中国大陆 |
+| 襄阳     | CN_Xiangyang  | 边缘节点   | 中国大陆 |
+| 西安     | CN_Xian       | 边缘节点   | 中国大陆 |
+| 贵阳     | CN_Guiyang    | 边缘节点   | 中国大陆 |
+| 重庆两江 | CN_Liangjiang | 边缘节点   | 中国大陆 |
+| 金华     | CN_Jinhua     | 边缘节点   | 中国大陆 |
+| 中国香港 | CN_HongKong   | 云平台节点 | 亚太地区 |
 
 
 #### 私有网络可用区名称
 
-| 可用区名称 | AvailableZoneCode | 站点类型  | 所在区域 |
-|-------|-------------------|-------|------|
-|东莞A| CN_Dongguan_A     |边缘节点|东莞|
-|中卫A| CN_Zhongwei_A     |边缘节点|中卫|
-|保定A| CN_Baoding_A      |边缘节点|保定|
-|呼和浩特B| CN_Hohhot_B       |边缘节点|呼和浩特|
-|娄底A| CN_Loudi_A        |边缘节点|娄底|
-|宿迁A| CN_Suqian_A       |边缘节点|宿迁|
-|宿迁B| CN_Suqian_B       |边缘节点|宿迁|
-|洛阳A| CN_Louyang_A      |边缘节点|洛阳|
-|济南A| CN_Jinan_A        |边缘节点|济南|
-|眉山A| CN_Meishan_A      |边缘节点|眉山|
-|福州A| CN_Fuzhou_A          |边缘节点|福州|
-|衢州A| CN_Quzhou_A          |边缘节点|衢州|
-|襄阳A| CN_Xiangyang_A       |边缘节点|襄阳|
-|西安A| CN_Xian_A            |边缘节点|西安|
-|贵阳A| CN_Guiyang_A         |边缘节点|贵阳|
-|重庆两江A| CN_Liangjiang_A      |边缘节点|重庆两江|
-|金华A| CN_Jinhua_A          |边缘节点|金华|
-|香港B| CN_HongKong_B     |云平台节点|中国香港|
+| 可用区名称 | AvailableZoneCode | 站点类型   | 所在区域 |
+| ---------- | ----------------- | ---------- | -------- |
+| 东莞A      | CN_Dongguan_A     | 边缘节点   | 东莞     |
+| 中卫A      | CN_Zhongwei_A     | 边缘节点   | 中卫     |
+| 保定A      | CN_Baoding_A      | 边缘节点   | 保定     |
+| 呼和浩特B  | CN_Hohhot_B       | 边缘节点   | 呼和浩特 |
+| 娄底A      | CN_Loudi_A        | 边缘节点   | 娄底     |
+| 宿迁A      | CN_Suqian_A       | 边缘节点   | 宿迁     |
+| 宿迁B      | CN_Suqian_B       | 边缘节点   | 宿迁     |
+| 洛阳A      | CN_Louyang_A      | 边缘节点   | 洛阳     |
+| 济南A      | CN_Jinan_A        | 边缘节点   | 济南     |
+| 眉山A      | CN_Meishan_A      | 边缘节点   | 眉山     |
+| 福州A      | CN_Fuzhou_A       | 边缘节点   | 福州     |
+| 衢州A      | CN_Quzhou_A       | 边缘节点   | 衢州     |
+| 襄阳A      | CN_Xiangyang_A    | 边缘节点   | 襄阳     |
+| 西安A      | CN_Xian_A         | 边缘节点   | 西安     |
+| 贵阳A      | CN_Guiyang_A      | 边缘节点   | 贵阳     |
+| 重庆两江A  | CN_Liangjiang_A   | 边缘节点   | 重庆两江 |
+| 金华A      | CN_Jinhua_A       | 边缘节点   | 金华     |
+| 香港B      | CN_HongKong_B     | 云平台节点 | 中国香港 |
 
 ## 示例
 
 ### 1.获取请求url
 
-​	**代码示例**
+  **代码示例**
 
 ```python
 def percentEncode(str):
-  	"""转换特殊符号"""
+   """转换特殊符号"""
     res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
@@ -15446,7 +15805,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
     return url
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 http://cdsapi.capitalonline.net/ccs/?SignatureVersion=1.0&Timestamp=2019-09-22T05%3A37%3A47Z&AccessKeyId=AccessKeyId&SignatureMethod=HMAC-SHA1&Version=2019-08-08&Signature=****&Action=CreateInstance&SignatureNonce=1c276ff3-dcfb-11e9-bcd1-1c36bbed2c63
@@ -15456,7 +15815,7 @@ http://cdsapi.capitalonline.net/ccs/?SignatureVersion=1.0&Timestamp=2019-09-22T0
 
 ### 2.获取虚拟数据中心公网信息
 
-​	**请求代码**
+  **请求代码**
 
 ```python
 def descrive_public_qos(vdc_id):
@@ -15484,7 +15843,7 @@ def descrive_public_qos(vdc_id):
     return pub
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```python
 [
@@ -15510,7 +15869,7 @@ def descrive_public_qos(vdc_id):
 
 ### 3.获取机器信息
 
-​	**请求代码**
+  **请求代码**
 
 ```python
 def descrive_vm(instance_id=None, vdc_id=None, pub_ip=None):
@@ -15538,7 +15897,7 @@ def descrive_vm(instance_id=None, vdc_id=None, pub_ip=None):
     return result.get("Data")
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```python
 {
@@ -15585,7 +15944,7 @@ def descrive_vm(instance_id=None, vdc_id=None, pub_ip=None):
 
 ### 4.创建云主机实例
 
-​	**请求代码**
+  **请求代码**
 
 ```python
 def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
@@ -15626,7 +15985,7 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
     return result.get("TaskId")
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -15637,7 +15996,7 @@ def create_vm(RegionId, VdcId, InstanceName, InstanceType, ImageId, Amount):
 }
 ```
 
-​	**注意**
+  **注意**
 
 ```md
 TaskId可以通过DescribeTask接口获取任务状态并返回资源uuid
@@ -15645,7 +16004,7 @@ TaskId可以通过DescribeTask接口获取任务状态并返回资源uuid
 
 ### 5.修改公网带宽
 
-​	**代码示例**
+  **代码示例**
 
 ```python
 def modify_public_qos(publicId, qos):
@@ -15670,7 +16029,7 @@ def modify_public_qos(publicId, qos):
     return task_id
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -15681,7 +16040,7 @@ def modify_public_qos(publicId, qos):
 }
 ```
 
-​	**注意**
+  **注意**
 
 ```md
 TaskId可以通过DescribeTask接口获取任务状态
@@ -15689,7 +16048,7 @@ TaskId可以通过DescribeTask接口获取任务状态
 
 ### 6.修改云主机实例计费类型
 
-​	**代码示例**
+  **代码示例**
 
 ```python
 def modify_vm_charge_type(vm_id, ):
@@ -15713,7 +16072,7 @@ def modify_vm_charge_type(vm_id, ):
     return True
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -15726,7 +16085,7 @@ def modify_vm_charge_type(vm_id, ):
 
 ### 7.获取任务状态
 
-​	**代码示例**
+  **代码示例**
 
 ```python
 def get_status(task_id):
@@ -15748,7 +16107,7 @@ def get_status(task_id):
     return result.get("Data")
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
@@ -15765,7 +16124,7 @@ def get_status(task_id):
 
 ### 8.定制模板
 
-​	**代码示例**
+  **代码示例**
 
 ```python
 def create_template(vm_id):
@@ -15786,7 +16145,7 @@ def create_template(vm_id):
     print(result)
 ```
 
-​	**返回示例**
+  **返回示例**
 
 ```json
 {
