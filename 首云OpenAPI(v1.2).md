@@ -10241,6 +10241,7 @@ def querySites():
 | goodsId        | int    | 15264                                  | 商品id                           |
 | requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
 | monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
+| isAllowSsd     | boolean | 1                                   | 是否允许使用ssd云盘 , 1允许，0不允许   |
 
    **错误码:**
 
@@ -10265,7 +10266,8 @@ def querySites():
             "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
             "requirePrice": 0.1868333333,
             "siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
-            "systemDiskSize": 150
+            "systemDiskSize": 150,
+            "isAllowSsd":1
         },
         {
             "cpuCores": 14,
@@ -10278,7 +10280,8 @@ def querySites():
             "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
             "requirePrice": 0.1868333333,
             "siteId": "9efa59c0-a0db-11ec-aefa-1efd5a8f8465",
-            "systemDiskSize": 150
+            "systemDiskSize": 150,
+            "isAllowSsd":0
         }
     ],
     "Message": ""
@@ -10480,6 +10483,8 @@ def queryImages():
 | billCycle | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
 | num       | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
 | goodsId   | string | 是       | “15273”                                | 商品id                                                       |
+| sysVolume   | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                     |
+| sysVolumeSize   | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                |
 
    **返回参数：**
 
@@ -10489,6 +10494,10 @@ def queryImages():
 | Message        | string | null                                 | 返回信息                                                     |
 | Data           | object | {}                                   | 返回数据                                                     |
 | tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
+| singleTradeAmount  | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
+| num            | int | 1                                 | 台数 |
+| vmPrice        | double | 0.11                                 |单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
+| sysVolumePrice | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
 | areaId         | string | CN                                   | 币种                                                         |
 | requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
 | requestContent | string | {}                                   | 请求参数                                                     |
@@ -10508,9 +10517,13 @@ def queryImages():
     "Code": "Success",
     "Data": {
         "areaId": "CN",
-        "requestContent": "{\"billCycle\":\"minute\",\"billMethod\":0,\"customerId\":\"E2129298\",\"duration\":1,\"funParam\":{\"billCycle\":\"minute\",\"billMethod\":0,\"customer_id\":\"E2129298\",\"duration\":1,\"goodsId\":15273,\"isToMonth\":0,\"num\":1,\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"user_id\":\"713367\"},\"goodsId\":15273,\"isToMonth\":0,\"num\":1,\"requestId\":\"e0997510-1b69-4de8-85a8-cc44b2dd28f8\",\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\"}",
+        "num": 1,
+        "requestContent": "{\"billCycle\":\"month\",\"billMethod\":\"1\",\"customerId\":\"E2129298\",\"duration\":\"1\",\"goodsId\":\"15264\",\"isToMonth\":\"0\",\"num\":\"1\",\"requestId\":\"e0997510-1b69-4de8-85a8-cc44b2dd28f8\",\"siteId\":\"e5aa47be-da46-11ec-bad2-defff767b3b5\",\"sysVolume\":\"local\",\"sysVolumeSize\":\"96\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\"}",
         "requestId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
-        "tradeAmount": 0.11
+        "singleTradeAmount": 296700,
+        "sysVolumePrice": 0,
+        "tradeAmount": 296700,
+        "vmPrice": 296700
     },
     "Message": ""
 }
@@ -10528,7 +10541,7 @@ def queryVmPrice():
     method = "POST"
     body = {
         "requestId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
-        "siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
+        "siteId": "e5aa47be-da46-11ec-bad2-defff767b3b5",
         "duration": "1",
         "isToMonth": "1",
         "billCycle": "minute",
@@ -12056,6 +12069,8 @@ def queryExpireVms():
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
 | vgatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
 | vgatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
+| sysVolume | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                |
+| sysVolumeSize | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                                   |
 
    **返回参数：**
 
