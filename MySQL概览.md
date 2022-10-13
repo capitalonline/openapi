@@ -26,17 +26,24 @@ MySQL 公开API目录
     - [5.CreatePrivilegedAccount](#5createprivilegedaccount)
     - [6.ModifyDbPrivilege](#6modifydbprivilege)
       - [OperationsObj](#operationsobj)
+      - [ExtraPrivilegeObj](#extraprivilegeobj)
     - [7.DeleteDbPrivilege](#7deletedbprivilege)
     - [8.DescribeDbPrivileges](#8describedbprivileges)
       - [查询权限DataObj](#查询权限dataobj)
     - [9.DescribeDBAccount](#9describedbaccount)
       - [查询用户DataObj](#查询用户dataobj)
       - [DatabasePrivilegesObj](#databaseprivilegesobj)
+      - [查询用户ExtraPrivilegeObj](#查询用户extraprivilegeobj)
     - [10.DeleteDBAccount](#10deletedbaccount)
     - [11.DescribeModifiableDBSpec](#11describemodifiabledbspec)
     - [12.ModifyDBInstanceSpec](#12modifydbinstancespec)
     - [13.DeleteDBInstance](#13deletedbinstance)
     - [14.DescribeAvailableReadOnlyConfig](#14describeavailablereadonlyconfig)
+      - [查询只读实例规格DataObj](#查询只读实例规格dataobj)
+      - [查询只读实例规格ComputeRolesObj](#查询只读实例规格computerolesobj)
+      - [查询只读实例规格StandardObj](#查询只读实例规格standardobj)
+      - [查询只读实例规格AttachDiskObj](#查询只读实例规格attachdiskobj)
+      - [查询只读实例规格CpuRamObj](#查询只读实例规格cpuramobj)
     - [15.CreateReadOnlyDBInstance](#15createreadonlydbinstance)
     - [16.CreateBackup](#16createbackup)
     - [17.DescribeBackups](#17describebackups)
@@ -607,7 +614,7 @@ def create_mysql():
 | Disks           | int    | 磁盘大小,单位GB                  |
 | RegionId        | string | 站点编号                         |
 | VdcId           | string | 数据中心的编号                   |
-| Master_Info     | dict   | 从属集群，当实例为只读实例时有值 |
+| Master_Info     | dict   | 主节点信息（已弃用） |
 | LinkTypeStr     | string | 链路类型名称                     |
 | RoGroups        | list   | 只读实例列表                     |
 | SubProductName  | string | 子产品的名字                     |
