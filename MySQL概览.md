@@ -1608,7 +1608,7 @@ def create_backup(instance_uuid):
     url = get_signature(action, AK, AccessKeySecret, method, MYSQL_URL, param=param)
     body = {
         "InstanceUuid": instance_uuid,
-        "BackupType": "physical-backup",  # 目前只支持物理备份
+        "BackupType": "logical-backup", 
         "Desc": "test-openapi-python",
         "DBList":[
             "test1",
