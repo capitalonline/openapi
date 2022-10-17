@@ -5,6 +5,11 @@
                 <el-button type="primary" @click="destroy" :disabled="!auth_list.includes('add_mirror')">销毁</el-button>
             </template> -->
         </action-block>
+        <div class="icon m-bottom10">
+            <el-tooltip content="刷新" placement="bottom" effect="light">
+                <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+            </el-tooltip>
+        </div>
         <el-table 
             :data="list" 
             border 
@@ -46,13 +51,13 @@
             </el-table-column>
             <el-table-column prop="mount_path" label="挂载地址" width="180">
                 <template slot-scope="scope">
-                    <!-- <el-tooltip 
-                        :content="scope.row.mount_path[0]" 
+                    <el-tooltip 
+                        :content="scope.row.mount_path" 
                         placement="bottom" 
                         effect="light">
-                            <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
+                            <span class="id-cell">{{ scope.row.mount_path}}</span>
                     </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                 -->
+                    <Clipboard :content="scope.row.mount_path"></Clipboard>                
                 </template>
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
@@ -64,7 +69,7 @@
             </el-table-column>
             <el-table-column prop="status_ch" label="状态">
                 <template slot-scope="scope">
-                    <span :class="scope.row.status">{{scope.row.status_ch}}</span>
+                    <span :class="scope.row.status">{{scope.row.status_cn}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间">
@@ -74,7 +79,7 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作" width="120">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="visible=true">查看不可用原因</el-button> 
+                    <el-button type="text" @click="view(scope.row)">查看不可用原因</el-button> 
                 </template>
             </el-table-column>
         </el-table>
@@ -94,7 +99,7 @@
                 width="30%"
                 :close-on-click-modal="false"
                 :destroy-on-close="true">
-                <span>这是一段信息</span>
+                <span>{{reason}}</span>
                 <span slot="footer" class="dialog-footer">
                     <el-button type="primary" @click="visible = false">确 定</el-button>
                 </span>
@@ -120,10 +125,14 @@ export default class List extends Vue{
     private moment = moment;
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
     private search_option:Object={
-        customer_id:{placeholder:'请输入客户ID'},
-        customer_name:{placeholder:'请输入客户名称'},
-        nas_id:{placeholder:'请输入文件系统ID'},
-        nas_name:{placeholder:'请输入文件系统名称'},
+        customer:{placeholder:'请输入后查询',list:[{type:'customer_id',label:'客户ID'},{type:'customer_name',label:'客户名称'}]
+        ,type:'composite',width:340},
+        nas:{placeholder:'请输入后查询',list:[{type:'nas_id',label:'文件系统ID'},{type:'nas_name',label:'文件系统名称'}]
+        ,type:'composite',width:340},
+        // customer_id:{placeholder:'请输入客户ID'},
+        // customer_name:{placeholder:'请输入客户名称'},
+        // nas_id:{placeholder:'请输入文件系统ID'},
+        // nas_name:{placeholder:'请输入文件系统名称'},
     }
     private list:Array<any>=[{customer_id:1}]
     private current:number = 1
@@ -133,7 +142,8 @@ export default class List extends Vue{
     private auth_list:any=[];
     private operateInfo:any={}
     private clear=null
-    private visible:boolean=false
+    private visible:boolean=false;
+    private reason:string=''
     private feeInfo={
       '0':'按需计费',
       '1':'包年包月',
@@ -141,47 +151,32 @@ export default class List extends Vue{
     }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
-        // this.search()
+        this.search()
     }
-    @Watch('visible')
-    private watch_visible(nv){
-        if(!nv){
-            this.getNasList()
-        }
-    }
+    // @Watch('visible')
+    // private watch_visible(nv){
+    //     if(!nv){
+    //         this.getNasList()
+    //     }
+    // }
     @Watch('$store.state.pod_id')
     private watch_pod(){
-        // this.search(this.search_data)
+        this.search(this.search_data)
     }
     private async getNasList(loading:boolean=true){
-        if(!loading){
-            this.$store.commit('SET_LOADING', false);
-        }
-        let res:any = await Service.get_nas_list({
-            ...this.search_data,
+        let res:any = await Service.get_not_use_list({
+            [this.search_data.customersub ? this.search_data.customersub : 'customer_id']:this.search_data.customer,
+            [this.search_data.nassub ? this.search_data.nassub : 'customer_id']:this.search_data.nas,
+            // ...this.search_data,
             pod_id:this.$store.state.pod_id,
             page_index:this.current,
             page_size:this.size
         })
         if(res.code==="Success"){
-            this.list = res.data.nas_list;
-            this.total = res.data.page.count
+            this.list = res.data.data;
+            this.total = res.data.total_num
             this.getFileUse(false)
         }
-        this.FnSetTimer()
-    }
-    private FnSetTimer(){
-      if(this.clear){
-        this.FnClearTimer()
-      }
-      this.clear = setTimeout(()=>{
-        this.getNasList(false)
-      },1000*60)
-    }
-    private FnClearTimer(){
-      if(this.clear){
-        clearTimeout(this.clear)
-      }
     }
     private async getFileUse(loading:boolean=true){
       if(!loading){
@@ -196,7 +191,7 @@ export default class List extends Vue{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
         //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
-          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? Number(res.data[item.nas_id].used/res.data[item.nas_id].total).toFixed(6) : 0.00
+          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? Number(res.data[item.nas_id].used/res.data[item.nas_id].total).toFixed(2) : 0.00
           console.log('num',num)
           this.$set(item,'used_percent',`${num}%`)
           this.$set(item,'use_total_size',`${size} / ${total}`)
@@ -204,39 +199,21 @@ export default class List extends Vue{
       }
     }
     private search(data:any={}){
-        this.FnClearTimer()
         this.current = 1;
         this.search_data={...data}
+        console.log('this.search_data',this.search_data)
         this.getNasList()
     }
     private refresh(){
-        this.FnClearTimer()
         this.getNasList()
     }
     private handleSizeChange(size){
-        this.FnClearTimer()
         this.size = size
         this.getNasList()
     }
     private handleCurrentChange(cur){
-        this.FnClearTimer()
         this.current = cur
         this.getNasList()
-    }
-    private detail(id){
-        this.FnClearTimer()
-        this.$router.push({
-            path:'fielsystem/detail',
-            query:{
-                id
-            }
-        })
-    }
-    private capacity(row){
-        console.log('ccc')
-        this.FnClearTimer()
-        this.visible=true;
-        this.operateInfo=row
     }
     private computeUnit(value,num=0){
         if(value>=1024){
@@ -245,9 +222,11 @@ export default class List extends Vue{
             return value.toFixed(2) + this.units[num];
         }        
     }
-    beforeDestroy() {
-        this.FnClearTimer()
+    private view(row){
+        this.visible=true;
+        this.reason = row.reason
     }
+    
 }
 </script>
 <style lang="scss" scoped>
