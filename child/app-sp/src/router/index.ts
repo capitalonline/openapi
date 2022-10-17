@@ -154,6 +154,12 @@ const routes: RouteConfig[] = [
     meta: {meta: 'message_list'}
   },
   {
+    path: '/ecs_destroyed',
+    name: 'ecs_destroyed',
+    component: () => import('../views/instance/destroyedList.vue'),
+    meta: {meta: 'ecs_destroyed', no_auth: true}
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),
