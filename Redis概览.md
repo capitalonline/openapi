@@ -518,6 +518,7 @@ def create_redis():
 | MasterInfo      | dict   | 从属集群，只读实例会有值（Redis目前不支持只读实例） |
 | LinkTypeStr     | string | 链路类型名称                                        |
 | RoGroups        | list   | 只读实例列表（Redis目前不支持只读实例）             |
+| SubProductKey  | string | 子产品的英文名字                                        |
 | SubProductName  | string | 子产品的名字                                        |
 | Version         | string | 服务版本                                            |
 | LinkType        | string | 链路类型：英文                                      |
@@ -527,6 +528,7 @@ def create_redis():
 | InstanceName    | string | 实例名称                                            |
 | CreatedTime     | string | 实例创建时间                                        |
 | ResourceId      | string | 账单ID，查询账单时的唯一标识                        |
+| ProjectName      | string | 项目名称     |
 
 **请求示例：**
 
@@ -550,30 +552,35 @@ def get_redis_instances_list():
 **返回示例：**
 
 ```json
-"Data": [{
+{
+    "Code": "Success",
+    "Data": [{
         "CloneServices": null,
-        "CreatedTime": "2020-03-13 15:38:35",
-        "DisplayName": "中国大陆-北京-可用区H",
-        "IP": "********",
-        "InstanceName": "********",
-        "InstanceUuid": "***************",
+        "CreatedTime": "2022-10-18 10:19:34",
+        "DisplayName": "中国大陆-无锡-可用区A",
+        "IP": "*****************",
+        "InpaasId": "3cd1dac1-b549-4229-ab0f-2a8ef4ee7f57",
+        "InstanceName": "*****************",
+        "InstanceUuid": "*****************",
         "LinkType": "default_link",
         "LinkTypeStr": "默认链路",
         "MasterInfo": "",
         "Port": 9736,
+        "ProjectName": "默认项目组",
         "Ram": 1024,
-        "RegionId": "CN_Beijing_H",
+        "RegionId": "CN_Wuxi_A",
         "RelationService": null,
-        "ResourceId": "9e8e7d56-d394-4b8f-a2e3-51ca29048073",
+        "ResourceId": "*****************",
         "RoGroups": null,
         "Status": "RUNNING",
         "StatusStr": "运行中",
-        "SubProductName": "Redis 读写分离版",
-        "VdcId": "cacdf937-d484-435a-894b-241be9309d80",
-        "VdcName": "北京8",
-        "Version": "2.8.19"
+        "SubProductKey": "redis-replication",
+        "SubProductName": "Redis 主从版",
+        "VdcId": "4b7c78da-6d38-4b90-8bbf-c8a6bf4a405b",
+        "VdcName": "无锡A-PAAS",
+        "Version": "5.0"
     }],
-    "Message": "Success."
+    "Message": "success"
 }
 ```
 

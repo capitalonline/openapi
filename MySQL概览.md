@@ -617,6 +617,7 @@ def create_mysql():
 | Master_Info     | dict   | 主节点信息（已弃用） |
 | LinkTypeStr     | string | 链路类型名称                     |
 | RoGroups        | list   | 只读实例列表                     |
+| SubProductKey  | string | 子产品的英文名                     |
 | SubProductName  | string | 子产品的名字                     |
 | Version         | string | MySQL的版本                      |
 | LinkType        | string | 链路类型：英文                   |
@@ -626,6 +627,7 @@ def create_mysql():
 | InstanceName    | string | 实例名称                         |
 | CreatedTime     | string | 实例创建时间                     |
 | ResourceId      | string | 账单ID，查询账单时的唯一标识     |
+| ProjectName      | string | 项目名称     |
 
 **请求示例：**
 
@@ -663,6 +665,7 @@ def get_mysql_instances_list():
         "LinkTypeStr": "默认链路",
         "MasterInfo": "",
         "Port": 6033,
+        "ProjectName": "默认项目",
         "Ram": 8192,
         "RegionId": "CN_Hongkong_A",
         "RelationService": null,
@@ -685,7 +688,8 @@ def get_mysql_instances_list():
         }],
         "Status": "RUNNING",
         "StatusStr": "运行中",
-        "SubProductName": "MySQL 高可用版\n",
+        "SubProductKey": "mysql-replication",
+        "SubProductName": "MySQL 高可用版",
         "VdcId": "d459c74b-d60e-4f28-adbb-67be402f76f3",
         "VdcName": "香港PaaS1",
         "Version": "5.7.24"
