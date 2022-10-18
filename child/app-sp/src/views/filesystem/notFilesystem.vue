@@ -62,11 +62,7 @@
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
             <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
-            <el-table-column prop="billing_method" label="计费方式">
-                <template slot-scope="scope">
-                    <span>{{feeInfo[scope.row.billing_method]}}</span>
-                </template>
-            </el-table-column>
+            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
             <el-table-column prop="status_ch" label="状态">
                 <template slot-scope="scope">
                     <span :class="scope.row.status">{{scope.row.status_cn}}</span>
