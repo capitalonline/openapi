@@ -103,7 +103,15 @@ export default class LeftMenu extends Vue {
         {
           name: "vm_list",
           label: "NAS转发虚拟机"
-        }
+        },
+        {
+          name: "notFilesystem",
+          label: "不可用文件系统"
+        },
+        {
+          name: "nasSet",
+          label: "NAS设置"
+        },
       ]
     },
     { name: 'event_list', label: "任务管理" },

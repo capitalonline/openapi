@@ -157,10 +157,10 @@ export default class ActionBlock extends Vue {
         );
         flag++;
       }
-      if(this.search_option[key].type==='composite' && this.search_option[key].list){
+      if (this.search_option[key].type==='composite') {
         this.$set(
           this.search_value,
-          key + 'sub',
+          key+'sub',
           this.search_option[key].list[0].type
         );
       }

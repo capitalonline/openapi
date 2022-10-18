@@ -142,6 +142,18 @@ const routes: RouteConfig[] = [
     meta:{menu:'vm_list'}
   },
   {
+    path:'/notFilesystem',
+    name:'notFilesystem',
+    component:()=>import('../views/filesystem/notFilesystem.vue'),
+    meta:{menu:'notFilesystem'}
+  },
+  {
+    path:'/nasSet',
+    name:'nasSet',
+    component:()=>import('../views/filesystem/set.vue'),
+    meta:{menu:'nasSet'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
