@@ -41,7 +41,7 @@ module.exports = {
         }
       },
       '/nas': {
-        target: 'http://10.131.171.99:8080',
+        target: 'http://cloudos-nas-op.gic.test',
         // target:'http://ecs-business.gic.test',
         changeOrigin: true,
        
