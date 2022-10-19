@@ -130,7 +130,7 @@ export default class List extends Vue{
         // nas_id:{placeholder:'请输入文件系统ID'},
         // nas_name:{placeholder:'请输入文件系统名称'},
     }
-    private list:Array<any>=[{customer_id:1}]
+    private list:Array<any>=[]
     private current:number = 1
     private size:number = 20
     private total:number = 0

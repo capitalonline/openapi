@@ -11,7 +11,7 @@
             </el-table-column>
             <el-table-column prop="value" label="配置Value">
                 <template slot-scope="scope">
-                    <span>{{`${scope.row.update_during}${timeInfo[scope.row.unit]}`}}</span>
+                    <span>{{`${scope.row.update_during}${scope.row.unit ? timeInfo[scope.row.unit] : ''}`}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="operate" label="操作" width="120">
