@@ -50,7 +50,7 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/snapshot/api': '/api'
-        }
+      },
       '/nas': {
         target: 'http://cloudos-nas-op.gic.test',
         // target:'http://ecs-business.gic.test',
