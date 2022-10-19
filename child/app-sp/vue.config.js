@@ -46,10 +46,11 @@ module.exports = {
         }
       },
       '/snapshot/api': {
-        target: ' http://cloudos-op-metricsapi.gic.test',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/snapshot/api': '/api'
+          target: ' http://cloudos-op-metricsapi.gic.test',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/snapshot/api': '/api'
+        }
       },
       '/nas': {
         target: 'http://cloudos-nas-op.gic.test',
