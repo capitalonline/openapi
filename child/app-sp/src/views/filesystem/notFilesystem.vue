@@ -16,7 +16,7 @@
         >
             <el-table-column prop="customer_id" label="客户ID"></el-table-column>
             <el-table-column prop="customer_name" label="客户名称"></el-table-column>
-            <el-table-column prop="nas_id" label="文件系统ID/名称" width="120px">
+            <el-table-column prop="nas_id" label="文件系统ID/名称" width="160px">
                 <template slot-scope="scope">
                     <div>
                         <el-tooltip 
@@ -31,25 +31,25 @@
                 </template>
             </el-table-column>
             <el-table-column prop="nas_type" label="NAS类型"></el-table-column>
-            <el-table-column prop="protocol_type" label="协议类型"></el-table-column>
+            <el-table-column prop="protocol_type" label="协议类型" width="70"></el-table-column>
             <el-table-column prop="az_name" label="地域-可用区">
                 <template slot-scope="scope">
                     <span>{{`${scope.row.region_name}-${scope.row.az_name}`}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="vpc_id" label="VPC">
+            <el-table-column prop="vpc_id" label="VPC" width="140">
                 <template slot-scope="scope">
                     <div class="not-clickable">{{scope.row.vpc_id}}</div>
                     <div>{{scope.row.vpc_name}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="subnet_id" label="子网">
+            <el-table-column prop="subnet_id" label="子网" width="140">
                 <template slot-scope="scope">
                     <div class="not-clickable">{{scope.row.subnet_id}}</div>
                     <div>{{scope.row.subnet_name}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="mount_path" label="挂载地址" width="180">
+            <el-table-column prop="mount_path" label="挂载地址" width="160">
                 <template slot-scope="scope">
                     <el-tooltip 
                         :content="scope.row.mount_path" 
@@ -61,14 +61,14 @@
                 </template>
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
-            <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
-            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
-            <el-table-column prop="status_ch" label="状态">
+            <el-table-column prop="used_percent" label="空间使用率" width="80"></el-table-column>
+            <el-table-column prop="billing_method" label="计费方式" width="80"></el-table-column>
+            <el-table-column prop="status_ch" label="状态" width="80">
                 <template slot-scope="scope">
                     <span :class="scope.row.status">{{scope.row.status_cn}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="create_time" label="创建时间">
+            <el-table-column prop="create_time" label="创建时间" width="90">
                 <template slot-scope="scope">
                     <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
                 </template>
