@@ -321,7 +321,7 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_purpose_ch'){
         item = Object.assign(item,{},{column_key:'host_purpose',list:this.host_uses})
       }
-      if(item.prop==='host_attribution__name'){
+      if(item.prop==='host_attribution_name'){
         item = Object.assign(item,{},{column_key:'host_belong',list:this.host_belongs})
       }
       if(item.prop==='host_source'){
@@ -433,7 +433,7 @@ export default class PhysicalList extends Vue {
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
-      this.setList(this.host_belongs,'host_attribution__name')
+      this.setList(this.host_belongs,'host_attribution_name')
     }
   }
   private goEcs(id){
