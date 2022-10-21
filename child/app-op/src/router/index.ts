@@ -43,6 +43,18 @@ const routes: RouteConfig[] = [
     meta: {label: '云服务器创建', menu: 'instance_list', hidden: true}
   },
   {
+    path: '/inventory',
+    name: 'inventory_list',
+    component: () => import('../views/inventory/list.vue'),
+    meta: {label: '资源库存', menu: 'inventory_list'},
+  },
+  {
+    path: '/product_inventory',
+    name: 'product_inventory_list',
+    component: () => import('../views/inventory/product.vue'),
+    meta: {label: '商品库存', menu: 'product_inventory_list'},
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),
