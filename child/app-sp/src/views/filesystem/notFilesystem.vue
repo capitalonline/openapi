@@ -188,7 +188,7 @@ export default class List extends Vue{
         this.list.map(item=>{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
-          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? Number(res.data[item.nas_id].used/res.data[item.nas_id].total).toFixed(2) : 0.00
+          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : 0.00
           console.log('num',num)
           this.$set(item,'used_percent',`${num}%`)
           this.$set(item,'use_total_size',`${size} / ${total}`)
