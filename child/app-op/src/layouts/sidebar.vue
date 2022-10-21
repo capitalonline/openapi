@@ -61,6 +61,10 @@ export default class SideBar extends Vue {
       label: "POD管理"
     },
     {
+      name: "productType",
+      label: "物理机产品类型管理"
+    },
+    {
       name: "physical_list",
       label: "物理资源管理"
     },
@@ -78,7 +82,7 @@ export default class SideBar extends Vue {
         },
         {
           name: "product_inventory_list",
-          label: "产品库存"
+          label: "商品库存"
         }
       ]
     },
