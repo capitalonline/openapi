@@ -8337,15 +8337,15 @@ def describe_goodsId():
 
 ### 1.DescribeBill
 
-   **Action: DescribeBill**
+**Action：DescribeBill**
 
-  **描述：** 查询账单
+**描述：** 查询账单
 
-   **请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
-   **请求方法：GET**
+**请求方法：GET**
 
-   **请求参数：**
+**请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                  | 描述                        |
 | ---------- | ------ | -------- | ----------------------- | --------------------------- |
@@ -8482,15 +8482,15 @@ def describe_goodsId():
 
 ### 2.DescribeBillInfo
 
-   **Action: DescribeBillInfo**
+**Action： DescribeBillInfo**
 
-  **描述：** 查询账单
+**描述：** 查询账单
 
-   **请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
-   **请求方法：GET**
+**请求方法：GET**
 
-   **请求参数：**
+**请求参数：**
 
 | 名称       | 类型   | 是否必选 | 示例值                               | 描述                     |
 | ---------- | ------ | -------- | ------------------------------------ | ------------------------ |
@@ -8564,15 +8564,15 @@ def describe_goodsId():
 
 ### 3.DescribeBillDetail
 
-   **Action: DescribeBillDetail**
+**Action：DescribeBillDetail**
 
-  **描述：** 查询账单
+**描述：** 查询账单
 
-   **请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
-   **请求方法：GET**
+**请求方法：GET**
 
-   **请求参数：**
+**请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值     | 描述                                                   |
 | ----------- | ------ | -------- | ---------- | ------------------------------------------------------ |
@@ -9740,15 +9740,15 @@ def describe_goodsId():
 
 ### 4.DescribeAccountInfo
 
-**Action: DescribeAccountInfo**
+**Action：DescribeAccountInfo**
 
 **描述：** 查询主账户余额，充值记录以及消费概况
 
-**请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
 **请求方法：GET**
 
-**请求参数:** 无
+**请求参数：** 无
 
 **返回参数：**
 
@@ -9829,11 +9829,11 @@ def describe_goodsId():
 
 ### 5.DescribeCostSummaryByPro
 
-**Action: DescribeCostSummaryByPro**
+**Action： DescribeCostSummaryByPro**
 
- **描述：** 获取以产品为维度的汇总账单
+**描述：** 获取以产品为维度的汇总账单
 
-**请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
 **请求方法：GET**
 
@@ -9900,11 +9900,11 @@ def describe_goodsId():
 
 ### 6.DescribeCostSummaryByProject
 
-**Action: DescribeCostSummaryByProject**
+**Action：DescribeCostSummaryByProject**
 
- **描述：** 获取以项目为维度的汇总账单
+**描述：** 获取以项目为维度的汇总账单
 
-**请求地址:** cdsapi.capitalonline.net/billing
+**请求地址：** cdsapi.capitalonline.net/billing
 
 **请求方法：GET**
 
