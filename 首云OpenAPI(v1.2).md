@@ -9886,7 +9886,7 @@ def describe_goodsId():
                 "TotalCost": 9.62,
                 "TotalMasterCost": 9.62,
                 "TotalViceCost": 9.62,
-        	    "Currency": "CN",
+        		"Currency": "CN",
         		"ToDeduct": 0.0,
                 "ProductName": "云服务器",
                 "ProductType": "vm",
