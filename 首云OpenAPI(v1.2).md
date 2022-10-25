@@ -9740,15 +9740,15 @@ def describe_goodsId():
 
 ### 4.DescribeAccountInfo
 
-   **Action: DescribeAccountInfo**
+**Action: DescribeAccountInfo**
 
-  **描述：** 查询主账户余额，充值记录以及消费概况
+**描述：** 查询主账户余额，充值记录以及消费概况
 
-   **请求地址:** cdsapi.capitalonline.net/billing
+**请求地址:** cdsapi.capitalonline.net/billing
 
-   **请求方法：GET**
+**请求方法：GET**
 
-   **请求参数:**无
+**请求参数:** 无
 
 **返回参数：**
 
