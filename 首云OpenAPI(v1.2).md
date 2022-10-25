@@ -9758,7 +9758,7 @@ def describe_goodsId():
 
    **请求方法：GET**
 
-   **请求参数：**无
+   **请求参数：** 无
 
 **返回参数：**
 
@@ -9959,7 +9959,7 @@ def describe_goodsId():
             "TotalCost": 333.0,
             "MasterCost": 333.0,
             "ViceCost": 0.0,
-            "ToDeduct": 0.0，
+            "ToDeduct": 0.0,
             "Currency": "CN"
         },
         "BillInfo": [
