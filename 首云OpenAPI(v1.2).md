@@ -9880,14 +9880,14 @@ def describe_goodsId():
            "ViceCost": 0.0,
            "ToDeduct": 0.0,
            "Currency": "CN"
-        }
+        },
         "BillInfo": [
             {
                 "TotalCost": 9.62,
                 "TotalMasterCost": 9.62,
                 "TotalViceCost": 9.62,
-        	    "Currency": "CN",
-        		"ToDeduct": 0.0,
+                "Currency": "CN",
+                "ToDeduct": 0.0,
                 "ProductName": "云服务器",
                 "ProductType": "vm",
                 "ResourceCount": 1
@@ -9951,14 +9951,14 @@ def describe_goodsId():
             "ViceCost": 0.0,
             "ToDeduct": 0.0,
             "Currency": "CN"
-        }
+        },
         "BillInfo": [
             {
-        		"TotalCost": 9.62,
+               "TotalCost": 9.62,
                 "TotalMasterCost": 9.62,
                 "TotalViceCost": 9.62,
-        		"ToDeduct": 0.0,
-        		"Currency": "CN"
+                "ToDeduct": 0.0,
+                "Currency": "CN",
                 "ProjectId": "c3e4945c-1314-11ed-bed4-b6888a4026a1",
                 "ProjectName": "555",
                 "ResourceCount": 1
