@@ -16024,7 +16024,6 @@ def rename_snapshot():
 | 参数        | 说明     | 类型   | 是否必传 | 示例                            |
 | ----------- | -------- | ------ | -------- | ------------------------------- |
 | SnapshotIds | 快照列表 | list   | 是       | ["snapshotid1","snapshotid2"]   |
-| SnapshotId  | 快照ID   | string | 是       | s-disk-gncm33qrh1orx3pp-8q0s-01 |
 
 **返回参数**
 
