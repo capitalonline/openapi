@@ -293,7 +293,7 @@
        * [8.DescribeDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8describedisk)
        * [9.DescribeEcsAttachDisks](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9describeecsattachdisks)
        * [10.DescribeEvent](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10describeevent)
-     * [快照SNAPSHOT相关](https://github.com/capitalonline/openapi/blob/feature/add-ebs-doc/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E4%BA%91%E7%9B%98ebs%E7%9B%B8%E5%85%B3)
+     * [快照SNAPSHOT相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%BF%AB%E7%85%A7snapshot%E7%9B%B8%E5%85%B3)
        * [1.DescribeSnapshotList](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describesnapshotlist)
        * [2.DescribeSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describesnapshot)
        * [3.DescribeSnapshotChainList](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3describesnapshotchainlist)
