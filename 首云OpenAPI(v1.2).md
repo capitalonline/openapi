@@ -146,6 +146,8 @@
        * [2.DescribeBillInfo](#2describebillinfo)
        * [3.DescribeBillDetail](#3describebilldetail)
        * [4.DescribeAccountInfo](#4describeAccountInfo)
+       * [5.DescribeCostSummaryByPro](#5describecostsummarybypro)
+       * [6.DescribeCostSummaryByProject](#6describecostsummarybyproject)
      * [冷云计量相关](#冷云计量相关)
        * [1.GetMetering](#1GetMetering)
      * [网络告警相关](#网络告警相关)
@@ -8484,8 +8486,7 @@ def describe_goodsId():
         "TotalMasterCost": 0,
         "TotalViceCost": 76.97
     },
-    "Message": "bill day query success",
-    "TaskId": ""
+    "Message": "bill day query success"
 }
 ```
 
@@ -8532,6 +8533,8 @@ def describe_goodsId():
 | Status        | String   | running                                                      | 资源状态         |
 | UnitPrice     | Float    | 0.01417548                                                   | 资源单价         |
 | IPs           | List     | []                                                           | IP列表           |
+| ProjectName   | string   | 默认项目组                                                   | 项目名称         |
+| ProjectId     | string   | 0-0                                                          | 项目id           |
 
   **返回示例:**
 
@@ -8558,13 +8561,14 @@ def describe_goodsId():
                 "TotalCost": 9.62,
                 "UnitPrice": 0.01417548,
                 "VdcId": "b420f679-80a7-44f7-bf08-6e3bfadf3400",
-                "VdcName": "北京五"
+                "VdcName": "北京五",
+                "ProjectId": "0-0",
+                "ProjectName": "默认项目组"
             }
         ],
         "TotalCost": 9.62
     },
-    "Message": "bill details query success",
-    "TaskId": ""
+    "Message": "bill details query success"
 }
 ```
 
@@ -9740,8 +9744,7 @@ def describe_goodsId():
       "ViceCost": 874.16
     }
   },
-  "Message": "账单详情数据获取成功",
-  "TaskId": ""
+  "Message": "账单详情数据获取成功"
 }
 ```
 
@@ -9749,7 +9752,7 @@ def describe_goodsId():
 
    **Action: DescribeAccountInfo**
 
-  **描述：** 查询主账户余额，充值记录已经消费概况
+  **描述：** 查询主账户余额，充值记录以及消费概况
 
    **请求地址:** cdsapi.capitalonline.net/billing
 
@@ -9830,8 +9833,149 @@ def describe_goodsId():
     ],
     "ToDeduct": 16.63
   },
-  "Message": "主账户的剩余金额、待扣金额、充值记录、消费金额以及月消费金额获取成功",
-  "TaskId": ""
+  "Message": "主账户的剩余金额、待扣金额、充值记录、消费金额以及月消费金额获取成功"
+}
+```
+
+### 5.DescribeCostSummaryByPro
+
+**Action: DescribeCostSummaryByPro**
+
+ **描述：** 获取以产品为维度的汇总账单
+
+**请求地址:** cdsapi.capitalonline.net/billing
+
+**请求方法：GET**
+
+**请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值          | 描述                     |
+| -------- | ------ | -------- | --------------- | ------------------------ |
+| DateFrom | string | 是       | 2022-10-01      | 账单开始时间             |
+| DateTo   | string | 是       | 2022-10-17      | 账单结束时间             |
+| Currency | string | 是       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
+
+**返回示例**
+
+| 参数            | 参数类型 | 示例值               | 含义           |
+| --------------- | -------- | -------------------- | -------------- |
+| Code            | string   | Success              | 返回码         |
+| Message         | string   | 获取产品账单汇总成功 | 返回信息       |
+| Data            | dict     | {}                   | 返回数据字典   |
+| TotalSummary    | dict     | {}                   | 汇总消费金额   |
+| Currency        | string   | CN                   | 币种           |
+| TotalCost       | float    | 333.0                | 总消费金额     |
+| MasterCost      | float    | 333.0                | 主账户消费金额 |
+| ViceCost        | float    | 0.0                  | 副账户消费金额 |
+| ToDeduct        | float    | 0.0                  | 代扣金额       |
+| BillInfo        | list     |                      | 账单信息       |
+| TotalMasterCost | float    | 10.90                | 主账户消费金额 |
+| TotalViceCost   | float    | 11.92                | 副账户消费金额 |
+| TotalCost       | float    | 22.82                | 客户总消费金额 |
+| ToDeduct        | float    | 0.0                  | 代扣金额       |
+| Currency        | string   | CN                   | 币种           |
+| ProductName     | string   | 云服务器             | 产品名称       |
+| ProductType     | string   | vm                   | 产品类型       |
+| ResourceCount   | int      | 1                    | 产品资源数量   |
+
+**成功**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+       "TotalSummary": {
+           "TotalCost": 333.0,
+           "MasterCost": 333.0,
+           "ViceCost": 0.0,
+           "ToDeduct": 0.0,
+           "Currency": "CN"
+        }
+        "BillInfo": [
+            {
+                "TotalCost": 9.62,
+                "TotalMasterCost": 9.62,
+                "TotalViceCost": 9.62,
+        	    "Currency": "CN",
+        		"ToDeduct": 0.0,
+                "ProductName": "云服务器",
+                "ProductType": "vm",
+                "ResourceCount": 1
+            }
+        ]
+    },
+    "Message": "获取产品账单汇总成功",
+}
+```
+
+### 6.DescribeCostSummaryByProject
+
+**Action: DescribeCostSummaryByProject**
+
+ **描述：** 获取以项目为维度的汇总账单
+
+**请求地址:** cdsapi.capitalonline.net/billing
+
+**请求方法：GET**
+
+**请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值          | 描述                     |
+| -------- | ------ | -------- | --------------- | ------------------------ |
+| DateFrom | string | 是       | 2022-10-01      | 账单开始时间             |
+| DateTo   | string | 是       | 2022-10-17      | 账单结束时间             |
+| Currency | string | 是       | 账户币种(CN/US) | 账户币种, 默认CN(人民币) |
+
+**返回示例**
+
+| 参数            | 参数类型 | 示例值               | 含义           |
+| --------------- | -------- | -------------------- | -------------- |
+| Code            | string   | Success              | 返回码         |
+| Message         | string   | 获取产品账单汇总成功 | 返回信息       |
+| Data            | dict     | {}                   | 返回数据字典   |
+| TotalSummary    | dict     | {}                   | 汇总消费金额   |
+| Currency        | string   | CN                   | 币种           |
+| TotalCost       | float    | 333.0                | 总消费金额     |
+| MasterCost      | float    | 333.0                | 主账户消费金额 |
+| ViceCost        | float    | 0.0                  | 副账户消费金额 |
+| ToDeduct        | float    | 0.0                  | 代扣金额       |
+| BillInfo        | list     |                      | 账单信息       |
+| Currency        | string   | CN                   | 币种           |
+| TotalMasterCost | float    | 10.90                | 主账户消费金额 |
+| TotalViceCost   | float    | 11.92                | 副账户消费金额 |
+| TotalCost       | float    | 22.82                | 客户总消费金额 |
+| ToDeduct        | float    | 0.0                  | 代扣金额       |
+| ProjectName     | string   | 测试项目0-0          | 项目名称       |
+| ProjectId       | string   | 0-0                  | 项目类型       |
+| ResourceCount   | int      | 1                    | 项目资源数量   |
+
+**成功**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "TotalSummary": {
+            "TotalCost": 333.0,
+            "MasterCost": 333.0,
+            "ViceCost": 0.0,
+            "ToDeduct": 0.0，
+            "Currency": "CN"
+        }
+        "BillInfo": [
+            {
+        		"TotalCost": 9.62,
+                "TotalMasterCost": 9.62,
+                "TotalViceCost": 9.62,
+        		"ToDeduct": 0.0,
+        		"Currency": "CN"
+                "ProjectId": "c3e4945c-1314-11ed-bed4-b6888a4026a1",
+                "ProjectName": "555",
+                "ResourceCount": 1
+            }
+        ]
+    },
+    "Message": "获取项目账单汇总成功",
 }
 ```
 
