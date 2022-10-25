@@ -215,16 +215,6 @@
        * [8.DescribeDisk](#8describedisk)
        * [9.DescribeEcsAttachDisks](#9describeecsattachdisks)
        * [10.DescribeEvent](#10describeevent)
-     * [快照SNAPSHOT相关](#快照snapshot相关)
-       - [1.DescribeSnapshotList](#1describesnapshotlist)
-       - [2.DescribeSnapshot](#2describesnapshot)
-       - [3.DescribeSnapshotChainList](#3describesnapshotchainlist)
-       - [4.DescribeSnapshotChain](#4describesnapshotchain)
-       - [5.CreateSnapshot](#5createsnapshot)
-       - [6.RollbackDiskBySnapshot](#6rollbackdiskbysnapshot)
-       - [7.RenameSnapshot](#7renamesnapshot)
-       - [8.DeleteSnapshot](#8deletesnapshot)
-       - [9.DescribeSnapshotQuota](#9describesnapshotquota)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -9758,7 +9748,7 @@ def describe_goodsId():
 
    **请求方法：GET**
 
-   **请求参数：**无
+   **请求参数:**无
 
 **返回参数：**
 
@@ -9904,7 +9894,7 @@ def describe_goodsId():
             }
         ]
     },
-    "Message": "获取产品账单汇总成功",
+    "Message": "获取产品账单汇总成功"
 }
 ```
 
@@ -9959,7 +9949,7 @@ def describe_goodsId():
             "TotalCost": 333.0,
             "MasterCost": 333.0,
             "ViceCost": 0.0,
-            "ToDeduct": 0.0，
+            "ToDeduct": 0.0,
             "Currency": "CN"
         }
         "BillInfo": [
@@ -9975,7 +9965,7 @@ def describe_goodsId():
             }
         ]
     },
-    "Message": "获取项目账单汇总成功",
+    "Message": "获取项目账单汇总成功"
 }
 ```
 
@@ -10379,23 +10369,23 @@ def querySites():
 
    **返回参数：**
 
-| 名称           | 类型    | 示例                                   | 描述                                 |
-| -------------- | ------- | -------------------------------------- | ------------------------------------ |
-| Code           | string  | Success                                | 返回状态码: Success: 成功            |
-| Message        | string  | null                                   | 返回信息                             |
-| Data           | list    | []                                     | 返回数据                             |
-| siteId         | string  | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                              |
-| productId      | string  | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                           |
-| cpuCores       | int     | 14                                     | cpu 核数                             |
-| memorySize     | int     | 25                                     | 内存                                 |
-| gpuModel       | string  | “NVIDIA A5000”                         | gpu型号                              |
-| gpuRam         | int     | 24                                     | gpu显存                              |
-| systemDiskSize | int     | 150                                    | 系统盘大小                           |
-| os             | string  | “windows”                              | 操作系统                             |
-| goodsId        | int     | 15264                                  | 商品id                               |
-| requirePrice   | double  | 0.1868333333                           | 按需价格，每分钟所需的人民币数值     |
-| monthPrice     | double  | 3364                                   | 包月价格，每月所需的人民币数值       |
-| isAllowSsd     | boolean | 1                                      | 是否允许使用ssd云盘 , 1允许，0不允许 |
+| 名称           | 类型   | 示例                                   | 描述                             |
+| -------------- | ------ | -------------------------------------- | -------------------------------- |
+| Code           | string | Success                                | 返回状态码: Success: 成功        |
+| Message        | string | null                                   | 返回信息                         |
+| Data           | list   | []                                     | 返回数据                         |
+| siteId         | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                          |
+| productId      | string | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                       |
+| cpuCores       | int    | 14                                     | cpu 核数                         |
+| memorySize     | int    | 25                                     | 内存                             |
+| gpuModel       | string | “NVIDIA A5000”                         | gpu型号                          |
+| gpuRam         | int    | 24                                     | gpu显存                          |
+| systemDiskSize | int    | 150                                    | 系统盘大小                       |
+| os             | string | “windows”                              | 操作系统                         |
+| goodsId        | int    | 15264                                  | 商品id                           |
+| requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
+| monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
+| isAllowSsd     | boolean | 1                                   | 是否允许使用ssd云盘 , 1允许，0不允许   |
 
    **错误码:**
 
@@ -10628,33 +10618,33 @@ def queryImages():
 
    **请求参数：**
 
-| 名称          | 类型   | 是否必须 | 示例                                   | 描述                                                         |
-| ------------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
-| requestId     | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
-| siteId        | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
-| duration      | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
-| isToMonth     | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
-| billCycle     | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
-| num           | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
-| goodsId       | string | 是       | “15273”                                | 商品id                                                       |
-| sysVolume     | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
-| sysVolumeSize | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
+| 名称      | 类型   | 是否必须 | 示例                                   | 描述                                                         |
+| --------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| requestId | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
+| siteId    | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
+| duration  | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
+| isToMonth | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| billCycle | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
+| num       | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
+| goodsId   | string | 是       | “15273”                                | 商品id                                                       |
+| sysVolume   | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                     |
+| sysVolumeSize   | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                |
 
    **返回参数：**
 
-| 名称              | 类型   | 示例                                 | 描述                                                         |
-| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
-| Code              | string | Success                              | 返回状态码: Success: 成功                                    |
-| Message           | string | null                                 | 返回信息                                                     |
-| Data              | object | {}                                   | 返回数据                                                     |
-| tradeAmount       | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
-| singleTradeAmount | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
-| num               | int    | 1                                    | 台数                                                         |
-| vmPrice           | double | 0.11                                 | 单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
-| sysVolumePrice    | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
-| areaId            | string | CN                                   | 币种                                                         |
-| requestId         | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
-| requestContent    | string | {}                                   | 请求参数                                                     |
+| 名称           | 类型   | 示例                                 | 描述                                                         |
+| -------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Code           | string | Success                              | 返回状态码: Success: 成功                                    |
+| Message        | string | null                                 | 返回信息                                                     |
+| Data           | object | {}                                   | 返回数据                                                     |
+| tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
+| singleTradeAmount  | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
+| num            | int | 1                                 | 台数 |
+| vmPrice        | double | 0.11                                 |单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
+| sysVolumePrice | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
+| areaId         | string | CN                                   | 币种                                                         |
+| requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
+| requestContent | string | {}                                   | 请求参数                                                     |
 
    **错误码:**
 
@@ -12223,8 +12213,8 @@ def queryExpireVms():
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
 | vgatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
 | vgatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
-| sysVolume      | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
-| sysVolumeSize  | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
+| sysVolume | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                |
+| sysVolumeSize | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                                   |
 
    **返回参数：**
 
@@ -14078,7 +14068,7 @@ def describe_event():
 | TimeInterval | 可选 | string | 当前时间某个时间段的监控时间，单位为小时 (默认1小时)         |
 | StartTime    | 可选 | string | 当前时间附近时间间隔                                         |
 | EndTime      | 可选 | string | 获取数据的结束时间点(默认当前时间为结束时间)                 |
-| Indicators   | 可选 | list   | 监控指标('CpuUsage', 'CPU使用率'), ('MemoryUsage', '内存使用率'), ('Load', '系统平均负载'), ('NetworkRate', '网络吞吐量'), ('DiskUsage', '磁盘使用率'), ('DiskThroughput', '磁盘吞吐量'), ('DiskIops', '磁盘iops'), ('GpuUsage', 'GPU使用率'), ('GpuMemoryUsage', '显存使用率'), ('GpuTemperature', 'GPU温度') ,('GpuClocksGraphics','图形时钟频率'),('GpuClocksMemory', '显存时钟频率')不填默认监控所有指标 |
+| Indicators   | 可选 | list   | 监控指标('CpuUsage', 'CPU使用率'), ('MemoryUsage', '内存使用率'), ('Load', '系统平均负载'), ('NetworkRate', '网络吞吐量'), ('DiskUsage', '磁盘使用率'), ('DiskThroughput', '磁盘吞吐量'), ('DiskIops', '磁盘iops'), ('GpuUsage', 'GPU使用率'), ('GpuMemoryUsage', '显存使用率'), ('GpuTemperature', 'GPU温度') 不填默认监控所有指标 |
 
 **返回参数**
 
@@ -14754,17 +14744,16 @@ def sync_image():
 
 **请求参数**
 
-| 参数                | 说明                                                         | 类型   | 是否必传 | 示例                            |
-| ------------------- | ------------------------------------------------------------ | ------ | -------- | ------------------------------- |
-| AvailableZoneCode   | 可用区Code                                                   | string | 是       | CN_Suqian_A                     |
-| InstanceId          | 挂载到云主机的实例id(字段有值并且有效时表示挂载到该实例，云盘只能挂载至同一可用区的实例上) | string | 否       | ins-72ys37squwzemjlx            |
-| ReleaseWithInstance | 是否随实例删除，1:是,0:否(挂载实例字段有效时，本字段有意义，如果挂载到实例，默认为1) | int    | 否       | 1                               |
-| DiskName            | 设置的云盘名称，不传则提供默认名称(名称规则：2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头) | string | 否       | ssd-20220802                    |
-| DiskFeature         | 盘类型(目前只支持SSD)                                        | string | 是       | SSD                             |
-| SnapshotId          | 快照ID（只能传递数据盘的快照ID）                             | string | 否       | s-disk-xftwc38r6ja63wr8-zg0y-01 |
-| Size                | 盘容量，单位:GB,容量为8的倍数，且最小24GB起。                | int    | 是       | 24                              |
-| Number              | 创建数量，不传默认为1                                        | int    | 否       | 5                               |
-| BillingMethod       | 计费方式 ，0:按需计费,1:包年包月, (默认为0，目前只支持按需计费) | string | 否       | 0                               |
+| 参数                | 说明                                                         | 类型   | 是否必传 | 示例                        |
+| ------------------- | ------------------------------------------------------------ | ------ | -------- | --------------------------- |
+| AvailableZoneCode   | 可用区Code                                                   | string | 是       | CN_Suqian_A                 |
+| EcsId               | 挂载到云主机的实例id(字段有值并且有效时表示挂载到该实例，云盘只能挂载至同一可用区的实例上) | string | 否       | ins-72ys37squwzemjlx        |
+| ReleaseWithInstance | 是否随实例删除，1:是,0:否(挂载实例字段有效时，本字段有意义，如果挂载到实例，默认为1) | int    | 否       | 1                           |
+| DiskName            | 设置的云盘名称，不传则提供默认名称(名称规则：2-40个字符，可包含大小写字母、中文、数字、点号(.)、下划线(_)、半角冒号(:)、连字符(-)、英文括号(英文输入法下的括号)字符，以大小写字母开头) | string | 否       | ssd-20220802                |
+| DiskFeature         | 盘类型(目前只支持SSD)                                        | string | 是       | SSD                         |
+| Size                | 盘容量，单位:GB,容量为8的倍数，且最小24GB起。                | int    | 是       | 24                          |
+| Number              | 创建数量，不传默认为1                                        | int    | 否       | 5                           |
+| BillingMethod       | 计费方式 ，0:按需计费,1:包年包月                             | string | 否       | 默认为0，目前只支持按需计费 |
 
 **返回参数**
 
@@ -14797,6 +14786,8 @@ def create_disk():
     result = json.loads(resp.content)
     return result
 ```
+
+
 
 **返回示例：**
 
@@ -14935,7 +14926,7 @@ def detach_disk():
 | 参数                | 说明                               | 类型   | 是否必传 | 示例                 |
 | ------------------- | ---------------------------------- | ------ | -------- | -------------------- |
 | DiskIds             | 挂载的云盘id列表                   | list   | 是       | ["disk1", "disk2"]   |
-| InstanceId          | 挂载的目标实例id                   | string | 是       | ins-cplc7w0rfmy7sb1g |
+| EcsId               | 挂载的目标实例id                   | string | 是       | ins-cplc7w0rfmy7sb1g |
 | ReleaseWithInstance | 是否随实例删除,默认为1。1:是, 0:否 | int    | 否       | 1                    |
 
 **返回参数**
@@ -15283,9 +15274,9 @@ def describe_disk():
 
 **请求参数：**
 
-| 参数       | 说明     | 类型   | 是否必传 | 示例                 |
-| ---------- | -------- | ------ | -------- | -------------------- |
-| InstanceId | 云主机id | string | 是       | ins-z684q1prultrf7rj |
+| 参数  | 说明     | 类型   | 是否必传 | 示例                 |
+| ----- | -------- | ------ | -------- | -------------------- |
+| EcsId | 云主机id | string | 是       | ins-z684q1prultrf7rj |
 
 **返回参数**
 
@@ -15438,688 +15429,6 @@ def describe_event():
                 "TaskTypeDisplay": "卸载云盘"
             }
         ]
-    }
-}
-```
-
-## 快照SNAPSHOT相关
-
-**快照状态(Status)说明**
-
-| code               | 说明                                      |
-| ------------------ | ----------------------------------------- |
-| creating           | 创建中                                    |
-| create_fail        | 创建失败                                  |
-| running            | 运行中                                    |
-| deleting           | 删除中（逻辑删除）                        |
-| disk_creating      | 创建云盘中                                |
-| disk_rollback      | 回滚云盘中                                |
-| deleted            | 已删除                                    |
-| recycling          | 回收中                                    |
-| cancel_recycling   | 取消回收                                  |
-| destroy            | 已销毁                                    |
-| destroying         | 销毁中（gic展示删除中）                   |
-| recycle_destroying | 回收销毁中（回收流程物理销毁，gic不展示） |
-| error              | 错误                                      |
-
-### 1.DescribeSnapshotList
-
-**Action**: DescribeSnapshotList
-
-**描述**:  查询云盘快照列表
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：GET
-
-**请求参数**：
-
-| 参数              | 说明       | 类型   | 是否必传 | 示例        |
-| ----------------- | ---------- | ------ | -------- | ----------- |
-| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
-| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
-| DiskId            | 云盘ID     | String | 否       | disk-**     |
-| PageNumber        | 页码       | int    | 否       | 1           |
-| PageSize          | 每页记录数 | int    | 否       | 20          |
-
-**返回参数**：
-
-| 参数              | 类型   | 示例                            | 说明                                                         |
-| ----------------- | ------ | ------------------------------- | ------------------------------------------------------------ |
-| PageNumber        | int    | 1                               | 当前页数                                                     |
-| PageSize          | int    | 1                               | 每页数据条数                                                 |
-| TotalCount        | int    | 10                              | 总记录数                                                     |
-| SnapshotList      | list   | []                              | 快照id列表                                                   |
-| RegionCode        | string | CN_Suqian                       | 地域Code                                                     |
-| AvailableZoneCode | string | CN_Suqian_A                     | 可用区Code                                                   |
-| SnapshotId        | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照ID                                                       |
-| SnapshotName      | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照名称                                                     |
-| DiskId            | string | disk-xftwc38r6ja63wr8           | 云盘ID                                                       |
-| DiskName          | string | disk-xftwc38r6ja63wr8           | 云盘名称                                                     |
-| DiskProperty      | string | system                          | system:系统盘 data数据盘                                     |
-| DiskSize          | int    | 40                              | 盘容量,单位:GB                                               |
-| CreateTime        | Date   | 2022-10-10 07:45:42             | 快照创建时间                                                 |
-| ReservedTime      | string | 1                               | Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
-| SnapshotStatus    | string | 0                               | 快照状态                                                     |
-
-**请求示例**
-
-```python
-def describe_snapshot_list():
-    """
-    获取快照列表
-    """
-    ebs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "DescribeSnapshotList"
-    method = "GET"
-    param = {
-        "AvailableZoneCode":"CN_Hohhot_B"
-    }
-    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
-    resp = requests.get(url)
-    result = json.loads(resp.content)
-    return result
-```
-
-**返回实例**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "获取快照列表成功！",
-    "Data": {
-        "SnapshotList": [
-            {
-                "SnapshotId": "s-disk-tyvgscgr1ria5ftt-aa22-01",
-                "SnapshotName": "-2222222",
-                "DiskId": "disk-tyvgscgr1ria5ftt",
-                "DiskName": "ssd-20221010",
-                "DiskSize": 24,
-                "ReservedTime": "Forever",
-                "SnapshotStatus": "running",
-                "CreateTime": "2022-10-10 11:18:49",
-                "RegionCode": "CN_Huhhot",
-                "AvailableZoneCode": "CN_Hohhot_B",
-                "DiskProperty": "data"
-            }
-        ]
-    },
-    "PageNumber": 1,
-    "PageSize": 1,
-    "TotalCount": 1
-}
-```
-
-### 2.DescribeSnapshot
-
-**Action**: DescribeSnapshot
-
-**描述**:  查询某一快照信息
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：GET
-
-**请求参数**：
-
-| 参数       | 说明   | 类型   | 是否必传 | 示例                            |
-| ---------- | ------ | ------ | -------- | ------------------------------- |
-| SnapshotId | 快照ID | string | 否       | s-disk-tyvgscgr1ria5ftt-aa22-01 |
-
-**返回参数**：
-
-| 参数              | 类型   | 示例                            | 说明                                                         |
-| ----------------- | ------ | ------------------------------- | ------------------------------------------------------------ |
-| PageNumber        | int    | 1                               | 当前页数                                                     |
-| PageSize          | int    | 1                               | 每页数据条数                                                 |
-| TotalCount        | int    | 10                              | 总记录数                                                     |
-| SnapshotList      | list   | []                              | 快照id列表                                                   |
-| RegionCode        | string | CN_Suqian                       | 地域Code                                                     |
-| AvailableZoneCode | string | CN_Suqian_A                     | 可用区Code                                                   |
-| SnapshotId        | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照ID                                                       |
-| SnapshotName      | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照名称                                                     |
-| DiskId            | string | disk-xftwc38r6ja63wr8           | 云盘ID                                                       |
-| DiskName          | string | disk-xftwc38r6ja63wr8           | 云盘名称                                                     |
-| DiskProperty      | string | system                          | system:系统盘 data数据盘                                     |
-| DiskSize          | int    | 40                              | 盘容量,单位:GB                                               |
-| CreateTime        | Date   | 2022-10-10 07:45:42             | 快照创建时间                                                 |
-| ReservedTime      | string | 1                               | Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
-| SnapshotStatus    | string | 0                               | 快照状态                                                     |
-
-**请求示例**
-
-```python
-def describe_snapshot_detail():
-    """
-    获取快照详情
-    """
-    ebs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "DescribeSnapshot"
-    method = "GET"
-    param = {
-        "SnapshotId": "s-disk-tyvgscgr1ria5ftt-aa22-01",
-    }
-    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
-    resp = requests.get(url)
-    result = json.loads(resp.content, )
-    return result
-```
-
-**返回示例**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "获取快照详情成功！",
-    "Data": {
-        "SnapshotInfo": {
-            "SnapshotId": "s-disk-tyvgscgr1ria5ftt-aa22-01",
-            "SnapshotName": "-2222222",
-            "DiskId": "disk-tyvgscgr1ria5ftt",
-            "DiskName": "ssd-20221010",
-            "DiskSize": 24,
-            "ReservedTime": "Forever",
-            "SnapshotStatus": "running",
-            "CreateTime": "2022-10-10 11:18:49",
-            "RegionCode": "CN_Huhhot",
-            "AvailableZoneCode": "CN_Hohhot_B",
-            "DiskProperty": "data"
-        }
-    }
-}
-```
-
-
-### 3.DescribeSnapshotChainList
-
-**Action**: DescribeSnapshotChainList
-
-**描述**:  查询快照链列表
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：GET
-
-**请求参数**：
-
-| 参数              | 说明       | 类型   | 是否必传 | 示例        |
-| ----------------- | ---------- | ------ | -------- | ----------- |
-| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
-| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
-| DiskId            | 云盘ID     | String | 否       | disk-**     |
-| InstanceId        | 云主机ID   | String | 否       | ins-**      |
-| PageNumber        | 页码       | int    | 否       | 1           |
-| PageSize          | 每页记录数 | int    | 否       | 20          |
-
-**返回参数**：
-
-| 参数              | 类型   | 示例                          | 说明                                          |
-| ----------------- | ------ | ----------------------------- | --------------------------------------------- |
-| PageNumber        | int    | 1                             | 当前页数                                      |
-| PageSize          | int    | 1                             | 每页数据条数                                  |
-| TotalCount        | int    | 10                            | 总记录数                                      |
-| SnapshotChainList | list   | []                            | 快照链列表                                    |
-| RegionCode        | string | CN_Suqian                     | 地域Code                                      |
-| AvailableZoneCode | string | CN_Suqian_A                   | 可用区Code                                    |
-| SnapshotChainId   | string | sl-disk-tyvgscgr1ria5ftt-aa22 | 快照链ID                                      |
-| InstanceId        | string | ins-**                        | 云主机ID                                      |
-| InstanceName      | string | ins-**                        | 云主机名称                                    |
-| DiskId            | string | disk-**                       | 云盘ID                                        |
-| DiskName          | string | disk-**                       | 云盘名称                                      |
-| DiskProperty      | string | system                        | system:系统盘 data数据盘                      |
-| DiskSize          | int    | 40                            | 盘容量,单位:GB                                |
-| SnapshotNum       | int    | 5                             | 该快照链下的快照数量                          |
-| SnapshotSize      | double | 20.13                         | 快照链容量，单位为GB                          |
-| BillingMethod     | string | 0                             | 计费方式 ，0:按需计费, 1:包年包月, 2:按次计费 |
-
-**请求示例**
-
-```python
-def describe_snapshot_chains_list():
-    """
-    获取快照链列表
-    """
-    ebs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "DescribeSnapshotChainList"
-    method = "GET"
-    param = {
-        "AvailableZoneCode":"CN_Hohhot_B"
-    }
-    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
-    resp = requests.get(url)
-    result = json.loads(resp.content, )
-    return result
-
-```
-
-**返回示例**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "获取快照链列表成功！",
-    "Data": {
-        "SnapshotChainList": [
-            {
-                "BillingMethod": "0",
-                "DiskId": "disk-tyvgscgr1ria5ftt",
-                "DiskName": "ssd-20221010",
-                "DiskSize": 24,
-                "InstanceId": "",
-                "InstanceName": "",
-                "SnapshotNumber": 1,
-                "RegionCode": "CN_Huhhot",
-                "AvailableZoneCode": "CN_Hohhot_B",
-                "DiskProperty": "data",
-                "SnapshotChainId": "sl-disk-tyvgscgr1ria5ftt-aa22",
-                "SnapshotSize": 0.0
-            }
-        ]
-    },
-    "PageNumber": 1,
-    "PageSize": 1,
-    "TotalCount": 1
-}
-```
-
-### 4.DescribeSnapshotChain
-
-**Action**: DescribeSnapshotChain
-
-**描述**:  查询快照链下的详细信息
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：GET
-
-**请求参数**：
-
-| 参数            | 说明       | 类型   | 是否必传 | 示例                          |
-| --------------- | ---------- | ------ | -------- | ----------------------------- |
-| DiskId          | 云盘ID     | string | 否       | disk-1i5ybswrg8zrj9le         |
-| SnapshotChainId | 快照链ID   | string | 否       | sl-disk-1i5ybswrg8zrj9le-zl08 |
-| PageNumber      | 页码       | int    | 否       | 1                             |
-| PageSize        | 每页记录数 | int    | 否       | 20                            |
-
-**返回参数**：
-
-| 参数              | 类型   | 示例                            | 说明                                                         |
-| ----------------- | ------ | ------------------------------- | ------------------------------------------------------------ |
-| PageNumber        | int    | 1                               | 当前页数                                                     |
-| PageSize          | int    | 1                               | 每页数据条数                                                 |
-| TotalCount        | int    | 10                              | 总记录数                                                     |
-| SnapshotChainId   | string | sl-disk-xftwc38r6ja63wr8-zg0y   | 快照链ID                                                     |
-| InstanceId        | string | ins-6xu4as3r285r89ie            | 云主机ID                                                     |
-| InstanceName      | string | 云主机名称                      | 云主机名称                                                   |
-| DiskId            | string | disk-1i5ybswrg8zrj9le           | 云盘ID                                                       |
-| DiskName          | string | ssd_20221019                    | 云盘名称                                                     |
-| DiskProperty      | string | system                          | system:系统盘 data：数据盘                                   |
-| DiskSize          | int    | 40                              | 盘容量,单位:GB                                               |
-| SnapshotNum       | int    | 5                               | 该快照链下的快照数量                                         |
-| SnapshotSize      | double | 46.47GB                         | 快照链容量，单位为GB                                         |
-| BillingMethod     | string | 0                               | 计费方式 ，0:按需计费                                        |
-| SnapshotList      | list   | object[]                        | 快照列表                                                     |
-| RegionCode        | string | CN_Suqian                       | 地域Code                                                     |
-| AvailableZoneCode | string | CN_Suqian_A                     | 可用区Code                                                   |
-| SnapshotId        | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照ID                                                       |
-| SnapshotName      | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照名称                                                     |
-| DiskId            | string | disk-xftwc38r6ja63wr8           | 云盘ID                                                       |
-| DiskName          | string | disk-xftwc38r6ja63wr8           | 云盘名称                                                     |
-| DiskProperty      | string | system                          | system:系统盘 data：数据盘                                   |
-| DiskSize          | int    | 40                              | 盘容量,单位:GB                                               |
-| CreateTime        | string | 2022-10-10 07:45:42             | 快照创建时间                                                 |
-| ReservedTime      | string | 1                               | Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
-| SnapshotStatus    | string | running                         | 快照状态                                                     |
-
-**请求示例：**
-
-~~~python
-def ebs_describe_snapshot_chain():
-    """
-    获取快照链详情
-    """
-    ecs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "DescribeSnapshotChain"
-    method = "GET"
-    param = {
-        "DiskId": "disk-1i5ybswrg8zrj9le",
-        "SnapshotChainId": "sl-disk-1i5ybswrg8zrj9le-zl08",
-        "PageNumber": "1",
-        "PageSize": "20"
-    }
-
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.get(url)
-    result = json.loads(resp.content)
-    return result
-~~~
-
-
-
-**返回示例：**
-
-~~~json
-{
-    "Code": "Success",
-    "Msg": "获取获取快照链详情！",
-    "Data": {
-        "DiskId": "disk-1i5ybswrg8zrj9le",
-        "DiskName": "ssd_20221019",
-        "DiskSize": 40,
-        "InstanceId": "ins-6xu4as3r285r89ie",
-        "InstanceName": "lzliu-test1",
-        "SnapshotSize": "46.47GB",
-        "BillingMethod": "0",
-        "SnapshotChainId": "sl-disk-1i5ybswrg8zrj9le-zl08",
-        "DiskProperty": "system",
-        "SnapshotNum": 1,
-        "SnapshotList": [
-            {
-                "SnapshotId": "s-disk-1i5ybswrg8zrj9le-zl08-01",
-                "SnapshotName": "test-openapi-create",
-                "DiskId": "disk-1i5ybswrg8zrj9le",
-                "DiskName": "ssd_20221019",
-                "DiskSize": 40,
-                "ReservedTime": "1",
-                "SnapshotStatus": "running",
-                "CreateTime": "2022-10-19 17:21:18",
-                "DiskProperty": "system",
-                "AvailableZoneCode": "CN_Suqian_B",
-                "RegionCode": "CN_Suqian"
-            }
-        ]
-    }
-    "PageNumber": 1,
-    "PageSize": 20,
-    "TotalCount": 1
-}
-~~~
-
-### 5.CreateSnapshot
-
-**Action**: CreateSnapshot
-
-**描述**:  创建单个云盘快照
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：POST
-
-**请求参数**
-
-| 参数         | 说明         | 类型   | 是否必传 | 示例                                                         |
-| ------------ | ------------ | ------ | -------- | ------------------------------------------------------------ |
-| DiskId       | 云盘ID       | string | 是       | disk-1i5ybswrg8zrj9le                                        |
-| SnapshotName | 快照名称     | string | 否       | 不传默认与快照id一致，快照名称允许使用2-128个字符，不允许使用auto作为开头，允许大小写字母、数字、汉字和“-” |
-| ReservedTime | 快照保留时间 | string | 否       | 不传递该参数默认为1。Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
-
-**返回参数**
-
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
-
-**请求示例：**
-
-~~~python
-def ebs_create_snapshot():
-    """
-    创建快照任务下发
-    """
-    ecs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "CreateSnapshot"
-    method = "POST"
-    param = {}
-    body = {
-        "DiskId": "disk-1i5ybswrg8zrj9le",
-        "SnapshotChainId": "test-openapi-create",
-        "ReservedTime": "1"
-    }
-
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.post(url, json=body)
-    result = json.loads(resp.content)
-    return result
-~~~
-
-**返回示例：**
-
-~~~json
-{
-    "Code": "Success",
-    "Msg": "创建快照任务下发成功！",
-    "Data": {
-        "EventId": "639e2f92-4f8f-11ed-ae23-be26ad5c0652"
-    }
-}
-~~~
-
-
-
-### 6.RollbackDiskBySnapshot
-
-**Action**: RollbackDiskBySnapShot
-
-**描述**：使用快照回滚云盘
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：POST
-
-**请求参数：**
-
-| 参数               | 说明                   | 类型   | 是否必传 | 示例                                                         |
-| ------------------ | ---------------------- | ------ | -------- | ------------------------------------------------------------ |
-| DiskId             | 要回滚的云盘ID         | string | 是       | disk-pnmgbrfrk2q64w48                                        |
-| SnapshotId         | 快照ID                 | string | 是       | s-disk-pnmgbrfrk2q64w48-u1pa-05                              |
-| NewSnapshot        | 新快照信息             | dict   | 否       | {<br/>        "SnapshotName": "rollback_test", #新建快照名称<br/>        "ReservedTime": "1" #新建快照保留时间<br/>} |
-| AutoTurnOnInstance | 是否自动开启云主机电源 | int    | 否       | 1：开启，0：不开启，默认为1                                  |
-
-**返回参数**
-
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
-
-**请求示例**
-
-```python
-def ebs_rollback_disk_by_snapshot():
-    """
-    通过快照回滚云盘
-    """
-    ecs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "RollbackDiskBySnapshot"
-    method = "POST"
-    param = {}
-    body = {
-        "DiskId": "disk-pnmgbrfrk2q64w48",
-        "SnapshotId": "s-disk-pnmgbrfrk2q64w48-u1pa-05",
-        "NewSnapshot": {
-            "SnapshotName": "rollback_test",
-            "ReservedTime": "1"
-        }
-        "AutoTurnOnInstance": 1
-    }
-
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.post(url, json=body)
-    result = json.loads(resp.content)
-    return result
-```
-
-**返回示例**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "通过快照回滚云盘任务下发成功",
-    "Data": {
-        "EventId": "6d905a30-4f7a-11ed-9cd1-eaf7f2590855"
-    }
-}
-```
-
-### 7.RenameSnapshot
-
-**Action**: RenameSnapshot
-
-**描述**：修改快照名称
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：POST
-
-**请求参数：**
-
-| 参数         | 说明     | 类型   | 是否必传 | 示例                                                         |
-| ------------ | -------- | ------ | -------- | ------------------------------------------------------------ |
-| SnapshotId   | 快照ID   | string | 是       | s-disk-xftwc38r6ja63wr8-zg0y-01                              |
-| SnapshotName | 快照名称 | string | 是       | 新的快照名称。允许用户自定义名称，避免与自动快照（后续规划功能）命名重复，不允许使用auto作为开头，字符长度为2-126，允许大小写字母、数字、汉字和“-” |
-
-**请求示例**
-
-```python
-def rename_snapshot():
-    """
-    修改快照名称
-    """
-    ebs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "RenameSnapshot"
-    method = "POST"
-    param = {}
-    body = {
-        "SnapshotId":"s-disk-gsy63hjr41fr33op-ajca-05",
-        "SnapshotName":"更改后的名称001"
-        }
-    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
-    resp = requests.post(url, json=body)
-    result = json.loads(resp.content)
-    return result
-
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "快照名称更改成功！",
-    "Data": {}
-}
-```
-
-### 8.DeleteSnapshot
-
-**Action**: DeleteSnapshot
-
-**描述**：删除一个或者多个快照
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：POST
-
-**请求参数**：
-
-| 参数        | 说明     | 类型   | 是否必传 | 示例                            |
-| ----------- | -------- | ------ | -------- | ------------------------------- |
-| SnapshotIds | 快照列表 | list   | 是       | ["snapshotid1","snapshotid2"]   |
-| SnapshotId  | 快照ID   | string | 是       | s-disk-gncm33qrh1orx3pp-8q0s-01 |
-
-**返回参数**
-
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | eddb28de-4f91-11ed-988b-82b53449da97 | 事件id |
-
-**请求示例**
-
-```python
-def delete_snapshot():
-    """
-    删除快照
-    """
-    ebs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "DeleteSnapshot"
-    method = "POST"
-    param = {}
-    body = {
-        "SnapshotIds":["snapshotid1","snapshotid2"]
-    }
-    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
-    resp = requests.post(url, json=body)
-    result = json.loads(resp.content, json=body)
-    return result
-```
-
-**返回示例**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "快照删除下发任务成功！",
-    "Data": {
-        "EventId": "eddb28de-4f91-11ed-988b-82b53449da97"
-    }
-}
-```
-
-### 9.DescribeSnapshotQuota
-
-**Action**: DescribeSnapshotQuota
-
-**描述**：获取云盘快照配额信息
-
-**请求地址**：api.capitalonline.net/ebs/v1
-
-**请求方法**：GET
-
-**请求参数：**
-
-| 参数   | 说明   | 类型   | 是否必传 | 示例                  |
-| ------ | ------ | ------ | -------- | --------------------- |
-| DiskId | 云盘ID | string | 是       | disk-5f1yn3or6tr998dn |
-
-**返回参数**
-
-| 参数       | 类型   |         示例          | 说明                                                         |
-| ---------- | ------ | :-------------------: | ------------------------------------------------------------ |
-| DiskId     | string | disk-5f1yn3or6tr998dn | 云盘ID                                                       |
-| TotalQuota | int    |          10           | 单个云盘可创建的快照数量上限                                 |
-| UsedQuota  | int    |           2           | 单个云盘已经创建的快照数量                                   |
-| FreeQuota  | int    |           8           | 单个云盘剩余可创建的快照数量，如果该数量为0，那么该云盘不可以再创建快照。 |
-
-**请求示例**
-
-```python
-def ebs_describe_snapshot_quota():
-    """
-    查询快照配额
-    """
-    ecs_url = 'http://api.capitalonline.net/ebs/v1'
-    action = "RollbackDiskBySnapshot"
-    method = "GET"
-    param = {
-        "DiskId": "disk-5f1yn3or6tr998dn"
-    }
-
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.get(url)
-    result = json.loads(resp.content)
-    return result
-```
-
-**返回示例：**
-
-```json
-{
-    "Code": "Success",
-    "Msg": "查询快照配额成功！",
-    "Data": {
-        "DiskId": "disk-5f1yn3or6tr998dn",
-        "TotalQuota": 10,
-        "UsedQuota": 10,
-        "FreeQuota": 0
     }
 }
 ```
