@@ -106,6 +106,7 @@ func TestTerminateDisks(t *testing.T) {
 	}
 }
 
+// 获取快照信息测试
 func TestDescribeSnapshots(t *testing.T) {
 	res, err := DescribeSnapshots()
 	if err != nil {
@@ -113,6 +114,7 @@ func TestDescribeSnapshots(t *testing.T) {
 	fmt.Println(res)
 }
 
+// 创建快照测试
 func TestCreateSnapshot(t *testing.T) {
 	res, err := CreateSnapshot()
 	if err != nil {
@@ -120,6 +122,7 @@ func TestCreateSnapshot(t *testing.T) {
 	fmt.Println(res)
 }
 
+// 删除快照测试
 func TestDeleteSnapshots(t *testing.T) {
 	request := DeleteSnapshotsRequest{
 		SnapshotIds: []string{"s-disk-xxx1", "s-disk-xxx2"},
