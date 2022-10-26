@@ -188,7 +188,7 @@
      * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
-       * [3.DescribeImage](#3describeimage)
+       * [3.DescribeImages](#3describeimages)
        * [4.DescribeInstanceList](#4describeinstancelist)
        * [5.DescribePrice](#5describeprice)
        * [6.DescribeInstance](#6describeinstance)
@@ -13276,38 +13276,41 @@ def ecs_family_info():
 }
 ```
 
-### 3.DescribeImage
+### 3.DescribeImages
 
-**Action**: DescribeImage
+**Action**: DescribeImages
 
 **描述**：获取镜像信息
 
-**请求地址**：api.capitalonline.net/ecs/v1
+**请求地址**：api.capitalonline.net/ecs/v1.1
 
-**请求方法**：GET
+**请求方法**：POST GET
 
 **请求参数**
 
 | 参数              | 要求 | 类型   | 说明                                                         |
 | ----------------- | ---- | ------ | ------------------------------------------------------------ |
-| AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| AvailableZoneCode | 可选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| ImageIds          | 可选 | list   | 镜像id列表                                                   |
 
 **返回参数**
 
-| 参数             | 类型   | 示例                                 | 说明                                                         |
-| ---------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
-| Public           | dict   | {}                                   | 公共镜像信息字典                                             |
-| Private          | dict   | {}                                   | 私有镜像信息字典                                             |
-| OsVersions       | dict   | {}                                   | 镜像类型字典                                                 |
-| ImageId          | string | 2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f | 镜像id                                                       |
-| ImageName        | string | create-image1                        | 镜像名称                                                     |
-| OsType           | string | Centos                               | 系统类型                                                     |
-| OsVersion        | string | 7.4                                  | 镜像版本                                                     |
-| OsBit            | string | 64                                   | 镜像系统位数                                                 |
-| Size             | int    | 24                                   | 镜像大小（单位：GB）                                         |
-| Username         | string | root                                 | 系统用户名                                                   |
-| SupportType      | list   | ["Cpu","Ram"]                        | 支持的云服务器类型("Cpu"、"Ram")                             |
-| SupportGpuDriver | string | Geforce                              | 镜像支持的显卡驱动类型（创建实例时镜像支持驱动需要和所选实例规格驱动类型一致） |
+| 参数              | 类型   | 示例                                               | 说明                                |
+| ----------------- | ------ | -------------------------------------------------- | ----------------------------------- |
+| PageNumber        | int    | 1                                                  | 当前页数                            |
+| PageSize          | int    | 1                                                  | 每页数据条数                        |
+| TotalCount        | int    | 10                                                 | 总记录数                            |
+| ImageList         | list   | []                                                 | 镜像列表                            |
+| TemplateType      | string | public                                             | 公共镜像为public，私有镜像为private |
+| ImageId           | string | img-46faai4r9rnbu639                               | 镜像id                              |
+| ImageName         | string | gpu-private-Ubuntu-20.04-E104616-Geforce-V20220830 | 镜像名称                            |
+| Status            | string | running                                            | 镜像状态code                        |
+| OsType            | string | Ubuntu                                             | 镜像类型                            |
+| OsBit             | int    | 64                                                 | 系统位数                            |
+| StatusDisplay     | string | 可用                                               | 镜像状态中文                        |
+| AvailableZoneCode | string | CN_Dongguan_A                                      | 可用区code                          |
+| CreateTime        | string | 2022-08-30 12:30:48                                | 创建时间                            |
+| OsSize            | int    | 40                                                 | 镜像容量(GB)                        |
 
 **请求示例**
 
@@ -13316,14 +13319,14 @@ def image_info():
     """
     获取镜像信息
     """
-    ecs_url = 'http://api.capitalonline.net/ecs/v1'
-    action = "DescribeImage"
-    method = "GET"
-    param = {
+    ecs_url = 'http://api.capitalonline.net/ecs/v1.1'
+    action = "DescribeImages"
+    method = "POST"
+    body = {
         "AvailableZoneCode": ""
     }
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.get(url)
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url)
+    resp = requests.post(url, json=body)
     result = json.loads(resp.content)
     return result
 ```
@@ -13335,211 +13338,33 @@ def image_info():
     "Code": "Success",
     "Msg": "获取镜像信息成功！",
     "Data": {
-        "Public": {
-            "Name": "公共镜像",
-            "OsTemplateType": "public",
-            "OsVersions": {
-                "Centos": [
-                    {
-                        "ImageId": "ee300237-0ef4-40a9-ad79-7470262d4a2f",
-                        "OsVersion": "7.4",
-                        "OsBit": 64,
-                        "ImageName": "Centos 7.4 64位",
-                        "Username": "root",
-                        "SupportGpuDriver": "",
-                        "SupportType": [
-                            "cpu"
-                        ],
-                        "OsType": "Centos",
-                        "Size": 20
-                    },
-                    {
-                        "ImageId": "b2624c3c-d28e-4586-bf1a-20db4be3f680",
-                        "OsVersion": "7.4",
-                        "OsBit": 64,
-                        "ImageName": "Centos 7.4 64位-GPU-Datacenter",
-                        "Username": "root",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Centos",
-                        "Size": 20
-                    },
-                    {
-                        "ImageId": "38e4c433-9ce9-407a-90a2-28082bbe4a71",
-                        "OsVersion": "8.2",
-                        "OsBit": 64,
-                        "ImageName": "Centos 8.2 64位-GPU-Datacenter",
-                        "Username": "root",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Centos",
-                        "Size": 24
-                    },
-                    {
-                        "ImageId": "2421999f-b22d-44e5-a6f9-b37e6c968ca0",
-                        "OsVersion": "8.2",
-                        "OsBit": 64,
-                        "ImageName": "Centos 8.2 64位-GPU-Geforce",
-                        "Username": "root",
-                        "SupportGpuDriver": "Geforce",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Centos",
-                        "Size": 24
-                    }
+        "ImageList": [
+            {
+                "TemplateType": "public",
+                "ImageId": "667a49df-20ff-4569-9cdc-35180b28d16f",
+                "ImageName": "Ubuntu 20.04 64位",
+                "Status": "running",
+                "OsType": "Ubuntu",
+                "OsBit": 64,
+                "StatusDisplay": "可用",
+                "AzId": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+                "AzName": "大别山A",
+                "SupportGpuDriver": "Datacenter",
+                "Username": "root",
+                "SupportType": [
+                    "gpu"
                 ],
-                "Windows": [
-                    {
-                        "ImageId": "9587d78b-9501-445e-881b-38cbf01dd414",
-                        "OsVersion": "10",
-                        "OsBit": 64,
-                        "ImageName": "Windows 10 64位-GPU-Datacenter",
-                        "Username": "admin",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "cpu",
-                            "gpu"
-                        ],
-                        "OsType": "Windows",
-                        "Size": 40
-                    },
-                    {
-                        "ImageId": "a3d02045-4cb7-446a-92da-ee57b8480fd3",
-                        "OsVersion": "10",
-                        "OsBit": 64,
-                        "ImageName": "Windows 10 64位-GPU-Geforce",
-                        "Username": "admin",
-                        "SupportGpuDriver": "Geforce",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Windows",
-                        "Size": 40
-                    },
-                    {
-                        "ImageId": "3c64a1e9-b629-4c35-8be0-c352b1cf586e",
-                        "OsVersion": "2019",
-                        "OsBit": 64,
-                        "ImageName": "Windows 2019 64位-GPU-Datacenter",
-                        "Username": "administrator",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Windows",
-                        "Size": 40
-                    },
-                    {
-                        "ImageId": "906a60f8-e77d-432c-aa58-21f7d087d77d",
-                        "OsVersion": "2019",
-                        "OsBit": 64,
-                        "ImageName": "Windows 2019 64位-GPU-Geforce",
-                        "Username": "administrator",
-                        "SupportGpuDriver": "Geforce",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Windows",
-                        "Size": 40
-                    }
-                ],
-                "Ubuntu": [
-                    {
-                        "ImageId": "abde20c0-7f39-4e0d-8b58-231afa989561",
-                        "OsVersion": "18.04",
-                        "OsBit": 64,
-                        "ImageName": "Ubuntu 18.04 64位-GPU-Datacenter",
-                        "Username": "root",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Ubuntu",
-                        "Size": 24
-                    },
-                    {
-                        "ImageId": "f0473737-2ed0-4a75-a540-fc2fd0a18b47",
-                        "OsVersion": "18.04",
-                        "OsBit": 64,
-                        "ImageName": "Ubuntu 18.04 64位-GPU-Geforce",
-                        "Username": "root",
-                        "SupportGpuDriver": "Geforce",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Ubuntu",
-                        "Size": 24
-                    },
-                    {
-                        "ImageId": "51d9f8ab-ef6c-4b12-8980-825b6dcd58d8",
-                        "OsVersion": "20.04",
-                        "OsBit": 64,
-                        "ImageName": "Ubuntu 20.04 64位-GPU-Geforce",
-                        "Username": "root",
-                        "SupportGpuDriver": "Geforce",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Ubuntu",
-                        "Size": 24
-                    },
-                    {
-                        "ImageId": "7d54c51a-b411-43c2-a9da-d0f2b5990688",
-                        "OsVersion": "20.04",
-                        "OsBit": 64,
-                        "ImageName": "Ubuntu 20.04 64位",
-                        "Username": "root",
-                        "SupportGpuDriver": "",
-                        "SupportType": [
-                            "cpu"
-                        ],
-                        "OsType": "Ubuntu",
-                        "Size": 24
-                    },
-                    {
-                        "ImageId": "db1dba9b-6939-4d56-8520-382dcf1465a2",
-                        "OsVersion": "20.04",
-                        "OsBit": 64,
-                        "ImageName": "Ubuntu 20.04 64位-GPU-Datacenter",
-                        "Username": "root",
-                        "SupportGpuDriver": "Datacenter",
-                        "SupportType": [
-                            "gpu"
-                        ],
-                        "OsType": "Ubuntu",
-                        "Size": 24
-                    }
-                ]
+                "OsVersion": "20.04",
+                "CreateTime": "2022-01-24 17:46:17",
+                "OsSize": 24,
+                "AvailableZoneCode": "CN_DaBieShan_A"
             }
-        },
-        "Private": {
-            "Name": "自定义镜像",
-            "OsTemplateType": "private",
-            "OsVersions": {
-                "Centos": [
-                    {
-                        "ImageId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7",
-                        "OsVersion": "7.4",
-                        "OsBit": 64,
-                        "ImageName": "nasCentos 7.4 64位",
-                        "Username": "root",
-                        "SupportGpuDriver": "",
-                        "SupportType": [
-                            "cpu"
-                        ],
-                        "OsType": "Centos",
-                        "Size": 24
-                    }
-                ]
-            }
-        }
+        ]
     },
-    "RequestId": "0343bc60-e876-11eb-aa87-30c9ab46699c"
+    "RequestId": "13c88ede54e011edb7f6c2b5d7e451cd",
+    "PageNumber": 1,
+    "PageSize": 71,
+    "TotalCount": 71
 }
 ```
 
@@ -14599,10 +14424,10 @@ def create_image():
 
 **请求参数：**
 
-| 参数               | 要求 | 类型   | 说明                                         |
-| ------------------ | ---- | ------ | -------------------------------------------- |
-| ImageId            | 必选 | string | 实例ID                                       |
-| AvailableZoneCodes | 可选 | list   | 删除的可用区code，不填时默认删除所有节点镜像 |
+| 参数              | 要求 | 类型   | 说明                                                 |
+| ----------------- | ---- | ------ | ---------------------------------------------------- |
+| ImageIds          | 必选 | list   | 实例ID列表                                           |
+| AvailableZoneCode | 可选 | string | 删除的镜像所在可用区code，不填时默认删除所有节点镜像 |
 
 **返回参数：**
 
@@ -14621,7 +14446,7 @@ def delete_image():
     action = "DeleteImage"
     method = "POST"
     param={}
-    body={"ImageId":"img-jx9w92oq9gmmkjnb"}
+    body={"ImageIds":["img-jx9w92oq9gmmkjnb"]}
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
     result = json.loads(resp.content)
@@ -16021,9 +15846,9 @@ def rename_snapshot():
 
 **请求参数**：
 
-| 参数        | 说明     | 类型   | 是否必传 | 示例                            |
-| ----------- | -------- | ------ | -------- | ------------------------------- |
-| SnapshotIds | 快照列表 | list   | 是       | ["snapshotid1","snapshotid2"]   |
+| 参数        | 说明     | 类型 | 是否必传 | 示例                          |
+| ----------- | -------- | ---- | -------- | ----------------------------- |
+| SnapshotIds | 快照列表 | list | 是       | ["snapshotid1","snapshotid2"] |
 
 **返回参数**
 
