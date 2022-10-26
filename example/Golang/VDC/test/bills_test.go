@@ -1,7 +1,7 @@
 package test
 
 import (
-	"example/model"
+	"example/VDC/model"
 	"fmt"
 	"testing"
 )
