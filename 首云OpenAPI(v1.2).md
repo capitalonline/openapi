@@ -188,7 +188,7 @@
      * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
-       * [3.DescribeImage](#3describeimage)
+       * [3.DescribeImages](#3describeimages)
        * [4.DescribeInstanceList](#4describeinstancelist)
        * [5.DescribePrice](#5describeprice)
        * [6.DescribeInstance](#6describeinstance)
@@ -13276,15 +13276,15 @@ def ecs_family_info():
 }
 ```
 
-### 3.DescribeImage
+### 3.DescribeImages
 
-**Action**: DescribeImage
+**Action**: DescribeImages
 
 **描述**：获取镜像信息
 
 **请求地址**：api.capitalonline.net/ecs/v1.1
 
-**请求方法**：POST
+**请求方法**：POST GET
 
 **请求参数**
 
@@ -13320,7 +13320,7 @@ def image_info():
     获取镜像信息
     """
     ecs_url = 'http://api.capitalonline.net/ecs/v1.1'
-    action = "DescribeImage"
+    action = "DescribeImages"
     method = "POST"
     body = {
         "AvailableZoneCode": ""
@@ -13347,6 +13347,14 @@ def image_info():
                 "OsType": "Ubuntu",
                 "OsBit": 64,
                 "StatusDisplay": "可用",
+                "AzId": "16e6e380-729d-11ec-b62a-1e00e202ff80",
+                "AzName": "大别山A",
+                "SupportGpuDriver": "Datacenter",
+                "Username": "root",
+                "SupportType": [
+                    "gpu"
+                ],
+                "OsVersion": "20.04",
                 "CreateTime": "2022-01-24 17:46:17",
                 "OsSize": 24,
                 "AvailableZoneCode": "CN_DaBieShan_A"
