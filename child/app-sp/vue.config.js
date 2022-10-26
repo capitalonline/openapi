@@ -33,12 +33,18 @@ module.exports = {
         }
       },
       '/alarm/api': {
-        target: ' http://cloudos-metricsalarm.gic.test',
+        target: 'http://cloudos-metricsalarm.gic.test',
         // target:'http://10.131.162.69:8001',
         changeOrigin: true,
         pathRewrite: {
           '^/alarm/api': '/api'
         }
+      },
+      '/nas_op': {
+        target: 'http://cloudos-nas-op.gic.test',
+        // target:'http://ecs-business.gic.test',
+        changeOrigin: true,
+       
       },
       '/api': {
         target: 'http://cds-os-tasker.gic.test',
