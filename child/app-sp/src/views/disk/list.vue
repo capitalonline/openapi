@@ -21,7 +21,7 @@
           <pre>{{scope.row.disk_name}}</pre>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="云盘状态">
+      <el-table-column prop="status" label="云盘状态" :filter-multiple="false" :filters="disk_state" column-key="status">
         <template slot-scope="scope">
           <span :class="scope.row.status">{{scope.row.status_name}}</span>
         </template>
@@ -148,7 +148,7 @@ export default class extends Vue {
   private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
-    status:{list:[],placeholder:'请选择与云盘状态'},
+    // status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
   }
@@ -256,7 +256,7 @@ export default class extends Vue {
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
     if(res.code==="Success"){
-      this.search_dom.status.list = trans(res.data,'status_name','status','label','type') 
+      this.disk_state = trans(res.data,'status_name','status','text','value') 
     }
   }
   private async getDiskList(loading:boolean = true){
@@ -272,7 +272,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status || '',
+      status:req_data.status ? req_data.status[0] : '',
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
       disk_property:req_data.disk_property ? req_data.disk_property[0] : '',
