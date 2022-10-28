@@ -18,6 +18,11 @@ type CreateDiskReq struct {
 	BillingMethod       string `json:"BillingMethod"`                 // 计费方式
 }
 
+type CreateDiskResp struct {
+	DiskIdSet []interface{} `json:"DiskIdSet"`
+	EventId   string        `json:"EventId"`
+}
+
 // CreateDisk 创建云盘示例 说明：https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createdisk-1
 func CreateDisk(params CreateDiskReq) (common.CommonReturn, error) {
 	var (
@@ -259,7 +264,7 @@ func CreateSnapshot() (common.CommonReturn, error) {
 	action := "CreateSnapshot"
 	method := "POST"
 	params := map[string]interface{}{
-		"DiskId":       "disk-1i5ybswrg8zrj9le",
+		"DiskId":       "disk-xxx",
 		"SnapshotName": "test-openapi-create",
 		"ReservedTime": "1",
 	}
@@ -281,7 +286,8 @@ type CreateSnapshotRequest struct {
 
 // 创建快照返回数据体
 type CreateSnapshotData struct {
-	EventId string `json:"EventId"` //事件ID
+	EventId    string `json:"EventId"` //事件ID
+	SnapshotId string `json:"SnapshotId"`
 }
 
 // 删除快照请求体
