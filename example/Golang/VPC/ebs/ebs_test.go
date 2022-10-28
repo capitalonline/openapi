@@ -1,6 +1,7 @@
 package ebs
 
 import (
+	"encoding/json"
 	"example/VPC/common"
 	"fmt"
 	"log"
@@ -10,14 +11,14 @@ import (
 // 创建云盘测试
 func TestCreateDisk(t *testing.T) {
 	var (
-		resp, eventResp common.CommonReturn
-		err             error
+		resp common.CommonReturn
+		err  error
 	)
 	resp, err = CreateDisk(CreateDiskReq{
 		AvailableZoneCode:   "CN_Suqian_B",
 		EcsId:               "",
 		ReleaseWithInstance: 0,
-		DiskName:            "demo",
+		DiskName:            "demo_gyx3",
 		DiskFeature:         "SSD",
 		Size:                24,
 		Number:              1,
@@ -27,21 +28,10 @@ func TestCreateDisk(t *testing.T) {
 		log.Fatalln(err)
 	}
 	if resp.Code == "Success" && resp.Data != nil {
-		if eventId, ok := resp.Data.(map[string]interface{})["EventId"]; ok {
-			// 获取到事件id后
-			eventResp, err = common.DescribeEvent(eventId.(string))
-			if eventResp.Code == "Success" && eventResp.Data != nil {
-				// 解析事件响应，获取创建的云盘DiskId。
-				taskList := eventResp.Data.(map[string]interface{})["TaskList"]
-				switch taskList.(type) {
-				case []interface{}:
-					for _, task := range taskList.([]interface{}) {
-						// 打印DiskId
-						log.Println("DiskId:", task.(map[string]interface{})["ResourceId"])
-					}
-				}
-			}
-		}
+		bytes, _ := json.Marshal(resp.Data)
+		data := CreateDiskResp{}
+		_ = json.Unmarshal(bytes, &data)
+		fmt.Println(data)
 	}
 }
 
@@ -116,10 +106,16 @@ func TestDescribeSnapshots(t *testing.T) {
 
 // 创建快照测试
 func TestCreateSnapshot(t *testing.T) {
-	res, err := CreateSnapshot()
+	resp, err := CreateSnapshot()
 	if err != nil {
+		if resp.Data != nil {
+			bytes, _ := json.Marshal(resp.Data)
+			data := CreateSnapshotData{}
+			_ = json.Unmarshal(bytes, &data)
+			fmt.Println(data)
+		}
 	}
-	fmt.Println(res)
+	fmt.Println(resp)
 }
 
 // 删除快照测试
