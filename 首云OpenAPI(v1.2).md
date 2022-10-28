@@ -15704,7 +15704,7 @@ def ebs_create_snapshot():
     param = {}
     body = {
         "DiskId": "disk-1i5ybswrg8zrj9le",
-        "SnapshotChainId": "test-openapi-create",
+        "SnapshotName": "test-openapi-create",
         "ReservedTime": "1"
     }
 
