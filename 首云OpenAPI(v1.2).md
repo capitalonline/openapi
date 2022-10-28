@@ -1,4 +1,4 @@
-目录
+ 目录
 =================
 
    * [首云公开API文档](#首云公开api文档)
@@ -14067,9 +14067,10 @@ def describe_account_subject():
 
 **返回参数**
 
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id |
+| 参数     | 类型   | 示例                                 | 说明             |
+| -------- | ------ | ------------------------------------ | ---------------- |
+| EventId  | string | d0b1d5b7-7549-41dc-972c-c40270b53bd7 | 事件id           |
+| EcsIdSet | list   | ['ins-xxx']                          | 创建的资源id列表 |
 
 **请求示例**
 
@@ -14123,7 +14124,8 @@ def create_ecs():
     "Code": "Success",
     "Msg": "创建云服务器任务下发成功",
     "Data": {
-        "EventId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7"
+        "EventId": "d0b1d5b7-7549-41dc-972c-c40270b53bd7",
+        "EcsIdSet": ["ins-72ys37squwzemjlx"]
     }
 }
 ```
@@ -14375,9 +14377,10 @@ def change_ecs_name():
 
 **返回参数**
 
-| 参数    | 类型   | 示例                                   | 说明   |
-| ------- | ------ | -------------------------------------- | ------ |
-| EventId | string | "d0b1d5b7-7549-41dc-972c-c40270b53bd7" | 事件id |
+| 参数    | 类型   | 示例                                   | 说明       |
+| ------- | ------ | -------------------------------------- | ---------- |
+| EventId | string | "d0b1d5b7-7549-41dc-972c-c40270b53bd7" | 事件id     |
+| ImageId | string | img-wchmdfur5lpmh2bz                   | 镜像资源id |
 
 **请求示例**
 
@@ -14407,7 +14410,8 @@ def create_image():
     "Code":"Success",
     "Msg":"创建私有镜像成功",
     "Data":{
-        "EventId":"d0b1d5b7-7549-41dc-972c-c40270b53bd7" 
+        "EventId":"d0b1d5b7-7549-41dc-972c-c40270b53bd7",
+        "ImageId":"img-wchmdfur5lpmh2bz"
     }
 }
 ```
@@ -14593,9 +14597,10 @@ def sync_image():
 
 **返回参数**
 
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+| 参数      | 类型   | 示例                                 | 说明       |
+| --------- | ------ | ------------------------------------ | ---------- |
+| EventId   | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id     |
+| DiskIdSet | list   | ["disk-8q6wrg5qdomw1t3i"]            | 云盘id列表 |
 
 **请求示例：**
 
@@ -14630,7 +14635,8 @@ def create_disk():
     "Code": "Success",  
     "Msg": "云盘创建任务下发成功！", 
     "Data": {
-        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4"
+        "EventId": "11c4ad90-122c-11ed-b996-7ae483eaf4a4",
+        "DiskIdSet": ["disk-8q6wrg5qdomw1t3i"]
     }
 }
 ```
@@ -15680,9 +15686,10 @@ def ebs_describe_snapshot_chain():
 
 **返回参数**
 
-| 参数    | 类型   | 示例                                 | 说明   |
-| ------- | ------ | ------------------------------------ | ------ |
-| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+| 参数       | 类型   | 示例                                 | 说明   |
+| ---------- | ------ | ------------------------------------ | ------ |
+| EventId    | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a4 | 事件id |
+| SnapshotId | string | s-disk-r5cqowzrkcdzsyyj-aez6-01      | 快照id |
 
 **请求示例：**
 
@@ -15714,7 +15721,8 @@ def ebs_create_snapshot():
     "Code": "Success",
     "Msg": "创建快照任务下发成功！",
     "Data": {
-        "EventId": "639e2f92-4f8f-11ed-ae23-be26ad5c0652"
+        "EventId": "639e2f92-4f8f-11ed-ae23-be26ad5c0652",
+		"SnapshotId":"s-disk-r5cqowzrkcdzsyyj-aez6-01"
     }
 }
 ~~~
