@@ -61,7 +61,7 @@
             <el-table-column prop="transfer_vm_image" label="镜像名称"></el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="FnVnc(scope.row.transfer_vm_id)" :disabled="!auth_list.includes('vnc')">远程链接</el-button> 
+                    <el-button type="text" @click="FnVnc(scope.row.transfer_vm_id)" :disabled="!auth_list.includes('vnc')">远程连接</el-button> 
                     <el-button type="text" @click="FnToMonitor(scope.row)" :disabled="!auth_list.includes('monitor')">监控</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
                 </template>

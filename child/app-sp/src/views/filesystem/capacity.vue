@@ -11,14 +11,18 @@
         <div>
             <span class="label">扩容后容量:</span>
             <span>
-                <el-input-number v-model="size" :min="min" :max="unit==='TB' ? 64 : 64*1024" @change="change" @blur="change"></el-input-number>
-                <el-select v-model="unit" @change="changeUnit" :disabled="configInfo.total.value && configInfo.total.value.slice(-2)==='TB'" >
+                <el-input class="size" v-model="size" @keyup="value=value.replace(/^(0+)|[^\d]+/g,'')"></el-input>
+                <el-select v-model="unit">
                     <el-option v-for="item in unitList" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
             </span>
+            <div v-if="!text.test(Number(size))" class="error_message m-l-73">请输入正整数</div>
+            <div v-else-if="!getIsMin()" class="error_message m-l-73">扩容后容量不能小于或者等于当前容量</div>
+            <div v-else-if="unit==='TB' ? Number(size)>64 : Number(size)>64*1024" class="error_message m-l-73">扩容后容量不能大于64TB</div>
+            <div class="prompt_message m-top10">说明：扩容后容量不能小于或者等于当前容量</div>
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="confirm">确 定</el-button>
+            <el-button type="primary" @click="confirm" :disabled="Math.ceil(max)>=64">确 定</el-button>
             <el-button @click="visibleSync = false">取 消</el-button>
         </span>
     </el-dialog>
@@ -47,7 +51,9 @@ export default class RollBack extends Vue{
     private unitList:any=['GB','TB'];
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
     private clear=null;
+    private max:number=0
     private min:number=0
+    private text:any = new RegExp("^[0-9]*[1-9][0-9]*$")
     created() {
         for(let i in this.configInfo){
             this.configInfo[i].value = this.info[i]
@@ -84,8 +90,8 @@ export default class RollBack extends Vue{
             this.configInfo.total.value = this.computeUnit(res.data[id]&& res.data[id].total ? (res.data[id].total) : 0);
             let oldUnit:string = this.configInfo.total.value.slice(-2)
             this.size = Math.ceil(Number(this.configInfo.total.value.slice(0,-2)))
-            this.min=this.size
-            console.log('###',oldUnit,this.size,this.configInfo.total.value.slice)
+            this.max=res.data[id].total ? Number(res.data[id].total)/1024/1024/1024/1024 : 0;
+            this.min = res.data[id].total ? Number(res.data[id].total)/1024/1024/1024 : 0;
             if(['GB','TB'].includes(oldUnit)){
                 this.unit = oldUnit
             }else{
@@ -95,44 +101,15 @@ export default class RollBack extends Vue{
         } 
         this.FnSetTimer();
     }
-    /**
-     
-     */
-    // private get min(){
-    //     let oldUnit:string = this.configInfo.total.value.slice(-2)
-    //     let size = Math.ceil(Number(this.configInfo.total.value.slice(0,-2)))
-    //     if(oldUnit===this.unit){
-    //         return size
-    //     }else if(this.unit==='TB'){//不等的情况下，原来的总量单位一定比TB小
-    //         return oldUnit==='GB' ? Math.ceil(Number(size)/1024) : 0
-    //     }else{//this.unit==='GB',如果原来总量的单位是TB，那已经不允许更改单位，那就符合第一种条件
-    //         return size
-    //     }
-    // }
-    private change(){
-        if(!this.size){
-            this.size = this.min
+    private getIsMin(){
+        let flag:boolean=true
+        if(this.unit==='TB'){//this.min为当前总量
+            flag=this.size>this.max
+        }else{
+            flag=this.size>this.min
         }
-    }
-    private changeUnit(){
-        let oldUnit:string = this.configInfo.total.value.slice(-2);
-        let originSize:number = Number(this.configInfo.total.value.slice(0,-2))
-        if(this.unit==='TB'){
-            if(oldUnit==='TB'){
-                this.size = Math.min(this.size,64);
-                this.min = Math.ceil(originSize)//min不用变
-            }else{//那一定比TB小,size的容量不用改
-                this.size = oldUnit==='GB' ? Math.ceil(originSize/1024) : 1;
-                this.min = this.size
-            }
-        }else{//GB
-            if(oldUnit==='TB'){//原来容量为TB，改变后的单位为GB，不可能为这个单位
-                
-            }else{//原来的单位比GB小或是一样
-                this.size = Math.max(this.size,Math.ceil(originSize))
-                this.min = oldUnit==='GB' ? Math.ceil(originSize) : 1
-            }
-        }
+        console.log('flag',flag)
+        return flag
     }
     private computeUnit(value,num=0){
         if(value>=1024){
@@ -143,6 +120,12 @@ export default class RollBack extends Vue{
     }
     private async confirm(){
         if(!this.unit){
+            return;
+        }
+        if(!this.text.test(this.size)){
+            return
+        }
+        if(((this.unit==='TB' && Number(this.size)>64)) || Number(this.size)>64*1024 || !this.getIsMin()){
             return;
         }
         const {region_id,az_id,nas_id,customer_id}=this.info
@@ -170,5 +153,12 @@ export default class RollBack extends Vue{
     font-weight: bold;
     font-size: 14px;
     margin: 0 5px;
+}
+.size{
+    width: 240px;
+    margin-right: 10px;
+}
+.m-l-73{
+    margin-left: 73px;
 }
 </style>
