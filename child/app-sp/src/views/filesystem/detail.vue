@@ -13,7 +13,10 @@
                         <span class="title">文件系统信息</span>
                     </div>
                     <el-descriptions class="margin-top" :column="2">
-                        <el-descriptions-item v-for="(item,i) in fileInfo" :key="i" :label="item.label">{{item.value}}</el-descriptions-item>
+                        <el-descriptions-item v-for="(item,i) in fileInfo" :key="i" :label="item.label">{{item.value}}
+                            <span v-if="i==='mount_path'" class="m-left10">
+                                <Clipboard :content="item.value"></Clipboard>
+                            </span></el-descriptions-item>
                     </el-descriptions>
                 </el-card>
                 
@@ -35,6 +38,7 @@
                                 <div>系统盘:{{detailInfo.transfer_vm_conf_system_disk_size ? `${detailInfo.transfer_vm_conf_system_disk_size}${detailInfo.transfer_vm_conf_system_disk_unit} (${detailInfo.transfer_vm_conf_system_disk_type})` : ''}}</div>
                             </div>
                             <span v-else>{{detailInfo[i]}}</span>
+                            
                         </el-descriptions-item>
                     </el-descriptions>
                 </el-card>
@@ -55,10 +59,12 @@ import moment from 'moment';
 import backHeader from '@/components/backHeader.vue';
 import detail from '@/https/event/detail';
 import Monitor from './monitor.vue';
+import Clipboard from '../../components/clipboard.vue';
 @Component({
     components:{
         backHeader,
-        Monitor
+        Monitor,
+        Clipboard
     }
 })
 export default class NasDetail extends Vue{
@@ -81,7 +87,7 @@ export default class NasDetail extends Vue{
     }
     private vmInfo:any={
         transfer_vm_id:{label:'虚拟机ID',value:''},
-        transfer_vm_name:{label:'虚拟机名称',value:''},
+        // transfer_vm_name:{label:'虚拟机名称',value:''},
         ip:{label:'虚拟机IP地址',value:''},
         config:{label:'虚拟机配置',value:''},
         transfer_vm_host_name:{label:'所在宿主机',value:''},
@@ -162,9 +168,22 @@ export default class NasDetail extends Vue{
     beforeDestroy() {
         this.FnClearTimer()
     }
-    private FnToMonitor(id) {
-        this.$router.push("/instance/monitor/" + id);
+    private FnToMonitor(row) {
+        sessionStorage.setItem('vm_monitor',JSON.stringify({
+            ...row,
+            hostId:row.transfer_vm_id,
+            ip:row.transfer_vm_storage_ip,
+            instanceType:'vm',
+            os:'linux',
+            region_id:row.region_id,
+            replica:row.az_id,
+            id:row.transfer_vm_id
+        }))
+        this.$router.push("/instance/monitor/" + row.transfer_vm_id);
     }
+    // private FnToMonitor(id) {
+    //     this.$router.push("/instance/monitor/" + id);
+    // }
 }
 
 </script>

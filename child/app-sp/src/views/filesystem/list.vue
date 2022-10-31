@@ -26,7 +26,8 @@
                             :content="scope.row.nas_id" 
                             placement="bottom" 
                             effect="light">
-                                <span class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
+                                <span class="not-clickable" v-if="['building','build_fail'].includes(scope.row.status)">{{ scope.row.nas_id }}</span>
+                                <span v-else class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
                         </el-tooltip>
                         <Clipboard :content="scope.row.nas_id" v-if="scope.row.nas_id"></Clipboard>
                     </div>
@@ -66,7 +67,7 @@
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
             <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
             <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
-            <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column>
+            <!-- <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column> -->
             <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
                 <template slot-scope="scope">
                    <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
@@ -83,7 +84,7 @@
                     <span :class="scope.row.status">{{scope.row.status_ch}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="create_time" label="创建时间">
+            <el-table-column prop="create_time" label="创建时间" width="90">
                 <template slot-scope="scope">
                     <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
                 </template>
