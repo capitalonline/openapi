@@ -1265,7 +1265,7 @@ def down_card(InterfaceId, InstanceId):
 | ----------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22                         | 云服务器编号                                                 |
 | MetricName  | string | 是       | CPUUtilization、RAMUtilization、DiskWriteIOPS、DiskReadIOPS、DiskWriteBPS、DiskReadBPS、InterfaceInRate、InterfaceOutRate | 实例各项指标，CPU(cpu)、内存(ram)、硬盘IOPS(iops)、硬盘吞吐量(throughput)、网卡流量(nic) |
-| Period      | int    | 是       | 60、900、3600                                                | 监控数据粒度，一分钟粒度(60)、十五分钟粒度(900)、一小时粒度(3600) |
+| Period      | int    | 是       | 60、900                                                | 监控数据粒度，一分钟粒度(60)、十五分钟粒度(900) |
 | StartTime   | string | 是       | 2019-10-09 15:30:00                                          | 开始时间                                                     |
 | EndTime     | string | 是       | 2019-10-09 16:30:00                                          | 结束时间                                                     |
 | InterfaceId | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 网卡的编号，可以在查询云服务器详情中查出                     |
