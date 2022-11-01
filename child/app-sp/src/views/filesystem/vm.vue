@@ -17,7 +17,7 @@
             :data="list" 
             border 
         >
-            <el-table-column prop="transfer_vm_id" label="虚拟机ID/名称">
+            <el-table-column prop="transfer_vm_id" label="虚拟机ID/文件系统ID">
                 <template slot-scope="scope">
                     <div>
                         <el-tooltip 
@@ -28,7 +28,15 @@
                         </el-tooltip>
                         <Clipboard :content="scope.row.transfer_vm_id" v-if="scope.row.transfer_vm_id"></Clipboard>
                     </div>
-                    <div>{{scope.row.transfer_vm_name}}</div>
+                    <div>
+                        <el-tooltip 
+                            :content="scope.row.nas_id" 
+                            placement="bottom" 
+                            effect="light">
+                                <span class="id-cell num_message">{{ scope.row.nas_id }}</span>
+                        </el-tooltip>
+                        <Clipboard :content="scope.row.nas_id" v-if="scope.row.nas_id"></Clipboard>
+                    </div>
                 </template>
             </el-table-column>
             <el-table-column prop="transfer_vm_host_name" label="宿主机名称"></el-table-column>
@@ -96,7 +104,7 @@ import Clipboard from '../../components/clipboard.vue'
 export default class CommonMirror extends Vue{
     private search_option:Object={
         transfer_vm_id:{placeholder:'请输入虚拟机ID'},
-        transfer_vm_name:{placeholder:'请输入虚拟机名称'},
+        nas_id:{placeholder:'请输入文件系统ID'},
         vpc_id:{placeholder:'请输入VPC名称'},
         vpc_ip:{placeholder:'请输入VPC  IP地址'},
         transfer_vm_storage_ip:{placeholder:'请输入存储网IP地址'},
