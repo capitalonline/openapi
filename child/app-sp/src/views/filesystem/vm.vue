@@ -17,7 +17,7 @@
             :data="list" 
             border 
         >
-            <el-table-column prop="transfer_vm_id" label="虚拟机ID/文件系统ID">
+            <el-table-column prop="transfer_vm_id" label="虚拟机ID">
                 <template slot-scope="scope">
                     <div>
                         <el-tooltip 
@@ -28,6 +28,10 @@
                         </el-tooltip>
                         <Clipboard :content="scope.row.transfer_vm_id" v-if="scope.row.transfer_vm_id"></Clipboard>
                     </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="nas_id" label="文件系统ID">
+                <template slot-scope="scope">
                     <div>
                         <el-tooltip 
                             :content="scope.row.nas_id" 
