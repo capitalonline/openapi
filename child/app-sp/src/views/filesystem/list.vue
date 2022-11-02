@@ -203,6 +203,9 @@ export default class List extends Vue{
       if(!loading){
         this.$store.commit("SET_LOADING",false)
       }
+      if(this.list.length===0){
+        return;
+      }
       let res:any = await Service.get_file_use({
         region_id:this.list[0].region_id,
         volume_ids:this.list.map(item=>item.nas_id)
@@ -212,7 +215,7 @@ export default class List extends Vue{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
         //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
-          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? Number(res.data[item.nas_id].used/res.data[item.nas_id].total).toFixed(6) : 0.00
+          let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : '0.00'
           console.log('num',num)
           this.$set(item,'used_percent',`${num}%`)
           this.$set(item,'use_total_size',`${size} / ${total}`)
