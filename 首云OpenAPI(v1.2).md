@@ -389,7 +389,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)** |
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                 |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                                             |
-| DescriptionNum | | string | 否 | 001 | int字符串；启用编号功能后，将自动为名称加上由3至6位数字组成的后缀，当一次性开通多台云服务器时，每台云服务器的编号将顺序加1。禁用编号后，一次性开通多台云服务器时每台服务器的名称将一样。 |
+| DescriptionNum | string | 否 | 001 | int字符串；启用编号功能后，将自动为名称加上由3至6位数字组成的后缀，当一次性开通多台云服务器时，每台云服务器的编号将顺序加1。禁用编号后，一次性开通多台云服务器时每台服务器的名称将一样。 |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
