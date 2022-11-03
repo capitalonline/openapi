@@ -471,7 +471,7 @@ export default class Monitor extends Vue{
     if (this.source_name === 'monitor' && !sessionStorage.getItem('vm_monitor')) {
       this.FnGetDetail();
     }
-  }transfer_vm_conf_system_disk_size
+  }
   private destroyed() {
     sessionStorage.removeItem('vm_monitor')
   }

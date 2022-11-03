@@ -104,9 +104,9 @@ export default class RollBack extends Vue{
     private getIsMin(){
         let flag:boolean=true
         if(this.unit==='TB'){//this.min为当前总量
-            flag=this.size>this.max
+            flag=this.size>Math.ceil(this.max)
         }else{
-            flag=this.size>this.min
+            flag=this.size>Math.ceil(this.min)
         }
         console.log('flag',flag)
         return flag
