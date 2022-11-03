@@ -43,7 +43,7 @@ export default class LeftMenu extends Vue {
   $store;
   private active_menu: string = '';
   private active_name: string = ''
-  private all_menu = [
+  private all_menu:any = [
     {
       name: "overview",
       label: "概览"
@@ -93,7 +93,15 @@ export default class LeftMenu extends Vue {
         {
           name: "vm_list",
           label: "NAS转发虚拟机"
-        }
+        },
+        {
+          name: "notFilesystem",
+          label: "不可用文件系统"
+        },
+        {
+          name: "nasSet",
+          label: "NAS设置"
+        },
       ]
     },
     { name: 'event_list', label: "任务管理" },
@@ -119,6 +127,13 @@ export default class LeftMenu extends Vue {
         { name: 'project_list', label: "项目管理" },
       ]
     },
+    {
+      name: "destroyed",
+      label: "已销毁资源",
+      children: [
+        { name: 'ecs_destroyed', label: "云服务器",noAuth:true, },
+      ]
+    },
   ];
   private menu: Array<object> = [];
   private FnChangeUrl(name): void {
@@ -133,7 +148,7 @@ export default class LeftMenu extends Vue {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          if (this.$store.state.auth_info[child.name]) {
+          if (this.$store.state.auth_info[child.name] || child.noAuth) {
             child_list.push(child)
           }
         })
@@ -145,7 +160,7 @@ export default class LeftMenu extends Vue {
           })
         }
       } else {
-        if (this.$store.state.auth_info[item.name]) {
+        if (this.$store.state.auth_info[item.name] || item.noAuth) {
           this.menu.push(item)
         }
       }

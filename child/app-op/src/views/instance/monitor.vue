@@ -87,6 +87,11 @@
           :data="gpu_memory_used"
           class="item"
         ></line-echart>
+        <line-echart
+          chart_id="gpu_frequency"
+          :data="gpu_frequency"
+          class="item"
+        ></line-echart>
       </div>
     </el-card>
   </div>

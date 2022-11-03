@@ -25,9 +25,10 @@
 <script lang="ts">
 import { Component, Prop, Vue,Watch } from 'vue-property-decorator';
 import { logout,getPodList } from '../https/public';
+import storage from '../store/storage';
 @Component
 export default class Header extends Vue {
-  private default_pod = ''
+  private default_pod = '';
   private pod_list = {
     "8da6bcb4-8ee7-11ec-aa0c-7a74fbaf3280": "POD206(东莞A)",
     "700c5158-992a-11ec-bf8e-1ac2878efae2": "POD206(宿迁A)"
@@ -42,7 +43,7 @@ export default class Header extends Vue {
     });
     if(res.code==='Success'){
       this.pod_list = res.data;
-      this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : ''
+      this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : '';
     }
   }
   private change_pod(val){
@@ -52,7 +53,8 @@ export default class Header extends Vue {
   }
   @Watch('default_pod')
   private watch_pod(){
-    this.$store.commit('SET_POD',this.default_pod)
+    this.$store.commit('SET_POD',this.default_pod);
+    storage.set('pod_name',this.pod_list[this.default_pod])
   }
   private FnToWiki(type) {
     if (type === 'public') {

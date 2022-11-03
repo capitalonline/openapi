@@ -138,7 +138,7 @@ export default class ActionBlock extends Vue {
     for (let i in this.search_option) {
       if (["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
-      } else {
+      }else {
         this.search_value = {};
       }
     }
@@ -154,6 +154,13 @@ export default class ActionBlock extends Vue {
           this.search_option[key].default_value
         );
         flag++;
+      }
+      if (this.search_option[key].type==='composite') {
+        this.$set(
+          this.search_value,
+          key+'sub',
+          this.search_option[key].list[0].type
+        );
       }
     }
     if (flag > 0 || this.type==='physical') {

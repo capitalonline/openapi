@@ -124,6 +124,18 @@ const routes: RouteConfig[] = [
     meta:{menu:'vm_list'}
   },
   {
+    path:'/notFilesystem',
+    name:'notFilesystem',
+    component:()=>import('../views/filesystem/notFilesystem.vue'),
+    meta:{menu:'notFilesystem'}
+  },
+  {
+    path:'/nasSet',
+    name:'nasSet',
+    component:()=>import('../views/filesystem/set.vue'),
+    meta:{menu:'nasSet'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
@@ -170,6 +182,12 @@ const routes: RouteConfig[] = [
     name: 'message_list',
     component: () => import('../views/message/list.vue'),
     meta: {meta: 'message_list'}
+  },
+  {
+    path: '/ecs_destroyed',
+    name: 'ecs_destroyed',
+    component: () => import('../views/instance/destroyedList.vue'),
+    meta: {meta: 'ecs_destroyed', no_auth: true}
   },
   {
     path: '/404',

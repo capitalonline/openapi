@@ -1,11 +1,23 @@
 // 事件列表
 import service from "../http"
-import { getNasOptions,getUsedOptions } from '../common'
+import { getNasOptions,getNas1Options,getUsedOptions } from '../common'
 
 export default{
     //获取文件系统列表接口
     get_nas_list(req){
         return service(getNasOptions('POST','/nas/nas_list/',req))
+    },
+    //获取不可用文件系统列表接口
+    get_not_use_list(req){
+        return service(getNas1Options('POST','/nas/get_unavailable_nas',req))
+    },
+    //修改更新时间接口
+    edit_update_time(req){
+        return service(getNas1Options('POST','/nas/change_update_during',req))
+    },
+    //获取设置列表
+    get_set_list(req){
+        return service(getNas1Options('GET','/nas/get_update_during',req))
     },
     //获取文件系统详情
     get_nas_detail(req){

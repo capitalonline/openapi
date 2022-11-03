@@ -78,10 +78,11 @@
                                         </el-select>
                                         <el-input
                                             size="small"
-                                            v-model.number="inn.num">
+                                            v-model="inn.num"
+                                            oninput="value= value.match(/\d+(\.\d{0,9})?/) ? value.match(/\d+(\.\d{0,9})?/)[0] : ''">
                                             <span slot="suffix">{{inn.metricUnit}}</span>
                                         </el-input>
-                                        <span class="error_message remark" v-if="inn.num==='' || !Number.isInteger(inn.num)">{{inn.num==='' ? '请输入指标项值' : '指标项值需为数字'}}</span>
+                                        <span class="error_message remark" v-if="inn.num===''">{{'请输入指标项值'}}</span>
                                         
                                      <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
@@ -526,7 +527,7 @@ export default class RuleConfig extends Vue{
         const form = this.tab_key==="0" ? this.$refs.rules_form[0] as Form : this.$refs.event_form[0] as Form;
         form.validate(async (valid)=>{
             if(valid){
-                if(this.tab_key==="0" && this.rule_data.level.some(item=>item.num==="" || !Number.isInteger(item.num))){
+                if(this.tab_key==="0" && this.rule_data.level.some(item=>item.num==="")){
                     return;
                 }
                 const {selected_products,tab_key,edit_key,edit_rule_id} = this
