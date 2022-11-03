@@ -1,6 +1,6 @@
 <template>
     <div >
-        <time-group :type="true" @fn-emit="getTime"></time-group>
+        <time-group :type="true" @fn-emit="getTime" :dis_day="61" :timeList="timeList"></time-group>
         <el-card class="m-bottom20">
             <disk-chart
                 :chart_id="'use'"
@@ -50,7 +50,14 @@ export default class Monitor extends Vue{
         console.log('this.time',this.time)
         this.get_info()
     }
-    private units=['B','KB','MB','GB','TB','PB','EB','ZB']
+    private units=['B','KB','MB','GB','TB','PB','EB','ZB'];
+    private timeList={
+        '1_hour': {label: '1小时', time: 1000 * 60 * 60},
+        '12_hour': {label: '12小时', time: 1000 * 60 * 60 * 12},
+        day: {label: '1天', time: 1000 * 60 * 60 * 24},
+        week: {label: '7天', time: 1000 * 60 * 60* 24 * 7},
+        '14_day': {label: '14天', time: 1000 * 60 * 60* 24 * 14}
+    }
     private computeUnit(value,num=0){
         if(value>=1024){
             return this.computeUnit(value/1024,++num)
@@ -138,6 +145,6 @@ export default class Monitor extends Vue{
             
         })
     }
-    setData
+    // setData
 }
 </script>

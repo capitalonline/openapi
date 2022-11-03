@@ -52,7 +52,7 @@ module.exports = {
             '^/snapshot/api': '/api'
         }
       },
-      '/nas': {
+      '/nas_op': {
         target: 'http://cloudos-nas-op.gic.test',
         // target:'http://ecs-business.gic.test',
         changeOrigin: true,

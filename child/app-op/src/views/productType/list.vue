@@ -5,6 +5,7 @@
                 <el-button type="primary" @click="add('add',{})" :disabled="!authList.includes('add')">新增</el-button>
             </template>
         </action-block>
+        <div class="error_message m-bottom10">红色：请补充配置信息！</div>
         <el-table
             :data="list"
             border
@@ -45,6 +46,11 @@
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
                 </template>
             </el-table-column>
+            <!-- <el-table-column prop="data_disk_info" label="数据盘">
+                <template slot-scope="scope">
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
+                </template>
+            </el-table-column> -->
             <el-table-column prop="network_card_info" label="网卡">
                 <template slot-scope="scope">
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.network_card_type}}<span v-if="scope.row.network_card_type"> * </span>{{scope.row.network_card_size}}</span>

@@ -82,7 +82,8 @@
                   <template #default="scope" v-else-if="inn.prop==='private_net'">
                     <div v-if="scope.row.private_net">
                       {{ scope.row.private_net }}
-                      （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+                      （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+                      <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
                     </div>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='pub_net'">
@@ -90,13 +91,17 @@
                       <span class="circel-border" v-if=" scope.row.eip_info[scope.row.pub_net] && scope.row.eip_info[scope.row.pub_net].conf_name" >
                         {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
                       </span>
-                      {{ scope.row.pub_net }}（vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+                      {{ scope.row.pub_net }}
+                      （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
+                      <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
                     </div>
                     <div v-for="i in scope.row.virtual_net" :key="i">
                       <span class="circel-border" v-if="scope.row.eip_info[i] && scope.row.eip_info[i].conf_name">
                         {{ scope.row.eip_info[i].conf_name }}
                       </span>
-                      {{ i }}（vlan {{ scope.row.vlan[FnGetNet(i)] }}）</div>
+                      {{ i }}
+                      （vlan {{ scope.row.eip_info[i].vlan_id }}）
+                    </div>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='pub_ip'">
                     <div v-if="scope.row.eip_info[scope.row.pub_net] &&scope.row.eip_info[scope.row.pub_net].conf_name">
@@ -355,7 +360,7 @@ export default class PhysicalList extends Vue {
     ]
   private custom_host=[
     'host_name','host_ip','out_band_address','machine_status_name','power_status_name',
-    'ecs_num','host_type_ch','host_purpose_ch','host_attribution__name','host_source',
+    'ecs_num','host_type_ch','host_purpose_ch','host_attribution_name','host_source',
     'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','create_time'
   ]
   private backendList:any=[
@@ -444,7 +449,7 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_purpose_ch'){
         item = Object.assign(item,{},{column_key:'host_purpose',list:this.host_uses})
       }
-      if(item.prop==='host_attribution__name'){
+      if(item.prop==='host_attribution_name'){
         item = Object.assign(item,{},{column_key:'host_attribution_id',list:this.host_belongs})
       }
       if(item.prop==='host_source'){
@@ -588,7 +593,7 @@ export default class PhysicalList extends Vue {
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
-      this.setList(this.host_belongs,'host_attribution__name')
+      this.setList(this.host_belongs,'host_attribution_name')
     }
   }
   private FnToDetail(id) {

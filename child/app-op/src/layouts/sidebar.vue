@@ -82,7 +82,7 @@ export default class SideBar extends Vue {
         },
         {
           name: "product_inventory_list",
-          label: "产品库存"
+          label: "商品库存"
         }
       ]
     },

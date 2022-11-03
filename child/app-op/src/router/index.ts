@@ -52,7 +52,7 @@ const routes: RouteConfig[] = [
     path: '/product_inventory',
     name: 'product_inventory_list',
     component: () => import('../views/inventory/product.vue'),
-    meta: {label: '产品库存', menu: 'product_inventory_list'},
+    meta: {label: '商品库存', menu: 'product_inventory_list'},
   },
   {
     path: '/404',

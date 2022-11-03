@@ -202,10 +202,10 @@ const routes: RouteConfig[] = [
     meta: {meta: 'message_list'}
   },
   {
-    path: '/ecs_deatroyed',
-    name: 'ecs_deatroyed',
+    path: '/ecs_destroyed',
+    name: 'ecs_destroyed',
     component: () => import('../views/instance/destroyedList.vue'),
-    meta: {meta: 'ecs_deatroyed'}
+    meta: {meta: 'ecs_destroyed', no_auth: true}
   },
   {
     path: '/404',
