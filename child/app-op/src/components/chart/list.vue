@@ -92,6 +92,7 @@ export default class LineEchart extends Vue {
     };
     this.option.tooltip = {
       trigger: 'axis',
+      confine: true,
       // formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
     };
     this.FnGetxAxis();

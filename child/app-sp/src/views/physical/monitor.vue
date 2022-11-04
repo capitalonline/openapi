@@ -188,7 +188,7 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: []
+    legend: [],
   }
   private gpu_memory_used = {
     title: '显存使用率',
@@ -196,7 +196,7 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: []
+    legend: [],
   }
   private gpu_temperature = {
     title: 'GPU温度',
@@ -204,7 +204,7 @@ export default class Monitor extends Vue{
     xTime: [],
     yValue: [],
     resize: 0,
-    legend: []
+    legend: [],
   }
   private gpu_frequency = {
     title: 'GPU主频',
@@ -296,7 +296,6 @@ export default class Monitor extends Vue{
       index++;
     })
     this[type].resize++;
-    // console.log('FnHandleMoreData',this[type])
   }
   private FnGetDiskInfo(type, reqData) {
     Service.get_disk(type, { queryType: 'use', ...reqData }).then((resData: any) => {
@@ -321,12 +320,50 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
+  private FnHandleMoreGpuNameData(data,ecs_list){//处理多个gpu卡数据，又是多条线
+    let instance:any=[]  
+    let list=[]  
+    let indexs = []
+    data.map((item,index)=>{
+      if(item.data.xTime){
+        list.push(item)
+        indexs.push(index)
+      }
+    })
+    let instanceList = ecs_list.filter((ecs,i)=>indexs.includes(i))
+    if(list.length===0){
+      return {data:{}}
+    }
+    let obj = list[0]
+    let timeIndex:number=0
+    list.map((item,index)=>{//把几个卡的数据合在一起，其余的数据是公用的，除了gpuname和yvalue
+      if(item.data.xTime.length > list[timeIndex].data.xTime.length){
+        timeIndex=index
+      }
+      item.data.gpuName.map(gpu=>{//每个卡对应一个云主机id
+        instance.push(instanceList[index])
+      })
+      if(index!==0){
+        obj.data.gpuName= [...obj.data.gpuName,...item.data.gpuName];
+        obj.data.yValues=[...obj.data.yValues,...item.data.yValues]
+      }        
+    })
+    obj.data.gpuName = obj.data.gpuName.map((gpu,i)=>{
+      let name = instance[i].ecs_name.length>20 ? `${instance[i].ecs_name.slice(0,20)}...` : instance[i].ecs_name
+      return instance[i].customer_name+'-'+name+'-'+gpu
+    })
+    obj.data.xTime = list[timeIndex].data.xTime
+    return obj
+  }
   private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
+    console.log('resData',resData)
     let index = 0;
+    let timeIndex:number=0
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
           item.data.metricInfo = item.data.metricInfo || item.data.device ||item.data.gpuName;
           if (index === 0) {
+            timeIndex = 0
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
             this[type].unit = item.data.unit;
@@ -344,6 +381,7 @@ export default class Monitor extends Vue{
         index++;
       })
       this[type].resize++;
+      console.log('this[type]',this[type])
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
@@ -375,8 +413,9 @@ export default class Monitor extends Vue{
         return item.status !== 'destroy' && (this.host_info.host_purpose === 'GPU' ? true : item.is_gpu)
       })      
     }
+    this.gpu_used.yValue = [];
     Promise.all(ecs_list.map(item => {
-      this.gpu_used.legend.push(item.ecs_name)
+      // this.gpu_used.legend.push(item.ecs_name)
       return Service.get_gpu(type, {
         queryType: 'gpu_usage',
         hostId: item.ecs_id,
@@ -388,8 +427,10 @@ export default class Monitor extends Vue{
         end: reqData.end
       })
     })).then(resData => {
-      this.FnHandleMoreData('gpu_used', resData)
+      this.FnHandleDubleData('gpu_used', [this.FnHandleMoreGpuNameData(resData,ecs_list)])
+      // this.FnHandleMoreData('gpu_used', resData)
     })
+    this.gpu_memory_used.yValue = [];
     Promise.all(ecs_list.map(item => {
       this.gpu_memory_used.legend.push(item.ecs_name)
       return Service.get_gpu(type, {
@@ -403,8 +444,10 @@ export default class Monitor extends Vue{
         end: reqData.end
       })
     })).then(resData => {
-      this.FnHandleMoreData('gpu_memory_used', resData)
+      this.FnHandleDubleData('gpu_memory_used', [this.FnHandleMoreGpuNameData(resData,ecs_list)])
+      // this.FnHandleMoreData('gpu_memory_used', resData)
     })
+    this.gpu_temperature.yValue = [];
     Promise.all(ecs_list.map(item => {
       this.gpu_temperature.legend.push(item.ecs_name)
       return Service.get_gpu(type, {
@@ -418,13 +461,12 @@ export default class Monitor extends Vue{
         end: reqData.end
       })
     })).then(resData => {
-      this.FnHandleMoreData('gpu_temperature', resData)
+      this.FnHandleDubleData('gpu_temperature', [this.FnHandleMoreGpuNameData(resData,ecs_list)])
+      // this.FnHandleMoreData('gpu_temperature', resData)
     })
-    let proList = []
+    let graphicsList=[]
+    let memoryList=[]
     ecs_list.forEach((item:any)=>{
-      // console.log('item',item.ecs_name)
-      // this.gpu_frequency.legend.push(item.ecs_name);
-      // this.gpu_frequency.legend.push(item.ecs_name);
       let data={
         hostId: item.ecs_id,
         region: reqData.region,
@@ -434,32 +476,22 @@ export default class Monitor extends Vue{
         start: reqData.start,
         end: reqData.end
       }
-      proList.push(Service.get_gpu(type, {
+      graphicsList.push(Service.get_gpu(type, {//每一个云主机都得掉一次两个接口
         queryType: 'gpu_clocks_graphics',
         ...data
       }))
-      proList.push(Service.get_gpu(type, {
+      memoryList.push(Service.get_gpu(type, {
         queryType: 'gpu_clocks_memory',
         ...data
       }))
     })
     this.gpu_frequency.yValue = [];
-    Promise.all(proList).then(resData => {
-      resData.map(item=>{
-        if(item.data.yValues && item.data.yValues.length>0){
-          item.data.yValues = [item.data.yValues];
-        }
-        let list=[]
-        ecs_list.forEach((inn:any)=>{
-          item.data.gpuName && item.data.gpuName.forEach((gpu:any)=>{
-            list.push(inn.ecs_name+'-'+gpu)
-          })
-        })
-        item.data.gpuName = list
-        return item;
+    Promise.all(graphicsList).then(resData => {
+      Promise.all(memoryList).then(res => {
+        this.FnHandleDubleData('gpu_frequency', [this.FnHandleMoreGpuNameData(resData,ecs_list),this.FnHandleMoreGpuNameData(res,ecs_list)])
       })
-      this.FnHandleDubleData('gpu_frequency', resData)
     })
+    
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
