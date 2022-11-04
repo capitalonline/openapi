@@ -451,15 +451,31 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
+  
   private FnGetGpuInfo(type, reqData) {
+    this.gpu_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'gpu_usage'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_used', resData);
+      this.FnHandleDubleData('gpu_used', [resData]);
     })
+    this.gpu_memory_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'memory_usage'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_memory_used', resData);
+      this.FnHandleDubleData('gpu_memory_used', [resData]);
     })
+    this.gpu_temperature.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'temperature'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_temperature', resData);
+      this.FnHandleDubleData('gpu_temperature', [resData]);
+    })
+    this.gpu_frequency.yValue = [];
+    Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
+      Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
+    ]).then(resData => {
+      // resData.map(item=>{
+      //   if(item.data.yValues && item.data.yValues.length>0){
+      //     item.data.yValues = item.data.yValues
+      //   }
+      //   return item;
+      // })
+      this.FnHandleDubleData('gpu_frequency', resData)
     })
     this.gpu_frequency.yValue = [];
     Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
