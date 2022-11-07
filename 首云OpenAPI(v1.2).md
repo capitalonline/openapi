@@ -225,6 +225,8 @@
        - [7.RenameSnapshot](#7renamesnapshot)
        - [8.DeleteSnapshot](#8deletesnapshot)
        - [9.DescribeSnapshotQuota](#9describesnapshotquota)
+       - [10.CreateImageBySnapshot](#10reateimagebysnapshot)
+       - [11.CopySnapshotCrossAZ](#11copysnapshotcrossaz)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -389,7 +391,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Password           | string   | 是       | EcsV587!                                                     | 云服务器密码 **(注: 公钥方式创建的云服务器也需要用户提供密码)** |
 | PublicKey          | string   | 否       |                                                              | 云服务器公钥                                                 |
 | InstanceName       | string   | 是       | shouduzaixhost                                               | 云服务器的主机名                                             |
-| DescriptionNum | string | 否 | 001 | int字符串；启用编号功能后，将自动为名称加上由3至6位数字组成的后缀，当一次性开通多台云服务器时，每台云服务器的编号将顺序加1。禁用编号后，一次性开通多台云服务器时每台服务器的名称将一样。 |
+| DescriptionNum     | string   | 否       | 001                                                          | int字符串；启用编号功能后，将自动为名称加上由3至6位数字组成的后缀，当一次性开通多台云服务器时，每台云服务器的编号将顺序加1。禁用编号后，一次性开通多台云服务器时每台服务器的名称将一样。 |
 | InstanceChargeType | string   | 否       | PostPaid                                                     | 云主机的付费方式，取值范围：    PrePaid：预付费，包年包月。    PostPaid（默认）：按量付费。 |
 | AutoRenew          | interger | 否       | 1                                                            | 包年包月云主机是否自动续费，1为自动续费（默认），0为不自动续费 |
 | PrepaidMonth       | interger | 否       | 0                                                            | 包年包月云主机购买月数，输入0为购买到月底，输入1为购买一个自然月，默认为0。 |
@@ -1266,7 +1268,7 @@ def down_card(InterfaceId, InstanceId):
 | ----------- | ------ | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | InstanceId  | string | 是       | f9053ea8-fc23-4032-8a7f-01def773dw22                         | 云服务器编号                                                 |
 | MetricName  | string | 是       | CPUUtilization、RAMUtilization、DiskWriteIOPS、DiskReadIOPS、DiskWriteBPS、DiskReadBPS、InterfaceInRate、InterfaceOutRate | 实例各项指标，CPU(cpu)、内存(ram)、硬盘IOPS(iops)、硬盘吞吐量(throughput)、网卡流量(nic) |
-| Period      | int    | 是       | 60、900                                                | 监控数据粒度，一分钟粒度(60)、十五分钟粒度(900) |
+| Period      | int    | 是       | 60、900                                                      | 监控数据粒度，一分钟粒度(60)、十五分钟粒度(900)              |
 | StartTime   | string | 是       | 2019-10-09 15:30:00                                          | 开始时间                                                     |
 | EndTime     | string | 是       | 2019-10-09 16:30:00                                          | 结束时间                                                     |
 | InterfaceId | string | 否       | f9053ea8-fc23-4032-8a7f-01def77b4cc0                         | 网卡的编号，可以在查询云服务器详情中查出                     |
@@ -15723,7 +15725,7 @@ def ebs_create_snapshot():
     "Msg": "创建快照任务下发成功！",
     "Data": {
         "EventId": "639e2f92-4f8f-11ed-ae23-be26ad5c0652",
-		"SnapshotId":"s-disk-r5cqowzrkcdzsyyj-aez6-01"
+      "SnapshotId":"s-disk-r5cqowzrkcdzsyyj-aez6-01"
     }
 }
 ~~~
@@ -15955,6 +15957,118 @@ def ebs_describe_snapshot_quota():
         "FreeQuota": 0
     }
 }
+```
+
+### 10.CreateImageBySnapshot
+
+**Action**: CreateImageBySnapshot
+
+**描述**：使用快照创建自定义镜像
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数       | 说明     | 类型   | 是否必传 | 示例        |
+| ---------- | -------- | ------ | -------- | ----------- |
+| SnapshotId | 快照ID   | string | 是       | "s-disk-**" |
+| ImageName  | 镜像名称 | String | 是       | 镜像名称    |
+
+**返回参数**
+
+| 参数    | 类型   | 示例                                 | 说明   |
+| ------- | ------ | ------------------------------------ | ------ |
+| EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
+| ImageId | String | Img-**                               | 镜像ID |
+
+**请求示例**
+
+```python
+def create_image_by_snapshot():
+    """
+    使用快照创建自定义镜像
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "CreateImageBySnapshot"
+    method = "POST"
+    param = {}
+    body = {
+        "SnapshotId":"snapshotid1",
+        "ImageName":"测试镜像名称"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content, json=body)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "系统盘快照创建镜像成功！",
+    "Data": {
+        "EventId": "eddb28de-4f91-11ed-988b-82b53449da97",
+        "ImageName": "测试镜像名称"
+    }
+}
+```
+
+### 11.CopySnapshotCrossAZ
+
+**Action**: CopySnapshotCrossAZ
+
+**描述**：跨可用区复制快照
+
+**请求地址**：api.capitalonline.net/ebs/v1
+
+**请求方法**：POST
+
+**请求参数：**
+
+| 参数              | 说明           | 类型   | 是否必传 | 示例        |
+| ----------------- | -------------- | ------ | -------- | ----------- |
+| SnapshotId        | 快照ID         | string | 是       | "s-disk-**" |
+| AvailableZoneCode | 目标可用区Code | String | 是       | CN_Suqian_A |
+
+**返回参数**
+
+| 参数       | 类型   | 示例                                 | 说明                       |
+| ---------- | ------ | ------------------------------------ | -------------------------- |
+| EventId    | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id                     |
+| SnapshotId | String | Sl-disk-**                           | 复制到目标可用区后的快照ID |
+
+**请求示例**
+
+```python
+def copy_snapshot():
+    """
+    跨可用区复制快照
+    """
+    ebs_url = 'http://api.capitalonline.net/ebs/v1'
+    action = "CopySnapshotCrossAZ"
+    method = "POST"
+    param = {}
+    body = {
+        "SnapshotId":"snapshotid1",
+        "AvailableZoneCode":"CN_Suqian_A"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ebs_url, param)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content, json=body)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+        "EventId": "eddb28de-4f91-11ed-988b-82b53449da97",
+        "SnapshotId": "s-disk-**"
+  }
 ```
 
 ## 其他公共接口
