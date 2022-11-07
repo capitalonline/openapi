@@ -44,6 +44,7 @@
        * [32.RebootInstances](#32RebootInstances)
        * [33.BatchAddNetworkInterfaces](#33BatchAddNetworkInterfaces)
        * [34.BatchDeleteNetworkInterfaces](#34BatchDeleteNetworkInterfaces)
+       * [35.DescribeNetworkCardFlow](#35DescribeNetworkCardFlow)
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
@@ -2141,17 +2142,17 @@ def down_card(InterfaceId, InstanceId):
 }
 ```
 
-### 16.DescribeNetworkCardFlow
+### 35.DescribeNetworkCardFlow
 
-**Action：DescribeNetworkCardFlow**
-
-**描述：** 获取网卡流量数据
-
-**请求地址:** cdsapi.capitalonline.net/ccs
-
-**请求方法：POST**
-
-**请求参数：**
+ **Action：DescribeNetworkCardFlow**
+ 
+ **描述：** 获取网卡流量数据
+ 
+ **请求地址:** cdsapi.capitalonline.net/ccs
+ 
+ **请求方法：POST**
+ 
+ **请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值                               | 描述                                     |
 | ----------- | ------ | -------- | ------------------------------------ | ---------------------------------------- |
@@ -2161,7 +2162,7 @@ def down_card(InterfaceId, InstanceId):
 | StartTime   | string | 是       | 2019-10-09 15:30:00                  | 开始时间                                 |
 | EndTime     | string | 是       | 2019-10-09 16:30:00                  | 结束时间                                 |
 
-**返回参数：**
+ **返回参数：**
 
 | 名称            | 类型     | 示例值                               | 描述                                     |
 | --------------- | -------- | ------------------------------------ | ---------------------------------------- |
@@ -2174,13 +2175,13 @@ def down_card(InterfaceId, InstanceId):
 | InputFlow       | Float    | 0.89531                              | 入向流量统计(单位GB)                     |
 | OutputFlow      | Float    | 0.74532                              | 出向流量统计(单位GB)                     |
 
-**错误码：**
+ **错误码：**
 
 | httpcode | 错误码                       | 错误信息                                            | 描述                   |
 | -------- | ---------------------------- | --------------------------------------------------- | ---------------------- |
 | 400      | InvalidInterfaceID.Malformed | The specified parameter "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
-**返回示例：**
+ **返回示例：**
 
 ```json
 {
