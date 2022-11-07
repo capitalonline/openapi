@@ -27,7 +27,7 @@
                     </div>
                     <el-descriptions class="margin-top" :column="2">
                         <el-descriptions-item v-for="(item,i) in vmInfo" :key="i" :label="item.label">
-                            <el-button type="text" v-if="i==='transfer_vm_id'" @click="FnToMonitor(detailInfo[i])">{{detailInfo[i]}}</el-button>
+                            <el-button type="text" v-if="i==='transfer_vm_id'" @click="FnToMonitor(detailInfo.vm_info)">{{detailInfo[i]}}</el-button>
                             <div v-else-if="i==='ip'">
                                 <div>VPC:{{detailInfo.transfer_vm_vpc_ip}}</div>
                                 <div>存储网:{{detailInfo.transfer_vm_storage_ip}}</div>
