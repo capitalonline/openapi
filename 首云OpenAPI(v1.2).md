@@ -410,6 +410,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。 |
 | **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                 | 用户自定义数据，格式必须为base64编码                         |
 | DryRun                | Bool     | 否       | false                              |     试运行，测试使用，不执行具体逻辑。默认false不测试                                     |
+| SwapOff                 | Bool     | 否       | false      |     是否关闭云服务器系统盘swap分区。默认false不关闭       |
 
 
 
@@ -903,6 +904,7 @@ def add_disk(vm_id):
 | PublicKey     | string | 否       |                                              | 云服务器公钥                                                 |
 | ProductId     | string | 否       |                                              | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
 | **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="] | 用户自定义数据，格式必须为base64编码                         |
+| SwapOff                 | Bool     | 否       | false           |     是否关闭云服务器系统盘swap分区。默认false不关闭              |
 
   **返回参数：**
 
