@@ -16066,9 +16066,13 @@ def copy_snapshot():
 
 ```json
 {
+    "Code": "Success",
+    "Msg": "快照复制成功！",
+    "Data": {
         "EventId": "eddb28de-4f91-11ed-988b-82b53449da97",
         "SnapshotId": "s-disk-**"
   }
+}
 ```
 
 ## 其他公共接口
