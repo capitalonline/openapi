@@ -409,7 +409,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | UTC                | Bool     | 否       | true                                                         | 是否设置时区为 UTC                                           |
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。 |
 | **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                 | 用户自定义数据，格式必须为base64编码                         |
-| DryRun                | Bool     | 否       | False                              |     试运行，测试使用，不执行具体逻辑。默认False不测试                                     |
+| DryRun                | Bool     | 否       | false                              |     试运行，测试使用，不执行具体逻辑。默认false不测试                                     |
 
 
 
