@@ -2172,7 +2172,6 @@ def down_card(InterfaceId, InstanceId):
 | Data            | Dict     | {}                                   | 返回数据列表                             |
 | InstanceId      | String   | c4987c70-5bfc-11ed-82a5-c28d140f35b4 | 实例ID                                   |
 | InterfaceId     | string   | 7226c99a-0b2c-11ed-aa5b-6ac04c76c0d0 | 网卡的编号，可以在查询云服务器详情中查出 |
-| Period          | String   | 300                                  | 监控颗粒度，默认5分钟                    |
 | NetworkCardFlow | Dick     | {}                                   | 网卡流量信息                             |
 | InputFlow       | Float    | 0.89531                              | 入向流量统计(单位GB)                     |
 | OutputFlow      | Float    | 0.74532                              | 出向流量统计(单位GB)                     |
