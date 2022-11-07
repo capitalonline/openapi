@@ -15973,15 +15973,15 @@ def ebs_describe_snapshot_quota():
 
 | 参数       | 说明     | 类型   | 是否必传 | 示例        |
 | ---------- | -------- | ------ | -------- | ----------- |
-| SnapshotId | 快照ID   | string | 是       | "s-disk-**" |
-| ImageName  | 镜像名称 | String | 是       | 镜像名称    |
+| SnapshotId | 快照ID   | string | 是       | s-disk-** |
+| ImageName  | 镜像名称 | string | 是       | 镜像名称    |
 
 **返回参数**
 
 | 参数    | 类型   | 示例                                 | 说明   |
 | ------- | ------ | ------------------------------------ | ------ |
 | EventId | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id |
-| ImageId | String | Img-**                               | 镜像ID |
+| ImageId | string | img-**                               | 镜像ID |
 
 **请求示例**
 
@@ -16012,7 +16012,7 @@ def create_image_by_snapshot():
     "Msg": "系统盘快照创建镜像成功！",
     "Data": {
         "EventId": "eddb28de-4f91-11ed-988b-82b53449da97",
-        "ImageName": "测试镜像名称"
+        "ImageId": "img-**"
     }
 }
 ```
@@ -16031,15 +16031,15 @@ def create_image_by_snapshot():
 
 | 参数              | 说明           | 类型   | 是否必传 | 示例        |
 | ----------------- | -------------- | ------ | -------- | ----------- |
-| SnapshotId        | 快照ID         | string | 是       | "s-disk-**" |
-| AvailableZoneCode | 目标可用区Code | String | 是       | CN_Suqian_A |
+| SnapshotId        | 快照ID         | string | 是       | s-disk-** |
+| AvailableZoneCode | 目标可用区Code | string | 是       | CN_Suqian_A |
 
 **返回参数**
 
 | 参数       | 类型   | 示例                                 | 说明                       |
 | ---------- | ------ | ------------------------------------ | -------------------------- |
 | EventId    | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id                     |
-| SnapshotId | String | Sl-disk-**                           | 复制到目标可用区后的快照ID |
+| SnapshotId | string | Sl-disk-**                           | 复制到目标可用区后的快照ID |
 
 **请求示例**
 
