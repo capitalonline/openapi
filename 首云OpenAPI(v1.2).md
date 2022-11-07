@@ -16039,7 +16039,7 @@ def create_image_by_snapshot():
 | 参数       | 类型   | 示例                                 | 说明                       |
 | ---------- | ------ | ------------------------------------ | -------------------------- |
 | EventId    | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id                     |
-| SnapshotId | string | Sl-disk-**                           | 复制到目标可用区后的快照ID |
+| SnapshotId | string | s-2022-11-02**                           | 复制到目标可用区后的快照ID |
 
 **请求示例**
 
