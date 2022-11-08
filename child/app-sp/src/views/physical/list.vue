@@ -83,7 +83,6 @@
                     <div v-if="scope.row.private_net">
                       {{ scope.row.private_net }}
                       （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
-                      <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
                     </div>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='pub_net'">
@@ -93,15 +92,12 @@
                       </span>
                       {{ scope.row.pub_net }}
                       （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
-                      <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
                     </div>
                     <div v-for="i in scope.row.virtual_net" :key="i">
                       <span class="circel-border" v-if="scope.row.eip_info[i] && scope.row.eip_info[i].conf_name">
                         {{ scope.row.eip_info[i].conf_name }}
                       </span>
-                      {{ i }}
-                      （vlan {{ scope.row.eip_info[i].vlan_id }}）
-                    </div>
+                      {{ i }}（vlan {{ scope.row.eip_info[item].vlan_id }}）</div>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='pub_ip'">
                     <div v-if="scope.row.eip_info[scope.row.pub_net] &&scope.row.eip_info[scope.row.pub_net].conf_name">
@@ -266,6 +262,8 @@ export default class PhysicalList extends Vue {
     nic:{placeholder:'请输入网卡型号'},
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
+    product_id:{placeholder:'请输入物理机产品ID'},
+    product_name:{placeholder:'请输入物理机产品名称'},
     create_time: {
       placeholder: ['开始时间', '结束时间'],
       type: 'datetimerange',
@@ -374,13 +372,14 @@ export default class PhysicalList extends Vue {
     'local,block':'云盘/本地盘'
   }
   created() {
-      this.get_host_list_field()
+      
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
+      this.get_host_list_field()
       this.auth_list = this.$store.state.auth_info[this.$route.name];
       delete this.$store.state.host_search['']
       for(let i in this.search_option){
@@ -434,7 +433,7 @@ export default class PhysicalList extends Vue {
       this.get_host_filter_item();
     }
     this.custom_host.map((item:any)=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{className:'physical',width:'140px'})
@@ -521,6 +520,8 @@ export default class PhysicalList extends Vue {
       create_time,
       cpu,
       nic,
+      product_id,
+      product_name,
     }=this.search_data;
     let res:any=await Service.get_host_list({
       pod_id:this.$store.state.pod_id,
@@ -534,6 +535,8 @@ export default class PhysicalList extends Vue {
       host_rack,
       cpu,
       nic,
+      product_id,
+      product_name,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       page_index:this.page_info.current,
@@ -542,6 +545,7 @@ export default class PhysicalList extends Vue {
       sort_ram:this.search_data.sort_ram,
       sort_create_time:this.search_data.sort_create_time,
       sort_gpu_count:this.search_data.sort_gpu_count,
+      sort_gpu_allot:this.search_data.sort_gpu_allot,
       sort_ecs_num:this.search_data.sort_ecs_num,
       sort_host_name:this.search_data.sort_host_name,
       sort_out_band_address:this.search_data.sort_out_band_address,
@@ -629,7 +633,9 @@ export default class PhysicalList extends Vue {
       sort_host_ip,
       create_time,
       cpu,
-      nic
+      nic,
+      product_id,
+      product_name,
     }=this.search_data
     let obj = {
         pod_id:this.$store.state.pod_id,
@@ -644,6 +650,8 @@ export default class PhysicalList extends Vue {
         sort_host_ip,
         cpu,
         nic,
+        product_id,
+        product_name,
         start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         ...this.filter_info,
@@ -712,6 +720,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_ecs_num =undefined
     this.search_data.sort_create_time =undefined
     this.search_data.sort_gpu_count=undefined
+    this.search_data.sort_gpu_allot=undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
