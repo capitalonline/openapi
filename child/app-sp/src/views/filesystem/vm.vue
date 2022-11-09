@@ -68,7 +68,11 @@
                 </template>
             </el-table-column>
             <el-table-column prop="transfer_vm_conf_cpu" label="CPU"></el-table-column>
-            <el-table-column prop="transfer_vm_conf_mem" label="内存"></el-table-column>
+            <el-table-column prop="transfer_vm_conf_mem" label="内存">
+                <template slot-scope="scope">
+                    <span>{{scope.row.transfer_vm_conf_mem}}GB</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="transfer_vm_os_type" label="操作系统"></el-table-column>
             <el-table-column prop="transfer_vm_image" label="镜像名称"></el-table-column>
             <el-table-column prop="operate" label="操作">
