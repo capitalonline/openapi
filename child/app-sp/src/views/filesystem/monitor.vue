@@ -8,7 +8,7 @@
                 :title="`空间用量(GB)`"
             ></disk-chart>
         </el-card>
-        <el-card class="m-bottom20 m-top10">
+        <!-- <el-card class="m-bottom20 m-top10">
             <disk-chart
                 :chart_id="'iops'"
                 :data="chartData"
@@ -21,7 +21,7 @@
                 :data="chartData"
                 :title="`带宽(MB/s)`"
             ></disk-chart>
-        </el-card>
+        </el-card> -->
         
         
     </div>
@@ -137,7 +137,7 @@ export default class Monitor extends Vue{
                                 let val = this.computeUnit(item.value*1024*1024*1024)
                                 list.push(item.marker+'<span style="margin-right:10px">'+item.seriesName+'</span>'+val)
                             })
-                            return '<div>'+list.join('<br>')+'</div>'
+                            return '<div>'+params[0].axisValue.replace('\n',' ')+'<br>'+list.join('<br>')+'</div>'
                         }
                     }
                 }:null 
