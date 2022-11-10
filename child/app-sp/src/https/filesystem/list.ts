@@ -51,6 +51,9 @@ export default{
     get_file_use(req){
         return service(getUsedOptions('POST','/nas/get_nas_use',req))
     },
-    
+    //获取自定义列表项
+    get_field(req){
+        return service(getNasOptions('GET','/nas/get_nas_list_field',req))
+    },
 
 }

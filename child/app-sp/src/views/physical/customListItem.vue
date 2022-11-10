@@ -121,11 +121,17 @@ interface CustomItem {
 @Component
 export default class CustomListItem extends Vue {
   @Prop({default: false}) private visible!: boolean;
+  @Prop({default: 'host'}) private type!: string;
   @Prop({default: () => []}) private all_column_item!: Array<CustomItem>;
   @Prop({default: () => []}) private all_item!: Array<any>;
   private select_item: Array<string> = [];
+  private typeObj={
+    'host':{func:'SET_CUSTOM_HOST',value:'custom_host'},
+    'nas':{func:'SET_NAS_HOST',value:'nas_host'},
+  }
   private created() {
-    this.FnHandleSelectItem(this.$store.state.custom_host)
+    console.log('this',this.type)
+    this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
   }
   private FnHandleSelectItem(item) {
     if (item.length>0) {
@@ -141,7 +147,7 @@ export default class CustomListItem extends Vue {
       this.$message.warning("自定义列表项最少为5项，最多为25项")
       return;
     }
-    this.$store.commit('SET_CUSTOM_HOST', this.select_item)
+    this.$store.commit(this.typeObj[this.type].func, this.select_item)
     this.FnEmit()
     this.FnClose()
   }
