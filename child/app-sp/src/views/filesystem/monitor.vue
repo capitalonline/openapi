@@ -1,6 +1,6 @@
 <template>
     <div >
-        <time-group :type="true" @fn-emit="getTime" :dis_day="61" :timeList="timeList"></time-group>
+        <time-group :type="true" @fn-emit="getTime" :dis_day="30" :timeList="timeList"></time-group>
         <el-card class="m-bottom20">
             <disk-chart
                 :chart_id="'use'"
