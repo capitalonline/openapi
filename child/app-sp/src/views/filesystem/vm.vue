@@ -113,7 +113,7 @@ export default class CommonMirror extends Vue{
     private search_option:Object={
         transfer_vm_id:{placeholder:'请输入虚拟机ID'},
         nas_id:{placeholder:'请输入文件系统ID'},
-        vpc_id:{placeholder:'请输入VPC名称'},
+        vpc_name:{placeholder:'请输入VPC名称'},
         vpc_ip:{placeholder:'请输入VPC  IP地址'},
         transfer_vm_storage_ip:{placeholder:'请输入存储网IP地址'},
     }
