@@ -6,9 +6,14 @@
             </template> -->
         </action-block>
         <div class="icon m-bottom10">
-            <!-- <el-tooltip content="导出" placement="bottom" effect="light">
-                <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
-            </el-tooltip> -->
+            <el-tooltip content="自定义列表项" placement="bottom" effect="light">
+                <el-button type="text" @click="FnCustom">
+                <i class="el-icon-s-tools" ></i>
+                </el-button>        
+            </el-tooltip>
+            <el-tooltip content="导出" placement="bottom" effect="light">
+                <el-button type="text" @click="down" :disabled="auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
+            </el-tooltip>
             <el-tooltip content="刷新" placement="bottom" effect="light">
                 <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
             </el-tooltip>
@@ -17,7 +22,66 @@
             :data="list" 
             border 
         >
-            <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+            <el-table-column 
+                v-for="(item) in custom_host" 
+                :filter-multiple="item.column_key ? false : null"
+                :key="item.prop" 
+                :prop="item.prop" 
+                :column-key="item.column_key ? item.column_key : null"
+                :filters="item.column_key ? item.list : null"
+                :sortable="item.sortable ? item.sortable : null"
+                :width="item.width ? item.width : null"
+                :label="item.label"
+                :type="item.type"
+                >
+                <template #default="scope" v-if="item.prop==='nas_id_name'">
+                    <div>
+                        <el-tooltip 
+                            :content="scope.row.nas_id" 
+                            placement="bottom" 
+                            effect="light">
+                                <span class="not-clickable" v-if="['building','build_fail'].includes(scope.row.status)">{{ scope.row.nas_id }}</span>
+                                <span v-else class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
+                        </el-tooltip>
+                        <Clipboard :content="scope.row.nas_id" v-if="scope.row.nas_id"></Clipboard>
+                    </div>
+                    <div>{{scope.row.nas_name}}</div>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='region_az_name'">
+                    <span>{{`${scope.row.region_name}-${scope.row.az_name}`}}</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='vpc'">
+                    <div class="not-clickable">{{scope.row.vpc_id}}</div>
+                    <div>{{scope.row.vpc_name}}</div>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='subnet'">
+                    <div class="not-clickable">{{scope.row.subnet_id}}</div>
+                    <div>{{scope.row.subnet_name}}</div>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='mount_path'">
+                    <el-tooltip 
+                        :content="scope.row.mount_path[0]" 
+                        placement="bottom" 
+                        effect="light">
+                            <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
+                    </el-tooltip>
+                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard> 
+                </template>
+                <template #default="scope" v-else-if="item.prop==='transfer_vpc_storage_ip'">
+                    <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
+                   <div>存储网:{{scope.row.transfer_vm_storage_ip}}</div>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='billing_method'">
+                    <span>{{feeInfo[scope.row.billing_method]}}</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='status_ch'">
+                    <span :class="scope.row.status">{{scope.row.status_ch}}</span>
+                </template>
+                <template #default="scope" v-else-if="item.prop==='create_time'">
+                    <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
+                </template>
+            </el-table-column>
+            <!-- <el-table-column prop="customer_id" label="客户ID"></el-table-column>
             <el-table-column prop="customer_name" label="客户名称"></el-table-column>
             <el-table-column prop="nas_id" label="文件系统ID/名称" width="120px">
                 <template slot-scope="scope">
@@ -67,7 +131,6 @@
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
             <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
             <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
-            <!-- <el-table-column prop="transfer_vm_name" label="中转虚拟机名称"></el-table-column> -->
             <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
                 <template slot-scope="scope">
                    <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
@@ -88,7 +151,7 @@
                 <template slot-scope="scope">
                     <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
                     <el-tooltip placement="right" v-if="scope.row.status!=='running' || !auth_list.includes('file_capacity')" effect="light" content="只有运行中的文件系统才可以扩容">
@@ -112,6 +175,13 @@
         <template v-if="visible">
             <capacity :visible.sync="visible" :info="operateInfo"></capacity>
         </template>
+        <custom-list-item
+            :visible.sync="show_custom" 
+            :all_item="all_item"
+            :all_column_item="all_column_item" 
+            @fn-custom="get_custom_columns"
+            :type="'nas'"
+        ></custom-list-item>
     </div>
 </template>
 <script lang="ts">
@@ -121,13 +191,17 @@ import SvgIcon from '../../components/svgIcon/index.vue';
 import Service from '../../https/filesystem/list';
 import moment from 'moment';
 import Clipboard from '../../components/clipboard.vue'
-import Capacity from './capacity.vue'
+import Capacity from './capacity.vue';
+import {trans,deal_list} from '../../utils/transIndex';
+import CustomListItem from '../physical/customListItem.vue';
+// import 
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
         Clipboard,
-        Capacity
+        Capacity,
+        CustomListItem
     }
 })
 export default class List extends Vue{
@@ -149,13 +223,18 @@ export default class List extends Vue{
     private auth_list:any=[];
     private operateInfo:any={}
     private clear=null
-    private visible:boolean=false
+    private visible:boolean=false;
+    private show_custom:boolean=false;
+    private all_item:Array<any>=[];
+    private all_column_item=[];
+    private custom_host=[]
     private feeInfo={
       '0':'按需计费',
       '1':'包年包月',
       '2':'按次计费',
     }
     created() {
+        this.get_field()
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.search()
     }
@@ -169,6 +248,57 @@ export default class List extends Vue{
     private watch_pod(){
         this.search(this.search_data)
     }
+    private async get_field(){
+        let res:any = await Service.get_field({})
+        if(res.code==="Success"){
+        let key_list=['field_name','show_name'];
+        let label_list=['prop','label'];
+        let list:Array<any>=[]
+        res.data.map(item=>{
+            list=[...list,...item.filed];
+            return item;
+        })
+        this.all_item = res.data;
+        this.all_column_item = deal_list(list,label_list,key_list);
+        this.get_custom_columns(this.$store.state.nas_host)
+        // this.get_custom_columns(this.$store.state.custom_host)
+
+
+        }
+    }
+    private get_custom_columns(list) {
+        console.log('list',list)
+        if(list.length===0){
+            return;
+        }
+        this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
+        this.custom_host.map((item:any)=>{
+            if(item.prop==='nas_id_name'){
+                item = Object.assign(item,{},{width:'120px'})
+            }
+            if(item.prop==='mount_path'){
+                item = Object.assign(item,{},{width:'180px'})
+            }
+            if(item.prop==='create_time'){
+                item = Object.assign(item,{},{width:'90px'})
+            }
+            return item;
+        })
+    }
+    private down(){
+        let obj = {
+            pod_id:this.$store.state.pod_id,
+            field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+        }
+        let str=""
+        for (let i in obj){
+            if(obj[i]){
+                str =str+`${i}=${obj[i]}&`
+            }
+            }
+            let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+            window.location.href=`/nas_union_business/v1/nas/nas_list_download/${query}`
+        }
     private async getNasList(loading:boolean=true){
         if(!loading){
             this.$store.commit('SET_LOADING', false);
@@ -199,6 +329,9 @@ export default class List extends Vue{
         clearTimeout(this.clear)
       }
     }
+    private FnCustom() {
+        this.show_custom = true;
+    }
     private async getFileUse(loading:boolean=true){
       if(!loading){
         this.$store.commit("SET_LOADING",false)
@@ -217,8 +350,8 @@ export default class List extends Vue{
         //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
           let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : '0.00'
           console.log('num',num)
-          this.$set(item,'used_percent',`${num}%`)
-          this.$set(item,'use_total_size',`${size} / ${total}`)
+          this.$set(item,'use_percent',`${num}%`)
+          this.$set(item,'use_size',`${size} / ${total}`)
         })
       }
     }

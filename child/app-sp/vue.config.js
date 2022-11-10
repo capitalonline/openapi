@@ -33,8 +33,8 @@ module.exports = {
         }
       },
       '/nas_union_business': {
-        target: 'http://cloudos-nas-union-business.gic.test',
-        // target:'http://10.131.171.83:2222',
+        // target: 'http://cloudos-nas-union-business.gic.test',
+        target:'http://10.131.171.99:8004',
         changeOrigin: true,
       },
       '/alarm/api': {
