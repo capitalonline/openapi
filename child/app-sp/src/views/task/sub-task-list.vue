@@ -224,7 +224,7 @@ export default class App extends Vue {
   private default_dependent_params = {};
   private default_serial_set_sub_params = {};
   private default_schedule_output_params = [];
-  private executor_list = ['kvm_ecs_controller', 'kvm_ebs_controller', 'kvm_images_controller', 'kvm_test_controller' , 'kvm_nas_controller'];
+  private executor_list = ['kvm_ecs_controller', 'kvm_ebs_controller', 'kvm_images_controller', 'kvm_test_controller' , 'kvm_nas_controller','kvm_sec_controller'];
   private sub_config = {
     subtask_name: '',
     subtask_type: '',
