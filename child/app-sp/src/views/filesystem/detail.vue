@@ -34,7 +34,7 @@
                             </div>
                             <div v-else-if="i==='config'">
                                 <div>CPU:{{detailInfo.transfer_vm_conf_cpu}}</div>
-                                <div>内存:{{detailInfo.transfer_vm_conf_mem}}</div>
+                                <div>内存:{{detailInfo.transfer_vm_conf_mem}}{{detailInfo.transfer_vm_conf_mem ? 'GB' : ''}}</div>
                                 <div>系统盘:{{detailInfo.transfer_vm_conf_system_disk_size ? `${detailInfo.transfer_vm_conf_system_disk_size}${detailInfo.transfer_vm_conf_system_disk_unit} (${detailInfo.transfer_vm_conf_system_disk_type})` : ''}}</div>
                             </div>
                             <span v-else>{{detailInfo[i]}}</span>
