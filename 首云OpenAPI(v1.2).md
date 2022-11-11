@@ -205,6 +205,7 @@
        * [16.CreateImage](#16createimage)
        * [17.DeleteImage](#17deleteimage)
        * [18.SyncImage](#18syncimage)
+       * [19.DescribeInstanceVncUrl](#19describeinstancevncurl)
      * [云盘EBS相关](#云盘ebs相关)
        * [1.CreateDisk](#1createdisk-1)
        * [2.DeleteDisk](#2deletedisk)
@@ -409,8 +410,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | UTC                | Bool     | 否       | true                                                         | 是否设置时区为 UTC                                           |
 | WindowsActivation  | Dict     | 否       | {"Batch":1,"ProductIds": ["Q7NBW-8B24B-MG6PV-DVP24-K4QWM"]}  | Windows型主机激活码, Batch: 1为批量激活，0为单机激活；<br> 批量激活：为本次创建的所有云服务器使用同一密钥进行激活；<br> 单机激活：为本次创建的云服务器分别使用不同密钥进行激活，需要您输入与创建云服务器数量等数目的激活密钥，输入多个密钥请用逗号分隔。 |
 | **UserData**       | list     | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="]                 | 用户自定义数据，格式必须为base64编码                         |
-| DryRun                | Bool     | 否       | false                              |     试运行，测试使用，不执行具体逻辑。默认false不测试                                     |
-| SwapOff                 | Bool     | 否       | false      |     是否关闭云服务器系统盘swap分区。默认false不关闭       |
+| DryRun             | Bool     | 否       | false                                                        | 试运行，测试使用，不执行具体逻辑。默认false不测试            |
+| SwapOff            | Bool     | 否       | false                                                        | 是否关闭云服务器系统盘swap分区。默认false不关闭              |
 
 
 
@@ -904,7 +905,7 @@ def add_disk(vm_id):
 | PublicKey     | string | 否       |                                              | 云服务器公钥                                                 |
 | ProductId     | string | 否       |                                              | 输入Windows密钥后，在创建云服务器时自动将密钥写入并激活系统，请您保证正确填写，否则将激活失败；若您未填写密钥，默认创建未激活的windows云服务器。 |
 | **UserData**  | list   | 否       | ["IyEvYmluL3NoCmVjaG8gIkhlbGxvIFdvcmxkIg=="] | 用户自定义数据，格式必须为base64编码                         |
-| SwapOff                 | Bool     | 否       | false           |     是否关闭云服务器系统盘swap分区。默认false不关闭              |
+| SwapOff       | Bool   | 否       | false                                        | 是否关闭云服务器系统盘swap分区。默认false不关闭              |
 
   **返回参数：**
 
@@ -2147,13 +2148,13 @@ def down_card(InterfaceId, InstanceId):
 ### 35.DescribeNetworkCardFlow
 
  **Action：DescribeNetworkCardFlow**
- 
+
  **描述：** 获取网卡流量数据
- 
+
  **请求地址:** cdsapi.capitalonline.net/ccs
- 
+
  **请求方法：POST**
- 
+
  **请求参数：**
 
 | 名称        | 类型   | 是否必选 | 示例值                               | 描述                                     |
@@ -2193,8 +2194,8 @@ def down_card(InterfaceId, InstanceId):
             "Output": 0.74532
         },
         "InstanceId": "c4987c70-5bfc-11ed-82a5-c28d140f35b4",
-      	"InterfaceId": "7226c99a-0b2c-11ed-aa5b-6ac04c76c0d0",
-      	"Period": 300
+       "InterfaceId": "7226c99a-0b2c-11ed-aa5b-6ac04c76c0d0",
+       "Period": 300
     },
     "Message": "获取网卡流量数据成功."
 }
@@ -14572,7 +14573,7 @@ def sync_image():
         "AvailableZoneCodes": ["CN_Beijing_A"]
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
-    resp = requests.get(url, json=body)
+    resp = requests.post(url, json=body)
     result = json.loads(resp.content)
     return result
 ```
@@ -14588,6 +14589,62 @@ def sync_image():
     }
 }
 ```
+
+### 19.DescribeInstanceVncUrl
+
+**Action**: DescribeInstanceVncUrl
+
+**描述**:获取云服务器远程连接地址
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数：**
+
+| 参数  | 要求 | 类型   | 说明   |
+| ----- | ---- | ------ | ------ |
+| EcsId | 必选 | string | 实例ID |
+
+**返回参数：**
+
+| 参数           | 类型   | 示例                             | 说明            |
+| -------------- | ------ | -------------------------------- | --------------- |
+| InstanceVncUrl | string | http://xxx.capitalonline.net/xxx | vnc远程连接地址 |
+
+**请求示例：**
+
+```python
+def describe_instance_vnc_url():
+    """
+    获取云服务器远程连接地址
+    """
+    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    action = "DescribeInstanceVncUrl"
+    method = "GET"
+    param={
+        "EcsId":"ins-xxxx"
+    }
+    body={}
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取远程连接地址成功！",
+    "Data": {
+        "InstanceVncUrl": "http://xxx.capitalonline.net/xxx"
+    }
+}
+```
+
+
 
 **错误码**
 
@@ -16032,10 +16089,10 @@ def ebs_describe_snapshot_quota():
 
 **请求参数：**
 
-| 参数       | 说明     | 类型   | 是否必传 | 示例        |
-| ---------- | -------- | ------ | -------- | ----------- |
+| 参数       | 说明     | 类型   | 是否必传 | 示例      |
+| ---------- | -------- | ------ | -------- | --------- |
 | SnapshotId | 快照ID   | string | 是       | s-disk-** |
-| ImageName  | 镜像名称 | string | 是       | 镜像名称    |
+| ImageName  | 镜像名称 | string | 是       | 镜像名称  |
 
 **返回参数**
 
@@ -16092,7 +16149,7 @@ def create_image_by_snapshot():
 
 | 参数              | 说明           | 类型   | 是否必传 | 示例        |
 | ----------------- | -------------- | ------ | -------- | ----------- |
-| SnapshotId        | 快照ID         | string | 是       | s-disk-** |
+| SnapshotId        | 快照ID         | string | 是       | s-disk-**   |
 | AvailableZoneCode | 目标可用区Code | string | 是       | CN_Suqian_A |
 
 **返回参数**
@@ -16100,7 +16157,7 @@ def create_image_by_snapshot():
 | 参数       | 类型   | 示例                                 | 说明                       |
 | ---------- | ------ | ------------------------------------ | -------------------------- |
 | EventId    | string | 11c4ad90-122c-11ed-b996-7ae483eaf4a2 | 事件id                     |
-| SnapshotId | string | s-2022-11-02**                           | 复制到目标可用区后的快照ID |
+| SnapshotId | string | s-2022-11-02**                       | 复制到目标可用区后的快照ID |
 
 **请求示例**
 
