@@ -332,3 +332,35 @@ func DeleteSnapshots(request DeleteSnapshotsRequest) (DeleteSnapshotsResponse, e
 	fmt.Printf(">>>>>>> request result: %v", res)
 	return data, nil
 }
+
+// 云盘列表信息结构体
+type DiskInfo struct {
+	DiskId              string `json:"DiskId"`
+	DiskName            string `json:"DiskName"`
+	Size                int    `json:"Size"`
+	EcsId               string `json:"EcsId"`
+	EcsName             string `json:"EcsName"`
+	BillingMethod       string `json:"BillingMethod"`
+	ReleaseWithInstance int    `json:"ReleaseWithInstance"`
+	RegionCode          string `json:"RegionCode"`
+	AvailableZoneCode   string `json:"AvailableZoneCode"`
+	Status              string `json:"Status"`
+	StatusDisplay       string `json:"StatusDisplay"`
+	DiskFeature         string `json:"DiskFeature"`
+	Property            string `json:"Property"`
+}
+
+func DescribeDiskList() (common.CommonReturn, error) {
+	var (
+		action = "DescribeDiskList"
+		params = map[string]interface{}{
+			"DiskIds": []string{"disk-r28if0vrh1e1auuw"},
+		}
+	)
+	body, err := json.Marshal(params)
+	if err != nil {
+		fmt.Println("反序列化失败：", err.Error())
+	}
+	res := common.DoHttpPost(action, common.EbsUrl, http.MethodPost, body)
+	return res, nil
+}

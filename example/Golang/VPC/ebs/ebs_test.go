@@ -129,3 +129,11 @@ func TestDeleteSnapshots(t *testing.T) {
 		fmt.Println(res)
 	}
 }
+
+func TestDescribeDiskList(t *testing.T) {
+	res, err := DescribeDiskList()
+	if err != nil {
+	} else {
+		fmt.Println(res)
+	}
+}
