@@ -15065,12 +15065,13 @@ def describe_disk_quota():
 
 **请求参数：**
 
-| 参数              | 说明       | 类型   | 是否必传 | 示例        |
-| ----------------- | ---------- | ------ | -------- | ----------- |
-| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
-| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
-| PageNumber        | 页码       | int    | 否       | 1           |
-| PageSize          | 每页记录数 | int    | 否       | 20          |
+| 参数              | 说明           | 类型   | 是否必传 | 示例        |
+| ----------------- | -------------- | ------ | -------- | ----------- |
+| AvailableZoneCode | 可用区Code     | string | 否       | CN_Suqian_A |
+| RegionCode        | 地域Code       | string | 否       | CN_Suqian   |
+| DiskIds           | 云盘资源id列表 | list   | 否       | ["disk-xx"] |
+| PageNumber        | 页码           | int    | 否       | 1           |
+| PageSize          | 每页记录数     | int    | 否       | 20          |
 
 **返回参数**
 
