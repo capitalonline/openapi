@@ -87,6 +87,14 @@ export default class LeftMenu extends Vue {
       label: '文件存储',
       children: [
         {
+          name: "filesystem_list",
+          label: "文件系统"
+        },
+        {
+          name: "vm_list",
+          label: "NAS转发虚拟机"
+        },
+        {
           name: "notFilesystem",
           label: "不可用文件系统"
         },

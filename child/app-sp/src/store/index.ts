@@ -21,6 +21,12 @@ export default new Vuex.Store({
       '内存使用率','创建时间'
 
     ],
+    nas_host:JSON.parse(storage.get('nas_host')) || [
+      '客户ID','客户名称','文件系统ID/名称','NAS类型','协议类型','地域-可用区',
+      'VPC','子网','挂载地址','使用量/总容量','空间使用率',
+      '中转虚拟机ID','中转虚拟机IP','计费方式','状态','创建时间'
+
+    ],
     host_search:{},
     pod_id:storage.get('pod_id') || '',
   },
@@ -53,6 +59,10 @@ export default new Vuex.Store({
     SET_CUSTOM_HOST(state,list){
       storage.set('custom_host',JSON.stringify(list))
       state.custom_host = list
+    },
+    SET_NAS_HOST(state,list){
+      storage.set('nas_host',JSON.stringify(list))
+      state.nas_host = list
     },
     SET_HOST_SEARCH(state,data){
       state.host_search = data
