@@ -13356,7 +13356,7 @@ def ecs_family_info():
 | 参数              | 要求 | 类型   | 说明                                                         |
 | ----------------- | ---- | ------ | ------------------------------------------------------------ |
 | AvailableZoneCode | 可选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| ImageIds          | 可选 | list   | 镜像id列表                                                   |
+| ImageIds          | 可选 | string | 镜像id列表(格式为字符串，例如: '["img-xx", "img-xx"]' )      |
 
 **返回参数**
 
@@ -14129,6 +14129,7 @@ def describe_account_subject():
 | UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
 | DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
 | DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+| TestAccount       | 可选 | string | 测试账户名称                                                 |
 
 **返回参数**
 
@@ -14681,16 +14682,22 @@ def describe_instance_vnc_url():
 
 **云盘状态(Status)说明**
 
-| code       | 说明     |
-| ---------- | -------- |
-| building   | 创建中   |
-| build_fail | 创建失败 |
-| running    | 使用中   |
-| mounting   | 挂载中   |
-| unmounting | 卸载中   |
-| waiting    | 待挂载   |
-| updating   | 更新中   |
-| error      | 错误     |
+| code              | 说明       |
+| ----------------- | ---------- |
+| building          | 创建中     |
+| build_fail        | 创建失败   |
+| running           | 使用中     |
+| mounting          | 挂载中     |
+| unmounting        | 卸载中     |
+| waiting           | 待挂载     |
+| updating          | 更新中     |
+| error             | 错误       |
+| recovering        | 恢复中     |
+| cancel_recycling  | 取消回收中 |
+| recycling         | 欠费回收中 |
+| error             | 错误       |
+| creating_snapshot | 创建快照中 |
+| rollback          | 回滚中     |
 
 ### 1.CreateDisk
 
@@ -15061,17 +15068,17 @@ def describe_disk_quota():
 
 **请求地址**：api.capitalonline.net/ebs/v1
 
-**请求方法**：GET
+**请求方法**：POST GET
 
 **请求参数：**
 
-| 参数              | 说明           | 类型   | 是否必传 | 示例        |
-| ----------------- | -------------- | ------ | -------- | ----------- |
-| AvailableZoneCode | 可用区Code     | string | 否       | CN_Suqian_A |
-| RegionCode        | 地域Code       | string | 否       | CN_Suqian   |
-| DiskIds           | 云盘资源id列表 | list   | 否       | ["disk-xx"] |
-| PageNumber        | 页码           | int    | 否       | 1           |
-| PageSize          | 每页记录数     | int    | 否       | 20          |
+| 参数              | 说明           | 类型   | 是否必传 | 示例                     |
+| ----------------- | -------------- | ------ | -------- | ------------------------ |
+| AvailableZoneCode | 可用区Code     | string | 否       | CN_Suqian_A              |
+| RegionCode        | 地域Code       | string | 否       | CN_Suqian                |
+| DiskIds           | 云盘资源id列表 | string | 否       | '["disk-xx", "disk-xx"]' |
+| PageNumber        | 页码           | int    | 否       | 1                        |
+| PageSize          | 每页记录数     | int    | 否       | 20                       |
 
 **返回参数**
 
