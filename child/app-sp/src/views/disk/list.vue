@@ -30,6 +30,7 @@
         <template slot-scope="scope">
           <div>类型：{{scope.row.feature ? `${scope.row.feature}` : ''}}</div>
           <div>容量：{{scope.row.size ? `${scope.row.size}GB` : ''}}</div>
+          <div>IOPS：{{scope.row.disk_iops ? `${scope.row.disk_iops}${scope.row.iops_unit}` : ''}}</div>
         </template>
       </el-table-column>
       <el-table-column prop="az_name" label="地域及可用区">
@@ -499,7 +500,7 @@ export default class extends Vue {
     }else if(label==="unInstall"){
       return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="delete"){
-      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data" && this.auth_list.includes(label)
+      return (obj.status==="waiting" || (obj.status==="error" && obj.is_follow_delete===false)) && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="restore"){
       return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
     }else if(label==="destroy"){
