@@ -34,8 +34,8 @@ module.exports = {
         }
       },
       '/nas_union_business': {
-        // target: 'http://cloudos-nas-union-business.gic.test',
-        target:'http://10.131.171.99:8004',
+        target: 'http://cos-nas-union-business.gic.pre',
+        // target:'http://cloudos-nas-union-business.gic.test',
         changeOrigin: true,
       },
       '/alarm/api': {
