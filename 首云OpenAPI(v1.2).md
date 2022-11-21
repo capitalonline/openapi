@@ -14127,7 +14127,7 @@ def describe_account_subject():
 | IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
 | IsAutoRenewal     | 可选 | int    | 是否自动续约，包月时需传。1:是  0:否 默认为1                 |
 | UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
-| DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小<br/>    }] |
+| DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小,<br/>         "SnapshotId":"s-xxx" # 快照id,通过此快照创建数据盘,非必填<br/>    }] |
 | DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
 
 **返回参数**
@@ -14164,6 +14164,7 @@ def create_ecs():
         "DataDisk": {
             "DiskFeature": "ssd",
             "Size": 48,
+            "SnapshotId":"s-xxx",
             "ReleaseWithInstance": 0  
         },   
         "VpcInfo":{
@@ -14774,9 +14775,10 @@ def create_disk():
 
 **请求参数**：
 
-| 参数    | 说明       | 类型 | 是否必传 | 示例               |
-| ------- | ---------- | ---- | -------- | ------------------ |
-| DiskIds | 云盘id列表 | list | 是       | ["disk1", "disk2"] |
+| 参数           | 说明                       | 类型 | 是否必传 | 示例               |
+| -------------- | -------------------------- | ---- | -------- | ------------------ |
+| DiskIds        | 云盘id列表                 | list | 是       | ["disk1", "disk2"] |
+| DeleteSnapshot | 是否同时删除非永久保留快照 | int  | 否       | 1                  |
 
 **返回参数**
 
@@ -15427,13 +15429,14 @@ def describe_event():
 
 **请求参数**：
 
-| 参数              | 说明       | 类型   | 是否必传 | 示例        |
-| ----------------- | ---------- | ------ | -------- | ----------- |
-| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A |
-| RegionCode        | 地域Code   | string | 否       | CN_Suqian   |
-| DiskId            | 云盘ID     | String | 否       | disk-**     |
-| PageNumber        | 页码       | int    | 否       | 1           |
-| PageSize          | 每页记录数 | int    | 否       | 20          |
+| 参数              | 说明       | 类型   | 是否必传 | 示例                 |
+| ----------------- | ---------- | ------ | -------- | -------------------- |
+| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A          |
+| SnapshotIds       | 快照列表   | string | 否       | '["s-xxx", "s-xxx"]' |
+| RegionCode        | 地域Code   | string | 否       | CN_Suqian            |
+| DiskId            | 云盘ID     | String | 否       | disk-**              |
+| PageNumber        | 页码       | int    | 否       | 1                    |
+| PageSize          | 每页记录数 | int    | 否       | 20                   |
 
 **返回参数**：
 
@@ -15804,7 +15807,7 @@ def ebs_describe_snapshot_chain():
 | ------------ | ------------ | ------ | -------- | ------------------------------------------------------------ |
 | DiskId       | 云盘ID       | string | 是       | disk-1i5ybswrg8zrj9le                                        |
 | SnapshotName | 快照名称     | string | 否       | 不传默认与快照id一致，快照名称允许使用2-128个字符，不允许使用auto作为开头，允许大小写字母、数字、汉字和“-” |
-| ReservedTime | 快照保留时间 | string | 否       | 不传递该参数默认为1。Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
+| ReservedTime | 快照保留时间 | string | 否       | 不传递该参数默认为1。Forever:永久保留，当云盘删除时快照不随随云盘删除；具体数字为保留天数。 |
 
 **返回参数**
 
