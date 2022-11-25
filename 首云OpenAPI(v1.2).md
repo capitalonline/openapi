@@ -113,6 +113,7 @@
        * [27.DeleteVLINK](#27deletevlink)
        * [28.VLINKAddVM](#28vlinkaddvm)
        * [29.VLINKDeleteVM](#29vlinkdeletevm)
+       * [30.UpdateVPCBandwidthType](#30updatevpcbandwidthtype)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)

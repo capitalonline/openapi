@@ -112,6 +112,7 @@
        * [27.DeleteVLINK](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#27deletevlink)
        * [28.VLINKAddVM](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#28vlinkaddvm)
        * [29.VLINKDeleteVM](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#29vlinkdeletevm)
+       * [30.UpdateVPCBandwidthType](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#30updatevpcbandwidthtype)
      * [裸金属相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#裸金属相关)
        * [1.DescribeBmsGoods](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebmsgoodsprice)
