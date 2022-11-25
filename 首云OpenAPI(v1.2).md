@@ -14497,10 +14497,11 @@ def change_ecs_name():
 
 **请求参数**
 
-| 参数  | 要求 | 类型   | 说明     |
-| ----- | ---- | ------ | -------- |
-| EcsId | 必选 | string | 实例ID   |
-| Name  | 必选 | string | 镜像名称 |
+| 参数        | 要求 | 类型   | 说明         |
+| ----------- | ---- | ------ | ------------ |
+| EcsId       | 必选 | string | 实例ID       |
+| Name        | 必选 | string | 镜像名称     |
+| TestAccount | 可选 | string | 测试项目名称 |
 
 **返回参数**
 
@@ -14612,6 +14613,7 @@ def delete_image():
 | ------------------ | ---- | ------ | ---------------------------- |
 | ImageId            | 必选 | string | 实例ID                       |
 | AvailableZoneCodes | 必选 | list   | 同步镜像到目标可用区code列表 |
+| TestAccount        | 可选 | string | 测试项目名称                 |
 
 **返回参数：**
 
