@@ -4257,16 +4257,17 @@ def describe_vpc(regin_code, key, page):
   **请求参数：**
 
 
-| 名称              | 类型   | 是否必选 | 示例值        | 描述                    |
-| ----------------- | ------ | -------- | ------------- | ----------------------- |
-| RegionCode        | string | 是       | CN_Hongkong   | VPC区域code, 见附件五   |
-| VPCName           | string | 是       | name          | VPC名称                 |
-| VPCSegment        | string | 是       | 10.15.0.0/16  | VPC网段                 |
-| VPCSegmentType    | string | 是       | auto/manual   | 使用推荐网段或手动分配  |
-| SubnetList        | list   | 是       | []            | 创建VPC必须创建一个子网 |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A | VPC可用区code, 见附件五 |
-| SubnetName        | string | 是       | 子网1         | 子网名称                |
-| SubnetSegment     | string | 是       | 10.15.1.0/24  | 子网网段                |
+| 名称              | 类型   | 是否必选 | 示例值                  | 描述                                |
+| ----------------- | ------ | -------- | ----------------------- | ----------------------------------- |
+| RegionCode        | string | 是       | CN_Hongkong             | VPC区域code, 见附件五               |
+| VPCName           | string | 是       | name                    | VPC名称                             |
+| VPCSegment        | string | 是       | 10.15.0.0/16            | VPC网段                             |
+| VPCSegmentType    | string | 是       | auto/manual             | 使用推荐网段或手动分配              |
+| BandwidthType     | string | 否       | Bandwidth_China_Telecom | VPC带宽类型，边缘节点必传，见附件三 |
+| SubnetList        | list   | 是       | []                      | 创建VPC必须创建一个子网             |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A           | VPC可用区code, 见附件五             |
+| SubnetName        | string | 是       | 子网1                   | 子网名称                            |
+| SubnetSegment     | string | 是       | 10.15.1.0/24            | 子网网段                            |
 
   **返回参数：**
 
@@ -5432,14 +5433,15 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 
   **请求参数：**
 
-| 名称              | 类型   | 是否必选 | 示例值                  | 描述                                      |
-| ----------------- | ------ | -------- | ----------------------- | ----------------------------------------- |
-| RegionCode        | string | 是       | CN_Hongkong             | VPC区域code, 见附件五                     |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A           | VPC可用区code, 见附件五                   |
-| Name              | string | 是       | 香港共享带宽            | 共享带宽名称                              |
-| BandwidthType     | string | 是       | Bandwidth_China_Telecom | 带宽类型                                  |
-| BillScheme        | string | 是       | BandwIdth               | 计费方案<br/>BandwIdth_Shared（固定带宽） |
-| Qos               | int    | 是       | 5                       | 带宽大小                                  |
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                                      |
+| ----------------- | ------ | -------- | ------------------------------------ | ----------------------------------------- |
+| RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五                     |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五                   |
+| Name              | string | 是       | 香港共享带宽                         | 共享带宽名称                              |
+| BandwidthType     | string | 是       | Bandwidth_China_Telecom              | 带宽类型                                  |
+| BillScheme        | string | 是       | BandwIdth                            | 计费方案<br/>BandwIdth_Shared（固定带宽） |
+| Qos               | int    | 是       | 5                                    | 带宽大小                                  |
+| NETID             | string | 否       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 子网ID，边缘节点必传                      |
 
 
   **返回参数：**
@@ -6314,6 +6316,63 @@ def vlink_delete():
     body = {
         "VLINKId": "86fc6e6c-1859-11ed-90cd-5a683b26c272",
         "VMIdList": ["4d20118d-c58e-455b-b361-d1a95b4632d6"]
+    }
+    res = requests.post(url, json=body)
+```
+
+### 30.UpdateVPCBandwidthType
+
+  **Action:UpdateVPCBandwidthType**
+
+  **描述：** 变更VPC带宽类型(仅适用于边缘节点)
+
+  **请求地址:** cdsapi.capitalonline.net/vpc
+
+  **请求方法：POST**
+
+  **请求参数：**
+
+| 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
+| ------------- | ------ | -------- | ------------------------------------ | -------------------- |
+| VPCID         | string | 是       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | VPC ID               |
+| BandwidthType | string | 是       | Bandwidth_China_Telecom              | 共享带宽大小（Mbps） |
+
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值   | 描述   |
+| :------ | ------ | :------- | :----- |
+| Code    | string | Success  | 错误码 |
+| Message | string | 修改成功 | 信息   |
+
+  **错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+  **返回示例：**
+
+```json
+{
+  "Code": "Success",
+  "Data": null,
+  "Message": "修改成功"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+def update_vpc_bandwidth_type(regin_code, key, page, vpc_id, az_code):
+    action = 'UpdateVPCBandwidthType'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VPCID": "ce11eb1e-e6fa-11ec-8b50-bafaaf87d540",
+        "BandwidthType": "Bandwidth_China_Telecom"
     }
     res = requests.post(url, json=body)
 ```
