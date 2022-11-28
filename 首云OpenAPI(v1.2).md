@@ -230,6 +230,23 @@
        - [9.DescribeSnapshotQuota](#9describesnapshotquota)
        - [10.CreateImageBySnapshot](#10reateimagebysnapshot)
        - [11.CopySnapshotCrossAZ](#11copysnapshotcrossaz)
+     * [[告警相关](#告警相关接口)]
+       - [1.CreateContactUser](#1createcontactuser)
+       - [2.DescribeContactUsers](#2describecontactusers)
+       - [3.JoinContactGroups](#3joincontactgroups)
+       - [4.CreateContactGroup](#4createcontactgroup)
+       - [5.DeleteContactGroup](#5deletecontactgroup)
+       - [6.DescribeContactGroups](#6describecontactgroups)
+       - [7.DescribeAlarmMetrics](#7describealarmmetrics)
+       - [8.CreateAlarmStrategy](#8createalarmstrategy)
+       - [9.DeleteAlarmStrategy](#9deletealarmstrategy)
+       - [10.DescribeAlarmStrategies](#10describealarmstrategies)
+       - [11.ModifyStrategyStatus](#11modifystrategystatus)
+       - [12.ModifyStrategy](#12modifystrategy)
+       - [13.ModifyStrategyRule](#13modifystrategyrule)
+       - [14.AddStrategyRule](#14addstrategyrule)
+       - [15.DeleteStrategyRule](#15deletestrategyrule)
+       - [16.DescribeAlarmHistories](#16describealarmhistories)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -16263,6 +16280,2211 @@ def copy_snapshot():
         "EventId": "eddb28de-4f91-11ed-988b-82b53449da97",
         "SnapshotId": "s-disk-**"
   }
+}
+```
+
+## 告警相关接口
+
+### 通用字段
+
+- AlarmStatus:  告警状态
+
+| 字段值        | 含义     |
+| ------------- | -------- |
+| AlarmHappened | 发生告警 |
+| PipeSilence   | 通道沉默 |
+| RecoverNormal | 告警恢复 |
+
+- AlarmType:   告警类型
+
+| 字段值      | 含义     |
+| ----------- | -------- |
+| MetricAlarm | 指标告警 |
+| EventAlarm  | 事件告警 |
+
+- <<span id="ProductType">ProductType</span>:  产品类型
+
+| 字段值            | 含义                      |      |
+| ----------------- | ------------------------- | ---- |
+| CCS               | 云服务器                  |      |
+| BMS               | 裸金属服务器              |      |
+| ECS               | 弹性云服务器（GPU云主机） |      |
+| Cdb               | 云数据库-MySQL-主机       |      |
+| CdbSlave          | 云数据库-MySQL-备机       |      |
+| RedisCluster      | 云数据库Redis集群(社区版) |      |
+| RedisReplication  | 云数据库Redis主从(社区版) |      |
+| RedisStandalone   | 云数据库Redis经济型主从   |      |
+| MysqlSingle       | 云数据库-MYSQL-基础版     |      |
+| Haproxy           | 云数据库Haproxy-基础资源  |      |
+| HaproxyServer     | 负载均衡Haproxy-4层监听   |      |
+| HaproxyServerHttp | 负载均衡Haproxy-7层监听   |      |
+| Lvs               | 负载均衡LVS-基础资源      |      |
+| LvsListenerTotal  | 负载均衡LVS-监听          |      |
+
+TriggerType
+
+| 字段值  | 含义       |      |
+| ------- | ---------- | ---- |
+| Average | 取平均值   |      |
+| Always  | 总是       |      |
+| Once    | 只要有一次 |      |
+
+
+### 1.CreateContactUser
+
+**Action**: CreateContactUser
+
+**描述**：创建报警联系人
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称         | 类型   | 是否必选 | 示例                   | 描述                     |
+| ------------ | ------ | -------- | ---------------------- | ------------------------ |
+| ContactName  | string | 是       | 联系人1                | 联系人名字，2到128个字符 |
+| ContactEmail | string | 是       | test@capitalonline.net | 联系人邮箱               |
+| WebhookUrl   | string | 否       | http://www.example.com | webhook地址              |
+| PhoneNumber  | string | 否       | 17701307177            | 联系人电话               |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值                                | 描述               |
+| ------- | ------ | ------------------------------------- | ------------------ |
+| Code    | string | Success                               | 错误码             |
+| Data    | object | {"ContactId":"3434-545-4545-5656-34"} | 添加成功的联系人ID |
+| Message | string | Request success                       | 提示信息           |
+
+**错误码**
+
+| httpcode | 错误码               | 错误信息                  | 描述               |
+| -------- | -------------------- | ------------------------- | ------------------ |
+| 400      | ContactNameDuplicate | ContactName duplicate     | 联系人名称重复     |
+| 400      | EmailDuplicate       | Email duplicate           | 邮箱重复或已被占用 |
+| 400      | InvalidWebhookUrl    | Webhook parameter invalid | webhook地址无效    |
+
+**请求示例**
+
+```python
+def create_contact_user():
+    action = "CreateContactUser"
+    method = "POST"
+    param = {
+        "ContactName": "联系人-example",
+        "PhoneNumber": "1560727xxxx",
+        "ContactEmail": "example@capitalonline.net",
+        "WebhookUrl": "https://www.example.com"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL)
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(res.json(), ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5"
+	}
+}
+```
+
+### 2.DescribeContactUsers
+
+**Action**: DescribeContactUsers
+
+**描述**：查询报警联系人列表
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: GET
+
+**请求参数**
+
+| 名称         | 类型   | 是否必选 | 示例                                                    | 描述                      |
+| ------------ | ------ | -------- | ------------------------------------------------------- | ------------------------- |
+| ContactName  | string | 否       |                                                         | 联系人名字                |
+| PhoneNumber  | string | 否       | 1560727xxxx                                             | 联系人电话                |
+| ContactEmail | string | 否       | example@capitalonline.net                               | 联系人邮箱地址            |
+| PageNumber   | int    | 否       | 10                                                      | 当前页码，默认第一页      |
+| WebhookUrl   | string | 否       | https://oapi.dingtalk.com/robot/send?access_token=xxxxx |                           |
+| PageSize     | int    | 否       | 20                                                      | 每页记录条数,默认每页10条 |
+| ContactId    | string | 否       | 4bb4a784-dd6b-41a5-83d5-a022a7aa425c                    | 报警联系人id              |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述           |
+| ------- | ------ | --------------- | -------------- |
+| Code    | string | Success         | 错误码         |
+| Data    | list   |                 | 多条联系人详情 |
+| Message | string | Request success | 提示信息       |
+
+Data对象
+
+| 名称       | 类型 | 示例值 | 描述                       |
+| ---------- | ---- | ------ | -------------------------- |
+| PageNumber | int  | 5      | 分页使用，第几页           |
+| PageSize   | int  | 20     | 分页使用，每页显示几条规则 |
+| TotalCount | int  | 100    | 分页使用，总记录数         |
+| Contacts   | list |        | 联系人列表                 |
+
+Contacts对象：
+
+| 名称         | 类型   | 示例值                 | 描述       |
+| ------------ | ------ | ---------------------- | ---------- |
+| ContactId    | string | 3434-545-4545-5656-34  | 联系人id   |
+| CustomerId   | string | E12345                 | 客户id     |
+| ContactName  | string | test                   | 联系人名称 |
+| PhoneNumber  | string | 17701307177            | 电话号码   |
+| ContactEmail | string | test@capitalonline.net | 邮箱       |
+
+**调用示例**
+
+```python
+def describe_contact_users():
+    action = "DescribeContactUsers"
+    method = "GET"
+    param = {
+        "ContactName": "联系人-example",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param=param)
+    response = requests.get(url)
+    result = response.json()
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"PageSize": 10,
+		"PageNumber": 1,
+		"TotalCount": 1,
+		"Contacts": [{
+			"ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5",
+			"ContactName": "联系人-example",
+			"PhoneNumber": "1560727xxxx",
+			"ContactEmail": "example@capitalonline.net",
+			"WebhookUrl": "",
+			"ContactStatus": "Normal",
+			"CreateTime": "2022-11-24 01:25:24"
+		}]
+	}
+}
+```
+
+### 3.JoinContactGroups
+
+**Action**: JoinContactGroups
+
+**描述**：报警联系人添加至报警组
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称      | 类型   | 是否必选 | 示例                                                         | 描述     |
+| --------- | ------ | -------- | ------------------------------------------------------------ | -------- |
+| GroupIds  | list   | 是       | ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1","d32a71ff-3667-43cf-92f5-32ed74cee46f"] | 联系组ID |
+| ContactId | string | 是       | b51ea7d3-df46-477b-9c40-df37fba22ae0                         | 联系人id |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Data    | object |                 | 具体数据 |
+| Message | string | Request success | 提示信息 |
+
+data对象
+
+| 名称    | 类型 | 示例                                     | 描述                   |
+| ------- | ---- | ---------------------------------------- | ---------------------- |
+| Success | list | ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"] | 添加成功的联系组id列表 |
+| Failed  | list | ["d32a71ff-3667-43cf-92f5-32ed74cee46f"] | 添加失败的联系组id列表 |
+
+**错误码**
+
+| httpcode | 错误码                   | 错误信息                                                     | 描述                             |
+| -------- | ------------------------ | ------------------------------------------------------------ | -------------------------------- |
+| 400      | InvalidContactID         | ContactId parameter invalid  or not exist                    | 联系人ID错误或不存在             |
+| 400      | InvalidNotificationGroup | NotificationGroup parameter invalid or contains invalid groups | 联系组你数错误或者包含无效联系组 |
+
+**请求示例**
+
+```python
+def join_contact_groups():
+    action = "JoinContactGroups"
+    method = "POST"
+    param = {
+        "GroupIds": ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"],
+        "ContactId": "b51ea7d3-df46-477b-9c40-df37fba22ae0"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"],
+		"Failed": []
+	}
+}
+```
+
+### 4.CreateContactGroup
+
+**Action**: CreateContactGroup
+
+**描述**：创建报警联系组
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称             | 类型   | 是否必选 | 示例                                              | 描述                           |
+| ---------------- | ------ | -------- | ------------------------------------------------- | ------------------------------ |
+| GroupName        | string | 是       | 联系组-example                                    | 联系组名称，长度范围1到128字符 |
+| GroupDescription | string | 否       | 联系组                                            | 联系组描述，最大长度512字符    |
+| ContactIds       | list   | 否       | ["3434-545-4545-5656-34","3434-545-4545-5656-34"] | 联系人id                       |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值                         | 描述               |
+| ------- | ------ | ------------------------------ | ------------------ |
+| Code    | string | Success                        | 错误码             |
+| Data    | object | {"GroupId":"xxxxxxxx-xxx-xxx"} | 添加成功的联系组id |
+| Message | string | Request success                | 提示信息           |
+
+**错误码**
+
+| httpcode | 错误码             | 错误信息                     | 描述           |
+| -------- | ------------------ | ---------------------------- | -------------- |
+| 400      | InvalidContact     | ContactIds parameter invalid | 联系人无效     |
+| 400      | GroupNameDuplicate | GroupName duplicate          | 联系组名称重复 |
+
+**请求示例**
+
+```python
+def create_contact_group():
+    action = "CreateContactGroup"
+    method = "POST"
+    param = {
+        "GroupName": "联系组-example",
+        "GroupDescription": "联系组",
+        "ContactIds": ["98824212-1505-45f4-a503-7ec20a26c7b5"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1"
+	}
+}
+```
+
+### 5.DeleteContactGroup
+
+**Action**: DeleteContactGroup
+
+**描述**：删除报警联系组
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称     | 类型 | 是否必选 | 示例                      | 描述     |
+| -------- | ---- | -------- | ------------------------- | -------- |
+| GroupIds | list | 是       | ["3434-545-4545-5656-34"] | 联系组ID |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述               |
+| ------- | ------ | --------------- | ------------------ |
+| Code    | string | Success         | 错误码             |
+| Data    | object |                 | 删除成功的联系组id |
+| Message | string | Request success | 提示信息           |
+
+data对象
+
+| 名称    | 类型 | 示例                                                         | 描述                   |
+| ------- | ---- | ------------------------------------------------------------ | ---------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除成功的联系组id列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除失败的联系组id列表 |
+
+**请求示例**
+
+```python
+def delete_contact_group():
+    action = "DeleteContactGroup"
+    method = "POST"
+    param = {
+        "GroupIds": ["14ec565a-8f11-4944-ba2b-13f3b0fa91db", "1f0234e8-8883-42ad-850e-47ad54f1da03"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["14ec565a-8f11-4944-ba2b-13f3b0fa91db"],
+		"Failed": ["1f0234e8-8883-42ad-850e-47ad54f1da03"]
+	}
+}
+```
+
+### 6.DescribeContactGroups
+
+**Action**: DescribeContactGroups
+
+**描述**：查询报警联系组列表
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: GET
+
+**请求参数**
+
+| 名称       | 类型   | 是否必选 | 示例                                 | 描述                       |
+| ---------- | ------ | -------- | ------------------------------------ | -------------------------- |
+| GroupName  | string | 否       | 联系组-example                       | 联系组名称，支持模糊匹配   |
+| GroupId    | string | 否       | 4c8d8bad-10ed-4673-ba3f-4a568d0756a1 | 联系组ID                   |
+| PageNumber | int    | 否       | 1                                    | 当前页码，默认第一页       |
+| PageSize   | int    | 否       | 10                                   | 每页记录条数，默认每页10条 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述           |
+| ------- | ------ | --------------- | -------------- |
+| Code    | string | Success         | 错误码         |
+| Data    | object |                 | 多条联系组详情 |
+| Message | string | Request success | 提示信息       |
+
+data对象
+
+| 名称          | 类型 | 示例值 | 描述                       |
+| ------------- | ---- | ------ | -------------------------- |
+| PageNumber    | int  | 1      | 分页使用，第几页           |
+| PageSize      | int  | 10     | 分页使用，每页显示几条规则 |
+| TotalCount    | int  | 100    | 分页使用，总记录数         |
+| ContactGroups | list |        | 联系组信息列表             |
+
+ContactGroup对象
+
+| 名称             | 类型   | 示例值                               | 描述       |
+| ---------------- | ------ | ------------------------------------ | ---------- |
+| GroupId          | string | 4c8d8bad-10ed-4673-ba3f-4a568d0756a1 | 联系组id   |
+| GroupName        | string | 联系组-example                       | 联系组名   |
+| GroupDescription | string | 联系组                               | 联系组描述 |
+
+**请求示例**
+
+```python
+def describe_contact_groups():
+    action = "DescribeContactGroups"
+    method = "GET"
+    param = {
+        "PageNumber": 1,
+        "PageSize": 10,
+        "GroupName": "联系组-example",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param=param)
+    res = requests.get(url)
+    result = res.json()
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"PageNumber": 1,
+		"PageSize": 10,
+		"TotalCount": 1,
+		"ContactGroups": [{
+			"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
+			"GroupName": "联系组-example",
+			"GroupDescription": "联系组"
+		}]
+	}
+}
+```
+
+### 7.DescribeAlarmMetrics
+
+**Action**: DescribeAlarmMetrics
+
+**描述**：查询报警指标列表
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: GET
+
+**请求参数**
+
+| 名称        | 类型   | 是否必选 | 示例        | 描述                             |
+| ----------- | ------ | -------- | ----------- | -------------------------------- |
+| AlarmType   | string | 是       | MetricAlarm | 报警类型 MetricAlarm, EventAlarm |
+| ProductType | string | 否       | ECS         | 资源类型，参考通用字段           |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Data    | object |                 | 具体数据 |
+| Message | string | Request success |          |
+
+Data对象
+
+| 名称              | 类型 | 示例值      | 描述                      |
+| ----------------- | ---- | ----------- | ------------------------- |
+| CCS               | list | Metrics数组 | 云服务器                  |
+| BMS               | list | Metrics数组 | 裸金属服务器              |
+| ECS               | list | Metrics数组 | 弹性云服务器（GPU云主机） |
+| Cdb               | list | Metrics数组 | 云数据库-MySQL-主机       |
+| CdbSlave          | list | Metrics数组 | 云数据库-MySQL-备机       |
+| RedisCluster      | list | Metrics数组 | 云数据库Redis集群(社区版) |
+| RedisReplication  | list | Metrics数组 | 云数据库Redis主从(社区版) |
+| RedisStandalone   | list | Metrics数组 | 云数据库Redis经济型主从   |
+| MysqlSingle       | list | Metrics数组 | 云数据库-MYSQL-基础版     |
+| Haproxy           | list | Metrics数组 | 云数据库Haproxy-基础资源  |
+| HaproxyServer     | list | Metrics数组 | 负载均衡Haproxy-4层监听   |
+| HaproxyServerHttp | list | Metrics数组 | 负载均衡Haproxy-7层监听   |
+| Lvs               | list | Metrics数组 | 负载均衡LVS-基础资源      |
+| LvsListenerTotal  | list | Metrics数组 | 负载均衡LVS-监听          |
+
+Metrics对象：
+
+| 名称        | 类型   | 示例值             | 描述                      |
+| ----------- | ------ | ------------------ | ------------------------- |
+| Id          | string | vm.mem.usage       | 指标id                    |
+| Name        | string | 云服务器内存使用率 | 指标名称                  |
+| Granularity | int    | 60                 | 指标告警最小粒度，单位 秒 |
+| Unit        | string | %                  | 指标告警单位              |
+
+**请求示例**
+
+```python
+def describe_alarm_metrics():
+    action = "DescribeAlarmMetrics"
+    method = "GET"
+    param = {
+        "AlarmType": "MetricAlarm",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param=param)
+    res = requests.get(url)
+    result = res.json()
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"CCS": [{
+			"Id": "vm.cpu.usage",
+			"Name": "云服务器CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "vm.data_disk.usage",
+			"Name": "云服务器数据盘使用率",
+			"Granularity": 1800,
+			"Unit": "%"
+		}, {
+			"Id": "vm.disk.iops.read",
+			"Name": "云服务器磁盘读IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "vm.disk.iops.write",
+			"Name": "云服务器磁盘写IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "vm.disk.throughput.read",
+			"Name": "云服务器磁盘读吞吐量",
+			"Granularity": 60,
+			"Unit": "kbps"
+		}, {
+			"Id": "vm.disk.throughput.write",
+			"Name": "云服务器磁盘写吞吐量",
+			"Granularity": 60,
+			"Unit": "kbps"
+		}, {
+			"Id": "vm.mem.usage",
+			"Name": "云服务器内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "vm.nic.throughput.read",
+			"Name": "云服务器网卡读吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.nic.throughput.write",
+			"Name": "云服务器网卡写吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.private_nic.throughput.read",
+			"Name": "云服务器私网网卡读吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.private_nic.throughput.write",
+			"Name": "云服务器私网网卡写吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.public_nic.throughput.read",
+			"Name": "云服务器公网网卡读吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.public_nic.throughput.write",
+			"Name": "云服务器公网网卡写吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "vm.system_disk.usage",
+			"Name": "云服务器系统盘使用率",
+			"Granularity": 1800,
+			"Unit": "%"
+		}],
+		"ECS": [{
+			"Id": "ecs.cpu.usage",
+			"Name": "ecs云服务器CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "ecs.disk.iops.read",
+			"Name": "ecs云服务器磁盘读IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "ecs.disk.iops.write",
+			"Name": "ecs云服务器磁盘写IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "ecs.disk.throughput.read",
+			"Name": "ecs云服务器磁盘读吞吐量",
+			"Granularity": 60,
+			"Unit": "kbps"
+		}, {
+			"Id": "ecs.disk.throughput.write",
+			"Name": "ecs云服务器磁盘写吞吐量",
+			"Granularity": 60,
+			"Unit": "kbps"
+		}, {
+			"Id": "ecs.disk.usage",
+			"Name": "ecs云服务器磁盘使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "ecs.mem.usage",
+			"Name": "ecs云服务器内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "ecs.nic.throughput.read",
+			"Name": "ecs云服务器网卡读吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}, {
+			"Id": "ecs.nic.throughput.write",
+			"Name": "ecs云服务器网卡写吞吐量",
+			"Granularity": 60,
+			"Unit": "mbps"
+		}],
+		"BMS": [{
+			"Id": "bms.cpu.usage",
+			"Name": "裸金属CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "bms.disk.iops.read",
+			"Name": "裸金属磁盘读IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "bms.disk.iops.write",
+			"Name": "裸金属磁盘写IOPS",
+			"Granularity": 60,
+			"Unit": "iops"
+		}, {
+			"Id": "bms.disk.throughput.read",
+			"Name": "裸金属磁盘读吞吐量",
+			"Granularity": 60,
+			"Unit": "mb/s"
+		}, {
+			"Id": "bms.disk.throughput.write",
+			"Name": "裸金属磁盘写吞吐量",
+			"Granularity": 60,
+			"Unit": "mb/s"
+		}, {
+			"Id": "bms.disk.usage",
+			"Name": "裸金属磁盘使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "bms.mem.usage",
+			"Name": "裸金属内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "bms.nic.throughput.read",
+			"Name": "裸金属网卡读吞吐量",
+			"Granularity": 60,
+			"Unit": "mb/s"
+		}, {
+			"Id": "bms.nic.throughput.write",
+			"Name": "裸金属网卡写吞吐量",
+			"Granularity": 60,
+			"Unit": "mb/s"
+		}],
+		"Cdb": [{
+			"Id": "51b8dabd-5140-4ed5-972a-dd5cf7f0c785",
+			"Name": "cpu利用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "eff006d7-8819-4ab7-ab50-0b56de49255d",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "feb4d34a-8c13-4407-83b7-c6d28c20d809",
+			"Name": "磁盘使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "d7bcda20-f76e-4301-8c19-2e96ef15ff77",
+			"Name": "最大连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "8a9f82d1-ebfd-472a-8e13-9ebd180950e0",
+			"Name": "每秒执行操作数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "d08a47f1-7495-4982-9d55-d9e84564ad58",
+			"Name": "慢查询数",
+			"Granularity": 60,
+			"Unit": "次"
+		}, {
+			"Id": "bdd7fc9f-926c-493d-a073-e174102cce03",
+			"Name": "全表扫描数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "68507a96-a73e-4bef-b8ee-d5280d068112",
+			"Name": "查询数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "1d7d6bff-1d29-479f-87f0-faf750a0509d",
+			"Name": "更新数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "186c472b-0ad9-4aab-a91b-733fb3c20842",
+			"Name": "删除数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "a313b122-7ea1-4ef0-a2b0-b729bb0e5e0d",
+			"Name": "插入数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "4a61bd4a-dc2f-4beb-b549-08f3f75defac",
+			"Name": "覆盖数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "8b33e392-8de5-49e7-97dc-19a3450e67a0",
+			"Name": "总请求数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "c47fd55b-dee6-4e15-ba5a-5b745f004d4f",
+			"Name": "当前打开连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "ef97e0a8-04cb-4bfe-adf7-7a9e869c3685",
+			"Name": "连接数使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "3dfa12f0-548b-4cfc-b66f-1097ea77522d",
+			"Name": "临时表数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "a183d550-abc7-41be-a5a8-c12d45eff0d5",
+			"Name": "临时文件数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "070aa6d1-9e82-4e31-a1b9-3cfca2369e96",
+			"Name": "运行的线程数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "e029808c-c791-4f1c-a9cf-f6a26dee6746",
+			"Name": "磁盘临时表数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "233ae49c-c594-41c0-ae00-fc7f3a5d3eec",
+			"Name": "每秒提交的事务数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}],
+		"CdbSlave": [{
+			"Id": "f613c855-779a-4eed-af4c-97e04aa8f460",
+			"Name": "主从延迟距离",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "f158ce6e-2565-43be-9eee-d87a3b16931d",
+			"Name": "主从延迟时间",
+			"Granularity": 60,
+			"Unit": "秒"
+		}, {
+			"Id": "3031d60d-cb1b-44fd-9ab6-db2dc5d9eab6",
+			"Name": "IO 线程状态",
+			"Granularity": 60,
+			"Unit": "状态值"
+		}, {
+			"Id": "abcf6f68-21c8-4950-aaf9-632d8cdda8c5",
+			"Name": "SQL 线程状态",
+			"Granularity": 60,
+			"Unit": "状态值"
+		}],
+		"RedisCluster": [{
+			"Id": "00ff51cd-dee8-476c-982d-c9b0379f6498",
+			"Name": "CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "929d873f-1db0-4ab9-8aef-9cc4d1f810aa",
+			"Name": "内存使用量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "7393ae80-4cee-40fc-a594-c0e2c63aede4",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "4ebaddda-cfa1-4529-9cc4-961de0e8e322",
+			"Name": "Key总个数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "679e5efe-164d-4a21-b663-6ee7e7896fd4",
+			"Name": "读请求命中率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "0aa8354d-09b8-487e-8e5b-1a3f23ac3f78",
+			"Name": "读请求命中",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "0a41153a-2bc5-4c31-a27f-72ff9d38e614",
+			"Name": "总请求",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "5017029a-9033-41a5-9543-3f62da99cb9f",
+			"Name": "入流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "c342d9cf-7bd7-4bcf-8e70-c6ddfd7261d7",
+			"Name": "出流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "4c0ebb4d-0226-4617-b0af-a7403c27eb6a",
+			"Name": "分片CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "81d8d08b-f585-4674-89ee-e87f83800c32",
+			"Name": "分片内存使用量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "b0347b11-e484-4c3a-b0b7-6bd69fd3233c",
+			"Name": "分片内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}],
+		"RedisReplication": [{
+			"Id": "ce415c93-2df2-4f57-b4ad-bc882ccc0df5",
+			"Name": "CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "ecf3b95c-7bcf-43fe-9c21-76bebaeecbaa",
+			"Name": "内存使用量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "97b00e01-5e65-41b9-ba05-c0dace1cdaf9",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "82860c15-c5c8-438d-902c-9c982c32d147",
+			"Name": "Key总个数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "6adb90ab-4d24-451e-ae9e-274a9e1348cc",
+			"Name": "读请求命中率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "58247601-489f-47ee-bb41-6177883220e2",
+			"Name": "读请求命中",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "84b6305b-181c-4d2b-a5c7-88df76dc21d8",
+			"Name": "总请求",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "7440cdc1-1f08-4f3a-9ff8-9d884671c591",
+			"Name": "入流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "281b21fe-f624-4914-a193-9cc1bdb6e823",
+			"Name": "出流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "bb8a9d27-9898-40a1-813e-753cc3f51739",
+			"Name": "平均执行时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}, {
+			"Id": "783df910-77ef-443f-8c20-99e585c8718a",
+			"Name": "读平均时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}, {
+			"Id": "4bec55f3-9cad-420b-8ca1-0630dc734b73",
+			"Name": "写平均时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}],
+		"RedisStandalone": [{
+			"Id": "4bc3687f-8e2a-4ee1-b8b9-e24515bf96a4",
+			"Name": "CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "d4dd91f7-875f-4b36-a0c1-c1b5a985a95a",
+			"Name": "内存使用量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "789701e9-6272-4187-af53-abdca577017e",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "cffea516-eec1-4659-9f29-81714ba2e844",
+			"Name": "Key总个数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "b51d3820-ec16-4157-8874-61eb581250cb",
+			"Name": "读请求命中率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "8b945bc4-b51a-4da5-bd3c-f4e5ed1f8c2b",
+			"Name": "读请求命中",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "e64de80d-3781-4157-970b-55277cbf9a43",
+			"Name": "总请求",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "bd756af5-a4bd-4ce3-950c-c689731d22aa",
+			"Name": "入流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "b1bf33ed-f51d-484a-80ea-179337c72f5a",
+			"Name": "出流量",
+			"Granularity": 60,
+			"Unit": "MB"
+		}, {
+			"Id": "eb61afce-db2c-47ef-85f9-1f2271cdceec",
+			"Name": "平均执行时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}, {
+			"Id": "e39c4a0e-2895-4668-a585-9ed85edf89bf",
+			"Name": "读平均时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}, {
+			"Id": "b49cd095-1998-49f4-840f-aef0499a1a67",
+			"Name": "写平均时延",
+			"Granularity": 60,
+			"Unit": "ms"
+		}],
+		"MysqlSingle": [{
+			"Id": "c622839a-fcc1-4e03-abc7-fb5de90e18c5",
+			"Name": "cpu利用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "6405b795-77ed-4fe0-a9ab-52403ef6686b",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "70458642-a0b6-430b-8354-7b52da6ccd5f",
+			"Name": "磁盘使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "7debf81d-6e58-4ff1-983c-fcf0c9b3037a",
+			"Name": "最大连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "1142da28-8efb-4c71-83c1-61e834705d30",
+			"Name": "每秒执行操作数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "bf9828b6-64b0-489e-9ab4-93d3a0d40324",
+			"Name": "慢查询数",
+			"Granularity": 60,
+			"Unit": "次"
+		}, {
+			"Id": "882938bc-bf2d-44d1-b468-2dbb95b9d848",
+			"Name": "全表扫描数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "db08e90d-2ee6-45f6-87ff-549781c2abe1",
+			"Name": "查询数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "57bb0e52-6fce-4055-9264-fbd2cb2f99a5",
+			"Name": "更新数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "809bf5a6-9f75-452b-8475-ff13962b40a0",
+			"Name": "删除数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "adc3bea5-9024-4220-9a33-66cd350d7c63",
+			"Name": "插入数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "93e95b0f-5ebb-4111-bd81-6289532aac6f",
+			"Name": "覆盖数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "493d5db0-ae59-46cf-8223-14213817c3a3",
+			"Name": "总请求数",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "74ca0c11-2ef3-451b-9e39-898c5cb5203b",
+			"Name": "当前打开连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "8724a58c-282c-43fb-bb80-8a8ec6787ff6",
+			"Name": "临时文件数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}, {
+			"Id": "329015c7-8bfa-4734-8691-f24ea65a26f8",
+			"Name": "每秒提交的事务数量",
+			"Granularity": 60,
+			"Unit": "次/秒"
+		}],
+		"Haproxy": [{
+			"Id": "7ae02782-3076-4187-a790-d1ccd489912b",
+			"Name": "CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "e83e4ab5-b322-4335-a7f8-177340ffd7d2",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "f53abaf5-0602-47a9-8f77-ad162acc55e1",
+			"Name": "入包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "813d9b33-09ed-48a6-9294-e5637306bc8b",
+			"Name": "出包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "27f7e53b-02ca-488c-8ad7-67f9e7b4fe4b",
+			"Name": "出流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "69c74b54-9b15-4224-8b43-f42d6e879767",
+			"Name": "入流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}],
+		"HaproxyServer": [{
+			"Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
+			"Name": "负载均衡队列请求数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
+			"Name": "负载均衡活跃会话数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
+			"Name": "负载均衡入流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
+			"Name": "负载均衡出流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "7f205784-2884-4013-b959-e1778b1ea66f",
+			"Name": "负载均衡失败连接数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
+			"Name": "负载均衡错误响应数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
+			"Name": "负载均衡新建会话数",
+			"Granularity": 60,
+			"Unit": "个"
+		}],
+		"HaproxyServerHttp": [{
+			"Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
+			"Name": "负载均衡队列请求数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
+			"Name": "负载均衡活跃会话数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
+			"Name": "负载均衡入流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
+			"Name": "负载均衡出流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "7f205784-2884-4013-b959-e1778b1ea66f",
+			"Name": "负载均衡失败连接数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
+			"Name": "负载均衡错误响应数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
+			"Name": "负载均衡新建会话数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "1fa95a83-5316-4778-a73c-9e276e04eb92",
+			"Name": "http每秒2XX个数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "c675d7ca-114e-413e-af35-7ebc5bb3efa9",
+			"Name": "http每秒3XX个数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "c495df46-8ae8-446f-93c2-328c15ecbf05",
+			"Name": "http每秒4XX个数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "e5d67afe-2f58-4c27-8735-63b61691f4e8",
+			"Name": "http每秒5XX个数",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}],
+		"Lvs": [{
+			"Id": "52e25a12-56bd-4fd5-95d1-59abd073e759",
+			"Name": "CPU使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "fda33502-56af-4622-a94f-263e0366a62c",
+			"Name": "内存使用率",
+			"Granularity": 60,
+			"Unit": "%"
+		}, {
+			"Id": "18e528d0-6c06-4f7f-963c-4b4ba600130e",
+			"Name": "入包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "b4e7dd9b-c8bf-4b0f-9722-35678d5706fc",
+			"Name": "出包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "9ee2b2e5-1340-4aa8-97c2-ad636b4ba552",
+			"Name": "出流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "cbea7adc-1fc3-4df1-8ff5-58d2aec9a998",
+			"Name": "入流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}],
+		"LvsListenerTotal": [{
+			"Id": "a2849467-af38-4efb-8aa3-1939ba9c53ca",
+			"Name": "活跃连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "e1024fdd-eb44-4fe9-b25a-8a30ab436f35",
+			"Name": "不活跃连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "9fc0d3e5-28ae-486a-8f93-a360b8e83108",
+			"Name": "新增连接数",
+			"Granularity": 60,
+			"Unit": "个"
+		}, {
+			"Id": "b1f7bee7-6a37-4268-af24-ba6fd6e1a5b8",
+			"Name": "监听入流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "d8bfd4bf-23f0-4067-9887-6c7e9a813fc8",
+			"Name": "监听出流量",
+			"Granularity": 60,
+			"Unit": "MB/s"
+		}, {
+			"Id": "3f9ee23a-c3b3-4953-a75a-9f320e5a4ee2",
+			"Name": "监听入包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}, {
+			"Id": "115aa7a8-b289-4bab-a787-d120ac200026",
+			"Name": "监听出包量",
+			"Granularity": 60,
+			"Unit": "个/s"
+		}]
+	}
+}
+```
+
+### 8.CreateAlarmStrategy
+
+**Action**: CreateAlarmStrategy
+
+**描述**：创建云监控报警策略
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称              | 类型   | 是否必须 | 示例                                     | 描述                                                         |
+| ----------------- | ------ | -------- | ---------------------------------------- | ------------------------------------------------------------ |
+| ActiveStartTime   | string | 否       | 00:00                                    | 起始时间 默认00:00                                           |
+| ActiveEndTime     | string | 否       | 23:59                                    | 结束时间  默认23:59                                          |
+| Level             | int    | 是       | 1                                        | 告警级别 3 Info 2 Warning 1 Critical                         |
+| LinkInstances     | list   | 否       | ["e714f411-c941-478c-9f22-23a57977eb85"] | 关联的实例                                                   |
+| NotificationType  | list   | 否       | ["email","sms","webhook"]                | 通知方式 email:邮件；sms:短信；webhook:第三方回调，默认为邮件通知，短信每人每天最多可接收15条 |
+| NotificationGroup | list   | 是       | ["f8b892c0-3506-402d-b91a-caaefa816bfb"] | 联系人组                                                     |
+| Rules             | list   | 是       |                                          | 规则详情，云服务器（CCS），裸金属（BMS），弹性云服务器（ECS），暂时仅支持一个策略一条规则 |
+| Scope             | int    | 是       | 0                                        | 规则是否为全局 0.全局 1.实例                                 |
+| StrategyName      | string | 是       | 测试策略                                 | 策略名称,2到64字符                                           |
+| ProductType       | string | 是       | ECS                                      | 产品类型，产品类型与指标必须相匹配                           |
+| AlarmType         | string | 否       | MetricAlarm                              | 告警类型， 默认为MetricAlarm， 注：云服务器（CCS），裸金属（BMS），弹性云服务器（ECS）产品 暂不支持事件告警(EventAlarm)， 其它产品如果监控指标为EventAlarm， 需指明AlarmType为**EventAlarm**。 |
+| CallbackUrl       | string | 否       | http://www.example.com                   | 告警回调URL，最大长度2048个字符                              |
+
+Rules对象
+
+| 名称          | 类型   | 是否必须 | 示例          | 描述                                                         |
+| ------------- | ------ | -------- | ------------- | ------------------------------------------------------------ |
+| RuleName      | string | 否       | 测试规则      | 规则名称， 当前仅支持云服务器（CCS），裸金属（BMS），弹性云服务器（ECS）产品 |
+| MetricsId     | string | 是       | ecs.cpu.usage | 指标id，可以通过DescribeAlarmMetrics 获取产品指标ID          |
+| Period        | int    | 否       | 1             | 周期，默认为1,取值范围1/15/30/60                             |
+| LastedPeriod  | int    | 否       | 5             | 连续周期数,默认为1                                           |
+| TriggerType   | string | 否       | Average       | 判断类型Always/Average/Once，默认为平均值，除ECS/CCS/BMS以外其它产品只支持Average |
+| TriggerSymbol | string | 否       | >=            | 规则判断方式，默认>=         取值范围>=   <=     <    >      |
+| Value         | int    | 否       | 10            | 触发值，默认为10                                             |
+| SilentPeriod  | int    | 否       | 360           | 规则沉默周期，单位分钟 5 10 15 30 60 180 360 720 1440，默认5 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例            | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Message | string | Request success | 提示信息 |
+| Data    | Object |                 |          |
+
+Data对象
+
+| 名称         | 类型   | 示例                                 | 描述           |
+| ------------ | ------ | ------------------------------------ | -------------- |
+| StrategyId   | string | e714f411-c941-478c-9f22-23a57977eb85 | 生成的策略的id |
+| StrategyName | string | 测试策略                             | 策略名称       |
+
+**错误码**
+
+| httpcode | 错误码                         | 错误信息                                                     | 描述                                        |
+| -------- | ------------------------------ | ------------------------------------------------------------ | ------------------------------------------- |
+| 400      | InvalidNotificationGroup       | NotificationGroup parameter invalid or contains invalid groups | 参数错误或包含无效联系组                    |
+| 400      | UnSupportMultipleRules         | Not support multiple rules                                   | ECS、BMS、CCS单条策略暂时不允许多个规则存在 |
+| 400      | InvalidInstance                | LinkInstances parameter id invalid or instance not exist     | 关联实例参数错误或者实例id无效              |
+| 400      | InvalidProductTypeAndMetricsId | ProductType parameter does not match MetricsId               | 产品类型与指标不匹配                        |
+| 400      | StrategyNameExists             | StrategyName duplicate                                       | 策略名重复                                  |
+| 400      | InvalidInActiveValue           | Inactive value invalid                                       | 禁用值无效                                  |
+
+**请求示例**
+
+```python
+def create_alarm_strategy():
+    action = "CreateAlarmStrategy"
+    method = "POST"
+    param = {
+        "ActiveStartTime": "00:00",
+        "ActiveEndTime": "23:59",
+        "Level": 1,
+        "NotificationType": ["webhook"],
+        "NotificationGroup": [
+            "4c8d8bad-10ed-4673-ba3f-4a568d0756a1"
+        ],
+        "Rules":
+            [
+                {
+                 "MetricsId": "ecs.cpu.usage",
+                 "Period": 1,
+                 "LastedPeriod": 5,
+                 "TriggerType": "Average",
+                 "TriggerSymbol": ">=",
+                 "Value": 90,
+                 "SilentPeriod": 5
+                 }
+            ],
+        "Scope": 0,
+        "StrategyName": "ecs策略-example",
+        "ProductType": "ECS",
+        "AlarmType": "MetricAlarm",
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+		"StrategyName": "ecs策略-example"
+	}
+}
+```
+
+### 9.DeleteAlarmStrategy
+
+**Action**: DeleteAlarmStrategy
+
+**描述**：删除报警策略
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称        | 类型 | 是否必须 | 示例                                                         | 描述       |
+| ----------- | ---- | -------- | ------------------------------------------------------------ | ---------- |
+| StrategyIds | list | 是       | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 策略id列表 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例            | 描述             |
+| ------- | ------ | --------------- | ---------------- |
+| Code    | string | Success         | 错误码           |
+| Message | string | Request success | 提示信息         |
+| Data    | object |                 | 删除成功的规则id |
+
+data对象
+
+| 名称    | 类型 | 示例                                                         | 描述                 |
+| ------- | ---- | ------------------------------------------------------------ | -------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除成功的策略id列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除失败的策略id列表 |
+
+**请求示例**
+
+```python
+def delete_alarm_strategy():
+    action = "DeleteAlarmStrategy"
+    method = "POST"
+    param = {
+        "StrategyIds": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309", "5ee92b2a-df85-4026-b6ed-39dd54115ea2"],
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
+		"Failed": ["5ee92b2a-df85-4026-b6ed-39dd54115ea2"]
+	}
+}
+```
+
+### 10.DescribeAlarmStrategies
+
+**Action**: DescribeAlarmStrategies
+
+**描述**：查询报警策略列表
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: GET
+
+**请求参数**
+
+| 名称         | 类型   | 是否必须 | 示例                             | 描述                                                         |
+| ------------ | ------ | -------- | -------------------------------- | ------------------------------------------------------------ |
+| StrategyId   | string | 否       | 1e97d3c0-721a-4f6f-bcf1-47d71f16 | 报警策略ID                                                   |
+| PageNumber   | int    | 否       | 10                               | 当前页码                                                     |
+| PageSize     | int    | 否       | 20                               | 每页记录规则条数                                             |
+| StrategyName | string | 否       | test                             | 策略名称                                                     |
+| AlarmType    | string | 否       | MetricAlarm                      | 告警类型:MetricAlarm、EventAlarm                             |
+| InActive     | string | 否       | 0                                | 是否启用                                                     |
+| ProductType  | string | 否       | ECS                              | 产品类型 参考[通用字段下的ProductType:  产品类型](#ProductType) |
+| Level        | int    | 否       | 3                                | 告警级别 3-info；2-warning；1-critical                       |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Data    | object |                 |          |
+| Message | string | Request success | 提示信息 |
+
+Data对象
+
+| 名称       | 类型 | 示例值 | 描述                       |
+| ---------- | ---- | ------ | -------------------------- |
+| PageNumber | int  | 5      | 分页使用，第几页           |
+| PageSize   | int  | 20     | 分页使用，每页显示几条规则 |
+| TotalCount | int  | 100    | 分页使用，总记录数         |
+| Strategy   | list |        | 策略列表                   |
+
+Strategy对象
+
+| 名称              | 类型     | 示例值                                                 | 描述                                                         |
+| ----------------- | -------- | ------------------------------------------------------ | ------------------------------------------------------------ |
+| StrategyId        | string   | 1e97d3c0-721a-4f6f-bcf1-47d71f16                       | 策略id                                                       |
+| StrategyName      | string   | 测试策略                                               | 策略名称                                                     |
+| Status            | string   | Normal                                                 | 规则使用状态：正常Normal，正在告警中Alarming、未告警出来Pending、数据不足DataLocked |
+| StatusStr         | string   | 正常                                                   | 规则状态的中文说明                                           |
+| InActive          | int      | 1                                                      | 0 未启用 1 启用                                              |
+| Level             | int      | 1                                                      | 告警级别 3 Info 2 Warning 1 Critical                         |
+| LevelStr          | string   | 严重                                                   | 告警级别说明                                                 |
+| ActiveStartSime   | string   | 00:00                                                  | 起始时间 00:00                                               |
+| ActiveEndTime     | string   | 23:59                                                  | 结束时间 23:59                                               |
+| ProductType       | string   | ECS                                                    | 资源类型 BMS裸金属 CCS 云服务器、ECS                         |
+| ProductTypeStr    | string   | gpu云服务器                                            | 资源类型说明                                                 |
+| AlarmType         | string   | MetricAlarm                                            | 告警类型:MetricAlarm、EventAlarm                             |
+| AlarmTypeStr      | string   | 指标告警                                               | 告警类型说明                                                 |
+| NotificationType  | list     | ["email","sms"]                                        | 通知方式 email:邮件；sms:短信；webhook:第三方回调            |
+| NotificationGroup | string   | {'247a1925-f401-44ce-90b4-43b2a900124a': 'warnGroup1'} | 联系人组                                                     |
+| Scope             | int      | 1                                                      | 生效资源范围：0：全部资源;1:实例（指定实例）                 |
+| CreateTime        | datetime | 2020-12-06 00:13:29                                    | 策略创建时间                                                 |
+| UpdateTime        | datetime | 2020-12-06 00:13:29                                    | 策略最近一次更新时间                                         |
+| CallbackUrl       | string   | http://www.example.com                                 | url回调地址，POST请求方式                                    |
+| Rules             | list     |                                                        | 规则列表                                                     |
+| LinkInstances     | list     |                                                        | 关联的实例                                                   |
+
+Rules对象
+
+| 名称            | 类型     | 示例值                           | 描述                                                      |
+| --------------- | -------- | -------------------------------- | --------------------------------------------------------- |
+| RuleName        | string   | 测试规则                         | 规则名称                                                  |
+| RuleId          | string   | 1e97d3c0-721a-4f6f-bcf1-47d71f16 | 规则id                                                    |
+| Description     | string   | 测试规则                         | 描述                                                      |
+| MetricsId       | string   | ecs.cpu.usage                    | 监控指标id                                                |
+| MetricsIdStr    | string   | ecs实例cpu使用率                 | 监控指标说明                                              |
+| Period          | int      | 1                                | 监控周期 单位 分钟                                        |
+| PeriodStr       | string   |                                  | 监控周期说明                                              |
+| LastedPeriod    | int      | 30                               | 连续报警周期                                              |
+| LastedPeriodStr | string   |                                  | 连续报警周期说明                                          |
+| TriggerType     | string   | Average                          | 判断方式Always:总是， Maximum：最大值，  Once：只要有一次 |
+| TriggerTypeStr  | string   | 平均值                           | 判断方式说明                                              |
+| TriggerSymbol   | string   | >                                | 比较方式>=,<=,!=,between,=,<,>                            |
+| Value           | int      | 80                               | 单位 百分比                                               |
+| Unit            | string   | %                                | 单位 %,mb/s                                               |
+| SilentPeriod    | int      | 3600                             | 沉默周期，单位秒                                          |
+| SilentPeriodStr | string   | 一小时                           | 沉默周期说明                                              |
+| CreateTime      | datetime | 2020-12-06 00:13:29              | 规则创建时间                                              |
+| UpdateTime      | datetime | 2020-12-06 00:13:29              | 规则最近一次更新时间                                      |
+
+LinkInstances对象
+
+| 名称         | 类型   | 示例值                               | 描述   |
+| ------------ | ------ | ------------------------------------ | ------ |
+| InstanceId   | string | 20a5037b-f8e6-4457-9e2b-f016f4a872f1 | 实例id |
+| InstanceName | string | ccs实例-example                      | 实例名 |
+
+错误码：
+
+| httpcode | 错误码      | 错误信息               | 描述             |
+| -------- | ----------- | ---------------------- | ---------------- |
+| 400      | InvalidPage | Page parameter invalid | 分页相关参数无效 |
+
+**请求示例**
+
+```python
+def describe_alarm_strategies():
+    action = "DescribeAlarmStrategies"
+    method = "GET"
+    param = {
+        "PageNumber": 1,
+        "PageSize": 100,
+        "StrategyName": "ecs策略-example"
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param=param)
+    res = requests.get(url)
+    result = res.json()
+
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+返回结果示例
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"PageNumber": 1,
+		"PageSize": 100,
+		"TotalCount": 1,
+		"Strategy": [{
+			"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+			"StrategyName": "ecs策略-example",
+			"Status": "",
+			"StatusStr": "正常状态",
+			"InActive": 1,
+			"Level": 1,
+			"LevelStr": "严重",
+			"ActiveStartTime": "00:00",
+			"ActiveEndTime": "23:59",
+			"Scope": 0,
+			"ProductType": "ECS",
+			"ProductTypeStr": "",
+			"NotificationType": ["webhook"],
+			"NotificationGroup": [{
+				"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
+				"GroupName": "联系组-example"
+			}],
+			"CallbackUrl": "",
+			"AlarmType": "MetricAlarm",
+			"AlarmTypeStr": "指标告警",
+			"SmsSendLimit": 0,
+			"Rules": [{
+				"RuleId": "9653b68a-82a5-4329-a400-8177bd10758b",
+				"RuleName": "ecs策略-example_0",
+				"Description": "",
+				"MetricsId": "ecs.cpu.usage",
+				"MetricsIdStr": "",
+				"Period": 1,
+				"PeriodStr": "1分钟周期",
+				"LastedPeriod": 5,
+				"LastedPeriodStr": "连续5周期",
+				"TriggerType": "Average",
+				"TriggerTypeStr": "平均值",
+				"TriggerSymbol": ">=",
+				"Value": 90,
+				"Unit": "%",
+				"SilentPeriod": 5,
+				"SilentPeriodStr": "5分钟",
+				"CreateTime": "2022-11-24 11:31:01",
+				"UpdateTime": "2022-11-24 11:31:01"
+			}],
+			"CreateTime": "2022-11-24 11:31:01",
+			"UpdateTime": "2022-11-24 11:31:01"
+		}]
+	}
+}
+```
+
+### 11.ModifyStrategyStatus
+
+**Action**: ModifyStrategyStatus
+
+**描述**：查询报警策略列表
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称        | 类型 | 是否必须 | 示例                                                         | 描述         |
+| ----------- | ---- | -------- | ------------------------------------------------------------ | ------------ |
+| StrategyIds | List | 是       | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 策略ID       |
+| Enable      | int  | 是       | 0                                                            | 0禁用，1启用 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Data    | object |                 | 具体数据 |
+| Message | string | Request success | 提示信息 |
+
+Data对象
+
+| 名称    | 类型 | 示例值                                                       | 描述                      |
+| ------- | ---- | ------------------------------------------------------------ | ------------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 启用/禁用成功的策略id列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 启用/禁用成功的策略id列表 |
+
+**请求示例**
+
+```python
+ef modify_strategy_status():
+    action = "ModifyStrategyStatus"
+    method = "POST"
+    param = {
+        "StrategyIds": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
+        "Enable": 0
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
+		"Failed": []
+	}
+}
+```
+
+### 12.ModifyStrategy
+
+**Action**: ModifyStrategy
+
+**描述**：修改报警策略
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称              | 类型   | 是否必须 | 示例                                     | 描述                                              |
+| ----------------- | ------ | -------- | ---------------------------------------- | ------------------------------------------------- |
+| StrategyId        | string | 是       | e714f411-c941-478c-9f22-23a57977eb85     | 策略ID                                            |
+| StrategyName      | string | 否       | test                                     | 策略名称，长度范围2到64字符                       |
+| Level             | int    | 否       | 1                                        | 告警级别                                          |
+| ActiveStartTime   | string | 否       | 00:00                                    | 有效起始时间                                      |
+| ActiveEndTime     | string | 否       | 23:59                                    | 有效结束时间                                      |
+| NotificationType  | list   | 否       | ["email","sms"]                          | 通知方式 email:邮件；sms:短信；webhook:第三方回调 |
+| NotificationGroup | list   | 否       | ["f8b892c0-3506-402d-b91a-caaefa816bfb"] | 联系人组                                          |
+| CallbackUrl       | string | 否       | http:/test.com.cn                        | 回调URL，最长2048个字符                           |
+| Scope             | int    | 否       | 0                                        | 资源范围，0.全局 1.实例                           |
+| LinkInstances     | list   | 否       | ["e714f411-c941-478c-9f22-23a57977eb85"] | 关联实例                                          |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述               |
+| ------- | ------ | --------------- | ------------------ |
+| Code    | string | Success         | 错误码             |
+| Data    | object |                 | 修改成功的规则的ID |
+| Message | string | Request success |                    |
+
+Data对象
+
+| 名称       | 类型   | 示例值                               | 描述   |
+| ---------- | ------ | ------------------------------------ | ------ |
+| StrategyId | string | e714f411-c941-478c-9f22-23a57977eb85 | 策略id |
+
+**错误码**
+
+| httpcode | 错误码                    | 错误信息                                                     | 描述                             |
+| -------- | ------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| 400      | ParameterNotEnough        | There must be at least one optional parameter                | 可选参数不能全部为空             |
+| 400      | InvalidStrategyNameLength | Strategy too short or too lang,lenth limit 2 to 64           | 策略名长度范围为2到64字符        |
+| 400      | InvalidNotificationGroup  | NotificationGroup parameter invalid or contains invalid groups | 联系组参数无效或者包含无效联系组 |
+| 400      | InvalidInstance           | LinkInstances parameter id invalid or instance not exist     | 关联实例参数无效或者实例不存在   |
+| 400      | InvalidActiveTimeRange    | ActiveStartTime must be earlier than ActiveEndTime           | 起始时间必须早于终止时间         |
+| 400      | StrategyIdNotFound        | Strategy id not found                                        | 策略id不存在                     |
+
+**请求示例**
+
+```python
+def modify_strategy():
+    action = "ModifyStrategy"
+    method = "POST"
+    param = {
+        "StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+        "NotificationGroup": ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"],
+        "NotificationType": [
+            "email",
+            "sms",
+            "webhook"
+        ],
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309"
+	}
+}
+```
+
+### 13.ModifyStrategyRule
+
+**Action**: ModifyStrategyRule
+
+**描述**：修改报警策略的规则
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述                                           |
+| ---------- | ------ | -------- | ------------------------------------ | ---------------------------------------------- |
+| StrategyId | string | 是       | 6cb991fb-3989-4860-8b79-e65466b7ec30 | 策略ID                                         |
+| Rules      | list   | 是       |                                      | 规则组，仅作为修改使用，增加和删除规则另有接口 |
+
+Rules对象：
+
+**注**： 当前对于监控指标的修改不建议跨产品操作
+
+| 名称          | 类型   | 是否必须 | 示例                                 | 描述                                                         |
+| ------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| RuleId        | string | 是       | e714f411-c941-478c-9f22-23a57977eb85 | 规则ID                                                       |
+| MetricsId     | string | 否       | vm.cpu.usage                         | 指标id，DescribeAlarmMetrics 获取指标ID                      |
+| Period        | int    | 否       | 1                                    | 监控周期（分钟）默认为1,取值范围1/15/30/60                   |
+| LastedPeriod  | int    | 否       | 1                                    | 连续周期（分钟）                                             |
+| TriggerType   | string | 否       | Always                               | 判断类型Always/Average/Once，默认为平均值，除ECS/CCS/BMS以外其它产品只支持Average |
+| TriggerSymbol | string | 否       | <=                                   | 规则判断方式，默认>=         取值范围>=   <=     <    >      |
+| Value         | int    | 否       | 4                                    | 设定值                                                       |
+| SilentPeriod  | int    | 否       | 0                                    | 沉默周期（分钟）取值范围 5 10 15 30 60 180 360 720 1440，默认5 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述               |
+| ------- | ------ | --------------- | ------------------ |
+| Code    | string | Success         | 错误码             |
+| Data    | object |                 | 修改成功的规则的ID |
+| Message | string | Request success |                    |
+
+Data对象
+
+| 名称    | 类型 | 示例值                                                       | 描述                 |
+| ------- | ---- | ------------------------------------------------------------ | -------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 修改成功的规则ID列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 修改失败的规则ID列表 |
+
+**错误码**
+
+| httpcode | 错误码             | 错误信息                | 描述         |
+| -------- | ------------------ | ----------------------- | ------------ |
+| 400      | InvalidRule        | Rules parameter invalid | 规则参数无效 |
+| 400      | StrategyIdNotFound | Strategy id not found   | 策略id不存在 |
+
+调用示例
+
+```python
+def modify_strategy_rule():
+    action = "ModifyStrategyRule"
+    method = "POST"
+    param = {
+        "StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+        "Rules": [{
+            "RuleId": "9653b68a-82a5-4329-a400-8177bd10758b",
+            "MetricsId": "ecs.mem.usage",
+            "Period": 15,
+            "LastedPeriod": 5,
+            "Value": 89
+        }]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+返回值示例
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["9653b68a-82a5-4329-a400-8177bd10758b"],
+		"Failed": null
+	}
+}
+```
+
+### 14.AddStrategyRule
+
+**Action**: AddStrategyRule
+
+**描述**：增加报警策略的规则【CCS/BMS/ECS暂不支持】
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+| 名称       | 类型   | 是否必须 | 示例                                 | 描述     |
+| ---------- | ------ | -------- | ------------------------------------ | -------- |
+| StrategyId | string | 是       | 6cb991fb-3989-4860-8b79-e65466b7ec30 | 策略ID   |
+| Rules      | list   | 是       |                                      | 规则对象 |
+
+Rules对象
+
+| 名称          | 类型   | 是否必须 | 示例          | 描述                                                         |
+| ------------- | ------ | -------- | ------------- | ------------------------------------------------------------ |
+| MetricsId     | string | 是       | ecs.cpu.usage | 指标id                                                       |
+| Period        | int    | 否       | 1             | 周期，默认为1,取值范围1/15/30/60                             |
+| LastedPeriod  | int    | 否       | 5             | 连续周期数,默认为1                                           |
+| TriggerType   | string | 否       | Average       | 判断类型Always/Average/Once，默认为平均值                    |
+| TriggerSymbol | string | 否       | >=            | 规则判断方式                                                 |
+| Value         | int    | 否       | 10            | 触发值，默认为10                                             |
+| SilentPeriod  | int    | 否       | 360           | 规则沉默周期，单位分钟 5 10 15 30 60 180 360 720 1440，默认0 |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述               |
+| ------- | ------ | --------------- | ------------------ |
+| Code    | string | Success         | 错误码             |
+| Data    | object |                 | 修改成功的规则的ID |
+| Message | string | Request success |                    |
+
+data对象
+
+| 名称    | 类型 | 示例                                                         | 描述                 |
+| ------- | ---- | ------------------------------------------------------------ | -------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除成功的规则id列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除失败的规则id列表 |
+
+**请求示例**
+
+```python
+def add_strategy_rule():
+    action = "AddStrategyRule"
+    method = "POST"
+    param = {
+        "StrategyId": "7203f66c-d761-4038-b46f-6a5d9130558e",
+        "Rules": [{
+            "MetricsId": "eff006d7-8819-4ab7-ab50-0b56de49255d",
+            "Period": 5,
+            "LastedPeriod": 5,
+            "Value": 89,
+            "TriggerType": "Average",
+        }]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
+		"Failed": []
+	}
+}
+```
+
+### 15.DeleteStrategyRule
+
+**Action**: DeleteStrategyRule
+
+**描述**：删除报警策略的规则【CCS/BMS/ECS暂不支持】
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: POST
+
+**请求参数**
+
+| 名称       | 类型   | 是否必须 | 示例                                                         | 描述   |
+| ---------- | ------ | -------- | ------------------------------------------------------------ | ------ |
+| StrategyId | string | 是       | 6cb991fb-3989-4860-8b79-e65466b7ec30                         | 策略ID |
+| RuleIds    | list   | 是       | ["a4704352-7fa7-4782-af82-bde57e28cf15","13a9fb72-7c92-4e54-8c16-cd73f4d52bc7"] | 规则ID |
+
+**返回参数**
+
+| 名称    | 类型   | 示例值          | 描述               |
+| ------- | ------ | --------------- | ------------------ |
+| Code    | string | Success         | 错误码             |
+| Data    | object |                 | 修改成功的规则的ID |
+| Message | string | Request success |                    |
+
+data对象
+
+| 名称    | 类型 | 示例                                                         | 描述                 |
+| ------- | ---- | ------------------------------------------------------------ | -------------------- |
+| Success | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除成功的规则id列表 |
+| Failed  | list | ["e714f411-c941-478c-9f22-23a57977eb85", "e714f411-c941-478c-9f22-23a57977eb85"] | 删除失败的规则id列表 |
+
+**请求示例**
+
+```python
+def delete_strategy_rule():
+    action = "DeleteStrategyRule"
+    method = "POST"
+    param = {
+        "StrategyId": "7203f66c-d761-4038-b46f-6a5d9130558e",
+        "RuleIds": ["5e5e7ced-3f16-402b-b458-72be178882b8"]
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param={})
+    res = requests.post(url, json=param)
+    result = res.json()
+    print(json.dumps(result, ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
+		"Failed": []
+	}
+}
+```
+
+### 16.DescribeAlarmHistories
+
+**Action**: DescribeAlarmHistories
+
+**描述**：查询产生的告警历史记录（暂只支持查询一小时以内）
+
+**请求地址**: api.capitalonline.net/alarm/v1
+
+**请求方法**: GET
+
+**请求参数**
+
+| 名称         | 类型   | 是否必须 | 示例                                  | 描述                                                         |
+| ------------ | ------ | -------- | ------------------------------------- | ------------------------------------------------------------ |
+| RuleName     | string | 否       | ecs规则-cpu                           | 规则名                                                       |
+| RuleId       | string | 否       | efefddsdf-8wef-1ewc-9247-5293weed0ddd | 规则ID                                                       |
+| InstanceName | string | 否       | test                                  | 实例名                                                       |
+| InstanceId   | string | 否       | ewefewa-95e1-11ec-adf8-1efweeef8465   | 实例ID                                                       |
+| PageNumber   | int    | 否       | 1                                     | 当前页码，默认第1页                                          |
+| PageSize     | int    | 否       | 10                                    | 页面大小，默认10                                             |
+| AlarmStatus  | string | 否       | AlarmHappened                         | 告警状态AlarmHappened、PipeSilence、RecoverNormal 、NewInitialize 初始化 |
+| AlarmType    | string | 否       | MetricAlarm                           | 报警类型MetricAlarm, EventAlarm                              |
+
+**返回参数**
+
+| 名称    | 类型   | 示例            | 描述     |
+| ------- | ------ | --------------- | -------- |
+| Code    | string | Success         | 错误码   |
+| Message | string | Request success | 提示信息 |
+| Data    | object |                 |          |
+
+Data对象的字段
+
+| 名称       | 类型 | 示例 | 描述         |
+| ---------- | ---- | ---- | ------------ |
+| AlarmList  | list |      | 告警记录列表 |
+| PageNumber | int  | 1    | 当前页码     |
+| TotalPages | int  | 10   | 总页数       |
+| Total      | int  | 100  |              |
+
+AlarmList对象的字段
+
+| 名称              | 类型   | 示例                                 | 描述                                                         |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| RuleId            | string | 73203ba0-09cc-4b52-a4f9-452b5b7642a5 | 规则id                                                       |
+| RuleName          | string | CCS规则-cpu                          | 规则名称                                                     |
+| InstanceId        | string | f61c355a-b43f-42f2-8c08-cf25f542a538 | 实例id                                                       |
+| ProductType       | string | CCS                                  | 产品类型CCS、BMS、ECS                                        |
+| InstanceName      | string | 测试实例                             | 实例名称                                                     |
+| Status            | string | PipeSilence                          | 告警状态：AlarmHappened 报警发生 PipeSilence 发送通道沉默 RecoverNormal 恢复正常 NewInitialize 初始化 |
+| NotificationType  | list   | ["email","sms"]                      |                                                              |
+| Duration          | string | 600                                  | 持续时间 单位秒                                              |
+| AlarmTime         | string | 2019-11-29 06:11:17                  | 告警发生时间                                                 |
+| NotificationGroup | list   |                                      | 告警联系组                                                   |
+| AlarmType         | string | MetricAlarm                          | 告警类型EventAlarm='事件告警', MetricAlarm='指标告警'        |
+| AlarmTypeStr      | string | 指标告警                             | 告警类型(中文说明)                                           |
+
+NotificationGroup
+
+| 名称      | 类型   | 示例                                 | 描述       |
+| --------- | ------ | ------------------------------------ | ---------- |
+| GroupId   | string | 4e16ac79-7541-4811-a658-22940a69bea8 | 联系组id   |
+| GroupName | string | 联系组1                              | 联系组名称 |
+
+**请求示例**
+
+```python
+def describe_alarm_histories():
+    action = "DescribeAlarmHistories"
+    method = "GET"
+    param = {
+        "AlarmStatus": "AlarmHappened",
+        "AlarmType": "MetricAlarm",
+        "PageNumber": 1,
+        "PageSize": 10,
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ALARM_URL, param=param)
+    res = requests.get(url)
+    result = res.json()
+    print(json.dumps(result,ensure_ascii=False))
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
+        return
+
+    return result
+```
+
+**返回示例**
+
+```json
+{
+	"Code": "Success",
+	"Message": "Request success",
+	"Data:": {
+		"PageNumber": 1,
+		"PageSize": 2,
+		"Total": 1,
+		"AlarmList": [{
+			"RuleId": "17fc9559-c114-49a6-84fd-e55ca09be999",
+			"RuleName": "ccs规则-example",
+			"InstanceId": "0df11f95-0dd5-43fa-8b53-bf8884ccc942",
+			"ProductType": "CCS",
+			"InstanceName": "ccs实例-example",
+			"Status": "AlarmHappened",
+			"NotificationType": ["webhook"],
+			"Duration": 60,
+			"AlarmTime": "2022-11-24 16:04:36",
+			"NotificationGroup": [{
+				"GroupId": "fae5f321-8a8f-4992-a1f8-e41b4e2d9dcf",
+				"GroupName": "联系组-example"
+			}],
+			"AlarmType": "MetricAlarm"
+		}]
+	}
 }
 ```
 
