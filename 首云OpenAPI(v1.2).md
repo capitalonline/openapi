@@ -19374,3 +19374,5 @@ def create_template(vm_id):
 }
 ```
 
+
+
