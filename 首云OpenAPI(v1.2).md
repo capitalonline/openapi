@@ -247,7 +247,7 @@
        - [14.AddStrategyRule](#14addstrategyrule)
        - [15.DeleteStrategyRule](#15deletestrategyrule)
        - [16.DescribeAlarmHistories](#16describealarmhistories)
-     * [安全组相关接口](#安全组相关接口)
+     * [ECS安全组相关接口](#ECS安全组相关接口)
        - [1.DescribeSecurityGroups](#1-describeSecurityGroups)
        - [2.CreateSecurityGroup](#2-createSecurityGroup)
        - [3.ModifySecurityGroupAttribute](#3-modifySecurityGroupAttribute)
@@ -18501,7 +18501,7 @@ def describe_alarm_histories():
 }
 ```
 
-## 安全组相关接口
+## ECS安全组相关接口
 
 ### 1. DescribeSecurityGroups
 
