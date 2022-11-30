@@ -247,6 +247,19 @@
        - [14.AddStrategyRule](#14addstrategyrule)
        - [15.DeleteStrategyRule](#15deletestrategyrule)
        - [16.DescribeAlarmHistories](#16describealarmhistories)
+     * [安全组相关接口](#安全组相关接口)
+       - [1.DescribeSecurityGroups](#1DescribeSecurityGroups)
+       - [2.CreateSecurityGroup](#2CreateSecurityGroup)
+       - [3.ModifySecurityGroupAttribute](#3ModifySecurityGroupAttribute)
+       - [4.DeleteSecurityGroup](#4DeleteSecurityGroup)
+       - [5.CreateSecurityGroupPolicies](#5CreateSecurityGroupPolicies)
+       - [6.DescribeSecurityGroupPolicies](#6DescribeSecurityGroupPolicies)
+       - [7.DeleteSecurityGroupPolicies](#7DeleteSecurityGroupPolicies)
+       - [8.ModifySecurityGroupPolicies](#8ModifySecurityGroupPolicies)
+       - [9.AssociateSecurityGroups](#9AssociateSecurityGroups)
+       - [10.DisassociateSecurityGroups](#10DisassociateSecurityGroups)
+       - [11.ModifySecurityGroupsPriority](#11ModifySecurityGroupsPriority)
+       - [12.DescribeSecurityGroupAssociationStatistics](#12DescribeSecurityGroupAssociationStatistics)
      * [其他公共接口](#其他公共接口)
        * [1.DescribeAvailableResource](#1describeavailableresource)
        * [2.DescribeTask](#2describetask)
@@ -18487,6 +18500,730 @@ def describe_alarm_histories():
 	}
 }
 ```
+
+## 安全组相关接口
+
+### 1. DescribeSecurityGroups
+
+**Action**: DescribeSecurityGroups
+
+**描述**: 查看用户下安全组属性概况
+
+**请求方法**：GET
+
+**请求参数** 
+
+| 参数              | 类型   | 含义         | 是否必选                            | 示例                |
+| ----------------- | ------ | ------------ | ----------------------------------- | ------------------- |
+| RegionCode        | string | 区域Code     | 否                                  | CN_Suqian           |
+| SecurityGroupId   | string | 安全组id     | 否                                  | sg-12ys37squazemjlx |
+| SecurityGroupName | string | 安全组名称   | 否                                  | mySG                |
+| PageNumber        | int    | 当前页       | 否，当为0或者不填时，表示不分页查询 | 1                   |
+| PageSize          | int    | 每页展示数量 | 否                                  | 20                  |
+
+**响应参数**
+
+| 参数             | 类型                     | 含义                            |
+| ---------------- | ------------------------ | ------------------------------- |
+| SecurityGroupSet | Array of *SecurityGroup* | 安全组对象，此字段可能返回 null |
+| TotalCount       | int                      | 符合条件的实例数量              |
+
+*SecurityGroup*
+
+| 参数                | 类型   | 含义                          |
+| ------------------- | ------ | ----------------------------- |
+| SecurityGroupId     | string | 安全组实例ID                  |
+| SecurityGroupName   | string | 安全组名称                    |
+| SecurityGroupRegion | string | 安全组区域名称                |
+| InstanceCount       | int    | 绑定实例数量                  |
+| IpCount             | int    | 可加入IP数量                  |
+| SecurityGroupDesc   | string | 安全组描述                    |
+| CreatedTime         | string | 安全组创建时间                |
+| UpdateTime          | string | 安全组更新时间                |
+| GroupInterconnected | bool   | 是否组内互通，true是，false否 |
+
+分页响应参数
+
+| 参数       | 类型 | 含义         |
+| ---------- | ---- | ------------ |
+| TotalCount | int  | 总数量       |
+| PageNumber | int  | 当前页       |
+| PageSize   | int  | 每页展示数量 |
+
+**示例**
+
+```
+GET http://api.capitalonline.net/sg/v1?&RegionCode=CN_Suqian&RegionCode=CN_Suqian&<公共请求参数>
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "Data": {
+        "TotalCount": 1,
+        "SecurityGroupSet": [
+            {
+                "SecurityGroupId": "sg-ateok6ref6ho4smp",
+                "SecurityGroupName": "demo",
+                "SecurityGroupRegion":"宿迁",
+                "InstanceCount": 2,
+                "IpCount": 1998,
+                "CreatedTime": "2022-11-02 10:05:47",
+                "UpdateTime": "2022-11-02 10:05:47",
+                "SecurityGroupDesc": "描述",
+                "GroupInterconnected": true
+            }
+        ]
+    },
+    "RequestId": "qtsnhp06l00co36tbbcdfg8100zsobyh",
+    "TotalCount": 16,
+    "PageNumber": 1,
+    "PageSize": 5
+}
+```
+
+
+
+### 2. CreateSecurityGroup
+
+**Action**: CreateSecurityGroup
+
+**描述**: 创建安全组
+
+**请求方法**：POST 
+
+**请求参数** 
+
+| 参数                     | 类型   | 含义                          | 是否必选 | 示例       |
+| ------------------------ | ------ | ----------------------------- | -------- | ---------- |
+| SecurityGroupName        | string | 安全组名称，最多60个字符      | 是       | mySG       |
+| SecurityGroupDescription | string | 安全组描述，最多128个字符     | 否       | 安全组描述 |
+| GroupInterconnected      | bool   | 是否组内互通，true是，false否 | 否       | true       |
+| RegionCode               | string | 可用区code                    | 是       | CN_Suqian  |
+
+**响应参数** 
+
+| 参数            | 类型   | 含义     | 是否必选 | 示例                |
+| --------------- | ------ | -------- | -------- | ------------------- |
+| SecurityGroupId | string | 安全组id | 是       | sg-iwvmqar807h34cmk |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupName": "测试demo",
+    "SecurityGroupDescription": "安全组描述",
+    "GroupInterconnected":true,
+    "RegionCode":"CN_Suqian"
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "Data": {
+        "SecurityGroupId": "sg-iwvmqar807h34cmk"
+    },
+    "RequestId": "qtsnhp04n00co3alsf4j6to100kbj61s"
+}
+```
+
+
+
+### 3. ModifySecurityGroupAttribute
+
+**Action**: ModifySecurityGroupAttribute
+
+**描述**: 修改安全组属性
+
+**请求方法**：POST 
+
+**请求参数** 
+
+| 参数                     | 类型   | 含义                                                | 是否必选 |
+| ------------------------ | ------ | --------------------------------------------------- | -------- |
+| SecurityGroupId          | string | 安全组id                                            | 是       |
+| SecurityGroupName        | string | 安全组名称，最多60个字符                            | 否       |
+| SecurityGroupDescription | string | 安全组描述，最多128个字符                           | 否       |
+| GroupInterconnected      | bool   | 是否组内互通，true是，false否，且不能更改和之前一样 | 否       |
+
+*注：修改时不填视为不更改，且不能修改和之前一样，GroupName/GroupDescription/GroupInterconnected 至少有要一个更改*
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId":"sg-78e4t8rkp4h740m0",
+    "SecurityGroupDescription": "描述修改"
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp094c0co5qv5cvko8w600gullgh"
+}
+```
+
+
+
+### 4. DeleteSecurityGroup
+
+**Action**: DeleteSecurityGroup
+
+**描述**: 安全组删除
+
+**请求方法**：POST
+
+**请求参数** 
+
+| 参数            | 类型   | 含义     | 是否必选 |
+| --------------- | ------ | -------- | -------- |
+| SecurityGroupId | string | 安全组id | 是       |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>&SecurityGroupId=sg-78e4t8rkp4h740m0
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp094c0co5qv5cvko8w600gullgh"
+}
+```
+
+
+
+### 5. CreateSecurityGroupPolicies
+
+**Action**: CreateSecurityGroupPolicies
+
+**描述**: 安全组添加规则
+
+**请求方法**：POST
+
+**请求参数** 
+
+| 参数                   | 类型                     | 含义         | 是否必选 |
+| ---------------------- | ------------------------ | ------------ | -------- |
+| SecurityGroupId        | string                   | 安全组实例ID | 是       |
+| SecurityGroupPolicySet | *SecurityGroupPolicySet* | 规则集合     | 否       |
+
+*SecurityGroupPolicySet*
+
+| 参数    | 类型                           | 含义     | 是否必选 |
+| ------- | ------------------------------ | -------- | -------- |
+| Ingress | Array of *SecurityGroupPolicy* | 入站规则 | 否       |
+| Egress  | Array of *SecurityGroupPolicy* | 出站规则 | 否       |
+
+*SecurityGroupPolicy*
+
+| 参数              | 类型   | 含义                              | 是否必选 | 示例      |
+| ----------------- | ------ | --------------------------------- | -------- | --------- |
+| Protocol          | string | 协议类型                          | 是       | TCP       |
+| PolicyDescription | string | 描述                              | 否       | 描述      |
+| Port              | string | 端口号范围                        | 是       | 22/22     |
+| Priority          | int    | 规则优先级（1~100）               | 是       | 12        |
+| CidrBlock         | string | 网段或IP(互斥)                    | 是       | 0.0.0.0/0 |
+| Status            | bool   | 状态，true表示允许，false表示拒绝 | 是       | true      |
+
+*注意：*
+
+*1. 当协议为icmp时，Port无意义，填1/1即可*
+
+*2. 新增的规则和历史规则一样时，则会新增失败*
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+    "SecurityGroupPolicySet": {
+        "Ingress": [
+            {
+                "Protocol": "TCP",
+                "PolicyDescription": "规则描述",
+                "Port": "22/22",
+                "CidrBlock": "0.0.0.0/0",
+                "Priority": 1,
+                "Status": true
+            },
+            {
+                "Protocol": "TCP",
+                "PolicyDescription": "规则描述",
+                "Port": "3000/4000",
+                "CidrBlock": "0.0.0.0/0",
+                "Priority": 10,
+                "Status": false
+            }
+        ],
+        "Egress": [
+            {
+                "Protocol": "TCP",
+                "PolicyDescription": "规则描述",
+                "Port": "10000/20000",
+                "CidrBlock": "0.0.0.0/0",
+                "Priority": 1,
+                "Status": false
+            }
+        ]
+    }
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp03bw0co5rceqdgv6o100w4kner"
+}
+```
+
+
+
+### 6. DescribeSecurityGroupPolicies
+
+**Action**: DescribeSecurityGroupPolicies
+
+**描述**: 查询安全组规则
+
+**请求方法**：GET
+
+**请求参数** 
+
+| 参数            | 类型   | 含义     | 是否必选 |
+| --------------- | ------ | -------- | -------- |
+| SecurityGroupId | string | 安全组id | 是       |
+
+**响应参数**
+
+| 参数                   | 类型                     | 含义         |
+| ---------------------- | ------------------------ | ------------ |
+| SecurityGroupId        | string                   | 安全组实例ID |
+| SecurityGroupPolicySet | *SecurityGroupPolicySet* | 规则集合     |
+
+*SecurityGroupPolicySet*
+
+| 参数    | 类型                           | 含义     |
+| ------- | ------------------------------ | -------- |
+| Ingress | Array of *SecurityGroupPolicy* | 入站规则 |
+| Egress  | Array of *SecurityGroupPolicy* | 出站规则 |
+
+*SecurityGroupPolicy*
+
+| 参数              | 类型   | 含义                              |
+| ----------------- | ------ | --------------------------------- |
+| PolicyId          | string | 规则id                            |
+| Protocol          | string | 协议类型                          |
+| PolicyDescription | string | 描述                              |
+| Port              | string | 端口号范围 例如：22/22            |
+| Priority          | int    | 规则优先级                        |
+| CidrBlock         | string | 网段或IP(互斥)                    |
+| Status            | bool   | 状态，true表示允许，false表示拒绝 |
+| SecurityGroupId   | string | 安全组实例ID                      |
+
+**示例**
+
+```
+GET  http://api.capitalonline.net/sg/v1?<公共请求参数>&SecurityGroupId=sg-tzejtarkp5hd4rm7
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "Data": {
+        "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+        "SecurityGroupPolicySet": {
+            "Ingress": [
+                {
+                    "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+                    "PolicyID": "sp-a3hv1qrvbnhr4emz",
+                    "Protocol": "tcp",
+                    "PolicyDescription": "规则描述",
+                    "Port": "22/22",
+                    "CidrBlock": "0.0.0.0/0",
+                    "Priority": 1,
+                    "Status": true
+                },
+                {
+                    "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+                    "PolicyID": "sp-3azd1hrbb9hf4dm3",
+                    "Protocol": "tcp",
+                    "PolicyDescription": "规则描述",
+                    "Port": "3000/4000",
+                    "CidrBlock": "0.0.0.0/0",
+                    "Priority": 10,
+                    "Status": false
+                }
+            ],
+            "Egress": [
+                {
+                    "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+                    "PolicyID": "sp-w8z51hrfbmhs4emt",
+                    "Protocol": "tcp",
+                    "PolicyDescription": "规则描述",
+                    "Port": "10000/20000",
+                    "CidrBlock": "0.0.0.0/0",
+                    "Priority": 1,
+                    "Status": false
+                }
+            ]
+        }
+    },
+    "RequestId": "qtsnhp0b900co5rzt5fu0f810087vhn8"
+}
+```
+
+
+
+### 7. DeleteSecurityGroupPolicies
+
+**Action**: DeleteSecurityGroupPolicies
+
+**描述**: 安全组规则删除
+
+**请求方法**：POST
+
+**请求参数** 
+
+| 参数            | 类型            | 含义                                   | 是否必选 |
+| --------------- | --------------- | -------------------------------------- | -------- |
+| SecurityGroupId | string          | 安全组id                               | 是       |
+| PolicyIds       | Array of string | 规则id数组，为空则删除该安全组所有策略 | 否       |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId":"sg-tzejtarkp5hd4rm7",
+    "PolicyIds":[
+        "sp-3azd1hrbb9hf4dm3",
+        "sp-w8z51hrfbmhs4emt"
+    ]
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp0b900co5ucyr8pww44002b1kwl"
+}
+```
+
+
+
+### 8. ModifySecurityGroupPolicies
+
+**Action**: ModifySecurityGroupPolicies
+
+**描述**: 安全组修改规则
+
+**请求方法**：POST
+
+**请求参数** 
+
+| 参数                   | 类型                     | 含义                                                         | 是否必选 |
+| ---------------------- | ------------------------ | ------------------------------------------------------------ | -------- |
+| SecurityGroupId        | string                   | 安全组实例ID                                                 | 是       |
+| SecurityGroupPolicySet | *SecurityGroupPolicySet* | 规则集合                                                     | 否       |
+| Reset                  | bool                     | 重置规则（将SecurityGroupPolicySet）覆盖之前规则，false不覆盖，true覆盖 | 是       |
+
+*SecurityGroupPolicySet*
+
+| 参数    | 类型                           | 含义     | 是否必选 |
+| ------- | ------------------------------ | -------- | -------- |
+| Ingress | Array of *SecurityGroupPolicy* | 入站规则 | 否       |
+| Egress  | Array of *SecurityGroupPolicy* | 出站规则 | 否       |
+
+*SecurityGroupPolicy*
+
+| 参数              | 类型   | 含义                              | 是否必选                                   |
+| ----------------- | ------ | --------------------------------- | ------------------------------------------ |
+| PolicyId          | string | 规则id，只修改已存在的策略。      | 外层Reset为false时，必选。为true时，不用填 |
+| Protocol          | string | 协议类型                          | 外层Reset为false时，非必选。为true时，必选 |
+| PolicyDescription | string | 描述                              | 否                                         |
+| Port              | string | 端口号范围（22/22）               | 外层Reset为false时，非必选。为true时，必选 |
+| Priority          | int    | 规则优先级（1~100）               | 外层Reset为false时，非必选。为true时，必选 |
+| CidrBlock         | string | 网段或IP(互斥)                    | 外层Reset为false时，非必选。为true时，必选 |
+| Status            | int    | 状态，true表示允许，false表示拒绝 | 外层Reset为false时，非必选。为true时，必选 |
+
+*注意：*
+
+*1. 当外层Reset为ture时，可以理解为新增规则，要遵循新增规则规范。当外层Reset为false时，非必选的修改参数，至少有一处需要修改*
+
+*2. 当协议为icmp时，修改Port无意义*
+
+*3. 修改内容中存在与历史规则重复的规则时，无法修改*
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+    "Reset":false,
+    "SecurityGroupPolicySet": {
+        "Ingress": [
+            {
+                "PolicyId":"sp-3azd1hrbb9hf4dm3",
+                "Port": "3000/10000",
+                "Status": true
+            }
+        ],
+        "Egress": []
+    }
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp03ho0co5v44yi9tq41002d16qa"
+}
+```
+
+
+
+
+
+### 9. AssociateSecurityGroups
+
+**Action**: AssociateSecurityGroups
+
+**描述**: 安全组绑定实例
+
+**请求方法**：POST
+
+**请求参数** 
+
+| 参数            | 类型                        | 含义           | 是否必选 |
+| --------------- | --------------------------- | -------------- | -------- |
+| SecurityGroupId | string                      | 安全组id       | 是       |
+| RegionCode      | string                      | 实例所属的区域 | 是       |
+| InstanceSet     | Array of *InstanceSecurity* | 实例集合       | 是       |
+
+*InstanceSecurity*
+
+| 参数                  | 类型   | 含义                                    | 是否必选 |
+| --------------------- | ------ | --------------------------------------- | -------- |
+| InstanceId            | string | 实例id                                  | 是       |
+| SecurityGroupPriority | int    | 上层安全组的优先级，只能1~5，且不能重复 | 是       |
+
+*注意：同一实例内，安全组的优先级不能重复*
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId":"sg-tzejtarkp5hd4rm7",
+    "RegionCode":"CN_Suqian",
+    "InstanceSet":[
+        {
+            "InstanceId":"ins-xuuentqr7y36lubc",
+            "SecurityGroupPriority":1
+        }
+    ]
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp062c0co5xf5j75two100uewugm"
+}
+```
+
+
+
+### 10.DisassociateSecurityGroups
+
+**Action**: DisassociateSecurityGroups
+
+**描述**: 安全组解绑实例
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数            | 类型            | 含义       | 是否必选 |
+| --------------- | --------------- | ---------- | -------- |
+| SecurityGroupId | string          | 安全组id   | 是       |
+| InstanceIds     | Array of string | 实例id数组 | 是       |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "SecurityGroupId":"sg-78e4t8rkp4h740m0",
+    "InstanceIds":[
+        "ins-xuuentqr7y36lubc"
+    ]
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp01880co5xvdelk92g400dfg2i4"
+}
+```
+
+*注意：当安全组为当前实例的最后一个安全组时，无法解绑*
+
+### 11. ModifySecurityGroupsPriority
+
+**Action**: ModifySecurityGroupsPriority
+
+**描述**: 修改/重置实例下安全组和优先级
+
+**请求方法**：POST
+
+**请求参数**
+
+| 参数             | 类型                        | 含义           | 是否必选 |
+| ---------------- | --------------------------- | -------------- | -------- |
+| InstanceId       | string                      | 实例id         | 是       |
+| RegionCode       | string                      | 实例所属的区域 | 是       |
+| SecurityGroupSet | Array of *SecurityGroupSet* | 安全组数组     | 是       |
+
+*SecurityGroupSet*
+
+| 参数            | 类型   | 含义     | 是否必选 |
+| --------------- | ------ | -------- | -------- |
+| SecurityGroupId | string | 安全组id | 是       |
+| Priority        | int    | 优先级   | 是       |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>
+```
+
+```json
+{
+    "InstanceId": "ins-xuuentqr7y36lubc",
+    "RegionCode":"CN_Suqian",
+    "SecurityGroupSet": [
+        {
+            "SecurityGroupId": "sg-tzejtarkp5hd4rm7",
+            "Priority": 1
+        },
+        {
+            "SecurityGroupId": "sg-78e4t8rkp4h740m0",
+            "Priority": 2
+        }
+    ]
+}
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "RequestId": "qtsnhp0bec0co5y582enh2o200obda2o"
+}
+```
+
+
+
+### 12. DescribeSecurityGroupAssociationStatistics
+
+**Action**: DescribeSecurityGroupAssociationStatistics
+
+**描述**: 查询安全组关联实例统计
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数            | 类型   | 含义     | 是否必选 |
+| --------------- | ------ | -------- | -------- |
+| SecurityGroupId | string | 安全组id | 是       |
+
+**响应参数**
+
+| 参数               | 类型                          | 含义     |
+| ------------------ | ----------------------------- | -------- |
+| InstanceCount      | int                           | 实例数   |
+| InstanceStatistics | Array of *InstanceStatistics* | 实例详情 |
+
+*InstanceStatistics*
+
+| 参数         | 类型   | 含义     |
+| ------------ | ------ | -------- |
+| InstanceName | string | 实例名称 |
+| InstanceId   | string | 实例id   |
+| Region       | string | 区域     |
+| Az           | string | 可用区   |
+| Vpc          | string | 所属vpc  |
+| Ip           | string | ip地址   |
+
+**示例**
+
+```
+POST  http://api.capitalonline.net/sg/v1?<公共请求参数>&SecurityGroupId=sg-tzejtarkp5hd4rm7
+```
+
+```json
+{
+    "Code": "Success",
+    "Message": "成功",
+    "Data": {
+        "InstanceCount": 1,
+        "InstanceStatistics": [
+            {
+                "InstanceName": "gyx_test",
+                "InstanceId": "ins-xuuentqr7y36lubc",
+                "Region": "宿迁",
+                "Az": "宿迁B",
+                "Vpc": "cmy-suqianA",
+                "Ip": "10.0.2.6"
+            }
+        ]
+    },
+    "RequestId": "qtsnhp0bec0co5y9j9cnbgg400bil9gi"
+}
+```
+
+
 
 ## 其他公共接口
 
