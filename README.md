@@ -8,7 +8,9 @@
          * [步骤一：构造规范化请求字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤一构造规范化请求字符串)
          * [步骤二：构造签名字符串](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#步骤二构造签名字符串)
        * [3.获取签名代码](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取签名代码)
+       
      * [访问地址](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#访问地址)
+     
      * [实例相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#实例相关)
        * [1.CreateInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createinstance)
        * [2.DeleteInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deleteinstance)
@@ -43,7 +45,7 @@
        * [32.RebootInstances](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#32RebootInstances)
        * [33.BatchAddNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#33BatchAddNetworkInterfaces)
        * [34.BatchDeleteNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#34BatchDeleteNetworkInterfaces)
-
+     
      * [安全组相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#安全组相关)
        * [1.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createsecuritygroup)
        * [2.DeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletesecuritygroup)
@@ -57,11 +59,13 @@
        * [10.JoinSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10joinsecuritygroup)
        * [11.LeaveSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11leavesecuritygroup)
        * [12.ModifySecurityGroupRulePriority](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12modifysecuritygrouprulepriority)
+       
      * [模板相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#模板相关)
        * [1.CreateTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createtemplate)
        * [2.DeleteTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletetemplate)
        * [3.SyncTemplate](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3synctemplate)
        * [4.DescribeTemplateInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4describetemplateinfo)
+       
      * [虚拟数据中心相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#虚拟数据中心相关)
        * [1.DescribeVdc](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describevdc)
        * [2.CreateVdc](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2createvdc)
@@ -82,6 +86,7 @@
        * [17.CreateGPN](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#17creategpn)
        * [18.DeleteGPN](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#18deletegpn)
        * [19.ModifyVdcName](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#19modifyvdcname)
+       
      * [私有网络相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#私有网络相关)
        * [1.DescribeVPC](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describevpc)
        * [2.CreateVPC](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2createvpc)
@@ -113,6 +118,7 @@
        * [28.VLINKAddVM](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#28vlinkaddvm)
        * [29.VLINKDeleteVM](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#29vlinkdeletevm)
        * [30.UpdateVPCBandwidthType](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#30updatevpcbandwidthtype)
+       
      * [裸金属相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#裸金属相关)
        * [1.DescribeBmsGoods](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebmsgoodsprice)
@@ -126,6 +132,7 @@
        * [10.ModifyBmsOrder](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10modifybmsorder) 
        * [11.DescribeBmsTask](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11describebmstask) 
        * [12.DeleteBmsInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12describebmstask) 
+       
      * [裸金属云盘相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#裸金属云盘相关)
        * [1.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createDisk)
        * [2.AttachDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2attachDisk)
@@ -142,6 +149,7 @@
        * [13.DeleteSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#13deleteSnapshot) 
        * [14.RollbackSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#14rollbackSnapshot) 
        * [15.DescribeGoodsId](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#15describeGoodsId) 
+       
      * [账单相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#账单相关)
        * [1.DescribeBill](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describebill)
        * [2.DescribeBillInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describebillinfo)
@@ -149,8 +157,10 @@
        * [4.DescribeAccountInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4describeaccountinfo)
        * [5.DescribeCostSummaryByPro](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5describecostsummarybypro)
        * [6.DescribeCostSummaryByProject](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6describecostsummarybyproject)
+       
      * [冷云计量相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#冷云计量相关)
        * [1.GetMetering](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1GetMetering)
+       
      * [MySQL相关](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md)
        * [1.DescribeRegions](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md#1describeregions) 
        * [2.DescribeAvailableDBConfig](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md#2describeavailabledbconfig) 
@@ -172,6 +182,7 @@
        * [18.DescribeTemporaryDBInstances](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md#18describetemporarydbinstances)
        * [19.RegularizeTemporaryDBInstances](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md#19regularizetemporarydbinstances)
        * [20.DeleteTemporaryDBInstances](https://github.com/capitalonline/openapi/blob/master/MySQL%E6%A6%82%E8%A7%88.md#20deletetemporarydbinstances)
+       
      * [Redis相关](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md)
        * [1.DescribeRegins](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md#1describeregins)
        * [2.DescribeAvailableDBConfig](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md#2describeavailabledbconfig)
@@ -182,18 +193,21 @@
        * [7.DownloadBackup](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md#7downloadbackup)
        * [8.CreateBackup](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md#8createbackup)
        * [9.DeleteBackup](https://github.com/capitalonline/openapi/blob/master/Redis%E6%A6%82%E8%A7%88.md#9deletebackup)
+       
      * [MongoDB相关](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md)
        * [1.DescribeZones](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md#1describezones)
        * [2.DescribeSpecInfo](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md#2describespecinfo)
        * [3.CreateDBInstance](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md#3createdbinstance)
        * [4.DescribeDBInstances](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md#4describedbinstances)
        * [5.DeleteDBInstance](https://github.com/capitalonline/openapi/blob/master/MongoDB%E6%A6%82%E8%A7%88.md#5deletedbinstance)
+       
      * [新版MongoDB相关](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md)
        * [1.DescribeZones](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#1describezones)
        * [2.DescribeSpecInfo](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#2describespecinfo)
        * [3.CreateDBInstance](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#3createdbinstance)
        * [4.DescribeDBInstances](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#4describedbinstances)
        * [5.DeleteDBInstance](https://github.com/capitalonline/openapi/blob/master/%E6%96%B0%E7%89%88MongoDB%E6%A6%82%E8%A7%88.md#5deletedbinstance)
+       
      * [Memcached相关](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md)
        * [1.CreateMemcachedInstance](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md#1creatememcachedinstance)   
        * [2.MemcachedInstanceList](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md#2memcachedinstancelist)   
@@ -201,8 +215,10 @@
        * [4.DeleteMemcachedInstance](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md#4deletememcachedinstance)   
        * [5.ClearMemcachedInstance](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md#5clearmemcachedinstance)   
        * [6.UpdateMemcachedInstance](https://github.com/capitalonline/openapi/blob/master/Memcached%E6%A6%82%E8%A7%88.md#6updatememcachedinstance)  
+       
      * [Kafka相关](https://github.com/capitalonline/openapi/blob/master/Kafka%E6%A6%82%E8%A7%88.md)
        * [1.GetKafkaList](https://github.com/capitalonline/openapi/blob/master/Kafka%E6%A6%82%E8%A7%88.md#1getkafkalist)
+       
      * [HaProxy相关](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate)
        * [1.DescribeZones](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#1describezones)
        * [2.DescribeLoadBalancersSpec](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#2describeloadbalancersspec)
@@ -217,6 +233,7 @@
        * [11.UploadCACertificate](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#11uploadcacertificate)
        * [12.DescribeLoadBalancerStrategys](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#describeloadbalancerstrategys)
        * [13.ModifyLoadBalancerStrategys](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate#modifyloadbalancerstrategys)
+       
      * [CDN相关](https://github.com/capitalonline/openapi/blob/master/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E6%A6%82%E8%A7%88.md#9describecacertificate)
         * [1.CreateCDN](https://github.com/capitalonline/openapi/blob/master/CDN%E6%A6%82%E8%A7%88.md#createcdn)
         * [2.DescribeCDN](https://github.com/capitalonline/openapi/blob/master/CDN%E6%A6%82%E8%A7%88.md#describecdn)
@@ -235,9 +252,13 @@
         * [15.FlowStatistics](https://github.com/capitalonline/openapi/blob/master/CDN%E6%A6%82%E8%A7%88.md#flowstatistics)
         * [16.DosageAnalysis](https://github.com/capitalonline/openapi/blob/master/CDN%E6%A6%82%E8%A7%88.md#dosageanalysis)
         * [17.PathMetering](https://github.com/capitalonline/openapi/blob/master/CDN%E6%A6%82%E8%A7%88.md#pathmetering)
+        
      * [网络告警相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#网络告警相关)
+     
      * [1.GetWanAlarmReceiver](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1getwanalarmreceiver)
+     
      * [2.UpdateWanAlarmReceiver](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2updatewanalarmreceiver)
+     
      * [云桌面相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E4%BA%91%E6%A1%8C%E9%9D%A2%E7%9B%B8%E5%85%B3)
         * [1.QueryTask](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1QueryTask)
         * [2.QuerySites](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2QuerySites)
@@ -269,7 +290,9 @@
         * [28.ChangeAccount](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#28ChangeAccount)
         * [29.UnbindAccounts](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#29UnbindAccounts)
         * [30.BindAccounts](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#30BindAccounts)
+        
      * [弹性云服务器ECS相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%BC%B9%E6%80%A7%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8ECS%E7%9B%B8%E5%85%B3)
+       
        * [1.DescribeRegions](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describeregions)
        * [2.DescribeEcsFamilyInfo](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describeecsfamilyinfo)
        * [3.DescribeImage](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3describeimage)
@@ -283,6 +306,7 @@
        * [11.DeleteInstance](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11deleteinstance)
        * [12.ModifyInstancePassword](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12modifyinstancepassword)
        * [13.ModifyInstanceName](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#13modifyinstancename)
+       
      * [云盘EBS相关](https://github.com/capitalonline/openapi/blob/feature/add-ebs-doc/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E4%BA%91%E7%9B%98ebs%E7%9B%B8%E5%85%B3)
        * [1.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createdisk-1)
        * [2.DeleteDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletedisk)
@@ -294,7 +318,9 @@
        * [8.DescribeDisk](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8describedisk)
        * [9.DescribeEcsAttachDisks](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9describeecsattachdisks)
        * [10.DescribeEvent](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10describeevent)
+       
      * [快照SNAPSHOT相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E5%BF%AB%E7%85%A7snapshot%E7%9B%B8%E5%85%B3)
+       
        * [1.DescribeSnapshotList](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describesnapshotlist)
        * [2.DescribeSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describesnapshot)
        * [3.DescribeSnapshotChainList](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3describesnapshotchainlist)
@@ -304,17 +330,37 @@
        * [7.RenameSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7renamesnapshot)
        * [8.DeleteSnapshot](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8deletesnapshot)
        * [9.DescribeSnapshotQuota](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9describesnapshotquota)
+     
+	* [ECS安全组相关接口](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#ECS安全组相关接口)
+     	- [1.DescribeSecurityGroups](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1-describeSecurityGroups)
+		- [2.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2-createSecurityGroup)
+		- [3.ModifySecurityGroupAttribute](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#3-modifySecurityGroupAttribute)
+		- [4.DeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#4-deleteSecurityGroup)
+		- [5.CreateSecurityGroupPolicies](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#5-createSecurityGroupPolicies)
+		- [6.DescribeSecurityGroupPolicies](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#6-describeSecurityGroupPolicies)
+		- [7.DeleteSecurityGroupPolicies](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#7-deleteSecurityGroupPolicies)
+		- [8.ModifySecurityGroupPolicies](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#8-modifySecurityGroupPolicies)
+		- [9.AssociateSecurityGroups](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#9-associateSecurityGroups)
+		- [10.DisassociateSecurityGroups](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#10-disassociateSecurityGroups)
+		- [11.ModifySecurityGroupsPriority](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#11-modifySecurityGroupsPriority)
+		- [12.DescribeSecurityGroupAssociationStatistics](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#12-describeSecurityGroupAssociationStatistics)
+		
      * [其他公共接口](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#其他公共接口)
        * [1.DescribeAvailableResource](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1describeavailableresource)
        * [2.DescribeTask](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2describetask)
+       
      * [附件一](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#附件一)
            * [可用区名称](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#可用区名称)
+       
      * [附件二](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#附件二)
            * [主机类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#主机类型)
+       
      * [附件三](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#附件三)
            * [带宽类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#带宽类型)
+       
      * [附件四](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#附件四)
            * [公共模板](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#公共模板)
+       
      * [示例](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#示例)
        * [1.获取请求url](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1获取请求url)
        * [2.获取虚拟数据中心公网信息](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2获取虚拟数据中心公网信息)
