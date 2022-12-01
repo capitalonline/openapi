@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const SgUrl = ""
+const SgUrl = "http://api.capitalonline.net/sg/v1"
 
 func MakeArrayParam(l []string) string {
 	if len(l) > 1 {
