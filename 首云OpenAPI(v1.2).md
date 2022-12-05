@@ -207,6 +207,7 @@
        * [17.DeleteImage](#17deleteimage)
        * [18.SyncImage](#18syncimage)
        * [19.DescribeInstanceVncUrl](#19describeinstancevncurl)
+       * [20.DescribeZoneInstanceType](#20describezoneinstancetype)
      * [云盘EBS相关](#云盘ebs相关)
        * [1.CreateDisk](#1createdisk-1)
        * [2.DeleteDisk](#2deletedisk)
@@ -14787,23 +14788,23 @@ def describe_instance_vnc_url():
 | ----------------- | ------ | ------ | ------------------------------------------------------------ |
 | AvailableZoneCode | 必选   | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
 | EcsFamilyName     | string | string | 规格族名称                                                   |
-| Cpu               | 可选   | int    | Cpu数量                                                      |
-| Ram               | 可选   | int    | 内存条数量                                                   |
+| Cpu               | 可选   | int    | Cpu大小                                                      |
+| Ram               | 可选   | int    | 内存大小                                                     |
 | Gpu               | 可选   | int    | 显卡数量                                                     |
 
 **返回参数**
 
-| 参数             | 类型   | 示例                  | 说明                                    |
-| ---------------- | ------ | --------------------- | --------------------------------------- |
-| EcsFamilyName    | string | AMD+A5000宕机组合测试 | 规格族名称                              |
-| AvailableZone    | string | 福州A                 | 可用区                                  |
-| SpecList         | list   | []                    | 规格列表                                |
-| Cpu              | int    | 16                    | Cpu数量                                 |
-| Ram              | int    | 32                    | 内存条数量                              |
-| Gpu              | int    | 1                     | 显卡数量                                |
-| GpuType          | string | 专业显卡              | 显卡型号                                |
-| Status           | string | SELL                  | 销售状况：1）SELL销售中;2)SELLOUT已售罄 |
-| SupportGpuDriver | string | Datacenter            | 显卡驱动类型                            |
+| 参数             | 类型   | 示例          | 说明                                    |
+| ---------------- | ------ | ------------- | --------------------------------------- |
+| EcsFamilyName    | string | 专业渲染型rp3 | 规格族名称                              |
+| AvailableZone    | string | 宿迁B         | 可用区                                  |
+| SpecList         | list   | []            | 规格列表                                |
+| Cpu              | int    | 16            | Cpu大小                                 |
+| Ram              | int    | 32            | 内存大小                                |
+| Gpu              | int    | 1             | 显卡数量                                |
+| GpuType          | string | 专业显卡      | 显卡型号                                |
+| Status           | string | SELL          | 销售状况：1）SELL销售中;2)SELLOUT已售罄 |
+| SupportGpuDriver | string | Datacenter    | 显卡驱动类型                            |
 
 **请求示例**
 
@@ -14812,8 +14813,8 @@ def describe_zone_instance_type():
     action = "DescribeZoneInstanceType"
     method = "GET"
     param = {
-        "EcsFamilyName": "Datacenter",
-        "AvailableZoneCode": "CN_Fuzhou_A",
+        "EcsFamilyName": "专业渲染型rp3",
+        "AvailableZoneCode": "CN_Suqian_B",
     }
     ecs_url = "http://api.capitalonline.net/ecs/v1"
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
@@ -14832,8 +14833,8 @@ def describe_zone_instance_type():
     "Msg": "获取计算类型族及其售卖状态！",
     "Data": [
         {
-            "EcsFamilyName": "AMD+A5000宕机组合测试",
-            "AvailableZone": "福州A",
+            "EcsFamilyName": "专业渲染型rp3",
+            "AvailableZone": "宿迁B",
             "SpecList": [
                 {
                     "GpuType": "专业显卡",
@@ -14842,7 +14843,7 @@ def describe_zone_instance_type():
                     "Gpu": 1,
                     "SupportGpuDriver": "Datacenter",
                     "Status": "SELLOUT",
-                    "CpuName": "AMD宕机测试"
+                    "CpuName": "渲染"
                 }
             ]
         }
