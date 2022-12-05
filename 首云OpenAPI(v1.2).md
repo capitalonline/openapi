@@ -14794,17 +14794,18 @@ def describe_instance_vnc_url():
 
 **返回参数**
 
-| 参数             | 类型   | 示例          | 说明                                    |
-| ---------------- | ------ | ------------- | --------------------------------------- |
-| EcsFamilyName    | string | 专业渲染型rp3 | 规格族名称                              |
-| AvailableZone    | string | 宿迁B         | 可用区                                  |
-| SpecList         | list   | []            | 规格列表                                |
-| Cpu              | int    | 16            | Cpu大小                                 |
-| Ram              | int    | 32            | 内存大小                                |
-| Gpu              | int    | 1             | 显卡数量                                |
-| GpuType          | string | 专业显卡      | 显卡型号                                |
-| Status           | string | SELL          | 销售状况：1）SELL销售中;2)SELLOUT已售罄 |
-| SupportGpuDriver | string | Datacenter    | 显卡驱动类型                            |
+| 参数             | 类型   | 示例              | 说明                                    |
+| ---------------- | ------ | ----------------- | --------------------------------------- |
+| EcsFamilyName    | string | 专业渲染型rp3     | 规格族名称                              |
+| AvailableZone    | string | 宿迁B             | 可用区                                  |
+| SpecList         | list   | []                | 规格列表                                |
+| Cpu              | int    | 16                | Cpu大小                                 |
+| Ram              | int    | 32                | 内存大小                                |
+| Gpu              | int    | 1                 | 显卡数量                                |
+| GpuType          | string | 专业显卡          | 显卡型号                                |
+| SupportGpuDriver | string | Datacenter        | 显卡驱动类型                            |
+| Status           | string | SELL              | 销售状况：1）SELL销售中;2)SELLOUT已售罄 |
+| CpuName          | string | Intel第八代处理器 | 处理器型号                              |
 
 **请求示例**
 
@@ -14837,13 +14838,13 @@ def describe_zone_instance_type():
             "AvailableZone": "宿迁B",
             "SpecList": [
                 {
-                    "GpuType": "专业显卡",
                     "Cpu": 12,
                     "Ram": 24,
                     "Gpu": 1,
+                    "GpuType": "专业显卡",
                     "SupportGpuDriver": "Datacenter",
                     "Status": "SELLOUT",
-                    "CpuName": "渲染"
+                    "CpuName": "Intel第八代处理器"
                 }
             ]
         }
