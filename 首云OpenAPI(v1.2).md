@@ -14771,6 +14771,98 @@ def describe_instance_vnc_url():
 | 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
 | 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
 
+### 20.DescribeZoneInstanceType
+
+**Action**: DescribeZoneInstanceType
+
+**描述**：获取弹性云服务器ECS计算类型规格及其销售状况
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：GET
+
+**请求参数**
+
+| 参数              | 要求   | 类型   | 说明                                                         |
+| ----------------- | ------ | ------ | ------------------------------------------------------------ |
+| AvailableZoneCode | 必选   | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
+| EcsFamilyName     | string | string | 规格族名称                                                   |
+| Cpu               | 可选   | int    | Cpu数量                                                      |
+| Ram               | 可选   | int    | 内存条数量                                                   |
+| Gpu               | 可选   | int    | 显卡数量                                                     |
+
+**返回参数**
+
+| 参数             | 类型   | 示例                  | 说明                                    |
+| ---------------- | ------ | --------------------- | --------------------------------------- |
+| EcsFamilyName    | string | AMD+A5000宕机组合测试 | 规格族名称                              |
+| AvailableZone    | string | 福州A                 | 可用区                                  |
+| SpecList         | list   | []                    | 规格列表                                |
+| Cpu              | int    | 16                    | Cpu数量                                 |
+| Ram              | int    | 32                    | 内存条数量                              |
+| Gpu              | int    | 1                     | 显卡数量                                |
+| GpuType          | string | 专业显卡              | 显卡型号                                |
+| Status           | string | SELL                  | 销售状况：1）SELL销售中;2)SELLOUT已售罄 |
+| SupportGpuDriver | string | Datacenter            | 显卡驱动类型                            |
+
+**请求示例**
+
+```python
+def describe_zone_instance_type():
+    action = "DescribeZoneInstanceType"
+    method = "GET"
+    param = {
+        "EcsFamilyName": "Datacenter",
+        "AvailableZoneCode": "CN_Fuzhou_A",
+    }
+    ecs_url = "http://api.capitalonline.net/ecs/v1"
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    print(url)
+    resp = requests.get(url)
+    print(resp)
+    tes_text = json.dumps(resp.json(),ensure_ascii=False)
+    print(tes_text)
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "获取计算类型族及其售卖状态！",
+    "Data": [
+        {
+            "EcsFamilyName": "AMD+A5000宕机组合测试",
+            "AvailableZone": "福州A",
+            "SpecList": [
+                {
+                    "GpuType": "专业显卡",
+                    "Cpu": 12,
+                    "Ram": 24,
+                    "Gpu": 1,
+                    "SupportGpuDriver": "Datacenter",
+                    "Status": "SELLOUT",
+                    "CpuName": "AMD宕机测试"
+                }
+            ]
+        }
+    ],
+    "RequestId": "5987dcd6-3fed-41ac-9e75-de17d675cb64"
+}
+```
+**错误码**
+
+| **HttpCode** | 错误码                        | 错误信息                                                     | 描述                                           |
+| ------------ | ----------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| 400          | ParamParseError               | Parameter parsing error.                                     | 请求参数解析错误                               |
+| 400          | InvalidParameter              | The parameter is not valid.                                  | 参数不合法                                     |
+| 400          | MissingParameter              | Missing required parameter.                                  | 缺少必需的参数                                 |
+| 400          | UnsupportedHTTPMethod         | Action does not correspond to the request method.            | http请求方式不支持                             |
+| 400          | UnsupportedAction             | Unsupported action.                                          | Action不在可选范围内                           |
+| 404          | InvalidAccount.NotFound       | Customer information does not exist                          | 未获取到客户信息                               |
+| 404          | InvalidAvailableZone.NotFound | The specified available zone does not exist.                 | 指定的可用区不存在                             |
+| 500          | InternalError                 | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单 |
+
 ## 云盘EBS相关
 
 **云盘状态(Status)说明**
