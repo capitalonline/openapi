@@ -1978,6 +1978,105 @@ def path_metering():
 | domainname | string | 加速域名         |
 | flow       | float  | 流量，单位是Byte |
 
+**Action：LogsList
+
+**描述：** 获取指定域名下的服务器日志
+
+**请求地址：**api.capitalonline.net/cdnapi/distribution/logs/list
+
+**请求方法：** GET
+
+**请求参数：**
+
+| 参数名     | 必选  | 类型     | 说明        |
+| :--------- |:----|:-------|-----------|
+| domainname       | 是   | string | 加速域名      |
+| pageindex  | 是   | string | 起始页       |
+| pagesize    | 是   | string | 每页最多显示记录数 |
+| project_id   | 是   | string | 项目id      |
+| begindate | 是   | string | 开始时间      |
+| enddate | 是   | string | 截止时间      |
+
+**请求示例：**
+
+```python
+def logs_list():
+    """
+    获取指定域名下的服务器日志
+    """
+    cdn_url = "https://api.capitalonline.net/cdnapi/distribution/logs/list"
+    action = "LogsList"
+    method = "GET"
+    param = {
+        "domainname": "cmyprodtest1013.cdscdntest.com",
+        "pageindex": "1",
+        "pagesize": "20",
+        "project_id": "0-0",
+        "begindate": "2022-12-05",
+        "enddate": "2022-12-05"
+        }
+    body = {}
+    url = get_signature(action, AK, AccessKeySecret, method, cdn_url, param)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    print(result)
+```
+
+**返回示例：**
+
+```json
+{
+    "code": 200,
+    "msg": "成功",
+    "data": {
+      "rows":[
+        {
+            "accountid": 44712,
+            "begindate": "2022-12-04T16:00:00.000Z",
+            "createtime": "2022-12-04T16:45:26.000Z",
+            "domainname": "cmyprodtest1013.cdscdntest.com",
+            "enddate": "2022-12-04T16:05:00.000Z",
+            "filename": "cmyprodtest1013.cdscdntest.com_20221205_00.00_00.05.gz",
+            "frequency": 0,
+            "fullurl": "http://cdn.5e29863a6e8e41fca3e1dd4440273a72.oss-cnbj01.cdsgss.com/data/cdnlogs/cmyprodtest1013.cdscdntest.com_20221205_00.00_00.05.gz",
+            "id": 637791,
+            "ifdel": 0,
+            "line": 0,
+            "size": 105098,
+            "updatetime": "2022-12-04T16:45:26.000Z",
+        }
+      ],
+      "pagesize": 20,
+      "totalcount": 1
+    }
+     
+}
+```
+
+**返回参数说明：**
+
+| 参数名        | 类型     | 说明              |
+|------------|:-------|-----------------|
+| code       | int    | 状态码             |
+| msg        | string | 信息描述            |
+| data       | dict   | 数据信息            |
+| rows       | list   | 数据信息            |
+| pagesize   | string | 每页显示记录数         |
+| totalcount | string | 总记录数            |
+| accountid  | int    | 用户id            |
+| begindate  | string | 开始时间            |
+| createtime | string | 创建时间            |
+| domainname | string | 加速域名            |
+| enddate    | string | 结束时间            |
+| filename   | string | 文件名称            |
+| frequency  | string | 执行次数            |
+| fullurl    | string | http 下载路径          |
+| id         | int    | 主键            |
+| ifdel      | int    | 是否有效 |
+| line       | int    | 日志行数              |
+| size       | int    | 文件大小            |
+| updatetime | string | 更新时间            |
+
 ## 错误码
 
 | **HttpCode** | **错误码** | **描述**                                                     |
