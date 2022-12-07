@@ -192,12 +192,13 @@ export default class PhysicalList extends Vue {
     host_ip:{placeholder:'请输入管理网IP'},
     host_name:{placeholder:'请输入主机名称/ID'},
     gpu_model:{placeholder:'请输入显卡型号'},
-    cpu_model:{placeholder:'请输入CPU型号'},
-    net_model:{placeholder:'请输入网卡型号'},
+    cpu:{placeholder:'请输入CPU型号'},
+    nic:{placeholder:'请输入网卡型号'},
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
-    product_id:{placeholder:'请输入物理机产品ID'},
-    product_name:{placeholder:'请输入物理机产品名称'},
+    bare_metal_id:{placeholder:'请输入物理机产品ID'},
+    bare_metal__name:{placeholder:'请输入物理机产品名称'},
+    customer_keyword:{placeholder:'请输入专属客户ID/名称'},
   }
   private operate_btns:any=[
     {label:'分配资源',value:'resource'},

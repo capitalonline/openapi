@@ -41,16 +41,20 @@
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.gpu_name}}<span v-if="scope.row.gpu_name"> * </span>{{scope.row.gpu_size}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="disk_info" label="硬盘">
+            <el-table-column prop="disk_info" label="系统盘">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">
+                        <span>类型: {{scope.row.system_disk_feature}}</span><br/>
+                        <span>容量*数量: {{scope.row.system_disk_capacity}}{{scope.row.system_disk_unit}}<span v-if="(Number(scope.row.system_disk_size)>=0)"> * </span>{{scope.row.system_disk_size}}</span><br/>
+                        <span>模式: {{scope.row.system_disk_mode}}</span>
+                    </span>
                 </template>
             </el-table-column>
-            <!-- <el-table-column prop="data_disk_info" label="数据盘">
+            <el-table-column prop="data_disk_info" label="数据盘">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="(Number(scope.row.system_disk_size)>=0)"> * </span>{{scope.row.disk_size}}</span>
                 </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column prop="network_card_info" label="网卡">
                 <template slot-scope="scope">
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.network_card_type}}<span v-if="scope.row.network_card_type"> * </span>{{scope.row.network_card_size}}</span>

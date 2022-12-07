@@ -521,7 +521,7 @@ export default class App extends Vue {
         item = Object.assign(item,{},{column_key:'ecs_goods_name',multiple:true,list:this.ecs_goods_name_list})
       }
       if(item.prop==='customer_type'){
-        item = Object.assign(item,{},{column_key:'customer_type',list:[{text:'内部',value:'1'},{text:'外部',value:'2'}]})
+        item = Object.assign(item,{},{column_key:'customer_type',list:[{text:'内部',value:'内部'},{text:'外部',value:'外部'}]})
       }
     })
   }
@@ -604,7 +604,7 @@ export default class App extends Vue {
       reqData["op_source"] = this.search_op_source;
     }
     if (this.search_ecs_goods_name.length > 0) {
-      reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
+      reqData["spec_family_ids"] = this.search_ecs_goods_name.join(',');
     }
     if(this.customer_type.length > 0){
       reqData["customer_type"]=this.customer_type[0]
@@ -1145,6 +1145,7 @@ export default class App extends Vue {
               ? "no"
               : this.search_billing_method,
           op_source: this.search_op_source,
+          spec_family_ids: this.search_ecs_goods_name.length > 0 ? this.search_ecs_goods_name.join(',') : undefined,
         },
         this.search_reqData
       )
