@@ -187,6 +187,7 @@
        * [29.UnbindAccounts](#29UnbindAccounts)
        * [30.BindAccounts](#30BindAccounts)
        * [31.ConfigNet](#31ConfigNet)
+       * [32.GetVpcBandwidth](#32GetVpcBandwidth)
      * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
@@ -10535,23 +10536,23 @@ def querySites():
 
    **返回参数：**
 
-| 名称           | 类型    | 示例                                   | 描述                                 |
-| -------------- | ------- | -------------------------------------- | ------------------------------------ |
-| Code           | string  | Success                                | 返回状态码: Success: 成功            |
-| Message        | string  | null                                   | 返回信息                             |
-| Data           | list    | []                                     | 返回数据                             |
-| siteId         | string  | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                              |
-| productId      | string  | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                           |
-| cpuCores       | int     | 14                                     | cpu 核数                             |
-| memorySize     | int     | 25                                     | 内存                                 |
-| gpuModel       | string  | “NVIDIA A5000”                         | gpu型号                              |
-| gpuRam         | int     | 24                                     | gpu显存                              |
-| systemDiskSize | int     | 150                                    | 系统盘大小                           |
-| os             | string  | “windows”                              | 操作系统                             |
-| goodsId        | int     | 15264                                  | 商品id                               |
-| requirePrice   | double  | 0.1868333333                           | 按需价格，每分钟所需的人民币数值     |
-| monthPrice     | double  | 3364                                   | 包月价格，每月所需的人民币数值       |
-| isAllowSsd     | boolean | 1                                      | 是否允许使用ssd云盘 , 1允许，0不允许 |
+| 名称           | 类型   | 示例                                   | 描述                             |
+| -------------- | ------ | -------------------------------------- | -------------------------------- |
+| Code           | string | Success                                | 返回状态码: Success: 成功        |
+| Message        | string | null                                   | 返回信息                         |
+| Data           | list   | []                                     | 返回数据                         |
+| siteId         | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                          |
+| productId      | string | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                       |
+| cpuCores       | int    | 14                                     | cpu 核数                         |
+| memorySize     | int    | 25                                     | 内存                             |
+| gpuModel       | string | “NVIDIA A5000”                         | gpu型号                          |
+| gpuRam         | int    | 24                                     | gpu显存                          |
+| systemDiskSize | int    | 150                                    | 系统盘大小                       |
+| os             | string | “windows”                              | 操作系统                         |
+| goodsId        | int    | 15264                                  | 商品id                           |
+| requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
+| monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
+| isAllowSsd     | boolean | 1                                   | 是否允许使用ssd云盘 , 1允许，0不允许   |
 
    **错误码:**
 
@@ -10784,33 +10785,33 @@ def queryImages():
 
    **请求参数：**
 
-| 名称          | 类型   | 是否必须 | 示例                                   | 描述                                                         |
-| ------------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
-| requestId     | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
-| siteId        | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
-| duration      | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
-| isToMonth     | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
-| billCycle     | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
-| num           | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
-| goodsId       | string | 是       | “15273”                                | 商品id                                                       |
-| sysVolume     | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
-| sysVolumeSize | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
+| 名称      | 类型   | 是否必须 | 示例                                   | 描述                                                         |
+| --------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| requestId | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
+| siteId    | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
+| duration  | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
+| isToMonth | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| billCycle | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
+| num       | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
+| goodsId   | string | 是       | “15273”                                | 商品id                                                       |
+| sysVolume   | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                     |
+| sysVolumeSize   | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                |
 
    **返回参数：**
 
-| 名称              | 类型   | 示例                                 | 描述                                                         |
-| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
-| Code              | string | Success                              | 返回状态码: Success: 成功                                    |
-| Message           | string | null                                 | 返回信息                                                     |
-| Data              | object | {}                                   | 返回数据                                                     |
-| tradeAmount       | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
-| singleTradeAmount | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
-| num               | int    | 1                                    | 台数                                                         |
-| vmPrice           | double | 0.11                                 | 单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
-| sysVolumePrice    | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
-| areaId            | string | CN                                   | 币种                                                         |
-| requestId         | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
-| requestContent    | string | {}                                   | 请求参数                                                     |
+| 名称           | 类型   | 示例                                 | 描述                                                         |
+| -------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Code           | string | Success                              | 返回状态码: Success: 成功                                    |
+| Message        | string | null                                 | 返回信息                                                     |
+| Data           | object | {}                                   | 返回数据                                                     |
+| tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
+| singleTradeAmount  | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
+| num            | int | 1                                 | 台数 |
+| vmPrice        | double | 0.11                                 |单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
+| sysVolumePrice | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
+| areaId         | string | CN                                   | 币种                                                         |
+| requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
+| requestContent | string | {}                                   | 请求参数                                                     |
 
    **错误码:**
 
@@ -11439,6 +11440,7 @@ def changeSubAccountRemark():
 | 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
 | --------- | ------ | -------- | ------------------------------------ | ------------ |
 | siteId    | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id       |
+| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id   **(新增) 从32获取** |
 | requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
 
    **返回参数：**
@@ -11468,7 +11470,7 @@ def changeSubAccountRemark():
 {
     "Code": "Success",
     "Data": {
-        "requestContent": "{\"customerId\":\"CDS01555\",\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"32e6fd62-9bac-11ec-875a-2a8d1f4e167e\",\"userFrom\":\"cdsapi\",\"userId\":\"715923\"}",
+        "requestContent": "{\"customerId\":\"CDS01555\",\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"32e6fd62-9bac-11ec-875a-2a8d1f4e167e\",\"bandwidthConfIdStr\":\"1306\",\"userFrom\":\"cdsapi\",\"userId\":\"715923\"}",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab",
         "taskId": "d460f799-6896-4d93-b037-02ee2efb3adb"
     },
@@ -11488,6 +11490,7 @@ def createDefaultNet():
     method = "POST"
     body = {
         "siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e",
+        "bandwidthConfIdStr": "1306",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
@@ -11514,6 +11517,7 @@ def createDefaultNet():
 | 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
 | --------- | ------ | -------- | ------------------------------------ | ------------ |
 | siteId    | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id       |
+| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id  **(新增) 从32获取** |
 | requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
 
    **返回参数：**
@@ -11543,7 +11547,7 @@ def createDefaultNet():
 {
     "Code": "Success",
     "Data": {
-        "requestContent": "{\"customerId\":\"CDS01555\",\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"32e6fd62-9bac-11ec-875a-2a8d1f4e167e\",\"userFrom\":\"cdsapi\",\"userId\":\"715923\"}",
+        "requestContent": "{\"customerId\":\"CDS01555\",\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"32e6fd62-9bac-11ec-875a-2a8d1f4e167e\",\"bandwidthConfIdStr\":\"1306\",\"userFrom\":\"cdsapi\",\"userId\":\"715923\"}",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab",
         "taskId": "d460f799-6896-4d93-b037-02ee2efb3adb"
     },
@@ -11563,6 +11567,7 @@ def supplyDefaultNet():
     method = "POST"
     body = {
         "siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e",
+        "bandwidthConfIdStr": "1306",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
@@ -11589,6 +11594,7 @@ def supplyDefaultNet():
 | 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
 | --------- | ------ | -------- | ------------------------------------ | ------------ |
 | siteId    | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id       |
+| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id  **(新增) 从32获取** |
 | requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
 
    **返回参数：**
@@ -11611,7 +11617,6 @@ def supplyDefaultNet():
 | deleteFlag  | boolean | false                                | 删除标识                                                     |
 |             |         |                                      |                                                              |
 | subnets     | list    | [ ]                                  | 子网集合                                                     |
-| vGateways   | list    | [ ]                                  | 虚拟网关集合                                                 |
 |             |         |                                      |                                                              |
 | status      | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
 | status_str  | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
@@ -11625,8 +11630,8 @@ def supplyDefaultNet():
 | ip_address  | String  | "10.1.0.0                            | ip                                                           |
 | gateway     | String  | 10.1.0.1                             | 网关                                                         |
 | vlan_id     | String  | 2911                                 | vlan id                                                      |
-| conf_id     | String  | 1216                                 | 带宽类型 id                                                  |
-| conf_name   | String  | 电信                                 | 带宽类型名字                                                 |
+| bandwidth_conf_id    | String  | 1216                                 | 带宽类型 id   **(新增) 与从32获取值相同**                           |
+| bandwidth_conf_name  | String  | 电信                                 | 带宽类型名字 **(新增) 与从32获取值相同**                              |
 
    **错误码:**
 
@@ -11665,40 +11670,8 @@ def supplyDefaultNet():
         ],
         "updateTime": "2022-05-07 14:04:35",
         "userId": "713367",
-        "vgateways": [
-            {
-                "conf_id": "10289",
-                "conf_name": "电信",
-                "dns": "[\"119.29.29.29\",\"114.114.114.114\"]",
-                "gateway": "10.2.0.1",
-                "id": "8054ab84-cdcb-11ec-a318-ee97882ecf7d",
-                "ip_address": "10.2.0.0",
-                "ip_type": "virtual_gateway",
-                "mask": 16,
-                "name": "电信默认网关",                
-                "not_used": 65520,
-                "used_num": 16,
-            "status": "ok",
-                "status_str": "正常",
-                "vlan_id": "1431"
-            },
-            {
-                "conf_id": "10298",
-                "conf_name": "移动",
-                "dns": "[\"119.29.29.29\",\"114.114.114.114\"]",
-                "gateway": "10.3.0.1",
-                "id": "80587138-cdcb-11ec-a318-ee97882ecf7d",
-                "ip_address": "10.3.0.0",
-                "ip_type": "virtual_gateway",
-                "mask": 16,
-                "name": "移动默认网关",                
-                "not_used": 65520,
-                "used_num": 16,
-           "status": "ok",
-                "status_str": "正常",
-                "vlan_id": "1767"
-            }
-        ],
+        "bandwidth_conf_id": "1216",
+        "bandwidth_conf_name": "电信",
         "vpcId": "73cbf764-cdcb-11ec-a318-ee97882ecf7d",
         "vpcName": "娄底-云桌面默认VPC",
         "vpcRecordId": "201bda0c-7cea-420b-b812-91a76aacfbd1",
@@ -11718,7 +11691,7 @@ def getDefaultNet():
     '''
     action = "GetDefaultNet"
     method = "GET"
-    param = {"siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e", "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"}
+    param = {"siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e", "bandwidthConfIdStr": "1306","requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"}
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
     res = requests.get(url)
     result = json.loads(res.content)
@@ -11743,6 +11716,7 @@ def getDefaultNet():
 | 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
 | --------- | ------ | -------- | ------------------------------------ | ------------ |
 | siteId    | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id       |
+| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id **(新增) 从32获取** |
 | requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
 
    **返回参数：**
@@ -11759,7 +11733,6 @@ def getDefaultNet():
 | userId     | string  | 571085                               | 用户ID                                                       |
 |            |         |                                      |                                                              |
 | subnets    | List    | [ ]                                  | 子网集合                                                     |
-| vGateways  | List    | [ ]                                  | 虚拟网关集合                                                 |
 |            |         |                                      |                                                              |
 | status     | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
 | status_str | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
@@ -11773,8 +11746,8 @@ def getDefaultNet():
 | ip_address | String  | "10.1.0.0                            | ip                                                           |
 | gateway    | String  | 10.1.0.1                             | 网关                                                         |
 | vlan_id    | String  | 2911                                 | vlan id                                                      |
-| conf_id    | String  | 1216                                 | 带宽类型 id                                                  |
-| conf_name  | String  | 电信                                 | 带宽类型名字                                                 |
+| bandwidth_conf_id    | String  | 1216                                 | 带宽类型 id  **(新增) 与从32获取值相同**                              |
+| bandwidth_conf_name  | String  | 电信                                 | 带宽类型名字  **(新增) 与从32获取值相同**                             |
 
    **错误码:**
 
@@ -11808,41 +11781,9 @@ def getDefaultNet():
                     "vlan_id": "1768"
                 }
             ],
+            "bandwidth_conf_id": "1216",   
+            "bandwidth_conf_name": "电信",   
             "userId": "715923",
-             "vgateways": [
-            {
-                "conf_id": "10289",
-                "conf_name": "电信",
-                "dns": "[\"119.29.29.29\",\"114.114.114.114\"]",
-                "gateway": "10.2.0.1",
-                "id": "8054ab84-cdcb-11ec-a318-ee97882ecf7d",
-                "ip_address": "10.2.0.0",
-                "ip_type": "virtual_gateway",
-                "mask": 16,
-                "name": "电信默认网关",                
-                "not_used": 65520,
-                "used_num": 16,
-           "status": "ok",
-                "status_str": "正常",
-                "vlan_id": "1431"
-            },
-            {
-                "conf_id": "10298",
-                "conf_name": "移动",
-                "dns": "[\"119.29.29.29\",\"114.114.114.114\"]",
-                "gateway": "10.3.0.1",
-                "id": "80587138-cdcb-11ec-a318-ee97882ecf7d",
-                "ip_address": "10.3.0.0",
-                "ip_type": "virtual_gateway",
-                "mask": 16,
-                "name": "移动默认网关",                
-                "not_used": 65520,
-                "used_num": 16,
-            "status": "ok",
-                "status_str": "正常",
-                "vlan_id": "1767"
-            }
-        ],
             "vpcId": "2c869a08-d749-11ec-9fb4-ca91557d24a6",
             "vpcName": "襄阳-云桌面默认VPC",
             "vpcSegment": "10.0.0.0/8"
@@ -11862,7 +11803,7 @@ def getCustomNet():
     '''
     action = "GetCustomNet"
     method = "GET"
-    param = {"siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e", "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"}
+    param = {"siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e","bandwidthConfIdStr": "1306", "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"}
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
     res = requests.get(url)
     result = json.loads(res.content)
@@ -12027,7 +11968,7 @@ def getLineBillingScheme():
 | 名称            | 类型   | 是否必须 | 示例                                   | 描述         |
 | --------------- | ------ | -------- | -------------------------------------- | ------------ |
 | size            | string | 是       | “1”                                    | eip数量(个)  |
-| bandwidthConfId | string | 是       | “1069”                                 | 带宽conf_id  |
+| bandwidthConfIdStr | string | 是       | “1069”                                 | 带宽conf_id **(新增) 从32获取** |
 | siteId          | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id       |
 | qos             | string | 是       | “5”                                    | 带宽值(mbps) |
 | requestId       | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid |
@@ -12101,7 +12042,7 @@ def getEipPrice():
     param = {
             "size":"1",
             "siteId": "09a38804-c1ee-11ec-bd22-4641dfd57315",
-            "bandwidthConfId":"10289",
+            "bandwidthConfIdStr":"10289",
             "qos":"5",
             "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"
     }
@@ -12377,10 +12318,9 @@ def queryExpireVms():
 | qos            | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
 | vpcId          | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
-| vgatewayNetId  | string | 是       | “80587138-cdcb-11ec-a318-ee97882ecf7d” | 虚拟出网网关网关–id                                          |
-| vgatewayConfId | string | 是       | “10298”                                | 虚拟网关–conf_id                                             |
-| sysVolume      | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
-| sysVolumeSize  | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
+| bandwidthConfIdStr | string | 是 | “1069” | 带宽conf_id **(新增) 从32获取** |
+| sysVolume | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                |
+| sysVolumeSize | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                                   |
 
    **返回参数：**
 
@@ -12414,7 +12354,7 @@ def queryExpireVms():
 {
     "Code": "Success",
     "Data": {
-        "requestContent": "{\"billCycle\":\"minute\",\"billMethod\":0,\"customerId\":\"E2129298\",\"duration\":1,\"funEipParam\":{\"qos\":5,\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"size\":1,\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"vGatewayConfId\":\"10298\",\"vGatewayConfName\":\"移动\",\"vGatewayNetId\":\"80587138-cdcb-11ec-a318-ee97882ecf7d\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"},\"isAutoRenewal\":0,\"isToMonth\":0,\"name\":\"openapi_test_2\",\"num\":1,\"priceToMonth\":0,\"productId\":\"745f6546-dc5f-492f-82d1-9eb47cd9fa2d\",\"qos\":5,\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\",\"vGatewayConfId\":\"10298\",\"vGatewayConfName\":\"移动\",\"vGatewayNetId\":\"80587138-cdcb-11ec-a318-ee97882ecf7d\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"}",
+        "requestContent": "{\"billCycle\":\"minute\",\"billMethod\":0,\"customerId\":\"E2129298\",\"duration\":1,\"funEipParam\":{\"qos\":5,\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"size\":1,\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"bandwidthConfIdStr\":\"1306\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"},\"isAutoRenewal\":0,\"isToMonth\":0,\"name\":\"openapi_test_2\",\"num\":1,\"priceToMonth\":0,\"productId\":\"745f6546-dc5f-492f-82d1-9eb47cd9fa2d\",\"qos\":5,\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"}",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab",
         "taskId": "53b150e2-bb27-4db1-8dc6-650eaba66fc2",
         "vmIds": [
@@ -12448,9 +12388,8 @@ def createVm():
         "priceToMonth":"0",
         "qos": "5",
         "vpcId": "b35e43a6-e706-11ec-8171-32f9a7e748fc",
-        "subnetNetId": "b36b43a8-e706-11ec-8171-32f9a7e748fc",
-        "vgatewayNetId": "c0505a90-e706-11ec-8171-32f9a7e748fc",
-        "vgatewayConfId": "10298"
+        "bandwidthConfIdStr":"10289",
+        "subnetNetId": "b36b43a8-e706-11ec-8171-32f9a7e748fc"
     }
  
  
@@ -13141,6 +13080,81 @@ def configNet():
     body = {
         "vmIds":[ "gcw-ecb427c719754291959c4073cff0217a"],
         "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e"
+    }
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print ("request error: %s" % result.get("Message"))
+    return result
+```
+
+
+### 32.GetVpcBandwidth
+
+   **Action: GetVpcBandwidth**
+
+  **描述：** 获取vpc线路
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：GET**
+
+   **请求参数：**
+
+| 名称      | 类型   | 是否必须 | 示例                                     | 描述     |
+| --------- | ------ | -------- | ---------------------------------------- | -------- |
+| siteId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   |站点id |
+
+   **返回参数：**
+
+| 名称           | 类型   | 示例                                     | 描述                      |
+| -------------- | ------ | ---------------------------------------- | ------------------------- |
+| Code           | string | Success                                  | 返回状态码: Success: 成功 |
+| Message        | string | null                                     | 返回信息                  |
+| Data           | obejct | {}                                       | 返回数据                  |
+| conf_id             | int    | 1069                                   | 方案id                           |
+| conf_name           | string | “电信”                                 | 方案名称 电信/联通…              |
+
+   **错误码:**
+
+| 错误码 | 错误信息              | 描述                  |
+| ------ | ------------------ | --------------------------- |
+| 10003  | 传入参数不符合要求 | 传入参数不符合要求          |
+| 13507  | 获取vpc线路类型失败   | 获取vpc线路类型失败            |
+
+   **返回示例:**
+
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "conf_id": 10289,
+            "conf_name": "电信"
+        },
+        {
+            "conf_id": 10298,
+            "conf_name": "移动"
+        }
+    ],
+    "Message": ""
+}
+```
+
+   **请求调用示例**
+
+```python
+def getVpcBandwidth():
+    '''
+    获取vpc线路
+    :return:
+    '''
+    action = "GetVpcBandwidth"
+    method = "GET"
+    body = {
+        "siteId": "32e6fd62-9bac-11ec-875a-2a8d1f4e167e"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
     res = requests.post(url,json=body)
