@@ -12318,7 +12318,6 @@ def queryExpireVms():
 | qos            | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
 | vpcId          | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
 | subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
-| bandwidthConfIdStr | string | 是 | “1069” | 带宽conf_id **(新增) 从32获取** |
 | sysVolume | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                |
 | sysVolumeSize | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                                   |
 
@@ -12354,7 +12353,7 @@ def queryExpireVms():
 {
     "Code": "Success",
     "Data": {
-        "requestContent": "{\"billCycle\":\"minute\",\"billMethod\":0,\"customerId\":\"E2129298\",\"duration\":1,\"funEipParam\":{\"qos\":5,\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"size\":1,\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"bandwidthConfIdStr\":\"1306\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"},\"isAutoRenewal\":0,\"isToMonth\":0,\"name\":\"openapi_test_2\",\"num\":1,\"priceToMonth\":0,\"productId\":\"745f6546-dc5f-492f-82d1-9eb47cd9fa2d\",\"qos\":5,\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"}",
+        "requestContent": "{\"billCycle\":\"minute\",\"billMethod\":0,\"customerId\":\"E2129298\",\"duration\":1,\"funEipParam\":{\"qos\":5,\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"size\":1,\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"},\"isAutoRenewal\":0,\"isToMonth\":0,\"name\":\"openapi_test_2\",\"num\":1,\"priceToMonth\":0,\"productId\":\"745f6546-dc5f-492f-82d1-9eb47cd9fa2d\",\"qos\":5,\"requestId\":\"6ca9ed98-27c8-4431-995f-59cc6d743dab\",\"siteId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"subnetNetId\":\"73d2c7ec-cdcb-11ec-a318-ee97882ecf7d\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\",\"vpcId\":\"73cbf764-cdcb-11ec-a318-ee97882ecf7d\",\"vpcName\":\"娄底-云桌面默认VPC\"}",
         "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab",
         "taskId": "53b150e2-bb27-4db1-8dc6-650eaba66fc2",
         "vmIds": [
@@ -12388,7 +12387,6 @@ def createVm():
         "priceToMonth":"0",
         "qos": "5",
         "vpcId": "b35e43a6-e706-11ec-8171-32f9a7e748fc",
-        "bandwidthConfIdStr":"10289",
         "subnetNetId": "b36b43a8-e706-11ec-8171-32f9a7e748fc"
     }
  
