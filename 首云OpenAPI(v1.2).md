@@ -10536,23 +10536,23 @@ def querySites():
 
    **返回参数：**
 
-| 名称           | 类型   | 示例                                   | 描述                             |
-| -------------- | ------ | -------------------------------------- | -------------------------------- |
-| Code           | string | Success                                | 返回状态码: Success: 成功        |
-| Message        | string | null                                   | 返回信息                         |
-| Data           | list   | []                                     | 返回数据                         |
-| siteId         | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                          |
-| productId      | string | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                       |
-| cpuCores       | int    | 14                                     | cpu 核数                         |
-| memorySize     | int    | 25                                     | 内存                             |
-| gpuModel       | string | “NVIDIA A5000”                         | gpu型号                          |
-| gpuRam         | int    | 24                                     | gpu显存                          |
-| systemDiskSize | int    | 150                                    | 系统盘大小                       |
-| os             | string | “windows”                              | 操作系统                         |
-| goodsId        | int    | 15264                                  | 商品id                           |
-| requirePrice   | double | 0.1868333333                           | 按需价格，每分钟所需的人民币数值 |
-| monthPrice     | double | 3364                                   | 包月价格，每月所需的人民币数值   |
-| isAllowSsd     | boolean | 1                                   | 是否允许使用ssd云盘 , 1允许，0不允许   |
+| 名称           | 类型    | 示例                                   | 描述                                 |
+| -------------- | ------- | -------------------------------------- | ------------------------------------ |
+| Code           | string  | Success                                | 返回状态码: Success: 成功            |
+| Message        | string  | null                                   | 返回信息                             |
+| Data           | list    | []                                     | 返回数据                             |
+| siteId         | string  | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点ID’                              |
+| productId      | string  | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 商品规格id                           |
+| cpuCores       | int     | 14                                     | cpu 核数                             |
+| memorySize     | int     | 25                                     | 内存                                 |
+| gpuModel       | string  | “NVIDIA A5000”                         | gpu型号                              |
+| gpuRam         | int     | 24                                     | gpu显存                              |
+| systemDiskSize | int     | 150                                    | 系统盘大小                           |
+| os             | string  | “windows”                              | 操作系统                             |
+| goodsId        | int     | 15264                                  | 商品id                               |
+| requirePrice   | double  | 0.1868333333                           | 按需价格，每分钟所需的人民币数值     |
+| monthPrice     | double  | 3364                                   | 包月价格，每月所需的人民币数值       |
+| isAllowSsd     | boolean | 1                                      | 是否允许使用ssd云盘 , 1允许，0不允许 |
 
    **错误码:**
 
@@ -10785,33 +10785,33 @@ def queryImages():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                   | 描述                                                         |
-| --------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
-| requestId | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
-| siteId    | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
-| duration  | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
-| isToMonth | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
-| billCycle | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
-| num       | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
-| goodsId   | string | 是       | “15273”                                | 商品id                                                       |
-| sysVolume   | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                     |
-| sysVolumeSize   | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                |
+| 名称          | 类型   | 是否必须 | 示例                                   | 描述                                                         |
+| ------------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| requestId     | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
+| siteId        | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
+| duration      | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
+| isToMonth     | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| billCycle     | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
+| num           | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
+| goodsId       | string | 是       | “15273”                                | 商品id                                                       |
+| sysVolume     | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
+| sysVolumeSize | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
 
    **返回参数：**
 
-| 名称           | 类型   | 示例                                 | 描述                                                         |
-| -------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
-| Code           | string | Success                              | 返回状态码: Success: 成功                                    |
-| Message        | string | null                                 | 返回信息                                                     |
-| Data           | object | {}                                   | 返回数据                                                     |
-| tradeAmount    | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
-| singleTradeAmount  | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
-| num            | int | 1                                 | 台数 |
-| vmPrice        | double | 0.11                                 |单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
-| sysVolumePrice | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
-| areaId         | string | CN                                   | 币种                                                         |
-| requestId      | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
-| requestContent | string | {}                                   | 请求参数                                                     |
+| 名称              | 类型   | 示例                                 | 描述                                                         |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Code              | string | Success                              | 返回状态码: Success: 成功                                    |
+| Message           | string | null                                 | 返回信息                                                     |
+| Data              | object | {}                                   | 返回数据                                                     |
+| tradeAmount       | double | 0.11                                 | 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为所要计算的总价格 |
+| singleTradeAmount | double | 0.11                                 | 单台 - 最终总价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果单台的总价格 |
+| num               | int    | 1                                    | 台数                                                         |
+| vmPrice           | double | 0.11                                 | 单台 - vm 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - vm 价格 |
+| sysVolumePrice    | double | 0.11                                 | 单台 - 系统盘 价格（元） 1、按需：返回结果为每小时的价格2、包月：返回的结果为单台 - 系统盘 价格 |
+| areaId            | string | CN                                   | 币种                                                         |
+| requestId         | string | e0997510-1b69-4de8-85a8-cc44b2dd28f8 | 请求uuid                                                     |
+| requestContent    | string | {}                                   | 请求参数                                                     |
 
    **错误码:**
 
@@ -11437,11 +11437,11 @@ def changeSubAccountRemark():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
-| --------- | ------ | -------- | ------------------------------------ | ------------ |
-| siteId    | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id       |
-| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id   **(新增) 从32获取** |
-| requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述                            |
+| ------------------ | ------ | -------- | ------------------------------------ | ------------------------------- |
+| siteId             | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id                          |
+| bandwidthConfIdStr | string | 是       | 1306                                 | vpc带宽id   **(新增) 从32获取** |
+| requestId          | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid                    |
 
    **返回参数：**
 
@@ -11514,11 +11514,11 @@ def createDefaultNet():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
-| --------- | ------ | -------- | ------------------------------------ | ------------ |
-| siteId    | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id       |
-| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id  **(新增) 从32获取** |
-| requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述                           |
+| ------------------ | ------ | -------- | ------------------------------------ | ------------------------------ |
+| siteId             | string | 是       | 35304122-8504-400c-a61c-56ba244c5dda | 站点id                         |
+| bandwidthConfIdStr | string | 是       | 1306                                 | vpc带宽id  **(新增) 从32获取** |
+| requestId          | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid                   |
 
    **返回参数：**
 
@@ -11591,47 +11591,47 @@ def supplyDefaultNet():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
-| --------- | ------ | -------- | ------------------------------------ | ------------ |
-| siteId    | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id       |
-| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id  **(新增) 从32获取** |
-| requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述                           |
+| ------------------ | ------ | -------- | ------------------------------------ | ------------------------------ |
+| siteId             | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id                         |
+| bandwidthConfIdStr | string | 是       | 1306                                 | vpc带宽id  **(新增) 从32获取** |
+| requestId          | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid                   |
 
    **返回参数：**
 
-| 名称        | 类型    | 示例                                 | 描述                                                         |
-| ----------- | ------- | ------------------------------------ | ------------------------------------------------------------ |
-| Code        | string  | Success                              | 返回状态码: Success: 成功                                    |
-| Message     | string  | null                                 | 返回信息                                                     |
-| Data        | object  | {}                                   | 返回数据                                                     |
-| id          | Integer | 112                                  | 主键id                                                       |
-| vpcRecordId | string  | c382a49c-942f-4389-af2b-7a81a7fee4d0 | vpc记录 id                                                   |
-| cityId      | string  | 30044852-a985-11ec-82c4-bec056b60a5c | vpc所属区域Id                                                |
-| vpcId       | string  | 3da4a818-80df-11ec-8c71-9291e2ce70c4 | vpc id                                                       |
-| vpcName     | string  | 云桌面默认VPC                        | vpc名字                                                      |
-| vpcSegment  | string  | 10.0.0.0/8                           | cidr规则的vpc网段                                            |
-| customerId  | string  | E888825                              | 客户ID                                                       |
-| userId      | string  | 571085                               | 用户ID                                                       |
-| createTime  | Date    | 2022-01-29 16:41:34                  | 创建时间                                                     |
-| updateTime  | Date    | 2022-01-29 16:41:34                  | 更新时间                                                     |
-| deleteFlag  | boolean | false                                | 删除标识                                                     |
-|             |         |                                      |                                                              |
-| subnets     | list    | [ ]                                  | 子网集合                                                     |
-|             |         |                                      |                                                              |
-| status      | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
-| status_str  | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
-| name        | string  | 子网1                                | 名称                                                         |
-| not_used    | Integer | 65521                                | 未使用ip数量                                                 |
-| used_num    | Integer | 15                                   | 已使用ip数量                                                 |
-| mask        | Integer | 16                                   | 掩码                                                         |
-| id          | String  | 3dabf76c-80df-11ec-8c71-9291e2ce70c4 | id                                                           |
-| dns         | String  | [“8.8.8.8”,“8.8.4.4”]                | dns                                                          |
-| ip_type     | String  | subnet                               | 网络类型：pubnet(“公网”), subnet( “子网”),virtual_gateway( “虚拟出网网”) |
-| ip_address  | String  | "10.1.0.0                            | ip                                                           |
-| gateway     | String  | 10.1.0.1                             | 网关                                                         |
-| vlan_id     | String  | 2911                                 | vlan id                                                      |
-| bandwidth_conf_id    | String  | 1216                                 | 带宽类型 id   **(新增) 与从32获取值相同**                           |
-| bandwidth_conf_name  | String  | 电信                                 | 带宽类型名字 **(新增) 与从32获取值相同**                              |
+| 名称                | 类型    | 示例                                 | 描述                                                         |
+| ------------------- | ------- | ------------------------------------ | ------------------------------------------------------------ |
+| Code                | string  | Success                              | 返回状态码: Success: 成功                                    |
+| Message             | string  | null                                 | 返回信息                                                     |
+| Data                | object  | {}                                   | 返回数据                                                     |
+| id                  | Integer | 112                                  | 主键id                                                       |
+| vpcRecordId         | string  | c382a49c-942f-4389-af2b-7a81a7fee4d0 | vpc记录 id                                                   |
+| cityId              | string  | 30044852-a985-11ec-82c4-bec056b60a5c | vpc所属区域Id                                                |
+| vpcId               | string  | 3da4a818-80df-11ec-8c71-9291e2ce70c4 | vpc id                                                       |
+| vpcName             | string  | 云桌面默认VPC                        | vpc名字                                                      |
+| vpcSegment          | string  | 10.0.0.0/8                           | cidr规则的vpc网段                                            |
+| customerId          | string  | E888825                              | 客户ID                                                       |
+| userId              | string  | 571085                               | 用户ID                                                       |
+| createTime          | Date    | 2022-01-29 16:41:34                  | 创建时间                                                     |
+| updateTime          | Date    | 2022-01-29 16:41:34                  | 更新时间                                                     |
+| deleteFlag          | boolean | false                                | 删除标识                                                     |
+|                     |         |                                      |                                                              |
+| subnets             | list    | [ ]                                  | 子网集合                                                     |
+|                     |         |                                      |                                                              |
+| status              | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
+| status_str          | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
+| name                | string  | 子网1                                | 名称                                                         |
+| not_used            | Integer | 65521                                | 未使用ip数量                                                 |
+| used_num            | Integer | 15                                   | 已使用ip数量                                                 |
+| mask                | Integer | 16                                   | 掩码                                                         |
+| id                  | String  | 3dabf76c-80df-11ec-8c71-9291e2ce70c4 | id                                                           |
+| dns                 | String  | [“8.8.8.8”,“8.8.4.4”]                | dns                                                          |
+| ip_type             | String  | subnet                               | 网络类型：pubnet(“公网”), subnet( “子网”),virtual_gateway( “虚拟出网网”) |
+| ip_address          | String  | "10.1.0.0                            | ip                                                           |
+| gateway             | String  | 10.1.0.1                             | 网关                                                         |
+| vlan_id             | String  | 2911                                 | vlan id                                                      |
+| bandwidth_conf_id   | String  | 1216                                 | 带宽类型 id   **(新增) 与从32获取值相同**                    |
+| bandwidth_conf_name | String  | 电信                                 | 带宽类型名字 **(新增) 与从32获取值相同**                     |
 
    **错误码:**
 
@@ -11713,41 +11713,41 @@ def getDefaultNet():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                 | 描述         |
-| --------- | ------ | -------- | ------------------------------------ | ------------ |
-| siteId    | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id       |
-| bandwidthConfIdStr    | string | 是       | 1306 | vpc带宽id **(新增) 从32获取** |
-| requestId | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid |
+| 名称               | 类型   | 是否必须 | 示例                                 | 描述                          |
+| ------------------ | ------ | -------- | ------------------------------------ | ----------------------------- |
+| siteId             | string | 是       | 32e6fd62-9bac-11ec-875a-2a8d1f4e167e | 站点id                        |
+| bandwidthConfIdStr | string | 是       | 1306                                 | vpc带宽id **(新增) 从32获取** |
+| requestId          | string | 是       | 6ca9ed98-27c8-4431-995f-59cc6d743dab | 请求标识uuid                  |
 
    **返回参数：**
 
-| 名称       | 类型    | 示例                                 | 描述                                                         |
-| ---------- | ------- | ------------------------------------ | ------------------------------------------------------------ |
-| Code       | string  | Success                              | 返回状态码: Success: 成功                                    |
-| Message    | string  | null                                 | 返回信息                                                     |
-| Data       | list    | [ ]                                  | 返回数据                                                     |
-| vpcId      | string  | 3da4a818-80df-11ec-8c71-9291e2ce70c4 | vpc id                                                       |
-| vpcName    | string  | 云桌面默认VPC                        | vpc名字                                                      |
-| vpcSegment | string  | 10.0.0.0/8                           | cidr规则的vpc网段                                            |
-| customerId | string  | E888825                              | 客户ID                                                       |
-| userId     | string  | 571085                               | 用户ID                                                       |
-|            |         |                                      |                                                              |
-| subnets    | List    | [ ]                                  | 子网集合                                                     |
-|            |         |                                      |                                                              |
-| status     | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
-| status_str | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
-| name       | string  | 子网1                                | 名称                                                         |
-| not_used   | Integer | 65521                                | 未使用ip数量                                                 |
-| used_num   | Integer | 15                                   | 已使用ip数量                                                 |
-| mask       | Integer | 16                                   | 掩码                                                         |
-| id         | String  | 3dabf76c-80df-11ec-8c71-9291e2ce70c4 | id                                                           |
-| dns        | String  | [“8.8.8.8”,“8.8.4.4”]                | dns                                                          |
-| ip_type    | String  | subnet                               | 网络类型：pubnet(“公网”), subnet( “子网”),virtual_gateway( “虚拟出网网”) |
-| ip_address | String  | "10.1.0.0                            | ip                                                           |
-| gateway    | String  | 10.1.0.1                             | 网关                                                         |
-| vlan_id    | String  | 2911                                 | vlan id                                                      |
-| bandwidth_conf_id    | String  | 1216                                 | 带宽类型 id  **(新增) 与从32获取值相同**                              |
-| bandwidth_conf_name  | String  | 电信                                 | 带宽类型名字  **(新增) 与从32获取值相同**                             |
+| 名称                | 类型    | 示例                                 | 描述                                                         |
+| ------------------- | ------- | ------------------------------------ | ------------------------------------------------------------ |
+| Code                | string  | Success                              | 返回状态码: Success: 成功                                    |
+| Message             | string  | null                                 | 返回信息                                                     |
+| Data                | list    | [ ]                                  | 返回数据                                                     |
+| vpcId               | string  | 3da4a818-80df-11ec-8c71-9291e2ce70c4 | vpc id                                                       |
+| vpcName             | string  | 云桌面默认VPC                        | vpc名字                                                      |
+| vpcSegment          | string  | 10.0.0.0/8                           | cidr规则的vpc网段                                            |
+| customerId          | string  | E888825                              | 客户ID                                                       |
+| userId              | string  | 571085                               | 用户ID                                                       |
+|                     |         |                                      |                                                              |
+| subnets             | List    | [ ]                                  | 子网集合                                                     |
+|                     |         |                                      |                                                              |
+| status              | string  | ok                                   | 状态 , ok ,erro ,creating ,deleting ,updating ,deleted ,shutdown ,stopping , starting |
+| status_str          | string  | 正常                                 | 状态name, 正常 , 错误 , 创建中 , 删除中 , 更新中 , 已删除 , 等待删除 , 禁用中 , 启用中 |
+| name                | string  | 子网1                                | 名称                                                         |
+| not_used            | Integer | 65521                                | 未使用ip数量                                                 |
+| used_num            | Integer | 15                                   | 已使用ip数量                                                 |
+| mask                | Integer | 16                                   | 掩码                                                         |
+| id                  | String  | 3dabf76c-80df-11ec-8c71-9291e2ce70c4 | id                                                           |
+| dns                 | String  | [“8.8.8.8”,“8.8.4.4”]                | dns                                                          |
+| ip_type             | String  | subnet                               | 网络类型：pubnet(“公网”), subnet( “子网”),virtual_gateway( “虚拟出网网”) |
+| ip_address          | String  | "10.1.0.0                            | ip                                                           |
+| gateway             | String  | 10.1.0.1                             | 网关                                                         |
+| vlan_id             | String  | 2911                                 | vlan id                                                      |
+| bandwidth_conf_id   | String  | 1216                                 | 带宽类型 id  **(新增) 与从32获取值相同**                     |
+| bandwidth_conf_name | String  | 电信                                 | 带宽类型名字  **(新增) 与从32获取值相同**                    |
 
    **错误码:**
 
@@ -11965,13 +11965,13 @@ def getLineBillingScheme():
 
    **请求参数：**
 
-| 名称            | 类型   | 是否必须 | 示例                                   | 描述         |
-| --------------- | ------ | -------- | -------------------------------------- | ------------ |
-| size            | string | 是       | “1”                                    | eip数量(个)  |
+| 名称               | 类型   | 是否必须 | 示例                                   | 描述                            |
+| ------------------ | ------ | -------- | -------------------------------------- | ------------------------------- |
+| size               | string | 是       | “1”                                    | eip数量(个)                     |
 | bandwidthConfIdStr | string | 是       | “1069”                                 | 带宽conf_id **(新增) 从32获取** |
-| siteId          | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id       |
-| qos             | string | 是       | “5”                                    | 带宽值(mbps) |
-| requestId       | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid |
+| siteId             | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id                          |
+| qos                | string | 是       | “5”                                    | 带宽值(mbps)                    |
+| requestId          | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid                    |
 
    **返回参数：**
 
@@ -12299,27 +12299,27 @@ def queryExpireVms():
 
    **请求参数：**
 
-| 名称           | 类型   | 是否必须 | 示例                                   | 描述                                                         |
-| -------------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
-| requestId      | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                                                     |
-| siteId         | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点ID                                                       |
-| productId      | string | 是       | “745f6546-dc5f-492f-82d1-9eb47cd9fa2d” | 规格uuid                                                     |
-| name           | string | 是       | “openapi_test_2”                       | GPU工作站名称                                                |
-| num            | string | 否       | “1”                                    | 开通数量，默认为1                                            |
-| hostNo         | string | 否       | “1”                                    | 开通机器起始编号，需大于0,购买超过一台GPU云桌面时，从第二台起名称后缀将自动添加编号，如名称为“测试”、后续名称为测试_001、测试_002等，默认为1 |
-| imageId        | string | 是       | “dcd81283-d2e9-456d-9f03-803b83ecc25a” | 镜像id                                                       |
-| moneyType      | string | 否       | “CN”                                   | 子账户-试用金的币种:US(美元)，CN(人民币) 默认人民币：“CN” ,  |
-| subAccountId   | string | 否       | “76581”                                | 子账户-试用金id                                              |
-| billCycle      | string | 否       | “minute”                               | 费周期 month是按月，minute是按需计费 ， 默认为minute 如果选择按需：minute，则参数duration、isToMonth、isAutoRenewal、priceToMonth无需传如果选择包月：montn，则参数 duration、isToMonth、isAutoRenewal、priceToMonth 选择：1、不传使用默认值：duration=1，isToMonth=0，isAutoRenewal=0，priceToMonth=0表示为：包1个整月 |
-| duration       | string | 否       | “1”                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5； 按需无需传，默认为1 |
-| isToMonth      | string | 否       | “0”                                    | 包月是否到月底 1是到月底，0否， 默认为0如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
-| isAutoRenewal  | string | 否       | “0”                                    | 包月是否续约 1是0否， 默认为0                                |
-| priceToMonth   | string | 否       | “0”                                    | 包年包月 不足整月是否按整月收费 1是0否， 默认为0             |
-| qos            | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
-| vpcId          | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
-| subnetNetId    | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
-| sysVolume | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘                |
-| sysVolumeSize | string | 否       | “200”                                | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数）                                   |
+| 名称          | 类型   | 是否必须 | 示例                                   | 描述                                                         |
+| ------------- | ------ | -------- | -------------------------------------- | ------------------------------------------------------------ |
+| requestId     | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求uuid                                                     |
+| siteId        | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点ID                                                       |
+| productId     | string | 是       | “745f6546-dc5f-492f-82d1-9eb47cd9fa2d” | 规格uuid                                                     |
+| name          | string | 是       | “openapi_test_2”                       | GPU工作站名称                                                |
+| num           | string | 否       | “1”                                    | 开通数量，默认为1                                            |
+| hostNo        | string | 否       | “1”                                    | 开通机器起始编号，需大于0,购买超过一台GPU云桌面时，从第二台起名称后缀将自动添加编号，如名称为“测试”、后续名称为测试_001、测试_002等，默认为1 |
+| imageId       | string | 是       | “dcd81283-d2e9-456d-9f03-803b83ecc25a” | 镜像id                                                       |
+| moneyType     | string | 否       | “CN”                                   | 子账户-试用金的币种:US(美元)，CN(人民币) 默认人民币：“CN” ,  |
+| subAccountId  | string | 否       | “76581”                                | 子账户-试用金id                                              |
+| billCycle     | string | 否       | “minute”                               | 费周期 month是按月，minute是按需计费 ， 默认为minute 如果选择按需：minute，则参数duration、isToMonth、isAutoRenewal、priceToMonth无需传如果选择包月：montn，则参数 duration、isToMonth、isAutoRenewal、priceToMonth 选择：1、不传使用默认值：duration=1，isToMonth=0，isAutoRenewal=0，priceToMonth=0表示为：包1个整月 |
+| duration      | string | 否       | “1”                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5； 按需无需传，默认为1 |
+| isToMonth     | string | 否       | “0”                                    | 包月是否到月底 1是到月底，0否， 默认为0如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| isAutoRenewal | string | 否       | “0”                                    | 包月是否续约 1是0否， 默认为0                                |
+| priceToMonth  | string | 否       | “0”                                    | 包年包月 不足整月是否按整月收费 1是0否， 默认为0             |
+| qos           | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
+| vpcId         | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
+| subnetNetId   | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
+| sysVolume     | string | 否       | “local”                                | 磁盘类型： 本地盘（local） 、云盘 (ssd) , 默认本地盘         |
+| sysVolumeSize | string | 否       | “200”                                  | 云盘大小 ，本底盘不用传  （云盘时传入盘的大小必须大于镜像大小且是8的倍数） |
 
    **返回参数：**
 
@@ -13101,26 +13101,26 @@ def configNet():
 
    **请求参数：**
 
-| 名称      | 类型   | 是否必须 | 示例                                     | 描述     |
-| --------- | ------ | -------- | ---------------------------------------- | -------- |
-| siteId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   |站点id |
+| 名称   | 类型   | 是否必须 | 示例                                   | 描述   |
+| ------ | ------ | -------- | -------------------------------------- | ------ |
+| siteId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 站点id |
 
    **返回参数：**
 
-| 名称           | 类型   | 示例                                     | 描述                      |
-| -------------- | ------ | ---------------------------------------- | ------------------------- |
-| Code           | string | Success                                  | 返回状态码: Success: 成功 |
-| Message        | string | null                                     | 返回信息                  |
-| Data           | obejct | {}                                       | 返回数据                  |
-| conf_id             | int    | 1069                                   | 方案id                           |
-| conf_name           | string | “电信”                                 | 方案名称 电信/联通…              |
+| 名称      | 类型   | 示例    | 描述                      |
+| --------- | ------ | ------- | ------------------------- |
+| Code      | string | Success | 返回状态码: Success: 成功 |
+| Message   | string | null    | 返回信息                  |
+| Data      | obejct | {}      | 返回数据                  |
+| conf_id   | int    | 1069    | 方案id                    |
+| conf_name | string | “电信”  | 方案名称 电信/联通…       |
 
    **错误码:**
 
-| 错误码 | 错误信息              | 描述                  |
-| ------ | ------------------ | --------------------------- |
-| 10003  | 传入参数不符合要求 | 传入参数不符合要求          |
-| 13507  | 获取vpc线路类型失败   | 获取vpc线路类型失败            |
+| 错误码 | 错误信息            | 描述                |
+| ------ | ------------------- | ------------------- |
+| 10003  | 传入参数不符合要求  | 传入参数不符合要求  |
+| 13507  | 获取vpc线路类型失败 | 获取vpc线路类型失败 |
 
    **返回示例:**
 
@@ -14223,7 +14223,7 @@ def describe_account_subject():
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
 | VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
 | SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list   | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 两种类型: 默认出网网关:"default_gateway",其他虚拟网关：”virtual“<br/>    "EipIds":[]<br/>} |
+| PubnetInfo        | 可选 | list   | 支持新分配公网IP和绑定已有的公网IP.<br/>"SubnetId":子网id;必填;若使用虚拟出网网关IP绑定公网IP则传虚拟出网网关id.<br/>"EipIds":[];绑定的eip的id列表;选填;若需新分配公网IP,不填,绑定已有公网IP需填,数量需要和云服务器数量一致.<br/>"IpType":"";选填;若使用虚拟出网网关必填.默认出网网关:"default_gateway",虚拟网关：”virtual”.<br/>"BandwidthType":带宽类型;选填;若需新分配公网IP必填,表示绑定公网IP的带宽类型.绑定已有公网IP不填.固定带宽:”Bandwidth”,流量按需: “Traffic”.<br/>"Qos":公网带宽值,单位为M;选填;若带宽类型选择”固定带宽”需填写. |
 | Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
 | StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
 | Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
@@ -14369,9 +14369,10 @@ def operate_ecs():
 
 **请求参数**
 
-| 参数   | 要求 | 类型 | 说明           |
-| ------ | ---- | ---- | -------------- |
-| EcsIds | 必选 | list | 云服务器id列表 |
+| 参数      | 要求 | 类型 | 说明                                            |
+| --------- | ---- | ---- | ----------------------------------------------- |
+| EcsIds    | 必选 | list | 云服务器id列表                                  |
+| DeleteEip | 可选 | int  | 1:解绑并删除服务器绑定的EIP，0:解绑EIP  默认为0 |
 
 **返回参数**
 
@@ -14755,6 +14756,8 @@ def describe_instance_vnc_url():
 
 **错误码**
 
+**错误码**
+
 | **HttpCode** | 错误码                                     | 错误信息                                                     | 描述                                                     |
 | ------------ | ------------------------------------------ | ------------------------------------------------------------ | -------------------------------------------------------- |
 | 400          | ParamParseError                            | Parameter parsing error.                                     | 请求参数解析错误                                         |
@@ -14778,10 +14781,11 @@ def describe_instance_vnc_url():
 | 404          | InvalidAccount.NotFound                    | Customer information does not exist                          | 未获取到客户信息                                         |
 | 404          | InvalidRegion.NotFound                     | The specified region does not exist.                         | 指定的地域不存在                                         |
 | 404          | InvalidAvailableZone.NotFound              | The specified available zone does not exist.                 | 指定的可用区不存在                                       |
-| 404          | InvalidEcsId.NotFound                      | The specified instance does not exist.                       | 指定的实例不存在                                         |
+| 404          | InvalidResourceId.NotFound                 | The specified resource zone does not exist                   | 指定的资源id不存在                                       |
 | 404          | InvalidVpc.NotFound                        | The specified vpc does not exist.                            | 指定的Vpc不存在                                          |
 | 404          | InvalidImage.NotFound                      | The specified image does not exist.                          | 指定的镜像不存在                                         |
 | 404          | InvalidEvent.NotFound                      | The specified event does not exist.                          | 指定的事件不存在                                         |
+| 404          | InvalidEvent.InvalidUrl.NotFound           | The specified url does not exist                             | 路由不存在或已升级                                       |
 | 500          | InternalError                              | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单           |
 
 ### 20.DescribeZoneInstanceType
@@ -14864,6 +14868,7 @@ def describe_zone_instance_type():
     "RequestId": "5987dcd6-3fed-41ac-9e75-de17d675cb64"
 }
 ```
+
 **错误码**
 
 | **HttpCode** | 错误码                        | 错误信息                                                     | 描述                                           |
@@ -14980,9 +14985,9 @@ def create_disk():
 
 **请求参数**：
 
-| 参数           | 说明                       | 类型 | 是否必传 | 示例               |
-| -------------- | -------------------------- | ---- | -------- | ------------------ |
-| DiskIds        | 云盘id列表                 | list | 是       | ["disk1", "disk2"] |
+| 参数           | 说明                       | 类型 | 是否必传 | 示例                  |
+| -------------- | -------------------------- | ---- | -------- | --------------------- |
+| DiskIds        | 云盘id列表                 | list | 是       | ["disk1", "disk2"]    |
 | DeleteSnapshot | 是否同时删除非永久保留快照 | int  | 否       | 1：是，0：否，默认为0 |
 
 **返回参数**
@@ -16509,11 +16514,11 @@ def create_contact_user():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5"
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5"
+   }
 }
 ```
 
@@ -16589,22 +16594,22 @@ def describe_contact_users():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"PageSize": 10,
-		"PageNumber": 1,
-		"TotalCount": 1,
-		"Contacts": [{
-			"ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5",
-			"ContactName": "联系人-example",
-			"PhoneNumber": "1560727xxxx",
-			"ContactEmail": "example@capitalonline.net",
-			"WebhookUrl": "",
-			"ContactStatus": "Normal",
-			"CreateTime": "2022-11-24 01:25:24"
-		}]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "PageSize": 10,
+      "PageNumber": 1,
+      "TotalCount": 1,
+      "Contacts": [{
+         "ContactId": "98824212-1505-45f4-a503-7ec20a26c7b5",
+         "ContactName": "联系人-example",
+         "PhoneNumber": "1560727xxxx",
+         "ContactEmail": "example@capitalonline.net",
+         "WebhookUrl": "",
+         "ContactStatus": "Normal",
+         "CreateTime": "2022-11-24 01:25:24"
+      }]
+   }
 }
 ```
 
@@ -16673,12 +16678,12 @@ def join_contact_groups():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"],
-		"Failed": []
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["4c8d8bad-10ed-4673-ba3f-4a568d0756a1"],
+      "Failed": []
+   }
 }
 ```
 
@@ -16741,11 +16746,11 @@ def create_contact_group():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1"
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1"
+   }
 }
 ```
 
@@ -16804,12 +16809,12 @@ def delete_contact_group():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["14ec565a-8f11-4944-ba2b-13f3b0fa91db"],
-		"Failed": ["1f0234e8-8883-42ad-850e-47ad54f1da03"]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["14ec565a-8f11-4944-ba2b-13f3b0fa91db"],
+      "Failed": ["1f0234e8-8883-42ad-850e-47ad54f1da03"]
+   }
 }
 ```
 
@@ -16883,18 +16888,18 @@ def describe_contact_groups():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"PageNumber": 1,
-		"PageSize": 10,
-		"TotalCount": 1,
-		"ContactGroups": [{
-			"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
-			"GroupName": "联系组-example",
-			"GroupDescription": "联系组"
-		}]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "PageNumber": 1,
+      "PageSize": 10,
+      "TotalCount": 1,
+      "ContactGroups": [{
+         "GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
+         "GroupName": "联系组-example",
+         "GroupDescription": "联系组"
+      }]
+   }
 }
 ```
 
@@ -16975,749 +16980,749 @@ def describe_alarm_metrics():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"CCS": [{
-			"Id": "vm.cpu.usage",
-			"Name": "云服务器CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "vm.data_disk.usage",
-			"Name": "云服务器数据盘使用率",
-			"Granularity": 1800,
-			"Unit": "%"
-		}, {
-			"Id": "vm.disk.iops.read",
-			"Name": "云服务器磁盘读IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "vm.disk.iops.write",
-			"Name": "云服务器磁盘写IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "vm.disk.throughput.read",
-			"Name": "云服务器磁盘读吞吐量",
-			"Granularity": 60,
-			"Unit": "kbps"
-		}, {
-			"Id": "vm.disk.throughput.write",
-			"Name": "云服务器磁盘写吞吐量",
-			"Granularity": 60,
-			"Unit": "kbps"
-		}, {
-			"Id": "vm.mem.usage",
-			"Name": "云服务器内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "vm.nic.throughput.read",
-			"Name": "云服务器网卡读吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.nic.throughput.write",
-			"Name": "云服务器网卡写吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.private_nic.throughput.read",
-			"Name": "云服务器私网网卡读吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.private_nic.throughput.write",
-			"Name": "云服务器私网网卡写吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.public_nic.throughput.read",
-			"Name": "云服务器公网网卡读吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.public_nic.throughput.write",
-			"Name": "云服务器公网网卡写吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "vm.system_disk.usage",
-			"Name": "云服务器系统盘使用率",
-			"Granularity": 1800,
-			"Unit": "%"
-		}],
-		"ECS": [{
-			"Id": "ecs.cpu.usage",
-			"Name": "ecs云服务器CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "ecs.disk.iops.read",
-			"Name": "ecs云服务器磁盘读IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "ecs.disk.iops.write",
-			"Name": "ecs云服务器磁盘写IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "ecs.disk.throughput.read",
-			"Name": "ecs云服务器磁盘读吞吐量",
-			"Granularity": 60,
-			"Unit": "kbps"
-		}, {
-			"Id": "ecs.disk.throughput.write",
-			"Name": "ecs云服务器磁盘写吞吐量",
-			"Granularity": 60,
-			"Unit": "kbps"
-		}, {
-			"Id": "ecs.disk.usage",
-			"Name": "ecs云服务器磁盘使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "ecs.mem.usage",
-			"Name": "ecs云服务器内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "ecs.nic.throughput.read",
-			"Name": "ecs云服务器网卡读吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}, {
-			"Id": "ecs.nic.throughput.write",
-			"Name": "ecs云服务器网卡写吞吐量",
-			"Granularity": 60,
-			"Unit": "mbps"
-		}],
-		"BMS": [{
-			"Id": "bms.cpu.usage",
-			"Name": "裸金属CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "bms.disk.iops.read",
-			"Name": "裸金属磁盘读IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "bms.disk.iops.write",
-			"Name": "裸金属磁盘写IOPS",
-			"Granularity": 60,
-			"Unit": "iops"
-		}, {
-			"Id": "bms.disk.throughput.read",
-			"Name": "裸金属磁盘读吞吐量",
-			"Granularity": 60,
-			"Unit": "mb/s"
-		}, {
-			"Id": "bms.disk.throughput.write",
-			"Name": "裸金属磁盘写吞吐量",
-			"Granularity": 60,
-			"Unit": "mb/s"
-		}, {
-			"Id": "bms.disk.usage",
-			"Name": "裸金属磁盘使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "bms.mem.usage",
-			"Name": "裸金属内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "bms.nic.throughput.read",
-			"Name": "裸金属网卡读吞吐量",
-			"Granularity": 60,
-			"Unit": "mb/s"
-		}, {
-			"Id": "bms.nic.throughput.write",
-			"Name": "裸金属网卡写吞吐量",
-			"Granularity": 60,
-			"Unit": "mb/s"
-		}],
-		"Cdb": [{
-			"Id": "51b8dabd-5140-4ed5-972a-dd5cf7f0c785",
-			"Name": "cpu利用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "eff006d7-8819-4ab7-ab50-0b56de49255d",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "feb4d34a-8c13-4407-83b7-c6d28c20d809",
-			"Name": "磁盘使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "d7bcda20-f76e-4301-8c19-2e96ef15ff77",
-			"Name": "最大连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "8a9f82d1-ebfd-472a-8e13-9ebd180950e0",
-			"Name": "每秒执行操作数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "d08a47f1-7495-4982-9d55-d9e84564ad58",
-			"Name": "慢查询数",
-			"Granularity": 60,
-			"Unit": "次"
-		}, {
-			"Id": "bdd7fc9f-926c-493d-a073-e174102cce03",
-			"Name": "全表扫描数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "68507a96-a73e-4bef-b8ee-d5280d068112",
-			"Name": "查询数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "1d7d6bff-1d29-479f-87f0-faf750a0509d",
-			"Name": "更新数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "186c472b-0ad9-4aab-a91b-733fb3c20842",
-			"Name": "删除数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "a313b122-7ea1-4ef0-a2b0-b729bb0e5e0d",
-			"Name": "插入数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "4a61bd4a-dc2f-4beb-b549-08f3f75defac",
-			"Name": "覆盖数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "8b33e392-8de5-49e7-97dc-19a3450e67a0",
-			"Name": "总请求数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "c47fd55b-dee6-4e15-ba5a-5b745f004d4f",
-			"Name": "当前打开连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "ef97e0a8-04cb-4bfe-adf7-7a9e869c3685",
-			"Name": "连接数使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "3dfa12f0-548b-4cfc-b66f-1097ea77522d",
-			"Name": "临时表数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "a183d550-abc7-41be-a5a8-c12d45eff0d5",
-			"Name": "临时文件数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "070aa6d1-9e82-4e31-a1b9-3cfca2369e96",
-			"Name": "运行的线程数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "e029808c-c791-4f1c-a9cf-f6a26dee6746",
-			"Name": "磁盘临时表数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "233ae49c-c594-41c0-ae00-fc7f3a5d3eec",
-			"Name": "每秒提交的事务数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}],
-		"CdbSlave": [{
-			"Id": "f613c855-779a-4eed-af4c-97e04aa8f460",
-			"Name": "主从延迟距离",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "f158ce6e-2565-43be-9eee-d87a3b16931d",
-			"Name": "主从延迟时间",
-			"Granularity": 60,
-			"Unit": "秒"
-		}, {
-			"Id": "3031d60d-cb1b-44fd-9ab6-db2dc5d9eab6",
-			"Name": "IO 线程状态",
-			"Granularity": 60,
-			"Unit": "状态值"
-		}, {
-			"Id": "abcf6f68-21c8-4950-aaf9-632d8cdda8c5",
-			"Name": "SQL 线程状态",
-			"Granularity": 60,
-			"Unit": "状态值"
-		}],
-		"RedisCluster": [{
-			"Id": "00ff51cd-dee8-476c-982d-c9b0379f6498",
-			"Name": "CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "929d873f-1db0-4ab9-8aef-9cc4d1f810aa",
-			"Name": "内存使用量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "7393ae80-4cee-40fc-a594-c0e2c63aede4",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "4ebaddda-cfa1-4529-9cc4-961de0e8e322",
-			"Name": "Key总个数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "679e5efe-164d-4a21-b663-6ee7e7896fd4",
-			"Name": "读请求命中率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "0aa8354d-09b8-487e-8e5b-1a3f23ac3f78",
-			"Name": "读请求命中",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "0a41153a-2bc5-4c31-a27f-72ff9d38e614",
-			"Name": "总请求",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "5017029a-9033-41a5-9543-3f62da99cb9f",
-			"Name": "入流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "c342d9cf-7bd7-4bcf-8e70-c6ddfd7261d7",
-			"Name": "出流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "4c0ebb4d-0226-4617-b0af-a7403c27eb6a",
-			"Name": "分片CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "81d8d08b-f585-4674-89ee-e87f83800c32",
-			"Name": "分片内存使用量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "b0347b11-e484-4c3a-b0b7-6bd69fd3233c",
-			"Name": "分片内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}],
-		"RedisReplication": [{
-			"Id": "ce415c93-2df2-4f57-b4ad-bc882ccc0df5",
-			"Name": "CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "ecf3b95c-7bcf-43fe-9c21-76bebaeecbaa",
-			"Name": "内存使用量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "97b00e01-5e65-41b9-ba05-c0dace1cdaf9",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "82860c15-c5c8-438d-902c-9c982c32d147",
-			"Name": "Key总个数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "6adb90ab-4d24-451e-ae9e-274a9e1348cc",
-			"Name": "读请求命中率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "58247601-489f-47ee-bb41-6177883220e2",
-			"Name": "读请求命中",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "84b6305b-181c-4d2b-a5c7-88df76dc21d8",
-			"Name": "总请求",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "7440cdc1-1f08-4f3a-9ff8-9d884671c591",
-			"Name": "入流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "281b21fe-f624-4914-a193-9cc1bdb6e823",
-			"Name": "出流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "bb8a9d27-9898-40a1-813e-753cc3f51739",
-			"Name": "平均执行时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}, {
-			"Id": "783df910-77ef-443f-8c20-99e585c8718a",
-			"Name": "读平均时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}, {
-			"Id": "4bec55f3-9cad-420b-8ca1-0630dc734b73",
-			"Name": "写平均时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}],
-		"RedisStandalone": [{
-			"Id": "4bc3687f-8e2a-4ee1-b8b9-e24515bf96a4",
-			"Name": "CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "d4dd91f7-875f-4b36-a0c1-c1b5a985a95a",
-			"Name": "内存使用量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "789701e9-6272-4187-af53-abdca577017e",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "cffea516-eec1-4659-9f29-81714ba2e844",
-			"Name": "Key总个数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "b51d3820-ec16-4157-8874-61eb581250cb",
-			"Name": "读请求命中率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "8b945bc4-b51a-4da5-bd3c-f4e5ed1f8c2b",
-			"Name": "读请求命中",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "e64de80d-3781-4157-970b-55277cbf9a43",
-			"Name": "总请求",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "bd756af5-a4bd-4ce3-950c-c689731d22aa",
-			"Name": "入流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "b1bf33ed-f51d-484a-80ea-179337c72f5a",
-			"Name": "出流量",
-			"Granularity": 60,
-			"Unit": "MB"
-		}, {
-			"Id": "eb61afce-db2c-47ef-85f9-1f2271cdceec",
-			"Name": "平均执行时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}, {
-			"Id": "e39c4a0e-2895-4668-a585-9ed85edf89bf",
-			"Name": "读平均时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}, {
-			"Id": "b49cd095-1998-49f4-840f-aef0499a1a67",
-			"Name": "写平均时延",
-			"Granularity": 60,
-			"Unit": "ms"
-		}],
-		"MysqlSingle": [{
-			"Id": "c622839a-fcc1-4e03-abc7-fb5de90e18c5",
-			"Name": "cpu利用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "6405b795-77ed-4fe0-a9ab-52403ef6686b",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "70458642-a0b6-430b-8354-7b52da6ccd5f",
-			"Name": "磁盘使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "7debf81d-6e58-4ff1-983c-fcf0c9b3037a",
-			"Name": "最大连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "1142da28-8efb-4c71-83c1-61e834705d30",
-			"Name": "每秒执行操作数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "bf9828b6-64b0-489e-9ab4-93d3a0d40324",
-			"Name": "慢查询数",
-			"Granularity": 60,
-			"Unit": "次"
-		}, {
-			"Id": "882938bc-bf2d-44d1-b468-2dbb95b9d848",
-			"Name": "全表扫描数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "db08e90d-2ee6-45f6-87ff-549781c2abe1",
-			"Name": "查询数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "57bb0e52-6fce-4055-9264-fbd2cb2f99a5",
-			"Name": "更新数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "809bf5a6-9f75-452b-8475-ff13962b40a0",
-			"Name": "删除数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "adc3bea5-9024-4220-9a33-66cd350d7c63",
-			"Name": "插入数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "93e95b0f-5ebb-4111-bd81-6289532aac6f",
-			"Name": "覆盖数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "493d5db0-ae59-46cf-8223-14213817c3a3",
-			"Name": "总请求数",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "74ca0c11-2ef3-451b-9e39-898c5cb5203b",
-			"Name": "当前打开连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "8724a58c-282c-43fb-bb80-8a8ec6787ff6",
-			"Name": "临时文件数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}, {
-			"Id": "329015c7-8bfa-4734-8691-f24ea65a26f8",
-			"Name": "每秒提交的事务数量",
-			"Granularity": 60,
-			"Unit": "次/秒"
-		}],
-		"Haproxy": [{
-			"Id": "7ae02782-3076-4187-a790-d1ccd489912b",
-			"Name": "CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "e83e4ab5-b322-4335-a7f8-177340ffd7d2",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "f53abaf5-0602-47a9-8f77-ad162acc55e1",
-			"Name": "入包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "813d9b33-09ed-48a6-9294-e5637306bc8b",
-			"Name": "出包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "27f7e53b-02ca-488c-8ad7-67f9e7b4fe4b",
-			"Name": "出流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "69c74b54-9b15-4224-8b43-f42d6e879767",
-			"Name": "入流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}],
-		"HaproxyServer": [{
-			"Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
-			"Name": "负载均衡队列请求数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
-			"Name": "负载均衡活跃会话数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
-			"Name": "负载均衡入流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
-			"Name": "负载均衡出流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "7f205784-2884-4013-b959-e1778b1ea66f",
-			"Name": "负载均衡失败连接数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
-			"Name": "负载均衡错误响应数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
-			"Name": "负载均衡新建会话数",
-			"Granularity": 60,
-			"Unit": "个"
-		}],
-		"HaproxyServerHttp": [{
-			"Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
-			"Name": "负载均衡队列请求数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
-			"Name": "负载均衡活跃会话数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
-			"Name": "负载均衡入流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
-			"Name": "负载均衡出流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "7f205784-2884-4013-b959-e1778b1ea66f",
-			"Name": "负载均衡失败连接数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
-			"Name": "负载均衡错误响应数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
-			"Name": "负载均衡新建会话数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "1fa95a83-5316-4778-a73c-9e276e04eb92",
-			"Name": "http每秒2XX个数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "c675d7ca-114e-413e-af35-7ebc5bb3efa9",
-			"Name": "http每秒3XX个数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "c495df46-8ae8-446f-93c2-328c15ecbf05",
-			"Name": "http每秒4XX个数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "e5d67afe-2f58-4c27-8735-63b61691f4e8",
-			"Name": "http每秒5XX个数",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}],
-		"Lvs": [{
-			"Id": "52e25a12-56bd-4fd5-95d1-59abd073e759",
-			"Name": "CPU使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "fda33502-56af-4622-a94f-263e0366a62c",
-			"Name": "内存使用率",
-			"Granularity": 60,
-			"Unit": "%"
-		}, {
-			"Id": "18e528d0-6c06-4f7f-963c-4b4ba600130e",
-			"Name": "入包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "b4e7dd9b-c8bf-4b0f-9722-35678d5706fc",
-			"Name": "出包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "9ee2b2e5-1340-4aa8-97c2-ad636b4ba552",
-			"Name": "出流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "cbea7adc-1fc3-4df1-8ff5-58d2aec9a998",
-			"Name": "入流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}],
-		"LvsListenerTotal": [{
-			"Id": "a2849467-af38-4efb-8aa3-1939ba9c53ca",
-			"Name": "活跃连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "e1024fdd-eb44-4fe9-b25a-8a30ab436f35",
-			"Name": "不活跃连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "9fc0d3e5-28ae-486a-8f93-a360b8e83108",
-			"Name": "新增连接数",
-			"Granularity": 60,
-			"Unit": "个"
-		}, {
-			"Id": "b1f7bee7-6a37-4268-af24-ba6fd6e1a5b8",
-			"Name": "监听入流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "d8bfd4bf-23f0-4067-9887-6c7e9a813fc8",
-			"Name": "监听出流量",
-			"Granularity": 60,
-			"Unit": "MB/s"
-		}, {
-			"Id": "3f9ee23a-c3b3-4953-a75a-9f320e5a4ee2",
-			"Name": "监听入包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}, {
-			"Id": "115aa7a8-b289-4bab-a787-d120ac200026",
-			"Name": "监听出包量",
-			"Granularity": 60,
-			"Unit": "个/s"
-		}]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "CCS": [{
+         "Id": "vm.cpu.usage",
+         "Name": "云服务器CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "vm.data_disk.usage",
+         "Name": "云服务器数据盘使用率",
+         "Granularity": 1800,
+         "Unit": "%"
+      }, {
+         "Id": "vm.disk.iops.read",
+         "Name": "云服务器磁盘读IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "vm.disk.iops.write",
+         "Name": "云服务器磁盘写IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "vm.disk.throughput.read",
+         "Name": "云服务器磁盘读吞吐量",
+         "Granularity": 60,
+         "Unit": "kbps"
+      }, {
+         "Id": "vm.disk.throughput.write",
+         "Name": "云服务器磁盘写吞吐量",
+         "Granularity": 60,
+         "Unit": "kbps"
+      }, {
+         "Id": "vm.mem.usage",
+         "Name": "云服务器内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "vm.nic.throughput.read",
+         "Name": "云服务器网卡读吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.nic.throughput.write",
+         "Name": "云服务器网卡写吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.private_nic.throughput.read",
+         "Name": "云服务器私网网卡读吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.private_nic.throughput.write",
+         "Name": "云服务器私网网卡写吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.public_nic.throughput.read",
+         "Name": "云服务器公网网卡读吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.public_nic.throughput.write",
+         "Name": "云服务器公网网卡写吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "vm.system_disk.usage",
+         "Name": "云服务器系统盘使用率",
+         "Granularity": 1800,
+         "Unit": "%"
+      }],
+      "ECS": [{
+         "Id": "ecs.cpu.usage",
+         "Name": "ecs云服务器CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "ecs.disk.iops.read",
+         "Name": "ecs云服务器磁盘读IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "ecs.disk.iops.write",
+         "Name": "ecs云服务器磁盘写IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "ecs.disk.throughput.read",
+         "Name": "ecs云服务器磁盘读吞吐量",
+         "Granularity": 60,
+         "Unit": "kbps"
+      }, {
+         "Id": "ecs.disk.throughput.write",
+         "Name": "ecs云服务器磁盘写吞吐量",
+         "Granularity": 60,
+         "Unit": "kbps"
+      }, {
+         "Id": "ecs.disk.usage",
+         "Name": "ecs云服务器磁盘使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "ecs.mem.usage",
+         "Name": "ecs云服务器内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "ecs.nic.throughput.read",
+         "Name": "ecs云服务器网卡读吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }, {
+         "Id": "ecs.nic.throughput.write",
+         "Name": "ecs云服务器网卡写吞吐量",
+         "Granularity": 60,
+         "Unit": "mbps"
+      }],
+      "BMS": [{
+         "Id": "bms.cpu.usage",
+         "Name": "裸金属CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "bms.disk.iops.read",
+         "Name": "裸金属磁盘读IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "bms.disk.iops.write",
+         "Name": "裸金属磁盘写IOPS",
+         "Granularity": 60,
+         "Unit": "iops"
+      }, {
+         "Id": "bms.disk.throughput.read",
+         "Name": "裸金属磁盘读吞吐量",
+         "Granularity": 60,
+         "Unit": "mb/s"
+      }, {
+         "Id": "bms.disk.throughput.write",
+         "Name": "裸金属磁盘写吞吐量",
+         "Granularity": 60,
+         "Unit": "mb/s"
+      }, {
+         "Id": "bms.disk.usage",
+         "Name": "裸金属磁盘使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "bms.mem.usage",
+         "Name": "裸金属内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "bms.nic.throughput.read",
+         "Name": "裸金属网卡读吞吐量",
+         "Granularity": 60,
+         "Unit": "mb/s"
+      }, {
+         "Id": "bms.nic.throughput.write",
+         "Name": "裸金属网卡写吞吐量",
+         "Granularity": 60,
+         "Unit": "mb/s"
+      }],
+      "Cdb": [{
+         "Id": "51b8dabd-5140-4ed5-972a-dd5cf7f0c785",
+         "Name": "cpu利用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "eff006d7-8819-4ab7-ab50-0b56de49255d",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "feb4d34a-8c13-4407-83b7-c6d28c20d809",
+         "Name": "磁盘使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "d7bcda20-f76e-4301-8c19-2e96ef15ff77",
+         "Name": "最大连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "8a9f82d1-ebfd-472a-8e13-9ebd180950e0",
+         "Name": "每秒执行操作数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "d08a47f1-7495-4982-9d55-d9e84564ad58",
+         "Name": "慢查询数",
+         "Granularity": 60,
+         "Unit": "次"
+      }, {
+         "Id": "bdd7fc9f-926c-493d-a073-e174102cce03",
+         "Name": "全表扫描数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "68507a96-a73e-4bef-b8ee-d5280d068112",
+         "Name": "查询数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "1d7d6bff-1d29-479f-87f0-faf750a0509d",
+         "Name": "更新数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "186c472b-0ad9-4aab-a91b-733fb3c20842",
+         "Name": "删除数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "a313b122-7ea1-4ef0-a2b0-b729bb0e5e0d",
+         "Name": "插入数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "4a61bd4a-dc2f-4beb-b549-08f3f75defac",
+         "Name": "覆盖数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "8b33e392-8de5-49e7-97dc-19a3450e67a0",
+         "Name": "总请求数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "c47fd55b-dee6-4e15-ba5a-5b745f004d4f",
+         "Name": "当前打开连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "ef97e0a8-04cb-4bfe-adf7-7a9e869c3685",
+         "Name": "连接数使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "3dfa12f0-548b-4cfc-b66f-1097ea77522d",
+         "Name": "临时表数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "a183d550-abc7-41be-a5a8-c12d45eff0d5",
+         "Name": "临时文件数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "070aa6d1-9e82-4e31-a1b9-3cfca2369e96",
+         "Name": "运行的线程数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "e029808c-c791-4f1c-a9cf-f6a26dee6746",
+         "Name": "磁盘临时表数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "233ae49c-c594-41c0-ae00-fc7f3a5d3eec",
+         "Name": "每秒提交的事务数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }],
+      "CdbSlave": [{
+         "Id": "f613c855-779a-4eed-af4c-97e04aa8f460",
+         "Name": "主从延迟距离",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "f158ce6e-2565-43be-9eee-d87a3b16931d",
+         "Name": "主从延迟时间",
+         "Granularity": 60,
+         "Unit": "秒"
+      }, {
+         "Id": "3031d60d-cb1b-44fd-9ab6-db2dc5d9eab6",
+         "Name": "IO 线程状态",
+         "Granularity": 60,
+         "Unit": "状态值"
+      }, {
+         "Id": "abcf6f68-21c8-4950-aaf9-632d8cdda8c5",
+         "Name": "SQL 线程状态",
+         "Granularity": 60,
+         "Unit": "状态值"
+      }],
+      "RedisCluster": [{
+         "Id": "00ff51cd-dee8-476c-982d-c9b0379f6498",
+         "Name": "CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "929d873f-1db0-4ab9-8aef-9cc4d1f810aa",
+         "Name": "内存使用量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "7393ae80-4cee-40fc-a594-c0e2c63aede4",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "4ebaddda-cfa1-4529-9cc4-961de0e8e322",
+         "Name": "Key总个数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "679e5efe-164d-4a21-b663-6ee7e7896fd4",
+         "Name": "读请求命中率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "0aa8354d-09b8-487e-8e5b-1a3f23ac3f78",
+         "Name": "读请求命中",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "0a41153a-2bc5-4c31-a27f-72ff9d38e614",
+         "Name": "总请求",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "5017029a-9033-41a5-9543-3f62da99cb9f",
+         "Name": "入流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "c342d9cf-7bd7-4bcf-8e70-c6ddfd7261d7",
+         "Name": "出流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "4c0ebb4d-0226-4617-b0af-a7403c27eb6a",
+         "Name": "分片CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "81d8d08b-f585-4674-89ee-e87f83800c32",
+         "Name": "分片内存使用量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "b0347b11-e484-4c3a-b0b7-6bd69fd3233c",
+         "Name": "分片内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }],
+      "RedisReplication": [{
+         "Id": "ce415c93-2df2-4f57-b4ad-bc882ccc0df5",
+         "Name": "CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "ecf3b95c-7bcf-43fe-9c21-76bebaeecbaa",
+         "Name": "内存使用量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "97b00e01-5e65-41b9-ba05-c0dace1cdaf9",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "82860c15-c5c8-438d-902c-9c982c32d147",
+         "Name": "Key总个数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "6adb90ab-4d24-451e-ae9e-274a9e1348cc",
+         "Name": "读请求命中率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "58247601-489f-47ee-bb41-6177883220e2",
+         "Name": "读请求命中",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "84b6305b-181c-4d2b-a5c7-88df76dc21d8",
+         "Name": "总请求",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "7440cdc1-1f08-4f3a-9ff8-9d884671c591",
+         "Name": "入流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "281b21fe-f624-4914-a193-9cc1bdb6e823",
+         "Name": "出流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "bb8a9d27-9898-40a1-813e-753cc3f51739",
+         "Name": "平均执行时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }, {
+         "Id": "783df910-77ef-443f-8c20-99e585c8718a",
+         "Name": "读平均时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }, {
+         "Id": "4bec55f3-9cad-420b-8ca1-0630dc734b73",
+         "Name": "写平均时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }],
+      "RedisStandalone": [{
+         "Id": "4bc3687f-8e2a-4ee1-b8b9-e24515bf96a4",
+         "Name": "CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "d4dd91f7-875f-4b36-a0c1-c1b5a985a95a",
+         "Name": "内存使用量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "789701e9-6272-4187-af53-abdca577017e",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "cffea516-eec1-4659-9f29-81714ba2e844",
+         "Name": "Key总个数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "b51d3820-ec16-4157-8874-61eb581250cb",
+         "Name": "读请求命中率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "8b945bc4-b51a-4da5-bd3c-f4e5ed1f8c2b",
+         "Name": "读请求命中",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "e64de80d-3781-4157-970b-55277cbf9a43",
+         "Name": "总请求",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "bd756af5-a4bd-4ce3-950c-c689731d22aa",
+         "Name": "入流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "b1bf33ed-f51d-484a-80ea-179337c72f5a",
+         "Name": "出流量",
+         "Granularity": 60,
+         "Unit": "MB"
+      }, {
+         "Id": "eb61afce-db2c-47ef-85f9-1f2271cdceec",
+         "Name": "平均执行时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }, {
+         "Id": "e39c4a0e-2895-4668-a585-9ed85edf89bf",
+         "Name": "读平均时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }, {
+         "Id": "b49cd095-1998-49f4-840f-aef0499a1a67",
+         "Name": "写平均时延",
+         "Granularity": 60,
+         "Unit": "ms"
+      }],
+      "MysqlSingle": [{
+         "Id": "c622839a-fcc1-4e03-abc7-fb5de90e18c5",
+         "Name": "cpu利用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "6405b795-77ed-4fe0-a9ab-52403ef6686b",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "70458642-a0b6-430b-8354-7b52da6ccd5f",
+         "Name": "磁盘使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "7debf81d-6e58-4ff1-983c-fcf0c9b3037a",
+         "Name": "最大连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "1142da28-8efb-4c71-83c1-61e834705d30",
+         "Name": "每秒执行操作数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "bf9828b6-64b0-489e-9ab4-93d3a0d40324",
+         "Name": "慢查询数",
+         "Granularity": 60,
+         "Unit": "次"
+      }, {
+         "Id": "882938bc-bf2d-44d1-b468-2dbb95b9d848",
+         "Name": "全表扫描数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "db08e90d-2ee6-45f6-87ff-549781c2abe1",
+         "Name": "查询数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "57bb0e52-6fce-4055-9264-fbd2cb2f99a5",
+         "Name": "更新数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "809bf5a6-9f75-452b-8475-ff13962b40a0",
+         "Name": "删除数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "adc3bea5-9024-4220-9a33-66cd350d7c63",
+         "Name": "插入数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "93e95b0f-5ebb-4111-bd81-6289532aac6f",
+         "Name": "覆盖数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "493d5db0-ae59-46cf-8223-14213817c3a3",
+         "Name": "总请求数",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "74ca0c11-2ef3-451b-9e39-898c5cb5203b",
+         "Name": "当前打开连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "8724a58c-282c-43fb-bb80-8a8ec6787ff6",
+         "Name": "临时文件数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }, {
+         "Id": "329015c7-8bfa-4734-8691-f24ea65a26f8",
+         "Name": "每秒提交的事务数量",
+         "Granularity": 60,
+         "Unit": "次/秒"
+      }],
+      "Haproxy": [{
+         "Id": "7ae02782-3076-4187-a790-d1ccd489912b",
+         "Name": "CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "e83e4ab5-b322-4335-a7f8-177340ffd7d2",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "f53abaf5-0602-47a9-8f77-ad162acc55e1",
+         "Name": "入包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "813d9b33-09ed-48a6-9294-e5637306bc8b",
+         "Name": "出包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "27f7e53b-02ca-488c-8ad7-67f9e7b4fe4b",
+         "Name": "出流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "69c74b54-9b15-4224-8b43-f42d6e879767",
+         "Name": "入流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }],
+      "HaproxyServer": [{
+         "Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
+         "Name": "负载均衡队列请求数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
+         "Name": "负载均衡活跃会话数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
+         "Name": "负载均衡入流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
+         "Name": "负载均衡出流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "7f205784-2884-4013-b959-e1778b1ea66f",
+         "Name": "负载均衡失败连接数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
+         "Name": "负载均衡错误响应数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
+         "Name": "负载均衡新建会话数",
+         "Granularity": 60,
+         "Unit": "个"
+      }],
+      "HaproxyServerHttp": [{
+         "Id": "65aaa113-7a2b-48b4-98aa-045791dfdfbc",
+         "Name": "负载均衡队列请求数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "870acb8b-4019-4e4c-ac9c-510ec1dd20f2",
+         "Name": "负载均衡活跃会话数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "8a021b1b-fee5-4777-a43e-0fc2ba131eb5",
+         "Name": "负载均衡入流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "e10582bb-84e9-4a86-8d80-3ac059982b60",
+         "Name": "负载均衡出流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "7f205784-2884-4013-b959-e1778b1ea66f",
+         "Name": "负载均衡失败连接数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "716e0770-daac-4d23-8ccd-c44c58e67266",
+         "Name": "负载均衡错误响应数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "c7559bb0-15fe-403f-96a1-f8125bc041e4",
+         "Name": "负载均衡新建会话数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "1fa95a83-5316-4778-a73c-9e276e04eb92",
+         "Name": "http每秒2XX个数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "c675d7ca-114e-413e-af35-7ebc5bb3efa9",
+         "Name": "http每秒3XX个数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "c495df46-8ae8-446f-93c2-328c15ecbf05",
+         "Name": "http每秒4XX个数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "e5d67afe-2f58-4c27-8735-63b61691f4e8",
+         "Name": "http每秒5XX个数",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }],
+      "Lvs": [{
+         "Id": "52e25a12-56bd-4fd5-95d1-59abd073e759",
+         "Name": "CPU使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "fda33502-56af-4622-a94f-263e0366a62c",
+         "Name": "内存使用率",
+         "Granularity": 60,
+         "Unit": "%"
+      }, {
+         "Id": "18e528d0-6c06-4f7f-963c-4b4ba600130e",
+         "Name": "入包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "b4e7dd9b-c8bf-4b0f-9722-35678d5706fc",
+         "Name": "出包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "9ee2b2e5-1340-4aa8-97c2-ad636b4ba552",
+         "Name": "出流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "cbea7adc-1fc3-4df1-8ff5-58d2aec9a998",
+         "Name": "入流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }],
+      "LvsListenerTotal": [{
+         "Id": "a2849467-af38-4efb-8aa3-1939ba9c53ca",
+         "Name": "活跃连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "e1024fdd-eb44-4fe9-b25a-8a30ab436f35",
+         "Name": "不活跃连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "9fc0d3e5-28ae-486a-8f93-a360b8e83108",
+         "Name": "新增连接数",
+         "Granularity": 60,
+         "Unit": "个"
+      }, {
+         "Id": "b1f7bee7-6a37-4268-af24-ba6fd6e1a5b8",
+         "Name": "监听入流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "d8bfd4bf-23f0-4067-9887-6c7e9a813fc8",
+         "Name": "监听出流量",
+         "Granularity": 60,
+         "Unit": "MB/s"
+      }, {
+         "Id": "3f9ee23a-c3b3-4953-a75a-9f320e5a4ee2",
+         "Name": "监听入包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }, {
+         "Id": "115aa7a8-b289-4bab-a787-d120ac200026",
+         "Name": "监听出包量",
+         "Granularity": 60,
+         "Unit": "个/s"
+      }]
+   }
 }
 ```
 
@@ -17834,12 +17839,12 @@ def create_alarm_strategy():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
-		"StrategyName": "ecs策略-example"
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+      "StrategyName": "ecs策略-example"
+   }
 }
 ```
 
@@ -17898,12 +17903,12 @@ def delete_alarm_strategy():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
-		"Failed": ["5ee92b2a-df85-4026-b6ed-39dd54115ea2"]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
+      "Failed": ["5ee92b2a-df85-4026-b6ed-39dd54115ea2"]
+   }
 }
 ```
 
@@ -18036,58 +18041,58 @@ def describe_alarm_strategies():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"PageNumber": 1,
-		"PageSize": 100,
-		"TotalCount": 1,
-		"Strategy": [{
-			"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
-			"StrategyName": "ecs策略-example",
-			"Status": "",
-			"StatusStr": "正常状态",
-			"InActive": 1,
-			"Level": 1,
-			"LevelStr": "严重",
-			"ActiveStartTime": "00:00",
-			"ActiveEndTime": "23:59",
-			"Scope": 0,
-			"ProductType": "ECS",
-			"ProductTypeStr": "",
-			"NotificationType": ["webhook"],
-			"NotificationGroup": [{
-				"GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
-				"GroupName": "联系组-example"
-			}],
-			"CallbackUrl": "",
-			"AlarmType": "MetricAlarm",
-			"AlarmTypeStr": "指标告警",
-			"SmsSendLimit": 0,
-			"Rules": [{
-				"RuleId": "9653b68a-82a5-4329-a400-8177bd10758b",
-				"RuleName": "ecs策略-example_0",
-				"Description": "",
-				"MetricsId": "ecs.cpu.usage",
-				"MetricsIdStr": "",
-				"Period": 1,
-				"PeriodStr": "1分钟周期",
-				"LastedPeriod": 5,
-				"LastedPeriodStr": "连续5周期",
-				"TriggerType": "Average",
-				"TriggerTypeStr": "平均值",
-				"TriggerSymbol": ">=",
-				"Value": 90,
-				"Unit": "%",
-				"SilentPeriod": 5,
-				"SilentPeriodStr": "5分钟",
-				"CreateTime": "2022-11-24 11:31:01",
-				"UpdateTime": "2022-11-24 11:31:01"
-			}],
-			"CreateTime": "2022-11-24 11:31:01",
-			"UpdateTime": "2022-11-24 11:31:01"
-		}]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "PageNumber": 1,
+      "PageSize": 100,
+      "TotalCount": 1,
+      "Strategy": [{
+         "StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309",
+         "StrategyName": "ecs策略-example",
+         "Status": "",
+         "StatusStr": "正常状态",
+         "InActive": 1,
+         "Level": 1,
+         "LevelStr": "严重",
+         "ActiveStartTime": "00:00",
+         "ActiveEndTime": "23:59",
+         "Scope": 0,
+         "ProductType": "ECS",
+         "ProductTypeStr": "",
+         "NotificationType": ["webhook"],
+         "NotificationGroup": [{
+            "GroupId": "4c8d8bad-10ed-4673-ba3f-4a568d0756a1",
+            "GroupName": "联系组-example"
+         }],
+         "CallbackUrl": "",
+         "AlarmType": "MetricAlarm",
+         "AlarmTypeStr": "指标告警",
+         "SmsSendLimit": 0,
+         "Rules": [{
+            "RuleId": "9653b68a-82a5-4329-a400-8177bd10758b",
+            "RuleName": "ecs策略-example_0",
+            "Description": "",
+            "MetricsId": "ecs.cpu.usage",
+            "MetricsIdStr": "",
+            "Period": 1,
+            "PeriodStr": "1分钟周期",
+            "LastedPeriod": 5,
+            "LastedPeriodStr": "连续5周期",
+            "TriggerType": "Average",
+            "TriggerTypeStr": "平均值",
+            "TriggerSymbol": ">=",
+            "Value": 90,
+            "Unit": "%",
+            "SilentPeriod": 5,
+            "SilentPeriodStr": "5分钟",
+            "CreateTime": "2022-11-24 11:31:01",
+            "UpdateTime": "2022-11-24 11:31:01"
+         }],
+         "CreateTime": "2022-11-24 11:31:01",
+         "UpdateTime": "2022-11-24 11:31:01"
+      }]
+   }
 }
 ```
 
@@ -18149,12 +18154,12 @@ ef modify_strategy_status():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
-		"Failed": []
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["ba586b23-5d28-4558-9a9f-75e1ec1a0309"],
+      "Failed": []
+   }
 }
 ```
 
@@ -18239,11 +18244,11 @@ def modify_strategy():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309"
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "StrategyId": "ba586b23-5d28-4558-9a9f-75e1ec1a0309"
+   }
 }
 ```
 
@@ -18332,12 +18337,12 @@ def modify_strategy_rule():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["9653b68a-82a5-4329-a400-8177bd10758b"],
-		"Failed": null
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["9653b68a-82a5-4329-a400-8177bd10758b"],
+      "Failed": null
+   }
 }
 ```
 
@@ -18414,12 +18419,12 @@ def add_strategy_rule():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
-		"Failed": []
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
+      "Failed": []
+   }
 }
 ```
 
@@ -18481,12 +18486,12 @@ def delete_strategy_rule():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
-		"Failed": []
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "Success": ["5e5e7ced-3f16-402b-b458-72be178882b8"],
+      "Failed": []
+   }
 }
 ```
 
@@ -18581,29 +18586,29 @@ def describe_alarm_histories():
 
 ```json
 {
-	"Code": "Success",
-	"Message": "Request success",
-	"Data:": {
-		"PageNumber": 1,
-		"PageSize": 2,
-		"Total": 1,
-		"AlarmList": [{
-			"RuleId": "17fc9559-c114-49a6-84fd-e55ca09be999",
-			"RuleName": "ccs规则-example",
-			"InstanceId": "0df11f95-0dd5-43fa-8b53-bf8884ccc942",
-			"ProductType": "CCS",
-			"InstanceName": "ccs实例-example",
-			"Status": "AlarmHappened",
-			"NotificationType": ["webhook"],
-			"Duration": 60,
-			"AlarmTime": "2022-11-24 16:04:36",
-			"NotificationGroup": [{
-				"GroupId": "fae5f321-8a8f-4992-a1f8-e41b4e2d9dcf",
-				"GroupName": "联系组-example"
-			}],
-			"AlarmType": "MetricAlarm"
-		}]
-	}
+   "Code": "Success",
+   "Message": "Request success",
+   "Data:": {
+      "PageNumber": 1,
+      "PageSize": 2,
+      "Total": 1,
+      "AlarmList": [{
+         "RuleId": "17fc9559-c114-49a6-84fd-e55ca09be999",
+         "RuleName": "ccs规则-example",
+         "InstanceId": "0df11f95-0dd5-43fa-8b53-bf8884ccc942",
+         "ProductType": "CCS",
+         "InstanceName": "ccs实例-example",
+         "Status": "AlarmHappened",
+         "NotificationType": ["webhook"],
+         "Duration": 60,
+         "AlarmTime": "2022-11-24 16:04:36",
+         "NotificationGroup": [{
+            "GroupId": "fae5f321-8a8f-4992-a1f8-e41b4e2d9dcf",
+            "GroupName": "联系组-example"
+         }],
+         "AlarmType": "MetricAlarm"
+      }]
+   }
 }
 ```
 
@@ -20216,6 +20221,4 @@ def create_template(vm_id):
   "TaskId": "60095b3a-dcfc-11e9-9f67-0242ac110002"
 }
 ```
-
-
 
