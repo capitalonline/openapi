@@ -14223,7 +14223,7 @@ def describe_account_subject():
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
 | VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
 | SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list   | 公网信息(window系统最多只能设置一个公网网关，linux系统最多三个。网关中有且只能有一个默认出网网关。 当给子网设置公网配置时，网关信息只能填写一个，并且类型为subnet){<br/>    "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>    "IpType":"",# 三种类型: 默认出网网关:"default_gateway",虚拟网关：”virtual“，子网网关:"subnet"<br/>    "EipIds":[],绑定的eip的id列表，如果绑定已有的弹性IP,数量需要和云服务器数量一致<br/>"Qos":50，公网带宽,单位为M,只有子网设置公网信息时有效，表示创建后绑定的弹性IP对应的带宽值<br/>"BandwidthType": "xxxx" 带宽类型, 只有子网设置公网信息时有效，表示创建后绑定的弹性IP对应的带宽类型<br/>} |
+| PubnetInfo        | 可选 | list   | 支持新分配公网IP和绑定已有的公网IP.<br/>"SubnetId":子网id;必填;若使用虚拟出网网关IP绑定公网IP则传虚拟出网网关id.<br/>"EipIds":[];绑定的eip的id列表;选填;若需新分配公网IP,不填,绑定已有公网IP需填,数量需要和云服务器数量一致.<br/>"IpType":"";选填;若使用虚拟出网网关必填.默认出网网关:"default_gateway",虚拟网关：”virtual”.<br/>"BandwidthType":带宽类型;选填;若需新分配公网IP必填,表示绑定公网IP的带宽类型.绑定已有公网IP不填.固定带宽:”Bandwidth”,流量按需: “Traffic”.<br/>"Qos":公网带宽值,单位为M;选填;若带宽类型选择”固定带宽”需填写. |
 | Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
 | StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
 | Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
