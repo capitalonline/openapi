@@ -11965,13 +11965,14 @@ def getLineBillingScheme():
 
    **请求参数：**
 
-| 名称               | 类型   | 是否必须 | 示例                                   | 描述                            |
-| ------------------ | ------ | -------- | -------------------------------------- | ------------------------------- |
-| size               | string | 是       | “1”                                    | eip数量(个)                     |
+| 名称            | 类型   | 是否必须 | 示例                                   | 描述         |
+| --------------- | ------ | -------- | -------------------------------------- | ------------ |
+| size            | string | 是       | “1”                                    | eip数量(个)  |
 | bandwidthConfIdStr | string | 是       | “1069”                                 | 带宽conf_id **(新增) 从32获取** |
-| siteId             | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id                          |
-| qos                | string | 是       | “5”                                    | 带宽值(mbps)                    |
-| requestId          | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid                    |
+| siteId          | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id       |
+| isMounth          | boolean | 是       | true | 是否包月     |
+| qos             | string | 是       | “5”                                    | 带宽值(mbps) |
+| requestId       | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid |
 
    **返回参数：**
 
@@ -12044,6 +12045,7 @@ def getEipPrice():
             "siteId": "09a38804-c1ee-11ec-bd22-4641dfd57315",
             "bandwidthConfIdStr":"10289",
             "qos":"5",
+            "isMounth":"false",
             "requestId": "6ca9ed98-27c8-4431-995f-59cc6d743dab"
     }
     url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param=param)
