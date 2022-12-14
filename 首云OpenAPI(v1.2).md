@@ -188,7 +188,7 @@
        * [30.BindAccounts](#30BindAccounts)
        * [31.ConfigNet](#31ConfigNet)
        * [32.GetVpcBandwidth](#32GetVpcBandwidth)
-     * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
+     * [弹性云服务器ECS/GPU云主机相关](#弹性云服务器ECS/GPU云主机相关)
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
        * [3.DescribeImages](#3describeimages)
@@ -13164,7 +13164,7 @@ def getVpcBandwidth():
 ```
 
 
-## 弹性云服务器ECS相关
+## 弹性云服务器ECS/GPU云主机相关
 
 **云服务器ECS状态(Status)说明**
 
