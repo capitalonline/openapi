@@ -87,7 +87,7 @@
        * [1.DescribeVPC](#1describevpc)
        * [2.CreateVPC](#2createvpc)
        * [3.DeleteVPC](#3deletevpc)
-       * [4.DescribeSubNet](#4describesubnet)
+       * [4.DescribeSubnet](#4describesubnet)
        * [5.CreateSubNet](#5createsubnet)
        * [6.DeleteSubNet](#6deletesubnet)
        * [7.DescribeVirtualGateWay](#7describevirtualgateway)
@@ -4394,9 +4394,9 @@ def delete_vpc(vpc_id):
     res = requests.post(url, json=body)
 ```
 
-### 4.DescribeSubNet
+### 4.DescribeSubnet
 
-  **Action:DescribeSubNet**
+  **Action:DescribeSubnet**
 
   **描述：** 查询子网信息
 
