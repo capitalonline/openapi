@@ -5466,15 +5466,15 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 
   **请求参数：**
 
-| 名称              | 类型   | 是否必选 | 示例值                               | 描述                                      |
-| ----------------- | ------ | -------- | ------------------------------------ | ----------------------------------------- |
-| RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五                     |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五                   |
-| Name              | string | 是       | 香港共享带宽                         | 共享带宽名称                              |
-| BandwidthType     | string | 是       | Bandwidth_China_Telecom              | 带宽类型                                  |
+| 名称              | 类型   | 是否必选 | 示例值                               | 描述                                                         |
+| ----------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五                                        |
+| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五                                      |
+| Name              | string | 是       | 香港共享带宽                         | 共享带宽名称                                                 |
+| BandwidthType     | string | 是       | Bandwidth_China_Telecom              | 带宽类型                                                     |
 | BillScheme        | string | 是       | BandwIdth                            | 计费方案<br/>BandwIdth_Shared（固定带宽）<br/>Traffic_Shared（流量按需） |
-| Qos               | int    | 是       | 5                                    | 带宽大小                                  |
-| NETID             | string | 否       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 子网ID，边缘节点必传                      |
+| Qos               | int    | 是       | 5                                    | 带宽大小                                                     |
+| NETID             | string | 否       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 子网ID，边缘节点必传                                         |
 
 
   **返回参数：**
@@ -14223,7 +14223,7 @@ def describe_account_subject():
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
 | VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
 | SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
-| PubnetInfo        | 可选 | list   | 支持新分配公网IP和绑定已有的公网IP.<br/>"SubnetId":子网id;必填;若使用虚拟出网网关IP绑定公网IP则传虚拟出网网关id.<br/>"EipIds":[];绑定的eip的id列表;选填;若需新分配公网IP,不填,绑定已有公网IP需填,数量需要和云服务器数量一致.<br/>"IpType":"";选填;若使用虚拟出网网关必填.默认出网网关:"default_gateway",虚拟网关：”virtual”.<br/>"BandwidthType":带宽类型;选填;若需新分配公网IP必填,表示绑定公网IP的带宽类型.绑定已有公网IP不填.固定带宽:”Bandwidth”,流量按需: “Traffic”.<br/>"Qos":公网带宽值,单位为M;选填;若带宽类型选择”固定带宽”需填写. |
+| PubnetInfo        | 可选 | list   | 支持新分配公网IP和绑定已有的公网IP.<br/>"SubnetId":""; string类型，必填,子网id;若使用虚拟出网网关IP绑定公网IP则传虚拟出网网关id.<br/>"EipIds":[]; list类型, 选填,绑定的eip的id列表;若需新分配公网IP,不填,绑定已有公网IP需填,数量需要和云服务器数量一致.<br/>"IpType":""; string类型，选填, 若使用虚拟出网网关必填.默认出网网关:"default_gateway",虚拟网关：”virtual”.<br/>"BandwidthType":""; string类型，选填, 带宽类型;若需新分配公网IP必填,表示绑定公网IP的带宽类型.绑定已有公网IP不填.固定带宽:”Bandwidth”,固定带宽包月:”BandwidthMonth”,流量按需: “Traffic”（若实例计费方式为包年包月选择固定带宽时需传"固定带宽包月"）.<br/>"Qos":100; int类型，选填，公网带宽值,单位为M;若带宽类型选择”固定带宽”需填写. |
 | Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
 | StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
 | Duration          | 可选 | int    | 只在包月算价时有意义，以月份为单位，一年值为12，大于一年要输入12的整数倍，最大值36(3年) |
