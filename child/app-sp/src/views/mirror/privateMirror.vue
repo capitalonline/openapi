@@ -58,6 +58,12 @@
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
+            <el-table-column prop="speed" label="优化镜像">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.is_accelerate" class="running">开启</span>
+                    <span v-if="!scope.row.is_accelerate">-</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom" width="120"></el-table-column>
             <el-table-column prop="update_time" label="更新时间" sortable="custom" width="120"></el-table-column>
             <el-table-column prop="operate" label="操作"  width="120">
