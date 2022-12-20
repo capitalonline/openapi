@@ -52,7 +52,11 @@
             </el-table-column>
             <el-table-column prop="data_disk_info" label="数据盘">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="(Number(scope.row.system_disk_size)>=0)"> * </span>{{scope.row.disk_size}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'" v-for="(item,index) in scope.row.data_disk_info" :key="index">
+                        <span>类型: {{item.data_disk_feature}}</span><br/>
+                        <span>容量*数量: {{item.data_disk_capacity}}{{item.data_disk_unit}}<span v-if="(Number(item.data_disk_size)>=0)"> * </span>{{item.data_disk_size}}</span><br/>
+                        <span>模式: {{item.data_disk_mode}}</span>
+                    </span>
                 </template>
             </el-table-column>
             <el-table-column prop="network_card_info" label="网卡">

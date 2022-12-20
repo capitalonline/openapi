@@ -197,7 +197,7 @@ export default class PhysicalList extends Vue {
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
     bare_metal_id:{placeholder:'请输入物理机产品ID'},
-    bare_metal__name:{placeholder:'请输入物理机产品名称'},
+    bare_metal_name:{placeholder:'请输入物理机产品名称'},
     customer_keyword:{placeholder:'请输入专属客户ID/名称'},
   }
   private operate_btns:any=[
@@ -320,10 +320,10 @@ export default class PhysicalList extends Vue {
   private get_custom_columns(list){
     if(list.length===0){
       return;
-    }
+    }    
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot','gpu_count','ecs_gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{width:'140px'})
@@ -391,13 +391,16 @@ export default class PhysicalList extends Vue {
       host_rack,
       host_source,
       ecs_family_id,
-      cpu_model,
-      net_model,
+      cpu,
+      nic,
       backend_type,
       product_id,
       product_name,
       power_status,
       machine_status,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -407,10 +410,13 @@ export default class PhysicalList extends Vue {
       host_ip,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
+      cpu,
+      nic,
       product_id,
       product_name,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -421,7 +427,9 @@ export default class PhysicalList extends Vue {
       power_status:power_status ? power_status[0] : undefined,
       machine_status:machine_status ? machine_status[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
+      sort_gpu_count:this.search_data.sort_gpu_count,
       sort_out_band_address:this.search_data.sort_out_band_address,
+      sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
       sort_host_ip:this.search_data.sort_host_ip,
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
@@ -489,14 +497,17 @@ export default class PhysicalList extends Vue {
       host_type,
       host_purpose,
       host_belong,
-      cpu_model,
-      net_model,
+      cpu,
+      nic,
       ecs_family_id,
       backend_type,
       product_id,
       product_name,
       power_status,
       machine_status,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
     }=this.search_data
     let obj = {//缺少规格族字段筛选
         az_id,
@@ -504,12 +515,15 @@ export default class PhysicalList extends Vue {
         host_name,
         out_band_address,
         host_ip,
-        cpu_model,
-        net_model,
+        cpu,
+        nic,
         gpu_model,
         host_rack,
         product_id,
         product_name,
+        bare_metal_id,
+        bare_metal_name,
+        customer_keyword,
         host_attribution_id:host_belong ? host_belong[0] : undefined,
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
@@ -571,6 +585,8 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_host_ip =undefined
     this.search_data.sort_ecs_num =undefined
     this.search_data.sort_gpu_allot=undefined
+    this.search_data.sort_gpu_count=undefined
+    this.search_data.sort_ecs_gpu_count =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }

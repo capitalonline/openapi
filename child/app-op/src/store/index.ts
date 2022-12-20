@@ -57,7 +57,7 @@ export default new Vuex.Store({
       state.ecs_custom_item = list;
       storage.set('ecs_custom_item', JSON.stringify(list))
     },
-    SET_CUSTOM_HOST(state,list){
+    SET_CUSTOM_HOST(state,list){      
       storage.set('custom_host',JSON.stringify(list))
       state.custom_host = list
     },

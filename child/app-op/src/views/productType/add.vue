@@ -29,29 +29,44 @@
         <el-form-item label="显存"  prop="gpuMemory" v-if="formData.gpu">
             <el-input-number class="four-two" v-model="formData.gpuMemory" :min="0" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
-        <el-form-item label="系统盘"  prop="disk">
-            <el-select v-model="formData.unit" class="m-right10" placeholder="类型">
+        <el-form-item label="系统盘"  prop="system">
+            <el-input v-model="formData.system.system_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input-number 
+              class="two" 
+              v-model="formData.system.system_disk_capacity" 
+              :min="1" 
+              :max="2048" 
+              :step="formData.system.system_disk_unit==='GB' ? 1 : 0.1" 
+              placeholder="单块容量"
+              step-strictly
+              :precision="formData.system.system_disk_unit==='TB' ? 2 : null"
+            ></el-input-number>
+            <el-select v-model="formData.system.system_disk_unit" class="m-right10">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select>
-            <el-input-number class="two" v-model="formData.disk" :min="0" :step="1" placeholder="单块容量"></el-input-number>
-            <el-select v-model="formData.unit" class="m-right10">
-              <el-option label="GB" value="GB"></el-option>
-              <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.diskNum" :min="0" :step="1"></el-input-number>
-            <el-select v-model="formData.unit" class="m-left10" placeholder="模式"></el-select>
+            </el-select>   *   <el-input-number v-model="formData.system.system_disk_size" :min="1" :max="48" :step="1" step-strictly></el-input-number>
+            <el-input v-model="formData.system.system_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
         </el-form-item>
         <el-form-item label="数据盘"  prop="disk">
-            <el-select v-model="formData.unit" class="m-right10" placeholder="类型">
+          <div v-for="(item,index) in formData.disk" :key="index">
+            <el-input v-model="formData.disk.data_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input-number 
+              class="two" 
+              v-model="formData.disk.data_disk_capacity" 
+              :min="1" 
+              :max="2048" 
+              :step="formData.disk.data_disk_unit==='GB' ? 1 : 0.1" 
+              placeholder="单块容量"
+              step-strictly
+              :precision="formData.disk.data_disk_unit==='TB' ? 2 : null"
+            ></el-input-number>
+            <el-select v-model="formData.disk.data_disk_unit" class="m-right10">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select>
-            <el-input-number class="two" v-model="formData.disk" :min="0" :step="1" placeholder="单块容量"></el-input-number>
-            <el-select v-model="formData.unit" class="m-right10">
-              <el-option label="GB" value="GB"></el-option>
-              <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.diskNum" :min="0" :step="1"></el-input-number>
-            <el-select v-model="formData.unit" class="m-left10" placeholder="模式"></el-select>
+            </el-select>   *   <el-input-number v-model="formData.disk.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
+            <el-input v-model="formData.disk.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
+          </div>
+            
         </el-form-item>
         <el-form-item label="网卡"  prop="net">
             <el-input v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
@@ -89,7 +104,20 @@ export default class AddPod extends Vue {
     gpu:this.row.host_product_id ? this.row.gpu_name : '',
     gpuNum:this.row.host_product_id ? Number(this.row.gpu_size) : 1,
     gpuMemory:this.row.host_product_id ? Number(this.row.gpu_capacity) : '',
-    disk:this.row.host_product_id ? Number(this.row.disk_capacity) : '',
+    disk:[{
+      data_disk_size:1,
+      data_disk_feature:'',
+      data_disk_capacity:1,
+      data_disk_unit:'GB',
+      data_disk_mode:'',
+    }],
+    system:{
+      system_disk_size:1,
+      system_disk_feature:'',
+      system_disk_capacity:1,
+      system_disk_unit:'GB',
+      system_disk_mode:'',
+    },
     unit:this.row.host_product_id ? this.row.disk_unit : 'GB',
     diskNum:this.row.host_product_id ? Number(this.row.disk_size) : 1,
     net:this.row.host_product_id ? this.row.network_card_type : '',
