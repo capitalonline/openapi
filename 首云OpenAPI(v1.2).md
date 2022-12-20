@@ -188,6 +188,7 @@
        * [30.BindAccounts](#30BindAccounts)
        * [31.ConfigNet](#31ConfigNet)
        * [32.GetVpcBandwidth](#32GetVpcBandwidth)
+       * [33.OffAndUnbind](#33OffAndUnbind)
      * [弹性云服务器ECS相关](#弹性云服务器ecs相关)
        * [1.DescribeRegions](#1describeregions)
        * [2.DescribeEcsFamilyInfo](#2describeecsfamilyinfo)
@@ -13162,6 +13163,84 @@ def getVpcBandwidth():
     print(result)
     if result.get("Code") != "Success":
         print ("request error: %s" % result.get("Message"))
+    return result
+```
+
+### 33.OffAndUnbind
+
+   **Action: OffAndUnbind**
+
+  **描述：** 云桌面关机并解绑操作
+
+   **请求地址:** cdsapi.capitalonline.net/gcw
+
+   **请求方法：POST**
+
+   **请求参数：**
+
+| 名称      | 类型   | 是否必须 | 示例                                     | 描述                        |
+| --------- | ------ | -------- | ---------------------------------------- | --------------------------- |
+| requestId | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”   | 请求uuid                    |
+| vmIds     | array  | 是       | [“a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | vm Ids                      |
+
+   **返回参数：**
+
+| 名称           | 类型   | 示例                                      | 描述                      |
+| -------------- | ------ | ----------------------------------------- | ------------------------- |
+| Code           | string | Success                                   | 返回状态码: Success: 成功 |
+| Message        | string | null                                      | 返回信息                  |
+| Data           | obejct | {}                                        | 返回数据                  |
+| taskId         | string | “10e0284f-6ce5-4cb0-a61e-4858865d9295”    | 任务id                    |
+| vmIds          | array  | [ “a8d09bab-64d4-4549-9c8c-0efe19423e5e”] | 云桌面ids                 |
+| requestId      | string | “ebbfcb70-a98f-11ec-926b-8aaa763f849e”    | 请求uuid                  |
+| requestContent | string | “”                                        | 请求参数                  |
+
+   **错误码:**
+
+| 错误码 | 错误信息                         | 描述                             |
+| ------ | -------------------------------- | -------------------------------- |
+| 10003  | 传入参数不符合要求，请检查后重试 | 传入参数不符合要求，请检查后重试 |
+| 10005  | 账户数据异常                     | 账户数据异常                     |
+| 13002  | GPU云桌面执行操作失败            | GPU云桌面执行操作失败            |
+| 10006  | 参数错误                         | 参数错误，暂不支持该操作         |
+
+   **返回示例:**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "requestContent": "{\"action\":\"off\",\"customerId\":\"E2129298\",\"funVmParam\":{\"instanceIds\":[\"a8d09bab-64d4-4549-9c8c-0efe19423e5e\"]},\"requestId\":\"ebbfcb70-a98f-11ec-926b-8aaa763f849e\",\"userFrom\":\"cdsapi\",\"userId\":\"713367\",\"vmIds\":[\"a8d09bab-64d4-4549-9c8c-0efe19423e5e\"]}",
+        "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
+        "taskId": "10e0284f-6ce5-4cb0-a61e-4858865d9295",
+        "vmIds": [
+            "a8d09bab-64d4-4549-9c8c-0efe19423e5e"
+        ]
+    },
+    "Message": ""
+}
+```
+
+   **请求调用示例**
+
+```python
+def offAndUnbind():
+    '''
+    云桌面关机并解绑操作
+    :return:
+    '''
+    action = "OffAndUnbind"
+    method = "POST"
+    body = {
+        "vmIds": ["a8d09bab-64d4-4549-9c8c-0efe19423e5e"],
+        "requestId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e"
+    }
+    url = getUrl(action, AK, AccessKeySecret, method, CCS_URL, param={})
+    res = requests.post(url,json=body)
+    result = json.loads(res.content)
+    print(result)
+    if result.get("Code") != "Success":
+        print("request error: %s" % result.get("Message"))
     return result
 ```
 
