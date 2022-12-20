@@ -3,9 +3,14 @@ import { get_user_info } from '../https/public'
 
 export async function getUserInfo() {
   let index = window.location.href.indexOf('token=');
+  console.log('index',index);
   let token = '';
   if (index >= 0) {
     token = window.location.href.substr(index + 6).split('&')[0];
+  }
+  if(!token){
+    token = sessionStorage.getItem('Access-Token')
+    console.log('token',token);
   }
   if (token) {
     store.commit('SET_TOKEN', token)
