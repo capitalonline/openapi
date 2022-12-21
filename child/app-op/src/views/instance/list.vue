@@ -174,7 +174,7 @@
       </el-table-column>
       <el-table-column label="操作" prop="operate">
         <template slot-scope="scope">
-          <el-button type="text">操作记录</el-button>
+          <el-button type="text" @click="FnToRecord(scope.row.ecs_id)">操作记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -1053,6 +1053,8 @@ export default class App extends Vue {
     this.detail_visible = true;
   }
   private FnToRecord(id) {
+    console.log('FnToRecord');
+    
     this.record_id = id;
     this.record_visible = true;
   }

@@ -445,14 +445,14 @@
           <div class="text-center">
             重启方式:
             <el-radio
-              v-model="shutdown_ecs_type"
+              v-model="restart_ecs_type"
               label="restart_ecs"
               class="m-left20"
               >正常重启</el-radio
             >
             <el-radio
-              v-model="shutdown_ecs_type"
-              label="compel_restart_ecs"
+              v-model="restart_ecs_type"
+              label="hard_restart_ecs"
               class="m-left20"
               >硬重启</el-radio
             >
@@ -569,6 +569,7 @@ export default class App extends Vue {
   private operate_title: string = "";
   private default_operate_type: string = "";
   private shutdown_ecs_type: string = "shutdown_ecs";
+  private restart_ecs_type: string = "restart_ecs";
   private record_visible: boolean = false;
   private record_id: string = "";
   private detail_visible: boolean = false;
@@ -911,6 +912,9 @@ export default class App extends Vue {
     }
   }
   private async FnPowerOperate(reqData) {
+    if (this.default_operate_type === "restart_ecs") {
+      reqData.op_type = this.restart_ecs_type;
+    }
     if (this.default_operate_type === "shutdown_ecs") {
       reqData.op_type = this.shutdown_ecs_type;
     }
