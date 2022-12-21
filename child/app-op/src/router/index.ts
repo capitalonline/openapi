@@ -55,6 +55,12 @@ const routes: RouteConfig[] = [
     meta: {label: '商品库存', menu: 'product_inventory_list'},
   },
   {
+    path: '/resource_statistical',
+    name: 'resource_statistical_list',
+    component: () => import('../views/statistical/tab.vue'),
+    meta: {label: '资源统计', menu: 'resource_statistical_list'},
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),

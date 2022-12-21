@@ -73,7 +73,7 @@ export default class Monitor extends Vue{
         }
         let req_data={
             volume_id:this.info.id,
-            regions:this.info.region_id,
+            region_id:this.info.region_id,
             start_time: moment(this.time[0] as any).utc().unix(),
             end_time:moment(this.time[1] as any).utc().unix(),
         }

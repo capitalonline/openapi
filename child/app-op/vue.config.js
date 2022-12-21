@@ -13,14 +13,14 @@ module.exports = {
     proxy: {
       '/ecs_business': {
         // target: '10.131.165.157:8001',
-        target:'http://cos-ecs-business.gic.pre',
-        // target:'http://ecs-business.gic.test',
+        // target:'http://cos-ecs-business.gic.pre',
+        target:'http://ecs-business.gic.test',
         ws: true,
         changeOrigin: true
       },
       '/monitor/api': {
-        // target: 'http://cloudos-op-metricsapi.gic.test',
-        target: 'http://cloudos-op-metricsapi.gic.pre',
+        target: 'http://cloudos-op-metricsapi.gic.test',
+        // target: 'http://cloudos-op-metricsapi.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/monitor/api': '/api'
@@ -45,7 +45,13 @@ module.exports = {
         target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
-      }
+      },
+      '/nas_op': {
+        target: 'http://10.131.171.99:80',
+        // target:'http://ecs-business.gic.test',
+        changeOrigin: true,
+       
+      },
     }
   },
   configureWebpack: config => {

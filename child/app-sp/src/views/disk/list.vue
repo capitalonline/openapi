@@ -504,7 +504,7 @@ export default class extends Vue {
     }else if(label==="unInstall"){
       return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="delete"){
-      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data" && this.auth_list.includes(label)
+      return (obj.status==="waiting" || (obj.status==="error" && obj.is_follow_delete===false)) && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="restore"){
       return obj.status==="deleted" && !obj.ecs_id && this.auth_list.includes(label)
     }else if(label==="destroy"){
