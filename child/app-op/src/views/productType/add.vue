@@ -125,9 +125,11 @@ export default class AddPod extends Vue {
     netNum:this.row.host_product_id ? Number(this.row.network_card_size) : 1,
   };
   created() {
-    this.formData.disk = this.row.data_disk_info
-    for(let i in this.formData.system){
-      this.formData.system[i] = this.row[i]
+    if(this.row.host_product_id){
+      this.formData.disk = this.row.data_disk_info
+      for(let i in this.formData.system){
+        this.formData.system[i] = this.row[i]
+      }
     }
   }
   private validNuclear = (rule, value, callback)=>{        
