@@ -25,14 +25,18 @@
             <el-table-column prop="disk_name" label="云盘名称"></el-table-column>
             <el-table-column prop="status" label="云盘状态">
                 <template slot-scope="scope">
-                <span :class="scope.row.status">{{scope.row.status_name}}</span>
+                    <span :class="scope.row.status">{{scope.row.status_name}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="size" label="容量"></el-table-column>
+            <el-table-column prop="size" label="容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.size}${scope.row.size_unit}` }}</span>                
+                </template>
+            </el-table-column>
             <el-table-column prop="used" label="实际使用空间"></el-table-column>
             <el-table-column prop="az_name" label="可用区">
                 <template slot-scope="scope">
-                    <span>{{`${scope.row.region_name}-${scope.row.az_name}`}}</span>
+                    <span>{{`${scope.row.az_name}`}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="disk_type" label="属性">
@@ -42,12 +46,8 @@
             </el-table-column>
             <el-table-column prop="ecs_name" label="实例名称"></el-table-column>
             <el-table-column prop="create_time" label="创建时间"></el-table-column>
-            <el-table-column prop="fee_way" label="计费方式" :filter-multiple="false" :filters="fee_way_fil" column-key="fee_way">
-                <template slot-scope="scope">
-                <span>{{!scope.row.billing_method_display ? '不计费' : scope.row.billing_method_display}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="op_source" label="创建来源" :filter-multiple="false" :filters="op_source_fil" column-key="op_source">
+            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
+            <el-table-column prop="op_source" label="创建来源">
                 <template slot-scope="scope">
                 <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
                 </template>
@@ -68,7 +68,7 @@
 import {Vue,Component,Prop,Watch} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
-// import Service from '../../https/statistical/list';
+import Service from '../../https/statistical/list';
 import moment from 'moment';
 // import 
 @Component({
@@ -80,7 +80,7 @@ import moment from 'moment';
 export default class List extends Vue{
     private moment = moment;
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
-    private search_option:Object={
+    private search_option:any={
         az_id:{placeholder:'请选择可用区',list:[]},
         customer_name:{placeholder:'请输入客户名称'},
     }
@@ -104,37 +104,50 @@ export default class List extends Vue{
     }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
+        this.getAzList()
         this.search()
+    }
+    private async getAzList(){
+        let res:any = await Service.get_az_list({})
+        if(res.code==="Success"){
+            this.search_option.az_id.list=[]
+            this.search_option.az_id.list=res.data.az_list.map(item=>({
+                type:item.az_id,
+                label:item.az_name
+            }))
+            this.search_option.az_id.list.unshift({
+                type:'',
+                label:'全部可用区'
+            })
+        }
     }
     private down(){
         let obj = {
-            pod_id:this.$store.state.pod_id,
-            field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+            az_id:this.search_data.az_id,
+            customer_name:this.search_data.customer_name
         }
         let str=""
         for (let i in obj){
             if(obj[i]){
                 str =str+`${i}=${obj[i]}&`
             }
-            }
-            let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
-            window.location.href=`/nas_union_business/v1/nas/nas_list_download/${query}`
         }
-    private async getNasList(loading:boolean=true){
+            let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+            window.location.href=`/nas_op/v1/operation/disk_list_download${query}`
+    }
+    private async getDiskList(loading:boolean=true){
         if(!loading){
             this.$store.commit('SET_LOADING', false);
         }
-        // let res:any = await Service.get_nas_list({
-        //     ...this.search_data,
-        //     pod_id:this.$store.state.pod_id,
-        //     page_index:this.current,
-        //     page_size:this.size
-        // })
-        // if(res.code==="Success"){
-        //     this.list = res.data.nas_list;
-        //     this.total = res.data.page.count
-        //     this.getFileUse(false)
-        // }
+        let res:any = await Service.get_disk_list({
+            ...this.search_data,
+            page_index:this.current,
+            page_size:this.size
+        })
+        if(res.code==="Success"){
+            this.list = res.data.data;
+            this.total = res.data.total_num
+        }
         this.FnSetTimer()
     }
     private FnSetTimer(){
@@ -142,7 +155,7 @@ export default class List extends Vue{
         this.FnClearTimer()
       }
       this.clear = setTimeout(()=>{
-        this.getNasList(false)
+        this.getDiskList(false)
       },1000*60)
     }
     private FnClearTimer(){
@@ -150,43 +163,25 @@ export default class List extends Vue{
         clearTimeout(this.clear)
       }
     }
-    private FnCustom() {
-        this.show_custom = true;
-    }
     private search(data:any={}){
         this.FnClearTimer()
         this.current = 1;
         this.search_data={...data}
-        this.getNasList()
+        this.getDiskList()
     }
     private refresh(){
         this.FnClearTimer()
-        this.getNasList()
+        this.getDiskList()
     }
     private handleSizeChange(size){
         this.FnClearTimer()
         this.size = size
-        this.getNasList()
+        this.getDiskList()
     }
     private handleCurrentChange(cur){
         this.FnClearTimer()
         this.current = cur
-        this.getNasList()
-    }
-    private detail(id){
-        this.FnClearTimer()
-        this.$router.push({
-            path:'fielsystem/detail',
-            query:{
-                id
-            }
-        })
-    }
-    private capacity(row){
-        console.log('ccc')
-        this.FnClearTimer()
-        this.visible=true;
-        this.operateInfo=row
+        this.getDiskList()
     }
     private computeUnit(value,num=0){
         if(value>=1024){

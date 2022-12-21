@@ -23,15 +23,14 @@
             <el-table-column prop="customer_name" label="客户名称"></el-table-column>
             <el-table-column prop="nas_id" label="文件系统ID/名称" width="120px">
                 <template slot-scope="scope">
-                    
                     <div>{{`${scope.row.nas_id} / ${scope.row.nas_name}`}}</div>
                 </template>
             </el-table-column>
             <el-table-column prop="nas_type" label="NAS类型"></el-table-column>
             <el-table-column prop="protocol_type" label="协议类型"></el-table-column>
-            <el-table-column prop="az_name" label="地域-可用区">
+            <el-table-column prop="az_name" label="可用区">
                 <template slot-scope="scope">
-                    <span>{{`${scope.row.region_name}-${scope.row.az_name}`}}</span>
+                    <span>{{`${scope.row.az_name}`}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="vpc_id" label="VPC">
@@ -46,19 +45,9 @@
                     <div>{{scope.row.subnet_name}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="mount_path" label="挂载地址" width="180">
-                <template slot-scope="scope">
-                    <el-tooltip 
-                        :content="scope.row.mount_path[0]" 
-                        placement="bottom" 
-                        effect="light">
-                            <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
-                    </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                
-                </template>
-            </el-table-column>
-            <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
-            <el-table-column prop="used_percent" label="空间使用率"></el-table-column>
+            <el-table-column prop="mount_path" label="挂载地址" width="180"></el-table-column>
+            <el-table-column prop="use_size" label="使用量/总容量"  width="140"></el-table-column>
+            <el-table-column prop="use_percent" label="空间使用率"></el-table-column>
             <el-table-column prop="transfer_vm_id" label="中转虚拟机ID"></el-table-column>
             <el-table-column prop="transfer_vm_vpc_ip" label="中转虚拟机IP">
                 <template slot-scope="scope">
@@ -73,7 +62,7 @@
             </el-table-column>
             <el-table-column prop="status_ch" label="状态">
                 <template slot-scope="scope">
-                    <span :class="scope.row.status">{{scope.row.status_ch}}</span>
+                    <span :class="scope.row.status">{{scope.row.status_cn}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间" width="90">
@@ -97,7 +86,7 @@
 import {Vue,Component,Prop,Watch} from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import SvgIcon from '../../components/svgIcon/index.vue';
-// import Service from '../../https/statistical/list';
+import Service from '../../https/statistical/list';
 import moment from 'moment';
 // import 
 @Component({
@@ -109,7 +98,7 @@ import moment from 'moment';
 export default class List extends Vue{
     private moment = moment;
     private units=['B','KB','MB','GB','TB','PB','EB','ZB']
-    private search_option:Object={
+    private search_option:any={
         az_id:{placeholder:'请选择可用区',list:[]},
         customer_name:{placeholder:'请输入客户名称'},
     }
@@ -133,67 +122,58 @@ export default class List extends Vue{
     }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
+        this.getAzList()
         this.search()
     }
-    @Watch('visible')
-    private watch_visible(nv){
-        if(!nv){
-            this.getNasList()
+    private async getAzList(){
+        let res:any = await Service.get_az_list({})
+        if(res.code==="Success"){
+            this.search_option.az_id.list=[]
+            this.search_option.az_id.list=res.data.az_list.map(item=>({
+                type:item.az_id,
+                label:item.az_name
+            }))
+            this.search_option.az_id.list.unshift({
+                type:'',
+                label:'全部可用区'
+            })
         }
-    }
-    @Watch('$store.state.pod_id')
-    private watch_pod(){
-        this.search(this.search_data)
-    }
-   
-    private get_custom_columns(list) {
-        console.log('list',list)
-        if(list.length===0){
-            return;
-        }
-        this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
-        this.custom_host.map((item:any)=>{
-            if(item.prop==='nas_id_name'){
-                item = Object.assign(item,{},{width:'120px'})
-            }
-            if(item.prop==='mount_path'){
-                item = Object.assign(item,{},{width:'180px'})
-            }
-            if(item.prop==='create_time'){
-                item = Object.assign(item,{},{width:'90px'})
-            }
-            return item;
-        })
     }
     private down(){
         let obj = {
-            pod_id:this.$store.state.pod_id,
-            field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+            az_id:this.search_data.az_id,
+            customer_name:this.search_data.customer_name
         }
         let str=""
         for (let i in obj){
             if(obj[i]){
                 str =str+`${i}=${obj[i]}&`
             }
-            }
-            let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
-            window.location.href=`/nas_union_business/v1/nas/nas_list_download/${query}`
         }
-    private async getNasList(loading:boolean=true){
+            let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+            window.location.href=`/nas_op/v1/operation/nas_list_download${query}`
+    }
+    private async getNasList(loading:boolean=true){        
         if(!loading){
             this.$store.commit('SET_LOADING', false);
         }
-        // let res:any = await Service.get_nas_list({
-        //     ...this.search_data,
-        //     pod_id:this.$store.state.pod_id,
-        //     page_index:this.current,
-        //     page_size:this.size
-        // })
-        // if(res.code==="Success"){
-        //     this.list = res.data.nas_list;
-        //     this.total = res.data.page.count
-        //     this.getFileUse(false)
-        // }
+        let res:any = await Service.get_nas_list({
+            ...this.search_data,
+            page_index:this.current,
+            page_size:this.size
+        })
+        if(res.code==="Success"){
+            this.list = []
+            this.list = res.data.data.map(item=>{
+                let size = this.computeUnit(item.used_size ? item.used_size : 0);
+                let total = this.computeUnit(item.size ? item.size : 0);
+                let num:any = item.used_size && item.size ? (Number(item.used_size/item.size)*100).toFixed(2) : '0.00'
+                item.use_size = `${size} / ${total}`
+                item.use_percent = `${num}%`
+                return item;
+            });
+            this.total = res.data.total_num
+        }
         this.FnSetTimer()
     }
     private FnSetTimer(){
@@ -208,32 +188,6 @@ export default class List extends Vue{
       if(this.clear){
         clearTimeout(this.clear)
       }
-    }
-    private FnCustom() {
-        this.show_custom = true;
-    }
-    private async getFileUse(loading:boolean=true){
-    //   if(!loading){
-    //     this.$store.commit("SET_LOADING",false)
-    //   }
-    //   if(this.list.length===0){
-    //     return;
-    //   }
-    //   let res:any = await Service.get_file_use({
-    //     region_id:this.list[0].region_id,
-    //     volume_ids:this.list.map(item=>item.nas_id)
-    //   })
-    //   if(res.code==='Success'){
-    //     this.list.map(item=>{
-    //       let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
-    //       let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
-    //     //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
-    //       let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : '0.00'
-    //       console.log('num',num)
-    //       this.$set(item,'use_percent',`${num}%`)
-    //       this.$set(item,'use_size',`${size} / ${total}`)
-    //     })
-    //   }
     }
     private search(data:any={}){
         this.FnClearTimer()
@@ -254,21 +208,6 @@ export default class List extends Vue{
         this.FnClearTimer()
         this.current = cur
         this.getNasList()
-    }
-    private detail(id){
-        this.FnClearTimer()
-        this.$router.push({
-            path:'fielsystem/detail',
-            query:{
-                id
-            }
-        })
-    }
-    private capacity(row){
-        console.log('ccc')
-        this.FnClearTimer()
-        this.visible=true;
-        this.operateInfo=row
     }
     private computeUnit(value,num=0){
         if(value>=1024){
