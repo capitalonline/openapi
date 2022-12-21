@@ -6,6 +6,12 @@
             </template>
         </action-block>
         <div class="error_message m-bottom10">红色：请补充配置信息！</div>
+
+        <div class="icon m-bottom10">
+            <el-tooltip content="导出" placement="bottom" effect="light">
+                <el-button type="text" @click="down"><svg-icon icon="export" class="export"></svg-icon></el-button>
+            </el-tooltip>
+        </div>
         <el-table
             :data="list"
             border
@@ -41,9 +47,22 @@
                     <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.gpu_name}}<span v-if="scope.row.gpu_name"> * </span>{{scope.row.gpu_size}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="disk_info" label="硬盘">
+            <el-table-column prop="disk_info" label="系统盘">
                 <template slot-scope="scope">
-                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">{{scope.row.disk_capacity}} {{scope.row.disk_unit}}<span v-if="scope.row.disk_capacity"> * </span>{{scope.row.disk_size}}</span>
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'">
+                        <span>类型: {{scope.row.system_disk_feature}}</span><br/>
+                        <span>容量*数量: {{scope.row.system_disk_capacity}}{{scope.row.system_disk_unit}}<span v-if="(Number(scope.row.system_disk_size)>=0)"> * </span>{{scope.row.system_disk_size}}</span><br/>
+                        <span>模式: {{scope.row.system_disk_mode}}</span>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="data_disk_info" label="数据盘">
+                <template slot-scope="scope">
+                    <span :class="scope.row.is_complete ? 'normal' : 'error_message'" v-for="(item,index) in scope.row.data_disk_info" :key="index">
+                        <span>类型: {{item.data_disk_feature}}</span><br/>
+                        <span>容量*数量: {{item.data_disk_capacity}}{{item.data_disk_unit}}<span v-if="(Number(item.data_disk_size)>=0)"> * </span>{{item.data_disk_size}}</span><br/>
+                        <span>模式: {{item.data_disk_mode}}</span>
+                    </span>
                 </template>
             </el-table-column>
             <!-- <el-table-column prop="data_disk_info" label="数据盘">
@@ -117,10 +136,12 @@ import Service from '../../https/hostProductType'
 import Add from './add.vue';
 import EcsService from '../../https/instance/create';
 import {trans} from '../../utils/transIndex';       
+import svgIcon from '@/components/svgIcon/index.vue';
 @Component({
     components:{
         ActionBlock,
-        Add
+        Add,
+        svgIcon
     }
 })
 export default class ProductType extends Vue{
@@ -198,12 +219,41 @@ export default class ProductType extends Vue{
         this.operInfo=obj;
         this.visible=true
     }
+    private async down(){
+        const {
+            az_id,
+            host_product_id,
+            cpu_name,
+            gpu_card_name,
+            network_card_type,
+        }=this.search_data
+        let obj = {
+            az_id,
+            host_product_id,
+            cpu_name,
+            gpu_card_name,
+            network_card_type,
+        }
+        let str=""
+        for (let i in obj){
+        if(obj[i]){
+            str =str+`${i}=${obj[i]}&`
+        }
+        }
+        let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+        console.log('query',query);
+        
+        window.location.href=`/ecs_business/v1/host/host_product_list_download/${query}`
+    }
 }
 </script>
 
 <style lang="scss" scoped>
 .normal{
     color:#606266
+}
+.icon{
+    text-align: right;
 }
 .table-expand{
     display: flex;

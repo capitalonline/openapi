@@ -438,6 +438,25 @@
             content="等同于断电处理，Windows操作系统可能会损坏，请谨慎选择"
           ></mark-tip>
         </div>
+        <template v-if="default_operate_type === 'restart_ecs'">
+          <div class="text-center">
+            重启方式:
+            <el-radio
+              v-model="restart_ecs_type"
+              label="restart_ecs"
+              class="m-left20"
+              >正常重启</el-radio
+            >
+            <el-radio
+              v-model="restart_ecs_type"
+              label="hard_restart_ecs"
+              class="m-left20"
+              >硬重启</el-radio
+            >
+          </div>
+          <div class="warning_message">说明：若云主机故障，请选择“硬重启”，使云主机快速恢复正常。</div>
+        </template>
+        
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -547,6 +566,7 @@ export default class App extends Vue {
   private operate_title: string = "";
   private default_operate_type: string = "";
   private shutdown_ecs_type: string = "shutdown_ecs";
+  private restart_ecs_type: string = "restart_ecs";
   private record_visible: boolean = false;
   private record_id: string = "";
   private detail_visible: boolean = false;
@@ -891,6 +911,9 @@ export default class App extends Vue {
     }
   }
   private async FnPowerOperate(reqData) {
+    if (this.default_operate_type === "restart_ecs") {
+      reqData.op_type = this.restart_ecs_type;
+    }
     if (this.default_operate_type === "shutdown_ecs") {
       reqData.op_type = this.shutdown_ecs_type;
     }

@@ -29,38 +29,46 @@
         <el-form-item label="显存"  prop="gpuMemory" v-if="formData.gpu">
             <el-input-number class="four-two" v-model="formData.gpuMemory" :min="0" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
-<<<<<<< HEAD
-        <el-form-item label="硬盘"  prop="disk">
-=======
-        <el-form-item label="系统盘"  prop="disk">
-            <!-- <el-select v-model="formData.unit" class="m-right10" placeholder="类型">
+        <el-form-item label="系统盘"  prop="system">
+            <el-input v-model="formData.system.system_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input-number 
+              class="two" 
+              v-model="formData.system.system_disk_capacity" 
+              :min="1" 
+              :max="2048" 
+              :step="formData.system.system_disk_unit==='GB' ? 1 : 0.1" 
+              placeholder="单块容量"
+              step-strictly
+              :precision="formData.system.system_disk_unit==='TB' ? 2 : null"
+            ></el-input-number>
+            <el-select v-model="formData.system.system_disk_unit" class="m-right10">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select> -->
->>>>>>> e8ef2d55b982c3640d74dc4e139cff570ba37853
-            <el-input-number class="two" v-model="formData.disk" :min="0" :step="1" placeholder="单块容量"></el-input-number>
-            <el-select v-model="formData.unit" class="m-right10">
-              <el-option label="GB" value="GB"></el-option>
-              <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.diskNum" :min="0" :step="1"></el-input-number>
-<<<<<<< HEAD
+            </el-select>   *   <el-input-number v-model="formData.system.system_disk_size" :min="1" :max="48" :step="1" step-strictly></el-input-number>
+            <el-input v-model="formData.system.system_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
         </el-form-item>
-=======
-            <!-- <el-select v-model="formData.unit" class="m-left10" placeholder="模式"></el-select> -->
+        <el-form-item label="数据盘"  prop="disk">
+          <div v-for="(item,index) in formData.disk" :key="index">
+            <el-input v-model="item.data_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input-number 
+              class="two" 
+              v-model="item.data_disk_capacity" 
+              :min="1" 
+              :max="2048" 
+              :step="item.data_disk_unit==='GB' ? 1 : 0.1" 
+              placeholder="单块容量"
+              step-strictly
+              :precision="item.data_disk_unit==='TB' ? 2 : null"
+            ></el-input-number>
+            <el-select v-model="item.data_disk_unit" class="m-right10">
+              <el-option label="GB" value="GB"></el-option>
+              <el-option label="TB" value="TB"></el-option>
+            </el-select>   *   <el-input-number v-model="item.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
+            <el-input v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
+            <el-button type="text" @click="del(index)" :disabled="formData.disk.length === 1"><i class="el-icon-remove-outline delete-icon"></i></el-button>
+          </div>
+          <el-button type="text" @click="add" :disabled="formData.disk.length === 5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
         </el-form-item>
-        <!-- <el-form-item label="数据盘"  prop="disk">
-            <el-select v-model="formData.unit" class="m-right10" placeholder="类型">
-              <el-option label="GB" value="GB"></el-option>
-              <el-option label="TB" value="TB"></el-option>
-            </el-select>
-            <el-input-number class="two" v-model="formData.disk" :min="0" :step="1" placeholder="单块容量"></el-input-number>
-            <el-select v-model="formData.unit" class="m-right10">
-              <el-option label="GB" value="GB"></el-option>
-              <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.diskNum" :min="0" :step="1"></el-input-number>
-            <el-select v-model="formData.unit" class="m-left10" placeholder="模式"></el-select>
-        </el-form-item> -->
->>>>>>> e8ef2d55b982c3640d74dc4e139cff570ba37853
         <el-form-item label="网卡"  prop="net">
             <el-input v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
             <el-input-number v-model="formData.netNum" :min="0" :step="1"></el-input-number>
@@ -97,15 +105,32 @@ export default class AddPod extends Vue {
     gpu:this.row.host_product_id ? this.row.gpu_name : '',
     gpuNum:this.row.host_product_id ? Number(this.row.gpu_size) : 1,
     gpuMemory:this.row.host_product_id ? Number(this.row.gpu_capacity) : '',
-    disk:this.row.host_product_id ? Number(this.row.disk_capacity) : '',
+    disk:[{
+      data_disk_size:1,
+      data_disk_feature:'',
+      data_disk_capacity:1,
+      data_disk_unit:'GB',
+      data_disk_mode:'',
+    }],
+    system:{
+      system_disk_size:1,
+      system_disk_feature:'',
+      system_disk_capacity:1,
+      system_disk_unit:'GB',
+      system_disk_mode:'',
+    },
     unit:this.row.host_product_id ? this.row.disk_unit : 'GB',
     diskNum:this.row.host_product_id ? Number(this.row.disk_size) : 1,
     net:this.row.host_product_id ? this.row.network_card_type : '',
     netNum:this.row.host_product_id ? Number(this.row.network_card_size) : 1,
   };
   created() {
+    this.formData.disk = this.row.data_disk_info
+    for(let i in this.formData.system){
+      this.formData.system[i] = this.row[i]
+    }
   }
-  private validNuclear = (rule, value, callback)=>{    
+  private validNuclear = (rule, value, callback)=>{        
     if(!value){      
       return callback(new Error('请输入逻辑核数'))
     }
@@ -115,19 +140,48 @@ export default class AddPod extends Vue {
       callback()
     }
   }
+  private validSystem = (rule, value, callback)=>{    
+    console.log('validSystem',value);
+    if(Object.values(value).some(item=>!item)){      
+      return callback(new Error('系统盘不可为空'))
+    }else{
+      callback()
+    }
+  }
+  private validDisk = (rule, value, callback)=>{  
+    console.log('validDisk',value);  
+    if(value.some(item=>!item.data_disk_size || !item.data_disk_feature || !item.data_disk_capacity || !item.data_disk_mode)){      
+      return callback(new Error('数据盘不可为空'))
+    }else{
+      callback()
+    }
+  }
   private rules = {
     name: [{ required: true, trigger: 'blur', message: '请输入产品名称' }],
     cpu: [{ required: true, trigger: 'blur', message: '请输入CPU型号' }],
     nuclear: [{ required: true, validator:this.validNuclear}],
     memory: [{ required: true, trigger: 'blur', message: '请输入内存容量' }],
-    disk: [{ required: true, trigger: 'blur', message: '请输入单块硬盘容量' }],
+    disk: [{ required: true, validator:this.validDisk}],
+    system: [{ required: true, validator:this.validSystem}],
     net: [{ required: true, trigger: 'blur', message: '请输入网卡型号' }],
+  }
+  private add(){
+    this.formData.disk.push({
+      data_disk_size:1,
+      data_disk_feature:'',
+      data_disk_capacity:1,
+      data_disk_unit:'GB',
+      data_disk_mode:'',
+    })
+  }
+  private del(index){
+    this.formData.disk = this.formData.disk.filter((item,i)=>i!==index)
   }
   private FnConfirm(){
     let form = this.$refs.form as any;
     const {name,cpu,cpuNum,nuclear,memory,
-          memoryNum,gpu,gpuNum,gpuMemory,disk,
-          diskNum,net,netNum,unit
+          memoryNum,gpu,gpuNum,gpuMemory,
+          net,netNum,disk,system
     }=this.formData;
     let req:any={
       name,
@@ -139,11 +193,10 @@ export default class AddPod extends Vue {
       gpu_capacity:gpu ? gpuMemory : undefined,
       gpu_size:gpu ? gpuNum : undefined,
       gpu_card_name:gpu,
-      disk_size:diskNum,
-      disk_capacity:disk,
       network_card_type:net,
       network_card_size:netNum,
-      disk_unit:unit,
+      ...system,
+      data_disk_info:disk
     }
     form.validate(async valid=>{
       if(valid){

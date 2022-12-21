@@ -66,10 +66,10 @@
         :key="item.prop"
         :label="item.label"
         :prop="item.prop"
-        :column-key="item.prop"
-        :sortable="item.sortable"
-        :filters="item.filters"
-        :filter-multiple="false"
+        :column-key="item.column_key ? item.column_key : null"
+        :sortable="item.sortable ? item.sortable : null"
+        :filters="item.column_key ? item.list : null"
+        :filter-multiple="item.multiple ? true : false"
       >
         <template #default="scope">
           <template v-if="item.prop === 'ecs_name'">
@@ -170,6 +170,11 @@
           <template v-else>
             {{ scope.row[item.prop] }}
           </template>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" prop="operate">
+        <template slot-scope="scope">
+          <el-button type="text" @click="FnToRecord(scope.row.ecs_id)">操作记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -429,12 +434,14 @@ export default class App extends Vue {
     customer_name: { placeholder: "请输入客户名称" },
     os_type: { placeholder: "请选择操作系统", list: [] },
     private_net: { placeholder: "请输入私网IP" },
+    public_net: { placeholder: "请输入公网IP" },
     host_name: { placeholder: "请输入宿主机名称", default_value: "" },
   };
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
   private search_ecs_goods_name = [];
+  private customer_type=[];
   private instance_list: Array<Object> = [];
   private customer_id: string = "";
   private az_id: string = "";
@@ -509,6 +516,12 @@ export default class App extends Vue {
       if(['ecs_id','ecs_name','customer_id','customer_level','system_disk_size','data_disk_size','host_name','create_time'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
       }
+      if(item.prop==='calculation_specification'){
+        item = Object.assign(item,{},{column_key:'ecs_goods_name',multiple:true,list:this.ecs_goods_name_list})
+      }
+      if(item.prop==='customer_type'){
+        item = Object.assign(item,{},{column_key:'customer_type',list:[{text:'内部',value:'内部'},{text:'外部',value:'外部'}]})
+      }
     })
   }
 
@@ -547,6 +560,9 @@ export default class App extends Vue {
     }
     if (val.ecs_goods_name) {
       this.search_ecs_goods_name = val.ecs_goods_name;
+    }
+    if(val.customer_type){
+      this.customer_type = val.customer_type;
     }
     this.FnGetList();
   }
@@ -587,7 +603,10 @@ export default class App extends Vue {
       reqData["op_source"] = this.search_op_source;
     }
     if (this.search_ecs_goods_name.length > 0) {
-      reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
+      reqData["spec_family_ids"] = this.search_ecs_goods_name.join(',');
+    }
+    if(this.customer_type.length > 0){
+      reqData["customer_type"]=this.customer_type[0]
     }
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
@@ -1033,6 +1052,8 @@ export default class App extends Vue {
     this.detail_visible = true;
   }
   private FnToRecord(id) {
+    console.log('FnToRecord');
+    
     this.record_id = id;
     this.record_visible = true;
   }
@@ -1103,6 +1124,14 @@ export default class App extends Vue {
           text: item.name,
         };
       });
+      this.$nextTick(()=>{
+        this.select_table_item.map(item=>{
+          if(item.prop==='calculation_specification'){
+            this.$set(item,'list',this.ecs_goods_name_list)
+          }
+        })
+      })
+      
     }
   }
   private FnCustom() {
@@ -1118,6 +1147,7 @@ export default class App extends Vue {
               ? "no"
               : this.search_billing_method,
           op_source: this.search_op_source,
+          spec_family_ids: this.search_ecs_goods_name.length > 0 ? this.search_ecs_goods_name.join(',') : undefined,
         },
         this.search_reqData
       )
@@ -1144,7 +1174,7 @@ export default class App extends Vue {
     this.FnGetStatus();
     this.get_list_field()
     this.get_az_list();
-    // this.FnGetCateGoryList();
+    this.FnGetCateGoryList();
     this.search_con.os_type.list = [
       {
         label: "centos",

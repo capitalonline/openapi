@@ -23,7 +23,7 @@ export default new Vuex.Store({
       '主机名','机器状态','电源状态','虚拟机数量',
       '主机类型','主机用途','主机归属','主机来源','CPU型号',
       'CPU总核数','显卡型号','显卡数量','网卡型号','内存总容量','存储总容量',
-      '专属客户','规格族','创建时间'
+      '专属客户','规格族','创建时间','已分配显卡数量','物理机产品ID','物理机产品名称',
     ],
     host_search:{},
   },
@@ -57,7 +57,7 @@ export default new Vuex.Store({
       state.ecs_custom_item = list;
       storage.set('ecs_custom_item', JSON.stringify(list))
     },
-    SET_CUSTOM_HOST(state,list){
+    SET_CUSTOM_HOST(state,list){      
       storage.set('custom_host',JSON.stringify(list))
       state.custom_host = list
     },
