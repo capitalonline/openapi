@@ -5,9 +5,10 @@
                 <el-button type="primary" @click="add('add',{})" :disabled="!authList.includes('add')">新增</el-button>
             </template>
         </action-block>
-        <div class="error_message m-bottom10">红色：请补充配置信息！</div>
+        
 
         <div class="icon m-bottom10">
+            <div class="error_message m-bottom10">红色：请补充配置信息！</div>
             <el-tooltip content="导出" placement="bottom" effect="light">
                 <el-button type="text" @click="down"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
@@ -253,7 +254,9 @@ export default class ProductType extends Vue{
     color:#606266
 }
 .icon{
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
 }
 .table-expand{
     display: flex;

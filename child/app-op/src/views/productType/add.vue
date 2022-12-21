@@ -65,9 +65,9 @@
               <el-option label="TB" value="TB"></el-option>
             </el-select>   *   <el-input-number v-model="item.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
             <el-input v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
-            <el-button type="text" @click="del(index)" :disabled="formData.disk.length === 1"><i class="el-icon-remove-outline delete-icon"></i></el-button>
+            <el-button type="text" @click="del(index)" :disabled="!formData.disk || formData.disk.length === 1"><i class="el-icon-remove-outline delete-icon"></i></el-button>
           </div>
-          <el-button type="text" @click="add" :disabled="formData.disk.length === 5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+          <el-button type="text" @click="add" :disabled="!formData.disk || formData.disk.length === 5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
         </el-form-item>
         <el-form-item label="网卡"  prop="net">
             <el-input v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
@@ -125,10 +125,13 @@ export default class AddPod extends Vue {
     netNum:this.row.host_product_id ? Number(this.row.network_card_size) : 1,
   };
   created() {
-    this.formData.disk = this.row.data_disk_info
-    for(let i in this.formData.system){
-      this.formData.system[i] = this.row[i]
+    if(this.row.host_product_id){
+      this.formData.disk = this.row.data_disk_info
+      for(let i in this.formData.system){
+        this.formData.system[i] = this.row[i]
+      }
     }
+    
   }
   private validNuclear = (rule, value, callback)=>{        
     if(!value){      
