@@ -14313,6 +14313,7 @@ def describe_account_subject():
 | UtcTime           | 可选 | int    | 是否utc时间，1:是  0:否 默认为0（默认UTC+8，上海时间）       |
 | DataDisk          | 可选 | list   | 数据盘信息。仅支持云盘，示例：[{<br/>        "DiskFeature":"local", # 盘类型，"local"：本地盘，"ssd": ssd云盘.  本地盘和云盘不能混用<br/>        "ReleaseWithInstance":1, # 是否随实例删除:1:随实例删除,0:不随实例删除.不传默认随实例删除<br/>         "Size":50 # 盘大小,<br/>         "SnapshotId":"s-xxx" # 快照id,通过此快照创建数据盘,非必填<br/>    }] |
 | DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
+| SecurityGroups    | 可选 | list   | 安全组列表，安全组优先级按顺序由高到低，示例：SecurityGroups:[{<br/>      "SecurityGroupId":"sg-p9fpfbrg6r1ft5vs", #安全组id<br/>     }] |
 | TestAccount       | 可选 | string | 测试账户名称                                                 |
 
 **返回参数**
@@ -14358,6 +14359,9 @@ def create_ecs():
         "SubnetInfo":{
             "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce"
         },
+        "SecurityGroups":[{
+            "SecurityGroupId":"sg-p9fpfbrg6r1ft5vs1"
+        }],
         "Name":"",
         "StartNumber":0,
         "Password":"123QWEqwe"
