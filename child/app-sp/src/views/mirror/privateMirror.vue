@@ -58,7 +58,7 @@
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="speed" label="优化镜像">
+            <el-table-column prop="speed" label="优化加速">
                 <template slot-scope="scope">
                     <span v-if="scope.row.is_accelerate" class="running">开启</span>
                     <span v-if="!scope.row.is_accelerate">-</span>
