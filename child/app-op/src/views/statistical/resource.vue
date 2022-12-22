@@ -178,7 +178,7 @@ export default class List extends Vue{
       }
       this.clear = setTimeout(()=>{
         this.getNasList(false)
-      },1000*6)
+      },1000*60)
     }
     private FnClearTimer(){
       if(this.clear){
