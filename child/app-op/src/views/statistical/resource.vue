@@ -55,11 +55,7 @@
                    <div>存储网:{{scope.row.transfer_vm_storage_ip}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="billing_method" label="计费方式">
-                <template slot-scope="scope">
-                    <span>{{feeInfo[scope.row.billing_method]}}</span>
-                </template>
-            </el-table-column>
+            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
             <el-table-column prop="status_ch" label="状态">
                 <template slot-scope="scope">
                     <span :class="scope.row.status">{{scope.row.status_cn}}</span>
@@ -182,7 +178,7 @@ export default class List extends Vue{
       }
       this.clear = setTimeout(()=>{
         this.getNasList(false)
-      },1000*60)
+      },1000*6)
     }
     private FnClearTimer(){
       if(this.clear){
