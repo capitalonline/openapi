@@ -5,8 +5,6 @@
                 <el-button type="primary" @click="add('add',{})" :disabled="!authList.includes('add')">新增</el-button>
             </template>
         </action-block>
-        
-
         <div class="icon m-bottom10">
             <div class="error_message m-bottom10">红色：请补充配置信息！</div>
             <el-tooltip content="导出" placement="bottom" effect="light">

@@ -532,6 +532,7 @@ export default class App extends Vue {
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
     private_net: { placeholder: "请输入私网IP" },
+    public_net: { placeholder: "请输入公网IP" },
     host_id: { placeholder: "请输入物理机ID"},
     host_name: { placeholder: "请输入物理机名称", },
     host_ip: { placeholder: "请输入物理机管理IP"},
@@ -612,6 +613,7 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_info: data.os_info,
       private_net: data.private_net,
+      public_net: data.public_net,
       host_id: data.host_id,
       host_name: data.host_name,
       host_ip: data.host_ip,
@@ -678,6 +680,8 @@ export default class App extends Vue {
     return [data[0], data[1], data[2], '0'].join('.')
   }
   private async FnGetList(loading: boolean = true) {
+    console.log('search_reqData',this.search_reqData);
+    
     if(!this.$store.state.pod_id){
       return ;
     }
