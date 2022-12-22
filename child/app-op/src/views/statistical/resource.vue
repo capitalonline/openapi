@@ -111,11 +111,6 @@ export default class List extends Vue{
     private all_item:Array<any>=[];
     private all_column_item=[];
     private custom_host=[]
-    private feeInfo={
-      '0':'按需计费',
-      '1':'包年包月',
-      '2':'按次计费',
-    }
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.getAzList()
