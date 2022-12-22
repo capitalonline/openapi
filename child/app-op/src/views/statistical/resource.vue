@@ -55,11 +55,7 @@
                    <div>存储网:{{scope.row.transfer_vm_storage_ip}}</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="billing_method" label="计费方式">
-                <template slot-scope="scope">
-                    <span>{{feeInfo[scope.row.billing_method]}}</span>
-                </template>
-            </el-table-column>
+            <el-table-column prop="billing_method" label="计费方式"></el-table-column>
             <el-table-column prop="status_ch" label="状态">
                 <template slot-scope="scope">
                     <span :class="scope.row.status">{{scope.row.status_cn}}</span>
