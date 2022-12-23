@@ -87,7 +87,7 @@
        * [1.DescribeVPC](#1describevpc)
        * [2.CreateVPC](#2createvpc)
        * [3.DeleteVPC](#3deletevpc)
-       * [4.DescribeSubNet](#4describesubnet)
+       * [4.DescribeSubnet](#4describesubnet)
        * [5.CreateSubNet](#5createsubnet)
        * [6.DeleteSubNet](#6deletesubnet)
        * [7.DescribeVirtualGateWay](#7describevirtualgateway)
@@ -4299,7 +4299,7 @@ def describe_vpc(regin_code, key, page):
 | VPCSegmentType    | string | 是       | auto/manual             | 使用推荐网段或手动分配              |
 | BandwidthType     | string | 否       | Bandwidth_China_Telecom | VPC带宽类型，边缘节点必传，见附件三 |
 | SubnetList        | list   | 是       | []                      | 创建VPC必须创建一个子网             |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A           | VPC可用区code, 见附件五             |
+| AvailableZoneCode | string | 是       | CN_Hongkong_B           | VPC可用区code, 见附件五             |
 | SubnetName        | string | 是       | 子网1                   | 子网名称                            |
 | SubnetSegment     | string | 是       | 10.15.1.0/24            | 子网网段                            |
 
@@ -4358,7 +4358,7 @@ def create_vpc():
    "VPCSegment": "10.15.0.0/16",
    "VPCSegmentType": "auto",
    "SubnetList": [{
-         "AvailableZoneCode": "CN_Hongkong_A",
+         "AvailableZoneCode": "CN_Hongkong_B",
          "SubnetName": "子网1",
          "SubnetSegment": "10.15.1.0/24"
           }
@@ -4427,9 +4427,9 @@ def delete_vpc(vpc_id):
     res = requests.post(url, json=body)
 ```
 
-### 4.DescribeSubNet
+### 4.DescribeSubnet
 
-  **Action:DescribeSubNet**
+  **Action:DescribeSubnet**
 
   **描述：** 查询子网信息
 
@@ -4480,7 +4480,7 @@ def delete_vpc(vpc_id):
   "Data": {
     "SubnetList": [
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "Status": "ok",
         "SubnetId": "026f4386-e573-11ec-a09a-cabfed3cc5e1",
         "SubnetName": "子网1",
@@ -4490,7 +4490,7 @@ def delete_vpc(vpc_id):
         "VPCName": "OPENAPI_VPC1"
       },
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "Status": "ok",
         "SubnetId": "22390f70-af37-11ec-8944-1200cba86117",
         "SubnetName": "子网1",
@@ -4542,7 +4542,7 @@ def describe_subnet(region_code, key, page, vpc_id, az_code):
 | ----------------- | ------ | -------- | ------------------------------------ | ----------------------- |
 | VPCId             | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID                  |
 | SubnetList        | list   | 是       | []                                   | 创建VPC必须创建一个子网 |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| AvailableZoneCode | string | 是       | CN_Hongkong_B                        | VPC可用区code, 见附件五 |
 | SubnetName        | string | 是       | 子网1                                | 子网名称                |
 | SubnetSegment     | string | 是       | 10.15.1.0/24                         | 子网网段                |
 
@@ -4588,7 +4588,7 @@ def create_subnet():
     body = {
    "VPCId": "0266c864-e573-11ec-a09a-cabfed3cc5e1",
    "SubnetList": [{
-         "AvailableZoneCode": "CN_Hongkong_A",
+         "AvailableZoneCode": "CN_Hongkong_B",
          "SubnetName": "子网3",
          "SubnetSegment": "10.15.3.0/24"
       }
@@ -4762,7 +4762,7 @@ def describe_virtual_gateway(regin_code, key, page, vpc_id, az_code):
 | --------------------- | ------ | -------- | ------------------------------------ | ----------------------- |
 | VPCId                 | string | 是       | 0266c864-e573-11ec-a09a-cabfed3cc5e1 | VPC ID                  |
 | VirtualGateWayList    | list   | 是       | []                                   |                         |
-| AvailableZoneCode     | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| AvailableZoneCode     | string | 是       | CN_Suqian_A                          | VPC可用区code, 见附件五 |
 | VirtualGateWayName    | string | 是       | 虚拟出网网关1                        | 虚拟出网网关名称        |
 | VirtualGateWaySegment | string | 是       | 10.15.1.0/24                         | 虚拟出网网关网段        |
 | Type                  | string | 是       | 联通                                 | 带宽CODE                |
@@ -4809,7 +4809,7 @@ def create_virtual_gateway():
     body = {
    "VPCId": "170d5f32-9922-11ec-91ec-02fde40489da",
    "VirtualGateWayList": [{
-         "AvailableZoneCode": "CN_DaBieShan_A",
+         "AvailableZoneCode": "CN_Suqian_A",
          "VirtualGateWayName": "虚拟出网网关1",
          "VirtualGateWaySegment": "10.6.1.0/24",
             "Type": "Bandwidth_CMCC"
@@ -4893,7 +4893,7 @@ def delete_virtual_gateway(virtual_gateway_id):
 | 名称              | 类型   | 是否必选                        | 示例值        | 描述                                               |
 | ----------------- | ------ | ------------------------------- | ------------- | -------------------------------------------------- |
 | RegionCode        | string | 是                              | CN_Hongkong   | VPC区域code, 见附件五                              |
-| AvailableZoneCode | string | 边缘节点：是 / 云平台节点：不传 | CN_Hongkong_A | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
+| AvailableZoneCode | string | 边缘节点：是 / 云平台节点：不传 | CN_Hongkong_B | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
 | Keyword           | string | 否                              | eip地址       | 查询关键字                                         |
 
 
@@ -4962,7 +4962,7 @@ def delete_virtual_gateway(virtual_gateway_id):
           "Name": "",
           "Qos": 10,
           "Status": "ok"
-        }，
+        },
          "BindResourceInfo": null
       },
       {
@@ -4976,7 +4976,7 @@ def delete_virtual_gateway(virtual_gateway_id):
         "Status": "ok",
         "BandwidthInfo":
         {
-          "AvailableZoneCode": "CN_Hongkong_A",
+          "AvailableZoneCode": "CN_Hongkong_B",
           "BandwidthType": "Bandwidth_China_Telecom",
           "BillScheme": "BandwIdth_Shared",
           "CreateTime": "2022-06-07 12:35:37",
@@ -5348,7 +5348,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
 | 名称              | 类型   | 是否必选 | 示例值        | 描述                           |
 | ----------------- | ------ | -------- | ------------- | ------------------------------ |
 | RegionCode        | string | 否       | CN_Hongkong   | VPC区域code, 见附件五          |
-| AvailableZoneCode | string | 否       | CN_Hongkong_A | 列表页码。起始值：1, 默认值：1 |
+| AvailableZoneCode | string | 否       | CN_Hongkong_B | 列表页码。起始值：1, 默认值：1 |
 | Keyword           | string | 否       | eip地址       | 查询关键字                     |
 
 
@@ -5388,7 +5388,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
     "BandwidthList":
     [
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_China_Unicom",
         "BillScheme": "BandwIdth_Shared",
         "CreateTime": "2022-03-21 14:56:06",
@@ -5399,7 +5399,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
         "Status": "ok"
       },
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_China_Telecom",
         "BillScheme": "BandwIdth_Shared",
         "CreateTime": "2022-03-15 17:03:56",
@@ -5410,7 +5410,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
         "Status": "ok"
       },
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_China_Telecom",
         "BillScheme": "BandwIdth_Shared",
         "CreateTime": "2022-03-14 14:50:57",
@@ -5421,7 +5421,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
         "Status": "ok"
       },
       {
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_CMCC",
         "BillScheme": "BandwIdth_Shared",
         "CreateTime": "2022-03-08 16:24:57",
@@ -5448,7 +5448,7 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
         "RegionCode": "CN_Hongkong",
-        "AvailableZoneCode": "CN_Hongkong_A"
+        "AvailableZoneCode": "CN_Hongkong_B"
     }
     res = requests.post(url, json=body)
 ```
@@ -5470,7 +5470,7 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 | 名称              | 类型   | 是否必选 | 示例值                               | 描述                                                         |
 | ----------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
 | RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五                                        |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五                                      |
+| AvailableZoneCode | string | 是       | CN_Hongkong_B                        | VPC可用区code, 见附件五                                      |
 | Name              | string | 是       | 香港共享带宽                         | 共享带宽名称                                                 |
 | BandwidthType     | string | 是       | Bandwidth_China_Telecom              | 带宽类型                                                     |
 | BillScheme        | string | 是       | BandwIdth                            | 计费方案<br/>BandwIdth_Shared（固定带宽）<br/>Traffic_Shared（流量按需） |
@@ -5520,7 +5520,7 @@ def create_bandwidth(regin_code, key, page, vpc_id, az_code):
     body = {
         "RegionCode": "CN_Hongkong",
         "Name": "香港共享带宽"
-        "AvailableZoneCode": "CN_Hongkong_A",
+        "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_China_Telecom",
         "BillScheme": "BandwIdth_Shared",
         "Qos": 10
@@ -5984,7 +5984,7 @@ def net_eip_info():
 
 | 名称              | 类型   | 是否必选 | 示例值                               | 描述                    |
 | ----------------- | ------ | -------- | ------------------------------------ | ----------------------- |
-| AvailableZoneCode | string | 是       | CN_Hongkong_A                        | VPC可用区code, 见附件五 |
+| AvailableZoneCode | string | 是       | CN_Suqian_B                          | VPC可用区code, 见附件五，云平台节点暂不支持 |
 | Ips               | list   | 是       |                                      | ip信息                  |
 | NetId             | string | 是       | 3e229ff2-ee26-11ec-8a3f-f64faa0dae79 | 虚拟出网网关ID          |
 | AddressList       | array  | 是       | ["172.18.2.0"]                       | 虚拟出网网关IP地址列表  |
@@ -6023,7 +6023,7 @@ def eip_batch_bind_and_reserve_ip():
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-        "AvailableZoneCode": "CN_DaBieShan_A",
+        "AvailableZoneCode": "CN_Suqian_B",
         "Ips": [
             {
                 "NetId": "3e229ff2-ee26-11ec-8a3f-f64faa0dae79",
