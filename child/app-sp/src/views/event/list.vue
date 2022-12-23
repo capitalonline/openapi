@@ -146,6 +146,7 @@ export default class List extends Vue {
       page_index:this.current,
       page_size:this.size,
       event_id:data.event_id || "",
+      event_name:data.event_name || "",
       resource_id:data.resource_id || "",
       [this.sort_prop_name]:this.sort_value,
       task_id:data.task_id || "",
