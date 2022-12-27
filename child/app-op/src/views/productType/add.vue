@@ -4,7 +4,7 @@
         ref="form"
         :model="formData"
         :rules="rules"
-        label-width="120px"
+        label-width="110px"
         label-suffix=":"
         label-position="left">
         <el-form-item label="物理机产品id" prop="id" v-if="formData.id">{{formData.id}}</el-form-item>
@@ -64,13 +64,13 @@
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
             </el-select>   *   <el-input-number class="m-r-10" v-model="item.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
-            <el-input class="w-140" v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
+            <el-input class="w-150" v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
             <el-button type="text" @click="del(index)" :disabled="formData.disk.length === 1"><i class="el-icon-remove-outline delete-icon"></i></el-button>
           </div>
           <el-button type="text" @click="add" :disabled="formData.disk.length === 5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
         </el-form-item>
         <el-form-item label="网卡"  prop="net">
-            <el-input v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
+            <el-input class="four-two" v-model="formData.net" placeholder="型号" :maxLength="256"></el-input>*
             <el-input-number v-model="formData.netNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
     </el-form>
