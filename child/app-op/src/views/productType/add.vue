@@ -9,10 +9,10 @@
         label-position="left">
         <el-form-item label="物理机产品id" prop="id" v-if="formData.id">{{formData.id}}</el-form-item>
         <el-form-item label="产品名称" prop="name">
-            <el-input v-model="formData.name" :maxLength="256"></el-input>
+            <el-input class="four-two" v-model="formData.name" :maxLength="256"></el-input>
         </el-form-item>
         <el-form-item label="CPU" prop="cpu">
-            <el-input v-model="formData.cpu" placeholder="型号" :maxLength="256"></el-input>*
+            <el-input class="four-two" v-model="formData.cpu" placeholder="型号" :maxLength="256"></el-input>*
             <el-input-number v-model="formData.cpuNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="逻辑核数" prop="nuclear">
@@ -23,48 +23,48 @@
             &nbsp;<el-input-number v-model="formData.memoryNum" :min="0" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="显卡"  prop="gpu">
-            <el-input v-model="formData.gpu" placeholder="型号" :maxLength="256"></el-input>
+            <el-input v-model="formData.gpu" class="four-two" placeholder="型号" :maxLength="256"></el-input>
             <span v-if="formData.gpu">  *   <el-input-number v-model="formData.gpuNum" :min="0" :step="1"></el-input-number></span>
         </el-form-item>
         <el-form-item label="显存"  prop="gpuMemory" v-if="formData.gpu">
             <el-input-number class="four-two" v-model="formData.gpuMemory" :min="0" :step="1" placeholder="单块显卡的显存"></el-input-number> GB
         </el-form-item>
         <el-form-item label="系统盘"  prop="system">
-            <el-input v-model="formData.system.system_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input class="w-130" v-model="formData.system.system_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
             <el-input-number 
-              class="two" 
+              class="m-l-10" 
               v-model="formData.system.system_disk_capacity" 
               :min="1" 
               :max="2048" 
-              :step="formData.system.system_disk_unit==='GB' ? 1 : 0.1" 
+              :step="formData.system.system_disk_unit==='GB' ? 1 : 0.01" 
               placeholder="单块容量"
               step-strictly
               :precision="formData.system.system_disk_unit==='TB' ? 2 : null"
             ></el-input-number>
-            <el-select v-model="formData.system.system_disk_unit" class="m-right10">
+            <el-select v-model="formData.system.system_disk_unit" class="m-l-10 m-right10 w-120">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="formData.system.system_disk_size" :min="1" :max="48" :step="1" step-strictly></el-input-number>
-            <el-input v-model="formData.system.system_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
+            </el-select>   *   <el-input-number class="m-r-10" v-model="formData.system.system_disk_size" :min="1" :max="48" :step="1" step-strictly></el-input-number>
+            <el-input class="w-150" v-model="formData.system.system_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
         </el-form-item>
         <el-form-item label="数据盘"  prop="disk">
           <div v-for="(item,index) in formData.disk" :key="index">
-            <el-input v-model="item.data_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
+            <el-input class="w-130" v-model="item.data_disk_feature" :maxLength="32" placeholder="请输入类型"></el-input>
             <el-input-number 
-              class="two" 
+              class="m-l-10" 
               v-model="item.data_disk_capacity" 
               :min="1" 
               :max="2048" 
-              :step="item.data_disk_unit==='GB' ? 1 : 0.1" 
+              :step="item.data_disk_unit==='GB' ? 1 : 0.01" 
               placeholder="单块容量"
               step-strictly
               :precision="item.data_disk_unit==='TB' ? 2 : null"
             ></el-input-number>
-            <el-select v-model="item.data_disk_unit" class="m-right10">
+            <el-select v-model="item.data_disk_unit" class="m-l-10 m-right10 w-120">
               <el-option label="GB" value="GB"></el-option>
               <el-option label="TB" value="TB"></el-option>
-            </el-select>   *   <el-input-number v-model="item.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
-            <el-input v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
+            </el-select>   *   <el-input-number class="m-r-10" v-model="item.data_disk_size" :min="1" :step="1" :max="48" step-strictly></el-input-number>
+            <el-input class="w-140" v-model="item.data_disk_mode" :maxLength="32" placeholder="请输入模式"></el-input>
             <el-button type="text" @click="del(index)" :disabled="formData.disk.length === 1"><i class="el-icon-remove-outline delete-icon"></i></el-button>
           </div>
           <el-button type="text" @click="add" :disabled="formData.disk.length === 5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
@@ -226,10 +226,10 @@ export default class AddPod extends Vue {
 
 
 <style lang="scss" scoped>
-.el-input,.el-iput-number{
-  width: 420px;
-  margin-right: 5px;
-}
+// .el-input,.el-iput-number{
+//   width: 420px;
+//   margin-right: 5px;
+// }
 .four-two{
   width: 420px;
   margin-right: 5px;
