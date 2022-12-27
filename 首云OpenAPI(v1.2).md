@@ -436,8 +436,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | InstanceType       | string   | 是       | Standard                                                     | 购买实例的类型，具体类型可参考附件二，可调用公共接口获取不同及诶单售卖的产品 |
 | ImageId            | string   | 否       | bbf63749-0186-4c68-8adc-9bf584bc1376                         | 模板Id，不指定则默认选择Ubuntu_16.04_64                      |
 | ImagePassword      | string   | 否       | tpl-password                                                 | 使用公共镜像时，该字段为非必填项；使用的是自定义镜像，该字段为必填项 |
-| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}         | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk |
-| DataDisks          | string   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] | ssd支持IOPS,默认: "IOPS": 0                                  |
+| SystemDisk         | Dict     | 否       | { "Size": 200, "Type": "ssd_system_disk", "IOPS": 5}         | 系统盘类型，大小，IOPS预置性能包个数。默认: "IOPS": 0, "size": 所选模板的系统盘大小, Type: system_disk(性能),ssd_system_disk(超高性能) |
+| DataDisks          | list   | 否       | [{ "Size": 100,  "Type": "ssd_disk", "IOPS": 5 },{  "Size": 50,  "Type": "high_disk" }] | ssd支持IOPS,默认: "IOPS": 0                                  |
 | Amount             | integer  | 否       | 1                                                            | 指定创建云服务器的数量，取值范围：1-99，默认取值：1          |
 | PublicIp           | list     | 否       | [“101.251.1.1”, “101.251.1.2”, “101.251.13”]                 | 公网Ip    输入的ip必须是该Vdc下可用ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配公网ip |
 | PrivateIp          | list     | 否       | [{"PrivateId": "xxxxxxxxxx", "IP": ["auto", "auto"]}]        | 内网Ip    输入的ip必须是该Vdc下可用内网uuid、ip，手动分配输入ip地址，自动分配输入：auto，默认不写为不分配ip |
