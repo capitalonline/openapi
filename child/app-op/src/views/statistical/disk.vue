@@ -33,7 +33,11 @@
                     <span>{{ `${scope.row.size}${scope.row.size_unit}` }}</span>                
                 </template>
             </el-table-column>
-            <el-table-column prop="used" label="实际使用空间"></el-table-column>
+            <el-table-column prop="used" label="实际使用空间">
+                <template slot-scope="scope">
+                    <div>{{ `${scope.row.use}${scope.row.use ? scope.row.use_unit : ''}` }}</div>
+                </template>
+            </el-table-column>
             <el-table-column prop="az_name" label="可用区">
                 <template slot-scope="scope">
                     <span>{{`${scope.row.az_name}`}}</span>
