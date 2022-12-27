@@ -163,3 +163,20 @@ pre {
 .table-limit-height {
   height: calc(100vh - 200px) !important;
 }
+@for $i from 0 through 1920 {
+  .w-#{$i} {width: #{$i}px;}
+}
+@for $i from 0 through 1000 {
+  .m-#{$i} {margin: #{$i}px;}
+  .m-l-#{$i} {margin-left: #{$i}px;}
+  .m-r-#{$i} {margin-right: #{$i}px;}
+  .m-b-#{$i} {margin-bottom: #{$i}px;}
+  .m-t-#{$i} {margin-top: #{$i}px;}
+
+  .p-#{$i} {padding: #{$i}px;}
+  .p-l-#{$i} {padding-left: #{$i}px;}
+  .p-r-#{$i} {padding-right: #{$i}px;}
+  .p-b-#{$i} {padding-bottom: #{$i}px;}
+  .p-t-#{$i} {padding-top: #{$i}px;}
+
+}
