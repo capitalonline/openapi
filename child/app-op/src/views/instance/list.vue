@@ -536,6 +536,7 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_type: data.os_type,
       private_net: data.private_net,
+      public_net: data.public_net,
       host_name: data.host_name,
       start_time:
         data.create_time && data.create_time[0]
