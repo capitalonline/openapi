@@ -34,13 +34,13 @@ module.exports = {
         }
       },
       '/nas_union_business': {
-        target: 'http://cos-nas-union-business.gic.pre',
-        // target:'http://cloudos-nas-union-business.gic.test',
+        // target: 'http://cos-nas-union-business.gic.pre',
+        target:'http://cloudos-nas-union-business.gic.test',
         changeOrigin: true,
       },
       '/alarm/api': {
         target: 'http://cloudos-metricsalarm.gic.test',
-        // target:'http://10.131.162.69:8001',
+        // target:'http://cloud-os-monitor-alarm.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/alarm/api': '/api'
@@ -54,8 +54,8 @@ module.exports = {
         }
       },
       '/nas_op': {
-        target: 'http://cloudos-nas-op.gic.test',
-        // target:'http://ecs-business.gic.test',
+        // target: 'http://cloudos-nas-op.gic.test',
+        target:'http://ecs-business.gic.test',
         changeOrigin: true,
        
       },

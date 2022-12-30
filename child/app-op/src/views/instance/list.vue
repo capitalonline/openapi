@@ -76,7 +76,8 @@
             <pre>{{ scope.row.ecs_name }}</pre>
           </template>
           <template v-else-if="item.prop === 'status_display'">
-            <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+            <div :class="scope.row.status">{{ scope.row.status_display }}</div>
+            <div class="warning_message" v-if="scope.row.no_charge_shutdown_ecs && scope.row.status==='shutdown'">关机不计费</div>
           </template>
           <template v-else-if="item.prop === 'host_name'">
             <span class="num_message">{{ scope.row.host_name }}</span>

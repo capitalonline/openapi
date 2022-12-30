@@ -23,7 +23,7 @@ instance.interceptors.request.use(
       loadingCount++;
       loadingInstance = Loading.service(loadingOptions);
     }
-    config.headers["Access-Token"] = store.state.token;
+    config.headers["Access-Token"] = store.state.token || sessionStorage.getItem('Access-Token');
     config.headers["X-Request-Id"] = uuid();
     return config
   },
