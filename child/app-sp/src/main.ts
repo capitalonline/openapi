@@ -27,11 +27,13 @@ function render (props: prop = {}) {
   console.log('sp-render',window.__POWERED_BY_QIANKUN__ )
   const { container } = props;
   const routes = [];
-  props.onGlobalStateChange((state, prev) => {
-    // state: 变更后的状态; prev 变更前的状态
-    console.log('sp-onGlobalStateChange',state, prev);
-    store.commit('SET_TOKEN',state.token)
-  },true)
+  // if(props){
+  //   props.onGlobalStateChange((state, prev) => {
+  //     // state: 变更后的状态; prev 变更前的状态
+      
+  //   },true)
+  // }
+  
   for (const item of all_routes) {
     if (store.state.auth_info[item.name]) {
       routes.push(item)
@@ -78,12 +80,17 @@ if (!window.__POWERED_BY_QIANKUN__) {
 export async function bootstrap () {
 }
 
-export function mount (props: any) {
+export function mount (props: any={}) {
   store.commit('SET_QIANKUN', true)
-  console.log('sp-mount',window.__POWERED_BY_QIANKUN__)
-  props.onGlobalStateChange((state, prev) => {
-    store.commit('SET_AUTH_INFO', state.permission_dict);
-  }, true);
+  console.log('sp-mount',window.__POWERED_BY_QIANKUN__,props)
+  if(props){
+    props.onGlobalStateChange((state, prev) => {
+      console.log('sp-onGlobalStateChange',state, prev);
+      store.commit('SET_TOKEN',state.token)
+      store.commit('SET_AUTH_INFO', state.permission_dict);
+    }, true);
+  }
+  
   render(props)
 }
 
