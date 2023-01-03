@@ -16,7 +16,7 @@
         >
             <el-table-column prop="customer_id" label="序号" width="45">
                 <template slot-scope="scope">
-                    <span>{{ scope.$index }}</span>
+                    <span>{{ scope.$index+1 }}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="customer_id" label="客户ID"></el-table-column>
