@@ -120,9 +120,7 @@ export default class Edit extends Vue{
             this.formData.status = this.info.status
         }
     }
-    private changeStatus(val){
-        console.log('###',this.formData.customer_ids,val);
-        
+    private changeStatus(val){        
         if(val!=='gray_open'){
             this.formData.customer_ids=[]
         }

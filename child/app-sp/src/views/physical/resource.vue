@@ -75,7 +75,6 @@ export default class Resource extends Vue{
       if(res.code==="Success"){
           this.ecs_list = res.data.host_attribution_list
           this.ecs_id = this.ecs_list[0].host_attribution_id;
-        //   console.log("this.ecs_id",this.ecs_id)
       }
   }
   private async confirm(){

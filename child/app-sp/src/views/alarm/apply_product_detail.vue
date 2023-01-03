@@ -40,7 +40,6 @@ export default class ApplyDetail extends Vue{
         let res:any=await Service.get_region_az_list({})
         if(res.code==='Success'){
             this.region_az_list = res.data
-            // console.log("this.region_az_list",this.region_az_list)
             const az_obj = this.get_all_az()
             this.rows[0].instances.map(item=>{
             this.list.push({

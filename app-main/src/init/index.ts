@@ -10,21 +10,17 @@ import action from '@/store/action';
 
 export async function getUserInfo() {
   let index = window.location.href.indexOf('token=');
-  console.log('main-index',index,window.location.href)
   let token = '';
   if (index >= 0) {
     token = window.location.href.substr(index + 6).split('&')[0];
   }
-  console.log('main-token',token)
   if (token) {
     store.commit('SET_TOKEN', token);
-    console.log('main-setGlobalState',token);
     action.setGlobalState({'token':token})
   }
 
   const resData = await axios.get(`/ecs_business/v1/account/get_user/?token=${ store.state.token}`)
   if (resData.data.code == 'Success') {
-    console.log('main-resData',resData)
     store.commit('SET_LOGIN_NAME', resData.data.data.login_name);
     store.commit('SET_AUTH_INFO', {...resData.data.data.permission_dict});
     // actions.setGlobalState({permission_dict: store.state.auth_info});

@@ -487,7 +487,6 @@ export default class App extends Vue {
   private async get_list_field(){
       let res:any = await Service.get_list_field()
       if(res.code==="Success"){
-        console.log("res",res)
         let key_list=['field_name','show_name'];
         let label_list=['prop','label'];
         let list:Array<any>=[]

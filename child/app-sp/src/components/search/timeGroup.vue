@@ -47,7 +47,6 @@ export default class TimeGroup extends Vue {
   };
   private default_time = '';
   private FnChangeTime() {
-    console.log('start_time', this.start_time)
     let time = this.time_list[this.default_time].time;
     let now = new Date().getTime();
     let start_time = new Date(now - time);

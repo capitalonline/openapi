@@ -30,7 +30,6 @@ export default class LongSelect extends Vue {
   private FnShowSelect(val) {
     if (val) {
       this.$nextTick(() => {
-        console.log(document.querySelector('.el-select-dropdown .el-scrollbar__wrap'))
         document.querySelector('.el-select-dropdown .el-scrollbar__wrap').addEventListener('scroll', this.FnSelectScroll(this.FnChangeCurrentList))
       })
     }

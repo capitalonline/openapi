@@ -44,7 +44,6 @@ export default class CustomListItem extends Vue {
     } else {
       this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
-    // console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {
@@ -128,7 +127,6 @@ export default class CustomListItem extends Vue {
     'nas':{func:'SET_NAS_HOST',value:'nas_host'},
   }
   private created() {
-    console.log('this',this.type)
     this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
   }
   private FnHandleSelectItem(item) {
@@ -137,7 +135,6 @@ export default class CustomListItem extends Vue {
     } else {
       this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
-    // console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {

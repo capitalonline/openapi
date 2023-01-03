@@ -42,12 +42,10 @@ export default class Detail extends Vue{
     private title:string="";
     private id:string=""
     private handleClick(val){
-        console.log("handleClick",val)
     }
     created() {
         this.title = this.$route.query.name
         this.id = this.$route.query.id
-        console.log("this.$route",this.$route)
     }
 }
 </script>

@@ -124,7 +124,6 @@ export default class Inventory extends Vue{
         this.getHostProductName(val,false)
     }
     private search(val){
-        console.log('val',val)
         this.pageInfo.page_index=1
         this.search_info={...val}
         this.getInventoryList()
@@ -153,7 +152,6 @@ export default class Inventory extends Vue{
         this.getInventoryList()
     }
     private handleSort(obj ){
-        console.log('###',obj.prop, obj.order)
         this.sortLable=obj.prop
         this.sort =obj.order==="descending" ? '1' : obj.order==="ascending" ? '0' : undefined
         this.getInventoryList()

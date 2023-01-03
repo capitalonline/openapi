@@ -20,15 +20,11 @@ let loadingCount = 0;
 // 添加请求拦截器
 instance.interceptors.request.use(
   config => {  // 发送请求之前做些什么
-    console.log('sp-http-cookie',cookie.get('cds-op-token'))
-    console.log('sp-http-token',store.state.token)
-    console.log('sp-http-session',sessionStorage.getItem('Access-Token'))
-    console.log('sp-http-location',window.location.href)
     if (store.state.loadingStatus) {
       loadingCount++;
       loadingInstance = Loading.service(loadingOptions);
     }
-    config.headers["Access-Token"] = store.state.token || sessionStorage.getItem('Access-Token');
+    config.headers["Access-Token"] = store.state.token;
     config.headers["X-Request-Id"] = uuid();
     return config
   },

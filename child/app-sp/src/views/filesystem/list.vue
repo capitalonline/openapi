@@ -267,7 +267,6 @@ export default class List extends Vue{
         }
     }
     private get_custom_columns(list) {
-        console.log('list',list)
         if(list.length===0){
             return;
         }
@@ -347,9 +346,7 @@ export default class List extends Vue{
         this.list.map(item=>{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
-        //   console.log('###',res.data[item.nas_id],res.data[item.nas_id].used,res.data[item.nas_id].total)
           let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : '0.00'
-          console.log('num',num)
           this.$set(item,'use_percent',`${num}%`)
           this.$set(item,'use_size',`${size} / ${total}`)
         })
@@ -385,7 +382,6 @@ export default class List extends Vue{
         })
     }
     private capacity(row){
-        console.log('ccc')
         this.FnClearTimer()
         this.visible=true;
         this.operateInfo=row

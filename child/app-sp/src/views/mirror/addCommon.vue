@@ -270,10 +270,8 @@ export default class AddCommon extends Vue{
 //     }
 //   }
     private before_upload(file){
-        // console.log("before_upload",file)
     }
     private FnSuccess(response, file, fileList){
-        // console.log("response",response)
     }
     @Watch('form_data.os_type')
     private watch_os_type(nv){
@@ -292,7 +290,6 @@ export default class AddCommon extends Vue{
     // @Watch("form_data",{immediate:true,deep:true})
     // private watch_form_data(){
     //     const {display_name,os_type,os_version,os_bit,customer_ids,az_id,backend_type,support_type,support_gpu_driver,os_file_type,path_md5}=this.form_data;
-    //     console.log("customer_ids",customer_ids.split(','))
     //     let obj={
     //         display_name,
     //         os_type,
@@ -313,7 +310,6 @@ export default class AddCommon extends Vue{
     //         }
     //     }
     //     this.query_url = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
-    //      console.log("this.query_url",this.query_url)
     // }
     private FnCustomer(val){
         this.form_data.customer_ids =val? val.join(',') : ''

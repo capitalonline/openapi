@@ -139,7 +139,6 @@ export default class InsDetail extends Vue{
     this.fn_search()
   }
   private fn_search(data:any={}){
-    console.log("fn_search",data)
     this.current = 1;
     this.search_data = data
     this.getOperateRecordList()
@@ -192,7 +191,6 @@ export default class InsDetail extends Vue{
         let key_list =['create_time','content','status_name','response','update_time','op_user']
         let label_list =['oper_time','oper_type_display','status_display','response','finish_time','oper_user']
         this.record_list = deal_list(res.data.operation_list,label_list,key_list)
-        console.log("this.record_list",this.record_list)
         
       }
       

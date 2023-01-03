@@ -126,7 +126,6 @@ export default class Index extends Vue{
                 }
                 const list=[]
                 selected_products.forEach(item=>{//最外层产品
-                    console.log("item",item)
                     item.rule_list.forEach(inn=>{//第二层规则
                         const temp=[]
                         inn.level.map(lev=>{//第三层阈值及报警级别指标项

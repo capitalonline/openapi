@@ -289,7 +289,6 @@ export default class Capacity extends Vue{
     }
     private async confirm(){
         if(this.capacity_list.length===0){
-            console.log("Aaa")
             this.$message.warning("请先勾选需要扩容的云盘")
             return;
         }

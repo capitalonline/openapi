@@ -24,7 +24,6 @@ interface prop {
 }
 
 function render (props: prop = {}) {
-  console.log('sp-render',window.__POWERED_BY_QIANKUN__ )
   const { container } = props;
   const routes = [];
   // if(props){
@@ -69,10 +68,8 @@ function render (props: prop = {}) {
 
 // 独立运行时
 if (!window.__POWERED_BY_QIANKUN__) {
-  console.log('sp-window',window.__POWERED_BY_QIANKUN__)
   store.commit('SET_QIANKUN', false)
   getUserInfo().then(() => {
-    console.log('sp','独立运行时')
     render();
   })
 }
@@ -82,10 +79,8 @@ export async function bootstrap () {
 
 export function mount (props: any={}) {
   store.commit('SET_QIANKUN', true)
-  console.log('sp-mount',window.__POWERED_BY_QIANKUN__,props)
   if(props){
     props.onGlobalStateChange((state, prev) => {
-      console.log('sp-onGlobalStateChange',state, prev);
       store.commit('SET_TOKEN',state.token)
       store.commit('SET_AUTH_INFO', state.permission_dict);
     }, true);

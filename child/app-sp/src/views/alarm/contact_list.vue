@@ -142,14 +142,12 @@ export default class ContactList extends Vue{
         //     id,
         // })
         // if(res.code===0){
-        //     console.log("aqaa");
         //     this.user_visible=true
         // }else{
             
         // }
     }
     private del(id){
-        console.log("id",id,this.contact_rows)
         if(Object.keys(id).length>0){
             this.contact_rows=[id]
         }

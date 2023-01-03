@@ -249,7 +249,6 @@ export default class Monitor extends Vue{
   private default_date_timer = [];
   // @Watch('$route',{immediate:true,deep:true})
   // private FnRoute(to,from){
-  //   console.log('route',to,from)
   // }
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
@@ -292,7 +291,6 @@ export default class Monitor extends Vue{
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
-    console.log('this.default_tab',this.default_tab)
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
@@ -497,7 +495,6 @@ export default class Monitor extends Vue{
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
-    console.log('ddd',this.default_tab)
     this.source_name = this.$route.name;
     if(sessionStorage.getItem('vm_monitor')){
       Vue.delete(this.tab_list, 'gpu');

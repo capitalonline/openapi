@@ -179,7 +179,6 @@ export default class ApplyStrategy extends Vue{
     }
     created() {
         this.getContactGroupList('')
-        console.log("this.enable",this.list)
     }
     private valid(name){
         this.$nextTick(()=>{
@@ -262,7 +261,6 @@ export default class ApplyStrategy extends Vue{
     }
     //设置可用区ID
     // private get_az_id(val){
-    //     console.log("get_az_id",val)
     //     const {region_info,region_key} = val
     //     this.form_data={...this.form_data,az:region_key}
     // }

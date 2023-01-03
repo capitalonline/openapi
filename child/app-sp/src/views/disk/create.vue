@@ -356,7 +356,6 @@ export default class CreateDisk extends Vue{
     }
     //是否开启计费
     private changeBillMode(val){
-        // console.log("changeBillMode",val)
         this.form_data.is_bill = val
         this.form_data.ecs_id=""
         this.get_instance_list()
@@ -625,7 +624,6 @@ export default class CreateDisk extends Vue{
         })
         });
         
-        // console.log("origin_size",min,origin_size,)
         // let size = origin_size ? origin_size : min;
         // // if(!origin_size)this.$set(this.form_data.disk_list[index],'disk_size',size);
         // // if(!origin_size)this.$refs.size[index].value = 128;

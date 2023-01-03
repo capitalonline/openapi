@@ -36,7 +36,6 @@ export default class EditName extends Vue{
     private new_name:string = this.name.disk_name
     private async confirm(){
         if(this.new_name.trim().length<2){
-            console.log("this.new_name.trim()",this.new_name.trim())
             return;
         }
         let res:any =await Service.edit_disk_name({

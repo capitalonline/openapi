@@ -318,7 +318,6 @@ export default class updateDisk extends Vue {
   }
   @Watch('spec_family_id')
   private FnChangeFamily(newVal) {
-    console.log('newVal', newVal)
     if (newVal) {
       this.data_disk_list = [];
       this.FnGetDiskInfo();

@@ -37,7 +37,6 @@ export default new Vuex.Store({
       state.qiankun = flag;
     },
     SET_TOKEN (state, token) {
-      console.log('sp-SET_TOKEN',token)
       cookie.set('cds-op-token', token);
       state.token = token;
     },
@@ -69,7 +68,6 @@ export default new Vuex.Store({
       state.host_search = data
     },
     SET_POD(state,id){
-      console.log('sp-SET_POD',storage)
       if(storage && storage.set){
         storage.set('pod_id',id)
       }

@@ -21,11 +21,7 @@ const actions:MicroAppStateActions  = initGlobalState(initialState) //初始化s
 
 // 监听actions全局公共状态数据的变化
 actions.onGlobalStateChange((state, prevState) => {
-    console.log('main-onGlobalStateChange',state)
-    // console.log("主应用变更前：", prevState);
-    // console.log("主应用变更后：", state);
-    // store.commit("SET_SUB_PARAMS", state) //将获取的最新的公共状态保存到vuex中
-    // store.commit("SET_TOKEN", state)
+   
 })
 
 export default actions

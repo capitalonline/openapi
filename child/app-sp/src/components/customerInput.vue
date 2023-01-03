@@ -28,7 +28,6 @@ export default class CustomerInput extends Vue{
     private flag:boolean=true;
     created(){
         this.customerList = [...this.list];
-        console.log("this.customerList",this.customerList,this.customers)
         this.customer_id = this.customers;
         this.getDefaultCustomerList()
     }

@@ -184,7 +184,6 @@ export default class Az extends Vue{
         if(val){
             return;
         }else{
-            console.log('changeAz');
             this.getAzList()
         }
     }

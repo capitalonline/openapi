@@ -148,11 +148,9 @@ export default class LineEchart extends Vue {
     
     if (this.data.type) {//this.data.type--double_line
       this.legend = this.data.legend.filter(item => item.indexOf(this.data.type) < 0);
-      // console.log('this.chart',this.chart_id,this.legend)//5个，lengend一一对应
     } else {
       this.legend = this.data.legend;
     }
-    // console.log('this.data.legend',this.data.legend)
     for(let i = 0; i < this.data.legend.length; i++) { // 一个legend对应两条线
       let item  = this.data.yValue[i];
       if (this.data.type) {
