@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Loading, Message } from "element-ui";
 import store from '../store';
 import uuid from '../utils/uuid';
+import cookie from '../store/cookie';
 
 let instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API
@@ -19,6 +20,10 @@ let loadingCount = 0;
 // 添加请求拦截器
 instance.interceptors.request.use(
   config => {  // 发送请求之前做些什么
+    console.log('sp-http-cookie',cookie.get('cds-op-token'))
+    console.log('sp-http-token',store.state.token)
+    console.log('sp-http-session',sessionStorage.getItem('Access-Token'))
+    console.log('sp-http-location',window.location.href)
     if (store.state.loadingStatus) {
       loadingCount++;
       loadingInstance = Loading.service(loadingOptions);

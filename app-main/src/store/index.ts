@@ -16,6 +16,7 @@ export default new Vuex.Store({
   },
   mutations: {
     SET_TOKEN (state, token) {
+      console.log('main-SET_TOKEN',token)
       cookie.set('cds-op-token', token);
       state.token = token;
     },
