@@ -37,6 +37,7 @@ export default new Vuex.Store({
       state.qiankun = flag;
     },
     SET_TOKEN (state, token) {
+      console.log('sp-SET_TOKEN',token)
       cookie.set('cds-op-token', token);
       state.token = token;
     },
