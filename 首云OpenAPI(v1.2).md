@@ -5523,7 +5523,8 @@ def create_bandwidth(regin_code, key, page, vpc_id, az_code):
         "AvailableZoneCode": "CN_Hongkong_B",
         "BandwidthType": "Bandwidth_China_Telecom",
         "BillScheme": "BandwIdth_Shared",
-        "Qos": 10
+        "Qos": 10,
+        "NETID": "cc8b3018-8b2b-11ed-b9a9-1a4f7a4e7272"
     }
     res = requests.post(url, json=body)
 ```
