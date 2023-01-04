@@ -460,7 +460,7 @@ export default class extends Vue {
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return (item.ecs_status ==="running" && item.status==="running") || item.status ==="waiting"
+      return (item.ecs_status ==="running" && item.status==="running") ||  (item.disk_status==="running" && item.ecs_status==="shutdown" && item.no_charge_shutdown_ecs) || item.status ==="waiting"
     })
     if(!flag){
       this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
