@@ -152,14 +152,14 @@
                     <span>{{scope.row.create_time ? moment(scope.row.create_time).format('YYYY-MM-DD HH:mm:ss') : ''}}</span>
                 </template>
             </el-table-column> -->
-            <el-table-column prop="operate" label="操作">
+            <el-table-column prop="operate" label="操作" width="140">
                 <template slot-scope="scope">
                     <el-tooltip placement="right" v-if="scope.row.status!=='running' || !auth_list.includes('file_capacity')" effect="light" content="只有运行中的文件系统才可以扩容">
-                        <span type="text" class="not-clickable">扩容</span> 
+                        <span type="text" class="not-clickable m-right10">扩容</span> 
                     </el-tooltip>
                     <el-button type="text" v-else @click="capacity(scope.row)">扩容</el-button> 
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">删除</el-button>  -->
-                    <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>  -->
+                    <el-button type="text" @click="record(scope.row)">操作记录</el-button> 
                 </template>
             </el-table-column>
         </el-table>
@@ -174,6 +174,9 @@
         </el-pagination>
         <template v-if="visible">
             <capacity :visible.sync="visible" :info="operateInfo"></capacity>
+        </template>
+        <template v-if="recordVisible">
+            <record :visible="recordVisible" :record_id="operateInfo.nas_id" :type="'nas'" @close="closeRecord"></record>
         </template>
         <custom-list-item
             :visible.sync="show_custom" 
@@ -194,14 +197,15 @@ import Clipboard from '../../components/clipboard.vue'
 import Capacity from './capacity.vue';
 import {trans,deal_list} from '../../utils/transIndex';
 import CustomListItem from '../physical/customListItem.vue';
-// import 
+import Record from '../instance/record.vue'
 @Component({
     components:{
         ActionBlock,
         SvgIcon,
         Clipboard,
         Capacity,
-        CustomListItem
+        CustomListItem,
+        Record
     }
 })
 export default class List extends Vue{
@@ -224,6 +228,7 @@ export default class List extends Vue{
     private operateInfo:any={}
     private clear=null
     private visible:boolean=false;
+    private recordVisible:boolean=false
     private show_custom:boolean=false;
     private all_item:Array<any>=[];
     private all_column_item=[];
@@ -392,6 +397,14 @@ export default class List extends Vue{
         }else{
             return value.toFixed(2) + this.units[num];
         }        
+    }
+    private record(row){
+        this.FnClearTimer()
+        this.recordVisible=true;
+        this.operateInfo=row
+    }
+    private closeRecord(){
+        this.recordVisible=false;
     }
     beforeDestroy() {
         this.FnClearTimer()

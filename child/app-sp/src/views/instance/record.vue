@@ -36,7 +36,7 @@
           </el-table-column>
           <el-table-column prop="oper_type_display" label="操作内容"></el-table-column>
           <el-table-column prop="status_display" label="状态"></el-table-column>
-          <el-table-column prop="response" label="响应信息" v-if="!['message'].includes(type)">
+          <el-table-column prop="response" label="响应信息" v-if="!['message','nas'].includes(type)">
             <template slot-scope="scope">
               <el-button type="text" @click="view(scope.row.result)" v-if="scope.row.result">查看</el-button>
               <span v-else>-</span>
@@ -53,7 +53,7 @@
               <span>{{scope.row.finish_time ? moment(scope.row.finish_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="oper_user" label="用户名"></el-table-column>
+          <el-table-column prop="oper_user" :label="type==='nas' ? '操作用户' :'用户名'"></el-table-column>
           <el-table-column prop="flag_display" label="操作标识" v-if="!['physical','message'].includes(type)"></el-table-column>
         </el-table>
         <el-pagination
@@ -80,7 +80,8 @@ import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from '../../https/instance/record_detail';
 import p_service from '../../https/physical/list';
-import m_service from '../../https/mirror/list'
+import m_service from '../../https/mirror/list';
+import n_service from '../../https/filesystem/list'
 import moment from 'moment';
 import {deal_list} from '../../utils/transIndex';
 import SvgIcon from '../../components/svgIcon/index.vue'
@@ -177,6 +178,10 @@ export default class InsDetail extends Vue{
         page_size:this.size,                                                                         
         page_index:this.current,
         
+      })
+    }else if(this.type==='nas'){
+      res = await n_service.get_nas_record({
+        ...req
       })
     }else{
       res = await Service.get_operate_record_list({
