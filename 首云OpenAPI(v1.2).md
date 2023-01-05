@@ -13561,6 +13561,7 @@ def ecs_family_info():
 | AvailableZoneCode | string | CN_Dongguan_A                                      | 可用区code                          |
 | CreateTime        | string | 2022-08-30 12:30:48                                | 创建时间                            |
 | OsSize            | int    | 40                                                 | 镜像容量(GB)                        |
+| IsOptimized       | int    | 1                                                  | 镜像是否开启优化选项，1为开启，0为未开启 |
 
 **请求示例**
 
@@ -13607,7 +13608,8 @@ def image_info():
                 "OsVersion": "20.04",
                 "CreateTime": "2022-01-24 17:46:17",
                 "OsSize": 24,
-                "AvailableZoneCode": "CN_DaBieShan_A"
+                "AvailableZoneCode": "CN_DaBieShan_A",
+                "IsOptimized": 1
             }
         ]
     },
@@ -14632,6 +14634,7 @@ def change_ecs_name():
 | EcsId       | 必选 | string | 实例ID       |
 | Name        | 必选 | string | 镜像名称     |
 | TestAccount | 可选 | string | 测试项目名称 |
+| IsOptimized | 可选 | int    | 1：优化镜像，0：不优化镜像，默认为0 |
 
 **返回参数**
 
@@ -15753,6 +15756,7 @@ def describe_event():
 | CreateTime        | Date   | 2022-10-10 07:45:42             | 快照创建时间                                                 |
 | ReservedTime      | string | 1                               | Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
 | SnapshotStatus    | string | 0                               | 快照状态                                                     |
+| IsOptimized       | int    | 1                               | 是否开启优化选项，1为开启，0为未开启。                       |
 
 **请求示例**
 
@@ -15792,7 +15796,8 @@ def describe_snapshot_list():
                 "CreateTime": "2022-10-10 11:18:49",
                 "RegionCode": "CN_Huhhot",
                 "AvailableZoneCode": "CN_Hohhot_B",
-                "DiskProperty": "data"
+                "DiskProperty": "data",
+                "IsOptimized": 1
             }
         ]
     },
@@ -15837,6 +15842,7 @@ def describe_snapshot_list():
 | CreateTime        | Date   | 2022-10-10 07:45:42             | 快照创建时间                                                 |
 | ReservedTime      | string | 1                               | Forever:永久保留，当云盘删除时快照跟随云盘删除；具体数字为保留天数。 |
 | SnapshotStatus    | string | 0                               | 快照状态                                                     |
+| IsOptimized       | int    | 1                               | 是否开启优化选项，1为开启，0为未开启。                       |
 
 **请求示例**
 
@@ -15875,7 +15881,8 @@ def describe_snapshot_detail():
             "CreateTime": "2022-10-10 11:18:49",
             "RegionCode": "CN_Huhhot",
             "AvailableZoneCode": "CN_Hohhot_B",
-            "DiskProperty": "data"
+            "DiskProperty": "data",
+            "IsOptimized": 1
         }
     }
 }
@@ -16104,6 +16111,7 @@ def ebs_describe_snapshot_chain():
 | DiskId       | 云盘ID       | string | 是       | disk-1i5ybswrg8zrj9le                                        |
 | SnapshotName | 快照名称     | string | 否       | 不传默认与快照id一致，快照名称允许使用2-128个字符，不允许使用auto作为开头，允许大小写字母、数字、汉字和“-” |
 | ReservedTime | 快照保留时间 | string | 否       | 不传递该参数默认为1。Forever:永久保留，当云盘删除时快照不随随云盘删除；具体数字为保留天数。 |
+| IsOptimized  | 优化快照选项 | int    | 否       | 1：优化快照，0：不优化快照 默认为0。                         |
 
 **返回参数**
 
@@ -16278,6 +16286,7 @@ def rename_snapshot():
 | 参数        | 说明     | 类型 | 是否必传 | 示例                          |
 | ----------- | -------- | ---- | -------- | ----------------------------- |
 | SnapshotIds | 快照列表 | list | 是       | ["snapshotid1","snapshotid2"] |
+| DeleteBindImages | 删除快照关联的镜像 | Boolean | 否 | true：删除快照时，删除对应的镜像，false：删除快照时不影响镜像 |
 
 **返回参数**
 
@@ -16393,6 +16402,7 @@ def ebs_describe_snapshot_quota():
 | ---------- | -------- | ------ | -------- | --------- |
 | SnapshotId | 快照ID   | string | 是       | s-disk-** |
 | ImageName  | 镜像名称 | string | 是       | 镜像名称  |
+| IsOptimized | 优化加速选项 | int | 否     | 1：优化加速，0：不优化加速，默认为0 |
 
 **返回参数**
 
