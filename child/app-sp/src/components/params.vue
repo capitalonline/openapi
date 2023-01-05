@@ -86,13 +86,11 @@ export default class Params extends Vue {
   private FnWatchRel(newVal) {
     this.dependent_params = newVal;
     this.FnEmit()
-    console.log('Watch', newVal)
   }
 
   mounted() {
     this.dependent_params = this.params;
     this.FnEmit()
-    console.log('Mounted')
   }
 }
 </script>

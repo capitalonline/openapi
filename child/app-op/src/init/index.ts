@@ -3,7 +3,6 @@ import { get_user_info } from '../https/public'
 
 export async function getUserInfo() {
   let index = window.location.href.indexOf('token=');
-  console.log('index',index);
   
   let token = '';
   if (index >= 0) {
@@ -11,8 +10,6 @@ export async function getUserInfo() {
   }
   if(!token){
     token = sessionStorage.getItem('Access-Token')
-    console.log('token',token);
-    
   }
   if (token) {
     store.commit('SET_TOKEN', token)

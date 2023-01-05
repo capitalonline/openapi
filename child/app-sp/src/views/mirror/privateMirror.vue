@@ -216,7 +216,6 @@ export default class PrivateMirror extends Vue{
         this.getMirrorList()
     }
     private filterAttribute(obj:any){
-        console.log("obj",obj)
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
         

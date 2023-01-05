@@ -36,7 +36,7 @@
           </el-table-column>
           <el-table-column prop="oper_type_display" label="操作内容"></el-table-column>
           <el-table-column prop="status_display" label="状态"></el-table-column>
-          <el-table-column prop="response" label="响应信息" v-if="!['message'].includes(type)">
+          <el-table-column prop="response" label="响应信息" v-if="!['message','nas'].includes(type)">
             <template slot-scope="scope">
               <el-button type="text" @click="view(scope.row.result)" v-if="scope.row.result">查看</el-button>
               <span v-else>-</span>
@@ -53,7 +53,7 @@
               <span>{{scope.row.finish_time ? moment(scope.row.finish_time).format("YYYY-MM-DD HH:mm:ss") : ''}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="oper_user" label="用户名"></el-table-column>
+          <el-table-column prop="oper_user" :label="type==='nas' ? '操作用户' :'用户名'"></el-table-column>
           <el-table-column prop="flag_display" label="操作标识" v-if="!['physical','message'].includes(type)"></el-table-column>
         </el-table>
         <el-pagination
@@ -82,6 +82,7 @@ import Service from '../../https/instance/record_detail';
 import p_service from '../../https/physical/list';
 import m_service from '../../https/mirror/list';
 import snapshot_service from '../../https/snapshot/list'
+import n_service from '../../https/filesystem/list'
 import moment from 'moment';
 import {deal_list} from '../../utils/transIndex';
 import SvgIcon from '../../components/svgIcon/index.vue'
@@ -140,7 +141,6 @@ export default class InsDetail extends Vue{
     this.fn_search()
   }
   private fn_search(data:any={}){
-    console.log("fn_search",data)
     this.current = 1;
     this.search_data = data
     this.getOperateRecordList()
@@ -188,7 +188,11 @@ export default class InsDetail extends Vue{
         task_type:data.content,
         page_size:this.size,                                                                         
         page_index:this.current,
+      })
         
+    }else if(this.type==='nas'){
+      res = await n_service.get_nas_record({
+        ...req
       })
     }else{
       res = await Service.get_operate_record_list({
@@ -203,7 +207,6 @@ export default class InsDetail extends Vue{
         let key_list =['create_time','content','status_name','response','update_time','op_user']
         let label_list =['oper_time','oper_type_display','status_display','response','finish_time','oper_user']
         this.record_list = deal_list(res.data.operation_list,label_list,key_list)
-        console.log("this.record_list",this.record_list)
         
       }
       

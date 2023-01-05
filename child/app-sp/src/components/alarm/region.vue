@@ -206,7 +206,6 @@ export default class Region extends Vue{
                         if(this.form_data.regions.includes(inn.region_id)){//当前这个区域被勾选
                             let ids = inn.az_list.map(az=>az.az_id)
                             let fil = this.form_data.az.filter(az=>ids.includes(az))
-                            // console.log("fil",fil)
                             if(fil.length===0){
                                 temp=[...temp,...ids]
                             }else{

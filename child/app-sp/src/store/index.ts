@@ -28,7 +28,7 @@ export default new Vuex.Store({
 
     ],
     host_search:{},
-    pod_id:storage.get('pod_id') || '',
+    pod_id:storage && storage.get ? storage.get('pod_id') : '',
   },
   getters: {
   },
@@ -68,7 +68,9 @@ export default new Vuex.Store({
       state.host_search = data
     },
     SET_POD(state,id){
-      storage.set('pod_id',id)
+      if(storage && storage.set){
+        storage.set('pod_id',id)
+      }
       state.pod_id = id
     }
 

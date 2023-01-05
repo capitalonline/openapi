@@ -47,7 +47,6 @@ export default class Monitor extends Vue{
     private chartData:any={};
     private getTime(val){
         this.time = val;
-        console.log('this.time',this.time)
         this.get_info()
     }
     private units=['B','KB','MB','GB','TB','PB','EB','ZB'];
@@ -64,7 +63,6 @@ export default class Monitor extends Vue{
         }else{
             return value.toFixed(2) + this.units[num];
         }
-        // console.log("computeUnit",value.toFixed(2) + this.units[num])
         
     }
     private get_info(){

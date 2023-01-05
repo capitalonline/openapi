@@ -160,7 +160,6 @@ export default class List extends Vue{
         this.search(this.search_data)
     }
     private async getNasList(loading:boolean=true){
-        console.log('###',this.search_data.customersub,this.search_data.customer)
         let label = this.search_data.customersub ? this.search_data.customersub : 'customer_id';
         let label1 = this.search_data.nassub ? this.search_data.nassub : 'nas_id'
         let res:any = await Service.get_not_use_list({
@@ -189,7 +188,6 @@ export default class List extends Vue{
           let size = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].used ? res.data[item.nas_id].used : 0);
           let total = this.computeUnit(res.data[item.nas_id]&& res.data[item.nas_id].total ? (res.data[item.nas_id].total) : 0);
           let num:any = res.data[item.nas_id]&&res.data[item.nas_id].used && res.data[item.nas_id].total ? (Number(res.data[item.nas_id].used/res.data[item.nas_id].total)*100).toFixed(2) : 0.00
-          console.log('num',num)
           this.$set(item,'used_percent',`${num}%`)
           this.$set(item,'use_total_size',`${size} / ${total}`)
         })
@@ -198,7 +196,6 @@ export default class List extends Vue{
     private search(data:any={}){
         this.current = 1;
         this.search_data={...data}
-        console.log('this.search_data',this.search_data)
         this.getNasList()
     }
     private refresh(){

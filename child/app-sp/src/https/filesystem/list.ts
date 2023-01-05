@@ -55,5 +55,8 @@ export default{
     get_field(req){
         return service(getNasOptions('GET','/nas/get_nas_list_field',req))
     },
-
+    //获取自定义列表项
+    get_nas_record(req){
+        return service(getNas1Options('GET','/op_log/history_record',req))
+    },
 }

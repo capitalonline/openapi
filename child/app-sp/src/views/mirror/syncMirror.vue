@@ -112,7 +112,6 @@ export default class SyncMirror extends Vue{
             for(let i in temp){
                 temp[i].map(item=>{
                     az_info[item.region_group_name] = {...az_info[item.region_group_name],[item.az_id]:{...item,label:i}};//同一区域拼接
-                    // console.log("this.az_info",this.az_info)
                 })
             }
             let list_temp:any=[];
@@ -123,7 +122,6 @@ export default class SyncMirror extends Vue{
                 }
                 list_temp.push({name:i,data:temp_list,checkList:[],len:temp_list.filter(inn=>inn.label==='not_available_az_list').length,id:Math.random()*1000})
             }
-            console.log("list",list_temp)
             this.list = list_temp;
         }
     }

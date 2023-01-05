@@ -116,7 +116,6 @@ export default class InsDetail extends Vue{
   }
   private confirm(){
       const form = this.$refs.form as Form
-      console.log("form",form)
       form.validate(async (valid:boolean)=>{
           if(valid){
             if(this.id===""){

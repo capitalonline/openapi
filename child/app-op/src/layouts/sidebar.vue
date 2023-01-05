@@ -116,7 +116,6 @@ export default class SideBar extends Vue {
   
   private created() {    
     this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);
-    console.log('this.routes',this.routes)
     this.all_menu.forEach(item => {
       if (item.children) {
         let child_list = []

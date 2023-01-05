@@ -127,7 +127,6 @@ export default class CommonMirror extends Vue{
     private visible:boolean=false
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
-        console.log('this.auth_list',this.auth_list)
         this.search()
     }
     @Watch('visible')

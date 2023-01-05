@@ -26,6 +26,13 @@ interface prop {
 function render (props: prop = {}) {
   const { container } = props;
   const routes = [];
+  // if(props){
+  //   props.onGlobalStateChange((state, prev) => {
+  //     // state: 变更后的状态; prev 变更前的状态
+      
+  //   },true)
+  // }
+  
   for (const item of all_routes) {
     if (store.state.auth_info[item.name]) {
       routes.push(item)
@@ -70,11 +77,15 @@ if (!window.__POWERED_BY_QIANKUN__) {
 export async function bootstrap () {
 }
 
-export function mount (props: any) {
+export function mount (props: any={}) {
   store.commit('SET_QIANKUN', true)
-  props.onGlobalStateChange((state, prev) => {
-    store.commit('SET_AUTH_INFO', state.permission_dict);
-  }, true);
+  if(props){
+    props.onGlobalStateChange((state, prev) => {
+      store.commit('SET_TOKEN',state.token)
+      store.commit('SET_AUTH_INFO', state.permission_dict);
+    }, true);
+  }
+  
   render(props)
 }
 

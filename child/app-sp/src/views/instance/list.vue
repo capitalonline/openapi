@@ -696,7 +696,6 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
-    console.log('this.search_status',this.search_status,this.ecs_status_list);
     
     let reqData = {
       billing_method:

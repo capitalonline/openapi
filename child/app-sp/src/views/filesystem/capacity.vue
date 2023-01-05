@@ -112,7 +112,6 @@ export default class RollBack extends Vue{
         }else{//GB,GB
             flag=this.size>Number(this.min.toFixed(2))
         }
-        console.log('flag',flag)
         return flag
     }
     private computeUnit(value,num=0){

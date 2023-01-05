@@ -628,7 +628,17 @@ export default class CreateDisk extends Vue{
             }
             return item;
         })
-        this.getDiskFee()
+        
+        // let size = origin_size ? origin_size : min;
+        // // if(!origin_size)this.$set(this.form_data.disk_list[index],'disk_size',size);
+        // // if(!origin_size)this.$refs.size[index].value = 128;
+        // this.form_data.disk_list[index].iops = getIops(this.data_disk_info[id],size).iops;
+        // this.form_data.disk_list[index].throughput = getIops(this.data_disk_info[id],size).throughput;
+        /**
+         * todo
+         * 解决只改一次调两次获取价格接口
+         */
+        this.form_data.is_bill==='1' && this.getDiskFee()
     }
     private createConfirm(){
         const form = this.$refs.form as Form;

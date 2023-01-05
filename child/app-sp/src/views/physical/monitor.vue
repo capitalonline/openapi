@@ -356,7 +356,6 @@ export default class Monitor extends Vue{
     return obj
   }
   private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
-    console.log('resData',resData)
     let index = 0;
     let timeIndex:number=0
       resData.forEach((item: any) => {
@@ -381,7 +380,6 @@ export default class Monitor extends Vue{
         index++;
       })
       this[type].resize++;
-      console.log('this[type]',this[type])
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];

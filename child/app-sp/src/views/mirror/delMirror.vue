@@ -57,7 +57,6 @@ export default class DelCommonMirror extends Vue{
     @Prop()type!:string;
     private alert_msg:string=this.type==='del' ? "将删除该镜像在全部可用区的文件。镜像删除后，客户将无法使用该镜像进行创建实例与重装操作系统操作，确定要执行删除操作吗？" : '镜像删除后，客户将无法在删除可用区使用该镜像进行创建实例与重装操作系统操作，确定要执行删除操作吗？'
     created(){
-        console.log("this",this.rows)
     }
     private async confirm(){
         let res:any

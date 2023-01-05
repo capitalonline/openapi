@@ -209,7 +209,6 @@ export default class CommonMirror extends Vue{
         this.search(this.search_data)
     }
     private handle(obj,label){
-        console.log("handle",obj,label)
         this[label](obj)
         // if(label==='edit'){
         //     this.edit(obj)
@@ -280,7 +279,6 @@ export default class CommonMirror extends Vue{
     }
     setCellStyle(row, column, rowIndex, columnIndex){
         if(columnIndex==5){
-            console.log('aaa')
             return {"color":"red"}
         }
     }

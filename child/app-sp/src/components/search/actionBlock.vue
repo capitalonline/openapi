@@ -116,7 +116,6 @@ export default class ActionBlock extends Vue {
     this.$nextTick(()=>{
       let search = this.$refs.search as any
       let hei = window.getComputedStyle(search).height.replace('px','')
-      console.log("hei",hei,parseInt(hei))
       if(parseInt(hei) >52 && this.isOpen){//超过一行，展开的情况下折叠
         this.isOpen=false;//折叠
       }

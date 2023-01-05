@@ -88,7 +88,6 @@ export default class InsDetail extends Vue{
   
   created() {
     this.getContactList('')
-    console.log("created",this.id)
     if(this.id!==""){
       this.get_contact_group_detail()
     }
@@ -101,7 +100,6 @@ export default class InsDetail extends Vue{
     })
     if(res.code==='Success'){
         this.contact_list = trans(res.data.datas,"name",'id','label','key')
-        console.log("this.contact_list",this.contact_list.length)
     }
   }
   private async get_contact_group_detail(){
@@ -117,7 +115,6 @@ export default class InsDetail extends Vue{
     }
   }
   private filterMethod(query, item) {
-      // console.log("query",query,item)
       // this.getContactList(query)
       return item.label.indexOf(query) > -1;
     }
