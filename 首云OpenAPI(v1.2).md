@@ -14403,7 +14403,7 @@ def create_ecs():
 | 参数   | 要求 | 类型   | 说明                                                         |
 | ------ | ---- | ------ | ------------------------------------------------------------ |
 | EcsIds | 必选 | list   | 云服务器id列表                                               |
-| OpType | 必选 | string | 操作类型：<br/>开机:"start_up_ecs" <br/>关机:"shutdown_ecs"<br/>重启:"restart_ecs"<br/>强制关机:"hard_shutdown_ecs"<br/>不计费关机:"free_shutdown_ecs" |
+| OpType | 必选 | string | 操作类型：<br/>开机:"start_up_ecs" <br/>关机:"shutdown_ecs"<br/>重启:"restart_ecs"<br/>强制关机:"hard_shutdown_ecs"<br/>不计费关机:"free_shutdown_ecs",不计费关机:"free_shutdown_ecs"，仅按需计费的云盘实例支持关机不计费，再开机公网IP可能会变化；若批量操作关机：支持关机不收费的实例，关机后停止 CPU、内存、GPU和公网收费；不支持关机不收费的实例，正常关机，继续收费；不计费关机期间不支持除开机、删除、定制镜像外的操作。目前关机不计费白名单开放，若需要请联系商务。 |
 
 **返回参数**
 
