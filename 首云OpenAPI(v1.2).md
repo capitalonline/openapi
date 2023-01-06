@@ -15830,7 +15830,7 @@ def describe_snapshot_list():
 | PageNumber        | int    | 1                               | 当前页数                                                     |
 | PageSize          | int    | 1                               | 每页数据条数                                                 |
 | TotalCount        | int    | 10                              | 总记录数                                                     |
-| SnapshotList      | list   | []                              | 快照id列表                                                   |
+| SnapshotInfo      | dict   | {}                              | 快照信息                                                   |
 | RegionCode        | string | CN_Suqian                       | 地域Code                                                     |
 | AvailableZoneCode | string | CN_Suqian_A                     | 可用区Code                                                   |
 | SnapshotId        | string | s-disk-xftwc38r6ja63wr8-zg0y-01 | 快照ID                                                       |
