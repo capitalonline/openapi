@@ -97,7 +97,8 @@
       <!-- <el-table-column prop="az_name" label="可用区"></el-table-column> -->
       <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="ecs_status_list">
         <template #default="scope">
-          <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+          <div :class="scope.row.status">{{ scope.row.status_display }}</div>
+          <div class="warning_message" v-if="scope.row.no_charge_shutdown_ecs && scope.row.status==='shutdown'">关机不计费</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -118,7 +119,7 @@
         <template #default="scope">
           <div v-if="scope.row.private_net">
             {{ scope.row.private_net }}
-            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
           </div>
         </template>
@@ -136,7 +137,7 @@
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
             </span>
             {{ scope.row.pub_net }}
-            （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
           </div>
           <div v-for="item in scope.row.virtual_net" :key="item">
@@ -149,7 +150,7 @@
               {{ scope.row.eip_info[item].conf_name }}
             </span>
             {{ item }}
-            （vlan {{ scope.row.eip_info[item].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[item].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(item)] }}） -->
           </div>
         </template>
@@ -844,6 +845,11 @@ export default class App extends Vue {
         }
       if (type === "update_spec" && this.is_gpu) {
         this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
+        flag = false;
+        break;
+      }
+      if(['update_spec','update_system'].includes(type) && item.no_charge_shutdown_ecs){
+        this.$message.warning(`不允许对关机不计费的实例${operate_info.label}操作！`);
         flag = false;
         break;
       }
