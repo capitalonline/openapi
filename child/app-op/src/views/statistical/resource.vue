@@ -35,14 +35,14 @@
             </el-table-column>
             <el-table-column prop="vpc_id" label="VPC">
                 <template slot-scope="scope">
-                    <div class="not-clickable">{{scope.row.vpc_id}}</div>
-                    <div>{{scope.row.vpc_name}}</div>
+                    <div>{{scope.row.vpc_id}}</div>
+                    <div class="not-clickable">{{scope.row.vpc_name}}</div>
                 </template>
             </el-table-column>
             <el-table-column prop="subnet_id" label="子网">
                 <template slot-scope="scope">
-                    <div class="not-clickable">{{scope.row.subnet_id}}</div>
-                    <div>{{scope.row.subnet_name}}</div>
+                    <div>{{scope.row.subnet_id}}</div>
+                    <div class="not-clickable">{{scope.row.subnet_name}}</div>
                 </template>
             </el-table-column>
             <el-table-column prop="mount_path" label="挂载地址" width="180"></el-table-column>
