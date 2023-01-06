@@ -14403,7 +14403,7 @@ def create_ecs():
 | 参数   | 要求 | 类型   | 说明                                                         |
 | ------ | ---- | ------ | ------------------------------------------------------------ |
 | EcsIds | 必选 | list   | 云服务器id列表                                               |
-| OpType | 必选 | string | 操作类型：<br/>开机:"start_up_ecs" <br/>关机:"shutdown_ecs"<br/>重启:"restart_ecs"<br/>强制关机:"hard_shutdown_ecs" |
+| OpType | 必选 | string | 操作类型：<br/>开机:"start_up_ecs" <br/>关机:"shutdown_ecs"<br/>重启:"restart_ecs"<br/>强制关机:"hard_shutdown_ecs"<br/>不计费关机:"free_shutdown_ecs" |
 
 **返回参数**
 
