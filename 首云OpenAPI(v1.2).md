@@ -88,7 +88,7 @@
        * [2.CreateVPC](#2createvpc)
        * [3.DeleteVPC](#3deletevpc)
        * [4.DescribeSubnet](#4describesubnet)
-       * [5.CreateSubNet](#5createsubnet)
+       * [5.CreateSubnet](#5createsubnet)
        * [6.DeleteSubnet](#6deletesubnet)
        * [7.DescribeVirtualGateWay](#7describevirtualgateway)
        * [8.CreateVirtualGateWay](#8createvirtualgateway)
@@ -4526,9 +4526,9 @@ def describe_subnet(region_code, key, page, vpc_id, az_code):
     res = requests.post(url, json=body)
 ```
 
-### 5.CreateSubNet
+### 5.CreateSubnet
 
-  **Action:CreateSubNet**
+  **Action:CreateSubnet**
 
   **描述：** 创建一个子网
 
