@@ -89,7 +89,7 @@
        * [3.DeleteVPC](#3deletevpc)
        * [4.DescribeSubnet](#4describesubnet)
        * [5.CreateSubNet](#5createsubnet)
-       * [6.DeleteSubNet](#6deletesubnet)
+       * [6.DeleteSubnet](#6deletesubnet)
        * [7.DescribeVirtualGateWay](#7describevirtualgateway)
        * [8.CreateVirtualGateWay](#8createvirtualgateway)
        * [9.DeleteVirtualGateWay](#9deletevirtualgateway)
@@ -4598,9 +4598,9 @@ def create_subnet():
     res = requests.post(url, json=body)
 ```
 
-### 6.DeleteSubNet
+### 6.DeleteSubnet
 
-  **Action:DeleteSubNet**
+  **Action:DeleteSubnet**
 
   **描述：** 删除一个子网
 
