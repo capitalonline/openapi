@@ -11,6 +11,9 @@
                 :prop="item.prop" 
                 :label="item.label" 
                 :max-height="tableHeight"
+                :column-key="item.prop"
+                :filters ="item.column_key? item.filters : null"
+                :filter-multiple="true"
             >   
                 <template #default="scope" v-if="item.prop==='snapshot_chains_id'">
                     <div>
@@ -106,7 +109,8 @@ import { Component, Vue,Watch } from 'vue-property-decorator';
 import Service from '../../https/snapshot/list';
 // import Clipboard from '../../components/clipboard.vue';
 import SearchBar from '../../components/search/actionBlock.vue'
-
+import {trans} from '../../utils/transIndex'
+import d_Service from '../../https/disk/list';
 interface Page{
     page_size:number,
     page_index:number,
@@ -126,6 +130,8 @@ export default class Chains extends Vue {
             {type:'disk_info',label:'云盘名称/ID'},
             {type:'instance_info',label:'实例名称/ID'},
         ],type:'composite',width:340},
+        customer_id:{placeholder:'请输入客户ID'},
+        customer_name:{placeholder:'请输入客户名称'},
     }
     private action_btns:Array<string>=['refresh']
     private tableHeight = 200
@@ -139,7 +145,7 @@ export default class Chains extends Vue {
         {prop:'snapshot_chains_id',label:'快照链ID'},
         {prop:'instance_id',label:'实例名称/ID'},
         {prop:'disk_id',label:'云盘名称/ID'},
-        {prop:'disk_status_cn',label:'云盘状态'},
+        {prop:'disk_status_cn',label:'云盘状态',column_key:'disk_status',filters:[]},
         {prop:'disk_size',label:'属性/容量'},
         {prop:'az_name',label:'可用区'},
         {prop:'snapshot_number',label:'快照数量'},
@@ -156,6 +162,7 @@ export default class Chains extends Vue {
     private search_data:any={};
     private timer=null
     created() {
+        this.get_disk_state();
         this.getSnapshotChainsList()
         // this.getSnapshotChainsList('created');
     }
@@ -165,6 +172,14 @@ export default class Chains extends Vue {
         return;
       }
       this.FnSearch(this.search_data)
+    }
+    //获取云盘状态列表
+    private async get_disk_state(){
+        let res:any = await d_Service.get_disk_state({})
+        if(res.code==="Success"){
+            this.column_list[5].filters = trans(res.data,'status_name','status','text','value') 
+
+        }
     }
     private FnSearch(data:any={}){
         this.FnClearTimer()
@@ -182,6 +197,8 @@ export default class Chains extends Vue {
         }
         let res:any = await Service.get_snapshot_chains_list({
             pod_id:this.$store.state.pod_id,
+            customer_id:this.search_data.customer_id,
+            customer_name:this.search_data.customer_name,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
             [this.search_data.typesub]:this.search_data.type,

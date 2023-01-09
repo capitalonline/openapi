@@ -5,6 +5,11 @@
         <el-button v-for="item in operateBtns" :key="item.value" type="primary" @click="handleBtn(item.value)" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-button>
       </template>
     </action-block>
+    <div class="icon m-bottom10">
+      <el-tooltip content="导出" placement="bottom" effect="light">
+        <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
+      </el-tooltip>
+    </div>
     <el-table
       :data="disk_list"
       border
@@ -64,6 +69,8 @@
           <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="cluster" label="所属集群"></el-table-column>
+      <el-table-column prop="storage" label="Storage Pool"></el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
@@ -105,7 +112,7 @@
     <template v-if="visible && operate_type==='edit_name'">
       <edit-name :visible="visible" :name="mount_id[0]" @close = "close_disk" />
     </template>
-    <template v-if="visible && (operate_type==='delete' || operate_type==='restore' || operate_type==='destroy' || operate_type==='open_bill')">
+    <template v-if="visible && ['delete','restore','destroy','open_bill','migrate'].includes(operate_type)">
       <Common :visible="visible" :mount_id="mount_id" :title="common_operate[operate_type]" @close = "close_disk" />
     </template>
   </div>
@@ -124,6 +131,7 @@ import Common from './commonDialog.vue'
 import {Table} from 'element-ui'
 import Service from '../../https/disk/list';
 import {trans} from '../../utils/transIndex'
+import SvgIcon from '../../components/svgIcon/index.vue';
 @Component({
   components:{
     ActionBlock,
@@ -133,7 +141,8 @@ import {trans} from '../../utils/transIndex'
     EditAttr,
     EditName,
     Common,
-    ConfirmBox
+    ConfirmBox,
+    SvgIcon
   }
 })
 export default class extends Vue {
@@ -153,6 +162,8 @@ export default class extends Vue {
     // status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
+    storage:{placeholder:'请选择Storage Pool',list:[]},
+    cluster: {placeholder:'请输入集群名称',list:[]},
   }
   private visible:Boolean = false;
   private operate_type:string=""
@@ -164,7 +175,8 @@ export default class extends Vue {
     delete:'逻辑删除',
     restore:'恢复',
     destroy:'销毁',
-    open_bill:'开启计费'
+    open_bill:'开启计费',
+    migrate:'迁移'
   }
  
   private operateBtns=[
@@ -199,6 +211,10 @@ export default class extends Vue {
     {
       label:'开启计费',
       value:'open_bill'
+    },
+    {
+      label:'迁移',
+      value:'migrate'
     },
   ]
   private req_data:any={}
@@ -457,6 +473,10 @@ export default class extends Vue {
     this.operate_type=str
     this.visible = true
   }
+  private migrate(){
+    this.operate_type='migrate'
+    this.visible = true
+  }
   //扩容
   private disk_capacity(){
     if(!this.judge_disk('az_name',this.mount_id[0].az_name)){
@@ -518,6 +538,10 @@ export default class extends Vue {
     }else if(label==="open_bill"){
       return obj.status==="waiting" && obj.is_charge===0 && this.auth_list.includes(label)
     }
+  }
+  //导出
+  private down(){
+
   }
   private close_disk(val:string='1'){
     this.visible = false
