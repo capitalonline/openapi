@@ -14,7 +14,7 @@
             :data="list" 
             border 
         >
-            <el-table-column prop="customer_id" label="序号" width="45">
+            <el-table-column prop="customer_id" label="序号" width="80">
                 <template slot-scope="scope">
                     <span>{{ scope.row.index }}</span>
                 </template>
