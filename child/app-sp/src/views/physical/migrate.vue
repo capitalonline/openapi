@@ -140,7 +140,7 @@ export default class Migrate extends Vue{
         let status_list = data[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
         let list:any=[]
         status_list.map(item=>{
-            if(item.is_gpu && item.status==='已关机'){
+            if(item.is_gpu && item.status==='已关机' && !item.no_charge_shutdown_ecs){
                 list.push(item.ecs_id)
             }else if(!item.is_gpu &&item.disk_info && item.disk_info.system){
                 if(Object.keys(item.disk_info.system)[0]!=='local'){//cpu云盘
