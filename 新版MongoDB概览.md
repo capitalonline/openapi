@@ -15,6 +15,7 @@ MongoDB 公开API目录
     * [3.CreateDBInstance](#3createdbinstance)
     * [4.DescribeDBInstances](#4describedbinstances)
     * [5.DeleteDBInstance](#5deletedbinstance)
+    * [6.ModifyDBInstanceSpec](#6modifydbinstancespec)
 
 ### API概览
 
@@ -22,13 +23,14 @@ MongoDB产品提供以下相关API接口。
 
 #### 实例
 
-| API                 | 描述                                      |
-| ------------------- | ----------------------------------------- |
-| DescribeZones       | 获取云数据库MongoDB支持的站点区域         |
-| DescribeSpecInfo    | 获取某个站点支持的MongoDB产品类型以及规格 |
-| CreateDBInstance    | 创建MongoDB云数据库实例                   |
-| DescribeDBInstances | 获取MongoDB实例列表                       |
-| DeleteDBInstance    | 删除MongoDB实例                           |
+| API                  | 描述                                      |
+| -------------------- | ----------------------------------------- |
+| DescribeZones        | 获取云数据库MongoDB支持的站点区域         |
+| DescribeSpecInfo     | 获取某个站点支持的MongoDB产品类型以及规格 |
+| CreateDBInstance     | 创建MongoDB云数据库实例                   |
+| DescribeDBInstances  | 获取MongoDB实例列表                       |
+| DeleteDBInstance     | 删除MongoDB实例                           |
+| ModifyDBInstanceSpec | 修改MongoDB规格                           |
 
 #### 错误码
 
@@ -555,3 +557,69 @@ def delete_mongodb(instance_uuid, ):
 | Data    | dict   | 数据     |
 | Message | string | 信息描述 |
 | TaskId  | string | 任务编号 |
+
+### 6.ModifyDBInstanceSpec
+
+**Action：** ModifyDBInstanceSpec
+
+**描述：** 修改MongoDB规格或存储空间
+
+**请求地址：** cdsapi.capitalonline.net/mongodb/v1
+
+**请求方法：** POST
+
+**请求参数：**
+
+| 参数名       | 必选 | 类型   | 说明                                                         |
+| :----------- | :--- | :----- | ------------------------------------------------------------ |
+| InstanceUuid | 是   | string | 实例编号                                                     |
+| PaasGoodsId  | 否   | string | 产品的规格编号                                               |
+| DiskType     | 否   | string | 磁盘类型，只能跟最开始购买时候类型一致。不能一个实例加多种类型磁盘，比如最开始添加高性能磁盘，后面也只能选择添加高性能磁盘 |
+| DiskValue    | 否   | int    | 磁盘大小                                                     |
+
+**请求示例：**
+
+```python
+def update_mongodb(self, instanceuuid, paasgoodsid, diskvalue):
+        action = "ModifyDBInstanceSpec"
+        method = "POST"
+        param = {}
+        url = get_signature(action, self.AK, self.AccessKeySecret, method, self.MongoDBUrl, param)
+        body = {
+            "InstanceUuid": instanceuuid,
+            "PaasGoodsId": paasgoodsid,
+            "DiskType": "ssd_disk",
+            "DiskValue": diskvalue
+        }
+        print(body)
+        res = requests.post(url, json=body)
+        result = json.loads(res.content)
+        print(result)
+        return result
+```
+
+**返回示例：**
+
+```json
+{
+   "Code":"Success",
+   "Data":{
+      "InstanceUuid":"****************"
+   },
+   "Message":"success"
+}
+```
+
+**返回参数说明：**
+
+| 参数名  | 类型                       | 说明     |
+| :------ | :------------------------- | -------- |
+| Code    | string                     | 状态码   |
+| Data    | object of [Data](#dataobj) | 数据     |
+| Message | string                     | 信息描述 |
+
+#### DataOBJ
+
+| 参数名       | 类型   | 说明     |
+| :----------- | :----- | -------- |
+| InstanceUuid | string | 实例编号 |
