@@ -20,6 +20,16 @@
                 </el-select>
             </div>
             <div class="m-bottom20">
+                <span>切分粒度</span>
+                <el-input placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
+                <el-tooltip content="每块GPU仅能按照一种显存大小进行切分；同物理机不同显卡切分粒度可以不同；故一台物理机切分粒度的数量不能多于物理机GPU数量。" placement="right" effect="light">
+                    <el-button type="text">
+                        <svg-icon icon="info" class="info"></svg-icon>
+                    </el-button>
+                </el-tooltip>
+            </div>
+            <div class="error_message" v-if="particle.split(',').length>4">最多支持设置4种值</div>
+            <div class="m-bottom20">
                 <span>专属客户</span>
                 <el-select 
                     v-model="customer_id" 
@@ -62,13 +72,20 @@
 <script lang="ts">
 import {Vue,Component,PropSync,Emit,Prop,Watch} from 'vue-property-decorator';
 import Service from '../../https/physical/list'
-@Component({})
+import svgIcon from '@/components/svgIcon/index.vue';
+@Component({
+    components:{
+        svgIcon
+    }
+})
+
 export default class UpdateAttribute extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
     @Prop({default:()=>[]}) rows!:any
     private type:String="";
     private use:String = "";
     private backend:string=''
+    private particle:string=''
     private host_types=[]
     private host_uses=[];
     private customer_id:any=[];
@@ -147,6 +164,9 @@ export default class UpdateAttribute extends Vue{
     }
     
     private async confirm(){
+        if(this.particle.split(',').length>4){
+            return false;
+        }
         let res:any =await Service.update_attribute({
             host_ids:this.rows.map(item=>item.host_id),
             host_purpose:this.use,

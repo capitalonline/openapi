@@ -179,6 +179,7 @@ export default class CommonMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'GRID',value:'GRID'},
     ];
     private operateBtns:any=[
         {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
