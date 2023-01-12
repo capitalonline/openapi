@@ -7,12 +7,12 @@
             border
             ref="disk_table"
         >
-            <el-table-column prop="1" label="Storage Pool 名称"></el-table-column>
-            <el-table-column prop="3" label="总容量"></el-table-column>
-            <el-table-column prop="4" label="已用容量"></el-table-column>
-            <el-table-column prop="5" label="使用率"></el-table-column>
-            <el-table-column prop="6" label="已分配容量"></el-table-column>
-            <el-table-column prop="7" label="分配率"></el-table-column>
+            <el-table-column prop="storage_pool_name" label="Storage Pool 名称"></el-table-column>
+            <el-table-column prop="total_size" label="总容量"></el-table-column>
+            <el-table-column prop="used_size" label="已用容量"></el-table-column>
+            <el-table-column prop="usage" label="使用率"></el-table-column>
+            <el-table-column prop="need_used_size" label="已分配容量"></el-table-column>
+            <el-table-column prop="need_usage" label="分配率"></el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"
@@ -28,7 +28,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import ActionBlock from '../../components/search/actionBlock.vue';
-
+import Service from '../../https/cluster/list'
 @Component({
     components:{
         ActionBlock
@@ -36,20 +36,40 @@ import ActionBlock from '../../components/search/actionBlock.vue';
 })
 export default class Cluster extends Vue{
     private search_dom = {
-        name:{placeholder:'请输入Storage Pool名称'},
+        storage_pool_name:{placeholder:'请输入Storage Pool名称'},
     }
     private list:any=[{1:'aaa'}]
     private current:number = 1;
     private size:number=20;
     private total:number = 0;
+    private search_data:any={}
+    created() {
+        this.search()
+    }
     private search(data:any={}){
-
+        this.search_data = data;
+        this.getList()
+    }
+    private async getList(){
+        let res:any = await Service.get_storage_pool_list({
+            storage_pool_name:this.search_data.storage_pool_name,
+            az_id:this.$route.query.az_id,
+            cluster_id:this.$route.query.cluster_id,
+            page_index:this.current,
+            page_size:this.size
+        })
+        if(res.code==='Success'){
+            this.list = res.data.storage_pool_list;
+            // this.total = res.
+        }
     }
     private handleSizeChange(size){
-        this.size = size
+        this.size = size;
+        this.getList()
     }
     private handleCurrentChange(cur){
-        this.current = cur
+        this.current = cur;
+        this.getList()
     }
 }
 </script>

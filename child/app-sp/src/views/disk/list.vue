@@ -69,8 +69,8 @@
           <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="cluster" label="所属集群"></el-table-column>
-      <el-table-column prop="storage" label="Storage Pool"></el-table-column>
+      <el-table-column prop="cluster_name" label="所属集群"></el-table-column>
+      <el-table-column prop="storage_pool_name" label="Storage Pool"></el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
@@ -250,6 +250,8 @@ export default class extends Vue {
   ]
   created() {
     this.get_disk_state();
+    this.getClusterName();
+    this.getstoragePoolName()
     this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
@@ -277,6 +279,18 @@ export default class extends Vue {
       this.disk_state = trans(res.data,'status_name','status','text','value') 
     }
   }
+  private async getClusterName(){
+    let res:any = await Service.get_cluster_name({})
+    if(res.code==="Success"){
+      this.search_dom.cluster.list = trans(res.data.cluster_list,'cluster_name','cluster_id','label','type') 
+    }
+  }
+  private async getstoragePoolName(){
+    let res:any = await Service.get_storage_pool_name({})
+    if(res.code==="Success"){
+      this.search_dom.storage.list = trans(res.data.storage_pool_list,'storage_pool_name','storage_pool_id','label','type') 
+    }
+  }
   private async getDiskList(loading:boolean = true){
     let copy_mount_id=[]
     if(!loading){
@@ -296,6 +310,8 @@ export default class extends Vue {
       disk_property:req_data.disk_property ? req_data.disk_property[0] : '',
       op_source:req_data.op_source ? req_data.op_source[0] : '',
       billing_method:req_data.fee_way ? req_data.fee_way[0] : 'all',
+      cluster_name:req_data.cluster || '',
+      storage_pool_name:req_data.storage || '',
       page_index:this.current,
       page_size:this.size,
     })
