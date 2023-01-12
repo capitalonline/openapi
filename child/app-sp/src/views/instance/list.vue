@@ -62,6 +62,12 @@
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
         >
+        <el-button
+          type="primary"
+          @click="FnOperate('net_set')"
+          :disabled="!operate_auth.includes('reset_pwd')"
+          >网络设置</el-button
+        >
         <!-- <el-button
           type="primary"
           @click="FnOperate('open_bill')"
@@ -119,7 +125,7 @@
         <template #default="scope">
           <div v-if="scope.row.private_net">
             {{ scope.row.private_net }}
-            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
           </div>
         </template>
@@ -137,7 +143,7 @@
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
             </span>
             {{ scope.row.pub_net }}
-            （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
           </div>
           <div v-for="item in scope.row.virtual_net" :key="item">
@@ -150,7 +156,7 @@
               {{ scope.row.eip_info[item].conf_name }}
             </span>
             {{ item }}
-            （vlan {{ scope.row.eip_info[item].vlan_id }}）
+            <!-- （vlan {{ scope.row.eip_info[item].vlan_id }}） -->
             <!-- （vlan {{ scope.row.vlan[FnGetNet(item)] }}） -->
           </div>
         </template>
@@ -263,6 +269,16 @@
             v-else
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button
+          >
+          <el-button
+            type="text"
+            @click="operateGpu(scope.row)"
+            >{{scope.row.status_display==='已卸载' ? '挂载显卡' : '卸载显卡'}}</el-button
+          >
+          <el-button
+            type="text"
+            @click="setNet('single',scope.row)"
+            >网络设置</el-button
           >
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
@@ -487,6 +503,12 @@
         :ecs_info="ecs_info"
       />
     </template>
+    <template v-if="net_visible">
+      <net-set
+        :visible.sync="net_visible"
+        :ecs_info="ecs_info"
+      />
+    </template>
   </div>
 </template>
 
@@ -510,6 +532,7 @@ import MarkTip from "../../components/markTip.vue";
 import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 import storage from '../../store/storage';
+import netSet from './netSet.vue'
 @Component({
   components: {
     LabelBlock,
@@ -523,7 +546,8 @@ import storage from '../../store/storage';
     Recover,
     SvgIcon,
     MarkTip,
-    AddCommon
+    AddCommon,
+    netSet
   }
 })
 export default class App extends Vue {
@@ -576,6 +600,7 @@ export default class App extends Vue {
   private record_id: string = "";
   private detail_visible: boolean = false;
   private detail_id: string = "";
+  private net_visible:boolean=false
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -756,6 +781,9 @@ export default class App extends Vue {
       if (type === "open_bill") {
         this.FnGetEcsPrice();
       }
+    }else if(type==='net_set'){
+      this.netSet('batch');
+      return ;
     } else {
       if (!this.FnJudgeCustomer(operate_info, type)) {
         return;
@@ -936,6 +964,12 @@ export default class App extends Vue {
       );
       this.FnClose();
     }
+  }
+  private netSet(type,row:any={}){
+    this.net_visible=true;
+  }
+  private operateGpu(){
+
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(
