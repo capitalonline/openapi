@@ -2,7 +2,8 @@
     <div>
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
-              <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+            <!-- :disabled="!auth_list.includes(item.value)" -->
+              <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)">{{item.label}}</el-button>
           </template>
       </action-block>
       <div class="icon m-bottom10">
@@ -155,9 +156,9 @@
           <template slot-scope="scope">
             <el-dropdown @command="handleOperate">
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
-
+              <!-- :disabled="!auth_list.includes(item.value)" -->
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-dropdown-item>
+                <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" >{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
           </template>
@@ -172,7 +173,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -200,7 +201,9 @@
       <template v-if="visible && oper_type==='business_test'">
         <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
-      
+      <template v-if="visible && oper_type==='remark'">
+        <remark :visible.sync="visible" :rows="multi_rows[0]"></remark>
+      </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
         :all_item="all_item"
@@ -231,6 +234,7 @@ import CustomListItem from './customListItem.vue';
 import BusinessTest from './businessTest.vue'
 import Detail from '../instance/detail.vue'
 import moment from 'moment';
+import Remark from './editRemark.vue';
 @Component({
   components:{
     ActionBlock,
@@ -243,7 +247,8 @@ import moment from 'moment';
     UpdateAttribute,
     CustomListItem,
     BusinessTest,
-    Detail
+    Detail,
+    Remark
   }
 })
 export default class PhysicalList extends Vue {
@@ -287,6 +292,9 @@ export default class PhysicalList extends Vue {
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
     {label:'业务测试',value:'business_test'},
+    {label:'调度标记',value:'schedule'},
+    {label:'迁移标记',value:'migrate_flag'},
+    {label:'欺骗器管理',value:'cheat'},
 
   ]
   private rows_operate_btns:any=[
@@ -294,6 +302,7 @@ export default class PhysicalList extends Vue {
     {label:'迁移',value:'migrate'},
     {label:'操作记录',value:'record'},
     {label:'分配资源',value:'resource'},
+    {label:'编辑备注',value:'remark'},
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
@@ -802,7 +811,7 @@ export default class PhysicalList extends Vue {
       }
         
     }
-    if(['upload','resource','update_attribute','business_test'].includes(value)){
+    if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){
           this.$message.warning('当前无宿主机可进行业务测试!')
@@ -816,6 +825,7 @@ export default class PhysicalList extends Vue {
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
+      console.log('ccc',this.oper_type)
       return;
     }
     if(this.judge(value)){
@@ -866,6 +876,11 @@ export default class PhysicalList extends Vue {
         }else{
           this.$message.warning(this.error_msg[label])
         }
+    }else if(label==='remark'){
+      console.log('remark')
+      this.oper_type=label;
+      this.visible=true;
+      
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{

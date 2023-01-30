@@ -46,6 +46,12 @@
         >
         <el-button
           type="primary"
+          @click="FnOperate('restore_ecs')"
+          :disabled="!operate_auth.includes('restore')"
+          >恢 复</el-button
+        >
+        <el-button
+          type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
           >更换实例规格</el-button
@@ -277,7 +283,7 @@
           >
           <el-button
             type="text"
-            @click="setNet('single',scope.row)"
+            @click="netSet('single',scope.row)"
             >网络设置</el-button
           >
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
@@ -968,8 +974,22 @@ export default class App extends Vue {
   private netSet(type,row:any={}){
     this.net_visible=true;
   }
-  private operateGpu(){
-
+  private operateGpu(row){
+    this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      this.$message({
+        type: 'success',
+        message: '删除成功!'
+      });
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      });          
+    });
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(
