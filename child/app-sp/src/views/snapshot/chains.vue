@@ -4,6 +4,7 @@
         <el-table
             ref="chains_table"
             :data="list"
+            @filter-change="handleFilter"
         >
             <el-table-column 
                 v-for="item in column_list" 
@@ -159,6 +160,7 @@ export default class Chains extends Vue {
         page_index:1,
         total:0,
     }
+    private filterInfo:any={}
     private search_data:any={};
     private timer=null
     created() {
@@ -201,6 +203,7 @@ export default class Chains extends Vue {
             customer_name:this.search_data.customer_name,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
+            disk_status:this.filterInfo.disk_status_cn ? this.filterInfo.disk_status_cn : [],
             [this.search_data.typesub]:this.search_data.type,
         })
         if(res.code==='Success'){
@@ -240,6 +243,12 @@ export default class Chains extends Vue {
         this.pageInfo = {...this.pageInfo,page_index:cur}
         this.getSnapshotChainsList() 
     } 
+    private handleFilter(obj:any){
+        this.FnClearTimer()
+        this.filterInfo={...this.filterInfo,...obj}
+        console.log('filterInfo',this.filterInfo)
+        this.getSnapshotChainsList()
+    }
     beforeDestroy() {
         this.FnClearTimer()
     }

@@ -9,11 +9,31 @@
         >
             <el-table-column prop="cluster_name" label="集群名称"></el-table-column>
             <el-table-column prop="az_name" label="可用区"></el-table-column>
-            <el-table-column prop="total_size" label="总容量"></el-table-column>
-            <el-table-column prop="used_size" label="已用容量"></el-table-column>
-            <el-table-column prop="usage" label="使用率"></el-table-column>
-            <el-table-column prop="need_used_size" label="已分配容量"></el-table-column>
-            <el-table-column prop="need_usage" label="分配率"></el-table-column>
+            <el-table-column prop="total_size" label="总容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.total_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="used_size" label="已用容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.used_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="usage" label="使用率">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.usage}%` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="need_used_size" label="已分配容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.need_used_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="need_usage" label="分配率">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.need_usage}%` }}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" @click="view(scope.row)">查看Storage Pool</el-button>
@@ -83,7 +103,7 @@ export default class Cluster extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.cluster_list;
-            // this.total = res.
+            this.total = res.data.page.count
         }
     }
     private view(row){

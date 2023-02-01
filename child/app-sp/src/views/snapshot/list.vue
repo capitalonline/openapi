@@ -256,6 +256,7 @@ export default class Snapshot extends Vue {
             customer_id:this.search_data.customer_id,
             customer_name:this.search_data.customer_name,
             //todo,云盘状态筛选
+            disk_status:this.filterInfo.disk_status_cn ? this.filterInfo.disk_status_cn : [],
             [this.search_data.typesub]:this.search_data.type,
             snapshot_chains_id:this.type!=='list' ? this.snapshot_chains_id : undefined,
         })

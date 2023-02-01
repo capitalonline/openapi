@@ -26,7 +26,7 @@
           <pre>{{scope.row.disk_name}}</pre>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="云盘状态" :filter-multiple="false" :filters="disk_state" column-key="status">
+      <el-table-column prop="status" label="云盘状态" :filter-multiple="true" :filters="disk_state" column-key="status">
         <template slot-scope="scope">
           <span :class="scope.row.status">{{scope.row.status_name}}</span>
         </template>
@@ -304,7 +304,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status ? req_data.status[0] : '',
+      status:req_data.status ? req_data.status : [],
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
       disk_property:req_data.disk_property ? req_data.disk_property[0] : '',

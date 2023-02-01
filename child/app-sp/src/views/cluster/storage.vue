@@ -54,13 +54,13 @@ export default class Cluster extends Vue{
         let res:any = await Service.get_storage_pool_list({
             storage_pool_name:this.search_data.storage_pool_name,
             az_id:this.$route.query.az_id,
-            cluster_id:this.$route.query.cluster_id,
+            cluster_id:this.$route.query.id,
             page_index:this.current,
             page_size:this.size
         })
         if(res.code==='Success'){
             this.list = res.data.storage_pool_list;
-            // this.total = res.
+            this.total = res.data.page.count
         }
     }
     private handleSizeChange(size){
