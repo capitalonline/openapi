@@ -34,9 +34,9 @@
                 <el-table-column prop="machine_status_name" label="机器状态" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="1" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="2" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="3" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="scheduled_display" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="migrated_display" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
             </el-table>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">

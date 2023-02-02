@@ -14,17 +14,32 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, PropSync} from 'vue-property-decorator';
+import { Component, Prop, Vue, PropSync,Emit} from 'vue-property-decorator';
+import Service from '../../https/physical/list'
 @Component({})
 export default class Remark extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
-    @Prop({default:()=>({host_name:''})})rows!:any
-    private value:string='';
+    @Prop({default:()=>({host_name:'',remark:''})})rows!:any
+    private value:string=this.rows.remark;
     created() {
         
     }
     private async confirm(){
-        
+        let res:any = await Service.set_remark({
+            host_ids:[this.rows.host_id],
+            remark:this.value
+        })
+        if(res.code==='Success'){
+            this.$message.success(res.message);
+            // this.visible_sync=false;
+            this.back("1")
+        }else{
+            this.back("0")
+        }
+    }
+    @Emit("close")
+    private back(val){
+        this.visible_sync=false
     }
 }
 </script>

@@ -202,7 +202,7 @@
         <business-test :visible.sync="visible" :az_info="az_info"></business-test>
       </template>
       <template v-if="visible && oper_type==='remark'">
-        <remark :visible.sync="visible" :rows="multi_rows[0]"></remark>
+        <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
       </template>
       <custom-list-item 
         :visible.sync="custom_visible" 
@@ -475,6 +475,15 @@ export default class PhysicalList extends Vue {
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
       }
+      if(['scheduled_display','migrated_display'].includes(item.prop)){
+        item = Object.assign(item,{},{column_key:'scheduled',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+      }
+      if(['migrated_display'].includes(item.prop)){
+        item = Object.assign(item,{},{column_key:'migrated',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+      }
+      if(item.prop==='dummy_display'){
+        item = Object.assign(item,{},{column_key:'dummy',list:[{text:'有',value:'1'},{text:'无',value:'0'}]})
+      }
       if(this.filed_name_list.includes(item.prop)){
         item = Object.assign(item,{},{column_key:item.prop,list:[]})
       }
@@ -532,6 +541,7 @@ export default class PhysicalList extends Vue {
       bare_metal_name,
       bare_metal_id,
     }=this.search_data;
+    console.log('this.filter_info',this.filter_info)
     let res:any=await Service.get_host_list({
       pod_id:this.$store.state.pod_id,
       machine_room_name:room,
