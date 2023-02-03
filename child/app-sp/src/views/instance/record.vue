@@ -188,8 +188,7 @@ export default class InsDetail extends Vue{
         task_type:data.content,
         page_size:this.size,                                                                         
         page_index:this.current,
-      })
-        
+      })   
     }else if(this.type==='nas'){
       res = await n_service.get_nas_record({
         ...req

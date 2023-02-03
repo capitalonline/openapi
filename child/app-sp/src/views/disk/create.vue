@@ -434,7 +434,10 @@ export default class CreateDisk extends Vue{
             billing_method: 'all'
         });
         if (resData.code == 'Success') {
-            this.ECS_instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && item.system_disk_feature!=='local' && item.is_charge===Number(this.form_data.is_bill));
+            /*todo
+            增加筛选系统盘为云盘的GPU实例,本期不做gpu实例挂载
+            */
+            this.ECS_instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===Number(this.form_data.is_bill)&& !item.no_charge_for_shutdown);
         }
     }
     //获取云盘规格信息

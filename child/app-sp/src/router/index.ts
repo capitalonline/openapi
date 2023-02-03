@@ -208,6 +208,18 @@ const routes: RouteConfig[] = [
     meta: {meta: 'ecs_destroyed', no_auth: true}
   },
   {
+    path:'/cluster',
+    name:'cluster_list',
+    component:()=>import('../views/cluster/list.vue'),
+    meta:{menu:'cluster_list',no_auth: true}
+  },
+  {
+    path:'/storage',
+    name:'storage_list',
+    component:()=>import('../views/cluster/storage.vue'),
+    meta:{menu:'cluster_list',no_auth: true}
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),
