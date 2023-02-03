@@ -147,7 +147,7 @@ export default class AddCommon extends Vue{
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
     private compute_type_list:any=['GPU','CPU','CPU/GPU']
-    private drive_type_list:any=['Datacenter','Geforce'];
+    private drive_type_list:any=['Datacenter','Geforce','Enflame'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
     private os_file:any=[];
