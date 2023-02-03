@@ -282,13 +282,25 @@ export default class extends Vue {
   private async getClusterName(){
     let res:any = await Service.get_cluster_name({})
     if(res.code==="Success"){
-      this.search_dom.cluster.list = trans(res.data.cluster_list,'cluster_name','cluster_id','label','type') 
+      this.search_dom.cluster.list = [];
+      res.data.map(item=>{
+        this.search_dom.cluster.list.push({
+          label:item,
+          type:item
+        })
+      })
     }
   }
   private async getstoragePoolName(){
     let res:any = await Service.get_storage_pool_name({})
     if(res.code==="Success"){
-      this.search_dom.storage.list = trans(res.data.storage_pool_list,'storage_pool_name','storage_pool_id','label','type') 
+      this.search_dom.storage.list = []
+      res.data.map(item=>{
+        this.search_dom.storage.list.push({
+          label:item,
+          type:item
+        })
+      })
     }
   }
   private async getDiskList(loading:boolean = true){
@@ -557,7 +569,28 @@ export default class extends Vue {
   }
   //导出
   private down(){
-
+    const {req_data}=this
+    let obj = {
+      pod_id:this.$store.state.pod_id,
+      disk_id:req_data.disk_id || undefined,
+      ecs_id:req_data.ecs_id || undefined,
+      status:req_data.status ? req_data.status.join(',') : undefined,
+      customer_id:req_data.customer_id || undefined,
+      customer_name:req_data.customer_name || undefined,
+      disk_property:req_data.disk_property ? req_data.disk_property[0] : undefined,
+      op_source:req_data.op_source ? req_data.op_source[0] : undefined,
+      billing_method:req_data.fee_way ? req_data.fee_way[0] : 'all',
+      cluster_name:req_data.cluster || undefined,
+      storage_pool_name:req_data.storage || undefined,
+    }
+    let str=""
+    for (let i in obj){
+      if(obj[i]){
+        str =str+`${i}=${obj[i]}&`
+      }
+    }
+    let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+    window.location.href=`/ecs_business/v1/ebs/ebs_list_download/${query}`
   }
   private close_disk(val:string='1'){
     this.visible = false

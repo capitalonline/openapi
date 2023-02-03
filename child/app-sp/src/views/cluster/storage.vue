@@ -8,11 +8,31 @@
             ref="disk_table"
         >
             <el-table-column prop="storage_pool_name" label="Storage Pool 名称"></el-table-column>
-            <el-table-column prop="total_size" label="总容量"></el-table-column>
-            <el-table-column prop="used_size" label="已用容量"></el-table-column>
-            <el-table-column prop="usage" label="使用率"></el-table-column>
-            <el-table-column prop="need_used_size" label="已分配容量"></el-table-column>
-            <el-table-column prop="need_usage" label="分配率"></el-table-column>
+            <el-table-column prop="total_size" label="总容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.total_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="used_size" label="已用容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.used_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="usage" label="使用率">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.usage}%` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="need_used_size" label="已分配容量">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.need_used_size}G` }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="need_usage" label="分配率">
+                <template slot-scope="scope">
+                    <span>{{ `${scope.row.need_usage}%` }}</span>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination
             @size-change="handleSizeChange"

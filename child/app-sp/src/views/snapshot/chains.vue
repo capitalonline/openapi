@@ -207,7 +207,7 @@ export default class Chains extends Vue {
             [this.search_data.typesub]:this.search_data.type,
         })
         if(res.code==='Success'){
-            this.list = res.data.snapshot_list;
+            this.list = res.data.snapshot_chains_list;
             this.pageInfo.total = res.data.page_info.count
         }
         this.FnSetTimer()

@@ -53,10 +53,10 @@ export default{
     },
     //获取集群名称
     get_cluster_name(req){
-        return service(getEcsOptions('POST', '/ebs/cluster_name/', req))
+        return service(getEcsOptions('GET', '/ebs/cluster_name/', req))
     },
     //获取存储池名称
     get_storage_pool_name(req){
-        return service(getEcsOptions('POST', '/ebs/storage_pool_name/', req))
+        return service(getEcsOptions('GET', '/ebs/storage_pool_name/', req))
     }
 }
