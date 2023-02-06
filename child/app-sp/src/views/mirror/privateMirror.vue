@@ -129,6 +129,7 @@ export default class PrivateMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'Enflame',value:'Enflame'},
     ];
     private disk_type:any=[{text:'系统盘',value:'system'},{text:'数据盘',value:'data'}];
     private storage_list:any=[{value:'local',text:'本地盘'},{value:'block',text:'云盘'}]

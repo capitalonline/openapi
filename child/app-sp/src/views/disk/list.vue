@@ -1,9 +1,9 @@
 <template>
   <div>
     <action-block :search_option="search_dom" @fn-search="search">
-      <template #default>
+      <!-- <template #default>
         <el-button v-for="item in operateBtns" :key="item.value" type="primary" @click="handleBtn(item.value)" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-button>
-      </template>
+      </template> -->
     </action-block>
     <div class="icon m-bottom10">
       <el-tooltip content="导出" placement="bottom" effect="light">
@@ -74,7 +74,7 @@
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
-          <el-dropdown @command="handleOperate">
+          <!-- <el-dropdown @command="handleOperate">
             <span class="el-dropdown-link">
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
@@ -84,7 +84,7 @@
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
         </template>
       </el-table-column>
     </el-table>
