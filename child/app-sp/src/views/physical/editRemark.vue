@@ -6,7 +6,7 @@
       :destroy-on-close="true"
       :close-on-click-modal="false"
     >
-        <el-input type="textarea" v-model="value" maxlength="512"></el-input>
+        <el-input type="textarea" v-model="value" maxlength="512" show-word-limit rows="5"></el-input>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
             <el-button @click="visible_sync=false">取消</el-button>

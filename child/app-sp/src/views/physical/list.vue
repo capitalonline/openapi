@@ -137,6 +137,12 @@
           <template #default="scope" v-else-if="item.prop==='backend_type'">
             <span>{{backendObj[scope.row.backend_type]}}</span>
           </template>
+          <template #default="scope" v-else-if="item.prop==='remark'">
+            <el-tooltip v-if="scope.row.remark.length>40" popper-class="tooltip-width" effect="light" :content="scope.row.remark" placement="bottom">
+              <span>{{ `${scope.row.remark.slice(0,41)}...` }}</span>
+            </el-tooltip>
+            <span v-else>{{scope.row.remark}}</span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='net_card_with_model'">
             <div class="net-model">
               <el-tooltip
@@ -442,7 +448,7 @@ export default class PhysicalList extends Vue {
       this.get_host_filter_item();
     }
     this.custom_host.map((item:any)=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{className:'physical',width:'140px'})
@@ -475,14 +481,14 @@ export default class PhysicalList extends Vue {
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
       }
-      if(['scheduled_display','migrated_display'].includes(item.prop)){
-        item = Object.assign(item,{},{column_key:'scheduled',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+      if(['scheduled_display'].includes(item.prop)){
+        item = Object.assign(item,{},{column_key:'scheduled',list:[{text:'是',value:1},{text:'否',value:0}]})
       }
       if(['migrated_display'].includes(item.prop)){
-        item = Object.assign(item,{},{column_key:'migrated',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+        item = Object.assign(item,{},{column_key:'migrated',list:[{text:'是',value:1},{text:'否',value:0}]})
       }
       if(item.prop==='dummy_display'){
-        item = Object.assign(item,{},{column_key:'dummy',list:[{text:'有',value:'1'},{text:'无',value:'0'}]})
+        item = Object.assign(item,{},{column_key:'dummy',list:[{text:'有',value:1},{text:'无',value:0}]})
       }
       if(this.filed_name_list.includes(item.prop)){
         item = Object.assign(item,{},{column_key:item.prop,list:[]})
@@ -569,6 +575,7 @@ export default class PhysicalList extends Vue {
       sort_host_name:this.search_data.sort_host_name,
       sort_out_band_address:this.search_data.sort_out_band_address,
       sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
+      sort_gpu_ff_count:this.search_data.sort_gpu_ff_count,
       sort_host_ip:this.search_data.sort_host_ip,
       ...this.filter_info,
       
@@ -742,6 +749,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_gpu_count=undefined
     this.search_data.sort_ecs_gpu_count =undefined
     this.search_data.sort_gpu_allot=undefined
+    this.search_data.sort_gpu_ff_count = undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -756,7 +764,7 @@ export default class PhysicalList extends Vue {
   //校验列表项是否存在此项
   private judgeColumns(){
     let keys = Object.keys(this.filter_data)
-    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type']
+    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy']
     keys.map(item=>{
       if(!temp.includes(item)){
         delete(this.filter_data[item])
@@ -768,6 +776,7 @@ export default class PhysicalList extends Vue {
     }
   }
   private filterAttribute(obj:any){
+    console.log('obj',obj)
     this.filter_data = {...this.filter_data,...obj};
     this.judgeColumns()
     if(this.filter_data.host_type && this.filter_data.host_type.length>0){

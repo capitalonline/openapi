@@ -6,23 +6,21 @@
         :destroy-on-close="true"
         :close-on-click-modal="false"
     >
-        <div class="main-edit">
-            <div class="m-bottom20">
-                <span>主机类型</span>
-                <el-select v-model="type" @change="changeType">
+        <el-form ref="form" :model="form_data" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="主机类型">
+                <el-select v-model="form_data.type" @change="changeType" class="w-280">
                     <el-option v-for="item in host_types" :key="item.type" :value="item.type" :label="item.type_name"></el-option>
                 </el-select>
-            </div>
-            <div class="m-bottom20">
-                <span>主机用途</span>
-                <el-select v-model="use">
+            </el-form-item>
+            <el-form-item label="主机用途" prop="use" :rules="[{required:true,message:'请选择主机用途'}]">
+               <el-select v-model="form_data.use" class="w-280">
                     <el-option v-for="item in host_uses" :key="item.use_type" :value="item.use_type" :label="item.use_name"></el-option>
                 </el-select>
-            </div>
-            <div class="m-bottom20">
-                <span>专属客户</span>
+            </el-form-item>
+            <el-form-item label="专属客户">
                 <el-select 
-                    v-model="customer_id" 
+                    class="w-280"
+                    v-model="form_data.customer_id" 
                     multiple
                     filterable 
                     remote
@@ -31,11 +29,11 @@
                 >
                     <el-option v-for="item in customerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
                 </el-select>
-            </div>
-            <div class="m-bottom20">
-                <span>产品规格族</span>
+            </el-form-item>
+            <el-form-item label="产品规格族">
                 <el-select
-                    v-model="family" 
+                    class="w-280"
+                    v-model="form_data.family" 
                     multiple 
                     filterable 
                     :filter-method="getFamilyList"
@@ -43,16 +41,29 @@
                 >
                     <el-option v-for="item in familyList" :key="item.spec_family_id" :value="item.spec_family_id" :label="item.name"></el-option>
                 </el-select>
-            </div>
-            <div class="m-bottom20">
-                <span>支持存储类型</span>
+            </el-form-item>
+            <el-form-item label="支持存储类型" prop="backend" :rules="[{required:true,message:'请选择支持存储类型'}]">
                 <el-select
-                    v-model="backend" 
+                    class="w-280"
+                    v-model="form_data.backend" 
                 >
                     <el-option v-for="item in backendList" :key="item.id" :value="item.id" :label="item.name"></el-option>
                 </el-select>
-            </div>
-        </div>
+            </el-form-item>
+            <el-form-item label="客户黑名单">
+                <el-select 
+                    class="w-280"
+                    v-model="form_data.black_customer_id" 
+                    multiple
+                    filterable 
+                    remote
+                    :remote-method="getBlackCustomerList"
+                    @visible-change="changeBlackCustomer"
+                >
+                    <el-option v-for="item in blackCustomerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
             <el-button @click="back('0')">取 消</el-button>
@@ -65,14 +76,24 @@ import Service from '../../https/physical/list'
 @Component({})
 export default class UpdateAttribute extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
-    @Prop({default:()=>[]}) rows!:any
+    @Prop({default:()=>[]}) rows!:any;
+    private form_data:any={
+        type:'',
+        use:'',
+        backend:'',
+        customer_id:[],
+        black_customer_id:[],
+        family:[]
+    }
     private type:String="";
     private use:String = "";
     private backend:string=''
     private host_types=[]
     private host_uses=[];
     private customer_id:any=[];
-    private customerList:any=[];
+    private black_customer_id:any=[];
+    private customerList:any=this.rows[0]?.exclusive_customers;
+    private blackCustomerList:any=this.rows[0]?.exclusive_black_customers;
     private family=[];
     private familyList=[]
     private flag:boolean=true;
@@ -83,28 +104,38 @@ export default class UpdateAttribute extends Vue{
         {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
+        console.log('rows',this.rows)
+        this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
+        this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
         if(this.rows.length>1 || (this.rows.length===1 && this.rows[0].backend_type==='')){
-            this.backend = 'local,block'
+            this.form_data.backend = 'local,block'
         }else{
-            this.backend =this.rows[0]?.backend_type
+            this.form_data.backend =this.rows[0]?.backend_type
         }
     }
     private async getHostTypes(){
         let res:any =await Service.get_host_type({})
         if(res.code==='Success'){
             this.host_types = res.data;
-            this.type = this.host_types[0].type
-            this.host_uses = this.host_types[0].list;
-            this.use = this.host_uses[0].use_type;
+            if(this.rows.length>1 || (this.rows.length===1 && this.rows[0].host_type==='')){//多选
+                this.form_data.type = this.host_types[0].type;
+                this.host_uses = this.host_types[0].list;
+                this.form_data.use = this.host_uses[0].use_type;
+            }else{
+                this.form_data.type =this.rows[0]?.host_type
+                this.host_uses= this.rows[0].host_type ? this.host_types.filter(item=>item.type===this.rows[0].host_type)[0]?.list : this.host_types[0].list;
+                console.log('this.rows[0].host_purpose',this.rows[0].host_purpose)
+                this.form_data.use = this.rows[0].host_purpose ? this.rows[0].host_purpose : this.host_uses[0] ? this.host_uses[0].use_type : '';
+            }
         }
         
     }
     private changeType(val){
         this.host_uses = this.host_types.filter(item=>item.type===val)[0].list;
-        this.use = this.host_uses.length > 0 ? this.host_uses[0].use_type : ''
+        this.form_data.use = this.host_uses.length > 0 ? this.host_uses[0].use_type : ''
     }
     private changeFamily(val){
         if(!val){
@@ -117,6 +148,12 @@ export default class UpdateAttribute extends Vue{
             // this.getCustomerList()
         }
     }
+    private changeBlackCustomer(val){
+        if(val){
+            this.blackCustomerList=[]
+            // this.getCustomerList()
+        }
+    }
     private async getFamilyList(val:string=""){
         let res:any=await Service.getFamilyList({
             host_ids:this.rows.map(item=>item.host_id),
@@ -124,7 +161,7 @@ export default class UpdateAttribute extends Vue{
         })
         if (res.code == 'Success'){
             this.familyList=res.data.spec_family_list;
-            if(this.flagFamily)this.family = res.data.old_family_data_list;
+            if(this.flagFamily)this.form_data.family = res.data.old_family_data_list;
             this.flagFamily=false;
         }
     }
@@ -141,31 +178,47 @@ export default class UpdateAttribute extends Vue{
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
-            if(this.flag)this.customer_id = res.data.old_customers_data_list;
-            this.flag=false;
         }
     }
-    
-    private async confirm(){
-        let res:any =await Service.update_attribute({
-            host_ids:this.rows.map(item=>item.host_id),
-            host_purpose:this.use,
-            host_type:this.type,
-            customer_ids:this.customer_id,
-            spec_family_ids:this.family,
-            backend_type:this.backend
-        })
-        if(res.code==='Success'){
-             if(res.data.fail_host_list.length>0){
-                this.$message.warning(res.message)
-                this.back("0");
-                return;
-            }
-            this.$message.success(res.message)
-            this.back("1")
-        }else{
-            this.back("0")
+    private async getBlackCustomerList(val:string="",loading:boolean=false){
+        if(!val && !loading){
+            return
         }
+        let res:any=await Service.getCustomerList({
+            host_ids:this.rows.map(item=>item.host_id),
+            customer_id:val
+        })
+        if (res.code == 'Success'){
+            this.blackCustomerList=res.data.customer_list;
+        }
+    }
+    private async confirm(){
+        let form = this.$refs.form as any;
+        form.validate(async valid=>{
+            if(valid){
+                let res:any =await Service.update_attribute({
+                    host_ids:this.rows.map(item=>item.host_id),
+                    host_purpose:this.form_data.use,
+                    host_type:this.form_data.type,
+                    customer_ids:this.form_data.customer_id,
+                    spec_family_ids:this.form_data.family,
+                    backend_type:this.form_data.backend,
+                    black_customer_ids:this.form_data.black_customer_id
+                })
+                if(res.code==='Success'){
+                    if(res.data.fail_host_list.length>0){
+                        this.$message.warning(res.message)
+                        this.back("0");
+                        return;
+                    }
+                    this.$message.success(res.message)
+                    this.back("1")
+                }else{
+                    this.back("0")
+                }
+                    }
+                })
+        
         
     }
     @Emit("close")
