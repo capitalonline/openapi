@@ -115,7 +115,14 @@ export default{
     get_host_filter_item(req){
         return service(getHostOptions('POST','/host/get_host_filter_item/',req))
     },
-    
+    //设置备注
+    set_remark(req){
+        return service(getHostOptions('POST','/host/set_host_remark/',req))
+    },
+    //设置迁移，调度标记
+    set_flag(req){
+        return service(getHostOptions('POST','/host/set_host_tag/',req))
+    }
     
 
 }
