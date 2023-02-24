@@ -10792,7 +10792,7 @@ def queryImages():
 | requestId     | string | 是       | “e0997510-1b69-4de8-85a8-cc44b2dd28f8” | 请求uuid                                                     |
 | siteId        | string | 是       | “ebbfcb70-a98f-11ec-926b-8aaa763f849e” | 节点id                                                       |
 | duration      | string | 否       | ”1“                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5；按需无需传，默认为1 |
-| isToMonth     | string | 否       | ”1“                                    | 费用是否为计算到月底(1:是,0:否) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| isToMonth     | string | 否       | ”1“                                    | 费用是否为计算到月底(0是整月，1到月底) ,如:7月20号购买到月底7-31号,则is_to_month=1,duration=1 ， 默认为0（包月使用） 如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
 | billCycle     | string | 否       | “minute”                               | 计费周期 month是按月，minute是按需计费， 默认为minute        |
 | num           | string | 否       | “1”                                    | 购买数量 ， 默认为1                                          |
 | goodsId       | string | 是       | “15273”                                | 商品id                                                       |
@@ -12316,9 +12316,9 @@ def queryExpireVms():
 | subAccountId  | string | 否       | “76581”                                | 子账户-试用金id                                              |
 | billCycle     | string | 否       | “minute”                               | 费周期 month是按月，minute是按需计费 ， 默认为minute 如果选择按需：minute，则参数duration、isToMonth、isAutoRenewal、priceToMonth无需传如果选择包月：montn，则参数 duration、isToMonth、isAutoRenewal、priceToMonth 选择：1、不传使用默认值：duration=1，isToMonth=0，isAutoRenewal=0，priceToMonth=0表示为：包1个整月 |
 | duration      | string | 否       | “1”                                    | 包月周期数，billCtcle的值是mounth时为包月，3个月传3,5个月传5； 按需无需传，默认为1 |
-| isToMonth     | string | 否       | “0”                                    | 包月是否到月底 1是到月底，0否， 默认为0如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
+| isToMonth     | string | 否       | “0”                                    | 包月是否到月底 1是到月底，0是整月， 默认为0如：包月开始时间为 2022.6.22 12:19:08isToMonth为1，duration为1，则包月到2022.7.1 00:00:00isToMonth为0，duration为1，则包整月到2022.7.22 12:19:08isToMonth为1，duration为6，则包整月到2022.12.1 12:19:08 isToMonth为0，duration为6，则包整月到2022.12.22 12:19:08 |
 | isAutoRenewal | string | 否       | “0”                                    | 包月是否续约 1是0否， 默认为0                                |
-| priceToMonth  | string | 否       | “0”                                    | 包年包月 不足整月是否按整月收费 1是0否， 默认为0             |
+| priceToMonth  | string | 否       | “0”                                    | 包年包月 不足整月是否按整月核算（目的是为了判断是否与允许创建订单 真正收费金额按照包月时长周期计算）  0是  1否， 默认为0           |
 | qos           | string | 是       | “5”                                    | 带宽大小 (mbps)                                              |
 | vpcId         | string | 是       | “73cbf764-cdcb-11ec-a318-ee97882ecf7d” | vpc id                                                       |
 | subnetNetId   | string | 是       | “73d2c7ec-cdcb-11ec-a318-ee97882ecf7d” | 子网–子网id                                                  |
