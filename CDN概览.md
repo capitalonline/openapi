@@ -264,9 +264,9 @@ def get_cdn_list():
                 "updatetime": "2021-09-26T00:08:17.000Z",
                 "bizstatusid": "01",
                 "bizstatusname": "正常",
-                "userid": "13900000800",
-                "username": "",
-                "customerid": "E020514",
+                "userid": "xxxxx",
+                "username": "xxxxx",
+                "customerid": "xxxxx",
                 "moduleid": "CDN",
                 "modulename": "CDN",
                 "modulecode": "125ee8ab74db11e68a93005056a4567b",
@@ -1108,9 +1108,9 @@ def get_ssl_list():
                 "billstatus": 0,
                 "endtime": "2022-08-06T06:33:34.000Z",
                 "ifdel": 0,
-                "customerid": "E020514",
-                "userid": "13900000800",
-                "username": "",
+                "customerid": "xxxxx",
+                "userid": "xxxxx",
+                 "username": "xxxxx",
                 "statusid": "01",
                 "statusname": "未使用"
             }
@@ -1203,9 +1203,9 @@ def get_ssl_info(ssl_id):
             "billstatus": 0,
             "endtime": "2022-08-06T06:33:34.000Z",
             "ifdel": 0,
-            "customerid": "E020514",
-            "userid": "13900000800",
-            "username": ""
+            "customerid": "xxxxx",
+            "userid": "xxxxx",
+             "username": "xxxxx"
         }
     }
 }
@@ -1448,8 +1448,8 @@ def prefetch_file():
 			"domainname": "group2.cdscdntest.com",
 			"createtime": "2021-02-02T09:31:14.000Z",
 			"updatetime": "2021-02-02T09:31:14.000Z",
-			"customerid": "E890856",
-			"userid": "cmyyuanzi@163.com",
+			"customerid": "xxxxx",
+			"userid": "xxxxx",
 			"username": "cmy",
 			"statusid": "02",
 			"statusname": "已完成",
@@ -1693,8 +1693,8 @@ def cache_status(self, id):
 			"url": "http://cmygic2test.cdscdntest.com/boom20m55s.mp4",
 			"createtime": "2022-08-03T06:47:31.000Z",
 			"updatetime": "2022-08-03T06:47:31.000Z",
-			"customerid": "E890856",
-			"userid": "cmyyuanzi@163.com",
+			"customerid": "xxxxx",
+			"userid": "xxxxx",
 			"username": "cmy",
 			"statusid": "02",
 			"statusname": "已完成",
