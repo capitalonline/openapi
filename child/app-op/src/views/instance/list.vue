@@ -2,12 +2,12 @@
   <div class="instance-list">
     <action-block :search_option="search_con" @fn-search="FnSearch" type="instance" @fn-operate="FnIsOpen">
       <template #default>
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="FnToCreate"
           :disabled="!operate_auth.includes('instance_create')"
           >创建实例</el-button
-        >
+        > -->
         <el-button
           type="primary"
           @click="FnOperate('delete_ecs')"

@@ -48,6 +48,13 @@
                    <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.region_id}}</span>
                </template>
            </el-table-column>
+           <el-table-column prop="support_ecs_type" label="计算产品类型">
+               <template slot-scope="scope">
+                    <span :class="scope.row.is_complete ? 'normal' : 'active'">
+                        <span v-for="(item,index) in scope.row.support_ecs_type">{{ item ? `${item.toUpperCase()}型${index===scope.row.support_ecs_type.length-1 ? '' : ','}` : '' }}</span>
+                    </span>
+               </template>
+           </el-table-column>
            <el-table-column prop="net_type_display" label="公网类型">
                <template slot-scope="scope">
                    <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.net_type_display}}</span>
