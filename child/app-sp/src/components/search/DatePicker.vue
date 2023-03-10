@@ -59,9 +59,10 @@ export default class DatePicker extends Vue {
   }
   @Watch('time_option.defaultTime') 
   private FnChangeDefaultTime(newVal) {
+    console.log('clear',newVal)
     if (newVal.length>0) {
       this.time = newVal;
-      // this.FnEmit()
+      this.FnEmit()
     }else{
         this.time = newVal;
         this.FnEmit()
