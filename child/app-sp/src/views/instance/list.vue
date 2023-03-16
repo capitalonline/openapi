@@ -279,10 +279,11 @@
           <el-button
             type="text"
             @click="operateGpu(scope.row)"
-            >{{scope.row.status_display==='已卸载' ? '挂载显卡' : '卸载显卡'}}</el-button
+            >显卡管理</el-button
           >
           <el-button
             type="text"
+            :disabled="scope.row.status!=='shutdown'"
             @click="netSet('single',scope.row)"
             >网络设置</el-button
           >
@@ -512,7 +513,7 @@
     <template v-if="net_visible">
       <net-set
         :visible.sync="net_visible"
-        :ecs_info="ecs_info"
+        :ecs_list="multiple_selection"
       />
     </template>
   </div>
@@ -777,7 +778,7 @@ export default class App extends Vue {
     }
     const operate_info = getInsStatus.getInsOperateAuth(type);
     if (
-      ["reset_pwd", "update_spec", "update_system", "open_bill"].indexOf(
+      ["reset_pwd", "update_spec", "update_system", "open_bill","net_set"].indexOf(
         type
       ) >= 0
     ) {
@@ -787,10 +788,11 @@ export default class App extends Vue {
       if (type === "open_bill") {
         this.FnGetEcsPrice();
       }
-    }else if(type==='net_set'){
-      this.netSet('batch');
-      return ;
-    } else {
+      if(type==='net_set'){
+        this.netSet('batch');
+        return;
+      }
+    }else {
       if (!this.FnJudgeCustomer(operate_info, type)) {
         return;
       }
@@ -972,6 +974,9 @@ export default class App extends Vue {
     }
   }
   private netSet(type,row:any={}){
+    if(type==='single'){
+      this.multiple_selection = [row]
+    }
     this.net_visible=true;
   }
   private operateGpu(row){
