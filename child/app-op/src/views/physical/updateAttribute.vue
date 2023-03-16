@@ -19,16 +19,28 @@
                     <el-option v-for="item in host_uses" :key="item.use_type" :value="item.use_type" :label="item.use_name"></el-option>
                 </el-select>
             </div>
-            <div class="m-bottom20">
+            <div class="m-bottom20" v-if="use.includes('vGPU')"> 
                 <span>切分粒度</span>
                 <el-input placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
-                <el-tooltip content="每块GPU仅能按照一种显存大小进行切分；同物理机不同显卡切分粒度可以不同；故一台物理机切分粒度的数量不能多于物理机GPU数量。" placement="right" effect="light">
+                <el-tooltip popper-class="tooltip-width" content="每块GPU仅能按照一种显存大小和切分类型进行切分；同物理机不同显卡切分粒度/切分类型可以不同；故一台物理机切分粒度/切分类型的数量不能多于物理机GPU数量。最多支持设置4种值。" placement="bottom" effect="light">
                     <el-button type="text">
                         <svg-icon icon="info" class="info"></svg-icon>
                     </el-button>
                 </el-tooltip>
             </div>
-            <div class="error_message" v-if="particle.split(',').length>4">最多支持设置4种值</div>
+            <div class="error_message tip" v-if="particle.split(',').length>4">最多支持设置4种值</div>
+            <div class="error_message tip" v-else-if="particle.includes('，')">请用英文逗号隔开</div>
+            <div class="m-bottom20" v-if="use.includes('vGPU')">
+                <span>切分类型</span>
+                <el-select v-model="vgpu_segment_type">
+                    <el-option
+                        v-for="item in particleList"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+            </div>
             <div class="m-bottom20">
                 <span>专属客户</span>
                 <el-select 
@@ -94,6 +106,8 @@ export default class UpdateAttribute extends Vue{
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
+    private particleList =['Q','B','C','A']
+    private vgpu_segment_type = this.particleList[0]
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
@@ -167,13 +181,18 @@ export default class UpdateAttribute extends Vue{
         if(this.particle.split(',').length>4){
             return false;
         }
+        if(this.particle.includes('，')){
+            return
+        }
         let res:any =await Service.update_attribute({
             host_ids:this.rows.map(item=>item.host_id),
             host_purpose:this.use,
             host_type:this.type,
             customer_ids:this.customer_id,
             spec_family_ids:this.family,
-            backend_type:this.backend
+            backend_type:this.backend,
+            vgpu_granularity:this.use.includes('vGPU') ? this.particle : undefined,
+            vgpu_segment_type:this.use.includes('vGPU') ? this.vgpu_segment_type : undefined
         })
         if(res.code==='Success'){
              if(res.data.fail_host_list.length>0){
@@ -204,6 +223,11 @@ export default class UpdateAttribute extends Vue{
     }
     .el-select,.el-input{
         width: 340px;
+    }
+    .tip{
+        margin-left: 140px;
+        margin-top: -20px;
+    
     }
 }
 </style>
