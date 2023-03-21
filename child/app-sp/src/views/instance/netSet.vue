@@ -52,12 +52,12 @@
             </el-table-column>
             <el-table-column prop="operate" label="">
                 <template slot-scope="scope">
-                    <i class="el-icon-remove-outline delete-icon" v-if="list.length>1" @click="del(scope.$index)"></i>
+                    <i class="el-icon-remove-outline delete-icon" @click="del(scope.$index)"></i>
                 </template>
             </el-table-column>
         </el-table>
         <div class="m-top10">
-            <el-button type="text" @click="add" :disabled="list.length===5"><i class="el-icon-circle-plus"></i> 添加数据盘</el-button>
+            <el-button type="text" @click="add" :disabled="list.length===5"><i class="el-icon-circle-plus"></i> 添加网卡</el-button>
         </div>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="confirm">确定</el-button>
