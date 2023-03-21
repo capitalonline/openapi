@@ -11973,6 +11973,8 @@ def getLineBillingScheme():
 | bandwidthConfIdStr | string | 是       | “1069”                                 | 带宽conf_id **(新增) 从32获取** |
 | siteId             | string | 是       | “35304122-8504-400c-a61c-56ba244c5dda” | 站点id                          |
 | isMounth           | string | 是       | "0"                                    | 是否包月  0：否 1：是           |
+| isToMonth           | string | 否       | "1"                                    | 包月购买时，是否到月底  0：购买整月 1：到月底  **(新增)**         |
+| duration           | string | 否       | "1"                                    | 包月时长   1：表示购买一个月   **(新增)**       |
 | qos                | string | 是       | “5”                                    | 带宽值(mbps)                    |
 | requestId          | string | 是       | “6ca9ed98-27c8-4431-995f-59cc6d743dab” | 请求标识uuid                    |
 
