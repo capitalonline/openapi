@@ -56,6 +56,14 @@ export default {
   add_common_mirror(reqData) {
     return service(getEcsOptions('POST', '/img/create_pub_image_by_ecs/', reqData))
   },
+  //网卡设置
+  set_net(req){
+    return service(getEcsOptions('POST', '/ecs/ecs_set_base_nic/', req))
+  },
+  //挂载显卡
+  mount_gpu_card(req){
+    return service(getEcsOptions('POST', '/ecs/instance_gpu_card/', req))
+  },
   // 导出excel
   export_list(reqData) {
     return service({

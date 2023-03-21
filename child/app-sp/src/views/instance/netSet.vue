@@ -16,32 +16,38 @@
         <el-table :data="list">
             <el-table-column prop="vlan" label="VLAN">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row.vlan" />
+                    <el-input v-model="scope.row.vlan_id" oninput="value = value.replace(/^(0+)|[^\d]+/g,'')" />
+                    <div v-show="!judge('vlan',scope.row.vlan_id)" class="error_message">vlan需为大于0的数字</div>
                 </template>
             </el-table-column>
             <el-table-column prop="ip" label="IP地址">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row.ip" />
+                    <el-input v-model="scope.row.ip_address" />
+                    <div v-show="!judge('ip',scope.row.ip_address)" class="error_message">ip地址格式不正确</div>
                 </template>
             </el-table-column>
             <el-table-column prop="subnet" label="子网掩码">
                 <template slot-scope="scope">
-                    <el-input v-model="scope.row.subnet" />
+                    <el-input v-model="scope.row.mask" oninput="value = value.replace(/^(0+)|[^\d]+/g,'')" />
+                    <div v-show="!judge('subnet',scope.row.mask)" class="error_message">子网掩码范围为1-32</div>
                 </template>
             </el-table-column>
             <el-table-column prop="gateway" label="网关">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.gateway" />
+                    <div v-show="!judge('ip',scope.row.gateway)" class="error_message">网关ip地址格式不正确</div>
                 </template>
             </el-table-column>
             <el-table-column prop="mainDns" label="主DNS">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.mainDns" />
+                    <div v-show="!judge('ip',scope.row.mainDns)" class="error_message">主DNS格式不正确</div>
                 </template>
             </el-table-column>
             <el-table-column prop="dns" label="备DNS">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.dns" />
+                    <div v-show="!judge('ip',scope.row.dns)" class="error_message">备DNS格式不正确</div>
                 </template>
             </el-table-column>
             <el-table-column prop="operate" label="">
@@ -63,39 +69,105 @@
   
   <script lang="ts">
   import { Component, Vue,Prop,Emit, PropSync } from 'vue-property-decorator';
+  import Service from '../../https/instance/list'
   @Component
   export default class InsDetail extends Vue{
     $message;
     @PropSync('visible')visibleSync!:boolean
-    @Prop(String) detail_id!:String;
-    private list:any=[
-        {
-            vlan:'',
-            ip:'',
-            subnet:'',
-            gateway:'',
-            mainDns:'',
-            dns:''
-        }
-    ]
+    @Prop({default:()=>[]}) ecs_list!:any;
+    private list:any=[]
     created() {
+        console.log('this.ecs_list',this.ecs_list[0].base_nic_info)
+        if(this.ecs_list.length===1){
+            this.ecs_list[0].base_nic_info.map(item=>{
+                this.list.push({
+                    netcard_id:item.netcard_id,
+                    vlan_id:item.vlan_id,
+                    ip_address:item.ip_address,
+                    mask:item.mask,
+                    gateway:item.gateway,
+                    mainDns:item.dns[0],
+                    dns:item.dns[1],
+                })
+                return item;
+            })
+        }else{
+            this.list = [{
+                netcard_id:'',
+                vlan_id:'',
+                ip_address:'',
+                mask:'',
+                gateway:'',
+                mainDns:'',
+                dns:''
+            }]
+        }
     }
     private add(){
+        if(this.list.length>=5){
+            return;
+        }
         this.list.push({
-            vlan:'',
-            ip:'',
-            subnet:'',
+            netcard_id:'',
+            vlan_id:'',
+            ip_address:'',
+            mask:'',
             gateway:'',
             mainDns:'',
             dns:''
         })
     }
+    private judge(type,value){
+        if(type==='vlan'){
+            return Number(value)>0
+        }else if(type==='ip'){
+            let reg = /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
+            return value && reg.test(value)
+        }else{
+            return Number(value)>0 && Number(value)<=32
+        }
+    }
     private del(ind){
         this.list = this.list.filter((item,index)=>index!==ind)
     }
     
-    private confirm(){
-
+    private async confirm(){
+        let obj = {
+            vlan_id:'vlan',
+            ip_address:'ip',
+            mask:'subnet',
+            gateway:'ip',
+            mainDns:'ip',
+            dns:'ip',
+        }
+        for(let i in this.list){
+            for(let j in this.list[i]){
+                if(j!=='netcard_id' && !this.judge(obj[j],this.list[i][j])){
+                    return;
+                }
+            }
+        }
+        let data = []
+        this.list.map(item=>{
+            const {vlan_id,ip_address,mask,gateway,mainDns,dns,netcard_id} = item
+            data.push({
+                netcard_id,
+                vlan_id:Number(vlan_id),
+                ip_address,
+                mask:Number(mask),
+                gateway,
+                dns:[mainDns,dns]
+            })
+        })
+        let res:any = await Service.set_net({
+            ecs_ids:this.ecs_list.map(item=>item.ecs_id),
+            base_nic_info:data,
+        })
+        if(res.code==='Success'){
+            this.$message.success(res.message)
+        }
+        console.log('confirm');
+        this.visibleSync=false
     }
   }
   </script>

@@ -239,6 +239,7 @@
           </div>
         </template>
       </el-table-column> -->
+      <el-table-column prop="gpu_card_status" label="显卡状态"></el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -276,13 +277,21 @@
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button
           >
+          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
+            <el-button type="text" class="not-clickable">显卡管理</el-button>
+          </el-tooltip>
           <el-button
             type="text"
+            v-else
             @click="operateGpu(scope.row)"
-            >{{scope.row.status_display==='已卸载' ? '挂载显卡' : '卸载显卡'}}</el-button
+            >显卡管理</el-button
           >
+          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
+            <el-button type="text" class="not-clickable">网络设置</el-button>
+          </el-tooltip>
           <el-button
             type="text"
+            v-else
             @click="netSet('single',scope.row)"
             >网络设置</el-button
           >
@@ -380,6 +389,7 @@
               }}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="gpu_card_status" label="显卡状态"></el-table-column>
           <el-table-column
             prop=""
             label="价格"
@@ -432,6 +442,20 @@
               :username="os_info.username"
             ></reset-pwd>
           </template>
+          <div v-if="default_operate_type === 'operateGpu'">
+            操作：
+            <el-radio-group v-model="gpu_card_operate">
+              <el-radio label="ecs_attach_gpu_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_attach_gpu_card')">挂载显卡</el-radio>
+              <el-radio label="ecs_detach_gpu_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_detach_gpu_card')">卸载显卡</el-radio>
+              <el-radio label="ecs_change_fault_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_change_fault_card')">切换显卡
+                <el-tooltip content="当云主机显卡关闭时，切换成正常可用的显卡。" placement="right" effect="light">
+                  <el-button type="text">
+                    <svg-icon :icon="'info'" viewBox="0 0 18 18"></svg-icon>
+                  </el-button>
+                </el-tooltip>
+              </el-radio>
+            </el-radio-group>
+          </div>
           <template v-if="default_operate_type === 'reset_pwd'">
             <reset-pwd
               ref="reset_pwd"
@@ -512,7 +536,7 @@
     <template v-if="net_visible">
       <net-set
         :visible.sync="net_visible"
-        :ecs_info="ecs_info"
+        :ecs_list="multiple_selection"
       />
     </template>
   </div>
@@ -592,9 +616,10 @@ export default class App extends Vue {
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
+  private gpu_card_operate:string=''
   private os_type = "";
   private billing_method: string = "0";
-  private multiple_selection: Array<Object> = [];
+  private multiple_selection: any = [];
   private multiple_selection_id: Array<string> = [];
   private operate_auth = [];
   private show_operate_dialog: boolean = false;
@@ -777,7 +802,7 @@ export default class App extends Vue {
     }
     const operate_info = getInsStatus.getInsOperateAuth(type);
     if (
-      ["reset_pwd", "update_spec", "update_system", "open_bill"].indexOf(
+      ["reset_pwd", "update_spec", "update_system", "open_bill","net_set"].indexOf(
         type
       ) >= 0
     ) {
@@ -787,10 +812,11 @@ export default class App extends Vue {
       if (type === "open_bill") {
         this.FnGetEcsPrice();
       }
-    }else if(type==='net_set'){
-      this.netSet('batch');
-      return ;
-    } else {
+      if(type==='net_set'){
+        this.netSet('batch');
+        return;
+      }
+    }else {
       if (!this.FnJudgeCustomer(operate_info, type)) {
         return;
       }
@@ -841,6 +867,8 @@ export default class App extends Vue {
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
+    console.log('this.multiple_selection',this.multiple_selection);
+    
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       this.multiple_selection_id.push(item.ecs_id);
@@ -954,6 +982,21 @@ export default class App extends Vue {
       this.FnOpenBill(
         Object.assign({ billing_method: this.billing_method }, reqData)
       );
+    }else if(this.default_operate_type === "operateGpu"){
+      this.mount_gpu_card()
+    }
+  }
+  private async mount_gpu_card(){
+    let res:any = await Service.mount_gpu_card({
+      ecs_id:this.multiple_selection[0].ecs_id,
+      customer_id:this.multiple_selection[0].customer_id,
+      event_type:this.gpu_card_operate
+    })
+    if (res.code == "Success") {
+      this.$message.success(
+        res.message
+      );
+      this.FnClose();
     }
   }
   private async FnPowerOperate(reqData) {
@@ -972,24 +1015,32 @@ export default class App extends Vue {
     }
   }
   private netSet(type,row:any={}){
+    if(type==='single'){
+      this.multiple_selection = [row]
+    }
     this.net_visible=true;
   }
   private operateGpu(row){
-    this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(async () => {
-      this.$message({
-        type: 'success',
-        message: '删除成功!'
-      });
-    }).catch(() => {
-      this.$message({
-        type: 'info',
-        message: '已取消删除'
-      });          
-    });
+    this.multiple_selection=[row]
+    this.show_operate_dialog = true;
+    this.operate_title = '显卡管理';
+    this.default_operate_type = 'operateGpu';
+    this.FnClearTimer();
+    // this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
+    //   confirmButtonText: '确定',
+    //   cancelButtonText: '取消',
+    //   type: 'warning'
+    // }).then(async () => {
+    //   this.$message({
+    //     type: 'success',
+    //     message: '删除成功!'
+    //   });
+    // }).catch(() => {
+    //   this.$message({
+    //     type: 'info',
+    //     message: '已取消删除'
+    //   });          
+    // });
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(
@@ -1226,10 +1277,17 @@ export default class App extends Vue {
       this.FnGetList();
     }
   }
+  @Watch("net_visible")
+  private watch_net_visible(nv){
+    if(!nv){
+      this.FnGetList();
+    }
+  }
   private FnClose() {
     this.show_operate_dialog = false;
     this.default_operate_type = "";
     this.total_price = "";
+    this.gpu_card_operate='';
     this.FnGetList();
   }
   private FnToDetail(id) {
