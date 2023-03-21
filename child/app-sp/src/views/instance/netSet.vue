@@ -75,20 +75,40 @@
     $message;
     @PropSync('visible')visibleSync!:boolean
     @Prop({default:()=>[]}) ecs_list!:any;
-    private list:any=[
-        {
-            vlan_id:'',
-            ip_address:'',
-            mask:'',
-            gateway:'',
-            mainDns:'',
-            dns:''
-        }
-    ]
+    private list:any=[]
     created() {
+        console.log('this.ecs_list',this.ecs_list[0].base_nic_info)
+        if(this.ecs_list.length===1){
+            this.ecs_list[0].base_nic_info.map(item=>{
+                this.list.push({
+                    netcard_id:item.netcard_id,
+                    vlan_id:item.vlan_id,
+                    ip_address:item.ip_address,
+                    mask:item.mask,
+                    gateway:item.gateway,
+                    mainDns:item.dns[0],
+                    dns:item.dns[1],
+                })
+                return item;
+            })
+        }else{
+            this.list = [{
+                netcard_id:'',
+                vlan_id:'',
+                ip_address:'',
+                mask:'',
+                gateway:'',
+                mainDns:'',
+                dns:''
+            }]
+        }
     }
     private add(){
+        if(this.list.length>=5){
+            return;
+        }
         this.list.push({
+            netcard_id:'',
             vlan_id:'',
             ip_address:'',
             mask:'',
@@ -122,19 +142,19 @@
         }
         for(let i in this.list){
             for(let j in this.list[i]){
-                if(!this.judge(obj[j],this.list[i][j])){
+                if(j!=='netcard_id' && !this.judge(obj[j],this.list[i][j])){
                     return;
                 }
             }
         }
         let data = []
         this.list.map(item=>{
-            const {vlan_id,ip_address,mask,gateway,mainDns,dns} = item
+            const {vlan_id,ip_address,mask,gateway,mainDns,dns,netcard_id} = item
             data.push({
-                netcard_id:'',
-                vlan_id,
+                netcard_id,
+                vlan_id:Number(vlan_id),
                 ip_address,
-                mask,
+                mask:Number(mask),
                 gateway,
                 dns:[mainDns,dns]
             })

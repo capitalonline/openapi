@@ -28,7 +28,7 @@ const auth = {
   update_system: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '更换操作系统'},
   reset_pwd: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '更换密码'},
   open_bill: {auth: ['running', 'shutdown'], msg: '已选实例状态需为运行中或已关机！', label: '开启计费'},
-  net_set: {auth: ['shutdown'], msg: '已选实例状态需为已关机！', label: '网络设置'}
+  net_set: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '网络设置'}
 }
 const host_status={//error为新增状态，异常
   start_up_host:{power:['shutdown'],host:['offline','online','exception'],msg:'已选主机需为在线或离线或异常状态',label:'开机'},
