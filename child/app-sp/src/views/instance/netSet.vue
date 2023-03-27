@@ -114,11 +114,11 @@
         })
         if(res.code==='Success'){
             this.dnsObj = res.data;            
-            this.list.map(item=>{
-                item.mainDns = res.data.main;
-                item.dns = res.data.slave;
-                return item;
-            })
+            // this.list.map(item=>{
+            //     item.mainDns = res.data.main;
+            //     item.dns = res.data.slave;
+            //     return item;
+            // })
         }
     }
     private add(){
