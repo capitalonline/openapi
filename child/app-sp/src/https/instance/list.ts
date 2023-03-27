@@ -60,6 +60,10 @@ export default {
   set_net(req){
     return service(getEcsOptions('POST', '/ecs/ecs_set_base_nic/', req))
   },
+  //获取网卡设置dns
+  get_default_dns(req){
+    return service(getEcsOptions('POST', '/ecs/az_default_dns/', req))
+  },
   //挂载显卡
   mount_gpu_card(req){
     return service(getEcsOptions('POST', '/ecs/instance_gpu_card/', req))
