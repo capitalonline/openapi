@@ -241,7 +241,7 @@
       </el-table-column> -->
       <el-table-column prop="gpu_card_status" label="显卡状态" :filter-multiple="false" column-key="card_status_type" :filters="gpu_status_list">
         <template slot-scope="scope">
-            <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':'' ]">{{ scope.row.gpu_card_status }}</span>
+            <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
           </template>
       </el-table-column>
       <el-table-column label="操作" width="180">
@@ -395,7 +395,7 @@
           </el-table-column>
           <el-table-column prop="gpu_card_status" label="显卡状态">
             <template slot-scope="scope">
-              <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':'' ]">{{ scope.row.gpu_card_status }}</span>
+              <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
           <el-table-column
