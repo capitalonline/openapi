@@ -76,10 +76,14 @@
     @PropSync('visible')visibleSync!:boolean
     @Prop({default:()=>[]}) ecs_list!:any;
     private list:any=[]
+    private dnsObj:any={
+        main:'',
+        slave:'',
+    }
     created() {
         console.log('this.ecs_list',this.ecs_list[0].base_nic_info)
         if(this.ecs_list.length===1){
-            this.ecs_list[0].base_nic_info.map(item=>{
+            this.ecs_list[0].base_nic_info.length>0 && this.ecs_list[0].base_nic_info.map(item=>{
                 this.list.push({
                     netcard_id:item.netcard_id,
                     vlan_id:item.vlan_id,
@@ -102,6 +106,20 @@
                 dns:''
             }]
         }
+        this.get_default_dns()
+    }
+    private async get_default_dns(){
+        let res:any = await Service.get_default_dns({
+            ecs_ids:this.ecs_list.map(item=>item.ecs_id)
+        })
+        if(res.code==='Success'){
+            this.dnsObj = res.data;            
+            this.list.map(item=>{
+                item.mainDns = res.data.main;
+                item.dns = res.data.slave;
+                return item;
+            })
+        }
     }
     private add(){
         if(this.list.length>=5){
@@ -113,8 +131,8 @@
             ip_address:'',
             mask:'',
             gateway:'',
-            mainDns:'',
-            dns:''
+            mainDns:this.dnsObj.main,
+            dns:this.dnsObj.slave
         })
     }
     private judge(type,value){

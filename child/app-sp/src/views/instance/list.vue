@@ -239,7 +239,11 @@
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column prop="gpu_card_status" label="显卡状态"></el-table-column>
+      <el-table-column prop="gpu_card_status" label="显卡状态" :filter-multiple="false" column-key="card_status_type" :filters="gpu_status_list">
+        <template slot-scope="scope">
+            <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':'' ]">{{ scope.row.gpu_card_status }}</span>
+          </template>
+      </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -389,7 +393,11 @@
               }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="gpu_card_status" label="显卡状态"></el-table-column>
+          <el-table-column prop="gpu_card_status" label="显卡状态">
+            <template slot-scope="scope">
+              <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':'' ]">{{ scope.row.gpu_card_status }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop=""
             label="价格"
@@ -631,7 +639,13 @@ export default class App extends Vue {
   private record_id: string = "";
   private detail_visible: boolean = false;
   private detail_id: string = "";
-  private net_visible:boolean=false
+  private net_visible:boolean=false;
+  private gpu_status_list:any=[
+    {text:'正常',value:'0'},
+    {text:'卸载',value:'1'},
+    {text:'关闭',value:'2'},
+  ]
+  private search_card_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -707,6 +721,9 @@ export default class App extends Vue {
       if(val.status){
         this.search_status = val.status;
       }
+      if(val.card_status_type){
+        this.search_card_status_type = val.card_status_type[0];
+      }
       this.FnGetList();
     },500)
     
@@ -765,6 +782,9 @@ export default class App extends Vue {
     }
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
+    }
+    if (this.search_card_status_type) {
+      reqData["card_status_type"] = this.search_card_status_type;
     }
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
@@ -1431,7 +1451,7 @@ export default class App extends Vue {
     }
     
   }
-  private beforeDestroy() {
+  beforeDestroy() {
     this.FnClearTimer();
   }
 }
