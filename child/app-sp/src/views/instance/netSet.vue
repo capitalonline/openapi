@@ -113,7 +113,12 @@
             ecs_ids:this.ecs_list.map(item=>item.ecs_id)
         })
         if(res.code==='Success'){
-            this.dnsObj = res.data;            
+            this.dnsObj = res.data;                 
+            if(this.ecs_list.length>1){
+                this.list[0].mainDns = this.dnsObj.main;
+                this.list[0].dns = this.dnsObj.slave;
+            } 
+                 
             // this.list.map(item=>{
             //     item.mainDns = res.data.main;
             //     item.dns = res.data.slave;

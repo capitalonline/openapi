@@ -71,6 +71,26 @@
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text">{{scope.row.ecs_num}}</el-button>
           </template>
+          <template #default="scope" v-else-if="item.prop==='exclusive_black_customers'">
+            <el-tooltip v-if="scope.row.exclusive_black_customers.length>1" effect="light">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_black_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_black_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_black_customers.length===1">{{ `${scope.row.exclusive_black_customers[0].id} (${scope.row.exclusive_black_customers[0].name})` }}</span>
+            <span v-else></span>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
+            <el-tooltip v-if="scope.row.exclusive_customers.length>1">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_customers.length===1">{{ `${scope.row.exclusive_customers[0].id} (${scope.row.exclusive_customers[0].name})` }}</span>
+            <span v-else></span>
+          </template>
           <template #default="props" v-else-if="item.prop==='ecs_num_expand'">
               <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading">
                 <el-table-column v-for="inn in ecs_fields" ref="ecs_list" :key="inn.prop" :label="inn.label" :prop="inn.prop" :width="inn.width ? inn.width : null">
