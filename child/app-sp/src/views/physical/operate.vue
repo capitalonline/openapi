@@ -128,7 +128,7 @@ export default class Operate extends Vue{
     valid:'',
     recycleId:'',
     reason:'',
-    isSet:'1',
+    isSet:this.oper_type==='cheat' ? '0' : '1',
   }
   private operate_info={
     'start_up_host':'host_operate',
