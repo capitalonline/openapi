@@ -62,33 +62,25 @@
             </el-tooltip>
             <div v-else></div>
           </template>
-          <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
-            <span v-if="scope.row.exclusive_customers.length===0">全部客户</span>
-            <el-tooltip effect="light" placement="bottom" v-else-if="scope.row.exclusive_customers.length>1">
-              <div slot='content'>
-                <div v-for="(item,index) in scope.row.exclusive_customers" :key="item.id">
-                  {{ item.id }}({{ item.name }})
-                </div>
-              </div>
-              <div>
-                <span v-for="(item,index) in scope.row.exclusive_customers" :key="item.id">{{ item.id }}<span v-if="index!==scope.row.exclusive_customers.length.length-1">,</span></span>
-              </div>
-              </el-tooltip>
-            <span v-else-if="scope.row.exclusive_customers.length===1">{{scope.row.exclusive_customers[0].id}}({{scope.row.exclusive_customers[0].name}})</span>
-          </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_black_customers'">
-            <span v-if="scope.row.exclusive_black_customers.length===0">全部客户</span>
-            <el-tooltip effect="light" placement="bottom" v-else-if="scope.row.exclusive_black_customers.length>1">
-              <div slot='content'>
-                <div v-for="(item,index) in scope.row.exclusive_black_customers" :key="item.id">
-                  {{ item.id }}({{ item.name }})
-                </div>
-              </div>
-              <div>
-                <span v-for="(item,index) in scope.row.exclusive_black_customers" :key="item.id">{{ item.id }}<span v-if="index!==scope.row.exclusive_black_customers.length.length-1">,</span></span>
-              </div>
-              </el-tooltip>
-            <span v-else-if="scope.row.exclusive_black_customers.length===1">{{scope.row.exclusive_black_customers[0].id}}({{scope.row.exclusive_black_customers[0].name}})</span>
+            <el-tooltip v-if="scope.row.exclusive_black_customers.length>1" effect="light">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_black_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_black_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_black_customers.length===1">{{ `${scope.row.exclusive_black_customers[0].id} (${scope.row.exclusive_black_customers[0].name})` }}</span>
+            <span v-else></span>
+          </template>
+          <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
+            <el-tooltip v-if="scope.row.exclusive_customers.length>1">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_customers.length===1">{{ `${scope.row.exclusive_customers[0].id} (${scope.row.exclusive_customers[0].name})` }}</span>
+            <span v-else>全部客户</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_spec_family'">
             <el-tooltip
@@ -106,12 +98,6 @@
           </template>
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text" @click="goEcs(scope.row.host_name)">{{scope.row.ecs_num}}</el-button>
-          </template>
-          <template #default="scope" v-else-if="item.prop==='remark'">
-            <el-tooltip v-if="scope.row.remark.length>40" popper-class="tooltip-width" effect="light" :content="scope.row.remark" placement="bottom">
-              <span>{{ `${scope.row.remark.slice(0,41)}...` }}</span>
-            </el-tooltip>
-            <span v-else>{{scope.row.remark}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='cpu_with_model'">
             <span v-if="scope.row.cpu_model">{{scope.row.cpu_model}} * {{scope.row.cpu_model_count}}</span><!--型号*数量-->
@@ -230,7 +216,6 @@ export default class PhysicalList extends Vue {
     bare_metal_id:{placeholder:'请输入物理机产品ID'},
     bare_metal_name:{placeholder:'请输入物理机产品名称'},
     customer_keyword:{placeholder:'请输入专属客户ID/名称'},
-    black_customer_keyword:{placeholder:'请输入黑名单客户ID/名称'},
   }
   private operate_btns:any=[
     {label:'分配资源',value:'resource'},
@@ -355,7 +340,7 @@ export default class PhysicalList extends Vue {
     }    
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot','gpu_count','ecs_gpu_count','gpu_ff_count'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot','gpu_count','ecs_gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{width:'140px'})
@@ -391,14 +376,8 @@ export default class PhysicalList extends Vue {
       if(item.prop==='backend_type'){
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
       }
-      if(['scheduled_display'].includes(item.prop)){
-        item = Object.assign(item,{},{column_key:'scheduled',list:[{text:'是',value:1},{text:'否',value:0}]})
-      }
-      if(['migrated_display'].includes(item.prop)){
-        item = Object.assign(item,{},{column_key:'migrated',list:[{text:'是',value:1},{text:'否',value:0}]})
-      }
-      if(item.prop==='dummy_display'){
-        item = Object.assign(item,{},{column_key:'dummy',list:[{text:'有',value:1},{text:'无',value:0}]})
+      if(item.prop==='vgpu_segment_type'){
+        // item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:}]})
       }
       return item;
     })
@@ -442,10 +421,6 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
-      black_customer_keyword,
-      migrated,
-      scheduled,
-      dummy,
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -462,7 +437,6 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
-      black_customer_keyword,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
@@ -476,13 +450,9 @@ export default class PhysicalList extends Vue {
       sort_gpu_count:this.search_data.sort_gpu_count,
       sort_out_band_address:this.search_data.sort_out_band_address,
       sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
-      sort_gpu_ff_count:this.search_data.sort_gpu_ff_count,
       sort_host_ip:this.search_data.sort_host_ip,
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
-      migrated:migrated ? migrated[0] : undefined,
-      scheduled:scheduled ? scheduled[0] : undefined,
-      dummy:dummy ? dummy[0] : undefined,
       host_source:host_source ? host_source[0] : undefined,
       backend_type:backend_type ? backend_type[0] : undefined,
       ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
@@ -558,10 +528,6 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
-      black_customer_keyword,
-      migrated,
-      scheduled,
-      dummy
     }=this.search_data
     let obj = {//缺少规格族字段筛选
         az_id,
@@ -578,7 +544,6 @@ export default class PhysicalList extends Vue {
         bare_metal_id,
         bare_metal_name,
         customer_keyword,
-        black_customer_keyword,
         host_attribution_id:host_belong ? host_belong[0] : undefined,
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
@@ -586,9 +551,6 @@ export default class PhysicalList extends Vue {
         power_status:power_status ? power_status[0] : undefined,
         machine_status:machine_status ? machine_status[0] : undefined,
         backend_type:backend_type ? backend_type[0] : undefined,
-        migrated:migrated ? migrated[0] : undefined,
-        scheduled:scheduled ? scheduled[0] : undefined,
-        dummy:dummy ? dummy[0] : undefined,
         ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
     }
@@ -645,7 +607,6 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_gpu_allot=undefined
     this.search_data.sort_gpu_count=undefined
     this.search_data.sort_ecs_gpu_count =undefined
-    this.search_data.sort_gpu_ff_count = undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }

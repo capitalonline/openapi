@@ -89,7 +89,7 @@
               <span>{{ scope.row.exclusive_customers.map(item=>item.id).join(',') }}</span>
             </el-tooltip>
             <span v-else-if="scope.row.exclusive_customers.length===1">{{ `${scope.row.exclusive_customers[0].id} (${scope.row.exclusive_customers[0].name})` }}</span>
-            <span v-else></span>
+            <span v-else>全部客户</span>
           </template>
           <template #default="props" v-else-if="item.prop==='ecs_num_expand'">
               <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading">
