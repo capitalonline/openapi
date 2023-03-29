@@ -160,6 +160,12 @@ const routes: RouteConfig[] = [
     meta: {menu: 'event_list'}
   },
   {
+    path: '/anomalyEvent',
+    name: 'anomaly_event_list',
+    component: () => import('../views/event/anomalyList.vue'),
+    meta: {menu: 'anomaly_event_list'}
+  },
+  {
     path: '/event/:id',
     name: 'event_detail',
     component: () => import('../views/event/detail.vue'),
