@@ -32,13 +32,13 @@
                     <div v-show="!judge('subnet',scope.row.mask)" class="error_message">子网掩码范围为1-32</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="gateway" label="网关">
+            <!-- <el-table-column prop="gateway" label="网关">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.gateway" />
                     <div v-show="!judge('ip',scope.row.gateway)" class="error_message">网关ip地址格式不正确</div>
                 </template>
-            </el-table-column>
-            <el-table-column prop="mainDns" label="主DNS">
+            </el-table-column> -->
+            <!-- <el-table-column prop="mainDns" label="主DNS">
                 <template slot-scope="scope">
                     <el-input v-model="scope.row.mainDns" />
                     <div v-show="!judge('ip',scope.row.mainDns)" class="error_message">主DNS格式不正确</div>
@@ -49,7 +49,7 @@
                     <el-input v-model="scope.row.dns" />
                     <div v-show="!judge('ip',scope.row.dns)" class="error_message">备DNS格式不正确</div>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="operate" label="">
                 <template slot-scope="scope">
                     <i class="el-icon-remove-outline delete-icon" @click="del(scope.$index)"></i>
@@ -89,9 +89,9 @@
                     vlan_id:item.vlan_id,
                     ip_address:item.ip_address,
                     mask:item.mask,
-                    gateway:item.gateway,
-                    mainDns:item.dns[0],
-                    dns:item.dns[1],
+                    // gateway:item.gateway,
+                    // mainDns:item.dns[0],
+                    // dns:item.dns[1],
                 })
                 return item;
             })
@@ -101,12 +101,12 @@
                 vlan_id:'',
                 ip_address:'',
                 mask:'',
-                gateway:'',
-                mainDns:'',
-                dns:''
+                // gateway:'',
+                // mainDns:'',
+                // dns:''
             }]
         }
-        this.get_default_dns()
+        // this.get_default_dns()
     }
     private async get_default_dns(){
         let res:any = await Service.get_default_dns({
@@ -135,9 +135,9 @@
             vlan_id:'',
             ip_address:'',
             mask:'',
-            gateway:'',
-            mainDns:this.dnsObj.main,
-            dns:this.dnsObj.slave
+            // gateway:'',
+            // mainDns:this.dnsObj.main,
+            // dns:this.dnsObj.slave
         })
     }
     private judge(type,value){
@@ -159,9 +159,9 @@
             vlan_id:'vlan',
             ip_address:'ip',
             mask:'subnet',
-            gateway:'ip',
-            mainDns:'ip',
-            dns:'ip',
+            // gateway:'ip',
+            // mainDns:'ip',
+            // dns:'ip',
         }
         for(let i in this.list){
             for(let j in this.list[i]){
@@ -172,14 +172,14 @@
         }
         let data = []
         this.list.map(item=>{
-            const {vlan_id,ip_address,mask,gateway,mainDns,dns,netcard_id} = item
+            const {vlan_id,ip_address,mask,mainDns,dns,netcard_id} = item
             data.push({
                 netcard_id,
                 vlan_id:Number(vlan_id),
                 ip_address,
                 mask:Number(mask),
-                gateway,
-                dns:[mainDns,dns]
+                gateway:'',
+                dns:[]
             })
         })
         let res:any = await Service.set_net({
