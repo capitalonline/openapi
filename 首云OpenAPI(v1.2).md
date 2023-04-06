@@ -19602,7 +19602,7 @@ def get_region_goods(site_code):
 
 | 名称       | 类型     | 示例值                               | 描述                                                         |
 | :--------- | -------- | :----------------------------------- | :----------------------------------------------------------- |
-| Code       | Interger | Success                              | 错误码                                                       |
+| Code       | string | Success                              | 错误码                                                       |
 | Message    | string   |                                      | 提示信息                                                     |
 | ResourceId | string   | bbf63749-0186-4c68-8adc-9bf584bc1376 | 资源Id列表                                                   |
 | TaskId     | string   | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 任务Id                                                       |
