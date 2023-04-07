@@ -29,22 +29,32 @@
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
-                <el-table-column prop="machine_status_name" label="主机状态" v-if="!status_list.includes(title)"></el-table-column>
+                <el-table-column prop="machine_status_name" label="主机状态" v-if="![...status_list,...flag_list].includes(title)"></el-table-column>
                 <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
+                <el-table-column prop="machine_status_name" label="机器状态" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="scheduled_display" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="migrated_display" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
             </el-table>
-            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate'].includes(oper_type)" label-position="left">
+            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
                 <el-radio-group v-model="form_data.valid">
                   <el-radio :label="'1'">成功</el-radio>
                   <el-radio :label="'0'">失败</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item prop="reason" label="说明:" v-if="oper_type==='finish_validate' && form_data.valid==='0'">
-                <el-input v-model="form_data.reason" type="textarea" :maxlength="256" />
+              <el-form-item prop="isFlag" :label="labelObj[oper_type]" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)">
+                <el-radio-group v-model="form_data.isSet">
+                  <el-radio :label="'1'">{{ valueObj[oper_type][0] }}</el-radio>
+                  <el-radio :label="'0'">{{ valueObj[oper_type][1] }}</el-radio>
+                </el-radio-group>
               </el-form-item>
-              <el-form-item prop="recycleId" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
+              <el-form-item prop="reason" label="说明:" v-if="['schedule','migrate_flag','cheat'].includes(oper_type) || (oper_type==='finish_validate' && form_data.valid==='0')">
+                <el-input v-model="form_data.reason" type="textarea" show-word-limit :maxlength="['schedule','migrate_flag','cheat'].includes(oper_type) ? 128 : 256" />
+              </el-form-item>
+              <el-form-item prop="recycleId" v-if="!['schedule','migrate_flag','cheat'].includes(oper_type)" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
                   <el-select v-model="form_data.recycleId">
                     <el-option v-for="item in recycle_list" :key="item.department_en" :label="item.department_name" :value="item.department_name"></el-option>
                   </el-select>
@@ -90,12 +100,35 @@ export default class Operate extends Vue{
   @Prop(String) oper_type!:string;
   private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作？`
   private status_list:Array<String> = ['开机','关机','重启'];
+  private flag_list:Array<String> = ['调度标记','迁移标记','欺骗器管理'];
   private valid:number=1;
+  private isFlag:number=1;
+  private labelObj={
+    'schedule':'是否允许调度',
+    'migrate_flag':'是否允许迁移',
+    'cheat':'欺骗器',
+  }
+  private op_typ_list={
+    'schedule':'set_host_scheduled',
+    'migrate_flag':'set_host_migrated',
+    'cheat':'set_host_dummy',
+  }
+  private op_typ_req={
+    'schedule':'scheduled',
+    'migrate_flag':'migrated',
+    'cheat':'dummy',
+  }
+  private valueObj={
+    'schedule':['是','否'],
+    'migrate_flag':['是','否'],
+    'cheat':['有','无'],
+  }
   private recycle_list=[]
   private form_data={
     valid:'',
     recycleId:'',
     reason:'',
+    isSet:this.oper_type==='cheat' ? '0' : '1',
   }
   private operate_info={
     'start_up_host':'host_operate',
@@ -106,7 +139,10 @@ export default class Operate extends Vue{
     'finish':'finish_maintenance',
     'shelves':'shelves',
     'disperse':'disperse',
-    'finish_validate':'finish_validate'
+    'finish_validate':'finish_validate',
+    'schedule':'set_flag',
+    'migrate_flag':'set_flag',
+    'cheat':'set_flag'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -133,6 +169,11 @@ export default class Operate extends Vue{
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
+    }:['schedule','migrate_flag','cheat'].includes(this.oper_type) ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      [this.op_typ_req[this.oper_type]]:Number(this.form_data.isSet),
+      description:this.form_data.reason,
+      op_type:this.op_typ_list[this.oper_type]
     } : ['online_maintenance','offline_maintenance'].includes(this.oper_type) ? {
       maintenance_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
