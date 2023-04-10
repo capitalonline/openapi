@@ -131,7 +131,7 @@
         <template #default="scope">
           <div v-if="scope.row.private_net">
             {{ scope.row.private_net }}
-            <!-- （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}） -->
+            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
           </div>
         </template>
@@ -149,7 +149,7 @@
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
             </span>
             {{ scope.row.pub_net }}
-            <!-- （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}） -->
+            （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
           </div>
           <div v-for="item in scope.row.virtual_net" :key="item">
@@ -162,7 +162,7 @@
               {{ scope.row.eip_info[item].conf_name }}
             </span>
             {{ item }}
-            <!-- （vlan {{ scope.row.eip_info[item].vlan_id }}） -->
+            （vlan {{ scope.row.eip_info[item].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(item)] }}） -->
           </div>
         </template>
