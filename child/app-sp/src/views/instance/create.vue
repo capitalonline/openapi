@@ -270,10 +270,7 @@ export default class App extends Vue {
   };
 
   private confirm_create_visible: boolean = false;
-  created() {
-      this.FnGetProductSource()
-    }
-
+ 
   private async FnGetCustomerName () {
     const resData = await Service.get_customer_name({ customer_id: this.customer_id_input });
     if (resData.code === 'Success') {
