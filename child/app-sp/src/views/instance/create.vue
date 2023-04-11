@@ -15,6 +15,7 @@
           <label-block label="客户名称">
             {{ customer_name }}
           </label-block>
+         
           <label-block label="是否计费">
             <el-switch v-model="is_billing">
             </el-switch>
@@ -215,6 +216,12 @@ export default class App extends Vue {
     az_list: []
   };
 
+  // 产品来源
+  private product_source = '';
+  // 对应服务账号id
+  private serve_id = '';
+  
+
   private default_az = {
     az_id: '',
     az_name: ''
@@ -267,6 +274,9 @@ export default class App extends Vue {
   };
 
   private confirm_create_visible: boolean = false;
+  created() {
+      this.FnGetProductSource()
+    }
 
   private async FnGetCustomerName () {
     const resData = await Service.get_customer_name({ customer_id: this.customer_id_input });
@@ -274,6 +284,19 @@ export default class App extends Vue {
       this.customer_id = resData.data.customer_id;
       this.customer_name = resData.data.customer_name;
       this.error_msg.customer_id.show = false;
+      this.FnGetRegionAzList();
+    }
+  }
+// 获取产品来源
+  private async FnGetProductSource () {
+    const resData = await Service.get_product_origin({ 
+      product_source:"云桌面",
+      page_size:0,
+      page_index:1
+     });
+    if (resData.code === 'Success') {
+      console.log(resData.data,'zyy产品来源');
+      // this.product_source = 
       this.FnGetRegionAzList();
     }
   }

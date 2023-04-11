@@ -244,6 +244,13 @@
             <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
           </template>
       </el-table-column>
+      <!-- 产品来源 -->
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_status_type" :filters="product_source_list">
+        <template slot-scope="scope">
+            <span>{{ scope.row.product_source}}</span>
+          </template>
+      </el-table-column>
+
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -398,6 +405,11 @@
               <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="product_source" label="产品来源">
+        <template slot-scope="scope">
+            <span>{{ scope.row.product_source}}</span>
+          </template>
+      </el-table-column>
           <el-table-column
             prop=""
             label="价格"
@@ -645,7 +657,15 @@ export default class App extends Vue {
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
   ]
+  // 产品来源
+  private product_source_list:any=[
+    {text:'云桌面',value:'云桌面'},
+    {text:'云主机',value:'云主机'},
+    {text:'文件存储转发',value:'文件存储转发'},
+    {text:'容器',value:'容器'},
+  ]
   private search_card_status_type:string=''
+  private search_product_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -706,6 +726,7 @@ export default class App extends Vue {
   }
   // 筛选实例来源
   private handleFilterChange(val) {
+    console.log('val',val)
     this.FnClearTimer();
     setTimeout(()=>{
       if (val.op_source) {
@@ -723,6 +744,9 @@ export default class App extends Vue {
       }
       if(val.card_status_type){
         this.search_card_status_type = val.card_status_type[0];
+      }
+      if(val.product_status_type){
+        this.search_product_status_type = val.product_status_type[0];
       }
       this.FnGetList();
     },500)
@@ -785,6 +809,9 @@ export default class App extends Vue {
     }
     if (this.search_card_status_type) {
       reqData["card_status_type"] = this.search_card_status_type;
+    }
+    if(this.search_product_status_type) {
+      reqData["product_status_type"] = this.search_product_status_type;
     }
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
