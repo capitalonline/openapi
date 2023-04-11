@@ -32,8 +32,5 @@ export default {
   get_ecs_limit(reqData) {
     return service(getEcsOptions('POST', '/ecs/get_ecs_limit/', reqData))
   },
-  // 产品来源
-  get_product_origin(reqData) {
-    return service(getEcsOptions('POST', '/ecs/ecs_list/', reqData))
-  }
+  
 }

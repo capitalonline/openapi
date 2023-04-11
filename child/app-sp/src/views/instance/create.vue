@@ -216,11 +216,7 @@ export default class App extends Vue {
     az_list: []
   };
 
-  // 产品来源
-  private product_source = '';
-  // 对应服务账号id
-  private serve_id = '';
-  
+ 
 
   private default_az = {
     az_id: '',
@@ -287,19 +283,7 @@ export default class App extends Vue {
       this.FnGetRegionAzList();
     }
   }
-// 获取产品来源
-  private async FnGetProductSource () {
-    const resData = await Service.get_product_origin({ 
-      product_source:"云桌面",
-      page_size:0,
-      page_index:1
-     });
-    if (resData.code === 'Success') {
-      console.log(resData.data,'zyy产品来源');
-      // this.product_source = 
-      this.FnGetRegionAzList();
-    }
-  }
+
 
   private async FnGetRegionAzList () {
     const resData = await Service.get_region_az_list({ customer_id: this.customer_id });
