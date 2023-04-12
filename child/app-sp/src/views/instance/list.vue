@@ -749,8 +749,8 @@ export default class App extends Vue {
         this.search_card_status_type = val.card_status_type[0];
       }
       // 产品来源
-      if(val.product_source){
-        this.search_product_source = val.product_source[0];
+      if(val.search_product_source){
+        this.search_product_source = val.search_product_source[0];
       }
       this.FnGetList();
     },500)
