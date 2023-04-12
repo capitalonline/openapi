@@ -337,10 +337,11 @@ export default class CommonMirror extends Vue{
         this.oper_info=obj
     }
     private down(){
-        const{os_id,display_name,time,os_type,support_gpu_driver,support_type,status,product_source} = this.search_data
+        const{os_id,display_name,product_server_id,time,os_type,support_gpu_driver,support_type,status,product_source} = this.search_data
         let query = paramsSerializer({
             image_id:os_id,
             image_name:display_name,
+            product_server_id:product_server_id,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,

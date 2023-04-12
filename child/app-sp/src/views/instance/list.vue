@@ -631,6 +631,8 @@ export default class App extends Vue {
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
+  // 产品线来源
+  private search_product_source='';
   private search_ecs_goods_name = [];
   private search_status=[]
   private instance_list: Array<Object> = [];
@@ -668,6 +670,8 @@ export default class App extends Vue {
     {text:'文件存储转发',value:'文件存储转发'},
     {text:'容器',value:'容器'},
   ]
+  // 服务账号ID
+  private product_server_id:string=''
   private search_card_status_type:string=''
   private search_product_status_type:string=''
   private page_info = {
@@ -716,6 +720,10 @@ export default class App extends Vue {
       host_name: data.host_name,
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
+      //产品来源
+      product_source:data.product_source,
+      // 服务账户ID
+      product_server_id:data.product_server_id,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -749,8 +757,9 @@ export default class App extends Vue {
       if(val.card_status_type){
         this.search_card_status_type = val.card_status_type[0];
       }
+      // 产品来源
       if(val.product_source){
-        this.search_product_status_type = val.product_source[0];
+        this.search_product_source = val.product_source[0];
       }
       this.FnGetList();
     },500)
@@ -811,12 +820,20 @@ export default class App extends Vue {
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
     }
+    // 产品来源
+    if(this.search_product_source){
+      reqData["product_source"] = this.search_product_source;
+    }
+    // 服务账户ID
+    // if(this.search_product_server_id){
+    //   reqData["product_server_id"] = this.search_product_server_id;
+    // }
     if (this.search_card_status_type) {
       reqData["card_status_type"] = this.search_card_status_type;
     }
-    if(this.search_product_status_type) {
-      reqData["product_source"] = this.search_product_status_type;
-    }
+    // if(this.search_product_status_type) {
+    //   reqData["product_source"] = this.search_product_status_type;
+    // }
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
@@ -1423,9 +1440,9 @@ export default class App extends Vue {
   }
 
   private async FnExport() {
+    console.log('this.search_product_source',this.search_product_source)
     this.loading = true;
-    const resData = await Service.export_list(
-      Object.assign(
+    let obj = Object.assign(
         {
           billing_method:
             this.search_billing_method == ""
@@ -1433,9 +1450,14 @@ export default class App extends Vue {
               : this.search_billing_method,
           op_source: this.search_op_source,
           spec_family_ids:this.search_ecs_goods_name.join(','),
+          // 产品来源
+          product_source:this.search_product_source,
         },
         this.search_reqData
       )
+    console.log('obj',obj)
+    const resData = await Service.export_list(
+      obj
     );
     if (resData) {
       this.loading = false;
