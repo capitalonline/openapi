@@ -195,7 +195,7 @@ export default class PrivateMirror extends Vue{
             sort_used_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
-            support_product_source_type:support_product_source_type ? support_product_source_type[0] : undefined,
+            // product_source:product_source_type ? support_product_source_type[0] : undefined,
             business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
             status:status ? status[0] : undefined,
             backend_type:backend_type ? backend_type[0] : undefined,
@@ -239,7 +239,7 @@ export default class PrivateMirror extends Vue{
         this.visible = false
     }
     private down(){
-        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,support_product_source_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time,product_source}=this.search_data;
+        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time,product_source}=this.search_data;
         let obj={
             image_info,
             customer_info,
@@ -251,11 +251,11 @@ export default class PrivateMirror extends Vue{
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
             // 产品来源
-            support_product_source_type:support_product_source_type ? support_product_source_type[0] : undefined,
+            product_source:product_source ? product_source[0] : undefined,
             business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
             status:status ? status[0] : undefined,
             backend_type:backend_type ? backend_type[0] : undefined,
-            product_source:product_source?product_source[0] : undefined,
+            // product_source:product_source?product_source[0] : undefined,
             sort_update_time,
             sort_create_time,
         }

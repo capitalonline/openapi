@@ -244,8 +244,8 @@
             <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
           </template>
       </el-table-column>
-      <!-- 产品来源 -->
-      <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="product_source_list">
+      <!-- 产品来源  -->
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="search_product_source" :filters="product_source_list">
         <template slot-scope="scope">
             <span>{{ scope.row.product_source}}</span>
           </template>
@@ -406,14 +406,7 @@
               <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
-          <!-- 产品来源 -->
-          <el-table-column prop="product_source" label="产品来源">
-            <template slot-scope="scope">
-              <span>{{ scope.row.product_source}}</span>
-            </template>
-          </el-table-column>
-          <!-- 计费账户ID -->
-          <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
+        
           <el-table-column
             prop=""
             label="价格"
@@ -606,10 +599,8 @@ import netSet from './netSet.vue'
 })
 export default class App extends Vue {
   private search_con = {
-    // az_id: { placeholder: "请选择可用区", list: [] },
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
-    // status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
     customer_id: { placeholder: "请输入客户ID" },
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
@@ -721,9 +712,9 @@ export default class App extends Vue {
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
       //产品来源
-      product_source:data.product_source,
+      // product_source:data.product_source,
       // 服务账户ID
-      product_server_id:data.product_server_id,
+      // product_server_id:data.product_server_id,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -815,6 +806,8 @@ export default class App extends Vue {
       status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
       [this.sort_prop_name]: this.sort_order,
       is_op:true,
+      // 产品来源
+      product_source:this.search_product_source,
       ...this.search_reqData
     }
     if (this.search_op_source) {
@@ -824,16 +817,9 @@ export default class App extends Vue {
     if(this.search_product_source){
       reqData["product_source"] = this.search_product_source;
     }
-    // 服务账户ID
-    // if(this.search_product_server_id){
-    //   reqData["product_server_id"] = this.search_product_server_id;
-    // }
     if (this.search_card_status_type) {
       reqData["card_status_type"] = this.search_card_status_type;
     }
-    // if(this.search_product_status_type) {
-    //   reqData["product_source"] = this.search_product_status_type;
-    // }
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
@@ -1223,7 +1209,8 @@ export default class App extends Vue {
       is_gpu: this.is_gpu,
       ecs_ids: this.multiple_selection_id,
       ebs_goods_info: {},
-      billing_info: this.disk_billing_info[data.ecs_goods_id]
+      billing_info: this.disk_billing_info[data.ecs_goods_id],
+      
     };
     if (this.is_gpu) {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
@@ -1455,7 +1442,6 @@ export default class App extends Vue {
         },
         this.search_reqData
       )
-    console.log('obj',obj)
     const resData = await Service.export_list(
       obj
     );
