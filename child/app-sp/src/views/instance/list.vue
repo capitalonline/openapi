@@ -411,8 +411,9 @@
             <template slot-scope="scope">
               <span>{{ scope.row.product_source}}</span>
             </template>
-        </el-table-column>
-        
+          </el-table-column>
+          <!-- 计费账户ID -->
+          <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
           <el-table-column
             prop=""
             label="价格"
