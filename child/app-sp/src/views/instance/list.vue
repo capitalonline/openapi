@@ -655,6 +655,8 @@ export default class App extends Vue {
     {text:'关闭',value:'2'},
   ]
   // 产品来源
+  // 产品来源
+  // 产品来源
   private product_source_list:any=[
     {text:'云桌面',value:'云桌面'},
     {text:'云主机',value:'云主机'},
