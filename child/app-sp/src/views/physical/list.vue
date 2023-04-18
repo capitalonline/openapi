@@ -467,7 +467,7 @@ export default class PhysicalList extends Vue {
         item = Object.assign(item,{},{width:'180px'})
       }
       if(item.prop==='vgpu_segment_type'){
-        // item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:}]})
+        item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:'Q',value:'Q'},{text:'B',value:'B'},{text:'C',value:'C'},{text:'A',value:'A'}]})
       }
       if(this.filed_name_list.includes(item.prop)){
         item = Object.assign(item,{},{column_key:item.prop,list:[]})
