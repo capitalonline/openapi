@@ -865,7 +865,8 @@ export default class App extends Vue {
         this.FnGetEcsPrice();
       }
       if(type==='net_set'){
-        this.netSet('batch');
+        this.netSet('batch');  
+        
         return;
       }
     }else {
