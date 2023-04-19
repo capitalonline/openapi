@@ -61,6 +61,8 @@
       :max-height="tableHeight"
     >
       <el-table-column type="selection" :width="select_table_item.length>0 ? '48px' : '1100px'"></el-table-column>
+      
+        
       <el-table-column
         v-for="item in select_table_item"
         :key="item.prop"
@@ -173,6 +175,13 @@
           </template>
         </template>
       </el-table-column>
+      <el-table-column label="产品线来源" prop="product_source" :filter-multiple="false" :filters="product_source_list" column-key="product_source">
+        <template #default="scope">
+          <span>{{ scope.row.product_source}}</span>
+          </template>
+      </el-table-column>
+        <!-- 计费账户id -->
+        <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
       <el-table-column label="操作" prop="operate">
         <template slot-scope="scope">
           <el-button type="text" @click="FnToRecord(scope.row.ecs_id)">操作记录</el-button>
@@ -441,6 +450,8 @@ export default class App extends Vue {
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
+  // 所选中的产品线来源
+  private product_source = "";
   private search_ecs_goods_name = [];
   private customer_type=[];
   private instance_list: Array<Object> = [];
@@ -474,6 +485,13 @@ export default class App extends Vue {
     0: "按需计费",
     1: "包年包月",
   };
+    // 产品来源
+    private product_source_list:any=[
+    {text:'云桌面',value:'云桌面'},
+    {text:'云主机',value:'云主机'},
+    {text:'文件存储转发',value:'文件存储转发'},
+    {text:'容器',value:'容器'},
+  ]
   private billing_method_list = [];
   private ecs_goods_name_list = [];
   private timer = null;
@@ -504,6 +522,8 @@ export default class App extends Vue {
         })
         this.all_item = res.data;
         this.all_column_item = deal_list(list,label_list,key_list);
+        // table里的字段
+        // console.log(list,"---->",label_list,"---->",key_list,'get_list_field');
         this.get_custom_columns(this.$store.state.ecs_custom_item)
 
       }
@@ -513,6 +533,7 @@ export default class App extends Vue {
       return;
     }
     this.select_table_item = this.all_column_item.filter(item=>list.includes(item.label));
+    // 遍历的列表中的内容
     this.select_table_item.map(item=>{
       if(['ecs_id','ecs_name','customer_id','customer_level','system_disk_size','data_disk_size','host_name','create_time'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
@@ -579,7 +600,7 @@ export default class App extends Vue {
     
     this.FnGetList();
   }
-  // 获取网段
+  // 获取网段 
   private FnGetNet(ip) {
     let data = ip.split(".");
     return [data[0], data[1], data[2], "0"].join(".");
@@ -593,13 +614,14 @@ export default class App extends Vue {
       });
     }
     let reqData = {
-      billing_method:
-        this.search_billing_method == "" ? "no" : this.search_billing_method,
-      page_index: this.page_info.page_index,
-      page_size: this.page_info.page_size,
-      is_op:false,
-      [this.sort_prop_name]: this.sort_order,
-      ...this.search_reqData,
+      // billing_method:
+      //   this.search_billing_method == "" ? "no" : this.search_billing_method,
+      // page_index: this.page_info.page_index,
+      // page_size: this.page_info.page_size,
+      // is_op:false,
+      // [this.sort_prop_name]: this.sort_order,
+      // ...this.search_reqData,
+      product_source:this.product_source
     };
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
@@ -610,9 +632,15 @@ export default class App extends Vue {
     if(this.customer_type.length > 0){
       reqData["customer_type"]=this.customer_type[0]
     }
+        // 产品来源
+    if(this.product_source){
+      reqData["product_source"] = this.product_source;
+    }
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
+      console.log(this.instance_list ,"this.instance_list ");
+      
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter((row) =>
@@ -1150,6 +1178,7 @@ export default class App extends Vue {
               : this.search_billing_method,
           op_source: this.search_op_source,
           spec_family_ids: this.search_ecs_goods_name.length > 0 ? this.search_ecs_goods_name.join(',') : undefined,
+          product_source:this.product_source,
         },
         this.search_reqData
       )

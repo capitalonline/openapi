@@ -807,7 +807,7 @@ export default class App extends Vue {
       // [this.sort_prop_name]: this.sort_order,
       // is_op:true,
       // 产品来源
-      product_source:this.search_product_source,
+      product_source:this.search_product_source
       // ...this.search_reqData
     }
     if (this.search_op_source) {
@@ -823,9 +823,12 @@ export default class App extends Vue {
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
+    // 
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
+      console.log(this.instance_list[0],"instance_list");
+      
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter(row =>
