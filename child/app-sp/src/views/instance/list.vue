@@ -655,8 +655,6 @@ export default class App extends Vue {
     {text:'关闭',value:'2'},
   ]
   // 产品来源
-  // 产品来源
-  // 产品来源
   private product_source_list:any=[
     {text:'云桌面',value:'云桌面'},
     {text:'云主机',value:'云主机'},
@@ -799,16 +797,16 @@ export default class App extends Vue {
     }
     
     let reqData = {
-      // billing_method:
-      //   this.search_billing_method == "" ? "no" : this.search_billing_method,
-      // page_index: this.page_info.page_index,
-      // page_size: this.page_info.page_size,
-      // status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
-      // [this.sort_prop_name]: this.sort_order,
-      // is_op:true,
+      billing_method:
+        this.search_billing_method == "" ? "no" : this.search_billing_method,
+      page_index: this.page_info.page_index,
+      page_size: this.page_info.page_size,
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
+      [this.sort_prop_name]: this.sort_order,
+      is_op:true,
       // 产品来源
-      product_source:this.search_product_source
-      // ...this.search_reqData
+      product_source:this.search_product_source,
+      ...this.search_reqData
     }
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
