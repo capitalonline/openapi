@@ -614,13 +614,13 @@ export default class App extends Vue {
       });
     }
     let reqData = {
-      // billing_method:
-      //   this.search_billing_method == "" ? "no" : this.search_billing_method,
-      // page_index: this.page_info.page_index,
-      // page_size: this.page_info.page_size,
-      // is_op:false,
-      // [this.sort_prop_name]: this.sort_order,
-      // ...this.search_reqData,
+      billing_method:
+        this.search_billing_method == "" ? "no" : this.search_billing_method,
+      page_index: this.page_info.page_index,
+      page_size: this.page_info.page_size,
+      is_op:false,
+      [this.sort_prop_name]: this.sort_order,
+      ...this.search_reqData,
       product_source:this.product_source
     };
     if (this.search_op_source) {
