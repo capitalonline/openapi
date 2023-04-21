@@ -151,7 +151,7 @@ export default class UpdateAttribute extends Vue{
             host_ids:this.rows.map(item=>item.host_id),
             host_purpose:this.use,
             host_type:this.type,
-            customer_ids:this.customer_id,
+            customer_ids:this.customer_id.length > 0 ? this.customer_id : [],
             spec_family_ids:this.family,
             backend_type:this.backend
         })
