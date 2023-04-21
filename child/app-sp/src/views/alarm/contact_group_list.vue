@@ -146,7 +146,6 @@ export default class ContactList extends Vue{
         this.del_visible=false
         this.group_rows=[]
         this.group_id=""
-        console.log("close_group",val)
         val==='1' && this.getContactGroupList()
     }
     private add(){

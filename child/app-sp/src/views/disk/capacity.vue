@@ -13,6 +13,12 @@
                 type="warning"
                 :closable="false">
             </el-alert>
+            <div class="prompt_message m-top10 prompt" v-if="Object.keys(showResetVolume).length>0">
+                <div v-for="(i,item) in usedVolume" :key="i">
+                    当前可用区已购买<span class="num_message num-prompt">{{item}}</span>云盘<span class="num_message num-prompt">{{i}}</span>
+                    GB,还可以购买的容量额度<span class="num_message num-prompt">{{showResetVolume[item]}}</span>GB
+                </div>
+            </div>
             <el-table
                 :data="list"
                 border
@@ -30,8 +36,8 @@
                 <el-table-column prop="capacity_size" label="当前规格">
                     <template slot-scope="scope">
                         <span>容量：&nbsp;{{scope.row.capacity_size}}GB</span>
-                        <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
-                        <div class="text-left">吞吐量：&nbsp;{{scope.row.capacity_throughput}}{{scope.row.mbps_unit}}</div>
+                        <!------ <div class="text-left">IOPS:&nbsp;{{scope.row.capacity_iops}}{{scope.row.iops_unit}}</div>
+                        <div class="text-left">吞吐量：&nbsp;{{scope.row.capacity_throughput}}{{scope.row.mbps_unit}}</div> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="status_name" label="状态"></el-table-column>
@@ -41,17 +47,17 @@
                             <el-input-number 
                                 size="small" 
                                 v-model="scope.row.size" 
-                                :step="get_step_max(scope.row).step" 
-                                :max="get_step_max(scope.row).max" 
+                                :step="scope.row.disk_step" 
+                                :max="scope.row.disk_max" 
                                 :min="scope.row.capacity_size" 
-                                step-strictly
                                 @blur="change_capacity(scope.$index)"
                                 @change="change_capacity(scope.$index)"
                             >
                             </el-input-number>
                             <div class="m-left10">
-                                <div class="text-left">IOPS:&nbsp;{{scope.row.disk_iops}}{{scope.row.iops_unit}}</div>
-                                <div class="text-left">吞吐量：&nbsp;{{scope.row.band_mbps}}{{scope.row.mbps_unit}}</div>
+                                <!-- max:{{scope.row.disk_max}}: -->
+                                <!-- <div class="text-left">IOPS:&nbsp;{{scope.row.disk_iops}}{{scope.row.iops_unit}}</div>
+                                <div class="text-left">吞吐量：&nbsp;{{scope.row.band_mbps}}{{scope.row.mbps_unit}}</div> -->
                             </div>
                         </div>
                     </template>
@@ -107,26 +113,51 @@ export default class Capacity extends Vue{
     private data_disk_info:any=null
     private system_disk_info:any=null
     private billing_info = {}
-    private price_unit:string= "￥"
+    private price_unit:string= "￥";
+    private showResetVolume={}
+    private volumeInfo:any=[];
+    private usedVolume:any={}
+    private diskRules:any={}
     created() {
         this.list = JSON.parse(this.$route.query.list)
         this.get_customer_name()
+        console.log("this.list",this.list)
     }
     //获取客户名称
     private async get_customer_name(){
         const resData: any = await ECS_Service.get_customer_name({customer_id: this.list[0].customer_id});
         if (resData.code == 'Success') {
             this.price_unit = resData.data.area_id;
-            this.get_disk_info()
+            this.getDiskRules()
+            // this.get_disk_info()
         }
     }
-    private get_step_max(row){
-        return this.data_disk_info && this.system_disk_info ? {
-            step:row.disk_type==='data' ? this.data_disk_info[row.feature].disk_step : this.system_disk_info[row.feature].disk_step,
-            max:row.disk_type==='data' ? this.data_disk_info[row.feature].disk_max : this.system_disk_info[row.feature].disk_max
-        }:{
-            step:1,
-            max:row.size
+    private getTotalSize(type){//获取扩容的容量
+        return this.capacity_list.filter(item=>item.feature.slice(0,-2)===type).reduce((pre,cur)=>{
+            return pre+(cur.size-cur.capacity_size)
+        },0)
+    }
+    private getAlerInfo(){
+        this.volumeInfo=[]
+        for(let i in this.showResetVolume){
+            this.volumeInfo.push({feature : i,add:this.getTotalSize(i),remain:this.showResetVolume[i] - this.getTotalSize(i)})
+        }        
+    }
+    private async getDiskRules(){
+        let res:any = await Create.getDiskRules({
+            disk_ids:this.list.map(item=>item.disk_id),
+            customer_id:this.list[0].customer_id,
+            az_id:this.list[0].az_id,
+            billing_method:'0'
+        })
+        if(res.code==='Success'){
+            this.billing_info = res.data.billing_info;
+            this.diskRules = res.data.disk_rules
+            let obj = {};
+            this.list.map(item=>{
+                obj[item.disk_feature] = item.disk_id;
+            })
+            this.get_disk_limit(Object.keys(obj))
         }
     }
     private async get_disk_info(){
@@ -137,30 +168,61 @@ export default class Capacity extends Vue{
         })
         if(res.code==="Success"){
             this.billing_info = res.data.billing_info;
-            res.data.data_disk.filter(item=>item.disk_feature==="HDD" || item.disk_feature==="SSD").map(item=>{
+            let ids = [];
+            res.data.data_disk.filter(item=>item.disk_feature!=='local').map(item=>{
+                ids.push(item.disk_feature)
                 this.data_disk_info = Object.assign({},this.data_disk_info,{[item.disk_name]:item});
             })
             res.data.system_disk.filter(item=>{
                 this.system_disk_info = Object.assign({},this.system_disk_info,{[item.disk_name]:item})
             })
-            this.list.map(item=>{
-                item.capacity_size = item.size;
-                item.capacity_iops = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],item.size).iops : getIops(this.system_disk_info[item.feature],item.size).iops;
-                item.capacity_throughput = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],item.size).throughput : getIops(this.system_disk_info[item.feature],item.size).throughput;
-                item.disk_iops = item.capacity_iops
-                item.band_mbps = item.capacity_throughput
-                return item;
-            })
-            let disk_ids =this.list.map(item=>{
-                if(item.is_charge!==0){
-                    return item.disk_id
-                }
-            })
-            this.get_expansion_price(disk_ids,'init')
+            this.get_disk_limit(ids);
+        }
+    }
+    //获取云盘各类型剩余可使用额度
+    private async get_disk_limit(type){
+        let res = await Create.get_disk_limit({
+            customer_id:this.list[0].customer_id,
+            az_id:this.list[0].az_id,
+            feature:type,
+        })
+        if(res.code==='Success'){
+            for(let i in res.data){
+                this.usedVolume[i] = Math.max(res.data[i].current_volume,0)
+                this.showResetVolume[i] = Math.max(res.data[i].rest_volume,0);//各类型总剩余容量;
+            }
+            this.$nextTick(()=>{
+                this.list.map(item=>{//初始化
+                    item.disk_info = this.diskRules[item.disk_id]
+                    // item.disk_info = item.disk_type==="data" ? this.data_disk_info[item.feature] : this.system_disk_info[item.feature];
+                    item.capacity_size = item.size;
+                    item.capacity_iops = getIops(item.disk_info,item.size).iops;
+                    item.capacity_throughput = getIops(item.disk_info,item.size).throughput;
+                    item.disk_iops = item.capacity_iops
+                    item.band_mbps = item.capacity_throughput;
+
+                    //每次改变容量最大值会变的,初始化容量最大值                    
+                    let reset =Math.min(this.showResetVolume[item.feature.slice(0,-2)]+item.capacity_size,item.disk_info.disk_max)//最小为当前未扩容的额度
+                    item.disk_max = reset;
+                    item.disk_step = item.disk_info.disk_step
+                    return item;
+                })
+                let disk_ids =this.list.map(item=>{
+                    if(item.is_charge!==0){
+                        return item.disk_id
+                    }
+                })
+                this.get_expansion_price(disk_ids,'init')
+                this.getAlerInfo()
+            })            
+            
         }
     }
     private async get_expansion_price(ids,label){
         const temp={}
+        if(this.list.some(item=>item.size===0 || !item.size)){
+            return;
+        }
         this.list.map(item=>{
             if(ids.includes(item.disk_id)){
                 const {ebs_goods_id,gic_goods_id,feature,size,disk_iops,band_mbps} = item
@@ -199,53 +261,27 @@ export default class Capacity extends Vue{
         }
     }
     private async change_capacity(index){
-        let size = !this.list[index].size ? this.list[index].capacity_size : this.list[index].size;
-        this.list[index].disk_iops = this.list[index].disk_type==="data" ? getIops(this.data_disk_info[this.list[index].feature],size).iops : getIops(this.system_disk_info[this.list[index].feature],size).iops;
-        this.list[index].band_mbps = this.list[index].disk_type==="data" ? getIops(this.data_disk_info[this.list[index].feature],size).throughput : getIops(this.system_disk_info[this.list[index].feature],size).throughput;
-
-        if(!this.list[index].size){
-            await this.$nextTick(()=>{
-                this.$set(this.list[index],'size',size)
+        await this.$nextTick(()=>{
+            this.list.map((item,ind)=>{
+                if(ind===index){
+                    let size:number;
+                    if(!item.size){
+                        size = item.capacity_size
+                    }else{
+                        let newStep = Math.floor((Math.min(item.size,item.disk_max) - item.capacity_size) / item.disk_info.disk_step)
+                        size = item.disk_info.disk_step*newStep + item.capacity_size
+                    }                    
+                    item.disk_iops = getIops(item.disk_info,size).iops
+                    item.band_mbps = getIops(item.disk_info,size).throughput;
+                    // this.capacity_list[index] = item
+                    if(this.capacity_list.length>0) this.capacity_list[index] = item
+                    this.$set(item,'size',size)
+                    item.is_charge!==0 && this.get_expansion_price([this.list[index].disk_id],'change')
+                }
+                return item;
             })
-        }else{
-            this.$set(this.list[index],'size',size)
-        }
-        this.list[index].is_charge!==0 && this.get_expansion_price([this.list[index].disk_id],'change')
-        // if(!this.list[index].size){
-        //     await this.$nextTick(()=>{
-        //         this.list.map(async(item,ind)=>{
-        //         if(ind===index){
-        //             let size = !item.size ? item.capacity_size : item.size;
-        //             item.disk_iops = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],size).iops : getIops(this.system_disk_info[item.feature],size).iops;
-        //             item.band_mbps = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],size).throughput : getIops(this.system_disk_info[item.feature],size).throughput;
-        //             if(this.capacity_list.length>0) this.capacity_list[index] = item
-        //             this.$set(item,'size',size)
-        //             item.is_charge!==0 && this.get_expansion_price([item.disk_id],'change')
-                    
-        //         }
-                    
-        //             return item;
-                
-        //     });
-        //     })
-        // }else{
-        //     this.list.map(async(item,ind)=>{
-        //         if(ind===index){
-        //             let size = !item.size ? item.capacity_size : item.size;
-        //             item.disk_iops = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],size).iops : getIops(this.system_disk_info[item.feature],size).iops;
-        //             item.band_mbps = item.disk_type==="data" ? getIops(this.data_disk_info[item.feature],size).throughput : getIops(this.system_disk_info[item.feature],size).throughput;
-        //             if(this.capacity_list.length>0) this.capacity_list[index] = item
-        //             this.$set(item,'size',size)
-        //             item.is_charge!==0 && this.get_expansion_price([item.disk_id],'change')
-                    
-        //         }
-                    
-        //             return item;
-                
-        //     });
-        // }
-        
-        
+            this.getAlerInfo()
+        });
     }
     private handleSelectionChange(val){
         if(val.length===this.list.length){
@@ -255,6 +291,7 @@ export default class Capacity extends Vue{
         }
         
         this.capacity_list = val
+        this.getAlerInfo()
         
     }
     private select_all(check){
@@ -277,6 +314,7 @@ export default class Capacity extends Vue{
         let ids = get_featrues(this.capacity_list,'disk_id')
         this.list = this.list.filter(item=>!ids.includes(item.disk_id))
     }
+    
     private refresh(){
         this.list.map(item=>{
             item.size = item.capacity_size;
@@ -289,7 +327,6 @@ export default class Capacity extends Vue{
     }
     private async confirm(){
         if(this.capacity_list.length===0){
-            console.log("Aaa")
             this.$message.warning("请先勾选需要扩容的云盘")
             return;
         }
@@ -303,6 +340,7 @@ export default class Capacity extends Vue{
         let res:any=await Service.expansion({
             customer_id:this.capacity_list[0].customer_id,
             expansion_info: expansion_info,
+            az_id:this.capacity_list[0].az_id,
             disk_ids:this.capacity_list.map(item=>item.disk_id),
             billing_info:bill_info
 
@@ -325,8 +363,18 @@ export default class Capacity extends Vue{
         margin-bottom: 56px;
         .expansion_spec{
             text-align: center;
-            display: flex;
-            align-items: center;
+            // display: flex;
+            // align-items: center;
+        }
+    }
+    .prompt{
+        padding: 8px 16px;
+        background: #fdf6ec ;
+        .num-prompt{
+            width: 30px;
+            display: inline-block;
+            margin: 0 5px;
+            text-align: center;
         }
     }
     .footer{

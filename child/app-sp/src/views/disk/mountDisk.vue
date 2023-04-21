@@ -83,7 +83,7 @@ export default class MountDisk extends Vue{
     @Prop({default:()=>[]}) mount_id!:any
     private form_data:any={
       instance_id:'',
-      del_set:false,
+      del_set:true,
     }
     private judge_ecs:Boolean=false
     private instance_list:any=[]
@@ -116,7 +116,7 @@ export default class MountDisk extends Vue{
             az_id:this.mount_id[0].az_id
         });
         if (resData.code == 'Success') {
-            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===this.mount_id[0].is_charge) || [];
+            this.instance_list = resData.data.ecs_list.filter(item=>["running","shutdown"].includes(item.status) && !item.is_gpu && item.is_charge===this.mount_id[0].is_charge && !item.no_charge_for_shutdown) || [];
         }
     }
     //获取实例挂载数据盘数量

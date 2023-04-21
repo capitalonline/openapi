@@ -52,6 +52,17 @@ export default class Area extends Vue{
     }
 }
 </script>
+<!--<style lang="scss">
+    li.el-select-dropdown__item.item {
+        height: 80px !important;
+    }
+    </style>
+    <style lang="scss" scoped>
+    .label{
+        font-size: 12px;
+        color: #909399;
+    }
+</style>-->
 <style lang="scss">
 .area-op{
 .area-btn{
@@ -60,7 +71,6 @@ export default class Area extends Vue{
     flex-wrap: wrap;
   }
 }
-
 li.el-select-dropdown__item.item {
     min-height: 80px !important;
     height: auto;

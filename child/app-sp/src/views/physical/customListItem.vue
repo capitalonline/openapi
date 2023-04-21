@@ -44,7 +44,6 @@ export default class CustomListItem extends Vue {
     } else {
       this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
-    // console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {
@@ -89,7 +88,7 @@ export default class CustomListItem extends Vue {
 </style>-->
 <template>
   <el-dialog :visible.sync="visible" title="自定义列表项" :show-close="false" :close-on-click-modal="false">
-    <div>清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
+    <div class="m-bottom10">清除缓存或者更换浏览器，自定义列表失效<span class="warning_message m-left10">(最少选择5项，最多选择25项)</span></div>
     <div class="item">
       <template v-for="n in all_item">
         <div class="label">{{n.name}}</div>
@@ -100,6 +99,8 @@ export default class CustomListItem extends Vue {
         </div>
       </template>
     </div>
+    
+    
     <span>已选择：<span class="num_message">{{select_item.length}}</span></span>
     
     <span slot="footer">
@@ -119,11 +120,16 @@ interface CustomItem {
 @Component
 export default class CustomListItem extends Vue {
   @Prop({default: false}) private visible!: boolean;
+  @Prop({default: 'host'}) private type!: string;
   @Prop({default: () => []}) private all_column_item!: Array<CustomItem>;
   @Prop({default: () => []}) private all_item!: Array<any>;
   private select_item: Array<string> = [];
+  private typeObj={
+    'host':{func:'SET_CUSTOM_HOST',value:'custom_host'},
+    'nas':{func:'SET_NAS_HOST',value:'nas_host'},
+  }
   private created() {
-    this.FnHandleSelectItem(this.$store.state.custom_host)
+    this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
   }
   private FnHandleSelectItem(item) {
     if (item.length>0) {
@@ -131,7 +137,6 @@ export default class CustomListItem extends Vue {
     } else {
       this.select_item = this.all_column_item.slice(0,25).map(item=>item.label)
     }
-    // console.log("this.select_item",this.select_item)
     this.FnEmit()
   }
   private FnConfirm() {
@@ -139,7 +144,7 @@ export default class CustomListItem extends Vue {
       this.$message.warning("自定义列表项最少为5项，最多为25项")
       return;
     }
-    this.$store.commit('SET_CUSTOM_HOST', this.select_item)
+    this.$store.commit(this.typeObj[this.type].func, this.select_item)
     this.FnEmit()
     this.FnClose()
   }

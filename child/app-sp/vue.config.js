@@ -20,6 +20,7 @@ module.exports = {
       },
       '/monitor/api': {
         target: 'http://cloudos-op-metricsapi.gic.test',
+        // target: 'http://cloudos-op-metricsapi.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/monitor/api': '/api'
@@ -32,13 +33,31 @@ module.exports = {
           '^/gpu_monitor/api': '/api'
         }
       },
+      '/nas_union_business': {
+        // target: 'http://cos-nas-union-business.gic.pre',
+        target:'http://cloudos-nas-union-business.gic.test',
+        changeOrigin: true,
+      },
       '/alarm/api': {
-        target: ' http://cloudos-metricsalarm.gic.test',
-        // target:'http://10.131.162.69:8001',
+        target: 'http://cloudos-metricsalarm.gic.test',
+        // target:'http://cloud-os-monitor-alarm.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/alarm/api': '/api'
         }
+      },
+      '/snapshot/api': {
+          target: ' http://cloudos-op-metricsapi.gic.test',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/snapshot/api': '/api'
+        }
+      },
+      '/nas_op': {
+        target: 'http://cloudos-nas-op.gic.test',
+        // target:'http://10.131.171.99:80',
+        changeOrigin: true,
+       
       },
       '/api': {
         target: 'http://cds-os-tasker.gic.test',

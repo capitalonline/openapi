@@ -78,8 +78,6 @@ export default class InsDetail extends Vue{
           this.warn_flag=true;
           return;
       }
-      console.log('###',{contactIDs:this.contact_rows.map(item=>item.id),
-        contactGroupIDs:this.check_group})
       let res:any = await Service.add_contact_to_group({
         contactIDs:this.contact_rows.map(item=>item.id),
         contactGroupIDs:this.check_group
@@ -93,7 +91,6 @@ export default class InsDetail extends Vue{
   }
   @Watch("check_group")
   private getWarn(newVal,oldVal){
-      console.log("getWarn",newVal,oldVal)
       if(newVal.length>0){
           this.warn_flag=false;
       }else if(newVal.length===0){

@@ -201,7 +201,6 @@ import Service from '../../https/alarm/list';
 import CreateService from '../../https/instance/create'
 import BackHeader from '../../components/backHeader.vue';
 import Customer from '../../components/customerInput.vue';
-// import {alarm_type} from '../../assets/alarm_data.ts';
 import HostService from '../../https/physical/list'
 import {deal_list} from '../../utils/transIndex';
 import svgIcon from '@/components/svgIcon/index.vue';
@@ -325,9 +324,6 @@ export default class CreateShield extends Vue{
             if(this.edit_id){
                 this.getDetail()
             }
-            // }else{
-                
-            // }
             
         }
     }
@@ -490,7 +486,6 @@ export default class CreateShield extends Vue{
                     this.$message.warning('抑制范围非默认时故障资源ID必选！')
                     return;
                 }
-                console.log('this.shieldData',this.shieldData)
                 let list = []
                 this.shieldData.condition.map(item=>{
                     list.push({

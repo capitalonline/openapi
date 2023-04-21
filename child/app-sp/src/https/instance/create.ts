@@ -31,5 +31,5 @@ export default {
   },
   get_ecs_limit(reqData) {
     return service(getEcsOptions('POST', '/ecs/get_ecs_limit/', reqData))
-  }
+  },
 }

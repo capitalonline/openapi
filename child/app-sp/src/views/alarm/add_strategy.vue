@@ -126,14 +126,13 @@ export default class Index extends Vue{
                 }
                 const list=[]
                 selected_products.forEach(item=>{//最外层产品
-                    console.log("item",item)
                     item.rule_list.forEach(inn=>{//第二层规则
                         const temp=[]
                         inn.level.map(lev=>{//第三层阈值及报警级别指标项
                             const temp_obj={
                                 metricID:inn.metricID[1],
                                 metricCondition:lev.range,
-                                metricValue:parseInt(lev.num),
+                                metricValue:Number(lev.num),
                                 metricPeriod:parseInt(lev.cycle_time),
                                 metricPeriodNum:parseInt(lev.cycle_num),
                                 level:parseInt(lev.alram_type),

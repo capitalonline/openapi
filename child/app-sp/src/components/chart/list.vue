@@ -1,13 +1,13 @@
 <template>
-  <el-card>
+  <div class="chart-card">
     <div :id="chart_id" :key="chart_id" class="chart"></div>
     <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="legend && legend.length > 0" clearable>
-      <el-option v-for="item in legend" :key="item" :value="item" :label="item"></el-option>
+      <el-option v-for="(item,i) in legend" :key="`${i}${item}`" :value="item" :label="item"></el-option>
     </el-select>
     <div class="empty-box" v-if="!data.xTime || data.xTime.length === 0">
       <el-empty description="暂无数据"></el-empty>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -83,7 +83,9 @@ export default class LineEchart extends Vue {
         end: 100
       }
     ],
-    series: []
+    series: [],
+    tooltip:{
+    }
   }
 
   private FnSetOption() {
@@ -92,6 +94,18 @@ export default class LineEchart extends Vue {
     };
     this.option.tooltip = {
       trigger: 'axis',
+      renderMode:'html',
+      appendToBody:true
+      // axisPointer: {
+      //   type: 'cross'
+      // },
+      // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      // position: function (pos, params, el, elRect, size) {
+      //   var obj = { top: 10 };
+      //   obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+      //   return obj;
+      // },
+      // confine: true,
       // formatter: '{b0}<br />'+ this.data.title + '(' + this.data.unit + ')' + ': {c0}'
     };
     this.FnGetxAxis();
@@ -131,7 +145,8 @@ export default class LineEchart extends Vue {
       })
       return
     }
-    if (this.data.type) {
+    
+    if (this.data.type) {//this.data.type--double_line
       this.legend = this.data.legend.filter(item => item.indexOf(this.data.type) < 0);
     } else {
       this.legend = this.data.legend;
@@ -151,6 +166,7 @@ export default class LineEchart extends Vue {
       } else {
         this.legend_relation[this.data.legend[i]] = [this.data.legend[i]];
       }
+
       this.option.series.push({
         name: this.data.legend[i],
         data: item,
@@ -201,12 +217,34 @@ export default class LineEchart extends Vue {
 </script>
 
 <style lang="scss" scoped>
+
 .chart-card {
   border: 1px solid #e7e7e7;
+  // display: inline-block;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  position: relative;
+  .el-select {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .empty-box {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    top: 20%;
+    left: 0;
+    background: #fff;
+  }
 }
 .chart {
   width: 100%;
   height: 300px;
+}
+.tooltip{
+  z-index: 99;
 }
 .el-card {
   position: relative;

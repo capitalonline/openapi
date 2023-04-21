@@ -22,7 +22,7 @@
 
       <time-group
         :start_time="ecs_info.create_finish_time"
-        v-if="ecs_info.create_finish_time"
+        v-if="ecs_info.create_finish_time || session.getItem('vm_monitor')"
         @fn-emit="FnGetTimer">
       </time-group>
 
@@ -75,7 +75,6 @@
           class="item">
         </line-echart>
       </div>
-
       <div class="chart-box" v-if="default_tab === 'gpu'">
         <line-echart
           chart_id="gpu_chart"
@@ -90,6 +89,11 @@
         <line-echart
           chart_id="gpu_temperature"
           :data="gpu_temperature"
+          class="item"
+        ></line-echart>
+        <line-echart
+          chart_id="gpu_frequency"
+          :data="gpu_frequency"
           class="item"
         ></line-echart>
       </div>
@@ -115,6 +119,7 @@ import moment from 'moment';
 })
 export default class Monitor extends Vue{
   $route;
+  private session = sessionStorage
   private source_name = '';
   private ecs_info = {
     region_id: '',
@@ -232,8 +237,19 @@ export default class Monitor extends Vue{
     yValue: [],
     resize: 0
   }
+  private gpu_frequency = {
+    title: 'GPU主频',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    line_name: ['GPU核心频率', '显存频率'],
+    type: 'double_line'
+  }
   private default_date_timer = [];
-
+  // @Watch('$route',{immediate:true,deep:true})
+  // private FnRoute(to,from){
+  // }
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
     this.FnGetChartData();
@@ -247,7 +263,7 @@ export default class Monitor extends Vue{
     let instanceType = '';
     let type = 'kvm';
     if (this.source_name === 'monitor') {
-      id = this.detail_info.ecs_id.value;
+      id =sessionStorage.getItem('vm_monitor') ? JSON.parse(sessionStorage.getItem('vm_monitor')).id :this.detail_info.ecs_id.value;
       region = this.ecs_info.region_id;
       replica = this.ecs_info.az_id;
       ip = this.ecs_info.private_net;
@@ -264,13 +280,14 @@ export default class Monitor extends Vue{
     if (!id) {
       return
     }
+    let vm_info = sessionStorage.getItem('vm_monitor') ? JSON.parse(sessionStorage.getItem('vm_monitor')) : ''
     let reqData = {
-      hostId: id,
-      region: region,
-      replica: replica,
-      ip: ip,
-      instanceType: instanceType,
-      os: this.ecs_info.os_system.toLocaleLowerCase(),
+      hostId: Object.keys(vm_info).length>0 ?vm_info.hostId : id,
+      region: Object.keys(vm_info).length>0 ?vm_info.region_id : region,
+      replica: Object.keys(vm_info).length>0 ?vm_info.replica : replica,
+      ip: Object.keys(vm_info).length>0 ?vm_info.ip : ip,
+      instanceType: Object.keys(vm_info).length>0 ?vm_info.instanceType : instanceType,
+      os: Object.keys(vm_info).length>0 ?vm_info.os : this.ecs_info.os_system.toLocaleLowerCase(),
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
@@ -399,11 +416,11 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('disk_iops', resData)
     })
   }
-  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络
+  private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
     let index = 0;
       resData.forEach((item: any) => {
         if (item.code === 'Success') {
-          item.data.metricInfo = item.data.metricInfo || item.data.device;
+          item.data.metricInfo = item.data.metricInfo || item.data.device || item.data.gpuName
           if (index === 0) {
             this[type].xTime = item.data.xTime;
             this[type].legend = item.data.metricInfo;
@@ -416,12 +433,15 @@ export default class Monitor extends Vue{
             }
           }
           if (item.data.yValues) {
+            console.log('1',this[type].yValue)
             this[type].yValue.push(...item.data.yValues);
+            console.log('2',this[type].yValue)
           }
         }
         index++;
       })
       this[type].resize++;
+      console.log('####',this[type])
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
@@ -437,23 +457,66 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
+  
   private FnGetGpuInfo(type, reqData) {
+    this.gpu_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'gpu_usage'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_used', resData);
+      this.FnHandleDubleData('gpu_used', [resData]);
     })
+    this.gpu_memory_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'memory_usage'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_memory_used', resData);
+      this.FnHandleDubleData('gpu_memory_used', [resData]);
     })
+    this.gpu_temperature.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'temperature'}, reqData)).then(resData => {
-      this.FnHandleSingleData('gpu_temperature', resData);
+      this.FnHandleDubleData('gpu_temperature', [resData]);
+    })
+    this.gpu_frequency.yValue = [];
+    Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
+      Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
+    ]).then(resData => {
+      // resData.map(item=>{
+      //   if(item.data.yValues && item.data.yValues.length>0){
+      //     item.data.yValues = item.data.yValues
+      //   }
+      //   return item;
+      // })
+      this.FnHandleDubleData('gpu_frequency', resData)
+    })
+    this.gpu_frequency.yValue = [];
+    Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
+      Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
+    ]).then(resData => {
+      console.log('resData',resData)
+      resData.map(item=>{
+        if(item.data.yValues && item.data.yValues.length>0){
+          item.data.yValues = [item.data.yValues]
+        }
+        return item;
+      })
+      this.FnHandleDubleData('gpu_frequency', resData)
     })
   }
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
     this.source_name = this.$route.name;
-    if (this.source_name === 'monitor') {
+    if(sessionStorage.getItem('vm_monitor')){
+      Vue.delete(this.tab_list, 'gpu');
+      let vm_info = JSON.parse(sessionStorage.getItem('vm_monitor'))
+      this.detail_info.ecs_name.value = vm_info.transfer_vm_name;
+      this.detail_info.ecs_id.value = vm_info.transfer_vm_id;
+      this.detail_info.az_name.value = vm_info.region_name+'-'+vm_info.az_name;
+      this.detail_info.system_disk_conf.value = vm_info.transfer_vm_conf_system_disk_type ? `${vm_info.transfer_vm_conf_system_disk_type}  ${vm_info.transfer_vm_conf_system_disk_size}${vm_info.transfer_vm_conf_system_disk_unit}` : ''
+      this.detail_info.os_info.value = vm_info.transfer_vm_image;
+      this.detail_info.private_net.value = `${vm_info.transfer_vm_vpc_ip}（vpc ip）<br> ${vm_info.transfer_vm_storage_ip }（存储网 ip）`
+      this.detail_info.status.value = vm_info.status_cn;
+    }
+    if (this.source_name === 'monitor' && !sessionStorage.getItem('vm_monitor')) {
       this.FnGetDetail();
     }
+  }
+  private destroyed() {
+    sessionStorage.removeItem('vm_monitor')
   }
   @Watch('default_tab')
   private FnChangeTab(newVal, oldVal) {

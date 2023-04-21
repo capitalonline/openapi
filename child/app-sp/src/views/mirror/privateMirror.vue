@@ -58,6 +58,12 @@
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
+            <el-table-column prop="speed" label="优化加速">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.is_accelerate" class="running">开启</span>
+                    <span v-if="!scope.row.is_accelerate">-</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom" width="120"></el-table-column>
             <el-table-column prop="update_time" label="更新时间" sortable="custom" width="120"></el-table-column>
             <el-table-column prop="operate" label="操作"  width="120">
@@ -123,6 +129,7 @@ export default class PrivateMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'Enflame',value:'Enflame'},
     ];
     private disk_type:any=[{text:'系统盘',value:'system'},{text:'数据盘',value:'data'}];
     private storage_list:any=[{value:'local',text:'本地盘'},{value:'block',text:'云盘'}]
@@ -210,7 +217,6 @@ export default class PrivateMirror extends Vue{
         this.getMirrorList()
     }
     private filterAttribute(obj:any){
-        console.log("obj",obj)
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
         

@@ -41,7 +41,7 @@ export default class CustomListItem extends Vue {
     if ( this.type === 'ecs' ) {
       this.FnHandleSelectItem(this.$store.state.ecs_custom_item)
     }
-    else if ( this.type === 'physical' ) {
+    else if ( this.type === 'physical' ) {      
       this.FnHandleSelectItem(this.$store.state.custom_host)
     }
   }

@@ -41,7 +41,6 @@ export default class EditAttr extends Vue{
     @Prop({default:()=>{}}) attr!:any;
     private checked:boolean = this.attr.is_follow_delete
     created() {
-        console.log("attr",this.attr)
     }
     private async confirm(){
         let res:any =await Service.edit_disk_attr({

@@ -12,6 +12,9 @@
           v-if="value.list && !value.type"
           :placeholder="value.placeholder"
           :multiple="value.multiple"
+          :filterable="value.filter"
+          :remote="value.filter"
+          :remote-method="value.filter ? FnRemoteFilter: undefined"
           clearable
         >
           <el-option
@@ -124,6 +127,9 @@ export default class ActionBlock extends Vue {
   private operate(){
     this.isOpen = !this.isOpen;
     this.FnOperate()
+  }
+  @Emit('fn-filter')
+  private FnRemoteFilter(val){
   }
   @Emit("fn-operate")
   private FnOperate(){

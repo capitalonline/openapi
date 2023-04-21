@@ -19,6 +19,12 @@ const routes: RouteConfig[] = [
     meta: {label: 'POD管理', meta: 'pod_list'}
   },
   {
+    path: '/productType',
+    name: 'productType',
+    component: () => import('../views/productType/list.vue'),
+    meta: {label: '物理机产品类型管理', meta: 'productType'}
+  },
+  {
     path:'/physical',
     name:'physical_list',
     component:()=>import('../views/physical/list.vue'),
@@ -35,6 +41,24 @@ const routes: RouteConfig[] = [
     name: 'instance_create',
     component: () => import('../views/instance/create.vue'),
     meta: {label: '云服务器创建', menu: 'instance_list', hidden: true}
+  },
+  {
+    path: '/inventory',
+    name: 'inventory_list',
+    component: () => import('../views/inventory/list.vue'),
+    meta: {label: '资源库存', menu: 'inventory_list'},
+  },
+  {
+    path: '/product_inventory',
+    name: 'product_inventory_list',
+    component: () => import('../views/inventory/product.vue'),
+    meta: {label: '商品库存', menu: 'product_inventory_list'},
+  },
+  {
+    path: '/resource_statistical',
+    name: 'resource_statistical_list',
+    component: () => import('../views/statistical/tab.vue'),
+    meta: {label: '资源统计', menu: 'resource_statistical_list'},
   },
   {
     path: '/404',

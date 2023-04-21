@@ -9,10 +9,12 @@ RUN mkdir -p /app/app-main/
 RUN mkdir -p /app/child/app-sp/
 RUN mkdir -p /app/child/app-op/
 
-RUN cd /build/app-main && \
-npm install && \
-npm run build && \
-mv /build/app-main/dist/* /app/app-main/
+RUN cd /build/app-main
+
+RUN npm install && \
+npm run build 
+
+RUN mv /build/app-main/dist/* /app/app-main/
 
 RUN cd /build/child/app-sp && \
 npm install && \

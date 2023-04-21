@@ -179,6 +179,7 @@ export default class CommonMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'Enflame',value:'Enflame'},
     ];
     private operateBtns:any=[
         {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
@@ -209,7 +210,6 @@ export default class CommonMirror extends Vue{
         this.search(this.search_data)
     }
     private handle(obj,label){
-        console.log("handle",obj,label)
         this[label](obj)
         // if(label==='edit'){
         //     this.edit(obj)
@@ -280,7 +280,6 @@ export default class CommonMirror extends Vue{
     }
     setCellStyle(row, column, rowIndex, columnIndex){
         if(columnIndex==5){
-            console.log('aaa')
             return {"color":"red"}
         }
     }
@@ -291,7 +290,6 @@ export default class CommonMirror extends Vue{
         this.getMirrorList()
     }
     private filterAttribute(obj:any){
-        console.log("obj",obj)
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
         

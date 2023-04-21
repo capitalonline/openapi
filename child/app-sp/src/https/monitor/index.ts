@@ -27,5 +27,9 @@ export default {
   },
   get_gpu(type, reqData) {
     return service(FnHandleOptions(type)('GET','/gpu_info', reqData))
+  },
+  //获取云盘监控详情
+  get_disk_info(type, reqData){
+    return service(FnHandleOptions(type)('GET','/disk_info', reqData))
   }
 }

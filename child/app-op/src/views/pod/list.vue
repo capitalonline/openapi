@@ -93,7 +93,7 @@ export default class PodList extends Vue {
   private show_record: boolean = false;
   private pod_list = [];
   private default_row = {};
-  private FnSearch(data) {
+  private FnSearch(data) {    
     this.search_value.pod_name = data.pod_name;
     this.search_value.az_id = data.az_id;
     this.search_value.az_name = data.az_name;

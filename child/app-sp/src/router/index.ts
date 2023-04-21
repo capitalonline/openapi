@@ -70,9 +70,27 @@ const routes: RouteConfig[] = [
     meta:{menu:'disk_list'}
   },
   {
+    path:'/snapshot',
+    name:'snapshot_list',
+    component:()=>import('../views/snapshot/tabList.vue'),
+    meta:{menu:'snapshot_list'}
+  },
+  {
+    path:'/chain/detail',
+    name:'snapshot_detail',
+    component:()=>import('../views/snapshot/chains-detail.vue'),
+    meta:{menu:'snapshot_list'}
+  },
+  {
     path:'/disk/create',
     name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
+    meta:{menu:'disk_list'}
+  },
+  {
+    path:'/disk/detail',
+    name:'disk_detail',
+    component:()=>import('../views/disk/detail.vue'),
     meta:{menu:'disk_list'}
   },
   {
@@ -106,10 +124,46 @@ const routes: RouteConfig[] = [
     meta:{menu:'private_mirror_list'}
   },
   {
+    path:'/fielsystem',
+    name:'filesystem_list',
+    component:()=>import('../views/filesystem/list.vue'),
+    meta:{menu:'filesystem_list'}
+  },
+  {
+    path:'/fielsystem/detail',
+    name:'file_detail',
+    component:()=>import('../views/filesystem/detail.vue'),
+    meta:{menu:'filesystem_list'}
+  },
+  {
+    path:'/vm',
+    name:'vm_list',
+    component:()=>import('../views/filesystem/vm.vue'),
+    meta:{menu:'vm_list'}
+  },
+  {
+    path:'/notFilesystem',
+    name:'notFilesystem',
+    component:()=>import('../views/filesystem/notFilesystem.vue'),
+    meta:{menu:'notFilesystem'}
+  },
+  {
+    path:'/nasSet',
+    name:'nasSet',
+    component:()=>import('../views/filesystem/set.vue'),
+    meta:{menu:'nasSet'}
+  },
+  {
     path: '/event',
     name: 'event_list',
     component: () => import('../views/event/list.vue'),
     meta: {menu: 'event_list'}
+  },
+  {
+    path: '/anomalyEvent',
+    name: 'anomaly_event_list',
+    component: () => import('../views/event/anomalyList.vue'),
+    meta: {menu: 'anomaly_event_list'}
   },
   {
     path: '/event/:id',
@@ -152,6 +206,12 @@ const routes: RouteConfig[] = [
     name: 'message_list',
     component: () => import('../views/message/list.vue'),
     meta: {meta: 'message_list'}
+  },
+  {
+    path: '/ecs_destroyed',
+    name: 'ecs_destroyed',
+    component: () => import('../views/instance/destroyedList.vue'),
+    meta: {meta: 'ecs_destroyed', no_auth: true}
   },
   {
     path: '/404',

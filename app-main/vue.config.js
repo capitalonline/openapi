@@ -38,11 +38,11 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
-      // '/': {
-      //   target: 'http://cloudos-sp-front.gic.test',
-      //   ws: true,
-      //   changeOrigin: true
-      // }
+      '/': {
+        target: 'http://cloudos-sp-front.gic.test',
+        ws: true,
+        changeOrigin: true
+      }
     }
   },
   chainWebpack: (config) => {

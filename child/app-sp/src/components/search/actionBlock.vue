@@ -1,5 +1,5 @@
 <template>
-  <div class="action-box">
+  <div class="action-box" :style="isShowBg ? {} : {background:'#fff',padding:0,margin:0,border:'none'}">
     <div class="search-box" ref="search" :class="{fold:!isOpen}">
       <div
         v-for="(value, key) in search_option"
@@ -91,6 +91,7 @@ export default class ActionBlock extends Vue {
   @Prop({ default: "" }) private create_btn!: string;
   @Prop({ default: true }) private disabled!: boolean;
   @Prop({ default: false }) private type!: boolean | string;
+  @Prop({ default: true }) private isShowBg: boolean;
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
@@ -115,7 +116,6 @@ export default class ActionBlock extends Vue {
     this.$nextTick(()=>{
       let search = this.$refs.search as any
       let hei = window.getComputedStyle(search).height.replace('px','')
-      console.log("hei",hei,parseInt(hei))
       if(parseInt(hei) >52 && this.isOpen){//超过一行，展开的情况下折叠
         this.isOpen=false;//折叠
       }
@@ -132,13 +132,14 @@ export default class ActionBlock extends Vue {
   @Emit('fn-create')
   private FnShowCreate() {
   }
+  
   @Watch("search_value", { immediate: true, deep: true })
   private watch_search_value(newval, oldval) {}
   private FnClear() {
     for (let i in this.search_option) {
       if (["datetimerange", "daterange"].includes(this.search_option[i].type)) {
         (this.$refs.datepicker as any)[0].FnClear();
-      } else {
+      }else {
         this.search_value = {};
       }
     }
@@ -155,7 +156,15 @@ export default class ActionBlock extends Vue {
         );
         flag++;
       }
+      if (this.search_option[key].type==='composite') {
+        this.$set(
+          this.search_value,
+          key+'sub',
+          this.search_option[key].list[0].type
+        );
+      }
     }
+    
     if (flag > 0 || this.type==='physical') {
       setTimeout(()=>{
         this.FnSearch()

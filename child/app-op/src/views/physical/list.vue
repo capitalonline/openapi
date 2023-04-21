@@ -62,6 +62,16 @@
             </el-tooltip>
             <div v-else></div>
           </template>
+          <template #default="scope" v-else-if="item.prop==='exclusive_black_customers'">
+            <el-tooltip v-if="scope.row.exclusive_black_customers.length>1" effect="light">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_black_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_black_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_black_customers.length===1">{{ `${scope.row.exclusive_black_customers[0].id} (${scope.row.exclusive_black_customers[0].name})` }}</span>
+            <span v-else></span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
             <!-- <span>{{scope.row.exclusive_customers && scope.row.exclusive_customers.length>0 ? scope.row.exclusive_customers.join(',') : '全部客户'}}</span> -->
             <div v-if="scope.row.exclusive_customers && scope.row.exclusive_customers.length>0">
@@ -200,10 +210,13 @@ export default class PhysicalList extends Vue {
     host_ip:{placeholder:'请输入管理网IP'},
     host_name:{placeholder:'请输入主机名称/ID'},
     gpu_model:{placeholder:'请输入显卡型号'},
-    cpu_model:{placeholder:'请输入CPU型号'},
-    net_model:{placeholder:'请输入网卡型号'},
+    cpu:{placeholder:'请输入CPU型号'},
+    nic:{placeholder:'请输入网卡型号'},
     room:{placeholder:'请选择机房',list:[]},
     host_rack:{placeholder:'请输入机柜编号'},
+    bare_metal_id:{placeholder:'请输入物理机产品ID'},
+    bare_metal_name:{placeholder:'请输入物理机产品名称'},
+    customer_keyword:{placeholder:'请输入专属客户ID/名称'},
   }
   private operate_btns:any=[
     {label:'分配资源',value:'resource'},
@@ -245,6 +258,8 @@ export default class PhysicalList extends Vue {
   private custom_visible:boolean = false;
   private tableHeight=70;
   private custom_host=[]
+  private power_list=[];
+  private machine_list=[]
   private backendList:any=[
     {value:'block',text:'云盘'},
     {value:'local',text:'本地盘'},
@@ -257,12 +272,13 @@ export default class PhysicalList extends Vue {
   }
   created() {
       this.getFamilyList()
-      this.get_host_list_field()
       this.get_room_list()
       this.get_az_list();
+      this.get_status_list()
       this.get_host_attribution()
       this.getHostTypes();
       this.get_host_recycle_department()
+      this.get_host_list_field()
       this.auth_list = this.$store.state.auth_info[this.$route.name];
       delete this.$store.state.host_search['']
       for(let i in this.search_option){
@@ -290,6 +306,17 @@ export default class PhysicalList extends Vue {
       }
     });
   }
+  private async get_status_list(){
+    let res:any=await Service.get_status_list({})
+    if(res.code==="Success"){
+      for(let i in res.data.power_status){
+        this.power_list.push({text:res.data.power_status[i],value:i})
+      }
+      for(let i in res.data.machine_status){
+        this.machine_list.push({text:res.data.machine_status[i],value:i})
+      }
+    }
+  }
   private async get_host_list_field(){
     let res:any = await Service.get_host_list_field({
       is_op:'0'
@@ -311,10 +338,10 @@ export default class PhysicalList extends Vue {
   private get_custom_columns(list){
     if(list.length===0){
       return;
-    }
+    }    
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot','gpu_count','ecs_gpu_count'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{width:'140px'})
@@ -329,11 +356,17 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_purpose_ch'){
         item = Object.assign(item,{},{column_key:'host_purpose',list:this.host_uses})
       }
-      if(item.prop==='host_attribution__name'){
+      if(item.prop==='host_attribution_name'){
         item = Object.assign(item,{},{column_key:'host_belong',list:this.host_belongs})
       }
       if(item.prop==='host_source'){
         item = Object.assign(item,{},{column_key:'host_source',list:this.host_source})
+      }
+      if(item.prop==='power_status_name'){
+        item = Object.assign(item,{},{column_key:'power_status',list:this.power_list})
+      }
+      if(item.prop==='machine_status_name'){
+        item = Object.assign(item,{},{column_key:'machine_status',list:this.machine_list})
       }
       if(item.prop==='exclusive_spec_family'){
         item = Object.assign(item,{},{column_key:'ecs_family_id',multiple:true,list:this.spec_family_list})
@@ -343,6 +376,9 @@ export default class PhysicalList extends Vue {
       }
       if(item.prop==='backend_type'){
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
+      }
+      if(item.prop==='vgpu_segment_type'){
+        // item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:}]})
       }
       return item;
     })
@@ -376,9 +412,16 @@ export default class PhysicalList extends Vue {
       host_rack,
       host_source,
       ecs_family_id,
-      cpu_model,
-      net_model,
-      backend_type
+      cpu,
+      nic,
+      backend_type,
+      product_id,
+      product_name,
+      power_status,
+      machine_status,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -388,16 +431,26 @@ export default class PhysicalList extends Vue {
       host_ip,
       gpu_model,
       host_rack,
-      cpu_model,
-      net_model,
+      cpu,
+      nic,
+      product_id,
+      product_name,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
       sort_ram:this.search_data.sort_ram,
       sort_ecs_num:this.search_data.sort_ecs_num,
+      sort_gpu_allot:this.search_data.sort_gpu_allot,
       host_attribution_id:host_belong ? host_belong[0] : undefined,
+      power_status:power_status ? power_status[0] : undefined,
+      machine_status:machine_status ? machine_status[0] : undefined,
       sort_host_name:this.search_data.sort_host_name,
+      sort_gpu_count:this.search_data.sort_gpu_count,
       sort_out_band_address:this.search_data.sort_out_band_address,
+      sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
       sort_host_ip:this.search_data.sort_host_ip,
       host_purpose:host_purpose ? host_purpose[0] : undefined,
       host_type:host_type ? host_type[0] : undefined,
@@ -441,7 +494,7 @@ export default class PhysicalList extends Vue {
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
       this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
-      this.setList(this.host_belongs,'host_attribution__name')
+      this.setList(this.host_belongs,'host_attribution_name')
     }
   }
   private goEcs(id){
@@ -465,10 +518,17 @@ export default class PhysicalList extends Vue {
       host_type,
       host_purpose,
       host_belong,
-      cpu_model,
-      net_model,
+      cpu,
+      nic,
       ecs_family_id,
-      backend_type
+      backend_type,
+      product_id,
+      product_name,
+      power_status,
+      machine_status,
+      bare_metal_id,
+      bare_metal_name,
+      customer_keyword,
     }=this.search_data
     let obj = {//缺少规格族字段筛选
         az_id,
@@ -476,14 +536,21 @@ export default class PhysicalList extends Vue {
         host_name,
         out_band_address,
         host_ip,
-        cpu_model,
-        net_model,
+        cpu,
+        nic,
         gpu_model,
         host_rack,
+        product_id,
+        product_name,
+        bare_metal_id,
+        bare_metal_name,
+        customer_keyword,
         host_attribution_id:host_belong ? host_belong[0] : undefined,
         host_purpose:host_purpose ? host_purpose[0] : undefined,
         host_source:host_source ? host_source[0] : undefined,
         host_type:host_type ? host_type[0] : undefined,
+        power_status:power_status ? power_status[0] : undefined,
+        machine_status:machine_status ? machine_status[0] : undefined,
         backend_type:backend_type ? backend_type[0] : undefined,
         ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
         field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
@@ -538,6 +605,9 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_out_band_address =undefined
     this.search_data.sort_host_ip =undefined
     this.search_data.sort_ecs_num =undefined
+    this.search_data.sort_gpu_allot=undefined
+    this.search_data.sort_gpu_count=undefined
+    this.search_data.sort_ecs_gpu_count =undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }

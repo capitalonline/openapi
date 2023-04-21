@@ -20,6 +20,7 @@ module.exports = {
       },
       '/monitor/api': {
         target: 'http://cloudos-op-metricsapi.gic.test',
+        // target: 'http://cloudos-op-metricsapi.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/monitor/api': '/api'
@@ -44,7 +45,13 @@ module.exports = {
         target: 'http://10.128.22.18:9000',
         ws: true,
         changeOrigin: true
-      }
+      },
+      '/nas_op': {
+        // target: 'http://10.131.171.99:80',
+        target:'http://cloudos-nas-op.gic.test',
+        changeOrigin: true,
+       
+      },
     }
   },
   configureWebpack: config => {

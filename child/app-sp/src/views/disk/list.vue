@@ -1,9 +1,9 @@
 <template>
   <div>
     <action-block :search_option="search_dom" @fn-search="search">
-      <template #default>
+      <!-- <template #default>
         <el-button v-for="item in operateBtns" :key="item.value" type="primary" @click="handleBtn(item.value)" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-button>
-      </template>
+      </template> -->
     </action-block>
     <el-table
       :data="disk_list"
@@ -21,7 +21,7 @@
           <pre>{{scope.row.disk_name}}</pre>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="云盘状态">
+      <el-table-column prop="status" label="云盘状态" :filter-multiple="false" :filters="disk_state" column-key="status">
         <template slot-scope="scope">
           <span :class="scope.row.status">{{scope.row.status_name}}</span>
         </template>
@@ -30,6 +30,7 @@
         <template slot-scope="scope">
           <div>类型：{{scope.row.feature ? `${scope.row.feature}` : ''}}</div>
           <div>容量：{{scope.row.size ? `${scope.row.size}GB` : ''}}</div>
+          <div>IOPS：{{scope.row.disk_iops ? `${scope.row.disk_iops}${scope.row.iops_unit}` : ''}}</div>
         </template>
       </el-table-column>
       <el-table-column prop="az_name" label="地域及可用区">
@@ -66,16 +67,17 @@
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
-          <el-dropdown @command="handleOperate">
+          <!-- <el-dropdown @command="handleOperate">
             <span class="el-dropdown-link">
               更多<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="{label:'detail',value:scope.row}">详情</el-dropdown-item>
               <el-dropdown-item v-for="item in operateBtns.slice(1)" :key="item.value" :command="{label:item.value,value:scope.row}" :disabled="!limit_disk_operate(item.value,scope.row)">{{item.label}}</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
               <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>
             </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
         </template>
       </el-table-column>
     </el-table>
@@ -148,7 +150,7 @@ export default class extends Vue {
   private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
-    status:{list:[],placeholder:'请选择与云盘状态'},
+    // status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
   }
@@ -246,17 +248,17 @@ export default class extends Vue {
     }
     this.search(this.req_data)
   }
-  @Watch("visible")
-  private watch_visble(nv,ov){
-    if(!nv){
-      this.close_disk()
-    }
-  }
+  // @Watch("visible")
+  // private watch_visble(nv,ov){
+  //   if(!nv && this.opera){
+  //     this.close_disk()
+  //   }
+  // }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
     if(res.code==="Success"){
-      this.search_dom.status.list = trans(res.data,'status_name','status','label','type') 
+      this.disk_state = trans(res.data,'status_name','status','text','value') 
     }
   }
   private async getDiskList(loading:boolean = true){
@@ -272,7 +274,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status || '',
+      status:req_data.status ? req_data.status[0] : '',
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
       disk_property:req_data.disk_property ? req_data.disk_property[0] : '',
@@ -288,7 +290,9 @@ export default class extends Vue {
       if(list.length>0){
         this.$nextTick(()=>{
           list.forEach(row => {
-            (this.$refs.disk_table as any).toggleRowSelection(row);
+            let table:any = (this.$refs.disk_table as any)
+            if(table)table.toggleRowSelection(row);
+            
           });
         });
         
@@ -357,6 +361,9 @@ export default class extends Vue {
   }
   private disk_create(){
     this.$router.push('/disk/create')
+  }
+  private detail(){
+    this.$router.push({path:'/disk/detail',query:{disk_id:this.mount_id[0].disk_id,count:1}})
   }
   private operateRecord(obj:any){
     this.FnClearTimer();
@@ -430,13 +437,11 @@ export default class extends Vue {
   private restore(str:string){
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
       return item.status ==='deleted' && !item.ecs_id
-      // return item.status ==='deleted' && !item.is_follow_delete
     })
     const fail_state:boolean = this.mount_id.every((item,index,arr)=>{
       return (item.status ==='deleted' && !item.ecs_id) || item.status ==='build_fail'
-      // return (item.status ==='deleted' && !item.is_follow_delete) || item.status ==='build_fail'
     })
-    if(str==="restore"){
+    if(str==="restore"){//恢复
       if(!flag){
         this.$message.warning('只允许对已删除且不随实例删除的云盘进行批量操作！')
         return;
@@ -459,7 +464,7 @@ export default class extends Vue {
       return;
     }
     const flag:boolean = this.mount_id.every((item,index,arr)=>{
-      return (item.ecs_status ==="running" && item.status==="running") || item.status ==="waiting"
+      return (item.ecs_status ==="running" && item.status==="running") ||  (item.disk_status==="running" && item.ecs_status==="shutdown" && item.no_charge_shutdown_ecs) || item.status ==="waiting"
     })
     if(!flag){
       this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
@@ -499,12 +504,11 @@ export default class extends Vue {
     }else if(label==="unInstall"){
       return obj.status==="running" && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="delete"){
-      return (obj.status==="waiting" || obj.status==="error") && obj.disk_type==="data" && this.auth_list.includes(label)
+      return (obj.status==="waiting" || (obj.status==="error" && obj.is_follow_delete===false)) && obj.disk_type==="data" && this.auth_list.includes(label)
     }else if(label==="restore"){
-      return obj.status==="deleted" && obj.is_follow_delete===false && this.auth_list.includes(label)
+      return obj.status==="deleted" && !obj.ecs_id && this.auth_list.includes(label)
     }else if(label==="destroy"){
       return ((obj.status==="deleted" && !obj.ecs_id) || obj.status ==='build_fail') && this.auth_list.includes(label)
-      // return ((obj.status==="deleted" && obj.is_follow_delete===false) || obj.status ==='build_fail') && this.auth_list.includes(label)
     }else if(label==="disk_capacity"){
       return (obj.status==="running" && obj.ecs_status==="running") || obj.status==="waiting" && this.auth_list.includes('disk_capacity')
     }else if(label==="edit_attr"){
@@ -515,12 +519,16 @@ export default class extends Vue {
       return obj.status==="waiting" && obj.is_charge===0 && this.auth_list.includes(label)
     }
   }
-  private close_disk(){
+  private close_disk(val:string='1'){
     this.visible = false
     this.mount_id=[]
     this.operate_type = ''
     this.toggleSelection()
-    this.current =1;
+    // console.log('val',val)
+    if(val==='1'){
+      this.current =1;
+    }
+    
     this.getDiskList()
     
   }

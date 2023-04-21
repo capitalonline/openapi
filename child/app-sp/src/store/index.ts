@@ -18,11 +18,17 @@ export default new Vuex.Store({
       '主机名','管理网IP','可用区','带外IP','机器状态','电源状态',
       '虚拟机数量','主机类型','主机用途','主机归属','主机来源',
       'CPU型号','显卡型号','显卡数量','网卡型号','CPU使用率',
-      '内存使用率','创建时间'
+      '内存使用率','创建时间','已分配显卡数量','物理机产品ID','物理机产品名称',
+
+    ],
+    nas_host:JSON.parse(storage.get('nas_host')) || [
+      '客户ID','客户名称','文件系统ID/名称','NAS类型','协议类型','地域-可用区',
+      'VPC','子网','挂载地址','使用量/总容量','空间使用率',
+      '中转虚拟机ID','中转虚拟机IP','计费方式','状态','创建时间'
 
     ],
     host_search:{},
-    pod_id:storage.get('pod_id') || '',
+    pod_id:storage && storage.get ? storage.get('pod_id') : '',
   },
   getters: {
   },
@@ -54,11 +60,17 @@ export default new Vuex.Store({
       storage.set('custom_host',JSON.stringify(list))
       state.custom_host = list
     },
+    SET_NAS_HOST(state,list){
+      storage.set('nas_host',JSON.stringify(list))
+      state.nas_host = list
+    },
     SET_HOST_SEARCH(state,data){
       state.host_search = data
     },
     SET_POD(state,id){
-      storage.set('pod_id',id)
+      if(storage && storage.set){
+        storage.set('pod_id',id)
+      }
       state.pod_id = id
     }
 

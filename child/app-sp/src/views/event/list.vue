@@ -78,6 +78,7 @@ export default class List extends Vue {
   $store;
   private search:any = {
     event_id:  {placeholder:'请输入事件ID'},
+    event_name:  {placeholder:'请输入事件名称'},
     resource_id: {placeholder:'请输入资源ID'},
     task_id: {placeholder:'请输入任务ID'},
     customer_id: {placeholder:'请输入客户ID'},
@@ -145,6 +146,7 @@ export default class List extends Vue {
       page_index:this.current,
       page_size:this.size,
       event_id:data.event_id || "",
+      event_name:data.event_name || "",
       resource_id:data.resource_id || "",
       [this.sort_prop_name]:this.sort_value,
       task_id:data.task_id || "",

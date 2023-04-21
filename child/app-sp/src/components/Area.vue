@@ -27,11 +27,15 @@ export default class Area extends Vue{
     private area_id:string=""
     private area_list:any =this.list.length>0 ? JSON.parse(JSON.stringify(this.list)) : []
     created() {
+        // console.log("this.value",this.value)
     }
     @Watch("list",{immediate:true,deep:true})
     private watch_list(newVal){
+        console.log("watch_list123",newVal,newVal.length>0)
         this.area_list= newVal.length>0 ? JSON.parse(JSON.stringify(newVal)) : [];
-        this.value = newVal.length>0 ? this.list[0].region_list[0].region_name : ''
+        console.log("this.area_list",this.area_list)
+        this.value = newVal.length>0 ? this.list[0].region_list[0].region_name : '';
+        console.log("this.value",this.value)
         newVal.length>0 && this.watch_val(this.value)
     }
     @Watch("value")
@@ -66,6 +70,7 @@ export default class Area extends Vue{
         padding-bottom: 10px;
     }
 }
+
 </style>
 <style lang="scss" scoped>
 .label{

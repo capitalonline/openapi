@@ -16,9 +16,10 @@
             </el-alert>
             <el-table
                 :data="mount_id"
+                max-height="220"
                 border
             >
-                <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+                <el-table-column prop="customer_id" label="客户ID1"></el-table-column>
                 <el-table-column prop="customer_name" label="客户名称"></el-table-column>
                 <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
                 <el-table-column prop="disk_name" label="云盘名称">

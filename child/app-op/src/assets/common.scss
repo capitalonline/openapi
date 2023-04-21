@@ -132,6 +132,9 @@
   border-radius: 10px;
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
 }
+.not-clickable{
+  color:#d1d1e0
+}
 /* 表格里面名称和id显示 */
 pre {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -162,4 +165,21 @@ pre {
 /* 固定表头 */
 .table-limit-height {
   height: calc(100vh - 200px) !important;
+}
+@for $i from 0 through 1920 {
+  .w-#{$i} {width: #{$i}px;}
+}
+@for $i from 0 through 1000 {
+  .m-#{$i} {margin: #{$i}px;}
+  .m-l-#{$i} {margin-left: #{$i}px;}
+  .m-r-#{$i} {margin-right: #{$i}px;}
+  .m-b-#{$i} {margin-bottom: #{$i}px;}
+  .m-t-#{$i} {margin-top: #{$i}px;}
+
+  .p-#{$i} {padding: #{$i}px;}
+  .p-l-#{$i} {padding-left: #{$i}px;}
+  .p-r-#{$i} {padding-right: #{$i}px;}
+  .p-b-#{$i} {padding-bottom: #{$i}px;}
+  .p-t-#{$i} {padding-top: #{$i}px;}
+
 }

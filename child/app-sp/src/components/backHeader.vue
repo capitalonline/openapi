@@ -1,7 +1,10 @@
 <template>
 <div>
   <div class="box">
-    <div>{{ title }}</div>
+    <div>
+      <span>{{ title }}</span>
+      <slot name="left"></slot>
+    </div>
     <div>
       <slot></slot>
       <el-button type="primary" plain @click="FnBack">返回</el-button>
@@ -42,10 +45,14 @@ export default class backHeader extends Vue {
   margin: -20px -20px 20px -20px;
   background: #fff;
   box-shadow: 0 5px 5px #dde2ef;
-  font-weight: bold;
+  
   position: absolute;
   width: calc(100% - 240px);
   z-index: 999;
+  span:first-child{
+    font-weight: bold;
+    margin-right: 10px;
+  }
   
 }
 .perch{

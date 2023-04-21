@@ -19,5 +19,16 @@ export default{
     get_capacity_price(req) {
         return service(getEcsOptions('POST', '/ebs/get_ebs_price/', req))
     },
-    
+    //获取云盘剩余可使用额度
+    get_disk_limit(req) {
+        return service(getEcsOptions('POST', '/ebs/get_disk_limit/', req))
+    },
+    //获取云盘详情
+    get_disk_detail(req) {
+        return service(getEcsOptions('GET', '/ebs/get_disk_detail/', req))
+    },
+    //获取云盘详情
+    getDiskRules(req) {
+        return service(getEcsOptions('POST', '/ebs/disk_rules/', req))
+    },
 }

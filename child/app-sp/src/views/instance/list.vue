@@ -2,12 +2,12 @@
   <div class="instance-list">
     <action-block :search_option="search_con" @fn-search="FnSearch" :type="true">
       <template #default>
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="FnToCreate"
           :disabled="!operate_auth.includes('instance_create')"
           >创建实例</el-button
-        >
+        > -->
         <el-button
           type="primary"
           @click="FnOperate('start_up_ecs')"
@@ -46,6 +46,12 @@
         >
         <el-button
           type="primary"
+          @click="FnOperate('restore_ecs')"
+          :disabled="!operate_auth.includes('restore')"
+          >恢 复</el-button
+        >
+        <el-button
+          type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
           >更换实例规格</el-button
@@ -61,6 +67,12 @@
           @click="FnOperate('reset_pwd')"
           :disabled="!operate_auth.includes('reset_pwd')"
           >重置密码</el-button
+        >
+        <el-button
+          type="primary"
+          @click="FnOperate('net_set')"
+          :disabled="!operate_auth.includes('reset_pwd')"
+          >网络设置</el-button
         >
         <!-- <el-button
           type="primary"
@@ -97,7 +109,8 @@
       <!-- <el-table-column prop="az_name" label="可用区"></el-table-column> -->
       <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="ecs_status_list">
         <template #default="scope">
-          <span :class="scope.row.status">{{ scope.row.status_display }}</span>
+          <div :class="scope.row.status">{{ scope.row.status_display }}</div>
+          <div class="warning_message" v-if="scope.row.no_charge_shutdown_ecs && scope.row.status==='shutdown'">关机不计费</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -118,7 +131,8 @@
         <template #default="scope">
           <div v-if="scope.row.private_net">
             {{ scope.row.private_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}）
+            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
           </div>
         </template>
       </el-table-column>
@@ -135,7 +149,8 @@
               {{ scope.row.eip_info[scope.row.pub_net].conf_name }}
             </span>
             {{ scope.row.pub_net }}
-            （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}）
+            （vlan {{ scope.row.eip_info[scope.row.pub_net].vlan_id }}）
+            <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.pub_net)] }}） -->
           </div>
           <div v-for="item in scope.row.virtual_net" :key="item">
             <span
@@ -147,7 +162,8 @@
               {{ scope.row.eip_info[item].conf_name }}
             </span>
             {{ item }}
-            （vlan {{ scope.row.vlan[FnGetNet(item)] }}）
+            （vlan {{ scope.row.eip_info[item].vlan_id }}）
+            <!-- （vlan {{ scope.row.vlan[FnGetNet(item)] }}） -->
           </div>
         </template>
       </el-table-column>
@@ -223,6 +239,11 @@
           </div>
         </template>
       </el-table-column> -->
+      <el-table-column prop="gpu_card_status" label="显卡状态" :filter-multiple="false" column-key="card_status_type" :filters="gpu_status_list">
+        <template slot-scope="scope">
+            <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
+          </template>
+      </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -259,6 +280,24 @@
             v-else
             @click="addCommon(scope.row)"
             >制作公共镜像</el-button
+          >
+          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
+            <el-button type="text" class="not-clickable">显卡管理</el-button>
+          </el-tooltip>
+          <el-button
+            type="text"
+            v-else
+            @click="operateGpu(scope.row)"
+            >显卡管理</el-button
+          >
+          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
+            <el-button type="text" class="not-clickable">网络设置</el-button>
+          </el-tooltip>
+          <el-button
+            type="text"
+            v-else
+            @click="netSet('single',scope.row)"
+            >网络设置</el-button
           >
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
@@ -354,6 +393,11 @@
               }}</span>
             </template>
           </el-table-column>
+          <el-table-column prop="gpu_card_status" label="显卡状态">
+            <template slot-scope="scope">
+              <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop=""
             label="价格"
@@ -406,6 +450,20 @@
               :username="os_info.username"
             ></reset-pwd>
           </template>
+          <div v-if="default_operate_type === 'operateGpu'">
+            操作：
+            <el-radio-group v-model="gpu_card_operate">
+              <el-radio label="ecs_attach_gpu_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_attach_gpu_card')">挂载显卡</el-radio>
+              <el-radio label="ecs_detach_gpu_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_detach_gpu_card')">卸载显卡</el-radio>
+              <el-radio label="ecs_change_fault_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_change_fault_card')">切换显卡
+                <el-tooltip content="当云主机显卡关闭时，切换成正常可用的显卡。" placement="right" effect="light">
+                  <el-button type="text">
+                    <svg-icon :icon="'info'" viewBox="0 0 18 18"></svg-icon>
+                  </el-button>
+                </el-tooltip>
+              </el-radio>
+            </el-radio-group>
+          </div>
           <template v-if="default_operate_type === 'reset_pwd'">
             <reset-pwd
               ref="reset_pwd"
@@ -438,6 +496,25 @@
             content="等同于断电处理，Windows操作系统可能会损坏，请谨慎选择"
           ></mark-tip>
         </div>
+        <template v-if="default_operate_type === 'restart_ecs'">
+          <div class="text-center">
+            重启方式:
+            <el-radio
+              v-model="restart_ecs_type"
+              label="restart_ecs"
+              class="m-left20"
+              >正常重启</el-radio
+            >
+            <el-radio
+              v-model="restart_ecs_type"
+              label="hard_restart_ecs"
+              class="m-left20"
+              >硬重启</el-radio
+            >
+          </div>
+          <div class="warning_message">说明：若云主机故障，请选择“硬重启”，使云主机快速恢复正常。</div>
+        </template>
+        
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -464,6 +541,12 @@
         :ecs_info="ecs_info"
       />
     </template>
+    <template v-if="net_visible">
+      <net-set
+        :visible.sync="net_visible"
+        :ecs_list="multiple_selection"
+      />
+    </template>
   </div>
 </template>
 
@@ -486,6 +569,8 @@ import Recover from "./recover.vue";
 import MarkTip from "../../components/markTip.vue";
 import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
+import storage from '../../store/storage';
+import netSet from './netSet.vue'
 @Component({
   components: {
     LabelBlock,
@@ -499,7 +584,8 @@ import moment from "moment";
     Recover,
     SvgIcon,
     MarkTip,
-    AddCommon
+    AddCommon,
+    netSet
   }
 })
 export default class App extends Vue {
@@ -512,6 +598,7 @@ export default class App extends Vue {
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
     private_net: { placeholder: "请输入私网IP" },
+    public_net: { placeholder: "请输入公网IP" },
     host_id: { placeholder: "请输入物理机ID"},
     host_name: { placeholder: "请输入物理机名称", },
     host_ip: { placeholder: "请输入物理机管理IP"},
@@ -537,19 +624,28 @@ export default class App extends Vue {
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
+  private gpu_card_operate:string=''
   private os_type = "";
   private billing_method: string = "0";
-  private multiple_selection: Array<Object> = [];
+  private multiple_selection: any = [];
   private multiple_selection_id: Array<string> = [];
   private operate_auth = [];
   private show_operate_dialog: boolean = false;
   private operate_title: string = "";
   private default_operate_type: string = "";
   private shutdown_ecs_type: string = "shutdown_ecs";
+  private restart_ecs_type: string = "restart_ecs";
   private record_visible: boolean = false;
   private record_id: string = "";
   private detail_visible: boolean = false;
   private detail_id: string = "";
+  private net_visible:boolean=false;
+  private gpu_status_list:any=[
+    {text:'正常',value:'0'},
+    {text:'卸载',value:'1'},
+    {text:'关闭',value:'2'},
+  ]
+  private search_card_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -591,6 +687,7 @@ export default class App extends Vue {
       customer_name: data.customer_name,
       os_info: data.os_info,
       private_net: data.private_net,
+      public_net: data.public_net,
       host_id: data.host_id,
       host_name: data.host_name,
       host_ip: data.host_ip,
@@ -623,6 +720,9 @@ export default class App extends Vue {
       }
       if(val.status){
         this.search_status = val.status;
+      }
+      if(val.card_status_type){
+        this.search_card_status_type = val.card_status_type[0];
       }
       this.FnGetList();
     },500)
@@ -657,6 +757,8 @@ export default class App extends Vue {
     return [data[0], data[1], data[2], '0'].join('.')
   }
   private async FnGetList(loading: boolean = true) {
+    console.log('search_reqData',this.search_reqData);
+    
     if(!this.$store.state.pod_id){
       return ;
     }
@@ -667,18 +769,22 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
+    
     let reqData = {
       billing_method:
         this.search_billing_method == "" ? "no" : this.search_billing_method,
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
-      status:this.search_status.join(','),
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
       [this.sort_prop_name]: this.sort_order,
       is_op:true,
       ...this.search_reqData
     }
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
+    }
+    if (this.search_card_status_type) {
+      reqData["card_status_type"] = this.search_card_status_type;
     }
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
@@ -716,7 +822,7 @@ export default class App extends Vue {
     }
     const operate_info = getInsStatus.getInsOperateAuth(type);
     if (
-      ["reset_pwd", "update_spec", "update_system", "open_bill"].indexOf(
+      ["reset_pwd", "update_spec", "update_system", "open_bill","net_set"].indexOf(
         type
       ) >= 0
     ) {
@@ -726,7 +832,11 @@ export default class App extends Vue {
       if (type === "open_bill") {
         this.FnGetEcsPrice();
       }
-    } else {
+      if(type==='net_set'){
+        this.netSet('batch');
+        return;
+      }
+    }else {
       if (!this.FnJudgeCustomer(operate_info, type)) {
         return;
       }
@@ -777,6 +887,8 @@ export default class App extends Vue {
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
+    console.log('this.multiple_selection',this.multiple_selection);
+    
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       this.multiple_selection_id.push(item.ecs_id);
@@ -842,6 +954,11 @@ export default class App extends Vue {
         flag = false;
         break;
       }
+      if(['update_spec','update_system'].includes(type) && item.no_charge_shutdown_ecs){
+        this.$message.warning(`不允许对关机不计费的实例${operate_info.label}操作！`);
+        flag = false;
+        break;
+      }
       if (operate_info.auth.indexOf(item.status) < 0) {
         this.$message.warning(operate_info.msg);
         flag = false;
@@ -885,9 +1002,27 @@ export default class App extends Vue {
       this.FnOpenBill(
         Object.assign({ billing_method: this.billing_method }, reqData)
       );
+    }else if(this.default_operate_type === "operateGpu"){
+      this.mount_gpu_card()
+    }
+  }
+  private async mount_gpu_card(){
+    let res:any = await Service.mount_gpu_card({
+      ecs_id:this.multiple_selection[0].ecs_id,
+      customer_id:this.multiple_selection[0].customer_id,
+      event_type:this.gpu_card_operate
+    })
+    if (res.code == "Success") {
+      this.$message.success(
+        res.message
+      );
+      this.FnClose();
     }
   }
   private async FnPowerOperate(reqData) {
+    if (this.default_operate_type === "restart_ecs") {
+      reqData.op_type = this.restart_ecs_type;
+    }
     if (this.default_operate_type === "shutdown_ecs") {
       reqData.op_type = this.shutdown_ecs_type;
     }
@@ -898,6 +1033,34 @@ export default class App extends Vue {
       );
       this.FnClose();
     }
+  }
+  private netSet(type,row:any={}){
+    if(type==='single'){
+      this.multiple_selection = [row]
+    }
+    this.net_visible=true;
+  }
+  private operateGpu(row){
+    this.multiple_selection=[row]
+    this.show_operate_dialog = true;
+    this.operate_title = '显卡管理';
+    this.default_operate_type = 'operateGpu';
+    this.FnClearTimer();
+    // this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
+    //   confirmButtonText: '确定',
+    //   cancelButtonText: '取消',
+    //   type: 'warning'
+    // }).then(async () => {
+    //   this.$message({
+    //     type: 'success',
+    //     message: '删除成功!'
+    //   });
+    // }).catch(() => {
+    //   this.$message({
+    //     type: 'info',
+    //     message: '已取消删除'
+    //   });          
+    // });
   }
   private async FnDelete(reqData) {
     const resData: any = await Service.delete_instance(
@@ -1134,10 +1297,17 @@ export default class App extends Vue {
       this.FnGetList();
     }
   }
+  @Watch("net_visible")
+  private watch_net_visible(nv){
+    if(!nv){
+      this.FnGetList();
+    }
+  }
   private FnClose() {
     this.show_operate_dialog = false;
     this.default_operate_type = "";
     this.total_price = "";
+    this.gpu_card_operate='';
     this.FnGetList();
   }
   private FnToDetail(id) {
@@ -1172,19 +1342,26 @@ export default class App extends Vue {
   }
   private async FnGetStatus() {
     // if (this.$store.state.status_list.length > 0) {
-    //   this.ecs_status_list = this.$store.state.status_list;
-    //   // this.search_con.status.list = this.$store.state.status_list;
+    //   this.search_con.status.list = this.$store.state.status_list;
     // } else {
       const resData = await Service.get_status_list();
       if (resData.code === "Success") {
         this.ecs_status_list = [];
         for (let key in resData.data) {
-          this.ecs_status_list.push({
-            text: resData.data[key],
-            value: key
-          });
+          if(key!=='destroy'){
+            this.ecs_status_list.push({
+              text: resData.data[key],
+              value: key
+            });
+          }
+          
         }
-        // this.$store.commit("SET_STATUS_LIST", this.ecs_status_list);
+        if (this.$route.query.host_id) {
+          
+        } else {
+          this.FnSearch();
+        }
+        // this.$store.commit("SET_STATUS_LIST", this.search_con.status.list);
       }
     // }
   }
@@ -1223,7 +1400,8 @@ export default class App extends Vue {
             this.search_billing_method == ""
               ? "no"
               : this.search_billing_method,
-          op_source: this.search_op_source
+          op_source: this.search_op_source,
+          spec_family_ids:this.search_ecs_goods_name.join(','),
         },
         this.search_reqData
       )
@@ -1234,11 +1412,12 @@ export default class App extends Vue {
         type: "application/octet-stream"
       });
       let reader = new FileReader();
+      let title ='云服务器-'+storage.get('pod_name') +'-'+ moment(new Date()).format('YYYYMMDD')
       reader.readAsText(blob, "utf-8");
       reader.onload = () => {
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = "云服务器列表" + ".xlsx";
+        link.download = title + ".xlsx";  
         link.click();
         window.URL.revokeObjectURL(link.href);
       };
@@ -1270,15 +1449,9 @@ export default class App extends Vue {
         text: this.billing_method_relation[key]
       });
     }
-    if (this.$route.query.host_id) {
-      // this.search_con.host_id.default_value = this.$route.query
-      //   .host_id as string;
-      // this.search_con.status.default_value = ['running', 'shutdown', 'deleted']
-    } else {
-      this.FnSearch();
-    }
+    
   }
-  private beforeDestroy() {
+  beforeDestroy() {
     this.FnClearTimer();
   }
 }

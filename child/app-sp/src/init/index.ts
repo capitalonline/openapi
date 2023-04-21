@@ -7,12 +7,15 @@ export async function getUserInfo() {
   if (index >= 0) {
     token = window.location.href.substr(index + 6).split('&')[0];
   }
+  if(!token){
+    token = sessionStorage.getItem('Access-Token')
+  }
   if (token) {
     store.commit('SET_TOKEN', token)
   }
   const resData = await get_user_info({'token': store.state.token});
   if (resData.code == 'Success') {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
-    store.commit('SET_AUTH_INFO', {...resData.data.permission_dict,overview:[]});
+    store.commit('SET_AUTH_INFO', {...resData.data.permission_dict,overview:[],snapshot_list:['snapshot_detail'],ecs_deatroyed:[]});
   }
 }
