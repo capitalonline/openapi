@@ -104,7 +104,6 @@ export default class UpdateAttribute extends Vue{
         {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
-        console.log('rows',this.rows)
         this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
         // this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
         this.getHostTypes();
@@ -200,7 +199,7 @@ export default class UpdateAttribute extends Vue{
                     host_ids:this.rows.map(item=>item.host_id),
                     host_purpose:this.form_data.use,
                     host_type:this.form_data.type,
-                    customer_ids:this.form_data.customer_id.length > 0 ? this.customer_id : [],
+                    customer_ids:this.form_data.customer_id.length > 0 ? this.form_data.customer_id : [],
                     spec_family_ids:this.form_data.family,
                     backend_type:this.form_data.backend,
                     // black_customer_ids:this.form_data.black_customer_id
