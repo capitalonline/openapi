@@ -1425,7 +1425,7 @@ def get_mysql_modifiable_spec(instance_uuid):
     :param instance_uuid: 实例编号
     :return:
     """
-    action = "DescribeModifiableDBSpec"
+    action = "DescribeAvailableReadOnlyConfig"
     method = "GET"
     param = {
         "InstanceUuid": instance_uuid
