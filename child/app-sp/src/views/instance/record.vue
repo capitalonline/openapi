@@ -209,7 +209,7 @@ export default class InsDetail extends Vue{
         
       }
       
-      this.total = res.data?.page_info?.count || 0
+      this.total = this.type==='nas' ? res.data.total_num : (res.data?.page_info?.count || 0)
     }
   }
   private handleSizeChange(size){

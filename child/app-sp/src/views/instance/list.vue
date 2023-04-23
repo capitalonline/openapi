@@ -244,6 +244,14 @@
             <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
           </template>
       </el-table-column>
+      <!-- 产品来源  -->
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="search_product_source" :filters="product_source_list">
+        <template slot-scope="scope">
+            <span>{{ scope.row.product_source}}</span>
+          </template>
+      </el-table-column>
+      <!-- 计费账户ID -->
+      <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -398,6 +406,7 @@
               <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
+        
           <el-table-column
             prop=""
             label="价格"
@@ -590,10 +599,8 @@ import netSet from './netSet.vue'
 })
 export default class App extends Vue {
   private search_con = {
-    // az_id: { placeholder: "请选择可用区", list: [] },
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
-    // status: { placeholder: "请选择云服务器状态", list: [], multiple: true, default_value: [] },
     customer_id: { placeholder: "请输入客户ID" },
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
@@ -615,6 +622,8 @@ export default class App extends Vue {
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
+  // 产品线来源
+  private search_product_source='';
   private search_ecs_goods_name = [];
   private search_status=[]
   private instance_list: Array<Object> = [];
@@ -645,6 +654,14 @@ export default class App extends Vue {
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
   ]
+  // 产品来源
+  private product_source_list:any=[
+    {text:'云桌面',value:'云桌面'},
+    {text:'云主机',value:'云主机'},
+    {text:'文件存储转发',value:'文件存储转发'},
+    {text:'容器',value:'容器'},
+  ]
+  // 服务账号ID
   private search_card_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
@@ -692,6 +709,10 @@ export default class App extends Vue {
       host_name: data.host_name,
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
+      //产品来源
+      // product_source:data.product_source,
+      // 服务账户ID
+      // product_server_id:data.product_server_id,
       start_time:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).format("YYYY-MM-DD")
@@ -706,6 +727,7 @@ export default class App extends Vue {
   }
   // 筛选实例来源
   private handleFilterChange(val) {
+    console.log('val',val)
     this.FnClearTimer();
     setTimeout(()=>{
       if (val.op_source) {
@@ -723,6 +745,10 @@ export default class App extends Vue {
       }
       if(val.card_status_type){
         this.search_card_status_type = val.card_status_type[0];
+      }
+      // 产品来源
+      if(val.search_product_source){
+        this.search_product_source = val.search_product_source[0];
       }
       this.FnGetList();
     },500)
@@ -778,10 +804,16 @@ export default class App extends Vue {
       status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
       [this.sort_prop_name]: this.sort_order,
       is_op:true,
+      // 产品来源
+      product_source:this.search_product_source,
       ...this.search_reqData
     }
     if (this.search_op_source) {
       reqData["op_source"] = this.search_op_source;
+    }
+    // 产品来源
+    if(this.search_product_source){
+      reqData["product_source"] = this.search_product_source;
     }
     if (this.search_card_status_type) {
       reqData["card_status_type"] = this.search_card_status_type;
@@ -789,9 +821,12 @@ export default class App extends Vue {
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
+    // 
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
+      console.log(this.instance_list[0],"instance_list");
+      
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter(row =>
@@ -833,7 +868,8 @@ export default class App extends Vue {
         this.FnGetEcsPrice();
       }
       if(type==='net_set'){
-        this.netSet('batch');
+        this.netSet('batch');  
+        
         return;
       }
     }else {
@@ -1175,7 +1211,8 @@ export default class App extends Vue {
       is_gpu: this.is_gpu,
       ecs_ids: this.multiple_selection_id,
       ebs_goods_info: {},
-      billing_info: this.disk_billing_info[data.ecs_goods_id]
+      billing_info: this.disk_billing_info[data.ecs_goods_id],
+      
     };
     if (this.is_gpu) {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
@@ -1392,9 +1429,9 @@ export default class App extends Vue {
   }
 
   private async FnExport() {
+    console.log('this.search_product_source',this.search_product_source)
     this.loading = true;
-    const resData = await Service.export_list(
-      Object.assign(
+    let obj = Object.assign(
         {
           billing_method:
             this.search_billing_method == ""
@@ -1402,9 +1439,13 @@ export default class App extends Vue {
               : this.search_billing_method,
           op_source: this.search_op_source,
           spec_family_ids:this.search_ecs_goods_name.join(','),
+          // 产品来源
+          product_source:this.search_product_source,
         },
         this.search_reqData
       )
+    const resData = await Service.export_list(
+      obj
     );
     if (resData) {
       this.loading = false;

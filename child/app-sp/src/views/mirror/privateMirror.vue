@@ -19,6 +19,7 @@
             <el-table-column prop="customer_id" label="客户ID"></el-table-column>
             <el-table-column prop="customer_name" label="客户名称"></el-table-column>
             <el-table-column prop="os_type" label="镜像类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type"></el-table-column>
+            <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="source_list"></el-table-column>
             <el-table-column prop="init_mirror" label="初始镜像">
                 <template slot-scope="scope">
                     <span>{{`${scope.row.os_type} ${scope.row.os_version} ${scope.row.os_bit}位`}}</span>
@@ -121,6 +122,12 @@ export default class PrivateMirror extends Vue{
     private search_data:any={};
     private auth_list:any=[];
     private mirror_type:any=[];
+    private source_list:any=[
+        {text:'云桌面',value:'云桌面'},
+        {text:'云主机',value:'云主机'},
+        {text:'文件存储转发',value:'文件存储转发'},
+        {text:'容器',value:'容器'},
+    ]
     private compute_type:any=[
         {text:'GPU',value:'GPU'},
         {text:'CPU',value:'CPU'},
@@ -136,6 +143,7 @@ export default class PrivateMirror extends Vue{
     private status_list:any=[];
     private visible:boolean=false;
     private oper_type:String="";
+    private support_product_source_type:String='';
     private oper_info:any={};
     private filter_data:any={};
     created() {
@@ -175,7 +183,7 @@ export default class PrivateMirror extends Vue{
         }
     }
     private async getMirrorList(){
-        const {image_info,customer_info,time,os_type,sort_size,sort_used_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data
+        const {image_info,customer_info,time,os_type,sort_size,sort_used_size,support_gpu_driver,support_type,support_product_source_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time,product_source}=this.search_data
         let res:any = await Service.get_private_mirror_list({
             image_info,
             customer_info,
@@ -187,9 +195,11 @@ export default class PrivateMirror extends Vue{
             sort_used_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
+            // product_source:product_source_type ? support_product_source_type[0] : undefined,
             business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
             status:status ? status[0] : undefined,
             backend_type:backend_type ? backend_type[0] : undefined,
+            product_source:product_source ? product_source[0] : undefined,
             sort_update_time,
             sort_create_time,
             page_index:this.current,
@@ -229,7 +239,7 @@ export default class PrivateMirror extends Vue{
         this.visible = false
     }
     private down(){
-        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time}=this.search_data;
+        const {image_info,customer_info,time,os_type,sort_size,support_gpu_driver,support_type,business_disk_type,status,backend_type,sort_update_time,sort_create_time,product_source}=this.search_data;
         let obj={
             image_info,
             customer_info,
@@ -240,9 +250,12 @@ export default class PrivateMirror extends Vue{
             sort_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
             support_type:support_type ? support_type[0] : undefined,
+            // 产品来源
+            product_source:product_source ? product_source[0] : undefined,
             business_disk_type:business_disk_type ? business_disk_type[0] : undefined,
             status:status ? status[0] : undefined,
             backend_type:backend_type ? backend_type[0] : undefined,
+            // product_source:product_source?product_source[0] : undefined,
             sort_update_time,
             sort_create_time,
         }

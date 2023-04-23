@@ -15,6 +15,7 @@
           <label-block label="客户名称">
             {{ customer_name }}
           </label-block>
+         
           <label-block label="是否计费">
             <el-switch v-model="is_billing">
             </el-switch>
@@ -215,6 +216,8 @@ export default class App extends Vue {
     az_list: []
   };
 
+ 
+
   private default_az = {
     az_id: '',
     az_name: ''
@@ -267,7 +270,7 @@ export default class App extends Vue {
   };
 
   private confirm_create_visible: boolean = false;
-
+ 
   private async FnGetCustomerName () {
     const resData = await Service.get_customer_name({ customer_id: this.customer_id_input });
     if (resData.code === 'Success') {
@@ -277,6 +280,7 @@ export default class App extends Vue {
       this.FnGetRegionAzList();
     }
   }
+
 
   private async FnGetRegionAzList () {
     const resData = await Service.get_region_az_list({ customer_id: this.customer_id });

@@ -32,6 +32,7 @@
             </el-table-column>
             <el-table-column prop="support_type" label="计算类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
+            <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="source_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="customer" label="客户权限">
                 <template slot-scope="scope">
@@ -179,8 +180,15 @@ export default class CommonMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'GRID',value:'GRID'},
         {text:'Enflame',value:'Enflame'},
     ];
+    private source_type:any=[
+        {text:'云桌面',value:'云桌面'},
+        {text:'云主机',value:'云主机'},
+        {text:'文件存储转发',value:'文件存储转发'},
+        {text:'容器',value:'容器'},
+    ]
     private operateBtns:any=[
         {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
         {label:'删除',authLabel:'del_mirror',fun:'del',list:['running','blocking','create_fail'],msg:'仅支持可用,停用或者创建失败状态的镜像操作'},
@@ -249,7 +257,7 @@ export default class CommonMirror extends Vue{
         this.getMirrorList()
     }
     private async getMirrorList(){
-        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status} = this.search_data
+        const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status,product_source} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
             pod_id:this.$store.state.pod_id,
             image_id:os_id,
@@ -259,7 +267,7 @@ export default class CommonMirror extends Vue{
             os_type:os_type ? os_type[0] : undefined,
             sort_size,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
-            support_type:support_type ? support_type[0] : undefined,
+            product_source:product_source ? product_source[0] : undefined,
             status:status ? status[0] : undefined,
             sort_create_time:sort_create_time,
             page_index:this.current,
@@ -330,14 +338,16 @@ export default class CommonMirror extends Vue{
         this.oper_info=obj
     }
     private down(){
-        const{os_id,display_name,time,os_type,support_gpu_driver,support_type,status} = this.search_data
+        const{os_id,display_name,product_server_id,time,os_type,support_gpu_driver,support_type,status,product_source} = this.search_data
         let query = paramsSerializer({
             image_id:os_id,
             image_name:display_name,
+            product_server_id:product_server_id,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,
             support_gpu_driver:support_gpu_driver ? support_gpu_driver[0] : undefined,
+            product_source : product_source ? product_source[0]:undefined,
             support_type:support_type ? support_type[0] : undefined,
             status:status ? status[0] : undefined,
         })
