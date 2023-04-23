@@ -104,7 +104,8 @@ export default class UpdateAttribute extends Vue{
         {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
-        this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
+        this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item);
+        // this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
         // this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
         this.getHostTypes();
         this.getCustomerList('',true);
@@ -126,7 +127,6 @@ export default class UpdateAttribute extends Vue{
             }else{
                 this.form_data.type =this.rows[0]?.host_type
                 this.host_uses= this.rows[0].host_type ? this.host_types.filter(item=>item.type===this.rows[0].host_type)[0]?.list : this.host_types[0].list;
-                console.log('this.rows[0].host_purpose',this.rows[0].host_purpose)
                 this.form_data.use = this.rows[0].host_purpose ? this.rows[0].host_purpose : this.host_uses[0] ? this.host_uses[0].use_type : '';
             }
         }
