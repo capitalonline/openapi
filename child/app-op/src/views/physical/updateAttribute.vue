@@ -17,7 +17,7 @@
                     <el-option v-for="item in host_uses" :key="item.use_type" :value="item.use_type" :label="item.use_name"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="切分粒度">
+            <!-- <el-form-item label="切分粒度">
                 <el-input placeholder="若输入多个值，用英文逗号隔开" v-model="form_data.particle"></el-input> GB
                 <el-tooltip content="每块GPU仅能按照一种显存大小进行切分；同物理机不同显卡切分粒度可以不同；故一台物理机切分粒度的数量不能多于物理机GPU数量。" placement="right" effect="light">
                     <el-button type="text">
@@ -25,7 +25,7 @@
                     </el-button>
                 </el-tooltip>
                 <div class="error_message" v-if="form_data.particle.split(',').length>4">最多支持设置4种值</div>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="专属客户">
                 <el-select 
                     class="w-280"
