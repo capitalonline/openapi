@@ -61,6 +61,12 @@ const routes: RouteConfig[] = [
     meta: {label: '资源统计', menu: 'resource_statistical_list'},
   },
   {
+    path: '/vgpu_list',
+    name: 'vgpu_list',
+    component: () => import('../views/vgpu/list.vue'),
+    meta: {label: 'vGPU授权库存', menu: 'vgpu_list',no_auth: true},
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),

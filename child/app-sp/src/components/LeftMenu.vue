@@ -76,6 +76,11 @@ export default class LeftMenu extends Vue {
           name: "snapshot_list",
           label: "快照管理"
         },
+        {
+          name: "cluster_list",
+          label: "集群统计",
+          noAuth:true
+        },
       ]
     },
     {

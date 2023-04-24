@@ -17,6 +17,15 @@
                     <el-option v-for="item in host_uses" :key="item.use_type" :value="item.use_type" :label="item.use_name"></el-option>
                 </el-select>
             </el-form-item>
+            <!-- <el-form-item label="切分粒度">
+                <el-input placeholder="若输入多个值，用英文逗号隔开" v-model="form_data.particle"></el-input> GB
+                <el-tooltip content="每块GPU仅能按照一种显存大小进行切分；同物理机不同显卡切分粒度可以不同；故一台物理机切分粒度的数量不能多于物理机GPU数量。" placement="right" effect="light">
+                    <el-button type="text">
+                        <svg-icon icon="info" class="info"></svg-icon>
+                    </el-button>
+                </el-tooltip>
+                <div class="error_message" v-if="form_data.particle.split(',').length>4">最多支持设置4种值</div>
+            </el-form-item> -->
             <el-form-item label="专属客户">
                 <el-select 
                     class="w-280"
@@ -72,8 +81,13 @@
 </template>
 <script lang="ts">
 import {Vue,Component,PropSync,Emit,Prop,Watch} from 'vue-property-decorator';
-import Service from '../../https/physical/list'
-@Component({})
+import Service from '../../https/physical/list';
+import svgIcon from '@/components/svgIcon/index.vue';
+@Component({
+    components:{
+        svgIcon
+    }
+})
 export default class UpdateAttribute extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
     @Prop({default:()=>[]}) rows!:any;
@@ -82,19 +96,21 @@ export default class UpdateAttribute extends Vue{
         use:'',
         backend:'',
         customer_id:[],
-        // black_customer_id:[],
-        family:[]
+        black_customer_id:[],
+        family:[],
+        particle:'',
     }
-    private type:String="";
-    private use:String = "";
-    private backend:string=''
+    // private type:String="";
+    // private use:String = "";
+    // private backend:string=''
+    // private particle:string=''
     private host_types=[]
     private host_uses=[];
-    private customer_id:any=[];
+    // private customer_id:any=[];
     // private black_customer_id:any=[];
     private customerList:any=this.rows[0]?.exclusive_customers;
-    // private blackCustomerList:any=this.rows[0]?.exclusive_black_customers;
-    private family=[];
+    private blackCustomerList:any=this.rows[0]?.exclusive_black_customers;
+    // private family=[];
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
@@ -194,7 +210,7 @@ export default class UpdateAttribute extends Vue{
     private async confirm(){
         let form = this.$refs.form as any;
         form.validate(async valid=>{
-            if(valid){
+            if(valid && this.form_data.particle.split(',').length<=4){
                 let res:any =await Service.update_attribute({
                     host_ids:this.rows.map(item=>item.host_id),
                     host_purpose:this.form_data.use,
