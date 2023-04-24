@@ -81,7 +81,6 @@
         slave:'',
     }
     created() {
-        console.log('this.ecs_list',this.ecs_list[0].base_nic_info)
         if(this.ecs_list.length===1){
             this.ecs_list[0].base_nic_info.length>0 && this.ecs_list[0].base_nic_info.map(item=>{
                 this.list.push({
@@ -189,7 +188,6 @@
         if(res.code==='Success'){
             this.$message.success(res.message)
         }
-        console.log('confirm');
         this.visibleSync=false
     }
   }
