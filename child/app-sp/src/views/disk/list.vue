@@ -69,6 +69,9 @@
           <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
         </template>
       </el-table-column>
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source"></el-table-column>
+      <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
+      <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
@@ -160,6 +163,8 @@ export default class extends Vue {
     // status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},
+    product_server_id:{placeholder:'请输入内部服务账号ID'},
+    product_server_name: {placeholder:'请输入内部服务账号名称'},
   }
   private visible:Boolean = false;
   private operate_type:string=""
@@ -246,6 +251,7 @@ export default class extends Vue {
   ]
   created() {
     this.get_disk_state();
+    this.get_product_source()
     this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
@@ -326,6 +332,7 @@ export default class extends Vue {
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
       status:req_data.status ? req_data.status[0] : '',
+      product_source:req_data.product_source ? req_data.product_source:[],
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
       product_server_id:req_data.product_server_id || '',
