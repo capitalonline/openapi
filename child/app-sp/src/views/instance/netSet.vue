@@ -85,10 +85,10 @@
         if(this.ecs_list.length===1){
             this.ecs_list[0].base_nic_info.length>0 && this.ecs_list[0].base_nic_info.map(item=>{
                 this.list.push({
-                    netcard_id:item.netcard_id,
-                    vlan_id:item.vlan_id,
-                    ip_address:item.ip_address,
-                    mask:item.mask,
+                    netcard_id:item[0].netcard_id,
+                    vlan_id:item[0].vlan_id,
+                    ip_address:item[0].ip_address,
+                    mask:item[0].mask,
                     // gateway:item.gateway,
                     // mainDns:item.dns[0],
                     // dns:item.dns[1],

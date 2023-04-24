@@ -757,8 +757,6 @@ export default class App extends Vue {
     return [data[0], data[1], data[2], '0'].join('.')
   }
   private async FnGetList(loading: boolean = true) {
-    console.log('search_reqData',this.search_reqData);
-    
     if(!this.$store.state.pod_id){
       return ;
     }
@@ -887,7 +885,6 @@ export default class App extends Vue {
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
-    console.log('this.multiple_selection',this.multiple_selection);
     
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
