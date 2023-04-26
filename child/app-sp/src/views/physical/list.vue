@@ -315,12 +315,12 @@ export default class PhysicalList extends Vue {
     {label:'完成维护',value:'finish'},
     // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
-    // {label:'分配资源',value:'resource'},
-    // {label:'更改属性',value:'update_attribute'},
+    {label:'分配资源',value:'resource'},
+    {label:'更改属性',value:'update_attribute'},
     {label:'业务测试',value:'business_test'},
-    // {label:'调度标记',value:'schedule'},
-    // {label:'迁移标记',value:'migrate_flag'},
-    // {label:'欺骗器管理',value:'cheat'},
+    {label:'调度标记',value:'schedule'},
+    {label:'迁移标记',value:'migrate_flag'},
+    {label:'欺骗器管理',value:'cheat'},
 
   ]
   private rows_operate_btns:any=[
