@@ -64,7 +64,7 @@
           <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" :filters="product_source_list" column-key="product_source"></el-table-column>
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source"></el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
       <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
       <el-table-column label="操作栏">
@@ -266,12 +266,9 @@ export default class extends Vue {
     let res:any = await Service.get_product_source({})
     if(res.code==="Success"){
       res.data.map((item,index)=>{
-        console.log(item,"res.data-product_source",index);
         this.product_source_list.push({
-          text:item.eks ? '容器' : '云桌面',
+          text:Object.values(item)[0],
           value:index
-          // text:item.product_source_cn,
-          // value:item.product_source
         })
         return item;
       })
