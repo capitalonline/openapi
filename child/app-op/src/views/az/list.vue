@@ -144,7 +144,7 @@ export default class Az extends Vue{
     }
     private regionList:any=[]
     private azList:any=[]
-    private publicList:any={};
+    // private publicList:any={};
     private visible:boolean=false;
     private operateInfo:any={};
     private operateType:string='';
@@ -159,7 +159,7 @@ export default class Az extends Vue{
     created() {
         this.authList = this.$store.state.auth_info[this.$route.name];        
         this.getRegion()
-        this.getNetType()
+        // this.getNetType()
         this.getAzList()
     }
     @Watch('visible')
@@ -177,13 +177,14 @@ export default class Az extends Vue{
             }
         }
     }
-    private async getNetType(){
-        let res:any = await Service.get_net_type();
-        if(res.code==='Success'){
-            this.publicList = res.data;
-        }
-    }
+    // private async getNetType(){
+    //     let res:any = await Service.get_net_type();
+    //     if(res.code==='Success'){
+    //         this.publicList = res.data;
+    //     }
+    // }
     private filterAz(val){        
+        console.log(val,'filterAz-val');
         this.getAzList(val)
     }
     private changeAz(val){

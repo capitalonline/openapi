@@ -277,10 +277,10 @@ export default class extends Vue {
     this.product_source_list=[]
     let res:any = await Service.get_product_source({})
     if(res.code==="Success"){
-      res.data.map(item=>{
+      res.data.map((item,index)=>{
         this.product_source_list.push({
-          text:item.product_source_cn,
-          value:item.product_source
+          text:Object.values(item)[0],
+          value:index
         })
         return item;
       })

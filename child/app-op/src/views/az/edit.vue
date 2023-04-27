@@ -27,9 +27,10 @@
                     <el-checkbox v-for="item in ecs_type_list" :key="item.id" :label="item.id">{{ item.label }}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="公网类型" prop="net_type">
+            <!-- <el-form-item label="公网类型" prop="net_type">
+
                 <el-radio v-for="(item,i) in publicList" :key="i" v-model="formData.net_type" :label="i">{{item}}</el-radio>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="存储类型" prop="backend_types">
                 <el-checkbox-group v-model="formData.backend_types">
                     <el-checkbox v-for="(item,i) in backend_list" :key="i" :label="i">{{item}}</el-checkbox>
@@ -96,7 +97,7 @@ export default class Edit extends Vue{
     }
     private backend_list:any={}
     private statusList:any={};
-    private publicList:any={};
+    // private publicList:any={};
     private customerList:any=[];
     private ecs_type_list:any=[
         {id:'gpu',label:'GPU型'},
@@ -109,15 +110,15 @@ export default class Edit extends Vue{
     created() {
         this.getBackendTypes();
         this.gtStatusList();
-        this.getNetType()
+        // this.getNetType()
     }
-    private async getNetType(){
-        let res:any = await Service.get_net_type();
-        if(res.code==='Success'){
-            this.publicList = res.data;
-            this.formData.net_type =this.info.net_type[0]
-        }
-    }
+    // private async getNetType(){
+    //     let res:any = await Service.get_net_type();
+    //     if(res.code==='Success'){
+    //         this.publicList = res.data;
+    //         this.formData.net_type =this.info.net_type[0]
+    //     }
+    // }
     private async getBackendTypes(){
         let res:any = await Service.get_backend_types();
         if(res.code==='Success'){
@@ -142,10 +143,10 @@ export default class Edit extends Vue{
         const {az_id,az_code,net_type,backend_types,status,customer_ids,remark,support_ecs_type}=this.formData
         form.validate(async valid=>{
             if(valid){
+                // net_type(参数-公网类型)
                 let res:any = await Service.edit({
                     az_id,
                     az_code,
-                    net_type,
                     backend_types:backend_types.join(','),
                     status,
                     customer_ids:customer_ids.join(','),
