@@ -10552,11 +10552,14 @@ def querySites():
 | gpuModel       | string  | “NVIDIA A5000”                         | gpu型号                              |
 | gpuRam         | int     | 24                                     | gpu显存                              |
 | systemDiskSize | int     | 150                                    | 系统盘大小                           |
-| os             | string  | “windows”                              | 操作系统                             |
+| os  (deleted)          | string  | “windows”                              | 操作系统    (废弃，具体系统以镜像为准)                         |
 | goodsId        | int     | 15264                                  | 商品id                               |
 | requirePrice   | double  | 0.1868333333                           | 按需价格，每分钟所需的人民币数值     |
 | monthPrice     | double  | 3364                                   | 包月价格，每月所需的人民币数值       |
 | isAllowSsd     | boolean | 1                                      | 是否允许使用ssd云盘 , 1允许，0不允许 |
+| isAllowLocal     | boolean | 1                                      | 是否允许使用本底盘, 1允许，0不允许 |
+| isAllowMinute     | boolean | 1                                      | 是否允许按需购买 , 1允许，0不允许 |
+| isAllowMonth     | boolean | 1                                      | 是否允许包月购买 , 1允许，0不允许 |
 
    **错误码:**
 
@@ -10577,12 +10580,14 @@ def querySites():
             "gpuRam": 24,
             "memorySize": 25,
             "monthPrice": 3364,
-            "os": "windows",
             "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
             "requirePrice": 0.1868333333,
             "siteId": "ebbfcb70-a98f-11ec-926b-8aaa763f849e",
             "systemDiskSize": 150,
-            "isAllowSsd":1
+            "isAllowSsd":1,
+            "isAllowLocal":1,
+            "isAllowMinute":1,
+            "isAllowMonth":1
         },
         {
             "cpuCores": 14,
@@ -10591,12 +10596,14 @@ def querySites():
             "gpuRam": 24,
             "memorySize": 25,
             "monthPrice": 3364,
-            "os": "windows",
             "productId": "e0997510-1b69-4de8-85a8-cc44b2dd28f8",
             "requirePrice": 0.1868333333,
             "siteId": "9efa59c0-a0db-11ec-aefa-1efd5a8f8465",
             "systemDiskSize": 150,
-            "isAllowSsd":0
+            "isAllowSsd":0,
+            "isAllowLocal":1,
+            "isAllowMinute":1,
+            "isAllowMonth":1
         }
     ],
     "Message": ""
