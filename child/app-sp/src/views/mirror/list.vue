@@ -182,6 +182,7 @@ export default class CommonMirror extends Vue{
         {text:'Geforce',value:'Geforce'},
         {text:'GRID',value:'GRID'},
         {text:'Enflame',value:'Enflame'},
+        {text:'GRID',value:'GRID'},
     ];
     private source_type:any=[
         {text:'云桌面',value:'云桌面'},

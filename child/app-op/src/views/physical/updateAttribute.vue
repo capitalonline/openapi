@@ -26,6 +26,19 @@
                 </el-tooltip>
                 <div class="error_message" v-if="form_data.particle.split(',').length>4">最多支持设置4种值</div>
             </el-form-item> -->
+            <div class="error_message tip" v-if="particle.split(',').length>4">最多支持设置4种值</div>
+            <div class="error_message tip" v-else-if="particle.includes('，')">请用英文逗号隔开</div>
+            <div class="m-bottom20" v-if="use.includes('vGPU')">
+                <span>切分类型</span>
+                <el-select v-model="vgpu_segment_type">
+                    <el-option
+                        v-for="item in particleList"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+            </div>
             <el-form-item label="专属客户">
                 <el-select 
                     class="w-280"
@@ -93,27 +106,29 @@ export default class UpdateAttribute extends Vue{
     @Prop({default:()=>[]}) rows!:any;
     private form_data:any={
         type:'',
-        use:'',
+        use:'', 
         backend:'',
         customer_id:[],
         black_customer_id:[],
         family:[],
         particle:'',
     }
-    // private type:String="";
-    // private use:String = "";
-    // private backend:string=''
-    // private particle:string=''
+    private type:String="";
+    private use:String = "";
+    private backend:string=''
+    private particle:string=''
     private host_types=[]
     private host_uses=[];
-    // private customer_id:any=[];
+    private customer_id:any=[];
     // private black_customer_id:any=[];
     private customerList:any=this.rows[0]?.exclusive_customers;
     private blackCustomerList:any=this.rows[0]?.exclusive_black_customers;
-    // private family=[];
+    private family=[];
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
+    private particleList =['Q','B','C','A']
+    private vgpu_segment_type = this.particleList[0]
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
@@ -208,32 +223,33 @@ export default class UpdateAttribute extends Vue{
     //     }
     // }
     private async confirm(){
-        let form = this.$refs.form as any;
-        form.validate(async valid=>{
-            if(valid && this.form_data.particle.split(',').length<=4){
-                let res:any =await Service.update_attribute({
-                    host_ids:this.rows.map(item=>item.host_id),
-                    host_purpose:this.form_data.use,
-                    host_type:this.form_data.type,
-                    customer_ids:this.form_data.customer_id.length > 0 ? this.form_data.customer_id : [],
-                    spec_family_ids:this.form_data.family,
-                    backend_type:this.form_data.backend,
-                    // black_customer_ids:this.form_data.black_customer_id
-                })
-                if(res.code==='Success'){
-                    if(res.data.fail_host_list.length>0){
-                        this.$message.warning(res.message)
-                        this.back("0");
-                        return;
-                    }
-                    this.$message.success(res.message)
-                    this.back("1")
-                }else{
-                    this.back("0")
-                }
-                    }
-                })
-        
+        if(this.particle.split(',').length>4){
+            return false;
+        }
+        if(this.particle.includes('，')){
+            return
+        }
+        let res:any =await Service.update_attribute({
+            host_ids:this.rows.map(item=>item.host_id),
+            host_purpose:this.use,
+            host_type:this.type,
+            customer_ids:this.customer_id,
+            spec_family_ids:this.family,
+            backend_type:this.backend,
+            vgpu_granularity:this.use.includes('vGPU') ? this.particle : undefined,
+            vgpu_segment_type:this.use.includes('vGPU') ? this.vgpu_segment_type : undefined
+        })
+        if(res.code==='Success'){
+             if(res.data.fail_host_list.length>0){
+                this.$message.warning(res.message)
+                this.back("0");
+                return;
+            }
+            this.$message.success(res.message)
+            this.back("1")
+        }else{
+            this.back("0")
+        }
         
     }
     @Emit("close")
@@ -252,6 +268,11 @@ export default class UpdateAttribute extends Vue{
     }
     .el-select,.el-input{
         width: 340px;
+    }
+    .tip{
+        margin-left: 140px;
+        margin-top: -20px;
+    
     }
 }
 </style>

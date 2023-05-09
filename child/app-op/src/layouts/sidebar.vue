@@ -99,6 +99,7 @@ export default class SideBar extends Vue {
           label: "vGPU授权库存",
           noAuth:true
         }
+
       ]
     },
   ]
