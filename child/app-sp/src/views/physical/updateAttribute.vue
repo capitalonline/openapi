@@ -149,7 +149,13 @@ export default class UpdateAttribute extends Vue{
     // 数据回显
     private valBack() {
         if(this.rows.length == 1) {
-           this.customer_id = this.rows[0].exclusive_customers.map(item=>item.id)
+           this.customer_id = this.rows[0].exclusive_customers.map(item=> {
+               if(typeof item == 'string'){
+                   return item
+               } else {
+                   return item.id
+               }
+            })
         }
     }
     @Emit("close")
