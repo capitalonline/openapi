@@ -231,7 +231,7 @@ export default class UpdateAttribute extends Vue{
         let res:any =await Service.update_attribute({
             host_ids:this.rows.map(item=>item.host_id),
             host_purpose:this.form_data.use,
-            host_type:this.type,
+            host_type:this.form_data.type,
             customer_ids:this.customer_id,
             spec_family_ids:this.family,
             backend_type:this.backend,
