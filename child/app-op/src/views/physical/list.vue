@@ -425,6 +425,7 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
+      vgpu_segment_type
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -441,6 +442,7 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
+      vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,

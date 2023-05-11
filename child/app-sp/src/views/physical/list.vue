@@ -316,7 +316,7 @@ export default class PhysicalList extends Vue {
     // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
     // {label:'分配资源',value:'resource'},
-    // {label:'更改属性',value:'update_attribute'},
+    {label:'更改属性',value:'update_attribute'},
     {label:'业务测试',value:'business_test'},
     // {label:'调度标记',value:'schedule'},
     // {label:'迁移标记',value:'migrate_flag'},
