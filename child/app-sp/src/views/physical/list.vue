@@ -569,8 +569,8 @@ export default class PhysicalList extends Vue {
       nic,
       bare_metal_name,
       bare_metal_id,
+      vgpu_segment_type
     }=this.search_data;
-    console.log('this.filter_info',this.filter_info)
     let res:any=await Service.get_host_list({
       pod_id:this.$store.state.pod_id,
       machine_room_name:room,
@@ -585,6 +585,7 @@ export default class PhysicalList extends Vue {
       nic,
       bare_metal_name,
       bare_metal_id,
+      vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       page_index:this.page_info.current,
@@ -787,7 +788,7 @@ export default class PhysicalList extends Vue {
   //校验列表项是否存在此项
   private judgeColumns(){
     let keys = Object.keys(this.filter_data)
-    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy']
+    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy','vgpu_segment_type']
     keys.map(item=>{
       if(!temp.includes(item)){
         delete(this.filter_data[item])
@@ -799,7 +800,6 @@ export default class PhysicalList extends Vue {
     }
   }
   private filterAttribute(obj:any){
-    console.log('obj',obj)
     this.filter_data = {...this.filter_data,...obj};
     this.judgeColumns()
     if(this.filter_data.host_type && this.filter_data.host_type.length>0){
