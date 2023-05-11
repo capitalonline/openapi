@@ -1,4 +1,4 @@
-<template>
+    <template>
     <el-dialog
         title="设置属性"
         :visible.sync="visible_sync"
@@ -66,12 +66,12 @@ export default class UpdateAttribute extends Vue{
     private customerList:any=[];
     private family=[];
     private familyList=[]
-    private flag:boolean=true;
     private flagFamily:boolean=true
     created() {
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
+        this.valBack()
     }
     private async getHostTypes(){
         let res:any =await Service.get_host_type({})
@@ -122,8 +122,6 @@ export default class UpdateAttribute extends Vue{
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
-            if(this.flag)this.customer_id = res.data.old_customers_data_list;
-            this.flag=false;
         }
     }
     
@@ -147,6 +145,12 @@ export default class UpdateAttribute extends Vue{
             this.back("0")
         }
         
+    }
+    // 数据回显
+    private valBack() {
+        if(this.rows.length == 1) {
+           this.customer_id = this.rows[0].exclusive_customers.map(item=>item.id)
+        }
     }
     @Emit("close")
     private back(val){
