@@ -380,9 +380,6 @@ export default class PhysicalList extends Vue {
       if(item.prop==='backend_type'){
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
       }
-      if(item.prop==='vgpu_segment_type'){
-        // item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:}]})
-      }
       return item;
     })
   }
