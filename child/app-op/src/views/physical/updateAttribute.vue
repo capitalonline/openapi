@@ -232,9 +232,9 @@ export default class UpdateAttribute extends Vue{
             host_ids:this.rows.map(item=>item.host_id),
             host_purpose:this.form_data.use,
             host_type:this.form_data.type,
-            customer_ids:this.customer_id,
-            spec_family_ids:this.family,
-            backend_type:this.backend,
+            customer_ids:this.form_data.customer_id,
+            spec_family_ids:this.form_data.family,
+            backend_type:this.form_data.backend,
             vgpu_granularity:this.form_data.use.includes('vGPU') ? this.particle : undefined,
             vgpu_segment_type:this.form_data.use.includes('vGPU') ? this.vgpu_segment_type : undefined
         })
