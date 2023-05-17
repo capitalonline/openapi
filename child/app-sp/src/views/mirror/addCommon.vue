@@ -54,9 +54,9 @@
                 </el-select>
             </el-form-item>
             <!-- support_product_source_type -->
-            <el-form-item label="产品来源" prop="support_product_source_type">
+            <el-form-item label="产品来源" prop="source_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
-                <el-select v-model=" form_data.support_product_source_type">
+                <el-select v-model=" form_data.product_source">
                     <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
@@ -174,7 +174,7 @@ export default class AddCommon extends Vue{
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
         // 产品来源
-        support_product_source_type:this.oper_info.support_product_source_type ? this.oper_info.support_product_source_type:this.product_source_type_list[0],
+        product_source:this.oper_info.support_product_source_type ? this.oper_info.support_product_source_type:this.product_source_type_list[0],
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
@@ -189,7 +189,7 @@ export default class AddCommon extends Vue{
         az_id: [{ required: true, message: '请选择可用区', trigger: 'change' }],
         backend_type: [{ required: true, message: '请选择存储类型', trigger: 'change' }],
         support_type: [{ required: true, message: '请选择计算类型', trigger: 'change' }],
-        support_product_source_type: [{ required: true, message: '请选择产品来源', trigger: 'change' }],
+        product_source: [{ required: true, message: '请选择产品来源', trigger: 'change' }],
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
         path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
@@ -332,7 +332,9 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {support_product_source_type,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
+        console.log(this.form_data,'this.form_data');
+        
+        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -342,7 +344,7 @@ export default class AddCommon extends Vue{
                         customer_ids:customer_ids==='' ? [] : customer_ids.split(','),
                         backend_type,
                         support_type,
-                        support_product_source_type,
+                        product_source,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5
@@ -363,7 +365,7 @@ export default class AddCommon extends Vue{
                         size,
                         backend_type,
                         support_type,
-                        support_product_source_type,
+                        product_source,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
