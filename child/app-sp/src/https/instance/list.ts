@@ -68,6 +68,10 @@ export default {
   mount_gpu_card(req){
     return service(getEcsOptions('POST', '/ecs/instance_gpu_card/', req))
   },
+  // 更新显卡状态
+  update_gpu_status(req) {
+    return service(getEcsOptions('POST', '/ecs/update_gpu_status/', req))
+  },
   // 导出excel
   export_list(reqData) {
     return service({

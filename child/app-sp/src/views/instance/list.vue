@@ -1073,12 +1073,19 @@ export default class App extends Vue {
     }
     this.net_visible=true;
   }
-  private operateGpu(row){
-    this.multiple_selection=[row]
-    this.show_operate_dialog = true;
-    this.operate_title = '显卡管理';
-    this.default_operate_type = 'operateGpu';
-    this.FnClearTimer();
+  private async operateGpu(row){
+    let {ecs_id} = row
+    const resData: any = await Service.update_gpu_status({ecs_id})
+    if(resData.code === 'Success'){
+      this.FnGetList().then(() => {
+        this.multiple_selection=this.instance_list
+        this.show_operate_dialog = true;
+        this.operate_title = '显卡管理';
+        this.default_operate_type = 'operateGpu';
+        this.FnClearTimer();
+      })
+    }
+
     // this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
     //   confirmButtonText: '确定',
     //   cancelButtonText: '取消',
