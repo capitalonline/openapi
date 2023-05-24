@@ -1,90 +1,120 @@
 <template>
     <div class="instance-list">
         <!-- 头部查询 -->
-    <action-block :search_option="search_con" :type="false"></action-block>
-    <el-table
-      ref="multipleTable"
-      :data="nfv_list"
-      @filter-change="handleFilterChange"
-      border
-    >
-      <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-      <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
-      <el-table-column prop="nat_id" label="nat网关ID"></el-table-column>
-      <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="status_list" >
-        <template #default="scope">
-            <div :class="scope.row.status">{{ scope.row.status }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="host_name" label="宿主机名称"></el-table-column>
-      <el-table-column prop="cpu" label="CPU" ></el-table-column>
-      <el-table-column prop="ram" label="内存"></el-table-column>
-      <el-table-column prop="group_ip" label="NAT组IP"></el-table-column>
-      <el-table-column prop="role_name" label="角色" ></el-table-column>
-      <el-table-column prop="vpc_time" label="VPC ID/VPC名称" width="120"></el-table-column>
-      <el-table-column label="操作" width="180" >
-        <template #default="scope">
-          <el-button
+      <action-block :search_option="search_con" :type="false"></action-block>
+      <el-table
+        ref="multipleTable"
+        :data="nfv_list"
+        @filter-change="handleFilterChange"
+        border
+      >
+        <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+        <el-table-column prop="ecs_id" label="云服务器ID"></el-table-column>
+        <el-table-column prop="nat_id" label="nat网关ID"></el-table-column>
+        <el-table-column prop="status" label="状态" width="90" column-key="status" :filters="status_list" >
+          <template #default="scope">
+              <div :class="scope.row.status">{{ scope.row.status }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="host_name" label="宿主机名称"></el-table-column>
+        <el-table-column prop="cpu" label="CPU" ></el-table-column>
+        <el-table-column prop="ram" label="内存"></el-table-column>
+        <el-table-column prop="group_ip" label="NAT组IP"></el-table-column>
+        <el-table-column prop="role_name" label="角色" ></el-table-column>
+        <el-table-column prop="vpc_time" label="VPC ID/VPC名称" width="120"></el-table-column>
+        <el-table-column label="操作" width="180" >
+          <template #default="scope">
+            <el-button
+              type="text"
+              @click="FnToDetail(scope.row.ecs_id)"
+              :disabled="!operate_auth.includes('nfv_detail')"
+              >详情</el-button
+            >
+            <el-button
             type="text"
-            :disabled="!operate_auth.includes('monitor')"
-            @click="FnToMonitor(scope.row.ecs_id)"
-            >监控</el-button
+            @click="FnToRecord(scope.row.ecs_id)"
+            :disabled="!operate_auth.includes('nfv_record')"
+            >操作记录</el-button
           >
-          <!--  -->
-          <el-button
-            type="text"
-            :disabled="
-                scope.row.status !== 'running'|| !operate_auth.includes('vnc') 
-            "
-            @click="FnToVnc(scope.row.ecs_id)"
-            >远程连接</el-button
-          >
-          <el-button
-            type="text"
-            :disabled="!operate_auth.includes('start_up')"
-            >开机</el-button
-          >
-          <el-button
-            type="text"
-            :disabled="!operate_auth.includes('shutdown')"
-            >关机</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    
-    <!-- @size-change="handleSizeChange"
-      @current-change="handleCurrentChange" -->
-    <el-pagination
-      :page-sizes="page_info.page_sizes"
-      :page-size.sync="page_info.page_size"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="page_info.total"
-      :current-page.sync="page_info.page_index"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-    </el-pagination>
+            <el-button
+              type="text"
+              :disabled="!operate_auth.includes('monitor')"
+              @click="FnToMonitor(scope.row.ecs_id)"
+              >监控</el-button
+            >
+            <!--  -->
+            <el-button
+              type="text"
+              :disabled="
+                  scope.row.status !== 'running'|| !operate_auth.includes('vnc') 
+              "
+              @click="FnToVnc(scope.row.ecs_id)"
+              >远程连接</el-button
+            >
+            <el-button
+              type="text"
+              :disabled="!operate_auth.includes('start_up')"
+              >开机</el-button
+            >
+            <el-button
+              type="text"
+              :disabled="!operate_auth.includes('shutdown')"
+              >关机</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination
+        :page-sizes="page_info.page_sizes"
+        :page-size.sync="page_info.page_size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="page_info.total"
+        :current-page.sync="page_info.page_index"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+      <!-- 详情 -->
+      <template v-if="detail_visible">
+        <Detail
+          :visible="detail_visible"
+          :detail_id="detail_id"
+          @close-detail="closeDetail"
+        />
+      </template>
+      <!-- 操作记录 -->
+      <template v-if="record_visible">
+      <Record
+        :visible="record_visible"
+        :record_id="record_id"
+        @close="closeRecord"
+      />
+    </template>
     </div>
     
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,PropSync} from 'vue-property-decorator';
 import Service from "../../https/nfv/list";
+import Detail from "./detail.vue";
+import Record from "./record.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
 @Component({
     components:{
         actionBlock,
+        Detail,
+        Record,
     }
 })
 export default class App extends Vue{
     // 搜索
-    private search_con = {
-        ecs_id: { placeholder: "请输入云服务器ID" },
-        os_info: { placeholder: "请输入NAT网关ID"},
-        customer_id: { placeholder: "请输入客户ID" },
-        host_name: { placeholder: "请输入宿主机名称", },
-  };
+  private search_con = {
+      ecs_id: { placeholder: "请输入云服务器ID" },
+      os_info: { placeholder: "请输入NAT网关ID"},
+      customer_id: { placeholder: "请输入客户ID" },
+      host_name: { placeholder: "请输入宿主机名称", },
+};
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
@@ -100,7 +130,7 @@ export default class App extends Vue{
         {text:'删除中',value: "deleting"},
     ]
     // 用户操作权限
-    private operate_auth = ['monitor','vnc','start_up','shutdown'];
+    private operate_auth = ['nfv_detail','monitor','vnc','start_up','shutdown','nfv_record'];
     // 分页
     private page_info = {
     page_sizes: [20, 50, 100],
@@ -108,7 +138,12 @@ export default class App extends Vue{
     page_index: 1,
     total: 0
     };
-
+      // 详情参数
+    private detail_id: string = '';
+    private detail_visible: boolean = false;
+    // 操作记录参数
+    private record_visible: boolean = false;
+    private record_id: string = "";
 
   // 获取状态列表
   private async FnGetStatus() {
@@ -182,8 +217,26 @@ private handleSizeChange(val){
     this.FnGetList();
   }
 
+// 详情
+  // 跳转详情页
+  private FnToDetail(id) {
+    this.detail_id = id;
+    this.detail_visible = true;
+  }
+  // 关闭详情页
+  private closeDetail(){
+    this.detail_visible = false;
+  }
 
-
+  //跳转操作纪录页
+  private FnToRecord(id) {
+    this.record_id = id;
+    this.record_visible = true;
+  }
+  // 关闭操作纪录页面
+  private closeRecord() {
+    this.record_visible = false;
+  }
   private created(){
     // this.operate_auth = this.$store.state.auth_info[this.$route.name];
     // console.log(this.operate_auth,'this.operate_auth');
