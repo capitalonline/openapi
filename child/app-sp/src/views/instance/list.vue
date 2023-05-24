@@ -782,6 +782,36 @@ export default class App extends Vue {
     let data = ip.split('.')
     return [data[0], data[1], data[2], '0'].join('.')
   }
+  private async FnGetGraphics(ecs_id) {
+    let reqData = {
+      billing_method:
+        this.search_billing_method == "" ? "no" : this.search_billing_method,
+      page_index: this.page_info.page_index,
+      page_size: this.page_info.page_size,
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
+      [this.sort_prop_name]: this.sort_order,
+      is_op:true,
+      ...this.search_reqData
+    }
+    if (this.search_op_source) {
+      reqData["op_source"] = this.search_op_source;
+    }
+    if (this.search_card_status_type) {
+      reqData["card_status_type"] = this.search_card_status_type;
+    }
+    if (this.search_ecs_goods_name.length > 0) {
+      reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
+    }
+    reqData["ecs_id"] = ecs_id
+    const resData: any = await Service.get_instance_list(reqData);
+    if (resData.code == 'Success') {
+      this.multiple_selection=resData.data.ecs_list;
+        this.show_operate_dialog = true;
+        this.operate_title = '显卡管理';
+        this.default_operate_type = 'operateGpu';
+        this.FnClearTimer();
+    }
+  }
   private async FnGetList(loading: boolean = true) {
     if(!this.$store.state.pod_id){
       return ;
@@ -1077,13 +1107,7 @@ export default class App extends Vue {
     let {ecs_id} = row
     const resData: any = await Service.update_gpu_status({ecs_id})
     if(resData.code === 'Success'){
-      this.FnGetList().then(() => {
-        this.multiple_selection=this.instance_list
-        this.show_operate_dialog = true;
-        this.operate_title = '显卡管理';
-        this.default_operate_type = 'operateGpu';
-        this.FnClearTimer();
-      })
+      this.FnGetGraphics(ecs_id)
     }
 
     // this.$confirm(`您选中的实例的显卡状态为${row.status_display}，请确认对显卡做${row.status_display==='已卸载' ? '挂载' : '卸载'}操作？`, '提示', {
