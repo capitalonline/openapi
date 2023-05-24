@@ -192,7 +192,7 @@ export default class Operate extends Vue{
     })
     
     if(res.code==="Success"){
-      if(this.oper_type==="finish_validate"){
+      if(this.oper_type==="finish_validate" || this.oper_type==="disperse"){
         this.$message.success(res.message)
         this.back("1")
       }else{
