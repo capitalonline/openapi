@@ -61,7 +61,7 @@
       </el-table-column>
       <el-table-column prop="op_source" label="创建来源" :filter-multiple="false" :filters="op_source_fil" column-key="op_source">
         <template slot-scope="scope">
-          <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
+          <span>{{scope.row.op_source==="gic" ? 'GIC' : scope.row.op_source==="internal_api" ? '内部API' : '运维后台'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source"></el-table-column>
@@ -226,6 +226,10 @@ export default class extends Vue {
       text:'GIC',
       value:'gic'
     },
+    {
+      text: '内部API',
+      value: 'internal_api'
+    }
   ]
   private fee_way_fil=[
     {
