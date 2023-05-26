@@ -350,7 +350,7 @@
 
    **说明** 计算签名时，RFC2104规定的Key值是您的`AccessKeySecret`并加上与号（`&`)，其ASCII值为38。
 
-### 2.获取签名代码
+### 3.获取签名代码
 
 ```python
 def percentEncode(str):
