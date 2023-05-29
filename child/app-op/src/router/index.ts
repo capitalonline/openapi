@@ -61,6 +61,12 @@ const routes: RouteConfig[] = [
     meta: {label: '资源统计', menu: 'resource_statistical_list'},
   },
   {
+    path: '/cloud_inventory',
+    name: 'cloud_inventory_list',
+    component: () => import('../views/cloud/inventory.vue'),
+    meta: {label: '云盘库存', menu: 'cloud_inventory_list', no_auth: true},
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),

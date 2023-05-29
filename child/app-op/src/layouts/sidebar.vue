@@ -96,6 +96,16 @@ export default class SideBar extends Vue {
         }
       ]
     },
+    {
+      name: 'cloud_management',
+      label: '云盘管理',
+      children: [
+        {
+          name: 'cloud_inventory_list',
+          label: '云盘库存'
+        }
+      ]
+    }
   ]
   private menu: Array<object> = [];
     private active_name: string = ''
@@ -114,15 +124,16 @@ export default class SideBar extends Vue {
     }
   };
   
-  private created() {    
+  private created() {   
     this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);
     this.all_menu.forEach(item => {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          if (this.$store.state.auth_info[child.name]) {
+          // 暂时注释
+          // if (this.$store.state.auth_info[child.name]) {
             child_list.push(child)
-          }
+          // }
         })
         if (child_list.length > 0) {
           this.menu.push({
