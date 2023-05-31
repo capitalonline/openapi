@@ -101,7 +101,7 @@ export default class SideBar extends Vue {
       label: '云盘管理',
       children: [
         {
-          name: 'cloud_inventory_list',
+          name: 'disk_inventory',
           label: '云盘库存'
         }
       ]
@@ -130,10 +130,9 @@ export default class SideBar extends Vue {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          // 暂时注释
-          // if (this.$store.state.auth_info[child.name]) {
+          if (this.$store.state.auth_info[child.name]) {
             child_list.push(child)
-          // }
+          }
         })
         if (child_list.length > 0) {
           this.menu.push({

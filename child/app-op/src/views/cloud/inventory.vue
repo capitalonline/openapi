@@ -3,12 +3,14 @@
     <div class="action-box">
       <el-form :model="echartForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
-          <el-select v-model="echartForm.PodId">
-            <el-option label="全部"></el-option>
+          <el-select v-model="echartForm.PodId" @change="podChange">
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="起始日期:">
           <el-date-picker
+            @change="createTimeChange"
             v-model="echartForm.create_time"
             type="date"
             placeholder="选择起始日期"
@@ -16,6 +18,7 @@
         </el-form-item>
         <el-form-item label="结束日期:">
           <el-date-picker
+            @change="endTimeChange"
             v-model="echartForm.end_time"
             type="date"
             placeholder="选择结束日期"
@@ -33,8 +36,9 @@
     <div class="action-box">
       <el-form :model="cloudForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
-          <el-select v-model="cloudForm.PodId">
-            <el-option label="全部"></el-option>
+          <el-select v-model="cloudForm.PodId"  @change="podIDChange">
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -52,7 +56,7 @@
       <el-table-column prop="PodName" label="更新时间"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button type="text" @click="editNum(scope.row)">编辑</el-button>  
+          <el-button type="text" :disabled="!authList.includes('available_sale_size')" @click="editNum(scope.row)">编辑</el-button>  
         </template>
       </el-table-column>
     </el-table>
@@ -98,6 +102,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LineEchart from '@/components/chart/list.vue';
 import Service from '../../https/cloudInventory/list';
+import httpService from '../../https/statistical/list';
 import { relativeTimeThreshold } from 'moment';
 @Component({
   components: {
@@ -109,6 +114,8 @@ export default class Inventory extends Vue {
   private cur_pod = ''
   private cur_pod_id = ''
   private totalNum = null
+  private az_list = {}
+  private authList:any=[]
   private echartForm: any = {
     PodId: '',
     create_time: '',
@@ -135,6 +142,14 @@ export default class Inventory extends Vue {
   private cloudList: any = [{
     PodName: '张三'
   }]
+
+  created() {
+    this.searchList()
+    this.get_az_list()
+    this.authList = this.$store.state.auth_info[this.$route.name];
+  }
+
+  
   private handleCurrentChange(cur){
       this.pageInfo.page_index = cur;
       this.searchList()
@@ -142,6 +157,9 @@ export default class Inventory extends Vue {
   private handleSizeChange(size){
       this.pageInfo.page_size = size;
       this.searchList()
+  }
+  private podIDChange(val) {
+    this.searchList()
   }
   private searchList() {
     let params = {
@@ -167,9 +185,18 @@ export default class Inventory extends Vue {
       }
     })
   }
+  private podChange(val) {
+    this.monitoringSearch()
+  }
+  private createTimeChange(val) {
+    this.monitoringSearch()
+  }
+  private endTimeChange(val) {
+    this.monitoringSearch()
+  }
   private monitoringSearch() {
     let params = {
-      PodId: this.echartForm.PodId
+      ...this.echartForm
     }
     Service.get_disk_inventory_monitor(params).then(res => {
       if(res.code === 'Success') {
@@ -200,9 +227,14 @@ export default class Inventory extends Vue {
     this.saleForm.TotalSize = null
     this.dialogVisible = false
   }
-  created() {
-    this.searchList()
+  private get_az_list() {
+    httpService.get_az_list({}).then(res => {
+      if(res.code === 'Success') {
+        this.az_list = res.data.az_list
+      }
+    })
   }
+  
 }
 </script>
 <style lang="scss" scoped>

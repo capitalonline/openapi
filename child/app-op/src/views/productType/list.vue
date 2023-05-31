@@ -166,7 +166,6 @@ export default class ProductType extends Vue{
         this.get_az_list();
         this.getHostTypes();
         this.authList = this.$store.state.auth_info[this.$route.name];
-        
     }
     @Watch('visible')
     private watch_visible(nv){
