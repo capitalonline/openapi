@@ -236,9 +236,6 @@ export default class Monitor extends Vue{
     type: 'double_line'
   }
   private default_date_timer = [];
-  // @Watch('$route',{immediate:true,deep:true})
-  // private FnRoute(to,from){
-  // }
   private FnGetTimer(timer) {
     this.default_date_timer = timer;
     this.FnGetChartData();
@@ -252,7 +249,7 @@ export default class Monitor extends Vue{
     let instanceType = '';
     let type = 'kvm';
     if (this.source_name === 'monitor') {
-      // id =sessionStorage.getItem('vm_monitor') ? JSON.parse(sessionStorage.getItem('vm_monitor')).id :this.detail_info.ecs_id.value;
+      // id =sessionStorage.getItem('vm_monitor') ? JSON.parse(sessionStorage.getItem('vm_monitor')).id :this.detail_info.nfv_id.value;
       region = this.ecs_info.region_id;
       replica = this.ecs_info.az_id;
       ip = this.ecs_info.private_net;
