@@ -9,8 +9,18 @@
         border
       >
         <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-        <el-table-column prop="vnf_id" label="云服务器ID"></el-table-column>
-        <el-table-column prop="nat_gateway_id" label="nat网关ID"></el-table-column>
+        <el-table-column label="云服务器ID" min-width="150px">
+          <template #default="scope">
+            <span style="margin-right: 5px">{{ scope.row.nfv_id }}</span>
+            <Clipboard v-if="scope.row.nfv_id" :content="scope.row.nfv_id"></Clipboard>
+          </template>
+        </el-table-column>
+        <el-table-column label="nat网关ID" min-width="150px">
+          <template #default="scope">
+            <span style="margin-right: 5px">{{ scope.row.nat_gateway_id }}</span>
+            <Clipboard v-if="scope.row.nat_gateway_id" :content="scope.row.nat_gateway_id"></Clipboard>
+          </template>
+        </el-table-column>
         <el-table-column  label="状态" width="90" column-key="status" :filters="status_list" >
           <template #default="scope">
               <div :class="scope.row.status">{{ scope.row.status_display }}</div>
@@ -19,9 +29,17 @@
         <el-table-column prop="host_name" label="宿主机名称"></el-table-column>
         <el-table-column prop="cpu" label="CPU" ></el-table-column>
         <el-table-column prop="ram" label="内存"></el-table-column>
-        <el-table-column prop="vnf_group_id" label="NAT组IP"></el-table-column>
+        <el-table-column prop="vnf_group_id" label="NAT组IP" min-width="150px"></el-table-column>
         <el-table-column prop="role" label="角色" ></el-table-column>
-        <el-table-column prop="vpc_time" label="VPC ID/VPC名称" width="120"></el-table-column>
+        <el-table-column label="VPC ID" min-width="150px" width="120">
+          <template #default="scope">
+            <span style="margin-right: 5px">{{ scope.row.vpc_id }}</span>
+            <Clipboard v-if="scope.row.vpc_id" :content="scope.row.vpc_id"></Clipboard>
+          </template>
+        </el-table-column>
+        <el-table-column prop="vpc_name" label="VPC名称" width="120">
+
+        </el-table-column>
         <el-table-column label="操作" width="180" >
           <template #default="scope">
          
@@ -49,6 +67,11 @@
               type="text"
               :disabled="!operate_auth.includes('shutdown')"
               >关机</el-button
+            >
+            <el-button
+              type="text"
+              :disabled="!operate_auth.includes('shutdown')"
+              >重启</el-button
             >
           </template>
         </el-table-column>
@@ -89,12 +112,14 @@ import Service from "../../https/nfv/list";
 import Detail from "./detail.vue";
 import Record from "./record.vue";
 import actionBlock from "../../components/search/actionBlock.vue";
+import Clipboard from '../../components/clipboard.vue';
 import moment from "moment";
 @Component({
     components:{
         actionBlock,
         Detail,
         Record,
+        Clipboard
     }
 })
 export default class App extends Vue{
@@ -219,7 +244,11 @@ export default class App extends Vue{
       // status:this.search_status.length>0 ? this.search_status.join(',') : this.status_list.map(item=>item.value).join(','),
       ...this.search_reqData
     }
-    console.log(reqData,'reqData');
+    for(let i in reqData) {
+      if(!reqData[i]) {
+        delete reqData[i];
+      }
+    }
     const resData: any = await Service.get_nfv_list(reqData);
     if (resData.code === "Success") {
       this.nfv_list = resData.data.nfv_list;
@@ -287,7 +316,7 @@ private handleSizeChange(val){
     this.record_visible = false;
   }
   private created(){
-    // this.FnGetList();
+    this.FnGetList();
     // this.operate_auth = this.$store.state.auth_info[this.$route.name];
     // console.log(this.operate_auth,'this.operate_auth');
     

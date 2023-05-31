@@ -5,11 +5,6 @@ export default {
     // 获取NFV实例信息列表
     get_nfv_list(reqData){
         return service(getEcsOptions('GET', '/nfv/nfv_list/', reqData))
-        // return service({
-        //     method:'GET', 
-        //     url:'/ecs_business/v1/nfv/nfv_list', 
-        //     params:reqData
-        // })
     },
     // 操作NFV实例（启动、停止、重启）
     operate_nfv(reqData){
