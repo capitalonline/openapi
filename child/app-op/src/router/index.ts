@@ -67,6 +67,12 @@ const routes: RouteConfig[] = [
     meta: {label: 'vGPU授权库存', menu: 'vgpu_list',no_auth: true},
   },
   {
+    path: '/cloud_inventory',
+    name: 'disk_inventory',
+    component: () => import('../views/cloud/inventory.vue'),
+    meta: {label: '云盘库存', menu: 'disk_inventory', no_auth: true},
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),
