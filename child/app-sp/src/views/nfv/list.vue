@@ -9,7 +9,7 @@
         border
       >
         <el-table-column prop="customer_id" label="客户ID"></el-table-column>
-        <el-table-column prop="vnf_id" label="云服务器ID"></el-table-column>
+        <el-table-column prop="nfv_id" label="云服务器ID"></el-table-column>
         <el-table-column prop="nat_gateway_id" label="nat网关ID"></el-table-column>
         <el-table-column  label="状态" width="90" column-key="status" :filters="status_list" >
           <template #default="scope">
@@ -21,7 +21,12 @@
         <el-table-column prop="ram" label="内存"></el-table-column>
         <el-table-column prop="vnf_group_id" label="NAT组IP"></el-table-column>
         <el-table-column prop="role" label="角色" ></el-table-column>
-        <el-table-column prop="vpc_time" label="VPC ID/VPC名称" width="120"></el-table-column>
+        <el-table-column  label="VPC名称/VPC ID" width="120">
+          <template #default="scope">
+              <div class="scope.row.status">{{ scope.row.vpc_name}}</div>
+              <div >{{ scope.row.vpc_id }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="180" >
           <template #default="scope">
          
@@ -31,7 +36,7 @@
               :disabled="
                   scope.row.status !== 'running'|| !operate_auth.includes('vnc') 
               "
-              @click="FnToVnc(scope.row.ecs_id)"
+              @click="FnToVnc(scope.row)"
               >远程连接</el-button
             >
             <el-button
@@ -42,13 +47,21 @@
             >
             <el-button
               type="text"
+              @click="FnOperate('power_on',scope.row)"
               :disabled="!operate_auth.includes('start_up')"
               >开机</el-button
             >
             <el-button
               type="text"
+              @click="FnOperate('power_off',scope.row)"
               :disabled="!operate_auth.includes('shutdown')"
               >关机</el-button
+            >
+            <el-button
+              type="text"
+              @click="FnOperate('restart',scope.row)"
+              :disabled="!operate_auth.includes('restart')"
+              >重启</el-button
             >
           </template>
         </el-table-column>
@@ -136,8 +149,6 @@ export default class App extends Vue{
     private record_id: string = "";
 
     private timer = null;
-
-
     @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -166,7 +177,7 @@ export default class App extends Vue{
         if (this.$route.query.host_id) {
           
         } else {
-          this.FnSearch();
+          this.FnSearch(this.search_reqData);
         }
       }
     // }
@@ -185,7 +196,8 @@ export default class App extends Vue{
       clearTimeout(this.timer);
     }
   }
-
+  
+// 点击查询按钮
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
@@ -252,14 +264,29 @@ export default class App extends Vue{
     this.$router.push("/nfv/monitor/" + id);
   }
 //   远程连接
-private async FnToVnc(id){
+private async FnToVnc(row){
     let resData: any = await Service.get_vnc_url({
-      ecs_id: id
+      nfv_id: row.nfv_id,
+      region_id:row.region_id,
+      az_id:row.az_id,
     });
     if (resData.code === "Success") {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
-      let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
+      let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${row.nfv_id}`;
       window.open(url);
+    }
+}
+// 开机、关机、重启按钮
+private async  FnOperate(type,row){
+  let resData: any = await Service.operate_nfv({
+      nfv_id_list:row.nfv_id.split(','),
+      operation:type,
+      region_id:row.region_id,
+      az_id:row.az_id,
+      customer_id:row.customer_id
+    });
+    if (resData.code === "Success") {
+      this.FnGetList();
     }
 }
 
@@ -288,12 +315,16 @@ private handleSizeChange(val){
   }
   private created(){
     // this.FnGetList();
-    // this.operate_auth = this.$store.state.auth_info[this.$route.name];
+    this.operate_auth = this.$store.state.auth_info[this.$route.name];
     // console.log(this.operate_auth,'this.operate_auth');
     
   }
   beforeDestroy() {
     this.FnClearTimer();
+  }
+  mounted(){
+    this.FnGetList();
+    this.FnGetStatus();
   }
 }
 </script>

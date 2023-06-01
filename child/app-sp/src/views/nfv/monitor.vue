@@ -22,7 +22,7 @@
       </el-tabs>
       <!-- v-if="ecs_info.create_finish_time || session.getItem('vm_monitor')" -->
       <time-group
-        :start_time="ecs_info.create_finish_time"
+        :start_time="nfv_info.create_finish_time"
         @fn-emit="FnGetTimer">
       </time-group>
 
@@ -41,7 +41,7 @@
           chart_id="system_chart"
           :data="system_load"
           class="item"
-          v-if="ecs_info.os_system.toLocaleLowerCase() !== 'windows'">
+          v-if="nfv_info.os_system.toLocaleLowerCase() !== 'windows'">
         </line-echart>
       </div>
 
@@ -101,7 +101,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 import BackHeader from '../../components/backHeader.vue';
 import TimeGroup from '../../components/search/timeGroup.vue';
 import LineEchart from '../../components/chart/list.vue';
-import DetailService from '../../https/instance/record_detail';
+import DetailService from '../../https/nfv/list';
 import Service from '../../https/monitor/index';
 import moment from 'moment';
 
@@ -116,7 +116,7 @@ export default class Monitor extends Vue{
   $route;
   private session = sessionStorage
   private source_name = 'monitor';
-  private ecs_info = {
+  private nfv_info = {
     region_id: '',
     az_id: '',
     private_net: '',
@@ -124,10 +124,10 @@ export default class Monitor extends Vue{
     os_system: ''
   };
   private detail_info = {
-    ecs_name: {label: '云服务器名称', value: '111'},
+    nfv_id: {label: '云服务器ID', value: '111'},
     ecs_rule: {label: '云服务器规格', value: '222'},
-    memory_ip: {label: '存储网IP', value: '333'},
-    status: {label: '运行状态', value: '444'}
+    // memory_ip: {label: '存储网IP', value: '333'},
+    status_display: {label: '运行状态', value: '444'}
   }
   private cpu_used = {
     title: 'CPU使用率',
@@ -250,9 +250,9 @@ export default class Monitor extends Vue{
     let type = 'kvm';
     if (this.source_name === 'monitor') {
       // id =sessionStorage.getItem('vm_monitor') ? JSON.parse(sessionStorage.getItem('vm_monitor')).id :this.detail_info.nfv_id.value;
-      region = this.ecs_info.region_id;
-      replica = this.ecs_info.az_id;
-      ip = this.ecs_info.private_net;
+      region = this.nfv_info.region_id;
+      replica = this.nfv_info.az_id;
+      ip = this.nfv_info.private_net;
       instanceType = 'vm';
     } else {
       let query = this.$route.query;
@@ -273,14 +273,14 @@ export default class Monitor extends Vue{
       replica: Object.keys(vm_info).length>0 ?vm_info.replica : replica,
       ip: Object.keys(vm_info).length>0 ?vm_info.ip : ip,
       instanceType: Object.keys(vm_info).length>0 ?vm_info.instanceType : instanceType,
-      os: Object.keys(vm_info).length>0 ?vm_info.os : this.ecs_info.os_system.toLocaleLowerCase(),
+      os: Object.keys(vm_info).length>0 ?vm_info.os : this.nfv_info.os_system.toLocaleLowerCase(),
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
-      if (this.ecs_info.os_system.toLocaleLowerCase() !== 'windows') this.FnGetLoad(type, reqData);
+      if (this.nfv_info.os_system.toLocaleLowerCase() !== 'windows') this.FnGetLoad(type, reqData);
     } else if (this.default_tab === 'disk') {
       this.FnGetDiskInfo(type, reqData);
     } else if (this.default_tab === 'net') {
@@ -291,24 +291,24 @@ export default class Monitor extends Vue{
   }
   private async FnGetDetail() {
     const resData: any = await DetailService.get_detail({
-      ecs_id: this.$route.params.id
+      nfv_id: this.$route.params.id
     })
     if ( resData.code === 'Success' ) {
       let data = resData.data;
-      this.ecs_info = {
+      this.nfv_info = {
         region_id: data.region_id,
         az_id: data.az_id,
         private_net: data.pipe.private_net,
         os_system: data.os_info.system,
         create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
-      this.detail_info.ecs_name.value = data.ecs_name;
-      // this.detail_info.ecs_id.value = data.ecs_id;
+      this.detail_info.nfv_id.value = data.nfv_id;
+      this.detail_info.status_display.value = data.status_display;
       this.detail_info.ecs_rule.value =
-        `${data.ecs_rule.name} ${data.ecs_rule.cpu_num}vCPU ${data.ecs_rule.ram}GiB` + (data.is_gpu ? `${data.ecs_rule.gpu}*${data.card_name}`: '');
+        `${data.cpu}vCPU ${data.ram}GiB`;
       // this.detail_info.az_name.value = data.az_name;
       // this.detail_info.system_disk_conf.value =
-        `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
+        // `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
       // this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
 
       let pipe_info = data.pipe;
@@ -326,7 +326,7 @@ export default class Monitor extends Vue{
           // if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）<br>`;
         }
 
-      this.detail_info.status.value = data.status_display;
+      // this.detail_info.status.value = data.status_display;
       if (!data.is_gpu) {
         Vue.delete(this.tab_list, 'gpu')
       }
@@ -486,18 +486,19 @@ export default class Monitor extends Vue{
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
     this.source_name = this.$route.name;
-    if(sessionStorage.getItem('vm_monitor')){
+    console.log(this.$route.name,'this.$route.name');
+    if(sessionStorage.getItem('nfv_monitor')){
       Vue.delete(this.tab_list, 'gpu');
-      let vm_info = JSON.parse(sessionStorage.getItem('vm_monitor'))
-      this.detail_info.ecs_name.value = vm_info.transfer_vm_name;
+      let vm_info = JSON.parse(sessionStorage.getItem('nfv_monitor'))
+      // this.detail_info.ecs_name.value = vm_info.transfer_vm_name;
       // this.detail_info.ecs_id.value = vm_info.transfer_vm_id;
       // this.detail_info.az_name.value = vm_info.region_name+'-'+vm_info.az_name;
       // this.detail_info.system_disk_conf.value = vm_info.transfer_vm_conf_system_disk_type ? `${vm_info.transfer_vm_conf_system_disk_type}  ${vm_info.transfer_vm_conf_system_disk_size}${vm_info.transfer_vm_conf_system_disk_unit}` : ''
       // this.detail_info.os_info.value = vm_info.transfer_vm_image;
       // this.detail_info.private_net.value = `${vm_info.transfer_vm_vpc_ip}（vpc ip）<br> ${vm_info.transfer_vm_storage_ip }（存储网 ip）`
-      this.detail_info.status.value = vm_info.status_cn;
+      // this.detail_info.status.value = vm_info.status_cn;
     }
-    if (this.source_name === 'monitor' && !sessionStorage.getItem('vm_monitor')) {
+    if (this.source_name === 'nfv_monitor' && !sessionStorage.getItem('nfv_monitor')) {
       this.FnGetDetail();
     }
   }
