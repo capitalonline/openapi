@@ -19,7 +19,6 @@
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
                 <el-select v-model="form_data.os_type" v-else>
                     <el-option v-for="item in mirror_type_list" :key="item" :label="item" :value=" item "></el-option>
-                    <el-option label="Other" value="Other"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
@@ -197,7 +196,9 @@ export default class AddCommon extends Vue{
     private validate_name(rule, value, callback){
         if(!value){
             return callback(new Error('请输入镜像名称'))
-        }else{
+        }else if(this.form_data.display_name.length> 128) {
+            return callback(new Error('镜像名称长度最多128个字符'))
+        } else {
             Service.check_name({
                 os_id:this.oper_info.os_id ? this.oper_info.os_id : '',
                 display_name:value,
