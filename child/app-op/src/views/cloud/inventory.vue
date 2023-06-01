@@ -3,7 +3,7 @@
     <div class="action-box">
       <el-form :model="echartForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
-          <el-select v-model="echartForm.PodId" @change="podChange">
+          <el-select v-model="echartForm.az_id" @change="podChange">
             <el-option label="全部" value=""></el-option>
             <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
@@ -36,7 +36,7 @@
     <div class="action-box">
       <el-form :model="cloudForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
-          <el-select v-model="cloudForm.PodId"  @change="podIDChange">
+          <el-select v-model="cloudForm.az_id"  @change="az_idChange">
             <el-option label="全部" value=""></el-option>
             <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
@@ -112,17 +112,17 @@ import { relativeTimeThreshold } from 'moment';
 export default class Inventory extends Vue {
   private dialogVisible = false
   private cur_pod = ''
-  private cur_pod_id = ''
+  private cur_az_id = ''
   private totalNum = null
   private az_list = {}
   private authList:any=[]
   private echartForm: any = {
-    PodId: '',
+    az_id: '',
     create_time: '',
     end_time: ''
   }
   private cloudForm: any = {
-    PodId: ''
+    az_id: ''
   }
   private saleForm: any = {
     TotalSize: null
@@ -158,26 +158,26 @@ export default class Inventory extends Vue {
       this.pageInfo.page_size = size;
       this.searchList()
   }
-  private podIDChange(val) {
+  private az_idChange(val) {
     this.searchList()
   }
   private searchList() {
     let params = {
-      PodId: this.cloudForm.PodId,
+      az_id: this.cloudForm.az_id,
       page_index:this.pageInfo.page_index,
       page_size:this.pageInfo.page_size,
     }
     Service.get_disk_inventory(params).then(res => {
       if(res.code === 'Success') {
         this.cloudList = res.data.result
-        this.pageInfo.page_index = res.data.page_info
-        this.pageInfo.count = res.data.total
+        this.pageInfo.page_index = res.data.page_info.cur_page
+        this.pageInfo.count = res.data.page_info.total
       }
     })
   }
   private exportList() {
     let params = {
-      PodId: this.cloudForm.PodId
+      az_id: this.cloudForm.az_id
     }
     Service.disk_inventory_download(params).then(res => {
       if(res.code === "Success") {
@@ -205,13 +205,13 @@ export default class Inventory extends Vue {
   }
   private editNum(row) {
     this.cur_pod = row.PodName
-    this.cur_pod_id = row.PodId
+    this.cur_az_id = row.az_id
     this.totalNum = row.TotalSize
     this.dialogVisible = true
   }
   private saleNumChange() {
     let params = {
-      PodId: this.cur_pod_id,
+      az_id: this.cur_az_id,
       TotalSize: this.saleForm.TotalSize
     }
     Service.set_available_sale_size(params).then(res => {
