@@ -70,7 +70,7 @@
             >
             <el-button
               type="text"
-              :disabled="!operate_auth.includes('shutdown')"
+              :disabled="!operate_auth.includes('restart')"
               >重启</el-button
             >
           </template>
@@ -147,7 +147,7 @@ export default class App extends Vue{
         // {text:'删除中',value: "deleting"},
     ]
     // 用户操作权限
-    private operate_auth = ['nfv_detail','monitor','vnc','start_up','shutdown','nfv_record'];
+    private operate_auth = ['monitor','vnc','start_up','shutdown','restart'];
     // 分页
     private page_info = {
     page_sizes: [20, 50, 100],
