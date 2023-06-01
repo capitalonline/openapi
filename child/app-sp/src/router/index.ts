@@ -37,13 +37,13 @@ const routes: RouteConfig[] = [
     path: '/nfv',
     name: 'nfv_list',
     component: () => import('../views/nfv/list.vue'),
-    meta: {menu: 'nfv_list', no_auth: true}
+    meta: {menu: 'nfv_list'}
   },
   {
     path: '/nfv/monitor/:id',
     name: 'nfv_monitor',
     component: () => import('../views/nfv/monitor.vue'),
-    meta: {menu: 'nfv_list', no_auth: true}
+    meta: {menu: 'nfv_list'}
   },
   {
     path:'/alarmInfo',

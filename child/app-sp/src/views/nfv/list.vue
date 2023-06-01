@@ -147,7 +147,7 @@ export default class App extends Vue{
         // {text:'删除中',value: "deleting"},
     ]
     // 用户操作权限
-    private operate_auth = ['monitor','vnc','start_up','shutdown','restart'];
+    private operate_auth = [];
     // 分页
     private page_info = {
     page_sizes: [20, 50, 100],
@@ -317,8 +317,7 @@ private handleSizeChange(val){
   }
   private created(){
     this.FnGetList();
-    // this.operate_auth = this.$store.state.auth_info[this.$route.name];
-    // console.log(this.operate_auth,'this.operate_auth');
+    this.operate_auth = this.$store.state.auth_info[this.$route.name];
     
   }
   beforeDestroy() {
