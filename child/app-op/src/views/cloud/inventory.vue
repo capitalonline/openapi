@@ -12,6 +12,7 @@
           <el-date-picker
             @change="createTimeChange"
             v-model="echartForm.create_time"
+            value-format="yyyy-MM-dd"
             type="date"
             placeholder="选择起始日期"
           ></el-date-picker>
@@ -20,6 +21,7 @@
           <el-date-picker
             @change="endTimeChange"
             v-model="echartForm.end_time"
+            value-format="yyyy-MM-dd"
             type="date"
             placeholder="选择结束日期"
           ></el-date-picker>
@@ -198,6 +200,7 @@ export default class Inventory extends Vue {
     }
     Service.get_disk_inventory_monitor(params).then(res => {
       if(res.code === 'Success') {
+        console.log('res',res)
       }
     })
   }
