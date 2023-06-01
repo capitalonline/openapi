@@ -48,12 +48,12 @@
       </el-form>
     </div>
     <el-table :data="cloudList" border>
-      <el-table-column prop="PodName" label="节点"></el-table-column>
-      <el-table-column prop="TotalSize" label="总体可售容量(TB)"></el-table-column>
-      <el-table-column prop="SoldSize" label="已售容量(TB)"></el-table-column>
-      <el-table-column prop="AvailableSize" label="剩余可售容量(TB)"></el-table-column>
-      <el-table-column prop="SaleRate" label="售出百分比(%)"></el-table-column>
-      <el-table-column prop="PodName" label="更新时间"></el-table-column>
+      <el-table-column prop="az_name" label="节点"></el-table-column>
+      <el-table-column prop="total_size" label="总体可售容量(TB)"></el-table-column>
+      <el-table-column prop="sold_size" label="已售容量(TB)"></el-table-column>
+      <el-table-column prop="available_size" label="剩余可售容量(TB)"></el-table-column>
+      <el-table-column prop="sale_rate" label="售出百分比(%)"></el-table-column>
+      <el-table-column prop="update_time" label="更新时间"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button type="text" :disabled="!authList.includes('available_sale_size')" @click="editNum(scope.row)">编辑</el-button>  
@@ -139,9 +139,7 @@ export default class Inventory extends Vue {
     yValue: [],
     resize: 0
   }
-  private cloudList: any = [{
-    PodName: '张三'
-  }]
+  private cloudList: any = []
 
   created() {
     this.searchList()
@@ -204,15 +202,15 @@ export default class Inventory extends Vue {
     })
   }
   private editNum(row) {
-    this.cur_pod = row.PodName
+    this.cur_pod = row.az_name
     this.cur_az_id = row.az_id
-    this.totalNum = row.TotalSize
+    this.totalNum = row.total_size
     this.dialogVisible = true
   }
   private saleNumChange() {
     let params = {
       az_id: this.cur_az_id,
-      TotalSize: this.saleForm.TotalSize
+      total_size: this.saleForm.TotalSize
     }
     Service.set_available_sale_size(params).then(res => {
       if(res.code === 'Success') {
