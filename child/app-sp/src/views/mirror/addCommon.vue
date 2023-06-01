@@ -210,10 +210,10 @@ export default class AddCommon extends Vue{
                         return callback('镜像名称重复,请重新输入')
                     }
                 }else{
-                    return callback('镜像名称重复,请重新输入')
+                    return callback('镜像名称长度最多128个字符')
                 }
             }).catch(err=>{
-                return callback('镜像名称重复,请重新输入')
+                return callback('镜像名称长度最多128个字符')
             })
             
         }
