@@ -8,23 +8,17 @@
             <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="起始日期:">
+
+        <el-form-item label="时间">
           <el-date-picker
-            @change="createTimeChange"
-            v-model="echartForm.create_time"
-            value-format="yyyy-MM-dd"
-            type="date"
-            placeholder="选择起始日期"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束日期:">
-          <el-date-picker
-            @change="endTimeChange"
-            v-model="echartForm.end_time"
-            value-format="yyyy-MM-dd"
-            type="date"
-            placeholder="选择结束日期"
-          ></el-date-picker>
+            v-model="timeList"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd HH:mm:ss">
+
+          </el-date-picker>
         </el-form-item>
       </el-form>
     </div>
@@ -142,13 +136,20 @@ export default class Inventory extends Vue {
     resize: 0
   }
   private cloudList: any = []
+  private timeList: any = [new Date(), new Date()]
 
   created() {
+    this.getCurentTime()
     this.searchList()
     this.get_az_list()
     this.authList = this.$store.state.auth_info[this.$route.name];
+    this.getCurentTime()
   }
-
+  private getCurentTime() {
+    let start = new Date().getTime() - 24 * 60 * 60 * 1000 * 7
+    let end = new Date().getTime()
+    this.timeList = [new Date(start), new Date(end)]
+  }
   
   private handleCurrentChange(cur){
       this.pageInfo.page_index = cur;
