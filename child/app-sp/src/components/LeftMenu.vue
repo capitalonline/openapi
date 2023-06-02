@@ -67,7 +67,7 @@ export default class LeftMenu extends Vue {
     {
       name: "nfv_list",
       label: "NFV云服务器",
-      noAuth:true,
+      // noAuth:true,
     },
     {
       name: 'disk',

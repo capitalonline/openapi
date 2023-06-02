@@ -48,19 +48,19 @@
             <el-button
               type="text"
               @click="FnOperate('power_on',scope.row)"
-              :disabled="!operate_auth.includes('start_up')"
+              :disabled="scope.row.status !== 'stop'||!operate_auth.includes('start_up')"
               >开机</el-button
             >
             <el-button
               type="text"
               @click="FnOperate('power_off',scope.row)"
-              :disabled="!operate_auth.includes('shutdown')"
+              :disabled="scope.row.status !== 'running' || !operate_auth.includes('shutdown')"
               >关机</el-button
             >
             <el-button
               type="text"
               @click="FnOperate('restart',scope.row)"
-              :disabled="!operate_auth.includes('restart')"
+              :disabled="scope.row.status !== 'running' || !operate_auth.includes('restart')"
               >重启</el-button
             >
           </template>
@@ -125,17 +125,15 @@ export default class App extends Vue{
   private search_status=[]
     //   列表
     private nfv_list:Array<Object> = [
-        {customer_id:'111',nfv_id:'222',nat_gateway_id:'333',status:'running',host_name:'lala',cpu:'gaga',ram:'wahaha',group_id:'444',role_name:'zhangsan',vpc_name:'test'}
+        // {customer_id:'111',nfv_id:'222',nat_gateway_id:'333',status:'running',host_name:'lala',cpu:'gaga',ram:'wahaha',group_id:'444',role_name:'zhangsan',vpc_name:'test'}
     ];
     private multiple_selection: any = [];
     private multiple_selection_id: Array<string> = [];
     private status_list= [
-        // {text:'创建中',value: "building"},
-        // {text:'运行中',value: "running"},
-        // {text:'删除中',value: "deleting"},
     ]
     // 用户操作权限
-    private operate_auth = ['nfv_detail','monitor','vnc','start_up','shutdown','nfv_record'];
+    // 'nfv_detail','monitor','vnc','start_up','shutdown','nfv_record'
+    private operate_auth = [];
     // 分页
     private page_info = {
     page_sizes: [20, 50, 100],
@@ -213,8 +211,6 @@ export default class App extends Vue{
 
    //获取首页列表
   private async FnGetList(loading: boolean = true) {
-    console.log('search_reqData',this.search_reqData);
-    
     if(!this.$store.state.pod_id){
       return ;
     }
@@ -228,7 +224,7 @@ export default class App extends Vue{
     let reqData = {
       page_index: this.page_info.page_index,
       page_size: this.page_info.page_size,
-      // status:this.search_status.length>0 ? this.search_status.join(',') : this.status_list.map(item=>item.value).join(','),
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.status_list.map(item=>item.value).join(','),
       ...this.search_reqData
     }
     console.log(reqData,'reqData');
