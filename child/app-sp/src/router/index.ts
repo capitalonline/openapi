@@ -34,6 +34,18 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
+    path: '/nfv',
+    name: 'nfv_list',
+    component: () => import('../views/nfv/list.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
+    path: '/nfv/monitor/:id',
+    name: 'monitor',
+    component: () => import('../views/nfv/monitor.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
     path:'/alarmInfo',
     name:'alarm_info',
     component:()=>import('../views/alarm/alarmInfo.vue'),
