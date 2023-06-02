@@ -171,7 +171,7 @@ export default class Inventory extends Vue {
       if(res.code === 'Success') {
         this.cloudList = res.data.result
         this.pageInfo.page_index = res.data.page_info.cur_page
-        this.pageInfo.count = res.data.page_info.total
+        this.pageInfo.total = res.data.page_info.count
       }
     })
   }
