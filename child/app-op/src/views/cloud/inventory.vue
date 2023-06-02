@@ -4,7 +4,7 @@
       <el-form :model="echartForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
           <el-select v-model="echartForm.az_id" @change="podChange">
-            <el-option label="全部" value=""></el-option>
+            <!-- <el-option label="全部" value=""></el-option> -->
             <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
@@ -189,10 +189,15 @@ export default class Inventory extends Vue {
     this.monitoringSearch()
   }
   private createTimeChange(val) {
-    this.monitoringSearch()
+    if(this.echartForm.az_id) {
+      this.monitoringSearch()
+    }
+    
   }
   private endTimeChange(val) {
-    this.monitoringSearch()
+    if(this.echartForm.az_id) {
+      this.monitoringSearch()
+    }
   }
   private monitoringSearch() {
     let params = {
@@ -232,6 +237,8 @@ export default class Inventory extends Vue {
     httpService.get_az_list({}).then(res => {
       if(res.code === 'Success') {
         this.az_list = res.data.az_list
+        this.echartForm.az_id = this.az_list[0].az_id
+        this.monitoringSearch()
       }
     })
   }
