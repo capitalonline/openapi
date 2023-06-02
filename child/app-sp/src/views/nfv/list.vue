@@ -6,6 +6,8 @@
         ref="multipleTable"
         :data="nfv_list"
         @filter-change="handleFilterChange"
+        :hesder-cell-style="{'text-align':'center'}"
+        :cell-style="{'text-align':'center'}"
         border
       >
         <el-table-column prop="customer_id" label="客户ID"></el-table-column>
@@ -15,7 +17,7 @@
             <Clipboard v-if="scope.row.nfv_id" :content="scope.row.nfv_id"></Clipboard>
           </template>
         </el-table-column>
-        <el-table-column label="nat网关ID" min-width="150px">
+        <el-table-column label="NAT网关ID" min-width="150px">
           <template #default="scope">
             <span style="margin-right: 5px">{{ scope.row.nat_gateway_id }}</span>
             <Clipboard v-if="scope.row.nat_gateway_id" :content="scope.row.nat_gateway_id"></Clipboard>
@@ -26,7 +28,7 @@
               <div :class="scope.row.status">{{ scope.row.status_display }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="host_name" label="宿主机名称"></el-table-column>
+        <el-table-column prop="host_name" label="宿主机名称" width="90"></el-table-column>
         <el-table-column prop="cpu" label="CPU" ></el-table-column>
         <el-table-column prop="ram" label="内存"></el-table-column>
         <el-table-column prop="vnf_group_id" label="NAT组IP" min-width="150px"></el-table-column>
