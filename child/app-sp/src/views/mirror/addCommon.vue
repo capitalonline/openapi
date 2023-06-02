@@ -82,7 +82,7 @@
             </el-form-item>
             <el-form-item label="MD5" prop="path_md5" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="512" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="32"  show-word-limit resize="none"></el-input>
             </el-form-item>
             <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
@@ -178,7 +178,7 @@ export default class AddCommon extends Vue{
         backend_type: [{ required: true, message: '请选择存储类型', trigger: 'change' }],
         support_type: [{ required: true, message: '请选择计算类型', trigger: 'change' }],
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
-        path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
+        path_md5:[{ required: true, validator:this.path_md5_check, trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
     }
     created(){
@@ -192,6 +192,13 @@ export default class AddCommon extends Vue{
             this.get_mirror_type();
         }
         this.get_disk_list()
+    }
+    private path_md5_check(rule, value, callback){
+        if(!value) {
+            return callback(new Error('请输入MD5'))
+        } else if(value.length < 32){
+            return callback(new Error('请输入32位MD5值'))
+        }
     }
     private validate_name(rule, value, callback){
         if(!value){
