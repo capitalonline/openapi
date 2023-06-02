@@ -198,6 +198,8 @@ export default class AddCommon extends Vue{
             return callback(new Error('请输入MD5'))
         } else if(value.length < 32){
             return callback(new Error('请输入32位MD5值'))
+        } else {
+            return callback()
         }
     }
     private validate_name(rule, value, callback){
