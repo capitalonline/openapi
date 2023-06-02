@@ -328,7 +328,7 @@ export default class PhysicalList extends Vue {
     {label:'迁移',value:'migrate'},
     {label:'操作记录',value:'record'},
     {label:'分配资源',value:'resource'},
-    // {label:'编辑备注',value:'remark'},
+    {label:'编辑备注',value:'remark'},
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',

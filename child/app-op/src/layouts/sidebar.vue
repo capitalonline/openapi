@@ -102,6 +102,16 @@ export default class SideBar extends Vue {
 
       ]
     },
+    {
+      name: 'cloud_management',
+      label: '云盘管理',
+      children: [
+        {
+          name: 'disk_inventory',
+          label: '云盘库存'
+        }
+      ]
+    }
   ]
   private menu: Array<object> = [];
     private active_name: string = ''
@@ -120,7 +130,7 @@ export default class SideBar extends Vue {
     }
   };
   
-  private created() {    
+  private created() {   
     this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);
     this.all_menu.forEach(item => {
       if (item.children) {

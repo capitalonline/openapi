@@ -19,6 +19,7 @@
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
                 <el-select v-model="form_data.os_type" v-else>
                     <el-option v-for="item in mirror_type_list" :key="item" :label="item" :value=" item "></el-option>
+                    <el-option label="Other" value="Other"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
@@ -150,7 +151,7 @@ export default class AddCommon extends Vue{
     @Prop({default:()=>{}})oper_info!:any;
     @PropSync('visible')visible_sync!:boolean;
     private mirror_type_list:any=[];
-    private bit_list:Array<any>=[{id:32,name:'32位'},{id:64,name:'64位'}];
+    private bit_list:Array<any>=[{id:64,name:'64位'},{id:32,name:'32位'}];
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
         // 产品来源
