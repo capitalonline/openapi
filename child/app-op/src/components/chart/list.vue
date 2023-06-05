@@ -76,10 +76,10 @@ export default class LineEchart extends Vue {
     dataZoom: [
       {
         type: 'inside',
-        start: 90,
+        start: 0,
         end: 100
       }, {
-        start: 90,
+        start: 0,
         end: 100
       }
     ],
