@@ -222,7 +222,6 @@ export default class Inventory extends Vue {
     }
     Service.get_disk_inventory_monitor(params).then(res => {
       if(res.code === 'Success') {
-        console.log('res',res)
         this.cloud_inventory_used.xTime = res.data.x_time
         this.cloud_inventory_used.yValue = [res.data.total_size,res.data.sold_size]
         this.cloud_inventory_used.legend = ['总体可售容量', '已售容量']
