@@ -13,7 +13,7 @@
                 <span>{{ form_data.id }}</span>
             </el-form-item>
             <el-form-item label="镜像名称" prop="display_name">
-                <el-input v-model="form_data.display_name"></el-input>
+                <el-input v-model="form_data.display_name" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="镜像类型" prop="os_type">
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
@@ -23,7 +23,7 @@
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
                 <span v-if="oper_info.os_id">{{ form_data.os_version }}</span>
-                <el-input v-else v-model="form_data.os_version"></el-input>
+                <el-input v-else v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="位数" prop="os_bit">
                 <span v-if="oper_info.os_id">{{ form_data.os_bit }}</span>
@@ -86,7 +86,7 @@
             </el-form-item>
             <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="512" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
             <!-- <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
