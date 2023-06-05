@@ -146,7 +146,7 @@ export default class AddCommon extends Vue{
     private bit_list:Array<any>=[{id:64,name:'64位'},{id:32,name:'32位'}];
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
-    private compute_type_list:any=['GPU','CPU','CPU/GPU']
+    private compute_type_list:any=['CPU/GPU','GPU','CPU']
     private drive_type_list:any=['Datacenter','Geforce','Enflame'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
