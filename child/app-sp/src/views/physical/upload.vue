@@ -84,7 +84,7 @@ export default class Upload extends Vue{
     }
   }
   private before_upload(file){
-    
+  
   }
   private FnSuccess(response, file, fileList){
     if(response.code==="Success"){
