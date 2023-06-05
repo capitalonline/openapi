@@ -272,7 +272,7 @@ export default class extends Vue {
       res.data.map((item,index)=>{
         this.product_source_list.push({
           text:Object.values(item)[0],
-          value:index
+          value:Object.keys(item)[0]
         })
         return item;
       })
