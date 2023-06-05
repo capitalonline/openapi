@@ -204,14 +204,7 @@ export default class Inventory extends Vue {
     })
   }
   private exportList() {
-    let params = {
-      az_id: this.cloudForm.az_id
-    }
-    Service.disk_inventory_download(params).then(res => {
-      if(res.code === "Success") {
-
-      }
-    })
+    window.location.href = `/ecs_business/v1/stock/disk_inventory_download/?az_id=${this.cloudForm.az_id}`
   }
   private podChange(val) {
     this.monitoringSearch()
