@@ -13,7 +13,7 @@
                 <span>{{ form_data.id }}</span>
             </el-form-item>
             <el-form-item label="镜像名称" prop="display_name">
-                <el-input v-model="form_data.display_name"></el-input>
+                <el-input v-model="form_data.display_name" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="镜像类型" prop="os_type">
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
@@ -23,7 +23,7 @@
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
                 <span v-if="oper_info.os_id">{{ form_data.os_version }}</span>
-                <el-input v-else v-model="form_data.os_version"></el-input>
+                <el-input v-else v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="位数" prop="os_bit">
                 <span v-if="oper_info.os_id">{{ form_data.os_bit }}</span>
@@ -93,7 +93,7 @@
             </el-form-item>
             <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="512" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
             <!-- <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
@@ -156,8 +156,8 @@ export default class AddCommon extends Vue{
         // 产品来源
     private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器'];
 
-    private compute_type_list:any=['GPU','CPU','CPU/GPU']
-    private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
+    private compute_type_list:any=['CPU/GPU','GPU','CPU']
+    private drive_type_list:any=['Datacenter','Geforce','Enflame'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
     private os_file:any=[];
@@ -211,6 +211,8 @@ export default class AddCommon extends Vue{
             return callback(new Error('请输入MD5'))
         } else if(value.length < 32){
             return callback(new Error('请输入32位MD5值'))
+        } else {
+            return callback()
         }
     }
     private validate_name(rule, value, callback){
@@ -341,8 +343,6 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        console.log(this.form_data,'this.form_data');
-        
         const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
