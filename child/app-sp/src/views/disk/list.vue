@@ -66,10 +66,20 @@
       </el-table-column>
       <el-table-column prop="op_source" label="创建来源" :filter-multiple="false" :filters="op_source_fil" column-key="op_source">
         <template slot-scope="scope">
-          <span>{{scope.row.op_source==="gic" ? 'GIC' : '运维后台'}}</span>
+          <span v-if="scope.row.op_source==='gic'">GIC</span>
+          <span v-else-if="scope.row.op_source==='internal_api'">内部API</span>
+          <span v-else>运维后台</span>
         </template>
       </el-table-column>
-      <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source"></el-table-column>
+      <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source">
+        <template slot-scope="scope">
+          <span v-if="scope.row.product_source === 'gcw'">云桌面</span>
+          <span v-else-if="scope.row.product_source === 'nas'">文件存储转发</span>
+          <span v-if="scope.row.product_source === 'eks'">容器</span>
+          <span v-if="scope.row.product_source === 'ecs'">云服务器</span>
+          <span v-if="scope.row.product_source === 'bm'">裸金属</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
       <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
       <el-table-column label="操作栏">
@@ -238,6 +248,10 @@ export default class extends Vue {
       text:'GIC',
       value:'gic'
     },
+    {
+      text: '内部API',
+      value: 'internal_api'
+    }
   ]
   private fee_way_fil=[
     {

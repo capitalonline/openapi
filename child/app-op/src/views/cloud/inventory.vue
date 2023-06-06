@@ -16,7 +16,8 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            value-format="yyyy-MM-dd HH:mm:ss">
+            value-format="yyyy-MM-dd HH:mm:ss"
+            @change="timeChange">
 
           </el-date-picker>
         </el-form-item>
@@ -133,24 +134,50 @@ export default class Inventory extends Vue {
     unit: '',
     xTime: [],
     yValue: [],
+    legend: [],
     resize: 0
   }
   private cloudList: any = []
   private timeList: any = [new Date(), new Date()]
 
-  created() {
-    this.getCurentTime()
+  async created() {
+    await this.getCurentTime()
+    await this.get_az_list()
     this.searchList()
-    this.get_az_list()
     this.authList = this.$store.state.auth_info[this.$route.name];
-    this.getCurentTime()
+  }
+  private dateFormat(format, date, day) {
+    if (!format) return '';
+    let curDate = new Date(date.getTime() - 24 * 60 * 60 * 1000 * day);
+    let dateMap = {
+        y: curDate.getFullYear(),
+        M: curDate.getMonth() + 1,
+        d: curDate.getDate(),
+        h: curDate.getHours(),
+        m: curDate.getMinutes(),
+        s: curDate.getSeconds(),
+        S: curDate.getMilliseconds()
+    };
+    return format.replace(/(y+)|(M+)|(d+)|(h+)|(m+)|(s+)|(S+)/g, (a) => this._add0(dateMap[a[0]], a.length))
+  }
+  private _add0(time, len) {
+    time = time.toString();
+    let l = time.length;
+    return l < len ? '0'.repeat(len - l) + time : time;
   }
   private getCurentTime() {
-    let start = new Date().getTime() - 24 * 60 * 60 * 1000 * 7
-    let end = new Date().getTime()
-    this.timeList = [new Date(start), new Date(end)]
+    let start = new Date()
+    let end = new Date()
+
+    this.timeList = [this.dateFormat("yyyy-MM-dd hh:mm:ss", start, 7), this.dateFormat("yyyy-MM-dd hh:mm:ss", end, 0)]
+    this.echartForm.create_time = this.dateFormat("yyyy-MM-dd hh:mm:ss", start, 7)
+    this.echartForm.end_time = this.dateFormat("yyyy-MM-dd hh:mm:ss", end, 0)
   }
-  
+  private timeChange(val) {
+    this.echartForm.create_time = val[0]
+    this.echartForm.end_time = val[1]
+    this.monitoringSearch()
+  }
   private handleCurrentChange(cur){
       this.pageInfo.page_index = cur;
       this.searchList()
@@ -177,28 +204,10 @@ export default class Inventory extends Vue {
     })
   }
   private exportList() {
-    let params = {
-      az_id: this.cloudForm.az_id
-    }
-    Service.disk_inventory_download(params).then(res => {
-      if(res.code === "Success") {
-
-      }
-    })
+    window.location.href = `/ecs_business/v1/stock/disk_inventory_download/?az_id=${this.cloudForm.az_id}`
   }
   private podChange(val) {
     this.monitoringSearch()
-  }
-  private createTimeChange(val) {
-    if(this.echartForm.az_id) {
-      this.monitoringSearch()
-    }
-    
-  }
-  private endTimeChange(val) {
-    if(this.echartForm.az_id) {
-      this.monitoringSearch()
-    }
   }
   private monitoringSearch() {
     let params = {
@@ -206,8 +215,22 @@ export default class Inventory extends Vue {
     }
     Service.get_disk_inventory_monitor(params).then(res => {
       if(res.code === 'Success') {
-        console.log('res',res)
+        this.cloud_inventory_used.xTime = res.data.x_time
+        this.cloud_inventory_used.yValue = [res.data.total_size,res.data.sold_size]
+        this.cloud_inventory_used.legend = ['总体可售容量', '已售容量']
+        this.cloud_inventory_used.unit = 'TB'
+        this.cloud_inventory_used.resize++
+      } else {
+        this.cloud_inventory_used = {
+          title: '云盘库存',
+          unit: '',
+          xTime: [],
+          yValue: [],
+          legend: [],
+          resize: 0
+        }
       }
+      
     })
   }
   private editNum(row) {
@@ -225,6 +248,7 @@ export default class Inventory extends Vue {
       if(res.code === 'Success') {
         this.$message.success(res.message)
         this.saleNumChangeCancel()
+        this.searchList()
       }
     })
   }
@@ -239,7 +263,7 @@ export default class Inventory extends Vue {
       if(res.code === 'Success') {
         this.az_list = res.data.az_list
         this.echartForm.az_id = this.az_list[0].az_id
-        this.monitoringSearch()
+        this.monitoringSearch() 
       }
     })
   }
