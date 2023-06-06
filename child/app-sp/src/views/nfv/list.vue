@@ -31,7 +31,7 @@
         <el-table-column prop="host_name" label="宿主机名称" width="90"></el-table-column>
         <el-table-column prop="cpu" label="CPU" ></el-table-column>
         <el-table-column prop="ram" label="内存"></el-table-column>
-        <el-table-column prop="vnf_group_id" label="NAT组IP" min-width="150px"></el-table-column>
+        <el-table-column prop="vnf_group_id" label="NAT组ID" min-width="150px"></el-table-column>
         <el-table-column prop="role" label="角色" ></el-table-column>
         <el-table-column label="VPC ID" min-width="150px" width="120">
           <template #default="scope">
