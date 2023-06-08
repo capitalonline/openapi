@@ -82,7 +82,7 @@ export default class Edit extends Vue{
         region_name:this.info.region_name,
         region_id:this.info.region_id,
         az_code:this.info.az_code,
-        net_type:'',
+        net_type:'3line_ip',
         backend_types:[],
         status:'',
         customer_ids:this.info.customer,
@@ -147,6 +147,7 @@ export default class Edit extends Vue{
                 let res:any = await Service.edit({
                     az_id,
                     az_code,
+                    net_type,
                     backend_types:backend_types.join(','),
                     status,
                     customer_ids:customer_ids.join(','),
