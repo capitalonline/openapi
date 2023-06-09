@@ -73,15 +73,14 @@
             <span v-else></span>
           </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_customers'">
-            <!-- <span>{{scope.row.exclusive_customers && scope.row.exclusive_customers.length>0 ? scope.row.exclusive_customers.join(',') : '全部客户'}}</span> -->
-            <div v-if="scope.row.exclusive_customers && scope.row.exclusive_customers.length>0">
-              <span v-for="(item, index) in scope.row.exclusive_customers">
-                <span>{{ ((index+1) < scope.row.exclusive_customers.length) ? item + '，' : item }}</span>
-              </span>
-            </div>
-            <div v-else>
-              全部客户
-            </div>
+            <el-tooltip v-if="scope.row.exclusive_customers.length>1">
+              <template #content>
+                <div v-for="item in scope.row.exclusive_customers">{{ `${item.id} (${item.name})` }}</div>
+              </template>
+              <span>{{ scope.row.exclusive_customers.map(item=>item.id).join(',') }}</span>
+            </el-tooltip>
+            <span v-else-if="scope.row.exclusive_customers.length===1">{{ `${scope.row.exclusive_customers[0].id} (${scope.row.exclusive_customers[0].name})` }}</span>
+            <span v-else>全部客户</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_spec_family'">
             <el-tooltip
