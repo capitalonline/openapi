@@ -11,49 +11,35 @@
         <el-table-column type="expand">
           <template #default="">
             <div style="overflow: hidden;padding: 0 0 24px;">
-              <el-table :data="stepData"
-                        class="expand-table"
-                        style="width: calc(100% - 45px); float:right"
-              >
-                <el-table-column type="expand">
-                  <template #default="step">
-                      <div style="overflow: hidden ;background: #f9f9f9;padding:16px 0;">
-                        <div style="width: calc(100% - 45px); float:right;">
-                          <el-table :data="step.row.stepList" class="expand-table"
-                          >
-                            <el-table-column label="步骤" prop="step" />
-                            <el-table-column label="步骤名称" prop="step_name" />
-                            <el-table-column label="执行流程" prop="subtask_name" />
-                            <el-table-column label="状态" prop="status" />
-                            <el-table-column label="操作">
-                              <el-button type="text"
-                              >重试</el-button>
-                              <el-button type="text"
-                              >忽略</el-button>
-                            </el-table-column>
-                          </el-table>
-                          <div style="margin:8px 0;padding:8px 4px;color:#333;">
-                            输出结果: {{step.row.result}}
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="步骤" prop="step" />
-                <el-table-column label="步骤名称" >
-                  <template #default="step">
-                    <el-input v-model="step.row.step_name" style="width:100px;"></el-input>
-                  </template>
-                </el-table-column>
-                <el-table-column label="执行流程" prop="subtask_name" />
-                <el-table-column label="状态" prop="status" />
-                <el-table-column label="操作">
-                  <el-button type="text"
-                  >重试</el-button>
-                  <el-button type="text"
-                  >忽略</el-button>
-                </el-table-column>
-              </el-table>
+              <ul>
+                <li>
+                  <h1>step1：<el-button type="primary">检查底层任务状态</el-button></h1>
+                  <div class="m-top10 m-bottom10"><b>检查结果：</b></div>
+                  <div class="step-result"></div>
+                </li>
+                <li>
+                  <h1>step2：底层任务修复</h1>
+                  <div class="step">
+                    现有参数：<el-input type="textarea" style="width:400px" rows="2" :readonly="true"></el-input>
+                    <div class="m-left10 m-right10">-->></div>
+                    修改后参数：<el-input type="textarea" style="width:400px" rows="2"></el-input>
+                    <el-button type="primary" class="m-left10">执行</el-button>
+                  </div>
+                  <div class="m-top10 m-bottom10"><b>执行结果：</b></div>
+                  <div class="step-result"></div>
+                </li>
+                <li>
+                  <h1>step3：修复业务层</h1>
+                  <div style="display: flex; align-items: center">
+                    现有状态：<el-input style="width:200px" :readonly="true"></el-input>
+                    <div class="m-left10 m-right10">-->></div>
+                    修改后状态：<el-input style="width:200px"></el-input>
+                    <el-button type="primary" class="m-left10">执行</el-button>
+                  </div>
+                  <div class="m-top10 m-bottom10"><b>执行结果：</b></div>
+                  <div class="step-result"></div>
+                </li>
+              </ul>
             </div>
           </template>
         </el-table-column>
