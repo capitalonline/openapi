@@ -229,6 +229,7 @@ export default class Chains extends Vue {
     private detail(id){
         this.FnClearTimer()
         sessionStorage.setItem('chainId',id)
+        console.log('this.$route.name',this.$route.name)
         this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
             id
         }})
