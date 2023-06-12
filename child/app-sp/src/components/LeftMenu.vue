@@ -126,6 +126,7 @@ export default class LeftMenu extends Vue {
     },
     { name: 'event_list', label: "任务管理" },
     { name: 'anomaly_event_list', label: "异常任务处理"},
+    { name: 'repair_event_list', label: "异常任务处理2"},
     {
       name:'alarm_manage',
       label:'报警管理',
