@@ -185,3 +185,19 @@ pre {
   max-height: 320px;
   overflow-y: auto;
 }
+
+.expand-table{
+  background: none !important;
+  tr{
+    background: none !important;
+  }
+  th.el-table__cell {
+    background: none !important;
+  }
+  th.el-table__cell.is-leaf, td.el-table__cell{
+    border-bottom: 2px solid #EBEEF5;
+  }
+  .el-table__cell{
+    border-right: 0 !important;
+  }
+}

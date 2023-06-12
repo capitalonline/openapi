@@ -20,6 +20,10 @@ export default{
     get_error_task_list(req){
         return service(getEcsOptions('POST','/event/get_error_task_list/',req))
     },
+    //获取异常事件列表
+    get_repair_event_list(req){
+       return service(getEcsOptions('POST','/event/get_error_task_list/',req))
+    },
     ignore(req){
         return service(getEcsOptions('POST','/event/task_status/',req))
     },
