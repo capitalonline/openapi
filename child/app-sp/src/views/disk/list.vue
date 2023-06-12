@@ -82,6 +82,8 @@
       </el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
       <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
+      <el-table-column prop="cluster_name" label="所属集群"></el-table-column>
+      <el-table-column prop="storage_pool_name" label="Storage Pool"></el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
@@ -175,6 +177,8 @@ export default class extends Vue {
     customer_name: {placeholder:'请输入客户名称'},
     product_server_id:{placeholder:'请输入内部服务账号ID'},
     product_server_name: {placeholder:'请输入内部服务账号名称'},
+    storage:{placeholder:'请选择Storage Pool',list:[]},
+    cluster: {placeholder:'请输入集群名称',list:[]},
   }
   private visible:Boolean = false;
   private operate_type:string=""
@@ -266,6 +270,8 @@ export default class extends Vue {
   created() {
     this.get_disk_state();
     this.get_product_source()
+    this.getClusterName();
+    this.getstoragePoolName()
     this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
