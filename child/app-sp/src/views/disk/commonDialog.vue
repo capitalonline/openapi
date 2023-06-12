@@ -19,21 +19,33 @@
                 max-height="220"
                 border
             >
-                <el-table-column prop="customer_id" label="客户ID1"></el-table-column>
-                <el-table-column prop="customer_name" label="客户名称"></el-table-column>
+                <el-table-column prop="customer_id" label="客户ID" v-if="!['迁移'].includes(title)"></el-table-column>
+                <el-table-column prop="customer_name" label="客户名称" v-if="!['迁移'].includes(title)"></el-table-column>
                 <el-table-column prop="disk_id" label="云盘ID"></el-table-column>
                 <el-table-column prop="disk_name" label="云盘名称">
                   <template slot-scope="scope">
                     <pre>{{scope.row.disk_name}}</pre>
                   </template>
                 </el-table-column>
-                <el-table-column prop="status_name" label="状态"></el-table-column>
+                <el-table-column prop="status_name" label="状态" v-if="!['迁移'].includes(title)"></el-table-column>
+                <el-table-column prop="size" label="云盘容量" v-if="['迁移'].includes(title)">
+                  <template slot-scope="scope">
+                    <div>{{scope.row.size ? `${scope.row.size}GB` : ''}}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="Storage Pool" label="Storage Pool" v-if="['迁移'].includes(title)"></el-table-column>
                 <el-table-column prop="fee" label="费用" v-if="title==='开启计费'">
                   <template slot-scope="scope">
                     <span class="num_message">{{scope.row.fee}}</span>
                   </template>
                 </el-table-column>
             </el-table>
+            <div v-if="['迁移'].includes(title)" class="m-top20">
+              目标Storage Pool:&nbsp;&nbsp;
+              <el-select placeholder="请选择" v-model="pool">
+                <el-option v-for="item in poolList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+              </el-select>
+            </div>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
@@ -51,6 +63,8 @@ export default class MountDisk extends Vue{
     @Prop({default:()=>[]}) mount_id!:any
     @Prop(String) title!:string;
     private alert_title:string = `是否确定要对以下云盘执行 ${this.title} 操作`;
+    private poolList:any=[]
+    private pool:string=''
     created() {
       this.title==='开启计费' && this.getFee()
     }
