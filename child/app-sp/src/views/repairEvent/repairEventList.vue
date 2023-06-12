@@ -272,4 +272,10 @@
   }
   </script>
   <style lang="scss" scoped>
+    .step{
+      display: flex; align-items: center
+    }
+    .step-result{
+      padding: 8px 4px;background: #f8f8f8;
+    }
   </style>
