@@ -309,7 +309,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status ? req_data.status[0] : '',
+      status:req_data.status ? req_data.status[0] : [],
       product_source:req_data.product_source ? req_data.product_source:[],
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
