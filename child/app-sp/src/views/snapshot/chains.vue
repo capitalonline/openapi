@@ -234,6 +234,7 @@ export default class Chains extends Vue {
                 id
             }})
         } else {
+            console.log('执行')
             this.$router.push({path:'/chain/detail',query:{
                 id
             }})
