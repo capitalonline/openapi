@@ -229,9 +229,19 @@ export default class Chains extends Vue {
     private detail(id){
         this.FnClearTimer()
         sessionStorage.setItem('chainId',id)
-        this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
-            id
-        }})
+        if(this.$route.name==='render_snapshot_list'){
+            this.$router.push({path:'/render/chain/detail',query:{
+                id
+            }})
+        } else {
+            console.log('执行')
+            this.$router.push({path:'/chain/detail',query:{
+                id
+            }})
+        }
+        // this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
+        //     id
+        // }})
     }
     private handleSizeChange(size){
         this.FnClearTimer()
