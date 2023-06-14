@@ -415,11 +415,12 @@
     private rowClick (row) {
       this.event_list.forEach(e => {
         if (row.task_id !== e.task_id) {
-          this.$refs.evenTable.toggleRowExpansion(e, false)
+          (this.$refs['evenTable'] as any).toggleRowExpansion(e, false)
+          // this.$refs.evenTable.toggleRowExpansion(e, false)
           e.isExpand = false
         } else {
           e.isExpand = !e.isExpand
-          this.$refs.evenTable.toggleRowExpansion(e, e.isExpand)
+          (this.$refs['evenTable'] as any).toggleRowExpansion(e, e.isExpand)
         }
       })
       this.clearTask()
