@@ -71,7 +71,7 @@
                     </el-table-column>
                     <el-table-column label="预期修改" width="400">
                       <template #default="step">
-                        <el-input type="textarea" :value="re_parameters" style="width: 370px;height: 150px;"></el-input>
+                        <el-input type="textarea" class="eventTextarea" :value="re_parameters" style="width: 370px;height: 150px;"></el-input>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -104,7 +104,7 @@
                     </el-table-column>
                     <el-table-column label="预期修改" width="200">
                       <template #default="step">
-                        <el-input type="textarea" v-if="step.row.status == 'failed'" :value="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
+                        <el-input type="textarea" class="eventTextarea" v-if="step.row.status == 'failed'" :value="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -443,7 +443,7 @@
     .step-result{
       padding: 8px 4px;background: #f8f8f8;
     }
-    .el-textarea__inner{
+    .eventTextarea .el-textarea__inner{
       height:150px !important;
     }
   </style>
