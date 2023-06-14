@@ -4,40 +4,136 @@
       <div class="prompt_message">重试：支持对失败状态的任务进行重试；忽略：支持对任务进行忽略，忽略的任务不展示</div>
       <el-table
         :data="event_list"
+        ref="evenTable"
         border
         class="event-table"
         @filter-change="filterAttribute"
+        @expand-change="rowClick"
       >
         <el-table-column type="expand">
-          <template #default="">
+          <template #default="scope">
             <div style="overflow: hidden;padding: 0 0 24px;">
               <ul>
                 <li>
-                  <h1>step1：<el-button type="primary">检查底层任务状态</el-button></h1>
-                  <div class="m-top10 m-bottom10"><b>检查结果：</b></div>
-                  <div class="step-result"></div>
+                  <h1>step1：<el-button type="primary" @click="getUnderlyingTasksInfo(scope.row.task_id)">检查底层任务状态</el-button></h1>
+                  <template v-if="step1_status">
+                    <div class="m-top10 m-bottom10"><b>主任务检查结果：</b></div>
+                    <div style="width:90%">
+                      <el-descriptions
+                        :column="2"
+                        border
+                      >
+                        <el-descriptions-item width="100" label="主任务Id">{{maintask.taskId}}</el-descriptions-item>
+                        <el-descriptions-item width="100" label="上一次执行结束时间">{{maintask.execEndTime}}</el-descriptions-item>
+                        <el-descriptions-item width="100" label="主任务执行参数"><div style="max-width: 700px;">{{maintask.globalContext}}</div></el-descriptions-item>
+                      </el-descriptions>
+                    </div>
+
+                    <div class="m-top10 m-bottom10"><b>子任务检查结果：</b></div>
+                    <el-table :data="subtasks"
+                              border
+                              v-if="subtasks.length > 0"
+                              style="width:99%"
+                              class="event-table">
+                      <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>
+                      <el-table-column prop="status" label="状态"></el-table-column>
+                      <el-table-column prop="errorMsg" label="失败原因"></el-table-column>
+                      <el-table-column prop="executorName" label="执行服务"></el-table-column>
+                      <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
+                      <el-table-column prop="execTime" label="执行时间"></el-table-column>
+                      <el-table-column label="执行参数">
+                        <template #defalut="step">
+                          {{step.row.status && step.row.status === 'failed' ? step.row.parameters : '-'}}
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="回调参数">
+                        <template #defalut="step">
+                          {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? step.row.callbackContent : '-'}}
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </template>
+
                 </li>
-                <li>
+                <li v-if="maintask.status == 'failed' && step1_status">
                   <h1>step2：底层任务修复</h1>
-                  <div class="step">
-                    现有参数：<el-input type="textarea" style="width:400px" rows="2" :readonly="true"></el-input>
-                    <div class="m-left10 m-right10">-->></div>
-                    修改后参数：<el-input type="textarea" style="width:400px" rows="2"></el-input>
-                    <el-button type="primary" class="m-left10">执行</el-button>
-                  </div>
-                  <div class="m-top10 m-bottom10"><b>执行结果：</b></div>
-                  <div class="step-result"></div>
+                  <div class="m-top10 m-bottom10"><b>主任务：</b></div>
+                  <el-table :data="maintaskList"
+                            border
+                            style="width:99%">
+                    <el-table-column prop="taskId" width="200" label="主任务Id"></el-table-column>
+                    <el-table-column prop="execEndTime" width="200" label="上一次执行结束时间"></el-table-column>
+                    <el-table-column label="当前错误参数显示" width="400">
+                      <template #defalut="step">
+                        {{step.row.parameters}}<br>
+                        <Clipboard :content="step.row.parameters" v-if="step.row.parameters"></Clipboard>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="预期修改" width="400">
+                      <template #default="step">
+                        <el-input type="textarea" :value="re_parameters" style="width: 370px;height: 150px;"></el-input>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <div class="m-top10 m-bottom10"><b>子任务列表：</b></div>
+                  <el-table :data="subtasks_step2"
+                            border
+                            v-if="subtasks_step2.length > 0"
+                            style="width:99%">
+                    <el-table-column width="55">
+                      <template #default="step">
+                        <el-checkbox v-model="step.row.isCheck"></el-checkbox>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>
+                    <el-table-column prop="status" width="80" label="状态"></el-table-column>
+                    <el-table-column prop="errorMsg" label="失败原因"></el-table-column>
+                    <el-table-column prop="executorName" label="执行服务"></el-table-column>
+                    <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
+                    <el-table-column prop="execTime" label="执行时间"></el-table-column>
+                    <el-table-column label="回调参数">
+                      <template #defalut="step">
+                        {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? step.row.callbackContent : '-'}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="当前错误参数显示">
+                      <template #defalut="step">
+                        {{step.row.parameters}}<br>
+                        <Clipboard :content="step.row.parameters" v-if="step.row.parameters"></Clipboard>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="预期修改" width="200">
+                      <template #default="step">
+                        <el-input type="textarea" v-if="step.row.status == 'failed'" :value="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <el-button type="primary" class="m-top10" @click="setReTasks(scope.row.task_id)">执行</el-button>
+
                 </li>
-                <li>
+                <li v-if="step1_status">
                   <h1>step3：修复业务层</h1>
-                  <div style="display: flex; align-items: center">
-                    现有状态：<el-input style="width:200px" :readonly="true"></el-input>
-                    <div class="m-left10 m-right10">-->></div>
-                    修改后状态：<el-input style="width:200px"></el-input>
-                    <el-button type="primary" class="m-left10">执行</el-button>
-                  </div>
-                  <div class="m-top10 m-bottom10"><b>执行结果：</b></div>
-                  <div class="step-result"></div>
+                  <el-table :data="resources"
+                            border
+                            style="width:99%"
+                            class="event-table">
+                    <el-table-column prop="resource_id" label="资源id"></el-table-column>
+                    <el-table-column prop="resource_status" label="资源状态"></el-table-column>
+                    <el-table-column prop="resource_type" label="资源类型"></el-table-column>
+                    <el-table-column prop="need_repair" label="是否需要修复"></el-table-column>
+                    <el-table-column prop="status" label="当前状态"></el-table-column>
+                    <el-table-column label="期望状态">
+                      <template #default="step">
+                        <el-select v-model="step.row.re_status">
+                          <el-option label="runing" value="runing">runing</el-option>
+                          <el-option label="shutdown" value="shutdown">shutdown</el-option>
+                          <el-option label="deleted" value="deleted">deleted</el-option>
+                          <el-option label="destory" value="destory">destory</el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <el-button type="primary" class="m-top10" @click="setTasksStatus(scope.row.task_id)">执行</el-button>
                 </li>
               </ul>
             </div>
@@ -107,9 +203,11 @@
   import EcsService from '../../https/instance/create'
   import {trans} from '../../utils/transIndex';
   import moment from 'moment';
+  import Clipboard from "@/components/clipboard.vue";
   @Component({
     components:{
       ActionBlock,
+      Clipboard,
     }
   })
   export default class List extends Vue {
@@ -150,40 +248,14 @@
     private sort_value:string=''
     private error_type_list=[];
     private filter_obj={}
-    private stepData:any = [
-      {
-        step: '步骤1',
-        step_name: '步骤名称',
-        subtask_name: '执行流程',
-        status: '状态',
-        result: '输出结果',
-        stepList: [
-          {
-            step: '步骤1.1',
-            step_name: '步骤名称',
-            subtask_name: '执行流程',
-            status: '状态',
-            result: '输出结果',
-          }
-        ]
-      },
-      {
-        step: '步骤2',
-        step_name: '步骤名称',
-        subtask_name: '执行流程',
-        status: '状态',
-        result: '输出结果',
-        stepList: [
-          {
-            step: '步骤2.1',
-            step_name: '步骤名称',
-            subtask_name: '执行流程',
-            status: '状态',
-            result: '输出结果',
-          }
-        ]
-      }
-    ]
+    private step1_status:boolean = false
+    private maintask:any = {}
+    private maintaskList:any = []
+    private subtasks:any = []
+    private subtasks_step2:any = []
+    private resources:any = []
+    private re_parameters:any = ''
+
     created() {
       this.get_az_list();
       this.getFilterList()
@@ -232,6 +304,11 @@
       })
       if(res.code==="Success"){
         this.event_list = res.data?.task_list || []
+        this.event_list = this.event_list.map(e => {
+          return Object.assign({}, e, {isExpand: false})
+        })
+
+
         this.total = res.data?.page_info?.count || 0
       }else{
           this.$message.error(res.msg || '操作错误')
@@ -268,14 +345,105 @@
         this.get_error_task_list()
       }
     }
+    private async getUnderlyingTasksInfo (task_id) {
+      this.step1_status = false
+      let res:any = await service.getUnderlyingTasks({
+        task_id
+      })
+      this.step1_status = true
+      if(res.code==='Success'){
+        this.maintask = res.data.maintask
+        this.maintaskList = [res.data.maintask]
+        this.subtasks = res.data.subtasks
+        this.subtasks_step2 = res.data.subtasks.map(e => {
+          return Object.assign({}, e,{
+            re_parameters: '',
+            isCheck: e.status === 'failed'
+          })
+        })
+      }
+      this.getTasksStatusInfo(task_id)
+
+    }
+    private async getTasksStatusInfo (task_id) {
+      let res:any = await service.getTasksStatus({
+        task_id
+      })
+      if(res.data.resource_detail && res.code==='Success'){
+        this.resources = res.data.resource_detail.map(e => {
+          return Object.assign({}, e,{
+            re_status: 'runing'
+          })
+        })
+      }
+    }
+    // step3的执行
+    private async setTasksStatus (task_id) {
+      let repairResources:any = this.resources.map(e => {
+        return {
+          resource_id: e.resource_id,
+          resource_type: e.re_status
+        }
+      })
+      let res:any = await service.setTasksStatus({
+        task_id: task_id,
+        repair_resources: repairResources
+      })
+      if(res.code==='Success'){
+        this.$message.success(res.message);
+        this.getTasksStatusInfo(task_id);
+      }
+    }
+    // step2的执行
+    private async setReTasks (task_id) {
+      let subtasks:any = this.subtasks_step2.filter(e => e.status === 'failed').map(e => {
+        return {
+          failedSubExecFlag: e.isCheck ? 1 : 0,
+          subtaskId: e.subtaskId,
+          parameters: e.re_parameters
+        }
+      })
+      let res:any = await service.setReTasks({
+        taskId: task_id,
+        global_context: this.re_parameters,
+        subtasks: subtasks
+      })
+      if(res.code==='Success'){
+        this.$message.success(res.message);
+      }
+    }
+    private rowClick (row) {
+      this.event_list.forEach(e => {
+        if (row.task_id !== e.task_id) {
+          this.$refs.evenTable.toggleRowExpansion(e, false)
+          e.isExpand = false
+        } else {
+          e.isExpand = !e.isExpand
+          this.$refs.evenTable.toggleRowExpansion(e, e.isExpand)
+        }
+      })
+      this.clearTask()
+    }
+    private clearTask () {
+      this.step1_status = false
+      this.maintask = {}
+      this.maintaskList = []
+      this.subtasks = []
+      this.subtasks_step2 = []
+      this.resources = []
+      this.re_parameters = ''
+    }
 
   }
   </script>
-  <style lang="scss" scoped>
+  <style lang="scss">
     .step{
       display: flex; align-items: center
     }
     .step-result{
       padding: 8px 4px;background: #f8f8f8;
+    }
+    .el-textarea__inner{
+      height:150px !important;
     }
   </style>
