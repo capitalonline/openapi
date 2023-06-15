@@ -37,10 +37,10 @@ export default{
     },
     //重试任务状态信息
     setTasksStatus(req){
-      return service(getEcsOptions('GET','/event/repair_task_resource/',req))
+      return service(getEcsOptions('POST','/event/repair_task_resource/',req))
     },
     //重试任务
     setReTasks(req){
-      return service(getEcsOptions('GET','/event/repair_task/',req))
+      return service(getEcsOptions('POST','/event/repair_task/',req))
     },
 }

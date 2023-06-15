@@ -25,7 +25,7 @@
                       >
                         <el-descriptions-item width="100" label="主任务Id">{{maintask.taskId}}</el-descriptions-item>
                         <el-descriptions-item width="100" label="上一次执行结束时间">{{maintask.execEndTime}}</el-descriptions-item>
-                        <el-descriptions-item width="100" label="主任务执行参数"><div style="max-width: 700px;">{{maintask.globalContext}}</div></el-descriptions-item>
+                        <el-descriptions-item width="100" label="主任务执行参数"><div style="max-width: 700px;">{{JSON.stringify(maintask.globalContext)}}</div></el-descriptions-item>
                       </el-descriptions>
                     </div>
 
@@ -42,13 +42,13 @@
                       <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
                       <el-table-column prop="execTime" label="执行时间"></el-table-column>
                       <el-table-column label="执行参数">
-                        <template #defalut="step">
+                        <template #default="step">
                           {{step.row.status && step.row.status === 'failed' ? step.row.parameters : '-'}}
                         </template>
                       </el-table-column>
                       <el-table-column label="回调参数">
-                        <template #defalut="step">
-                          {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? step.row.callbackContent : '-'}}
+                        <template #default="step">
+                          {{step.row.callbackContent}}
                         </template>
                       </el-table-column>
                     </el-table>
@@ -64,14 +64,14 @@
                     <el-table-column prop="taskId" width="200" label="主任务Id"></el-table-column>
                     <el-table-column prop="execEndTime" width="200" label="上一次执行结束时间"></el-table-column>
                     <el-table-column label="当前错误参数显示" width="400">
-                      <template #defalut="step">
-                        {{step.row.parameters}}<br>
-                        <Clipboard :content="step.row.parameters" v-if="step.row.parameters"></Clipboard>
+                      <template #default="step">
+                        {{step.row.globalContext}}<br>
+                        <Clipboard :content="JSON.stringify(step.row.globalContext)" v-if="step.row.globalContext"></Clipboard>
                       </template>
                     </el-table-column>
                     <el-table-column label="预期修改" width="400">
                       <template #default="step">
-                        <el-input type="textarea" class="eventTextarea" :value="re_parameters" style="width: 370px;height: 150px;"></el-input>
+                        <el-input type="textarea" class="eventTextarea" v-model="re_parameters" style="width: 370px;height: 150px;"></el-input>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -82,7 +82,7 @@
                             style="width:99%">
                     <el-table-column width="55">
                       <template #default="step">
-                        <el-checkbox v-model="step.row.isCheck"></el-checkbox>
+                        <el-checkbox v-model="step.row.isCheck" v-if="step.row.status == 'failed'"></el-checkbox>
                       </template>
                     </el-table-column>
                     <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>
@@ -92,19 +92,19 @@
                     <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
                     <el-table-column prop="execTime" label="执行时间"></el-table-column>
                     <el-table-column label="回调参数">
-                      <template #defalut="step">
-                        {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? step.row.callbackContent : '-'}}
+                      <template #default="step">
+                        {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? JSON.stringify(step.row.callbackContent) : '-'}}
                       </template>
                     </el-table-column>
                     <el-table-column label="当前错误参数显示">
-                      <template #defalut="step">
-                        {{step.row.parameters}}<br>
-                        <Clipboard :content="step.row.parameters" v-if="step.row.parameters"></Clipboard>
+                      <template #default="step">
+                        {{JSON.stringify(step.row.parameters)}}<br>
+                        <Clipboard :content="JSON.stringify(step.row.parameters)" v-if="step.row.parameters"></Clipboard>
                       </template>
                     </el-table-column>
                     <el-table-column label="预期修改" width="200">
                       <template #default="step">
-                        <el-input type="textarea" class="eventTextarea" v-if="step.row.status == 'failed'" :value="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
+                        <el-input type="textarea" class="eventTextarea" v-if="step.row.status == 'failed'" v-model="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -174,15 +174,15 @@
             <span>{{scope.row.end_time ? moment(scope.row.end_time).format("YYYY-MM-DD HH:mm:ss") : '--'}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="text"
-              @click="retry(scope.row.task_id,scope.row.event_id)"
-            >重试</el-button>
-            <el-button type="text" @click="ignore(scope.row.task_id,scope.row.event_id)"
-            >忽略</el-button>
-          </template>
-        </el-table-column>
+<!--        <el-table-column label="操作">-->
+<!--          <template slot-scope="scope">-->
+<!--            <el-button type="text"-->
+<!--              @click="retry(scope.row.task_id,scope.row.event_id)"-->
+<!--            >重试</el-button>-->
+<!--            <el-button type="text" @click="ignore(scope.row.task_id,scope.row.event_id)"-->
+<!--            >忽略</el-button>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
       </el-table>
       <el-pagination
         @size-change="handleSizeChange"
@@ -387,7 +387,7 @@
       })
       let res:any = await service.setTasksStatus({
         task_id: task_id,
-        repair_resources: repairResources
+        repair_resource: repairResources
       })
       if(res.code==='Success'){
         this.$message.success(res.message);
@@ -404,7 +404,7 @@
         }
       })
       let res:any = await service.setReTasks({
-        taskId: task_id,
+        task_id: task_id,
         global_context: this.re_parameters,
         subtasks: subtasks
       })
@@ -419,7 +419,11 @@
           // this.$refs.evenTable.toggleRowExpansion(e, false)
           e.isExpand = false
         } else {
-          e.isExpand = !e.isExpand
+          if (row.isExpand) {
+            e.isExpand = false
+          } else {
+            e.isExpand = true
+          }
           (this.$refs['evenTable'] as any).toggleRowExpansion(e, e.isExpand)
         }
       })
