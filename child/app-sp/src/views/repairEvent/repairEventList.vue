@@ -421,7 +421,7 @@
       })
       let res:any = await service.setReTasks({
         task_id: task_id,
-        global_context: this.re_parameters,
+        global_context: this.re_parameters !== '' ? this.re_parameters : undefined,
         subtasks: subtasks
       })
       if(res.code==='Success'){
