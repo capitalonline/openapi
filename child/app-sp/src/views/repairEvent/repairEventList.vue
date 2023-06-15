@@ -109,7 +109,7 @@
                     </el-table-column>
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)">底层任务修复执行</el-button>
-                  <div class="step-result">执行结果：{{step2_str}}</div>
+<!--                  <div class="step-result">执行结果：{{step2_str}}</div>-->
 
                 </li>
                 <li v-if="step1_status">
@@ -262,7 +262,6 @@
     private subtasks_step2:any = []
     private resources:any = []
     private re_parameters:any = ''
-    private step2_str:string = ''
     private step3_str:string = ''
 
     created() {
@@ -400,13 +399,13 @@
       })
       if(res.code==='Success'){
         const data = res.data.repair_list
-        this.resources.forEach(e => {
-          if (data[e.resource_id]){
-            e.after_status = data[e.resource_id].status
-            e.after_status_display = data[e.resource_id].status_display
-          }
+        this.resources = this.resources.map(e => {
+          return Object.assign({}, e, {
+            after_status: data[e.resource_id].status,
+            after_status_display: data[e.resource_id].status_display
+          })
         })
-        this.step3_str=res.data.result_str
+        this.step3_str=res.data.repair_detail
       }
     }
     // step2的执行
@@ -424,8 +423,8 @@
         subtasks: subtasks
       })
       if(res.code==='Success'){
-        // this.$message.success(res.message);
-        this.step2_str = res.data.result_str
+        this.$message.success(res.message);
+        // this.step2_str = res.data.result_str
       }
     }
     private rowClick (row) {
