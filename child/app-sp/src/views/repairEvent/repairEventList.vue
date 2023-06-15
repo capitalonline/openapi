@@ -108,7 +108,8 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  <el-button type="primary" class="m-top10" @click="setReTasks(scope.row.task_id)">执行</el-button>
+                  <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)">底层任务修复执行</el-button>
+                  <div class="step-result">执行结果：{{step2_str}}</div>
 
                 </li>
                 <li v-if="step1_status">
@@ -118,10 +119,16 @@
                             style="width:99%"
                             class="event-table">
                     <el-table-column prop="resource_id" label="资源id"></el-table-column>
-                    <el-table-column prop="resource_status" label="资源状态"></el-table-column>
                     <el-table-column prop="resource_type" label="资源类型"></el-table-column>
-                    <el-table-column prop="need_repair" label="是否需要修复"></el-table-column>
-                    <el-table-column prop="status" label="当前状态"></el-table-column>
+                    <el-table-column prop="need_repair" label="是否需要修复">
+                      <template #default="step">
+                        {{step.row.need_repair ? '是' : '否'}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="status_display" label="当前状态"></el-table-column>
+                    <el-table-column prop="expect_status_display" label="期望状态"></el-table-column>
+                    <el-table-column prop="after_status_display" label="修复后状态"></el-table-column>
+                    <el-table-column prop="expect_status" label="修复后状态"></el-table-column>
                     <el-table-column label="期望状态">
                       <template #default="step">
                         <el-select v-model="step.row.re_status">
@@ -133,7 +140,8 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  <el-button type="primary" class="m-top10" @click="setTasksStatus(scope.row.task_id)">执行</el-button>
+                  <el-button type="primary" class="m-top10 m-bottom10" @click="setTasksStatus(scope.row.task_id)">修复业务层执行</el-button>
+                  <div class="step-result">执行结果：{{step3_str}}</div>
                 </li>
               </ul>
             </div>
@@ -255,6 +263,8 @@
     private subtasks_step2:any = []
     private resources:any = []
     private re_parameters:any = ''
+    private step2_str:string = ''
+    private step3_str:string = ''
 
     created() {
       this.get_az_list();
@@ -390,8 +400,14 @@
         repair_resource: repairResources
       })
       if(res.code==='Success'){
-        this.$message.success(res.message);
-        this.getTasksStatusInfo(task_id);
+        const data = res.data.repair_list
+        this.resources.forEach(e => {
+          if (data[e.resource_id]){
+            e.after_status = data[e.resource_id].status
+            e.after_status_display = data[e.resource_id].status_display
+          }
+        })
+        this.step3_str=res.data.result_str
       }
     }
     // step2的执行
@@ -409,7 +425,8 @@
         subtasks: subtasks
       })
       if(res.code==='Success'){
-        this.$message.success(res.message);
+        // this.$message.success(res.message);
+        this.step2_str = res.data.result_str
       }
     }
     private rowClick (row) {
@@ -446,7 +463,7 @@
       display: flex; align-items: center
     }
     .step-result{
-      padding: 8px 4px;background: #f8f8f8;
+      color: forestgreen;
     }
     .eventTextarea .el-textarea__inner{
       height:150px !important;
