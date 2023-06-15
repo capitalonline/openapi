@@ -128,7 +128,6 @@
                     <el-table-column prop="status_display" label="当前状态"></el-table-column>
                     <el-table-column prop="expect_status_display" label="期望状态"></el-table-column>
                     <el-table-column prop="after_status_display" label="修复后状态"></el-table-column>
-                    <el-table-column prop="expect_status" label="修复后状态"></el-table-column>
                     <el-table-column label="期望状态">
                       <template #default="step">
                         <el-select v-model="step.row.re_status">
