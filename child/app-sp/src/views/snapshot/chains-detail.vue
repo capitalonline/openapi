@@ -43,7 +43,7 @@ export default class Create extends Vue{
     // }
     created() {
       console.log('+++++++++++', this.$route.query.id)
-        this.title=`快照链：${this.$route.query.id}`
+        // this.title=`快照链：${this.$route.query.id}`
         console.log('###',this.$route.query.id)
         // this.detail()
     }
