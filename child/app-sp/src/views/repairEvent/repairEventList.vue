@@ -391,7 +391,8 @@
       let repairResources:any = this.resources.map(e => {
         return {
           resource_id: e.resource_id,
-          resource_type: e.re_status
+          resource_type: e.resource_type,
+          expect_status: e.re_status,
         }
       })
       let res:any = await service.setTasksStatus({
