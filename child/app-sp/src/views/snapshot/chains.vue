@@ -237,7 +237,7 @@ export default class Chains extends Vue {
             console.log('执行', id)
       this.$router.push({path:'/disk/detail2',query:{
           id:id
-        }})
+        }}).catch(err => ())
             // this.$router.push({name: 'snapshot_detail', query: {
             //   'id': id
             //   }})
