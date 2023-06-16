@@ -2,7 +2,7 @@
 <template>
     <div class="chains-detail">
       111
-<!--        <back-header :title="title" back_url='/snapshot'></back-header>-->
+        <back-header :title="title" back_url='/snapshot'></back-header>
 <!--        <el-card>-->
 <!--            <el-descriptions title="基本信息" :column="2">-->
 <!--                <el-descriptions-item :label="item.label" v-for="(item,i) in configInfo" :key="i">{{item.value}}</el-descriptions-item>-->
@@ -26,22 +26,22 @@ import {Form} from 'element-ui';
     }
 })
 export default class Create extends Vue{
-    // @PropSync('visible')visibleSync!:false;
-    // @Prop({default:()=>{}})info!:any;
-    // private title:string=''
-    // private configInfo:any={
-    //     customer_id:{label:'客户ID',value:''},
-    //     az_name:{label:'可用区',value:''},
-    //     customer_name:{label:'客户名称',value:''},
-    //     disk_id:{label:'源云盘ID',value:''},
-    //     snapshot_chains_id:{label:'快照链ID',value:''},
-    //     disk_size:{label:'源云盘容量',value:''},
-    //     snapshot_size:{label:'快照容量',value:''},
-    //     disk_type:{label:'源云盘属性',value:''},
-    // }
-    // private form:any={
-    //     update_snapshot_name:''
-    // }
+    @PropSync('visible')visibleSync!:false;
+    @Prop({default:()=>{}})info!:any;
+    private title:string=''
+    private configInfo:any={
+        customer_id:{label:'客户ID',value:''},
+        az_name:{label:'可用区',value:''},
+        customer_name:{label:'客户名称',value:''},
+        disk_id:{label:'源云盘ID',value:''},
+        snapshot_chains_id:{label:'快照链ID',value:''},
+        disk_size:{label:'源云盘容量',value:''},
+        snapshot_size:{label:'快照容量',value:''},
+        disk_type:{label:'源云盘属性',value:''},
+    }
+    private form:any={
+        update_snapshot_name:''
+    }
     created() {
       console.log('+++++++++++', this.$route.query.id)
         // this.title=`快照链：${this.$route.query.id}`
