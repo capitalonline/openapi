@@ -90,7 +90,7 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="detail(scope.row.snapshot_chains_id)">详情</el-button>
+                    <el-button type="text" @click="toDetail(scope.row.snapshot_chains_id)">详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -226,7 +226,7 @@ export default class Chains extends Vue {
             clearTimeout(this.timer)
         }
     }
-    private detail(id){
+    private toDetail(id){
         // this.FnClearTimer()
         // sessionStorage.setItem('chainId',id)
         // if(this.$route.name==='render_snapshot_list'){
