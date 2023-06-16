@@ -227,15 +227,15 @@ export default class Chains extends Vue {
         }
     }
     private detail(id){
-        this.FnClearTimer()
-        sessionStorage.setItem('chainId',id)
+        // this.FnClearTimer()
+        // sessionStorage.setItem('chainId',id)
         // if(this.$route.name==='render_snapshot_list'){
         //     this.$router.push({path:'/render/chain/detail',query:{
         //         id
         //     }})
         // } else {
             console.log('执行', id)
-      this.$router.push({path:'/snapshot/abc',query:{
+      this.$router.push({path:'disk/create',query:{
           id:id
         }})
             // this.$router.push({name: 'snapshot_detail', query: {
