@@ -235,7 +235,9 @@ export default class Chains extends Vue {
         //     }})
         // } else {
             console.log('执行')
-            this.$router.push({name: 'snapshot_detail'})
+            this.$router.push({name: 'snapshot_detail', query: {
+              'id': id
+              }})
         // }
         // this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
         //     id
