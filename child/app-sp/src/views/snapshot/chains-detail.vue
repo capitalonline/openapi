@@ -25,9 +25,9 @@ import {Form} from 'element-ui';
     }
 })
 export default class Create extends Vue{
-    @PropSync('visible')visibleSync!:false;
-    @Prop({default:()=>{}})info!:any;
-    private title:string=''
+    // @PropSync('visible')visibleSync!:false;
+    // @Prop({default:()=>{}})info!:any;
+    // private title:string=''
     // private configInfo:any={
     //     customer_id:{label:'客户ID',value:''},
     //     az_name:{label:'可用区',value:''},
