@@ -6,21 +6,21 @@
             :data="list"
             @filter-change="handleFilter"
         >
-            <el-table-column 
-                v-for="item in column_list" 
-                :key="item.prop" 
-                :prop="item.prop" 
-                :label="item.label" 
+            <el-table-column
+                v-for="item in column_list"
+                :key="item.prop"
+                :prop="item.prop"
+                :label="item.label"
                 :max-height="tableHeight"
                 :column-key="item.prop"
                 :filters ="item.column_key? item.filters : null"
                 :filter-multiple="true"
-            >   
+            >
                 <template #default="scope" v-if="item.prop==='snapshot_chains_id'">
                     <div>
-                        <el-tooltip 
-                        :content="scope.row.snapshot_chains_id" 
-                        placement="bottom" 
+                        <el-tooltip
+                        :content="scope.row.snapshot_chains_id"
+                        placement="bottom"
                         effect="light">
                             <span>{{ scope.row.snapshot_chains_id }}</span>
                         </el-tooltip>
@@ -30,8 +30,8 @@
                 <template #default="scope" v-else-if="item.prop==='instance_id'">
                     <template v-if="scope.row.instance_id">
                         <div>
-                            <el-tooltip 
-                                placement="right" 
+                            <el-tooltip
+                                placement="right"
                                 popper-class="tooltip-width"
                                 effect="light">
                                 <div slot="content">{{scope.row.instance_name}}</div>
@@ -41,21 +41,21 @@
                             </el-tooltip>
                         </div>
                         <div>
-                            <el-tooltip 
-                            :content="scope.row.instance_id" 
-                            placement="bottom" 
+                            <el-tooltip
+                            :content="scope.row.instance_id"
+                            placement="bottom"
                             effect="light">
                                 <span>{{ scope.row.instance_id }}</span>
                             </el-tooltip>
                         </div>
                     </template>
                     <span v-else>-</span>
-                    
+
                 </template>
                 <template #default="scope" v-else-if="item.prop==='disk_id'">
                     <div>
-                        <el-tooltip 
-                            placement="right" 
+                        <el-tooltip
+                            placement="right"
                             popper-class="tooltip-width"
                             effect="light">
                             <div slot="content">{{scope.row.disk_name}}</div>
@@ -65,9 +65,9 @@
                         </el-tooltip>
                     </div>
                     <div>
-                        <el-tooltip 
-                        :content="scope.row.disk_id" 
-                        placement="bottom" 
+                        <el-tooltip
+                        :content="scope.row.disk_id"
+                        placement="bottom"
                         effect="light">
                             <span>{{ scope.row.disk_id }}</span>
                         </el-tooltip>
@@ -153,7 +153,7 @@ export default class Chains extends Vue {
         {prop:'snapshot_size',label:'快照容量'},
         {prop:'billing_method_display',label:'计费方式'},
     ]
-    
+
     private list:any=[]
     private pageInfo:Page={
         page_size:20,
@@ -179,7 +179,7 @@ export default class Chains extends Vue {
     private async get_disk_state(){
         let res:any = await d_Service.get_disk_state({})
         if(res.code==="Success"){
-            this.column_list[5].filters = trans(res.data,'status_name','status','text','value') 
+            this.column_list[5].filters = trans(res.data,'status_name','status','text','value')
 
         }
     }
@@ -229,16 +229,14 @@ export default class Chains extends Vue {
     private detail(id){
         this.FnClearTimer()
         sessionStorage.setItem('chainId',id)
-        if(this.$route.name==='render_snapshot_list'){
-            this.$router.push({path:'/render/chain/detail',query:{
-                id
-            }})
-        } else {
+        // if(this.$route.name==='render_snapshot_list'){
+        //     this.$router.push({path:'/render/chain/detail',query:{
+        //         id
+        //     }})
+        // } else {
             console.log('执行')
-            this.$router.push({path:'/chain/detail',query:{
-                id
-            }})
-        }
+            this.$router.push({name: 'snapshot_detail'})
+        // }
         // this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
         //     id
         // }})
@@ -251,8 +249,8 @@ export default class Chains extends Vue {
     private handleCurrentChange(cur){
         this.FnClearTimer()
         this.pageInfo = {...this.pageInfo,page_index:cur}
-        this.getSnapshotChainsList() 
-    } 
+        this.getSnapshotChainsList()
+    }
     private handleFilter(obj:any){
         this.FnClearTimer()
         this.filterInfo={...this.filterInfo,...obj}
