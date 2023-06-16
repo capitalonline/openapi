@@ -1,6 +1,7 @@
 
 <template>
-    <div class="chains-detail">
+  <div>2222</div>
+<!--    <div class="chains-detail">-->
 <!--        <back-header :title="title" back_url='/snapshot'></back-header>-->
 <!--        <el-card>-->
 <!--            <el-descriptions title="基本信息" :column="2">-->
@@ -9,7 +10,7 @@
 <!--            <el-divider></el-divider>-->
 <!--            <list-table :id="$route.query.id" :type="'detail'" :snapshot_chains_id="$route.query.id"></list-table>-->
 <!--        </el-card>-->
-    </div>
+<!--    </div>-->
 
 </template>
 <script lang="ts">
