@@ -1,8 +1,7 @@
 
 <template>
     <div class="chains-detail">
-      111
-        <back-header :title="title" back_url='/snapshot'></back-header>
+<!--        <back-header :title="title" back_url='/snapshot'></back-header>-->
 <!--        <el-card>-->
 <!--            <el-descriptions title="基本信息" :column="2">-->
 <!--                <el-descriptions-item :label="item.label" v-for="(item,i) in configInfo" :key="i">{{item.value}}</el-descriptions-item>-->
@@ -44,37 +43,37 @@ export default class Create extends Vue{
     }
     created() {
       console.log('+++++++++++', this.$route.query.id)
-        // this.title=`快照链：${this.$route.query.id}`
-        // console.log('###',this.$route.query.id)
-        // this.detail()
+        this.title=`快照链：${this.$route.query.id}`
+        console.log('###',this.$route.query.id)
+        this.detail()
     }
-    // private async detail(){
-    //     let res:any = await Service.chains_detail({
-    //         snapshot_chains_id:this.$route.query.id
-    //     })
-    //     if(res.code==='Success'){
-    //         let diskObj={
-    //             system:'系统盘',
-    //             data:'数据盘'
-    //         }
-    //         for(let i in this.configInfo){
-    //             if(i==='disk_type'){
-    //                 this.configInfo[i].value = diskObj[res.data[i]]
-    //             }else if(i==='az_name'){
-    //                 this.configInfo[i].value = `${res.data.region_name}-${res.data.az_name}`
-    //             }else if(i==='disk_size'){
-    //                 this.configInfo[i].value = res.data[i]+'GB'
-    //             }else if(i==='snapshot_size'){
-    //                 this.configInfo[i].value = res.data[i]+'GB'
-    //             }else{
-    //                 this.configInfo[i].value = res.data[i]
-    //             }
-    //
-    //
-    //         }
-    //
-    //     }
-    // }
+    private async detail(){
+        let res:any = await Service.chains_detail({
+            snapshot_chains_id:this.$route.query.id
+        })
+        if(res.code==='Success'){
+            let diskObj={
+                system:'系统盘',
+                data:'数据盘'
+            }
+            for(let i in this.configInfo){
+                if(i==='disk_type'){
+                    this.configInfo[i].value = diskObj[res.data[i]]
+                }else if(i==='az_name'){
+                    this.configInfo[i].value = `${res.data.region_name}-${res.data.az_name}`
+                }else if(i==='disk_size'){
+                    this.configInfo[i].value = res.data[i]+'GB'
+                }else if(i==='snapshot_size'){
+                    this.configInfo[i].value = res.data[i]+'GB'
+                }else{
+                    this.configInfo[i].value = res.data[i]
+                }
+
+
+            }
+
+        }
+    }
 }
 </script>
 <style lang="scss" scoped>
