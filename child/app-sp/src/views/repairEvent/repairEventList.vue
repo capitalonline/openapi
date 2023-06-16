@@ -131,7 +131,7 @@
                     <el-table-column label="期望状态">
                       <template #default="step">
                         <el-select v-model="step.row.re_status" >
-                          <el-option v-for="m in step.row.re_status_list" :label="m.status_display" :value="m.status">{{m.status}}</el-option>
+                          <el-option v-for="m in step.row.re_status_list" :label="m.status_display" :value="m.status">{{m.status_display}}</el-option>
                         </el-select>
                       </template>
                     </el-table-column>
