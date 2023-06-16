@@ -42,9 +42,9 @@ export default class Create extends Vue{
     //     update_snapshot_name:''
     // }
     created() {
-      console.log('+++++++++++', this.$route.query.id)
+      // console.log('+++++++++++', this.$route.query.id)
         // this.title=`快照链：${this.$route.query.id}`
-        console.log('###',this.$route.query.id)
+        // console.log('###',this.$route.query.id)
         // this.detail()
     }
     // private async detail(){
