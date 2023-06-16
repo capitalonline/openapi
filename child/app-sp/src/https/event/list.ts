@@ -43,4 +43,8 @@ export default{
     setReTasks(req){
       return service(getEcsOptions('POST','/event/repair_task/',req))
     },
+    //查看资源任务状态
+    getResourceStatus(){
+      return service(getEcsOptions('GET','/event/resource_status/'))
+    },
 }

@@ -130,11 +130,8 @@
                     <el-table-column prop="after_status_display" label="修复后状态"></el-table-column>
                     <el-table-column label="期望状态">
                       <template #default="step">
-                        <el-select v-model="step.row.re_status">
-                          <el-option label="runing" value="runing">runing</el-option>
-                          <el-option label="shutdown" value="shutdown">shutdown</el-option>
-                          <el-option label="deleted" value="deleted">deleted</el-option>
-                          <el-option label="destory" value="destory">destory</el-option>
+                        <el-select v-model="step.row.re_status" >
+                          <el-option v-for="m in step.row.re_status_list" :label="m.status_display" :value="m.status">{{m.status}}</el-option>
                         </el-select>
                       </template>
                     </el-table-column>
@@ -370,17 +367,21 @@
           })
         })
       }
-      this.getTasksStatusInfo(task_id)
+      this.getResourceStatusInfo(task_id)
 
     }
-    private async getTasksStatusInfo (task_id) {
-      let res:any = await service.getTasksStatus({
+    // 获取任务资源类型的状态列表
+    private async getResourceStatusInfo (task_id) {
+      let res:any = await service.getResourceStatus()
+      let taskList:any = await service.getTasksStatus({
         task_id
       })
-      if(res.data.resource_detail && res.code==='Success'){
-        this.resources = res.data.resource_detail.map(e => {
+      if(res.code==='Success' && taskList.code === 'Success'){
+        this.resources = taskList.data.resource_detail.map(e => {
+          const list = res.data[e.resource_type]
           return Object.assign({}, e,{
-            re_status: 'runing'
+            re_status: list[0].status,
+            re_status_list: list
           })
         })
       }
