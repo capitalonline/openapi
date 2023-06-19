@@ -1495,7 +1495,7 @@ def change_ecs_name():
 }
 ```
 
-### **16.CreateImage**
+### 16.CreateImage
 
 **Action**: CreateImage
 
