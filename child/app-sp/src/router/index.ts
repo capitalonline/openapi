@@ -97,7 +97,7 @@ const routes: RouteConfig[] = [
     path:'/disk/create1',
     name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
-    meta:{menu:'snapshot_list'}
+    meta:{menu:'disk_list'}
   },
   // {
   //   path:'/disk/create',
