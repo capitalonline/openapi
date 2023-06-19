@@ -94,14 +94,14 @@ const routes: RouteConfig[] = [
   //   meta:{menu:'snapshot_list'}
   // },
   {
-    path:'/disk/detail2',
-    name:'disk_create1',
+    path:'/disk/create1',
+    name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
     meta:{menu:'disk_list'}
   },
   {
     path:'/disk/create',
-    name:'disk_create',
+    name:'disk_create1',
     component:()=>import('../views/disk/create.vue'),
     meta:{menu:'disk_list'}
   },
