@@ -95,15 +95,15 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageInfo.page_index"
-            :page-sizes="[20, 50, 100]"
-            :page-size="pageInfo.page_size"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="pageInfo.total">
-        </el-pagination>
+<!--        <el-pagination-->
+<!--            @size-change="handleSizeChange"-->
+<!--            @current-change="handleCurrentChange"-->
+<!--            :current-page="pageInfo.page_index"-->
+<!--            :page-sizes="[20, 50, 100]"-->
+<!--            :page-size="pageInfo.page_size"-->
+<!--            layout="total, sizes, prev, pager, next, jumper"-->
+<!--            :total="pageInfo.total">-->
+<!--        </el-pagination>-->
     </div>
 </template>
 <script lang="ts">
