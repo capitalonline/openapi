@@ -90,7 +90,7 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="toDetail(scope.row.snapshot_chains_id)">详情</el-button>
+                    <el-button type="text" @click="toDetail(scope.row.snapshot_id)">详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -235,7 +235,7 @@ export default class Chains extends Vue {
         //     }})
         // } else {
             console.log('执行', id)
-      this.$router.push({path:'/disk/create1',query:{id:id}}).catch(()=>{})
+      this.$router.push({path:'/chain/detail',query:{id:id}}).catch(()=>{})
             // this.$router.push({name: 'snapshot_detail', query: {
             //   'id': id
             //   }})

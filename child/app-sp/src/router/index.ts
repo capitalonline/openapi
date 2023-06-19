@@ -87,21 +87,15 @@ const routes: RouteConfig[] = [
     component:()=>import('../views/snapshot/tabList.vue'),
     meta:{menu:'snapshot_list'}
   },
-  // {
-  //   path:'/snapshot/abc',
-  //   name:'snapshot_detail',
-  //   component:()=>import('../views/snapshot/tabList.vue'),
-  //   meta:{menu:'snapshot_list'}
-  // },
   {
-    path:'/disk/create1',
-    name:'disk_create',
-    component:()=>import('../views/disk/create.vue'),
-    meta:{menu:'disk_list'}
+    path:'/chain/detail',
+    name:'snapshot_detail',
+    component:()=>import('../views/snapshot/tabList.vue'),
+    meta:{menu:'snapshot_list'}
   },
   {
     path:'/disk/create',
-    name:'disk_create1',
+    name:'disk_create',
     component:()=>import('../views/disk/create.vue'),
     meta:{menu:'disk_list'}
   },
