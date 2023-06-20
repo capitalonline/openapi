@@ -1180,7 +1180,7 @@ def describe_account_subject():
 | Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
 | BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
 | Password          | 必选 | string | 登录密码                                                     |
-| ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
+| ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImages**返回值中的ImageName或者ImageId) |
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
 | VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
 | SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
