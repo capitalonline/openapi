@@ -95,7 +95,7 @@ const routes: RouteConfig[] = [
   // },
   {
     path:'/chain/detail',
-    name:'chain_detail',
+    name:'disk_create',
     component:()=>import('../views/snapshot/chains-detail.vue'),
     meta:{menu:'snapshot_list'}
   },
