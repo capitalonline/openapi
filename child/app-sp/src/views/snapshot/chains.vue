@@ -90,20 +90,19 @@
             </el-table-column>
             <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
-                  {{scope.row.snapshot_chains_id}}
-                    <el-button type="text" @click="toDetail(scope.row.snapshot_chains_id)">详情</el-button>
+                    <el-button type="text" @click="detail(scope.row.snapshot_chains_id)">详情</el-button>
                 </template>
             </el-table-column>
         </el-table>
-<!--        <el-pagination-->
-<!--            @size-change="handleSizeChange"-->
-<!--            @current-change="handleCurrentChange"-->
-<!--            :current-page="pageInfo.page_index"-->
-<!--            :page-sizes="[20, 50, 100]"-->
-<!--            :page-size="pageInfo.page_size"-->
-<!--            layout="total, sizes, prev, pager, next, jumper"-->
-<!--            :total="pageInfo.total">-->
-<!--        </el-pagination>-->
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageInfo.page_index"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageInfo.page_size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageInfo.total">
+        </el-pagination>
     </div>
 </template>
 <script lang="ts">
@@ -227,20 +226,19 @@ export default class Chains extends Vue {
             clearTimeout(this.timer)
         }
     }
-    private toDetail(id){
-        // this.FnClearTimer()
-        // sessionStorage.setItem('chainId',id)
-        // if(this.$route.name==='render_snapshot_list'){
-        //     this.$router.push({path:'/render/chain/detail',query:{
-        //         id
-        //     }})
-        // } else {
-            console.log('执行', id)
-      this.$router.push({path:'/chain/detail',query:{id:id}})
-            // this.$router.push({name: 'snapshot_detail', query: {
-            //   'id': id
-            //   }})
-        // }
+    private detail(id){
+        this.FnClearTimer()
+        sessionStorage.setItem('chainId',id)
+        if(this.$route.name==='render_snapshot_list'){
+            this.$router.push({path:'/render/chain/detail',query:{
+                id
+            }})
+        } else {
+            console.log('执行')
+            this.$router.push({path:'/chain/detail',query:{
+                id
+            }})
+        }
         // this.$router.push({path:this.$route.name==='render_snapshot_list' ? '/render/chain/detail' :'/chain/detail',query:{
         //     id
         // }})
