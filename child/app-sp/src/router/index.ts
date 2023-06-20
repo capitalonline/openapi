@@ -75,9 +75,15 @@ const routes: RouteConfig[] = [
     component:()=>import('../views/snapshot/tabList.vue'),
     meta:{menu:'snapshot_list'}
   },
+  // {
+  //   path:'/chain/detail',
+  //   name:'snapshot_detail',
+  //   component:()=>import('../views/snapshot/chains-detail.vue'),
+  //   meta:{menu:'snapshot_list'}
+  // },
   {
     path:'/chain/detail',
-    name:'snapshot_detail',
+    name:'chain_detail',
     component:()=>import('../views/snapshot/chains-detail.vue'),
     meta:{menu:'snapshot_list'}
   },
