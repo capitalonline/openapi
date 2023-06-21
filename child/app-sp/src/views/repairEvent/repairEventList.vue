@@ -16,46 +16,46 @@
               <ul>
                 <li>
                   <h1>step1：<el-button type="primary" @click="getUnderlyingTasksInfo(scope.row.task_id)">检查底层任务状态</el-button></h1>
-                  <template v-if="step1_status">
-                    <div class="m-top10 m-bottom10"><b>主任务检查结果：</b></div>
-                    <div style="width:90%">
-                      <el-descriptions
-                        :column="2"
-                        border
-                      >
-                        <el-descriptions-item width="100" label="主任务Id">{{maintask.taskId}}</el-descriptions-item>
-                        <el-descriptions-item width="100" label="上一次执行结束时间">{{maintask.execEndTime}}</el-descriptions-item>
-                        <el-descriptions-item width="100" label="主任务执行参数"><div style="max-width: 700px;">{{JSON.stringify(maintask.globalContext)}}</div></el-descriptions-item>
-                      </el-descriptions>
-                    </div>
+<!--                  <template v-if="step1_status">-->
+<!--                    <div class="m-top10 m-bottom10"><b>主任务检查结果：</b></div>-->
+<!--                    <div style="width:90%">-->
+<!--                      <el-descriptions-->
+<!--                        :column="2"-->
+<!--                        border-->
+<!--                      >-->
+<!--                        <el-descriptions-item width="100" label="主任务Id">{{maintask.taskId}}</el-descriptions-item>-->
+<!--                        <el-descriptions-item width="100" label="上一次执行结束时间">{{maintask.execEndTime}}</el-descriptions-item>-->
+<!--                        <el-descriptions-item width="100" label="主任务执行参数"><div style="max-width: 700px;">{{JSON.stringify(maintask.globalContext)}}</div></el-descriptions-item>-->
+<!--                      </el-descriptions>-->
+<!--                    </div>-->
 
-                    <div class="m-top10 m-bottom10"><b>子任务检查结果：</b></div>
-                    <el-table :data="subtasks"
-                              border
-                              v-if="subtasks.length > 0"
-                              style="width:99%"
-                              class="event-table">
-                      <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>
-                      <el-table-column prop="status" label="状态"></el-table-column>
-                      <el-table-column prop="errorMsg" label="失败原因"></el-table-column>
-                      <el-table-column prop="executorName" label="执行服务"></el-table-column>
-                      <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
-                      <el-table-column prop="execTime" label="执行时间"></el-table-column>
-                      <el-table-column label="执行参数">
-                        <template #default="step">
-                          {{step.row.status && step.row.status === 'failed' ? step.row.parameters : '-'}}
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="回调参数">
-                        <template #default="step">
-                          {{step.row.callbackContent}}
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </template>
+<!--                    <div class="m-top10 m-bottom10"><b>子任务检查结果：</b></div>-->
+<!--                    <el-table :data="subtasks"-->
+<!--                              border-->
+<!--                              v-if="subtasks.length > 0"-->
+<!--                              style="width:99%"-->
+<!--                              class="event-table">-->
+<!--                      <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>-->
+<!--                      <el-table-column prop="status" label="状态"></el-table-column>-->
+<!--                      <el-table-column prop="errorMsg" label="失败原因"></el-table-column>-->
+<!--                      <el-table-column prop="executorName" label="执行服务"></el-table-column>-->
+<!--                      <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>-->
+<!--                      <el-table-column prop="execTime" label="执行时间"></el-table-column>-->
+<!--                      <el-table-column label="执行参数">-->
+<!--                        <template #default="step">-->
+<!--                          {{step.row.status && step.row.status === 'failed' ? step.row.parameters : '-'}}-->
+<!--                        </template>-->
+<!--                      </el-table-column>-->
+<!--                      <el-table-column label="回调参数">-->
+<!--                        <template #default="step">-->
+<!--                          {{step.row.callbackContent}}-->
+<!--                        </template>-->
+<!--                      </el-table-column>-->
+<!--                    </el-table>-->
+<!--                  </template>-->
 
                 </li>
-                <li v-if="maintask.status == 'failed' && step1_status">
+                <li v-if="(maintask.status == 'failed' || step2_mainTaskStatus) && step1_status">
                   <h1>step2：底层任务修复</h1>
                   <div class="m-top10 m-bottom10"><b>主任务：</b></div>
                   <el-table :data="maintaskList"
@@ -109,7 +109,11 @@
                     </el-table-column>
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)">底层任务修复执行</el-button>
-<!--                  <div class="step-result">执行结果：{{step2_str}}</div>-->
+                  <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus"><el-progress :percentage="step2_progress"></el-progress></div>
+                  <div class="step-result" v-if="step2_progress === 100 && step2_mainTaskStatus">执行结果：
+                    <span v-if="maintask.status == 'failed'">任务失败</span>
+                    <span v-else>任务成功</span>
+                  </div>
 
                 </li>
                 <li v-if="step1_status">
@@ -260,6 +264,11 @@
     private resources:any = []
     private re_parameters:any = ''
     private step3_str:string = ''
+    private step2_str:string = ''
+    private step2_progress:number = 0
+    private step2_status:boolean = false
+    private clear = null;
+    private step2_mainTaskStatus:boolean = false
 
     created() {
       this.get_az_list();
@@ -350,8 +359,11 @@
         this.get_error_task_list()
       }
     }
-    private async getUnderlyingTasksInfo (task_id) {
-      this.step1_status = false
+    private async getUnderlyingTasksInfo (task_id,loading:boolean = true,status) {
+      if (!loading) {
+        this.$store.commit('SET_LOADING', false);
+        // this.step2_mainTaskStatus = status
+      }
       let res:any = await service.getUnderlyingTasks({
         task_id
       })
@@ -360,6 +372,8 @@
         this.maintask = res.data.maintask
         this.maintaskList = [res.data.maintask]
         this.subtasks = res.data.subtasks
+        this.step2_progress = res.data.process
+        this.step2_mainTaskStatus = status
         this.subtasks_step2 = res.data.subtasks.map(e => {
           return Object.assign({}, e,{
             re_parameters: '',
@@ -367,24 +381,62 @@
           })
         })
       }
-      this.getResourceStatusInfo(task_id)
+      this.getResourceStatusInfo(task_id,loading)
+      if(this.maintask.status !== 'doing'){
+        if (this.clear) {
+          this.FnClearTimer();
+        }
+      }
 
     }
     // 获取任务资源类型的状态列表
-    private async getResourceStatusInfo (task_id) {
-      let res:any = await service.getResourceStatus()
-      let taskList:any = await service.getTasksStatus({
-        task_id
-      })
-      if(res.code==='Success' && taskList.code === 'Success'){
-        this.resources = taskList.data.resource_detail.map(e => {
-          const list = res.data[e.resource_type]
-          return Object.assign({}, e,{
-            re_status: list[0].status,
-            re_status_list: list
-          })
-        })
+    private async getResourceStatusInfo (task_id,loading:boolean = true) {
+      console.log('11111'+loading)
+      if (!loading) {
+        this.$store.commit('SET_LOADING', false);
       }
+      if (!loading) {
+        await Promise.all([
+          service.getResourceStatus(),
+          service.getTasksStatus({task_id})
+        ]).then(([res, taskList]) => {
+          if (res.code === 'Success' && taskList.code === 'Success') {
+            this.resources = taskList.data.resource_detail.map(e => {
+              const list = res.data[e.resource_type];
+              return Object.assign({}, e, {
+                re_status: list[0].status,
+                re_status_list: list
+              });
+            });
+          }
+        });
+      } else {
+        let res = await service.getResourceStatus();
+        let taskList = await service.getTasksStatus({ task_id });
+
+        if (res.code === 'Success' && taskList.code === 'Success') {
+          this.resources = taskList.data.resource_detail.map(e => {
+            const list = res.data[e.resource_type];
+            return Object.assign({}, e, {
+              re_status: list[0].status,
+              re_status_list: list
+            });
+          });
+        }
+      }
+      // let res:any = await service.getResourceStatus()
+      // let taskList:any = await service.getTasksStatus({
+      //   task_id
+      // })
+      // if(res.code==='Success' && taskList.code === 'Success'){
+      //   this.resources = taskList.data.resource_detail.map(e => {
+      //     const list = res.data[e.resource_type]
+      //     return Object.assign({}, e,{
+      //       re_status: list[0].status,
+      //       re_status_list: list
+      //     })
+      //   })
+      // }
     }
     // step3的执行
     private async setTasksStatus (task_id) {
@@ -412,6 +464,8 @@
     }
     // step2的执行
     private async setReTasks (task_id) {
+      this.step2_status = true
+      this.$store.commit('SET_LOADING', false);
       let subtasks:any = this.subtasks_step2.filter(e => e.status === 'failed').map(e => {
         return {
           failedSubExecFlag: e.isCheck ? 1 : 0,
@@ -427,8 +481,24 @@
       if(res.code==='Success'){
         this.$message.success(res.message);
         // this.step2_str = res.data.result_str
+        this.FnSetTimer(task_id);
       }
     }
+
+    private FnSetTimer(task_id) {
+      if (this.clear) {
+        this.FnClearTimer();
+      }
+      this.clear = setInterval(()=>{
+        this.getUnderlyingTasksInfo(task_id, false,true);
+      },5000);
+    }
+    private FnClearTimer() {
+      if (this.clear) {
+        clearInterval(this.clear);
+      }
+    }
+
     private rowClick (row) {
       this.event_list.forEach(e => {
         if (row.task_id !== e.task_id) {
