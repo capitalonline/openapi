@@ -2362,7 +2362,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 **Action：DescribePipeUtilization**
 
-**描述：** 查询所有PIPE资源带宽使用率
+**描述：** 查询所有pipe资源带宽使用率(未加入GPN的私网不进行统计)
 
 **请求地址:** cdsapi.capitalonline.net/vpc
 
@@ -2393,6 +2393,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | PipeId | string | 61c5c88a-0712-11ed-bddb-a6f78540e6aa | Pipe ID |
 | PipeName | string | 公网1 | Pipe名称 |
 | Qos | int | 10 | Pipe带宽限速 |
+| Type | string | public | Pipe类型:public/private（公网/私网） |
 
 **错误码：**
 
@@ -2420,7 +2421,8 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
                         "OutUtilization": "0.0%",
                         "PipeId": "61c5c88a-0712-11ed-bddb-a6f78540e6aa",
                         "PipeName": "公网1",
-                        "Qos": 10
+                        "Qos": 10,
+                        "Type": "public"
                     }
                 ],
                 "VdcId": "02a6eadb-8e81-47ec-a891-2ec7a805afcb",
