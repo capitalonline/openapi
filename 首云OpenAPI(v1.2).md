@@ -2422,7 +2422,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
                         "PipeId": "61c5c88a-0712-11ed-bddb-a6f78540e6aa",
                         "PipeName": "公网1",
                         "Qos": 10,
-	                      "Type": "public"
+                        "Type": "public"
                     }
                 ],
                 "VdcId": "02a6eadb-8e81-47ec-a891-2ec7a805afcb",
