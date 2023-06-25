@@ -2393,7 +2393,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | PipeId | string | 61c5c88a-0712-11ed-bddb-a6f78540e6aa | Pipe ID |
 | PipeName | string | 公网1 | Pipe名称 |
 | Qos | int | 10 | Pipe带宽限速 |
-| Type | string | public | Pipe类型（公网/私网） |
+| Type | string | public | Pipe类型:public/private（公网/私网） |
 
 **错误码：**
 
