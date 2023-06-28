@@ -147,7 +147,12 @@
                     </el-table-column>
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setTasksStatus(scope.row.task_id)" :disabled="step3_repair">修复业务层执行</el-button>
-                  <div class="step-result">执行结果：{{step3_str}}</div>
+                  <div class="step-result">执行结果：
+                    <div v-for="(value,key) in step3_str">
+                    {{key}}:{{value}}
+                    <br/>
+                  </div>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -456,12 +461,12 @@
     }
     // step3的执行
     private async setTasksStatus (task_id) {
-      let repairResources:any = this.resources.map(e => {
-        return {
-          resource_id: e.resource_id,
-          resource_type: e.resource_type,
-          expect_status: e.re_status,
-        }
+      let repairResources:any = this.resources.filter((e) => e.need_repair).map(e => {
+          return {
+            resource_id: e.resource_id,
+            resource_type: e.resource_type,
+            expect_status: e.re_status,
+          }
       })
       let res:any = await service.setTasksStatus({
         task_id: task_id,
