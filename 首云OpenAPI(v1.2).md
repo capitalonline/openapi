@@ -82,6 +82,7 @@
        * [17.CreateGPN](#17creategpn)
        * [18.DeleteGPN](#18deletegpn)
        * [19.ModifyVdcName](#19modifyvdcname)
+       * [20.DescribePipeUtilization](#20describepipeutilization)
      * [私有网络相关](#私有网络相关)
        * [1.DescribeVPC](#1describevpc)
        * [2.CreateVPC](#2createvpc)
@@ -2354,6 +2355,82 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
   "Data": {},
   "Message": "Success.",
   "TaskId": ""
+}
+```
+
+### 20.DescribePipeUtilization
+
+**Action：DescribePipeUtilization**
+
+**描述：** 查询所有pipe资源带宽使用率(未加入GPN的私网不进行统计)
+
+**请求地址:** cdsapi.capitalonline.net/vpc
+
+**请求方法：POST**
+
+**请求参数：**
+
+| 名称 | 类型 | 是否必选 | 示例值 | 描述 |
+| ---- | ---- | -------- | ------ | ---- |
+| 无   |      |          |        |      |
+
+**返回参数：**
+
+| 名称   | 类型     | 示例值                               | 描述   |
+| :----- | -------- | :----------------------------------- | :----- |
+| Code          | string | Success                              | 错误码            |
+| Message       | string | success                              | 信息              |
+| Data          | dict   | {}                                   | 返回数据          |
+| Time          | string | 2023-06-19 11:43:51                  | 时间              |
+| VdcInfo       | list   | []                                   | vdc信息列表       |
+| VdcId         | string | 019c4121-58d3-453b-9fce-46a05301699e | VDC ID            |
+| VdcName       | string | 测试1                                | VDC 名称          |
+| PipeInfo      | list   | []                                   | VDC下Pipe信息列表 |
+| InFlow        | float | 0                                    | 入向带宽          |
+| InUtilization | string | 0.0%                                 | 入向带宽使用率         |
+| OutFlow | float | 0 | 出向带宽 |
+| OutUtilization | string | 0.0% | 出向带宽使用率 |
+| PipeId | string | 61c5c88a-0712-11ed-bddb-a6f78540e6aa | Pipe ID |
+| PipeName | string | 公网1 | Pipe名称 |
+| Qos | int | 10 | Pipe带宽限速 |
+| Type | string | public | Pipe类型:public/private（公网/私网） |
+
+**错误码：**
+
+| httpcode | 错误码                 | 错误信息                                                     | 描述                           |
+| -------- | ---------------------- | ------------------------------------------------------------ | ------------------------------ |
+
+**返回示例：**
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "Time": "2023-06-19 11:43:51",
+        "VdcInfo": [
+            {
+                "PipeInfo": null,
+                "VdcId": "019c4121-58d3-453b-9fce-46a05301699e",
+                "VdcName": "测试1"
+            },
+            {
+                "PipeInfo": [
+                    {
+                        "InFlow": 0,
+                        "InUtilization": "0.0%",
+                        "OutFlow": 0,
+                        "OutUtilization": "0.0%",
+                        "PipeId": "61c5c88a-0712-11ed-bddb-a6f78540e6aa",
+                        "PipeName": "公网1",
+                        "Qos": 10,
+                        "Type": "public"
+                    }
+                ],
+                "VdcId": "02a6eadb-8e81-47ec-a891-2ec7a805afcb",
+                "VdcName": "测试2"
+            }
+        ]
+    },
+    "Message": "success"
 }
 ```
 
@@ -5102,7 +5179,7 @@ def describe_bms_list():
     url = get_signature(action, AK, AccessKeySecret, method, BMS_URL, param)
     res = requests.get(url)
     result = json.loads(res.content)
- ```
+```
 
 
 ### 6.DescribeBmsDetail
