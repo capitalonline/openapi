@@ -108,10 +108,16 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)">底层任务修复执行</el-button>
+                  <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)" :disabled="step2_repair">底层任务修复执行</el-button>
+                  <span class="m-left10 step-result">{{step2_str}}</span>
                   <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus"><el-progress :percentage="step2_progress"></el-progress></div>
                   <div class="step-result" v-if="step2_progress === 100 && step2_mainTaskStatus">执行结果：
-                    <span v-if="maintask.status == 'failed'">任务失败</span>
+                    <span v-if="maintask.status == 'failed'">任务失败
+                      <div v-for="info in filter_info">
+                      <span>{{info.subtaskName + ':'}}</span>
+                      <span>{{info.errorMsg }}</span>
+                        </div>
+                    </span>
                     <span v-else>任务成功</span>
                   </div>
 
@@ -129,10 +135,10 @@
                         {{step.row.need_repair ? '是' : '否'}}
                       </template>
                     </el-table-column>
-                    <el-table-column prop="status_display" label="当前状态"></el-table-column>
+                    <el-table-column prop="status_display" label="初始状态"></el-table-column>
                     <el-table-column prop="expect_status_display" label="期望状态"></el-table-column>
                     <el-table-column prop="after_status_display" label="修复后状态"></el-table-column>
-                    <el-table-column label="期望状态">
+                    <el-table-column label="[操作]期望状态">
                       <template #default="step">
                         <el-select v-model="step.row.re_status" >
                           <el-option v-for="m in step.row.re_status_list" :label="m.status_display" :value="m.status">{{m.status_display}}</el-option>
@@ -140,7 +146,7 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  <el-button type="primary" class="m-top10 m-bottom10" @click="setTasksStatus(scope.row.task_id)">修复业务层执行</el-button>
+                  <el-button type="primary" class="m-top10 m-bottom10" @click="setTasksStatus(scope.row.task_id)" :disabled="step3_repair">修复业务层执行</el-button>
                   <div class="step-result">执行结果：{{step3_str}}</div>
                 </li>
               </ul>
@@ -269,6 +275,9 @@
     private step2_status:boolean = false
     private clear = null;
     private step2_mainTaskStatus:boolean = false
+    private step2_repair:boolean = false
+    private step3_repair:boolean = false
+    private filter_info = []
 
     created() {
       this.get_az_list();
@@ -387,11 +396,18 @@
           this.FnClearTimer();
         }
       }
+      if(this.step2_mainTaskStatus && this.maintask.status == 'failed'){
+        this.step2_repair = false
+        this.step3_repair = true
+        this.filter_info = res.data.fail_subtasks.map(item =>{
+          return {subtaskName: item.subtaskName , errorMsg:item.errorMsg}
+        })
+        console.log(JSON.stringify(this.filter_info))
+      }
 
     }
     // 获取任务资源类型的状态列表
     private async getResourceStatusInfo (task_id,loading:boolean = true) {
-      console.log('11111'+loading)
       if (!loading) {
         this.$store.commit('SET_LOADING', false);
       }
@@ -464,6 +480,7 @@
     }
     // step2的执行
     private async setReTasks (task_id) {
+      this.step2_repair = true
       this.step2_status = true
       this.$store.commit('SET_LOADING', false);
       let subtasks:any = this.subtasks_step2.filter(e => e.status === 'failed').map(e => {
@@ -479,7 +496,8 @@
         subtasks: subtasks
       })
       if(res.code==='Success'){
-        this.$message.success(res.message);
+        this.step2_str = res.message
+        // this.$message.success(res.message);
         // this.step2_str = res.data.result_str
         this.FnSetTimer(task_id);
       }
@@ -490,6 +508,7 @@
         this.FnClearTimer();
       }
       this.clear = setInterval(()=>{
+        this.step2_str = ''
         this.getUnderlyingTasksInfo(task_id, false,true);
       },5000);
     }
