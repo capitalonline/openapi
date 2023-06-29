@@ -408,6 +408,16 @@
             isCheck: e.status === 'failed'
           })
         })
+        for (let subtask of this.subtasks_step2) {
+          if (subtask.status === 'failed') {
+            this.step3_repair = true;
+            this.step2_repair = false;
+            break; // Stop iterating once a failed subtask is found
+          } else {
+            this.step3_repair = false;
+            this.step2_repair = true;
+          }
+        }
       }
       this.getResourceStatusInfo(task_id,loading)
       if(this.maintask.status !== 'doing'){
@@ -415,14 +425,9 @@
           this.FnClearTimer();
         }
       }
-      if (this.maintask.status !== 'success'){
-        this.step3_repair = true
-      } else {
-        this.step3_repair =false
-      }
       if(this.step2_mainTaskStatus && this.maintask.status == 'failed'){
-        this.step2_repair = false
-        this.step3_repair = true
+        // this.step2_repair = false
+        // this.step3_repair = true
         this.filter_info = res.data.fail_subtasks.map(item =>{
           return {subtaskName: item.subtaskName , errorMsg:item.errorMsg}
         })
@@ -501,6 +506,14 @@
           })
         })
         this.step3_str=res.data.repair_detail
+        Object.values(this.resources).forEach((resource) => {
+          if (resource.need_repair === true) {
+            this.step3_repair = false;
+          } else {
+            this.step3_repair = true
+            this.fn_search()
+          }
+        });
       }
     }
     // step2的执行
