@@ -110,18 +110,27 @@
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)" :disabled="step2_repair">底层任务修复执行</el-button>
                   <span class="m-left10 step-result">{{step2_str}}</span>
-                  <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus"><el-progress :percentage="step2_progress"></el-progress></div>
+                  <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus">
+                    <el-progress :percentage="step2_progress"></el-progress>
+                    <span v-for="status in subtasks">
+                      <span v-if="status.status == 'doing' && step2_progress !== 100 ">{{ status.subtaskName}}</span>
+                    </span>
+                  </div>
                   <div class="step-result" v-if="step2_progress === 100 && step2_mainTaskStatus">执行结果：
                     <span v-if="maintask.status == 'failed'">任务失败
                       <div v-for="info in filter_info">
-                      <span>{{info.subtaskName + ':'}}</span>
-                      <span>{{info.errorMsg }}</span>
+                      <span>{{ info.subtaskName }}</span>
+                      <span>{{info.errorMsg }}</span><br/>
+                        <span class="error">底层任务修复失败，请联系相关研发处理</span>
                         </div>
                     </span>
                     <span v-else>任务成功</span>
                   </div>
 
                 </li>
+                <span v-else-if="maintask.status == 'success'" class="step-result">
+                  底层任务无需修复
+                </span>
                 <li v-if="step1_status">
                   <h1>step3：修复业务层</h1>
                   <el-table :data="resources"
@@ -147,7 +156,7 @@
                     </el-table-column>
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setTasksStatus(scope.row.task_id)" :disabled="step3_repair">修复业务层执行</el-button>
-                  <div class="step-result">执行结果：
+                  <div class="step-result" v-if="Object.keys(step3_str).length> 0">执行结果：
                     <div v-for="(value,key) in step3_str">
                     {{key}}:{{value}}
                     <br/>
@@ -274,7 +283,7 @@
     private subtasks_step2:any = []
     private resources:any = []
     private re_parameters:any = ''
-    private step3_str:string = ''
+    private step3_str:any = {}
     private step2_str:string = ''
     private step2_progress:number = 0
     private step2_status:boolean = false
@@ -283,6 +292,8 @@
     private step2_repair:boolean = false
     private step3_repair:boolean = false
     private filter_info = []
+    private scrollPosition:number = 0
+
 
     created() {
       this.get_az_list();
@@ -377,12 +388,15 @@
       if (!loading) {
         this.$store.commit('SET_LOADING', false);
         // this.step2_mainTaskStatus = status
+        this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       }
       let res:any = await service.getUnderlyingTasks({
         task_id
       })
+      this.step3_str = {}
       this.step1_status = true
       if(res.code==='Success'){
+        window.scrollTo(0, this.scrollPosition);
         this.maintask = res.data.maintask
         this.maintaskList = [res.data.maintask]
         this.subtasks = res.data.subtasks
@@ -401,13 +415,17 @@
           this.FnClearTimer();
         }
       }
+      if (this.maintask.status !== 'success'){
+        this.step3_repair = true
+      } else {
+        this.step3_repair =false
+      }
       if(this.step2_mainTaskStatus && this.maintask.status == 'failed'){
         this.step2_repair = false
         this.step3_repair = true
         this.filter_info = res.data.fail_subtasks.map(item =>{
           return {subtaskName: item.subtaskName , errorMsg:item.errorMsg}
         })
-        console.log(JSON.stringify(this.filter_info))
       }
 
     }
@@ -422,11 +440,12 @@
           service.getTasksStatus({task_id})
         ]).then(([res, taskList]) => {
           if (res.code === 'Success' && taskList.code === 'Success') {
-            this.resources = taskList.data.resource_detail.map(e => {
+            this.resources = Object.keys(taskList.data.resource_detail).map((key) => {
+              const e = taskList.data.resource_detail[key];
               const list = res.data[e.resource_type];
               return Object.assign({}, e, {
                 re_status: list[0].status,
-                re_status_list: list
+                re_status_list: list,
               });
             });
           }
@@ -436,11 +455,12 @@
         let taskList = await service.getTasksStatus({ task_id });
 
         if (res.code === 'Success' && taskList.code === 'Success') {
-          this.resources = taskList.data.resource_detail.map(e => {
+          this.resources = Object.keys(taskList.data.resource_detail).map((key) => {
+            const e = taskList.data.resource_detail[key];
             const list = res.data[e.resource_type];
             return Object.assign({}, e, {
               re_status: list[0].status,
-              re_status_list: list
+              re_status_list: list,
             });
           });
         }
@@ -505,6 +525,8 @@
         // this.$message.success(res.message);
         // this.step2_str = res.data.result_str
         this.FnSetTimer(task_id);
+      } else {
+        this.step2_repair = false
       }
     }
 
