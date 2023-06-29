@@ -506,7 +506,7 @@
           })
         })
         this.step3_str=res.data.repair_detail
-        Object.values(this.resources).forEach((resource) => {
+        this.resources.forEach((resource) => {
           if (resource.need_repair === true) {
             this.step3_repair = false;
           } else {
