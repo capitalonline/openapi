@@ -95,7 +95,7 @@
                             <div v-else>{{ truncateText(scope.row.errorMsg, 3) }}</div>
                           </div>
                           <el-button v-if="scope.row.errorMsg " type="text" @click="toggleExpand(scope.$index)">
-                            <i :class="isExpanded[scope.$index] ? 'el-icon-arrow-down': 'el-icon-arrow-up' "></i>
+                            <i :class="isExpanded[scope.$index] ? 'el-icon-arrow-up': 'el-icon-arrow-down' "></i>
                           </el-button>
                         </div>
                       </template>
@@ -128,7 +128,9 @@
                   <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus">
                     <el-progress :percentage="step2_progress"></el-progress>
                     <span v-for="status in subtasks">
-                      <span v-if="status.status == 'doing' && step2_progress !== 100 ">{{ status.subtaskName}}</span>
+                      <span v-if="status.status == 'doing' && step2_progress !== 100 ">
+                        <span class="step-result">任务正在修复，请耐心等待:</span><br/>
+                        {{ status.subtaskName}}</span>
                     </span>
                   </div>
                   <div class="step-result" v-if="step2_progress === 100 && step2_mainTaskStatus">执行结果：
