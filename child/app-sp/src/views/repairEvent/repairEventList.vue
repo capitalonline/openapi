@@ -482,7 +482,7 @@
       } else if(this.step2_mainTaskStatus && this.maintask.status == 'success'){
         this.step3_repair = false;
       }
-      this.calculateLines();
+      // this.calculateLines();
     }
     // 获取任务资源类型的状态列表
     private async getResourceStatusInfo (task_id,loading:boolean = true) {
