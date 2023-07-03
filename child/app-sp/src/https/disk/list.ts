@@ -5,7 +5,7 @@ import { getEcsOptions } from '../common';
 export default{
     //获取云盘列表
     get_disk_list(req){
-        return service(getEcsOptions('GET','/ebs/get_disk_list/',req))
+        return service(getEcsOptions('POST','/ebs/get_disk_list/',req))
     },
     //云盘状态列表获取
     get_disk_state(req){
@@ -50,5 +50,9 @@ export default{
     //开启计费
     open_bill(req){
         return service(getEcsOptions('POST', '/resource/start_charge/', req))
+    },
+    //获取产品来源
+    get_product_source(req){
+        return service(getEcsOptions('GET', '/ebs/disk_product_source/', req))
     }
 }
