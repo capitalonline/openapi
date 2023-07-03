@@ -55,7 +55,7 @@
 <!--                  </template>-->
 
                 </li>
-                <li v-if="((maintask.status == 'failed' || step2_mainTaskStatus) && step1_status) && !step2_noFaild">
+                <li v-if="((maintask.status == 'failed' || step2_mainTaskStatus) && step1_status) && !step2_noFaild && main_list">
                   <h1>step2：底层任务修复</h1>
                   <div class="m-top10 m-bottom10"><b>主任务：</b></div>
                   <el-table :data="maintaskList"
@@ -63,17 +63,19 @@
                             style="width:99%">
                     <el-table-column prop="taskId" width="260" label="主任务Id"></el-table-column>
                     <el-table-column prop="execEndTime" width="230" label="上一次执行结束时间"></el-table-column>
-                    <el-table-column label="当前错误参数显示" width="420">
+                    <el-table-column label="当前错误参数显示" :width="tableWidth_1">
                       <template #default="step">
-                        <json-views :data="step.row.globalContext" :closed="true"></json-views>
-                        <Clipboard :content="JSON.stringify(step.row.globalContext)" v-if="step.row.globalContext"></Clipboard>
+                        <div @click="waclosed()">
+                          <json-views :data="step.row.globalContext" :closed="is_closed" ></json-views>
+                          <Clipboard  :content="JSON.stringify(step.row.globalContext)" v-if="step.row.globalContext"></Clipboard>
+                        </div>
                       </template>
                     </el-table-column>
-                    <el-table-column label="预期修改" width="420">
-                      <template #default="step">
-                        <el-input type="textarea" class="eventTextarea" v-model="re_parameters" style="width: 370px;height: 150px;"></el-input>
-                      </template>
-                    </el-table-column>
+<!--                    <el-table-column label="预期修改" width="420">-->
+<!--                      <template #default="step">-->
+<!--                        <el-input type="textarea" class="eventTextarea" v-model="re_parameters" style="width: 370px;height: 150px;"></el-input>-->
+<!--                      </template>-->
+<!--                    </el-table-column>-->
                   </el-table>
                   <div class="m-top10 m-bottom10"><b>子任务列表：</b></div>
                   <el-table :data="subtasks_step2"
@@ -87,7 +89,7 @@
                     </el-table-column>
                     <el-table-column prop="subtaskId" label="子任务Id"></el-table-column>
                     <el-table-column prop="status" width="80" label="状态"></el-table-column>
-                    <el-table-column prop="errorMsg" label="失败原因">
+                    <el-table-column prop="errorMsg" label="失败原因" >
                       <template slot-scope="scope">
                         <div class="text-container">
                           <div class="text-content" ref="textContent" :class="{ expanded: isExpanded[scope.$index] }">
@@ -103,40 +105,48 @@
                     <el-table-column prop="executorName" label="执行服务"></el-table-column>
                     <el-table-column prop="subtaskName" label="子任务名称"></el-table-column>
                     <el-table-column prop="execTime" label="执行时间"></el-table-column>
-                    <el-table-column label="回调参数" width="330">
+                    <el-table-column label="回调参数" :width="tableWidth_2">
                       <template #default="step">
-                        <json-views v-if="Object.keys(step.row.callbackContent).length >0"  :data="step.row.callbackContent" :closed="true"></json-views>
+                        <div @click="waclosed_2()">
+                        <json-views v-if="Object.keys(step.row.callbackContent).length >0"  :data="step.row.callbackContent" :closed="is_closed"></json-views>
                         <span v-else>-</span>
+                        </div>
 <!--                        {{step.row.callbackContent && JSON.stringify(step.row.callbackContent) !== '{}' ? JSON.stringify(step.row.callbackContent) : '-'}}-->
                       </template>
                     </el-table-column>
-                    <el-table-column label="当前错误参数显示" width="330">
+                    <el-table-column label="当前错误参数显示" :width="tableWidth_3">
                       <template #default="step">
-                        <json-views :data="step.row.parameters" :closed="true"></json-views>
+                        <div @click="waclosed_3()">
+                        <json-views :data="step.row.parameters" :closed="is_closed" @click="waclosed"></json-views>
+                        </div>
 <!--                        {{JSON.stringify(step.row.parameters)}}<br>-->
                         <Clipboard :content="JSON.stringify(step.row.parameters)" v-if="step.row.parameters"></Clipboard>
                       </template>
                     </el-table-column>
-                    <el-table-column label="预期修改" width="200">
-                      <template #default="step">
-                        <el-input type="textarea" class="eventTextarea" v-if="step.row.status == 'failed'" v-model="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>
-                      </template>
-                    </el-table-column>
+<!--                    <el-table-column label="预期修改" width="200">-->
+<!--                      <template #default="step">-->
+<!--                        <el-input type="textarea" class="eventTextarea" v-if="step.row.status == 'failed'" v-model="step.row.re_parameters" style="width: 170px;height: 150px;"></el-input>-->
+<!--                      </template>-->
+<!--                    </el-table-column>-->
                   </el-table>
                   <el-button type="primary" class="m-top10 m-bottom10" @click="setReTasks(scope.row.task_id)" :disabled="step2_repair">底层任务修复执行</el-button>
-                  <span class="m-left10 step-result">{{step2_str}}</span>
+<!--                  <span class="m-left10 step-result">{{step2_str}}</span>-->
+                  <div style="width: 25%" v-if="step2_status && !step2_mainTaskStatus">
+                    <el-progress :percentage="0"></el-progress>
+                    <span class="step-result">{{step2_doing}}</span>
+                  </div>
                   <div style="width: 25%" v-if="step2_status && step2_mainTaskStatus">
                     <el-progress :percentage="step2_progress"></el-progress>
+                    <span class="step-result" v-if="step2_progress !==100">{{step2_doing}}</span><br/>
                     <span v-for="status in subtasks">
                       <span v-if="status.status == 'doing' && step2_progress !== 100 ">
-                        <span class="step-result">任务正在修复，请耐心等待:</span><br/>
-                        {{ status.subtaskName}}</span>
+                        {{ status.subtaskCnName}}</span>
                     </span>
                   </div>
                   <div class="step-result" v-if="step2_progress === 100 && step2_mainTaskStatus">执行结果：
                     <span v-if="maintask.status == 'failed'">任务失败
                       <div v-for="info in filter_info">
-                      <span>{{ info.subtaskName }}</span>
+                      <span>{{ info.subtaskCnName }}</span><br/>
                       <span>{{info.errorMsg }}</span><br/>
                         <span class="error">底层任务修复失败，请联系相关研发处理</span>
                         </div>
@@ -145,10 +155,13 @@
                   </div>
 
                 </li>
-                <span v-else-if="step2_noFaild" class="step-result">
-                  底层任务无需修复
+                <span v-else-if="step2_noFaild">
+                  <li>
+                  <h1>step2：底层任务修复</h1>
+                  <span class="step-result">底层任务无需修复</span>
+               </li>
                 </span>
-                <li v-if="step1_status">
+                <li v-if="step1_status && main_list ">
                   <h1>step3：修复业务层</h1>
                   <el-table :data="resources"
                             border
@@ -288,6 +301,9 @@
     private size:number = 20
     private total:number = 0
     private moment =moment
+    private tableWidth_1: string = '200'
+    private tableWidth_2: string = '200'
+    private tableWidth_3: string = '200'
     private event_list:any=[]
     private min_date:any = ""
     private search_data:any = {};
@@ -315,12 +331,26 @@
     private scrollPosition:number = 0
     private isExpanded :any = []
     private step2_noFaild:boolean = false
+    private main_list:boolean = false
+    private is_closed:boolean = true
+    private step2_doing:string =''
 
     created() {
       this.get_az_list();
       this.getFilterList()
       this.fn_search()
     }
+
+    private waclosed(){
+      this.tableWidth_1 = this.tableWidth_1 === '200' ? '450' : '200'; // 根据需要调整宽度值
+    }
+    private waclosed_2(){
+      this.tableWidth_2 = this.tableWidth_2 === '200' ? '450' : '200'; // 根据需要调整宽度值
+    }
+    private waclosed_3(){
+      this.tableWidth_3 = this.tableWidth_3 === '200' ? '450' : '200'; // 根据需要调整宽度值
+    }
+
     private async get_az_list(){
       //this.search.az_id.list=[]
     let res:any=await EcsService.get_region_az_list({})
@@ -347,7 +377,10 @@
       this.search_data = {...data,...this.filter_obj}
       this.get_error_task_list()
     }
-    private async get_error_task_list() {
+    private async get_error_task_list(loading:boolean = true) {
+      if (!loading) {
+        this.$store.commit('SET_LOADING', false);
+      }
       const {search_data:data}=this
       const res:any = await service.get_repair_event_list({
         page_index:this.current,
@@ -418,33 +451,33 @@
         this.get_error_task_list()
       }
     }
-    private async getUnderlyingTasksInfo (task_id,loading:boolean = true,status) {
+    private async getUnderlyingTasksInfo (task_id,loading:boolean = true,status:boolean = false) {
       if (!loading) {
         this.$store.commit('SET_LOADING', false);
         // this.step2_mainTaskStatus = status
-        this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       }
       let res:any = await service.getUnderlyingTasks({
         task_id
       })
       this.step1_status = true
       if(res.code==='Success'){
-        window.scrollTo(0, this.scrollPosition);
-        this.maintask = res.data.maintask
-        this.maintaskList = [res.data.maintask]
-        this.subtasks = res.data.subtasks
-        this.step2_progress = res.data.process
-        this.step2_mainTaskStatus = status
-        if(Object.keys(this.maintask).length === 0){
-          this.$message.success('主任务不存在');
+        if( res.data.maintask_record !== undefined && res.data.maintask_record !== null &&  Object.keys(res.data.maintask_record).length === 0){
+          this.main_list = false
+          this.$message.error('主任务不存在');
         } else {
+          this.main_list = true
+          this.maintask = res.data.maintask
+          this.maintaskList = [res.data.maintask]
+          this.subtasks = res.data.subtasks
+          this.step2_progress = res.data.process
+          this.step2_mainTaskStatus = status
           this.subtasks_step2 = res.data.subtasks.map(e => {
             return Object.assign({}, e, {
               re_parameters: '',
               isCheck: e.status === 'failed'
             })
           })
-          if(!this.step2_mainTaskStatus) {
+          if(!this.step2_mainTaskStatus && this.subtasks_step2.length> 0 ) {
             this.step2_noFaild = true
             this.step3_repair = false;
             for (let subtask of this.subtasks_step2 ) {
@@ -506,6 +539,10 @@
               });
             } else {
               this.step3_repair = true
+              if(this.maintask.status === 'success' && this.step3_repair){
+                this.$message.success('任务修复成功');
+                this.get_error_task_list(false)
+              }
             }
           }
         });
@@ -569,14 +606,15 @@
             this.step3_repair = false;
           } else {
             this.step3_repair = true
-            this.fn_search()
+            this.$message.success('任务修复成功');
+            this.get_error_task_list(false)
           }
-          console.log(resource.need_repair === true)
         });
       }
     }
     // step2的执行
     private async setReTasks (task_id) {
+      this.step2_doing = '任务正在修复，请耐心等待：'
       this.step2_repair = true
       this.step2_status = true
       this.$store.commit('SET_LOADING', false);
@@ -644,6 +682,11 @@
       this.resources = []
       this.re_parameters = ''
       this.step3_str = {}
+      this.step2_str = ''
+      this.step2_status = false
+      this.main_list = false
+      this.filter_info = []
+      this.step2_doing = ''
     }
 
   }
@@ -672,6 +715,10 @@
 
     .text-content.expanded {
       -webkit-line-clamp: 99999;
+    }
+    .container {
+      display: flex;
+      flex-wrap: nowrap; /* 防止换行 */
     }
 
 

@@ -132,7 +132,7 @@ export default class ActionBlock extends Vue {
   @Emit('fn-create')
   private FnShowCreate() {
   }
-  
+
   @Watch("search_value", { immediate: true, deep: true })
   private watch_search_value(newval, oldval) {}
   private FnClear() {
@@ -164,7 +164,7 @@ export default class ActionBlock extends Vue {
         );
       }
     }
-    
+
     if (flag > 0 || this.type==='physical') {
       setTimeout(()=>{
         this.FnSearch()
