@@ -1,6 +1,8 @@
 <template>
     <div>
-      <action-block :search_option="search" @fn-search="fn_search"></action-block>
+      <div >
+      <action-block :style="{'display': 'flex', 'flex-wrap': 'nowrap','overflow-x': 'auto','min-width':'1000px'}" :search_option="search" @fn-search="fn_search"></action-block>
+      </div>
       <div class="prompt_message">重试：支持对失败状态的任务进行重试；忽略：支持对任务进行忽略，忽略的任务不展示</div>
       <el-table
         :data="event_list"
@@ -277,10 +279,10 @@
     $store;
     private search:any = {
       // az_id:  {placeholder:'请选择可用区',list:[]},
-      cloud_id:  {placeholder:'请输入资源ID'},
-      task_id: {placeholder:'请输入任务ID'},
+      cloud_id:  {placeholder:'请输入资源ID',width: 120},
+      task_id: {placeholder:'请输入任务ID',width: 120},
       // task_type: {placeholder:'请输入任务名称'},
-      customer_id: {placeholder:'请输入客户ID'},
+      customer_id: {placeholder:'请输入客户ID',width: 118},
       // customer_name: {placeholder:'请输入客户名称'},
       time:{
         type:'datetimerange',
