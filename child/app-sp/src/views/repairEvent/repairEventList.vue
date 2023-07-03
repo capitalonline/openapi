@@ -338,7 +338,7 @@
     private step2_doing:string =''
 
     created() {
-      this.get_az_list();
+      // this.get_az_list();
       this.getFilterList()
       this.fn_search()
     }
@@ -353,17 +353,17 @@
       this.tableWidth_3 = this.tableWidth_3 === '200' ? '450' : '200'; // 根据需要调整宽度值
     }
 
-    private async get_az_list(){
-      //this.search.az_id.list=[]
-    let res:any=await EcsService.get_region_az_list({})
-        if(res.code==="Success"){
-            res.data.forEach(item=>{
-                item.region_list.forEach(inn=>{
-                //this.search.az_id.list=[...this.search.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
-                })
-            })
-        }
-    }
+    // private async get_az_list(){
+    //   //this.search.az_id.list=[]
+    // let res:any=await EcsService.get_region_az_list({})
+    //     if(res.code==="Success"){
+    //         res.data.forEach(item=>{
+    //             item.region_list.forEach(inn=>{
+    //             //this.search.az_id.list=[...this.search.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+    //             })
+    //         })
+    //     }
+    // }
     private async getFilterList(){
       let res:any=await service.get_filter_item({
         filed_names:['error_type']
