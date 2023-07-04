@@ -99,7 +99,9 @@
                             <div v-else>{{ truncateText(scope.row.errorMsg, 3) }}</div>
                           </div>
                           <el-button v-if="scope.row.errorMsg " type="text" @click="toggleExpand(scope.$index)">
+                            <div class="button-container">
                             <i :class="isExpanded[scope.$index] ? 'el-icon-arrow-up': 'el-icon-arrow-down' "></i>
+                            </div>
                           </el-button>
                         </div>
                       </template>
@@ -752,6 +754,11 @@
     .container {
       display: flex;
       flex-wrap: nowrap; /* 防止换行 */
+    }
+    .button-container {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
 
