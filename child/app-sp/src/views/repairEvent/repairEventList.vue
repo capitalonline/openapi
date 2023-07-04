@@ -488,7 +488,7 @@
             let is_doing = false;
             let is_failed = false;
             for (let subtask of this.subtasks_step2 ) {
-              if ( subtask.status ==='doing' ||  subtask.status ==='wating') {
+              if ( subtask.status ==='doing' ||  subtask.status ==='waiting') {
                 is_doing = true;
               }
               if (this.maintask.status === 'failed' || subtask.status === 'failed'  ) {
@@ -500,7 +500,7 @@
               this.step3_repair = true;
               this.step2_repair = false;
             }
-            if(is_doing){
+            if(is_doing ){
               this.step2_noFaild = false;
               this.step3_repair = true;
               this.step2_repair = true;
@@ -512,7 +512,7 @@
             let is_doing = false;
             let is_failed = false;
             for (let subtask of this.subtasks_step2) {
-              if ( subtask.status ==='doing' ||  subtask.status ==='wating' ||  subtask.status ==='retry_init'  ) {
+              if ( subtask.status ==='doing' ||  subtask.status ==='waiting' ||  subtask.status ==='retry_init'  ) {
                 is_doing = true;
               }
               if (this.maintask.status === 'failed' || subtask.status === 'failed'  ) {
@@ -523,7 +523,7 @@
               this.step3_repair = true;
               this.step2_repair = false;
             }
-            if(is_doing){
+            if(is_doing || this.step2_progress!== 100){
               this.step3_repair = true;
               this.step2_repair = true;
             }
@@ -634,13 +634,14 @@
         })
         this.step3_str=res.data.repair_detail
         this.getResourceStatusInfo(task_id,false)
+        let is_need_repair = false;
         this.resources.forEach((resource) => {
           if (resource.need_repair === true) {
-            this.step3_repair = false;
-          } else {
-            this.step3_repair = true
+            is_need_repair = true;
           }
         });
+        this.step3_repair = !is_need_repair;
+
         if( this.step3_repair){
           this.get_error_task_list(false)
           this.$message.success('任务修复成功');
