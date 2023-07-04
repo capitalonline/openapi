@@ -480,26 +480,54 @@
             })
           })
           if(!this.step2_mainTaskStatus && this.subtasks_step2.length> 0 ) {
-            this.step2_noFaild = true
+            this.step2_noFaild = true;
+            this.step2_repair = true;
             this.step3_repair = false;
+            let is_doing = false;
+            let is_failed = false;
             for (let subtask of this.subtasks_step2 ) {
-              if (subtask.status === 'failed' || subtask.status ==='doing') {
-                this.step3_repair = true;
-                this.step2_repair = false;
-                this.step2_noFaild = false
-                break; // Stop iterating once a failed subtask is found
+              if ( subtask.status ==='doing' ||  subtask.status ==='wating') {
+                is_doing = true;
+              }
+              if (this.maintask.status === 'failed' || subtask.status === 'failed'  ) {
+                is_failed = true;
               }
             }
+            if(is_failed){
+              this.step2_noFaild = false;
+              this.step3_repair = true;
+              this.step2_repair = false;
+            }
+            if(is_doing){
+              this.step2_noFaild = false;
+              this.step3_repair = true;
+              this.step2_repair = true;
+            }
           } else {
-            this.step2_noFaild = false
-            this.step3_repair = false;
+            this.step3_repair = true;
             this.step2_repair = true;
+            this.step2_noFaild = false;
+            let is_doing = false;
+            let is_failed = false;
             for (let subtask of this.subtasks_step2) {
-              if (subtask.status === 'failed' || subtask.status ==='doing') {
-                this.step3_repair = true;
-                this.step2_repair = false;
-                break; // Stop iterating once a failed subtask is found
+              if ( subtask.status ==='doing' ||  subtask.status ==='wating' ||  subtask.status ==='retry_init'  ) {
+                is_doing = true;
               }
+              if (this.maintask.status === 'failed' || subtask.status === 'failed'  ) {
+                is_failed = true;
+              }
+            }
+            if(is_failed){
+              this.step3_repair = true;
+              this.step2_repair = false;
+            }
+            if(is_doing){
+              this.step3_repair = true;
+              this.step2_repair = true;
+            }
+            if(!is_failed && !is_doing){
+              this.step3_repair = false;
+              this.step2_repair = true;
             }
           }
         }
@@ -603,15 +631,18 @@
           })
         })
         this.step3_str=res.data.repair_detail
+        this.getResourceStatusInfo(task_id,false)
         this.resources.forEach((resource) => {
           if (resource.need_repair === true) {
             this.step3_repair = false;
           } else {
             this.step3_repair = true
-            this.$message.success('任务修复成功');
-            this.get_error_task_list(false)
           }
         });
+        if( this.step3_repair){
+          this.get_error_task_list(false)
+          this.$message.success('任务修复成功');
+        }
       }
     }
     // step2的执行
