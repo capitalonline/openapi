@@ -8,13 +8,21 @@
     </div> -->
     <div class="content">
       <!-- <action-block :search_option="search" @fn-search="fn_search"></action-block> -->
-      <div class="event-detail">
-        <div>任务总数:{{task_num}}</div>
-        <div class="destroy">已完成任务数:{{finish_num}}</div>
-        <div>完成率：{{finished_percent}}</div>
-        <div>成功任务数:{{success_num}}</div>
-        <div class="error">失败任务数:{{fail_num}}</div>
+      <div class="event-content">
+        <div class="event-search">
+          <el-input v-model="cloud_id" placeholder="请输入资源ID或资源名称查询"></el-input>
+          <el-button type="primary" @click="getTaskList">搜索</el-button>
+        </div>
+        <div class="event-detail">
+          <div>任务总数:{{task_num}}</div>
+          <div class="destroy">已完成任务数:{{finish_num}}</div>
+          <div>完成率：{{finished_percent}}</div>
+          <div>成功任务数:{{success_num}}</div>
+          <div class="error">失败任务数:{{fail_num}}</div>
+          <div class="nonExecution">不执行:{{ none_exec_num }}</div>
+        </div>
       </div>
+      
       <el-table 
         :data="task_list" 
         border 
@@ -24,7 +32,8 @@
         @filter-change="filterAttribute"
       >
         <el-table-column prop="task_id" label="任务ID"></el-table-column>
-        <el-table-column prop="event_id" label="事件ID"></el-table-column>
+        <!-- <el-table-column prop="event_id" label="事件ID"></el-table-column> -->
+        <el-table-column prop="customer_id" lable="客户ID" :filter-multiple="false"></el-table-column>
         <el-table-column prop="cloud_id" label="操作资源ID"></el-table-column>
         <el-table-column prop="az__name" label="可用区"></el-table-column>
         <el-table-column prop="task_type" label="任务名称"></el-table-column>
@@ -125,6 +134,7 @@ export default class Detail extends Vue {
     private finished_percent:string = '0.00%';
     private fail_num:number = 0;
     private success_num:number = 0;
+    private none_exec_num:number = 0;
     private err = 'err'
     private loading = false
     private visible = false
@@ -141,6 +151,7 @@ export default class Detail extends Vue {
     private sort_prop_name:string='';
     private sort_value:string='';
     private filter_obj:any={}
+    private cloud_id:string="" //资源id或资源名称查询
     created() {
       this.getFilterList()
       this.getTaskList()
@@ -177,6 +188,17 @@ export default class Detail extends Vue {
     private async getTaskList(){
       const {filter_obj:data}=this;
       const id = this.$route.params.id
+      let params = {
+        pod_id:this.$store.state.pod_id,
+        status:data.status && data.status.length>0 ? data.status[0] : '',
+        event_id:id,
+        page_index:this.current,
+        page_size:this.size,
+        [this.sort_prop_name]:this.sort_value,
+        error_type:data.error_type ? data.error_type[0] : undefined,
+        cloud_id:this.cloud_id ? this.cloud_id : '',
+      }
+      console.log('params', params)
       let res:any = await service.get_task_list({
         pod_id:this.$store.state.pod_id,
         status:data.status && data.status.length>0 ? data.status[0] : '',
@@ -194,6 +216,7 @@ export default class Detail extends Vue {
         this.fail_num = res.data?.fail_num
         this.success_num = res.data?.success_num
         this.finished_percent =this.task_num ? ((this.finish_num / this.task_num)*100).toFixed(2) + '%' : '0.00%'
+        this.none_exec_num = res.data?.none_exec_num
       }else{
         this.$message.error(res.msg)
       }
@@ -260,22 +283,33 @@ export default class Detail extends Vue {
     }
   }
   .content{
-    .event-detail{
-      display: flex;
+    .event-content {
       padding: 20px;
       background: #f2f2f2;
       border: 1px solid #e7e7e7;
-      margin-bottom: 20px;
-      // margin-top: -46px;
-      div {
-        margin-right: 20px;
-        // padding-left:20px
+      .event-search {
+        margin-bottom: 20px;
+        .el-input {
+          width: 200px;
+          margin-right: 20px;
+        }
       }
-      .error{
-        color: red;
+      .event-detail{
+        display: flex;
+        div {
+          margin-right: 20px;
+          // padding-left:20px
+        }
+        .error{
+          color: red;
+        }
+        .nonExecution {
+          color: #455cc6
+        }
       }
-      
     }
+    
+    
     .err{
       color:red
     }
