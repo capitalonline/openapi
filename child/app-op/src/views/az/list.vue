@@ -16,9 +16,9 @@
             >
                 <el-option v-for="item in azList" :key="item.az_id" :value="item.az_name" :label="item.az_name"></el-option>
             </el-select>
-            <el-select placeholder="请选择公网类型" v-model="search_data.public" class="search" @change="change($event,'public')" clearable>
+            <!-- <el-select placeholder="请选择公网类型" v-model="search_data.public" class="search" @change="change($event,'public')" clearable>
                 <el-option v-for="(item,i) in publicList" :key="i" :value="i" :label="item"></el-option>
-            </el-select>
+            </el-select> -->
             <div>
                 <el-button type="primary" @click="sync" :disabled="!authList.includes('sync')">同步</el-button>
             </div>
@@ -55,11 +55,11 @@
                     </span>
                </template>
            </el-table-column>
-           <el-table-column prop="net_type_display" label="公网类型">
+           <!-- <el-table-column prop="net_type_display" label="公网类型">
                <template slot-scope="scope">
                    <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.net_type_display}}</span>
                </template>
-           </el-table-column>
+           </el-table-column> -->
            <el-table-column prop="backend_types_display" label="存储类型">
                <template slot-scope="scope">
                    <span :class="scope.row.is_complete ? 'normal' : 'active'">{{scope.row.backend_types_display}}</span>
@@ -144,7 +144,7 @@ export default class Az extends Vue{
     }
     private regionList:any=[]
     private azList:any=[]
-    private publicList:any={};
+    // private publicList:any={};
     private visible:boolean=false;
     private operateInfo:any={};
     private operateType:string='';
@@ -159,7 +159,7 @@ export default class Az extends Vue{
     created() {
         this.authList = this.$store.state.auth_info[this.$route.name];        
         this.getRegion()
-        this.getNetType()
+        // this.getNetType()
         this.getAzList()
     }
     @Watch('visible')
@@ -177,12 +177,12 @@ export default class Az extends Vue{
             }
         }
     }
-    private async getNetType(){
-        let res:any = await Service.get_net_type();
-        if(res.code==='Success'){
-            this.publicList = res.data;
-        }
-    }
+    // private async getNetType(){
+    //     let res:any = await Service.get_net_type();
+    //     if(res.code==='Success'){
+    //         this.publicList = res.data;
+    //     }
+    // }
     private filterAz(val){        
         this.getAzList(val)
     }
@@ -195,10 +195,10 @@ export default class Az extends Vue{
         }
     }
     private async getAzList(val:string=this.search_data.az){
+        // net_type:this.search_data.public,--公网类型
         let res:any = await Service.get_az_list({
             region_name:this.search_data.region,
             az_name:val,
-            net_type:this.search_data.public,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
         })

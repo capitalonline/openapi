@@ -13,7 +13,7 @@
                 <span>{{ form_data.id }}</span>
             </el-form-item>
             <el-form-item label="镜像名称" prop="display_name">
-                <el-input v-model="form_data.display_name"></el-input>
+                <el-input v-model="form_data.display_name" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="镜像类型" prop="os_type">
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
@@ -23,7 +23,7 @@
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
                 <span v-if="oper_info.os_id">{{ form_data.os_version }}</span>
-                <el-input v-else v-model="form_data.os_version"></el-input>
+                <el-input v-else v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="位数" prop="os_bit">
                 <span v-if="oper_info.os_id">{{ form_data.os_bit }}</span>
@@ -51,6 +51,13 @@
                 </span>
                 <el-select v-model="form_data.az_id" v-else>
                     <el-option v-for="item in az_list" :key="item.az_id" :label="item.az_name" :value=" item.az_id "></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- support_product_source_type -->
+            <el-form-item label="产品来源" prop="source_type">
+                <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
+                <el-select v-model=" form_data.product_source">
+                    <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="存储类型" prop="backend_type">
@@ -82,11 +89,11 @@
             </el-form-item>
             <el-form-item label="MD5" prop="path_md5" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="512" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.path_md5" :maxlength="32"  show-word-limit resize="none"></el-input>
             </el-form-item>
             <el-form-item v-if="!oper_info.os_id" label="镜像在对象存储文件名" prop="oss_file_name" >
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
-                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="512" show-word-limit resize="none"></el-input>
+                <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
             <!-- <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
@@ -143,10 +150,13 @@ export default class AddCommon extends Vue{
     @Prop({default:()=>{}})oper_info!:any;
     @PropSync('visible')visible_sync!:boolean;
     private mirror_type_list:any=[];
-    private bit_list:Array<any>=[{id:32,name:'32位'},{id:64,name:'64位'}];
+    private bit_list:Array<any>=[{id:64,name:'64位'},{id:32,name:'32位'}];
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
-    private compute_type_list:any=['GPU','CPU','CPU/GPU']
+        // 产品来源
+    private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器'];
+
+    private compute_type_list:any=['CPU/GPU','GPU','CPU']
     private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
@@ -163,6 +173,8 @@ export default class AddCommon extends Vue{
         az_id:this.oper_info.az_list ? this.oper_info.az_list[0] : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
+        // 产品来源
+        product_source:this.oper_info.support_product_source_type ? this.oper_info.support_product_source_type:this.product_source_type_list[0],
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
@@ -177,8 +189,9 @@ export default class AddCommon extends Vue{
         az_id: [{ required: true, message: '请选择可用区', trigger: 'change' }],
         backend_type: [{ required: true, message: '请选择存储类型', trigger: 'change' }],
         support_type: [{ required: true, message: '请选择计算类型', trigger: 'change' }],
+        product_source: [{ required: true, message: '请选择产品来源', trigger: 'change' }],
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
-        path_md5:[{ required: true, message: '请输入MD5', trigger: 'change' }],
+        path_md5:[{ required: true, validator:this.path_md5_check, trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
     }
     created(){
@@ -193,10 +206,21 @@ export default class AddCommon extends Vue{
         }
         this.get_disk_list()
     }
+    private path_md5_check(rule, value, callback){
+        if(!value) {
+            return callback(new Error('请输入MD5'))
+        } else if(value.length < 32){
+            return callback(new Error('请输入32位MD5值'))
+        } else {
+            return callback()
+        }
+    }
     private validate_name(rule, value, callback){
         if(!value){
             return callback(new Error('请输入镜像名称'))
-        }else{
+        }else if(this.form_data.display_name.length> 128) {
+            return callback(new Error('镜像名称长度最多128个字符'))
+        } else {
             Service.check_name({
                 os_id:this.oper_info.os_id ? this.oper_info.os_id : '',
                 display_name:value,
@@ -208,10 +232,10 @@ export default class AddCommon extends Vue{
                         return callback('镜像名称重复,请重新输入')
                     }
                 }else{
-                    return callback('镜像名称重复,请重新输入')
+                    return callback('镜像名称长度最多128个字符')
                 }
             }).catch(err=>{
-                return callback('镜像名称重复,请重新输入')
+                return callback('镜像名称长度最多128个字符')
             })
             
         }
@@ -319,7 +343,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
+        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -329,6 +353,7 @@ export default class AddCommon extends Vue{
                         customer_ids:customer_ids==='' ? [] : customer_ids.split(','),
                         backend_type,
                         support_type,
+                        product_source,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5
@@ -349,6 +374,7 @@ export default class AddCommon extends Vue{
                         size,
                         backend_type,
                         support_type,
+                        product_source,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
