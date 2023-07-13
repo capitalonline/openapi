@@ -285,6 +285,7 @@ private async FnToVnc(row){
       nfv_id: row.nfv_id,
       region_id:row.region_id,
       az_id:row.az_id,
+      ip:row.ip,
     });
     if (resData.code === "Success") {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
