@@ -57,7 +57,7 @@
             <el-button
               type="text"
               :disabled="!operate_auth.includes('monitor')"
-              @click="FnToMonitor(scope.row.nfv_id)"
+              @click="FnToMonitor(scope.row)"
               >监控</el-button
             >
             <el-button
@@ -276,8 +276,10 @@ export default class App extends Vue{
   }
 
 //   跳转到监控页面
-  private FnToMonitor(id){
-    this.$router.push("/nfv/monitor/" + id);
+  private FnToMonitor(row){
+    this.$router.push({
+      path:`/nfv/monitor/${row.nfv_id}/${row.ip}`
+    })
   }
 //   远程连接
 private async FnToVnc(row){
@@ -285,7 +287,6 @@ private async FnToVnc(row){
       nfv_id: row.nfv_id,
       region_id:row.region_id,
       az_id:row.az_id,
-      ip:row.ip,
     });
     if (resData.code === "Success") {
       let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");

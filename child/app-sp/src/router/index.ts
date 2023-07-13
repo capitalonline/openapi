@@ -40,7 +40,7 @@ const routes: RouteConfig[] = [
     meta: {menu: 'nfv_list'}
   },
   {
-    path: '/nfv/monitor/:id',
+    path: '/nfv/monitor/:id/:ip',
     name: 'monitor',
     component: () => import('../views/nfv/monitor.vue'),
     meta: {menu: 'nfv_list'}
