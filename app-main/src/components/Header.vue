@@ -35,7 +35,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import axios from 'axios';
-import store from '../store'
 
 @Component
 export default class Header extends Vue {
@@ -48,10 +47,8 @@ export default class Header extends Vue {
     if (window.location.href.indexOf('under-app-sp') > 0) {
       this.entry_type = 'sp'
       if (!type) {
-        // this.$router.push({name: 'under-app-op'})
-        let url = ''
-        url = 'http://cds-os-op-front.gic.test/child/app-op/az?token=' + store.state.token
-        window.location.href = url
+        this.$router.push({name: 'under-app-op'})
+        this.entry_type = 'op'
       }
     } else if (window.location.href.indexOf('under-app-op') > 0) {
       this.entry_type = 'op'
