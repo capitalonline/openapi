@@ -13,9 +13,9 @@
                 <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table 
-            :data="list" 
-            border 
+        <el-table
+            :data="list"
+            border
             class="event-table"
             @sort-change="FnSortChange"
             :cell-style="setCellStyle"
@@ -41,9 +41,9 @@
             </el-table-column>
             <el-table-column prop="path_name" label="路径"  width="140">
                 <template slot-scope="scope">
-                    <el-tooltip 
-                        :content="scope.row.path_name" 
-                        placement="bottom" 
+                    <el-tooltip
+                        :content="scope.row.path_name"
+                        placement="bottom"
                         effect="light">
                             <span class="id-cell">{{ scope.row.path_name }}</span>
                     </el-tooltip>
@@ -91,7 +91,7 @@
                     <!-- <el-button type="text" :disabled="!['running','blocking','create_fail'].includes(scope.row.status) || !auth_list.includes('del_mirror')" @click="del(scope.row)">删除</el-button>
                     <el-button type="text" :disabled="!['running','blocking'].includes(scope.row.status) || !auth_list.includes('change_status')" @click="changeStatus(scope.row)">状态变更</el-button>
                     <el-button type="text" :disabled="!['running'].includes(scope.row.status) || !auth_list.includes('sync_mirror')" @click="FnSync(scope.row)">同步</el-button>-->
-                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button> 
+                    <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">操作记录</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -236,7 +236,7 @@ export default class CommonMirror extends Vue{
             res.data.type_list.map(item=>{
                 this.mirror_type.push({text:item,value:item})
             })
-            
+
         }
     }
     private async get_status_list(){
@@ -301,7 +301,6 @@ export default class CommonMirror extends Vue{
     private filterAttribute(obj:any){
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
-        
     }
     private add(){
         this.visible=true;
@@ -321,7 +320,7 @@ export default class CommonMirror extends Vue{
         this.visible=true;
         this.oper_type='del_az';
         this.oper_info= obj;
-        
+
     }
     private changeStatus(obj){
         this.visible=true;
@@ -355,12 +354,12 @@ export default class CommonMirror extends Vue{
         window.location.href=`/ecs_business/v1/img/pub_image_list_download/${query}`
     }
     private operate(id:String){
-       
+
     }
     private close(val){
         this.visible = false
     }
-    
+
 }
 </script>
 <style lang="scss" scoped>
