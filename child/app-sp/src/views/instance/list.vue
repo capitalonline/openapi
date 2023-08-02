@@ -129,10 +129,12 @@
       </el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
         <template #default="scope">
-          <div v-if="scope.row.private_net">
-            {{ scope.row.private_net }}
-            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+          <div v-for="net in  scope.row.private_net.split(';')" :key="net">
+          <span v-if="scope.row.eip_info[net]">
+            {{ net }}
+            （vlan {{ scope.row.eip_info[net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
+          </span>
           </div>
         </template>
       </el-table-column>
@@ -406,7 +408,7 @@
               <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
-        
+
           <el-table-column
             prop=""
             label="价格"
@@ -523,7 +525,7 @@
           </div>
           <div class="warning_message">说明：若云主机故障，请选择“硬重启”，使云主机快速恢复正常。</div>
         </template>
-        
+
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -754,7 +756,7 @@ export default class App extends Vue {
       }
       this.FnGetList();
     },500)
-    
+
   }
   //handleSizeChange
   private handleSizeChange(val){
@@ -825,7 +827,7 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
-    
+
     let reqData = {
       billing_method:
         this.search_billing_method == "" ? "no" : this.search_billing_method,
@@ -949,7 +951,7 @@ export default class App extends Vue {
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
-    
+
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       this.multiple_selection_id.push(item.ecs_id);
@@ -1121,7 +1123,7 @@ export default class App extends Vue {
     //   this.$message({
     //     type: 'info',
     //     message: '已取消删除'
-    //   });          
+    //   });
     // });
   }
   private async FnDelete(reqData) {
@@ -1238,7 +1240,7 @@ export default class App extends Vue {
       ecs_ids: this.multiple_selection_id,
       ebs_goods_info: {},
       billing_info: this.disk_billing_info[data.ecs_goods_id],
-      
+
     };
     if (this.is_gpu) {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
@@ -1417,10 +1419,10 @@ export default class App extends Vue {
               value: key
             });
           }
-          
+
         }
         if (this.$route.query.host_id) {
-          
+
         } else {
           this.FnSearch();
         }
@@ -1484,7 +1486,7 @@ export default class App extends Vue {
       reader.onload = () => {
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = title + ".xlsx";  
+        link.download = title + ".xlsx";
         link.click();
         window.URL.revokeObjectURL(link.href);
       };
@@ -1516,7 +1518,7 @@ export default class App extends Vue {
         text: this.billing_method_relation[key]
       });
     }
-    
+
   }
   beforeDestroy() {
     this.FnClearTimer();
