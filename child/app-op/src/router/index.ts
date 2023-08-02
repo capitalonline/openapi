@@ -61,12 +61,6 @@ const routes: RouteConfig[] = [
     meta: {label: '资源统计', menu: 'resource_statistical_list'},
   },
   {
-    path: '/vgpu_list',
-    name: 'vgpu_list',
-    component: () => import('../views/vgpu/list.vue'),
-    meta: {label: 'vGPU授权库存', menu: 'vgpu_list'},
-  },
-  {
     path: '/cloud_inventory',
     name: 'disk_inventory',
     component: () => import('../views/cloud/inventory.vue'),
