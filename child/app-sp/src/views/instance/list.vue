@@ -664,9 +664,7 @@ export default class App extends Vue {
     {text:'容器',value:'容器'},
   ]
   // 服务账号ID
-  private product_server_id:string=''
   private search_card_status_type:string=''
-  private search_product_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -828,6 +826,7 @@ export default class App extends Vue {
       });
     }
 
+    
     let reqData = {
       billing_method:
         this.search_billing_method == "" ? "no" : this.search_billing_method,
@@ -853,9 +852,12 @@ export default class App extends Vue {
     if (this.search_ecs_goods_name.length > 0) {
       reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
+    // 
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
+      console.log(this.instance_list[0],"instance_list");
+      
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter(row =>
@@ -897,7 +899,8 @@ export default class App extends Vue {
         this.FnGetEcsPrice();
       }
       if(type==='net_set'){
-        this.netSet('batch');
+        this.netSet('batch');  
+        
         return;
       }
     }else {

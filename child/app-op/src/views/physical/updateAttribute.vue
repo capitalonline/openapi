@@ -17,6 +17,28 @@
                     <el-option v-for="item in host_uses" :key="item.use_type" :value="item.use_type" :label="item.use_name"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="切分粒度"  v-if="form_data.use.includes('vGPU')">
+                <el-input class="w-280" placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
+                <el-tooltip popper-class="tooltip-width" content="每块GPU仅能按照一种显存大小和切分类型进行切分；同物理机不同显卡切分粒度/切分类型可以不同；故一台物理机切分粒度/切分类型的数量不能多于物理机GPU数量。最多支持设置4种值。" placement="bottom" effect="light">
+                    <el-button type="text">
+                        <svg-icon icon="info" class="info"></svg-icon>
+                    </el-button>
+                </el-tooltip>
+            </el-form-item>
+
+
+            <div class="error_message tip" v-if="particle.split(',').length>4">最多支持设置4种值</div>
+            <div class="error_message tip" v-else-if="particle.includes('，')">请用英文逗号隔开</div>
+            <el-form-item label="切分类型" v-if="form_data.use.includes('vGPU')">
+                <el-select class="w-280" v-model="vgpu_segment_type">
+                    <el-option
+                        v-for="item in particleList"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="专属客户">
                 <el-select 
                     class="w-280"
@@ -72,8 +94,13 @@
 </template>
 <script lang="ts">
 import {Vue,Component,PropSync,Emit,Prop,Watch} from 'vue-property-decorator';
-import Service from '../../https/physical/list'
-@Component({})
+import Service from '../../https/physical/list';
+import svgIcon from '@/components/svgIcon/index.vue';
+@Component({
+    components:{
+        svgIcon
+    }
+})
 export default class UpdateAttribute extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
     @Prop({default:()=>[]}) rows!:any;
@@ -86,8 +113,8 @@ export default class UpdateAttribute extends Vue{
         family:[]
     }
     private type:String="";
-    private use:String = "";
     private backend:string=''
+    private particle:string=''
     private host_types=[]
     private host_uses=[];
     private customer_id:any=[];
@@ -98,15 +125,24 @@ export default class UpdateAttribute extends Vue{
     private familyList=[]
     private flag:boolean=true;
     private flagFamily:boolean=true
+    private particleList =['Q','B','C','A']
+    private vgpu_segment_type = this.particleList[0]
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
         {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
-        // this.form_data.customer_id = this.rows[0]?.exclusive_customers;
-        this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
-        this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
+        // this.form_data.customer_id = this.rows.length == 1 ? this.rows[0]?.exclusive_customers : [];
+        this.form_data.customer_id = this.rows[0].exclusive_customers.map(item=> {
+               if(typeof item == 'string'){
+                   return item
+               } else {
+                   return item.id
+               }
+            })
+
+        // this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
@@ -236,6 +272,11 @@ export default class UpdateAttribute extends Vue{
     }
     .el-select,.el-input{
         width: 340px;
+    }
+    .tip{
+        margin-left: 140px;
+        margin-top: -20px;
+
     }
 }
 </style>
