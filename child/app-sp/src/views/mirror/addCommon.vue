@@ -43,7 +43,7 @@
                 <template v-else>
                     <el-input-number v-model="form_data.size" :min="form_data.os_type==='Windows' ? 40 : 20"></el-input-number>  GB
                 </template>
-                
+
             </el-form-item>
             <el-form-item label="可用区" prop="az_id">
                 <span v-if="oper_info.os_id">
@@ -56,7 +56,7 @@
             <!-- support_product_source_type -->
             <el-form-item label="产品来源" prop="source_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
-                <el-select v-model=" form_data.product_source">
+                <el-select v-model="form_data.product_source">
                     <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
@@ -174,7 +174,7 @@ export default class AddCommon extends Vue{
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
         // 产品来源
-        product_source:this.oper_info.support_product_source_type ? this.oper_info.support_product_source_type:this.product_source_type_list[0],
+        product_source:this.oper_info.product_source ? this.oper_info.product_source:this.product_source_type_list[0],
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
@@ -237,7 +237,7 @@ export default class AddCommon extends Vue{
             }).catch(err=>{
                 return callback('镜像名称长度最多128个字符')
             })
-            
+
         }
     }
     private FnDisable(date){
@@ -255,7 +255,7 @@ export default class AddCommon extends Vue{
             if(!this.oper_info.os_id){
                 this.form_data.backend_type = this.storage_type_list[0].id
             }
-            
+
         }
     }
     @Watch('form_data.backend_type')
@@ -264,7 +264,7 @@ export default class AddCommon extends Vue{
             this.form_data.az_id=''
             this.get_available_az()
         }
-        
+
     }
     private async get_available_az(){
         let res:any = await Service.get_available_az({
@@ -384,7 +384,7 @@ export default class AddCommon extends Vue{
                         this.$message.success(res.message)
                     }
                 }
-                
+
                 this.visible_sync=false
             }
         })
