@@ -373,11 +373,11 @@ export default class PhysicalList extends Vue {
       if(item.prop==='net_nic'){
         item = Object.assign(item,{},{width:'180px'})
       }
+      if(item.prop==='vgpu_segment_type'){
+        item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:'Q',value:'Q'},{text:'B',value:'B'},{text:'C',value:'C'},{text:'A',value:'A'}]})
+      }
       if(item.prop==='backend_type'){
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
-      }
-      if(item.prop==='vgpu_segment_type'){
-        // item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:}]})
       }
       return item;
     })
@@ -421,6 +421,7 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
+      vgpu_segment_type
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -437,6 +438,7 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
+      vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       page_index:this.page_info.current,
       page_size:this.page_info.size,
       sort_cpu:this.search_data.sort_cpu,
