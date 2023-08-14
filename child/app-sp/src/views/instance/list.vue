@@ -265,10 +265,10 @@
                   trigger="hover">
                 <div>
                       <span v-for="tag in scope.row.tag" :key="tag.label_id">
-                        <span style="width: 100%; display: inline-block">{{tag.label_value}}</span>
+                        <span style="width: 100%">{{tag.label_value}}</span>
                       </span>
                 </div>
-                <el-button slot="reference" type="text" size="mini" >
+                <el-button slot="reference" type="text" size="mini" style="white-space: normal">
                   <span>{{scope.row.tag[0].label_value + '+'}}</span>
                   <span>{{  scope.row.tag.length-1}}</span>
                 </el-button>
