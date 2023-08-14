@@ -25,8 +25,8 @@
                     </el-button>
                 </el-tooltip>
             </el-form-item>
-
-
+                
+            
             <div class="error_message tip" v-if="particle.split(',').length>4">最多支持设置4种值</div>
             <div class="error_message tip" v-else-if="particle.includes('，')">请用英文逗号隔开</div>
             <el-form-item label="切分类型" v-if="form_data.use.includes('vGPU')">
@@ -101,6 +101,7 @@ import svgIcon from '@/components/svgIcon/index.vue';
         svgIcon
     }
 })
+
 export default class UpdateAttribute extends Vue{
     @PropSync('visible') visible_sync!:Boolean;
     @Prop({default:()=>[]}) rows!:any;
@@ -253,7 +254,7 @@ export default class UpdateAttribute extends Vue{
                 }
                     }
                 })
-        
+
         
     }
     @Emit("close")

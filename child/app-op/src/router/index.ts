@@ -64,7 +64,7 @@ const routes: RouteConfig[] = [
     path: '/vgpu_list',
     name: 'vgpu_list',
     component: () => import('../views/vgpu/list.vue'),
-    meta: {label: 'vGPU授权库存', menu: 'vgpu_list',no_auth: true},
+    meta: {label: 'vGPU授权库存', menu: 'vgpu_list'},
   },
   {
     path: '/cloud_inventory',

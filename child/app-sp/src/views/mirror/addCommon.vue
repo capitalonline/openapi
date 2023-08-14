@@ -56,7 +56,7 @@
             <!-- support_product_source_type -->
             <el-form-item label="产品来源" prop="source_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
-                <el-select v-model="form_data.product_source">
+                <el-select v-model=" form_data.product_source">
                     <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
