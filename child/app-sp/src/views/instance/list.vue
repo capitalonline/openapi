@@ -129,10 +129,12 @@
       </el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
         <template #default="scope">
-          <div v-if="scope.row.private_net">
-            {{ scope.row.private_net }}
-            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+          <div v-for="net in  scope.row.private_net.split(';')" :key="net">
+          <span v-if="scope.row.eip_info[net]">
+            {{ net }}
+            （vlan {{ scope.row.eip_info[net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
+          </span>
           </div>
         </template>
       </el-table-column>
@@ -639,7 +641,7 @@ export default class App extends Vue {
     tag: {placeholder: "请选择标签", list: []},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
-       type: "daterange",
+      type: "daterange",
       width: "360",
       clearable: true,
       dis_day: 1,
@@ -689,9 +691,7 @@ export default class App extends Vue {
     {text:'容器',value:'容器'},
   ]
   // 服务账号ID
-  private product_server_id:string=''
   private search_card_status_type:string=''
-  private search_product_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -905,6 +905,8 @@ export default class App extends Vue {
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
+      console.log(this.instance_list[0],"instance_list");
+
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter(row =>
@@ -947,6 +949,7 @@ export default class App extends Vue {
       }
       if(type==='net_set'){
         this.netSet('batch');
+
         return;
       }
     }else {

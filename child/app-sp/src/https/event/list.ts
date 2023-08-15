@@ -23,4 +23,28 @@ export default{
     ignore(req){
         return service(getEcsOptions('POST','/event/task_status/',req))
     },
+    //获取异常事件列表
+    get_repair_event_list(req){
+      return service(getEcsOptions('POST','/event/get_error_task_list/',req))
+    },
+    //检查底层任务状态,获取任务信息
+    getUnderlyingTasks(req){
+      return service(getEcsOptions('GET','/event/get_maintask_detail/',req))
+    },
+    //检查底层任务状态,获取任务状态信息
+    getTasksStatus(req){
+      return service(getEcsOptions('GET','/event/check_task_resource/',req))
+    },
+    //重试任务状态信息
+    setTasksStatus(req){
+      return service(getEcsOptions('POST','/event/repair_task_resource/',req))
+    },
+    //重试任务
+    setReTasks(req){
+      return service(getEcsOptions('POST','/event/repair_task/',req))
+    },
+    //查看资源任务状态
+    getResourceStatus(){
+      return service(getEcsOptions('GET','/event/resource_status/'))
+    },
 }

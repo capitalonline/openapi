@@ -67,10 +67,10 @@ export default class Create extends Vue{
                 }else{
                     this.configInfo[i].value = res.data[i]
                 }
-                
-                
+
+
             }
-            
+
         }
     }
 }
