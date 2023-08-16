@@ -638,7 +638,7 @@ export default class App extends Vue {
     host_name: { placeholder: "请输入物理机名称", },
     host_ip: { placeholder: "请输入物理机管理IP"},
     out_band_address: { placeholder: "请输入物理机带外IP"},
-    tag: {placeholder: "请选择标签", list: []},
+    tag: {placeholder: "请选择标签", list: [],filter:true},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
