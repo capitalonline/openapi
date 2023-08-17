@@ -180,6 +180,7 @@ export default class CommonMirror extends Vue{
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
         {text:'Geforce',value:'Geforce'},
+        {text:'GRID',value:'GRID'},
         {text:'Enflame',value:'Enflame'},
         {text:'GRID',value:'GRID'},
     ];

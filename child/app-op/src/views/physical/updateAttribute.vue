@@ -94,7 +94,7 @@
 </template>
 <script lang="ts">
 import {Vue,Component,PropSync,Emit,Prop,Watch} from 'vue-property-decorator';
-import Service from '../../https/physical/list'
+import Service from '../../https/physical/list';
 import svgIcon from '@/components/svgIcon/index.vue';
 @Component({
     components:{
@@ -107,7 +107,7 @@ export default class UpdateAttribute extends Vue{
     @Prop({default:()=>[]}) rows!:any;
     private form_data:any={
         type:'',
-        use:'', 
+        use:'',
         backend:'',
         customer_id:[],
         black_customer_id:[],
@@ -134,9 +134,16 @@ export default class UpdateAttribute extends Vue{
         {id:'local,block',name:'云盘/本地盘'}
     ]
     created() {
-        // this.form_data.customer_id = this.rows[0]?.exclusive_customers;
-        this.form_data.customer_id = this.rows[0]?.exclusive_customers.map(item=>item.id);
-        this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
+        // this.form_data.customer_id = this.rows.length == 1 ? this.rows[0]?.exclusive_customers : [];
+        this.form_data.customer_id = this.rows[0].exclusive_customers.map(item=> {
+               if(typeof item == 'string'){
+                   return item
+               } else {
+                   return item.id
+               }
+            })
+
+        // this.form_data.black_customer_id = this.rows[0]?.exclusive_black_customers.map(item=>item.id)
         this.getHostTypes();
         this.getCustomerList('',true);
         this.getFamilyList();
@@ -247,7 +254,7 @@ export default class UpdateAttribute extends Vue{
                 }
                     }
                 })
-        
+
         
     }
     @Emit("close")
@@ -270,7 +277,7 @@ export default class UpdateAttribute extends Vue{
     .tip{
         margin-left: 140px;
         margin-top: -20px;
-    
+
     }
 }
 </style>

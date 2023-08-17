@@ -97,6 +97,7 @@ export default class SideBar extends Vue {
         {
           name: "vgpu_list",
           label: "vGPU授权库存",
+          noAuth:true
         }
 
       ]
@@ -135,10 +136,13 @@ export default class SideBar extends Vue {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          if (this.$store.state.auth_info[child.name]) {
+          console.log('item',item)
+          if (this.$store.state.auth_info[child.name] || item.noAuth) {
+            console.log('aaa')
             child_list.push(child)
           }
         })
+        console.log('child_list',child_list)
         if (child_list.length > 0) {
           this.menu.push({
             name: item.name,

@@ -56,7 +56,7 @@
             <!-- support_product_source_type -->
             <el-form-item label="产品来源" prop="source_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
-                <el-select v-model="form_data.product_source">
+                <el-select v-model=" form_data.product_source">
                     <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
@@ -157,7 +157,7 @@ export default class AddCommon extends Vue{
     private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器'];
 
     private compute_type_list:any=['CPU/GPU','GPU','CPU']
-    private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
+    private drive_type_list:any=['Datacenter','Geforce','Enflame'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
     private os_file:any=[];

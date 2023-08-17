@@ -34,6 +34,18 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
+    path: '/nfv',
+    name: 'nfv_list',
+    component: () => import('../views/nfv/list.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
+    path: '/nfv/monitor/:id/:ip',
+    name: 'monitor',
+    component: () => import('../views/nfv/monitor.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
     path:'/alarmInfo',
     name:'alarm_info',
     component:()=>import('../views/alarm/alarmInfo.vue'),
@@ -75,18 +87,24 @@ const routes: RouteConfig[] = [
     component:()=>import('../views/snapshot/tabList.vue'),
     meta:{menu:'snapshot_list'}
   },
+  // {
+  //   path:'/chain/detail',
+  //   name:'snapshot_detail',
+  //   component:()=>import('../views/snapshot/chains-detail.vue'),
+  //   meta:{menu:'snapshot_list'}
+  // },
   {
     path:'/chain/detail',
-    name:'snapshot_detail',
+    name:'disk_create',
     component:()=>import('../views/snapshot/chains-detail.vue'),
     meta:{menu:'snapshot_list'}
   },
-  {
-    path:'/disk/create',
-    name:'disk_create',
-    component:()=>import('../views/disk/create.vue'),
-    meta:{menu:'disk_list'}
-  },
+  // {
+  //   path:'/disk/create',
+  //   name:'disk_create',
+  //   component:()=>import('../views/disk/create.vue'),
+  //   meta:{menu:'disk_list'}
+  // },
   {
     path:'/disk/detail',
     name:'disk_detail',
@@ -218,6 +236,18 @@ const routes: RouteConfig[] = [
     name: 'ecs_destroyed',
     component: () => import('../views/instance/destroyedList.vue'),
     meta: {meta: 'ecs_destroyed', no_auth: true}
+  },
+  {
+    path:'/cluster',
+    name:'cluster_list',
+    component:()=>import('../views/cluster/list.vue'),
+    meta:{menu:'cluster_list',no_auth: true}
+  },
+  {
+    path:'/storage',
+    name:'storage_list',
+    component:()=>import('../views/cluster/storage.vue'),
+    meta:{menu:'cluster_list',no_auth: true}
   },
   {
     path: '/404',

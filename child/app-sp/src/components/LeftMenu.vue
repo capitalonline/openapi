@@ -65,6 +65,11 @@ export default class LeftMenu extends Vue {
       label: "云服务器管理"
     },
     {
+      name: "nfv_list",
+      label: "NFV云服务器",
+      // noAuth:true,
+    },
+    {
       name: 'disk',
       label: '云盘',
       children: [
@@ -75,6 +80,11 @@ export default class LeftMenu extends Vue {
         {
           name: "snapshot_list",
           label: "快照管理"
+        },
+        {
+          name: "cluster_list",
+          label: "集群统计",
+          noAuth:true
         },
       ]
     },

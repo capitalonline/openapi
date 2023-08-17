@@ -5,6 +5,11 @@
         <el-button v-for="item in operateBtns" :key="item.value" type="primary" @click="handleBtn(item.value)" :disabled="!auth_list.includes(item.value)">{{item.label}}</el-button>
       </template> -->
     </action-block>
+    <div class="icon m-bottom10">
+      <el-tooltip content="导出" placement="bottom" effect="light">
+        <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
+      </el-tooltip>
+    </div>
     <el-table
       :data="disk_list"
       border
@@ -21,7 +26,7 @@
           <pre>{{scope.row.disk_name}}</pre>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="云盘状态" :filter-multiple="false" :filters="disk_state" column-key="status">
+      <el-table-column prop="status" label="云盘状态" :filter-multiple="true" :filters="disk_state" column-key="status">
         <template slot-scope="scope">
           <span :class="scope.row.status">{{scope.row.status_name}}</span>
         </template>
@@ -77,6 +82,8 @@
       </el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
       <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
+      <el-table-column prop="cluster_name" label="所属集群"></el-table-column>
+      <el-table-column prop="storage_pool_name" label="Storage Pool"></el-table-column>
       <el-table-column label="操作栏">
         <template slot-scope="scope">
           <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
@@ -118,7 +125,7 @@
     <template v-if="visible && operate_type==='edit_name'">
       <edit-name :visible="visible" :name="mount_id[0]" @close = "close_disk" />
     </template>
-    <template v-if="visible && (operate_type==='delete' || operate_type==='restore' || operate_type==='destroy' || operate_type==='open_bill')">
+    <template v-if="visible && ['delete','restore','destroy','open_bill','migrate'].includes(operate_type)">
       <Common :visible="visible" :mount_id="mount_id" :title="common_operate[operate_type]" @close = "close_disk" />
     </template>
   </div>
@@ -137,6 +144,7 @@ import Common from './commonDialog.vue'
 import {Table} from 'element-ui'
 import Service from '../../https/disk/list';
 import {trans} from '../../utils/transIndex'
+import SvgIcon from '../../components/svgIcon/index.vue';
 @Component({
   components:{
     ActionBlock,
@@ -146,7 +154,8 @@ import {trans} from '../../utils/transIndex'
     EditAttr,
     EditName,
     Common,
-    ConfirmBox
+    ConfirmBox,
+    SvgIcon
   }
 })
 export default class extends Vue {
@@ -160,7 +169,7 @@ export default class extends Vue {
   private total:number = 0;
   private disk_state:any = [];
   private auth_list:any=[]
-  private search_dom = {
+  private search_dom:any = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
     // status:{list:[],placeholder:'请选择与云盘状态'},
@@ -168,6 +177,8 @@ export default class extends Vue {
     customer_name: {placeholder:'请输入客户名称'},
     product_server_id:{placeholder:'请输入内部服务账号ID'},
     product_server_name: {placeholder:'请输入内部服务账号名称'},
+    storage:{placeholder:'请选择Storage Pool',list:[]},
+    cluster: {placeholder:'请输入集群名称',list:[]},
   }
   private visible:Boolean = false;
   private operate_type:string=""
@@ -179,7 +190,8 @@ export default class extends Vue {
     delete:'逻辑删除',
     restore:'恢复',
     destroy:'销毁',
-    open_bill:'开启计费'
+    open_bill:'开启计费',
+    migrate:'迁移'
   }
  
   private operateBtns=[
@@ -214,6 +226,10 @@ export default class extends Vue {
     {
       label:'开启计费',
       value:'open_bill'
+    },
+    {
+      label:'迁移',
+      value:'migrate'
     },
   ]
   private req_data:any={}
@@ -254,6 +270,8 @@ export default class extends Vue {
   created() {
     this.get_disk_state();
     this.get_product_source()
+    this.getClusterName();
+    this.getstoragePoolName()
     this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
   }
@@ -296,6 +314,30 @@ export default class extends Vue {
       this.disk_state = trans(res.data,'status_name','status','text','value') 
     }
   }
+  private async getClusterName(){
+    let res:any = await Service.get_cluster_name({})
+    if(res.code==="Success"){
+      this.search_dom.cluster.list = [];
+      res.data.map(item=>{
+        this.search_dom.cluster.list.push({
+          label:item,
+          type:item
+        })
+      })
+    }
+  }
+  private async getstoragePoolName(){
+    let res:any = await Service.get_storage_pool_name({})
+    if(res.code==="Success"){
+      this.search_dom.storage.list = []
+      res.data.map(item=>{
+        this.search_dom.storage.list.push({
+          label:item,
+          type:item
+        })
+      })
+    }
+  }
   private async getDiskList(loading:boolean = true){
     let copy_mount_id=[]
     if(!loading){
@@ -309,7 +351,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status ? req_data.status[0] : '',
+      status:req_data.status ? req_data.status[0] : [],
       product_source:req_data.product_source ? req_data.product_source:[],
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
@@ -318,6 +360,8 @@ export default class extends Vue {
       disk_property:req_data.disk_property ? req_data.disk_property[0] : '',
       op_source:req_data.op_source ? req_data.op_source[0] : '',
       billing_method:req_data.fee_way ? req_data.fee_way[0] : 'all',
+      cluster_name:req_data.cluster || '',
+      storage_pool_name:req_data.storage || '',
       page_index:this.current,
       page_size:this.size,
     })
@@ -495,6 +539,10 @@ export default class extends Vue {
     this.operate_type=str
     this.visible = true
   }
+  private migrate(){
+    this.operate_type='migrate'
+    this.visible = true
+  }
   //扩容
   private disk_capacity(){
     if(!this.judge_disk('az_name',this.mount_id[0].az_name)){
@@ -556,6 +604,31 @@ export default class extends Vue {
     }else if(label==="open_bill"){
       return obj.status==="waiting" && obj.is_charge===0 && this.auth_list.includes(label)
     }
+  }
+  //导出
+  private down(){
+    const {req_data}=this
+    let obj = {
+      pod_id:this.$store.state.pod_id,
+      disk_id:req_data.disk_id || undefined,
+      ecs_id:req_data.ecs_id || undefined,
+      status:req_data.status ? req_data.status.join(',') : undefined,
+      customer_id:req_data.customer_id || undefined,
+      customer_name:req_data.customer_name || undefined,
+      disk_property:req_data.disk_property ? req_data.disk_property[0] : undefined,
+      op_source:req_data.op_source ? req_data.op_source[0] : undefined,
+      billing_method:req_data.fee_way ? req_data.fee_way[0] : 'all',
+      cluster_name:req_data.cluster || undefined,
+      storage_pool_name:req_data.storage || undefined,
+    }
+    let str=""
+    for (let i in obj){
+      if(obj[i]){
+        str =str+`${i}=${obj[i]}&`
+      }
+    }
+    let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+    window.location.href=`/ecs_business/v1/ebs/ebs_list_download/${query}`
   }
   private close_disk(val:string='1'){
     this.visible = false
