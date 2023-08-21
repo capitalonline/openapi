@@ -30,6 +30,7 @@ export default class InputNumber extends Vue{
     private async FnChange(){
         let size:number=0
         if(!this.size_info.size){
+            console.log('aaa');
             
             size = this.size_info.disk_min
         }else{

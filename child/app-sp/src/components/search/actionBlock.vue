@@ -12,7 +12,6 @@
           v-if="value.list && !value.type"
           :placeholder="value.placeholder"
           :multiple="value.multiple"
-          :filterable="value.filter"
           clearable
         >
           <el-option

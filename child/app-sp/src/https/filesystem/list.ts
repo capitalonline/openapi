@@ -59,8 +59,4 @@ export default{
     get_nas_record(req){
         return service(getNas1Options('GET','/op_log/history_record',req))
     },
-    //获取自定义列表项
-    get_status_list(req){
-        return service(getNasOptions('GET','/nas/nas_status/',req))
-    },
 }

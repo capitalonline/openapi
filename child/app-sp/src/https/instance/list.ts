@@ -81,9 +81,5 @@ export default {
       paramsSerializer: params => qs.stringify(params),
       responseType: 'blob'
     })
-  },
-  // 获取标签列表
-  get_tag_list(){
-    return service(getEcsOptions('GET','/ecs/get_tag_list/'))
   }
 }
