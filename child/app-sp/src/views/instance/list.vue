@@ -716,6 +716,7 @@ export default class App extends Vue {
   private sort_prop_name = '';
   private sort_order = undefined;
   private ecs_status_list:any=[];
+  private select_tag =[]
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -724,6 +725,14 @@ export default class App extends Vue {
       this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
+    if(data.tag) {
+      this.select_tag = []
+      this.search_con.tag.list.forEach(item => {
+        if (data.tag === item.type) {
+          this.select_tag.push(item)
+        }
+      })
+    }
     this.FnClearTimer();
     this.search_reqData = {
       pod_id:this.$store.state.pod_id,
@@ -738,6 +747,7 @@ export default class App extends Vue {
       host_name: data.host_name,
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
+      tag_list:data.tag ? this.select_tag.map(item =>{return {label_id:item.type,customer_id:item. customer_id}}) : [] ,
       //产品来源
       // product_source:data.product_source,
       // 服务账户ID
