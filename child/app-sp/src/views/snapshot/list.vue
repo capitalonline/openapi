@@ -16,7 +16,7 @@
                 :label="item.label" 
                 :column-key="item.prop"
                 :filters ="item.column_key? item.filters : null"
-                :filter-multiple="true"
+                :filter-multiple="false"
             >
                 <template #default="scope" v-if="item.prop==='snapshot_id'">
                     <div>
@@ -73,10 +73,6 @@
                 <template #default="scope" v-else-if="item.prop==='disk_status_cn'">
                     <span :class="scope.row.disk_status">{{scope.row.disk_status_cn}}</span>
                 </template>
-                <template #default="scope" v-else-if="item.prop === 'speed'">
-                    <span v-if="scope.row.is_accelerate" class="running">开启</span>
-                    <span v-if="!scope.row.is_accelerate">-</span>
-                </template>
             </el-table-column>
              <el-table-column prop="operate" label="操作">
                 <template slot-scope="scope">
@@ -104,9 +100,7 @@ import Service from '../../https/snapshot/list';
 import SvgIcon from '../../components/svgIcon/index.vue';
 import Record from '../instance/record.vue';
 // import Clipboard from '../../components/clipboard.vue';
-import d_Service from '../../https/disk/list';
 import SearchBar from '../../components/search/actionBlock.vue'
-import {trans} from '../../utils/transIndex'
 // import { FnGetRegion } from "../../utils/getRegionInfo";
 interface Page{
     page_size:number,
@@ -136,7 +130,6 @@ export default class Snapshot extends Vue {
         ],type:'composite',width:340},
         customer_id:{placeholder:'请输入客户ID'},
         customer_name:{placeholder:'请输入客户名称'},
-        
     }:{
         type:{placeholder:'请输入',list:[
             {type:'snapshot_id',label:'快照ID'},
@@ -149,18 +142,16 @@ export default class Snapshot extends Vue {
         {prop:'customer_id',label:'客户ID'},
         {prop:'customer_name',label:'客户名称'},
         {prop:'disk_id',label:'云盘名称/ID'},
-        {prop:'disk_status_cn',label:'云盘状态',column_key:'disk_status',filters:[]},
+        {prop:'disk_status_cn',label:'云盘状态'},
         {prop:'disk_size',label:'属性/容量'},
         {prop:'az_name',label:'可用区'},
         {prop:'snapshot_id',label:'快照名称/ID'},
         {prop:'create_time',label:'创建时间'},
         {prop:'retention_time',label:'保留时间'},
         {prop:'snapshot_status_cn',label:'状态'},
-        {prop:'speed',label:'加速优化'},
         {prop:'op_source',label:'创建来源'},
     ] : [
         {prop:'snapshot_id',label:'快照名称/ID'},
-        {prop:'snapshot_size',label:'快照容量'},//todo
         {prop:'create_time',label:'创建时间'},
         {prop:'retention_time',label:'保留时间'},
         {prop:'snapshot_status_cn',label:'状态'},
@@ -181,7 +172,6 @@ export default class Snapshot extends Vue {
     private timer=null
     private list=[];
     private multiSelect:any=[];
-    
     private statusObj:any={
         msg:'',
         status:true
@@ -202,7 +192,6 @@ export default class Snapshot extends Vue {
         //     });
         // }
         // this.getStatusList();
-        this.get_disk_state();
         this.getSnapshotList();
     }
     @Watch("$store.state.pod_id")
@@ -211,15 +200,6 @@ export default class Snapshot extends Vue {
         return;
       }
       this.FnSearch(this.search_data)
-    }
-    //获取云盘状态列表
-    private async get_disk_state(){
-        let res:any = await d_Service.get_disk_state({})
-        if(res.code==="Success"){
-            if(this.type==='list'){
-                this.column_list[3].filters = trans(res.data,'status_name','status','text','value') 
-            }
-        }
     }
    private record(row){
     this.multiSelect=[row]
@@ -255,8 +235,6 @@ export default class Snapshot extends Vue {
             page_size:this.pageInfo.page_size,
             customer_id:this.search_data.customer_id,
             customer_name:this.search_data.customer_name,
-            //todo,云盘状态筛选
-            disk_status:this.filterInfo.disk_status_cn ? this.filterInfo.disk_status_cn : [],
             [this.search_data.typesub]:this.search_data.type,
             snapshot_chains_id:this.type!=='list' ? this.snapshot_chains_id : undefined,
         })

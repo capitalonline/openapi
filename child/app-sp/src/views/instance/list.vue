@@ -129,12 +129,10 @@
       </el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
         <template #default="scope">
-          <div v-for="net in  scope.row.private_net.split(';')" :key="net">
-          <span v-if="scope.row.eip_info[net]">
-            {{ net }}
-            （vlan {{ scope.row.eip_info[net].vlan_id }}）
+          <div v-if="scope.row.private_net">
+            {{ scope.row.private_net }}
+            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
-          </span>
           </div>
         </template>
       </el-table-column>
@@ -251,32 +249,6 @@
         <template slot-scope="scope">
             <span>{{ scope.row.product_source}}</span>
           </template>
-      </el-table-column>
-      <el-table-column prop="tag" label="标签" width="110px">
-        <template slot-scope="scope">
-          <span class="time-box" v-if="scope.row.tag.length>0">
-              <span v-if="scope.row.tag.length === 1">
-                <span v-for="tag in scope.row.tag" :key="tag.label_id">{{tag.label_value}}</span>
-              </span>
-            <span v-else>
-                <el-popover
-                  placement="top-start"
-                  width="200"
-                  trigger="hover">
-                <div>
-                      <span v-for="(tag,index) in scope.row.tag" :key="tag.label_id">
-                        <span style="width: 100%; display: inline-block">{{tag.label_value}}</span>
-                      </span>
-                </div>
-                <el-button slot="reference" type="text" size="mini" style="white-space: normal" >
-                  <span>{{scope.row.tag[0].label_value + '+'}}</span>
-                  <span>{{  scope.row.tag.length-1}}</span>
-                </el-button>
-              </el-popover>
-              </span>
-          </span>
-          <span v-else>--</span>
-        </template>
       </el-table-column>
       <!-- 计费账户ID -->
       <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
@@ -434,7 +406,7 @@
               <span :class="[scope.row.gpu_card_status==='正常' ? 'running' :scope.row.gpu_card_status==='已卸载'?'destroy':scope.row.gpu_card_status==='关闭'? 'error' : '' ]">{{ scope.row.gpu_card_status }}</span>
             </template>
           </el-table-column>
-
+        
           <el-table-column
             prop=""
             label="价格"
@@ -551,7 +523,7 @@
           </div>
           <div class="warning_message">说明：若云主机故障，请选择“硬重启”，使云主机快速恢复正常。</div>
         </template>
-
+        
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="FnConfirm">确 定</el-button>
@@ -638,7 +610,6 @@ export default class App extends Vue {
     host_name: { placeholder: "请输入物理机名称", },
     host_ip: { placeholder: "请输入物理机管理IP"},
     out_band_address: { placeholder: "请输入物理机带外IP"},
-    tag: {placeholder: "请选择标签", list: [],filter:true},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -691,7 +662,9 @@ export default class App extends Vue {
     {text:'容器',value:'容器'},
   ]
   // 服务账号ID
+  private product_server_id:string=''
   private search_card_status_type:string=''
+  private search_product_status_type:string=''
   private page_info = {
     page_sizes: [20, 50, 100],
     page_size: 20,
@@ -716,7 +689,6 @@ export default class App extends Vue {
   private sort_prop_name = '';
   private sort_order = undefined;
   private ecs_status_list:any=[];
-  private select_tag = []
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -725,13 +697,6 @@ export default class App extends Vue {
       this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
-    if(data.tag) {
-      this.search_con.tag.list.forEach(item => {
-        if (data.tag === item.type) {
-          this.select_tag.push(item)
-        }
-      })
-    }
     this.FnClearTimer();
     this.search_reqData = {
       pod_id:this.$store.state.pod_id,
@@ -746,7 +711,6 @@ export default class App extends Vue {
       host_name: data.host_name,
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
-      tag_list:data.tag ? this.select_tag.map(item =>{return {label_id:item.type,customer_id:item. customer_id}}) : [] ,
       //产品来源
       // product_source:data.product_source,
       // 服务账户ID
@@ -790,7 +754,7 @@ export default class App extends Vue {
       }
       this.FnGetList();
     },500)
-
+    
   }
   //handleSizeChange
   private handleSizeChange(val){
@@ -819,21 +783,6 @@ export default class App extends Vue {
   private FnGetNet(ip) {
     let data = ip.split('.')
     return [data[0], data[1], data[2], '0'].join('.')
-  }
-  //获取标签列表
-  private async FnGetTag() {
-    const resData = await Service.get_tag_list();
-    if (resData.code === "Success") {
-      this.search_con.tag.list = [];
-      const all_tag_list = resData.data.label_info.map((item) => {
-        return {
-          label: item.label_value,
-          type: item.label_id,
-          customer_id:item.customer_id
-        };
-      });
-      this.search_con.tag.list = all_tag_list
-    }
   }
   private async FnGetGraphics(ecs_id) {
     let reqData = {
@@ -876,7 +825,7 @@ export default class App extends Vue {
         return row.ecs_id;
       });
     }
-
+    
     let reqData = {
       billing_method:
         this.search_billing_method == "" ? "no" : this.search_billing_method,
@@ -905,8 +854,6 @@ export default class App extends Vue {
     const resData: any = await Service.get_instance_list(reqData);
     if (resData.code === "Success") {
       this.instance_list = resData.data.ecs_list;
-      console.log(this.instance_list[0],"instance_list");
-
       var rows = [];
       if (this.multiple_selection_id.length > 0) {
         rows = resData.data.ecs_list.filter(row =>
@@ -949,7 +896,6 @@ export default class App extends Vue {
       }
       if(type==='net_set'){
         this.netSet('batch');
-
         return;
       }
     }else {
@@ -1003,7 +949,7 @@ export default class App extends Vue {
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
-
+    
     for (let index = 0; index < this.multiple_selection.length; index++) {
       let item: any = this.multiple_selection[index];
       this.multiple_selection_id.push(item.ecs_id);
@@ -1175,7 +1121,7 @@ export default class App extends Vue {
     //   this.$message({
     //     type: 'info',
     //     message: '已取消删除'
-    //   });
+    //   });          
     // });
   }
   private async FnDelete(reqData) {
@@ -1292,7 +1238,7 @@ export default class App extends Vue {
       ecs_ids: this.multiple_selection_id,
       ebs_goods_info: {},
       billing_info: this.disk_billing_info[data.ecs_goods_id],
-
+      
     };
     if (this.is_gpu) {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
@@ -1471,10 +1417,10 @@ export default class App extends Vue {
               value: key
             });
           }
-
+          
         }
         if (this.$route.query.host_id) {
-
+          
         } else {
           this.FnSearch();
         }
@@ -1538,7 +1484,7 @@ export default class App extends Vue {
       reader.onload = () => {
         let link = document.createElement("a");
         link.href = window.URL.createObjectURL(blob);
-        link.download = title + ".xlsx";
+        link.download = title + ".xlsx";  
         link.click();
         window.URL.revokeObjectURL(link.href);
       };
@@ -1548,7 +1494,6 @@ export default class App extends Vue {
   private created() {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
-    this.FnGetTag()
     this.get_az_list();
     this.FnGetCateGoryList();
     // this.search_con.os_type.list = [
@@ -1571,7 +1516,7 @@ export default class App extends Vue {
         text: this.billing_method_relation[key]
       });
     }
-
+    
   }
   beforeDestroy() {
     this.FnClearTimer();

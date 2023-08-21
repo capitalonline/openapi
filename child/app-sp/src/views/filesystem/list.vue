@@ -20,12 +20,11 @@
         </div>
         <el-table 
             :data="list" 
-            @filter-change="filterAttribute"
             border 
         >
             <el-table-column 
                 v-for="(item) in custom_host" 
-                :filter-multiple="item.column_key ? true : null"
+                :filter-multiple="item.column_key ? false : null"
                 :key="item.prop" 
                 :prop="item.prop" 
                 :column-key="item.column_key ? item.column_key : null"
@@ -233,16 +232,14 @@ export default class List extends Vue{
     private show_custom:boolean=false;
     private all_item:Array<any>=[];
     private all_column_item=[];
-    private custom_host=[];
-    private status_list:any=[];
-    private filter_data:any={}
+    private custom_host=[]
     private feeInfo={
       '0':'按需计费',
       '1':'包年包月',
       '2':'按次计费',
     }
     created() {
-        this.get_status_list()
+        this.get_field()
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.search()
     }
@@ -289,36 +286,12 @@ export default class List extends Vue{
             if(item.prop==='create_time'){
                 item = Object.assign(item,{},{width:'90px'})
             }
-            if(item.prop==='status_ch'){
-                item = Object.assign(item,{},{column_key:'status_list',list:this.status_list})
-            }
             return item;
         })
-    }
-    private async get_status_list(){
-        let res:any = await Service.get_status_list({})
-        if(res.code==='Success'){
-            this.status_list = []
-            res.data.map(item=>{
-                this.status_list.push({
-                    text:item.status_ch,
-                    value:item.status
-                })
-            })
-            this.get_field()
-        }else{
-            this.get_field()
-        }
-        
-    }
-    private filterAttribute(obj:any){
-        this.filter_data = {...this.filter_data,...obj};
-        this.search(this.search_data)
     }
     private down(){
         let obj = {
             pod_id:this.$store.state.pod_id,
-            status_list:this.filter_data.status_list ? this.filter_data.status_list.join(',') :'',
             field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
         }
         let str=""
@@ -338,9 +311,7 @@ export default class List extends Vue{
             ...this.search_data,
             pod_id:this.$store.state.pod_id,
             page_index:this.current,
-            page_size:this.size,
-            status_list:this.filter_data.status_list || [],
-
+            page_size:this.size
         })
         if(res.code==="Success"){
             this.list = res.data.nas_list;

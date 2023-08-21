@@ -11,6 +11,7 @@
 
         <el-form-item label="时间">
           <el-date-picker
+            class="date-picker"
             v-model="timeList"
             type="datetimerange"
             range-separator="至"
@@ -99,8 +100,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LineEchart from '@/components/chart/list.vue';
 import Service from '../../https/cloudInventory/list';
-import httpService from '../../https/statistical/list';
-import { relativeTimeThreshold } from 'moment';
+import httpService from '../../https/az/list';
 @Component({
   components: {
     LineEchart
@@ -111,7 +111,7 @@ export default class Inventory extends Vue {
   private cur_pod = ''
   private cur_az_id = ''
   private totalNum = null
-  private az_list = {}
+  private az_list = []
   private authList:any=[]
   private echartForm: any = {
     az_id: '',
@@ -259,11 +259,26 @@ export default class Inventory extends Vue {
     this.dialogVisible = false
   }
   private get_az_list() {
-    httpService.get_az_list({}).then(res => {
+    let params = {
+      region_name: '',
+      az_name: '',
+      page_index: 1,
+      page_size: 200
+    }
+    httpService.get_az_list(params).then(res => {
       if(res.code === 'Success') {
-        this.az_list = res.data.az_list
-        this.echartForm.az_id = this.az_list[0].az_id
-        this.monitoringSearch() 
+        if(res.data.az_list.length > 0) {
+          res.data.az_list.map(item => {
+            if(item.status !== 'global_close') {
+              this.az_list.push({
+                az_id: item.az_id,
+                az_name: item.az_name
+              })
+            }
+            this.echartForm.az_id = this.az_list[0].az_id
+          })
+        }
+        this.monitoringSearch()
       }
     })
   }
@@ -277,4 +292,9 @@ export default class Inventory extends Vue {
   border: 1px solid #e7e7e7;
   margin-bottom: 20px;
 }
+
+.date-picker ::v-deep .el-range__icon,
+.date-picker ::v-deep .el-range-separator {
+    line-height: 24px !important;
+  }
 </style>

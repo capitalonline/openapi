@@ -22,7 +22,7 @@
           @blur="FnChangeSystemSize"
           @change="FnChangeSystemSize"
           ></el-input-number>
-
+          
           <!-- {{systemDiskMax}}--{{data.system_info && data.system_info.disk_feature ? showResetVolume[data.system_info.disk_feature] : ''}} -->
           <!-- :max="data.default_system_info
             ? Number(data.default_system_info.disk_max)
@@ -273,7 +273,7 @@ export default class updateDisk extends Vue {
       min: 1,
       del: true
     }
-    // data.default_disk_info = this.data_disk_info[0] || {};
+    // data.default_disk_info = this.data_disk_info[0] || {};    
     data.default_disk_info = {...fil[0],disk_max:this.showResetVolume[fil[0].disk_feature] ? Math.min(fil[0].disk_max,this.showResetVolume[fil[0].disk_feature]):fil[0].disk_max} || {};
     if ( !data.default_disk_info.disk_name ) {
       return
@@ -312,7 +312,7 @@ export default class updateDisk extends Vue {
     if (!this.data.system_size) {
       this.data.system_size = this.data.system_disk_min;
       this.FnSysEmit()
-    }
+    }    
   }
   // 当系统盘容量改变时
   private FnChangeSystemSize() {
@@ -320,8 +320,8 @@ export default class updateDisk extends Vue {
       this.data.system_size = this.data.system_disk_min;
     }else{
       let size:number = Math.min(this.systemDiskMax,this.data.system_size)
-      let step:number = Math.floor((size - this.data.system_disk_min) / this.data.default_system_info.disk_step)
-      this.data.system_size = step*this.data.default_system_info.disk_step + this.data.system_disk_min
+      let step:number = Math.floor((size - this.data.system_disk_min) / this.data.default_system_info.disk_step)      
+      this.data.system_size = step*this.data.default_system_info.disk_step + this.data.system_disk_min 
     }
     this.FnSysEmit()
   }
