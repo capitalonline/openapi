@@ -45,6 +45,7 @@
        * [33.BatchAddNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E4%BA%91%E4%B8%BB%E6%9C%BA%E6%A6%82%E8%A7%88.md#33BatchAddNetworkInterfaces)
        * [34.BatchDeleteNetworkInterfaces](https://github.com/capitalonline/openapi/blob/master/%E4%BA%91%E4%B8%BB%E6%9C%BA%E6%A6%82%E8%A7%88.md#34BatchDeleteNetworkInterfaces)
        * [35.DescribeNetworkCardFlow](https://github.com/capitalonline/openapi/blob/master/%E4%BA%91%E4%B8%BB%E6%9C%BA%E6%A6%82%E8%A7%88.md#35DescribeNetworkCardFlow)
+       * [36.GetIpInfoBySegment](https://github.com/capitalonline/openapi/blob/master/%E4%BA%91%E4%B8%BB%E6%9C%BA%E6%A6%82%E8%A7%88.md#36GetIpInfoBySegment)
      * [安全组相关](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#安全组相关)
        * [1.CreateSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#1createsecuritygroup)
        * [2.DeleteSecurityGroup](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#2deletesecuritygroup)
