@@ -181,7 +181,7 @@ export default class extends Vue {
     destroy:'销毁',
     open_bill:'开启计费'
   }
- 
+
   private operateBtns=[
     {
       label:'创建云盘',
@@ -286,14 +286,14 @@ export default class extends Vue {
         })
         return item;
       })
-      
+
     }
   }
   //获取云盘状态列表
   private async get_disk_state(){
     let res:any = await Service.get_disk_state({})
     if(res.code==="Success"){
-      this.disk_state = trans(res.data,'status_name','status','text','value') 
+      this.disk_state = trans(res.data,'status_name','status','text','value')
     }
   }
   private async getDiskList(loading:boolean = true){
@@ -309,7 +309,7 @@ export default class extends Vue {
       pod_id:this.$store.state.pod_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
-      status:req_data.status ? req_data.status[0] : '',
+      status:req_data.status ? req_data.status[0] : [],
       product_source:req_data.product_source ? req_data.product_source:[],
       customer_id:req_data.customer_id || '',
       customer_name:req_data.customer_name || '',
@@ -330,11 +330,11 @@ export default class extends Vue {
           list.forEach(row => {
             let table:any = (this.$refs.disk_table as any)
             if(table)table.toggleRowSelection(row);
-            
+
           });
         });
-        
-      } 
+
+      }
     }
     this.FnSetTimer()
   }
@@ -383,12 +383,12 @@ export default class extends Vue {
         this[val]()
       }
     }
-    
+
   }
   private handleOperate(obj){
     this.FnClearTimer();
     this.mount_id=[obj.value]
-    this.operate_type =obj.label 
+    this.operate_type =obj.label
     if(obj.label==="restore" || obj.label==="destroy"){
       this.restore(obj.label)
     }else if(obj.label==="edit_attr" || obj.label==="edit_name"){
@@ -490,7 +490,7 @@ export default class extends Vue {
         return;
       }
     }
-    
+
     this.FnClearTimer();
     this.operate_type=str
     this.visible = true
@@ -511,7 +511,7 @@ export default class extends Vue {
     this.$router.push({
       path:'/disk/capacity',
       query:{
-        list:JSON.stringify(this.mount_id) 
+        list:JSON.stringify(this.mount_id)
       }
     })
   }
@@ -534,7 +534,7 @@ export default class extends Vue {
       return item[label] ===val
     })
   }
-  
+
   //限制云盘操作
   private limit_disk_operate(label:string,obj:any){
     if(label==="mount"){
@@ -566,13 +566,13 @@ export default class extends Vue {
     if(val==='1'){
       this.current =1;
     }
-    
+
     this.getDiskList()
-    
+
   }
   private handleSelectionChange(data){
     this.mount_id = data
-    
+
   }
   private toggleSelection() {
     const table = this.$refs.disk_table as Table
@@ -582,8 +582,8 @@ export default class extends Vue {
     this.filter_obj = {...this.filter_obj,...obj}
     this.search(this.req_data)
   }
-   
-  
+
+
 }
 </script>
 <style lang="scss" scoped>
