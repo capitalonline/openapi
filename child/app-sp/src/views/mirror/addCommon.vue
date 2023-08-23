@@ -154,7 +154,7 @@ export default class AddCommon extends Vue{
     private az_list:Array<any>=[];
     private storage_type_list:Array<any>=[];
         // 产品来源
-    private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器'];
+    private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器','负载均衡'];
 
     private compute_type_list:any=['CPU/GPU','GPU','CPU']
     private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
