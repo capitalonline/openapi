@@ -6,9 +6,9 @@
                 <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table 
-            :data="list" 
-            border 
+        <el-table
+            :data="list"
+            border
             class="event-table"
             @sort-change="FnSortChange"
             @filter-change="filterAttribute"
@@ -229,7 +229,7 @@ export default class PrivateMirror extends Vue{
     private filterAttribute(obj:any){
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
-        
+
     }
     private record(obj){
         this.oper_info=obj;
@@ -268,7 +268,7 @@ export default class PrivateMirror extends Vue{
         let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
         window.location.href=`/ecs_business/v1/img/private_image_list_download/${query}`
     }
-    
+
 }
 </script>
 <style lang="scss" scoped>

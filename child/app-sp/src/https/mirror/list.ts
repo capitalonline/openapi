@@ -63,6 +63,10 @@ export default{
     get_disk_list(req){
         return service(getEcsOptions('GET','/img/backend_type/',req))
     },
+  //获取产品来源
+  get_product_source(){
+      return service(getEcsOptions('GET','/ecs/get_product_source/'))
+  }
+
 }
 
-    

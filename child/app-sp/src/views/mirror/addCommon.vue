@@ -57,7 +57,7 @@
             <el-form-item label="产品来源" prop="source_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.backend_type }}</span> -->
                 <el-select v-model="form_data.product_source">
-                    <el-option v-for="item in product_source_type_list" :key="item" :label="item" :value=" item "></el-option>
+                    <el-option v-for="item in product_source_type_list" :key="item.value" :label="item.value" :value=" item.value "></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="存储类型" prop="backend_type">
@@ -205,6 +205,7 @@ export default class AddCommon extends Vue{
             this.get_mirror_type();
         }
         this.get_disk_list()
+        this.get_product_source()
     }
     private path_md5_check(rule, value, callback){
         if(!value) {
@@ -242,6 +243,15 @@ export default class AddCommon extends Vue{
     }
     private FnDisable(date){
         return date>new Date()
+    }
+    //获取产品来源
+    private async get_product_source(){
+      let res:any = await Service.get_product_source()
+      if(res.code==="Success"){
+        this.product_source_type_list = res.data
+      } else {
+        this.$message.error(res.message)
+      }
     }
     private async get_disk_list(){
         let res:any = await Service.get_disk_list({})
