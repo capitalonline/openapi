@@ -20,23 +20,38 @@
                 :title="alert_title"
                 type="warning"
                 center
+                v-if="oper_type!=='lock'"
                 :closable="false">
             </el-alert>
+          <el-alert
+            title="请确认将下述机器置为锁定状态，置为锁定状态后，无法在此机器上开出云主机"
+            type="warning"
+            center
+            v-if="oper_type==='lock'"
+            :closable="false">
+          </el-alert>
             <el-table
                 :data="rows"
                 border
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
+                <el-table-column prop="out_band_address" label="宿主机带外" v-if="['lock','maintenance'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="![...status_list,...flag_list].includes(title)"></el-table-column>
-                <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
+                <el-table-column prop="ecs_num" label="虚拟机数量" width="150" v-if="['lock'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="power_status_name" label="电源状态" v-if="!['lock','maintenance'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="scheduled_display" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="migrated_display" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="maintenance"  label="维护原因" v-if="['maintenance'].includes(oper_type)">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.maintenanceReason" type="textarea"  placeholder="请输入维护原因" maxlength="50" show-word-limit @blur="FnValidate"></el-input>
+                  </template>
+               </el-table-column>
             </el-table>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
@@ -62,7 +77,7 @@
             </el-form>
             <!-- <div v-if="oper_type==='finish_validate'" class="text-center m-top20">
               <span>验证结果:</span>
-              
+
             </div>
             <div class="text-center m-top20" v-if="['shelves','finish_validate'].includes(oper_type)">
               <span>{{oper_type==='finish_validate' ? '通知对象：' : '回收部门：'}}</span>
@@ -146,12 +161,19 @@ export default class Operate extends Vue{
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
+      const maintenance = [{maintenanceReason:''}]
+      this.rows = [...this.rows,...maintenance]
   }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
     if(res.code==="Success"){
       this.recycle_list = res.data
     }
+  }
+  private FnValidate(){
+    // if(!this.form_data.maintenanceReason){
+    //   this.$message.error('请输入维护原因')
+    // }
   }
   private async confirm(){
     if(['shelves','finish_validate'].includes(this.oper_type)){
@@ -190,7 +212,7 @@ export default class Operate extends Vue{
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
-    
+
     if(res.code==="Success"){
       if(this.oper_type==="finish_validate" || this.oper_type==="disperse"){
         this.$message.success(res.message)
@@ -205,8 +227,8 @@ export default class Operate extends Vue{
           this.back("1")
         }
       }
-      
-      
+
+
     }else{
       this.back("0")
     }

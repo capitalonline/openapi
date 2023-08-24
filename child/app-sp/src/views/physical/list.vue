@@ -3,12 +3,12 @@
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
             <!-- :disabled="!auth_list.includes(item.value)" -->
-              <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)">{{item.label}}</el-button>
+              <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)" style="margin-bottom: 10px;">{{item.label}}</el-button>
           </template>
       </action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
-          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>        
+          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
         </el-tooltip>
         <el-tooltip content="刷新" placement="bottom" effect="light">
           <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
@@ -28,11 +28,11 @@
         :max-height="tableHeight"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column 
-          v-for="(item) in custom_host" 
+        <el-table-column
+          v-for="(item) in custom_host"
           :filter-multiple="item.column_key ? false : null"
-          :key="item.prop" 
-          :prop="item.prop" 
+          :key="item.prop"
+          :prop="item.prop"
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
@@ -50,8 +50,21 @@
              <span v-else>{{item.label}}</span>
           </template>
           <template #default="scope" v-if="item.prop==='machine_status_name'">
-            <div>{{scope.row.machine_status_name}}</div>
+            <div v-if="scope.row.machine_status!=='lock'">{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
+            <div v-if="scope.row.machine_status==='lock'" class="destroy">
+              <el-popover
+                placement="bottom"
+                width="350"
+                trigger="click">
+                <el-table :data="maintenance_Data">
+                  <el-table-column width="150" property="remark" label="备注信息"></el-table-column>
+                  <el-table-column width="90" property="time" label="时间"></el-table-column>
+                  <el-table-column width="100" property="operator" label="操作人"></el-table-column>
+                </el-table>
+                <el-button slot="reference" type="text">{{scope.row.machine_status_name}}</el-button>
+              </el-popover>
+            </div>
           </template>
           <template #default="scope" v-else-if="item.prop==='net_nic'">
             <el-tooltip effect="light" v-if="scope.row.net_nic.length>0">
@@ -168,14 +181,14 @@
               <el-tooltip
                 v-if="scope.row.net_model"
                 :content="scope.row.net_model"
-                popper-class="tooltip-width" 
-                placement="right" 
+                popper-class="tooltip-width"
+                placement="right"
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
               <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span>
             </div>
-            
+
           </template>
         </el-table-column>
         <el-table-column label="操作栏">
@@ -230,10 +243,10 @@
       <template v-if="visible && oper_type==='remark'">
         <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
       </template>
-      <custom-list-item 
-        :visible.sync="custom_visible" 
+      <custom-list-item
+        :visible.sync="custom_visible"
         :all_item="all_item"
-        :all_column_item="all_column_item" 
+        :all_column_item="all_column_item"
         @fn-custom="get_custom_columns"
       ></custom-list-item>
       <!-- :all_item="all_item" -->
@@ -261,6 +274,7 @@ import BusinessTest from './businessTest.vue'
 import Detail from '../instance/detail.vue'
 import moment from 'moment';
 import Remark from './editRemark.vue';
+import it from "element-ui/src/locale/lang/it";
 @Component({
   components:{
     ActionBlock,
@@ -301,7 +315,7 @@ export default class PhysicalList extends Vue {
       width: '360',
       clearable: true,
       dis_day: 31,
-      defaultTime: [] 
+      defaultTime: []
     },
   }
   private operate_btns:any=[
@@ -310,8 +324,9 @@ export default class PhysicalList extends Vue {
     {label:'开机',value:'start_up_host'},
     {label:'关机',value:'shutdown_host'},
     {label:'重启',value:'restart_host'},
-    {label:'在线维护',value:'online_maintenance'},
-    {label:'离线维护',value:'offline_maintenance'},
+    // {label:'在线维护',value:'online_maintenance'},
+    // {label:'离线维护',value:'offline_maintenance'},
+    {label:'设置维护',value:'maintenance'},
     {label:'完成维护',value:'finish'},
     // {label:'下架',value:'shelves'},
     {label:'驱散',value:'disperse'},
@@ -321,6 +336,8 @@ export default class PhysicalList extends Vue {
     {label:'调度标记',value:'schedule'},
     {label:'迁移标记',value:'migrate_flag'},
     {label:'欺骗器管理',value:'cheat'},
+    {label:'锁定',value:'lock'},
+    {label:'解锁',value:'unlock'},
 
   ]
   private rows_operate_btns:any=[
@@ -339,7 +356,9 @@ export default class PhysicalList extends Vue {
     finish:'已选主机需为在线维护中或离线维护中',
     shelves:'已选主机上不能有虚拟机运行',
     disperse:'已选主机需为在线状态',
-    migrate:'已选主机需为在线状态'
+    migrate:'已选主机需为在线状态',
+    lock:'已选主机需为在线或离线状态',
+    unlock:'已选主机需为锁定状态'
   };
   private host_belongs=[]
   private search_data:any={}
@@ -370,7 +389,9 @@ export default class PhysicalList extends Vue {
   private new_prop_list:Array<string>=[];
   private filter_info:any={}
   private detail_id="";
-  private detail_visible=false 
+  private detail_visible=false
+  private maintenance_Data =[{remark:'额复合弓高VhERG你哦仍of的结果',time:'2023-08-02 12:23:34',operator:'11111'}]
+  private host_name = []
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -407,7 +428,7 @@ export default class PhysicalList extends Vue {
     'local,block':'云盘/本地盘'
   }
   created() {
-      
+
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
@@ -535,7 +556,7 @@ export default class PhysicalList extends Vue {
     this.page_info.current = 1;
     this.judgeColumns()
     this.get_physical_list();
-    
+
   }
   private beforeDestroy() {
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
@@ -602,7 +623,7 @@ export default class PhysicalList extends Vue {
       sort_gpu_ff_count:this.search_data.sort_gpu_ff_count,
       sort_host_ip:this.search_data.sort_host_ip,
       ...this.filter_info,
-      
+
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -622,7 +643,7 @@ export default class PhysicalList extends Vue {
         this.host_types =deal_list(res.data,label_list,key_list);
         this.setList(this.host_types,'host_type_ch')
       }
-      
+
   }
   private async get_host_filter_item(){
     let res:any = await Service.get_host_filter_item({
@@ -647,7 +668,7 @@ export default class PhysicalList extends Vue {
     if(res.code==="Success"){
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
-      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
+      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list)
       this.setList(this.host_belongs,'host_attribution_name')
     }
   }
@@ -706,7 +727,7 @@ export default class PhysicalList extends Vue {
         start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         ...this.filter_info,
-        field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+        field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop))
     }
     let str=""
     for (let i in obj){
@@ -730,7 +751,7 @@ export default class PhysicalList extends Vue {
   private async get_room_list(){
     let res:any=await Service.get_room_list({})
     if(res.code==="Success"){
-      
+
       res.data.machine_room.forEach(item => {
         this.search_option.room.list.push({
           label:item,
@@ -807,7 +828,7 @@ export default class PhysicalList extends Vue {
       let label_list=['value','text']
       let fil = this.host_types.filter(item=>item.value===this.filter_data.host_type[0]);
       this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[];
-      
+
     }else{
       this.host_uses=[]
     }
@@ -830,8 +851,8 @@ export default class PhysicalList extends Vue {
             this.$set(item,'ecs_detail',res.data.ecs_list)
           }
         })
-        this.loading=false        
-      } 
+        this.loading=false
+      }
       this.expand_rows = expandedRows
     }
   }
@@ -851,8 +872,25 @@ export default class PhysicalList extends Vue {
         this.$message.warning("物理机需为初始化状态或验证失败状态!");
         return;
       }
-        
+
     }
+    // if(value==='maintenance'){
+    //   if(this.multi_rows.every(item=>['lock'].includes(item.machine_status))){
+    //     this.oper_type=value;
+    //     this.oper_label = label
+    //     this.visible=true;
+    //     return;
+    //   }else{
+    //     this.host_name = this.multi_rows.filter(item => item.machine_status !== 'lock' && item.ecs_num!=0).map(item => item.host_name);
+    //     this.$confirm(`设置维护失败，${this.host_name}未处于"已锁定"状态，仅"已锁定"状态的宿主机可置为"维护状态"`, '提示', {
+    //       confirmButtonText: '确定',
+    //       type: 'warning'
+    //     }).catch(() => {
+    //       return;
+    //     });
+    //   }
+    //
+    // }
     if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){
@@ -870,7 +908,7 @@ export default class PhysicalList extends Vue {
       console.log('ccc',this.oper_type)
       return;
     }
-    if(this.judge(value)){
+    if(this.judge(value) && value !== 'maintenance' ){
       if(value==="disperse"){
         //筛选出GPU物理机
         let fil = this.multi_rows.filter(item=>item.host_purpose==='GPU');
@@ -888,23 +926,23 @@ export default class PhysicalList extends Vue {
     }else{
       this.$message.warning(this.error_msg[value])
     }
-    
-    
+
+
   }
   private judge(val):any{
-    const obj = getHostStatus(val)
-    let flag_list = this.multi_rows.every(item=>{
-      let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
-      let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
-      let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
-      if(!vm_flag && ['shutdown_host'].includes(val)){
-        this.error_msg[val]=getHostStatus(val).msg2
-      }else{
-        this.error_msg[val]=getHostStatus(val).msg
-      }
-      return power_flag && host_flag && vm_flag
-    })
-    return flag_list
+      const obj = getHostStatus(val)
+      let flag_list = this.multi_rows.every(item => {
+        let power_flag = obj.power.length === 0 ? true : obj.power.includes(item.power_status)
+        let host_flag = obj.host.length === 0 ? true : obj.host.includes(item.machine_status)
+        let vm_flag = obj.vm ? obj.vm === item.ecs_list.length + 1 : true;
+        if (!vm_flag && ['shutdown_host'].includes(val)) {
+          this.error_msg[val] = getHostStatus(val).msg2
+        } else {
+          this.error_msg[val] = getHostStatus(val).msg
+        }
+        return power_flag && host_flag && vm_flag
+      })
+      return flag_list
   }
   private handleOperate(obj){
     const {label,value}=obj;
@@ -922,7 +960,7 @@ export default class PhysicalList extends Vue {
       console.log('remark')
       this.oper_type=label;
       this.visible=true;
-      
+
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{
