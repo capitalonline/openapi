@@ -140,6 +140,10 @@ export default class LeftMenu extends Vue {
       ]
     },
     {
+      name: "log_list",
+      label: "操作日志审计",noAuth:true,
+    },
+    {
       name: "destroyed",
       label: "已销毁资源",
       children: [
