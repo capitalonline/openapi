@@ -66,7 +66,7 @@
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='memory_remainder'">
-            <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
+            <span :style="scope.row.memory_remainder < 1 ? {color:'red'} : {}">{{scope.row.memory_remainder+'GB'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
@@ -471,7 +471,7 @@ export default class PhysicalList extends Vue {
       this.get_host_filter_item();
     }
     this.custom_host.map((item:any)=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count','memory_remainder'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{className:'physical',width:'140px'})
@@ -777,6 +777,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_ecs_gpu_count =undefined
     this.search_data.sort_gpu_allot=undefined
     this.search_data.sort_gpu_ff_count = undefined
+    this.search_data.sort_memory_remainder = undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
