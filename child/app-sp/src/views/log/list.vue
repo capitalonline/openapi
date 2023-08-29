@@ -6,10 +6,26 @@
       border
       class="event-table"
     >
-      <el-table-column prop="operation_type" label="操作类型"></el-table-column>
-      <el-table-column prop="cloud_type" label="操作对象类型"></el-table-column>
-      <el-table-column prop="cloud_name" label="对象名称"></el-table-column>
-      <el-table-column prop="cloud_id" label="对象ID"></el-table-column>
+      <el-table-column prop="operation_type" label="操作类型">
+        <template slot-scope="scope">
+              <span v-for="item in opertion_type">
+                <span v-if="item.type === scope.row.operation_type">
+                  {{ item.label }}
+                </span>
+              </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="cloud_type" label="操作对象类型">
+        <template slot-scope="scope">
+              <span v-for="item in cloud_type">
+                <span v-if="item.type === scope.row.cloud_type">
+                  {{ item.label }}
+                </span>
+              </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="cloud_name" label="操作对象名称"></el-table-column>
+      <el-table-column prop="cloud_id" label="操作对象ID"></el-table-column>
       <el-table-column prop="content" label="操作内容"></el-table-column>
 <!--      <el-table-column prop="os_id" label="操作对象列表/内容">-->
 <!--        <template #default="scope">-->
@@ -86,7 +102,7 @@ export default class LogList extends Vue{
     page_index: 1,
     total: 0
   };
-  private list:Array<any>=[{content:'1111'}]
+  private list:Array<any>=[]
   private search_data:any={};
   private current:number = 1
 
@@ -110,11 +126,11 @@ export default class LogList extends Vue{
       op_user:data.op_user,
       create_time_start:
         data.create_time && data.create_time[0]
-          ? moment(data.create_time[0]).format("YYYY-MM-DD")
+          ? data.create_time[0]
           : undefined,
       create_time_end:
         data.create_time && data.create_time[1]
-          ? moment(data.create_time[1]).format("YYYY-MM-DD")
+          ? data.create_time[1]
           : undefined
     }
     this.current = 1;
