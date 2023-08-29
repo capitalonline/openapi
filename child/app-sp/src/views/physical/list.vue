@@ -66,7 +66,7 @@
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram_available'">
-            <span :style="scope.row.ram_available < 1 ? {color:'red'} : {}">{{scope.row.ram_available+'GB'}}</span>
+            <span :style="scope.row.ram_available < 1 ? {color:'red'} : {}">{{(parseFloat(scope.row.ram_available/1024)).toFixed(2) +'GB'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
