@@ -65,8 +65,8 @@
           <template #default="scope" v-else-if="item.prop==='cpu'">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
-          <template #default="scope" v-else-if="item.prop==='ram_available'">
-            <span :style="scope.row.ram_available < 1 ? {color:'red'} : {}">{{(parseFloat(scope.row.ram_available/1024)).toFixed(2) +'GB'}}</span>
+          <template #default="scope" v-else-if="item.prop==='hugepages_free'">
+            <span :style="scope.row.hugepages_free < 1 ? {color:'red'} : {}">{{scope.row.hugepages_free +'GB'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
@@ -397,7 +397,7 @@ export default class PhysicalList extends Vue {
   private custom_host=[
     'host_name','host_ip','out_band_address','machine_status_name','power_status_name',
     'ecs_num','host_type_ch','host_purpose_ch','host_attribution_name','host_source',
-    'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','ram_available','create_time'
+    'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','hugepages_free','create_time'
   ]
   private backendList:any=[
     {value:'block',text:'云盘'},
@@ -471,7 +471,7 @@ export default class PhysicalList extends Vue {
       this.get_host_filter_item();
     }
     this.custom_host.map((item:any)=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count','ram_available'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count','hugepages_free'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{className:'physical',width:'140px'})
@@ -604,7 +604,7 @@ export default class PhysicalList extends Vue {
       sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
       sort_gpu_ff_count:this.search_data.sort_gpu_ff_count,
       sort_host_ip:this.search_data.sort_host_ip,
-      sort_ram_available:this.search_data.sort_ram_available,
+      sort_hugepages_free:this.search_data.sort_hugepages_free,
       ...this.filter_info,
 
     })
@@ -778,7 +778,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_ecs_gpu_count =undefined
     this.search_data.sort_gpu_allot=undefined
     this.search_data.sort_gpu_ff_count = undefined
-    this.search_data.sort_ram_available = undefined
+    this.search_data.hugepages_free = undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
