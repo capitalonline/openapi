@@ -122,7 +122,19 @@ export default{
     //设置迁移，调度标记
     set_flag(req){
         return service(getHostOptions('POST','/host/set_host_tag/',req))
-    }
-    
+    },
+  //设置锁定
+  set_lock(req){
+    return service(getHostOptions('POST','/host/host_lock/',req))
+  },
+  //设置解锁
+  set_unlock(req){
+    return service(getHostOptions('POST','/host/host_unlock/',req))
+  },
+  //设置维护
+  set_maintenance(req){
+    return service(getHostOptions('POST','/host_maintenance/',req))
+  }
+
 
 }

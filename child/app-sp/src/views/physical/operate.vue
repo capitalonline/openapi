@@ -157,7 +157,10 @@ export default class Operate extends Vue{
     'finish_validate':'finish_validate',
     'schedule':'set_flag',
     'migrate_flag':'set_flag',
-    'cheat':'set_flag'
+    'cheat':'set_flag',
+    'lock':'set_lock',
+    'unlock':'set_unlock',
+    'maintenance':'set_maintenance'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -207,7 +210,10 @@ export default class Operate extends Vue{
     } : this.oper_type==="shelves" ? {
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
-    } :{host_ids:this.rows.map(item=>item.host_id)}
+    } : this.oper_type==="maintenance" ? {
+      maintenance_detail:this.oper_type,
+      host_ids:this.rows.map(item=>item.host_id)
+    }:{host_ids:this.rows.map(item=>item.host_id)}
 
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
