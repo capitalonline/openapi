@@ -8,7 +8,7 @@
     >
       <el-table-column prop="operation_type" label="操作类型">
         <template slot-scope="scope">
-              <span v-for="item in opertion_type">
+              <span v-for="item in operation_type">
                 <span v-if="item.type === scope.row.operation_type">
                   {{ item.label }}
                 </span>
@@ -71,7 +71,7 @@ import moment from "moment";
   }
 })
 export default class LogList extends Vue{
-  private opertion_type:any = [
+  private operation_type:any = [
     {type:'create',label:'创建'},
     {type:'change',label:'更新'},
     {type:'delete',label:'删除'}
@@ -83,9 +83,9 @@ export default class LogList extends Vue{
     {type:'troubleshoot',label:'故障处理任务'},
   ]
   private search_option:Object={
-    operation_type: {placeholder: "请选择操作类型", list:this.opertion_type},
+    operation_type: {placeholder: "请选择操作类型", list:this.operation_type},
     cloud_type: {placeholder: "请选择操作对象", list: this.cloud_type},
-    operation_id:{placeholder:'请输入操作对象ID'},
+    cloud_id:{placeholder:'请输入操作对象ID'},
     op_user:{placeholder:'请输入操作人'},
     create_time:{
       placeholder:['开始时间','结束时间'],
@@ -122,7 +122,7 @@ export default class LogList extends Vue{
     this.search_data = {
       operation_type:data.operation_type,
       cloud_type:data.cloud_type,
-      operation_id:data.operation_id,
+      cloud_id:data.cloud_id,
       op_user:data.op_user,
       create_time_start:
         data.create_time && data.create_time[0]
