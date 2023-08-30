@@ -71,7 +71,7 @@
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
             <br>
-            <span>({{ (parseFloat(scope.row.ram_available/1024)).toFixed(2)+'GB'}})</span>
+            <span>({{ (parseFloat(scope.row.raw_available/1024)).toFixed(2)+'GB'}})</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text">{{scope.row.ecs_num}}</el-button>
