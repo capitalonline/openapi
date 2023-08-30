@@ -78,8 +78,9 @@ export default class LogList extends Vue{
   ]
   private cloud_type:any = [
     {type:'host',label:'宿主机'},
+    {type:'ecs',label:'云主机'},
     {type:'image',label:'镜像'},
-    {type:'pod',label:'机房'},
+    {type:'disk',label:'云盘'},
     {type:'troubleshoot',label:'故障处理任务'},
   ]
   private search_option:Object={
