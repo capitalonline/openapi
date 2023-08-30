@@ -66,10 +66,12 @@
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='hugepages_free'">
-            <span :style="scope.row.hugepages_free < 1 ? {color:'red'} : {}">{{scope.row.hugepages_free +'GB'}}</span>
+            <span>{{scope.row.hugepages_free +'GB'}}</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
+            <br>
+            <span>({{ (parseFloat(scope.row.ram_available/1024)).toFixed(2)+'GB'}})</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text">{{scope.row.ecs_num}}</el-button>
