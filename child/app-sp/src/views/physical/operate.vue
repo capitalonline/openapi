@@ -142,7 +142,8 @@ export default class Operate extends Vue{
     'finish_validate':'finish_validate',
     'schedule':'set_flag',
     'migrate_flag':'set_flag',
-    'cheat':'set_flag'
+    'cheat':'set_flag',
+    'under_sync':'update_ecs_info',
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -154,6 +155,7 @@ export default class Operate extends Vue{
     }
   }
   private async confirm(){
+    console.log('oper_type', this.oper_type)
     if(['shelves','finish_validate'].includes(this.oper_type)){
       let flag:boolean=true
       let form = this.$refs.form as Form;
@@ -185,14 +187,28 @@ export default class Operate extends Vue{
     } : this.oper_type==="shelves" ? {
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
-    } :{host_ids:this.rows.map(item=>item.host_id)}
+    } : this.oper_type==="under_sync" ? {
+      pod_id: this.$store.state.pod_id,
+      host_ecs: {}
+    } : {host_ids:this.rows.map(item=>item.host_id)}
 
+    // 底层同步接口数据组装
+    if(this.oper_type==="under_sync") {
+      for(let i of this.rows){
+        req.host_ecs[i.host_id] = []
+        if(i.ecs_list.length > 0) {
+          i.ecs_list.map(item => {
+            req.host_ecs[i.host_id].push(item.ecs_id)
+          })
+        }
+      }
+    }
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
     
     if(res.code==="Success"){
-      if(this.oper_type==="finish_validate" || this.oper_type==="disperse"){
+      if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
       }else{
@@ -205,8 +221,6 @@ export default class Operate extends Vue{
           this.back("1")
         }
       }
-      
-      
     }else{
       this.back("0")
     }

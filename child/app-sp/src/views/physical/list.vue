@@ -199,7 +199,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark','under_sync'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -230,9 +230,9 @@
       <template v-if="visible && oper_type==='remark'">
         <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
       </template>
-      <template v-if="visible && oper_type==='under_sync'">
+      <!-- <template v-if="visible && oper_type==='under_sync'">
         <UnderSync :visible.sync="visible" :rows="multi_rows" @close="close"></UnderSync>
-      </template>
+      </template> -->
       <custom-list-item 
         :visible.sync="custom_visible" 
         :all_item="all_item"
@@ -264,7 +264,7 @@ import BusinessTest from './businessTest.vue'
 import Detail from '../instance/detail.vue'
 import moment from 'moment';
 import Remark from './editRemark.vue';
-import UnderSync from './underSync.vue'
+// import UnderSync from './underSync.vue'
 @Component({
   components:{
     ActionBlock,
@@ -279,7 +279,7 @@ import UnderSync from './underSync.vue'
     BusinessTest,
     Detail,
     Remark,
-    UnderSync
+    // UnderSync
   }
 })
 export default class PhysicalList extends Vue {
@@ -859,12 +859,12 @@ export default class PhysicalList extends Vue {
         
     }
     //底层同步
-    if(value==='under_sync') {
-      this.oper_type = value
-      this.visible=true;
-      return
-    }
-    if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat'].includes(value)){
+    // if(value==='under_sync') {
+    //   this.oper_type = value
+    //   this.visible=true;
+    //   return
+    // }
+    if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat','under_sync'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){
           this.$message.warning('当前无宿主机可进行业务测试!')
