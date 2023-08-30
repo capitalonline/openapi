@@ -126,11 +126,11 @@ export default class LogList extends Vue{
       op_user:data.op_user,
       create_time_start:
         data.create_time && data.create_time[0]
-          ? data.create_time[0]
+          ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
           : undefined,
       create_time_end:
         data.create_time && data.create_time[1]
-          ? data.create_time[1]
+          ? moment(data.create_time[1]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
           : undefined
     }
     this.current = 1;
@@ -145,6 +145,8 @@ export default class LogList extends Vue{
     if(res.code === 'Success'){
       this.list = res.data.operation_log_list
       this.page_info.total = res.data.page_info.count;
+    } else {
+      this.$message.error(res.message)
     }
   }
 }
