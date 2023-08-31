@@ -84,7 +84,7 @@ import {trans} from "@/utils/transIndex";
 export default class LogList extends Vue{
   private operation_type:any = [
     {type:'create',label:'创建'},
-    {type:'change',label:'更新'},
+    {type:'change',label:'变更'},
     {type:'delete',label:'删除'}
   ]
   private cloud_type:any = [
