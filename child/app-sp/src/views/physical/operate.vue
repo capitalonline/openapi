@@ -190,6 +190,16 @@ export default class Operate extends Vue{
         return false
       }
     }
+    if (this.oper_type === 'maintenance') {
+      let flagReason = this.list.some(item => {
+        if (!item.maintenanceReason) {
+          return true;
+        }
+      });
+      if (flagReason) {
+        return false
+      }
+    }
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
