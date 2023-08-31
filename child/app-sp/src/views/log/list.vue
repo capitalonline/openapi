@@ -24,9 +24,18 @@
               </span>
         </template>
       </el-table-column>
-      <el-table-column prop="cloud_name" label="操作对象名称"></el-table-column>
-      <el-table-column prop="cloud_id" label="操作对象ID"></el-table-column>
+      <el-table-column prop="cloud_name" label="对象名称"></el-table-column>
+      <el-table-column prop="cloud_id" label="对象ID"></el-table-column>
       <el-table-column prop="content" label="操作内容"></el-table-column>
+      <el-table-column prop="status" label="操作结果">
+        <template #default="scope">
+              <span :class="scope.row.status">
+                <span v-if="scope.row.status === 'failed'">失败</span>
+                <span v-if="scope.row.status === 'success'">成功</span>
+              </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="response" label="失败原因"></el-table-column>
 <!--      <el-table-column prop="os_id" label="操作对象列表/内容">-->
 <!--        <template #default="scope">-->
 <!--        <el-popover-->
@@ -64,6 +73,8 @@ import {Component, Vue} from "vue-property-decorator";
 import ActionBlock from "../../components/search/actionBlock.vue";
 import Service from "../../https/log/list";
 import moment from "moment";
+import EcsService from "@/https/instance/create";
+import {trans} from "@/utils/transIndex";
 
 @Component({
   components: {
@@ -83,9 +94,10 @@ export default class LogList extends Vue{
     {type:'disk',label:'云盘'},
     {type:'troubleshoot',label:'故障处理任务'},
   ]
-  private search_option:Object={
+  private search_option:any={
     operation_type: {placeholder: "请选择操作类型", list:this.operation_type},
     cloud_type: {placeholder: "请选择操作对象", list: this.cloud_type},
+    az_id: {placeholder: "请选择可用区", list:[]},
     cloud_id:{placeholder:'请输入操作对象ID'},
     op_user:{placeholder:'请输入操作人'},
     create_time:{
@@ -109,6 +121,18 @@ export default class LogList extends Vue{
 
   created(){
     this.getLogList()
+    this.get_az_list()
+  }
+  private async get_az_list(){
+    this.search_option.az_id.list=[]
+    let res:any=await EcsService.get_region_az_list({})
+    if(res.code==="Success"){
+      res.data.forEach(item=>{
+        item.region_list.forEach(inn=>{
+          this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
+        })
+      })
+    }
   }
   //handleSizeChange
   private handleSizeChange(val){
@@ -125,6 +149,7 @@ export default class LogList extends Vue{
       cloud_type:data.cloud_type,
       cloud_id:data.cloud_id,
       op_user:data.op_user,
+      az_id:data.az_id,
       create_time_start:
         data.create_time && data.create_time[0]
           ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
