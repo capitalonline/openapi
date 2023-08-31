@@ -133,7 +133,11 @@ export default{
   },
   //设置维护
   set_maintenance(req){
-    return service(getHostOptions('POST','/host_maintenance/',req))
+    return service(getHostOptions('POST','/host/host_maintenance/',req))
+  },
+  //获取维护记录
+  get_maintenance_record(req){
+    return service(getHostOptions('GET','/host/host_maintenance_record/',req))
   }
 
 

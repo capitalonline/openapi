@@ -31,7 +31,7 @@
             :closable="false">
           </el-alert>
             <el-table
-                :data="rows"
+                :data="list"
                 border
                 max-height="253"
             >
@@ -49,7 +49,8 @@
                 <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="maintenance"  label="维护原因" v-if="['maintenance'].includes(oper_type)">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.maintenanceReason" type="textarea"  placeholder="请输入维护原因" maxlength="50" show-word-limit @blur="FnValidate"></el-input>
+                    <el-input v-model="scope.row.maintenanceReason" type="textarea"  placeholder="请输入维护原因" maxlength="50" show-word-limit></el-input>
+                    <div v-show="!scope.row.maintenanceReason" class="error_message">请输入维护原因</div>
                   </template>
                </el-table-column>
             </el-table>
@@ -118,6 +119,7 @@ export default class Operate extends Vue{
   private flag_list:Array<String> = ['调度标记','迁移标记','欺骗器管理'];
   private valid:number=1;
   private isFlag:number=1;
+  private list:any=[]
   private labelObj={
     'schedule':'是否允许调度',
     'migrate_flag':'是否允许迁移',
@@ -164,19 +166,16 @@ export default class Operate extends Vue{
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
-      const maintenance = [{maintenanceReason:''}]
-      this.rows = [...this.rows,...maintenance]
+    this.list = []
+    this.list = this.rows.map(item=> {
+      return {...item, maintenanceReason: ''};
+    });
   }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
     if(res.code==="Success"){
       this.recycle_list = res.data
     }
-  }
-  private FnValidate(){
-    // if(!this.form_data.maintenanceReason){
-    //   this.$message.error('请输入维护原因')
-    // }
   }
   private async confirm(){
     if(['shelves','finish_validate'].includes(this.oper_type)){
@@ -191,6 +190,7 @@ export default class Operate extends Vue{
         return false
       }
     }
+    const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -211,10 +211,9 @@ export default class Operate extends Vue{
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
     } : this.oper_type==="maintenance" ? {
-      maintenance_detail:this.oper_type,
+      maintenance_detail:maintenance_detail,
       host_ids:this.rows.map(item=>item.host_id)
     }:{host_ids:this.rows.map(item=>item.host_id)}
-
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })

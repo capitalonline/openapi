@@ -4,6 +4,14 @@
           <template #default>
             <!-- :disabled="!auth_list.includes(item.value)" -->
               <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)" style="margin-bottom: 10px;">{{item.label}}</el-button>
+            <el-dropdown style="margin-left: 10px" @command="handleMore">
+              <el-button type="primary">
+                机器锁定<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item v-for="item in operate_btns2" :key="item.value" :command="{label:item.label,value:item.value}">{{item.label}}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
       </action-block>
       <div class="icon m-bottom10">
@@ -50,19 +58,19 @@
              <span v-else>{{item.label}}</span>
           </template>
           <template #default="scope" v-if="item.prop==='machine_status_name'">
-            <div v-if="scope.row.machine_status!=='lock'">{{scope.row.machine_status_name}}</div>
+            <div v-if="scope.row.machine_status!=='maintenance'">{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
-            <div v-if="scope.row.machine_status==='lock'" class="destroy">
+            <div v-if="scope.row.machine_status==='maintenance'" class="destroy">
               <el-popover
                 placement="bottom"
                 width="350"
                 trigger="click">
                 <el-table :data="maintenance_Data">
-                  <el-table-column width="150" property="remark" label="备注信息"></el-table-column>
-                  <el-table-column width="90" property="time" label="时间"></el-table-column>
-                  <el-table-column width="100" property="operator" label="操作人"></el-table-column>
+                  <el-table-column width="150" property="reason" label="备注信息"></el-table-column>
+                  <el-table-column width="90" property="create_time" label="时间"></el-table-column>
+                  <el-table-column width="100" property="op_user" label="操作人"></el-table-column>
                 </el-table>
-                <el-button slot="reference" type="text">{{scope.row.machine_status_name}}</el-button>
+                <el-button slot="reference" type="text" @click="get_maintenance_list(scope.row.host_id)">{{scope.row.machine_status_name}}</el-button>
               </el-popover>
             </div>
           </template>
@@ -336,9 +344,11 @@ export default class PhysicalList extends Vue {
     {label:'调度标记',value:'schedule'},
     {label:'迁移标记',value:'migrate_flag'},
     {label:'欺骗器管理',value:'cheat'},
-    {label:'锁定',value:'lock'},
-    {label:'解锁',value:'unlock'},
 
+  ]
+  private operate_btns2 = [
+    {label:'锁定机器',value:'lock'},
+    {label:'解锁机器',value:'unlock'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -358,7 +368,8 @@ export default class PhysicalList extends Vue {
     disperse:'已选主机需为在线状态',
     migrate:'已选主机需为在线状态',
     lock:'已选主机需为在线或离线状态',
-    unlock:'已选主机需为锁定状态'
+    unlock:'已选主机需为锁定状态',
+    maintenance:'已选主机需为已锁定状态且已选主机上不能有虚拟机运行'
   };
   private host_belongs=[]
   private search_data:any={}
@@ -390,8 +401,7 @@ export default class PhysicalList extends Vue {
   private filter_info:any={}
   private detail_id="";
   private detail_visible=false
-  private maintenance_Data =[{remark:'额复合弓高VhERG你哦仍of的结果',time:'2023-08-02 12:23:34',operator:'11111'}]
-  private host_name = []
+  private maintenance_Data =[]
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -477,6 +487,12 @@ export default class PhysicalList extends Vue {
       this.get_custom_columns(this.$store.state.custom_host)
 
 
+    }
+  }
+  private async get_maintenance_list(id){
+    let res:any = await Service.get_maintenance_record({host_id:id})
+    if(res.code==="Success"){
+      this.maintenance_Data = res.data
     }
   }
   private async get_custom_columns(list){
@@ -874,23 +890,6 @@ export default class PhysicalList extends Vue {
       }
 
     }
-    // if(value==='maintenance'){
-    //   if(this.multi_rows.every(item=>['lock'].includes(item.machine_status))){
-    //     this.oper_type=value;
-    //     this.oper_label = label
-    //     this.visible=true;
-    //     return;
-    //   }else{
-    //     this.host_name = this.multi_rows.filter(item => item.machine_status !== 'lock' && item.ecs_num!=0).map(item => item.host_name);
-    //     this.$confirm(`设置维护失败，${this.host_name}未处于"已锁定"状态，仅"已锁定"状态的宿主机可置为"维护状态"`, '提示', {
-    //       confirmButtonText: '确定',
-    //       type: 'warning'
-    //     }).catch(() => {
-    //       return;
-    //     });
-    //   }
-    //
-    // }
     if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){
@@ -908,7 +907,7 @@ export default class PhysicalList extends Vue {
       console.log('ccc',this.oper_type)
       return;
     }
-    if(this.judge(value) && value !== 'maintenance' ){
+    if(this.judge(value) ){
       if(value==="disperse"){
         //筛选出GPU物理机
         let fil = this.multi_rows.filter(item=>item.host_purpose==='GPU');
@@ -928,6 +927,20 @@ export default class PhysicalList extends Vue {
     }
 
 
+  }
+  private handleMore(obj){
+    const {label,value}=obj;
+    if(this.multi_rows.length===0){
+      this.$message.warning("请先勾选物理机!");
+      return;
+    }
+    if(this.judge(value) ){
+      this.oper_type=value;
+      this.oper_label = label
+      this.visible=true;
+    }else{
+      this.$message.warning(this.error_msg[value])
+    }
   }
   private judge(val):any{
       const obj = getHostStatus(val)

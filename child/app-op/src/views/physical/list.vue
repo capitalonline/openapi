@@ -230,7 +230,7 @@ export default class PhysicalList extends Vue {
     online_maintenance:'已选主机需为在线状态',
     offline_maintenance:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',
     finish:'已选主机需为在线维护中或离线维护中',
-    shelves:'已选主机上不能有虚拟机运行',
+    shelves:'已选主机需为维护中状态且已选主机上不能有虚拟机运行',
     disperse:'已选主机需为在线状态',
     migrate:'已选主机需为在线状态'
   };
