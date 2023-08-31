@@ -20,10 +20,9 @@
       <el-tabs v-model="default_tab" type="card">
         <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>
       </el-tabs>
-      <!-- v-if="ecs_info.create_finish_time || session.getItem('vm_monitor')" -->
       <time-group
         :start_time="nfv_info.create_finish_time"
-        v-if="nfv_info.create_finish_time || session.getItem('nfv_monitor')"
+        v-if="nfv_info.create_finish_time"
         @fn-emit="FnGetTimer">
       </time-group>
 
@@ -115,8 +114,7 @@ import moment from 'moment';
 })
 export default class Monitor extends Vue{
   $route;
-  private session = sessionStorage
-  private source_name = 'monitor';
+  private source_name = '';
   private nfv_info = {
     region_id: '',
     az_id: '',
@@ -243,41 +241,21 @@ export default class Monitor extends Vue{
   }
 
   private FnGetChartData() {
-    let id = '';
-    let region = '';
-    let replica = '';
-    let ip = '';
-    let instanceType = '';
     let type = 'kvm';
-    if (this.source_name === 'monitor') {
-      id =sessionStorage.getItem('nfv_monitor') ? JSON.parse(sessionStorage.getItem('nfv_monitor')).id :this.detail_info.nfv_id.value;
-      region = this.nfv_info.region_id;
-      replica = this.nfv_info.az_id;
-      // ip = this.nfv_info.private_net;
-      instanceType = 'vm';
-    } else {
-      let query = this.$route.query;
-      id = query.id;
-      region = query.region;
-      replica = query.az;
-      ip = query.ip;
-      instanceType = query.type;
-      type = 'gpu';
-    }
+    let id =this.detail_info.nfv_id.value;
+    let region = this.nfv_info.region_id;
+    let replica = this.nfv_info.az_id;
+    let instanceType = 'vm';
     if (!id) {
       return
     }
-    let vm_info = sessionStorage.getItem('nfv_monitor') ? JSON.parse(sessionStorage.getItem('nfv_monitor')) : ''
-    console.log(vm_info,'vm_info' ,id,'id',);
-    
     let reqData = {
-      hostId: Object.keys(vm_info).length>0 ?vm_info.hostId : id,
-      region: Object.keys(vm_info).length>0 ?vm_info.region_id : region,
-      replica: Object.keys(vm_info).length>0 ?vm_info.replica : replica,
-      // ip: Object.keys(vm_info).length>0 ?vm_info.ip : ip,
+      hostId:id,
+      region:region,
+      replica:replica,
       ip:this.$route.params.ip,
-      instanceType: Object.keys(vm_info).length>0 ?vm_info.instanceType : instanceType,
-      os: Object.keys(vm_info).length>0 ?vm_info.os : this.nfv_info.os_system.toLocaleLowerCase(),
+      instanceType: instanceType,
+      os: this.nfv_info.os_system.toLocaleLowerCase(),
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
@@ -302,8 +280,6 @@ export default class Monitor extends Vue{
       this.nfv_info = {
         region_id: data.region_id,
         az_id: data.az_id,
-        // private_net: data.pipe.private_net,
-        // data.os_info.system
         os_system: '',
         create_finish_time: moment(new Date(data.create_finish_time)).format()
       }
@@ -311,31 +287,9 @@ export default class Monitor extends Vue{
       this.detail_info.status_display.value = data.status_display;
       this.detail_info.ecs_rule.value =
         `${data.cpu}vCPU ${data.ram}GiB`;
-      // this.detail_info.az_name.value = data.az_name;
-      // this.detail_info.system_disk_conf.value =
-        // `${data.disk.system_disk_conf.disk_name} ${data.disk.system_disk_conf.size}${data.disk.system_disk_conf.unit}`;
-      // this.detail_info.os_info.value = `${data.os_info.system} ${data.os_info.version} ${data.os_info.bite}${data.os_info.unit}`;
-
-      // let pipe_info = data.pipe;
-      // this.detail_info.private_net.value = `${pipe_info.private_net}（主）<br> `;
-      //   this.detail_info.public_net.value = '';
-      //   if (pipe_info.pub_net) {
-      //     let pub_eip_info = pipe_info.eip_info[pipe_info.pub_net];
-      //     this.detail_info.private_net.value+= pipe_info.pub_net +
-      //       (pub_eip_info.conf_name ? '（' + pub_eip_info.conf_name + '）' : ' ') + '默认出网网卡<br>';
-      //     if ( pub_eip_info.eip_ip ) this.detail_info.public_net.value = `${pub_eip_info.eip_ip}（${pub_eip_info.conf_name}）<br>`;
-      //   }
-      //   for (let item of pipe_info.virtual_net) {
-      //     let eip_info = pipe_info.eip_info[item];
-      //     this.detail_info.private_net.value+= item + (eip_info.conf_name ? '（' + eip_info.conf_name + '）': '') + '<br>';
-      //     if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）<br>`;
-      //   }
-
-      // this.detail_info.status.value = data.status;
       if (!data.is_gpu) {
         Vue.delete(this.tab_list, 'gpu')
       }
-      // this.FnGetChartData()
     }
   }
   private async FnGetCpu(type, reqData) {
@@ -436,11 +390,6 @@ export default class Monitor extends Vue{
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
-    // Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout'}, reqData)),
-    //   Service.get_network(type, Object.assign({queryType: 'networkin'}, reqData))
-    // ]).then(resData => {
-    //   this.FnHandleDubleData('net_in_out', resData)
-    // })
     this.net_rate.yValue = [];
     Promise.all([Service.get_network(type, Object.assign({queryType: 'networkout_rate'}, reqData)),
       Service.get_network(type, Object.assign({queryType: 'networkin_rate'}, reqData))
@@ -466,12 +415,6 @@ export default class Monitor extends Vue{
     Promise.all([Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_graphics'}, reqData)),
       Service.get_gpu(type, Object.assign({queryType: 'gpu_clocks_memory'}, reqData))
     ]).then(resData => {
-      // resData.map(item=>{
-      //   if(item.data.yValues && item.data.yValues.length>0){
-      //     item.data.yValues = item.data.yValues
-      //   }
-      //   return item;
-      // })
       this.FnHandleDubleData('gpu_frequency', resData)
     })
     this.gpu_frequency.yValue = [];
@@ -491,26 +434,9 @@ export default class Monitor extends Vue{
   private created() {
     this.default_tab = Object.keys(this.tab_list)[0];
     this.source_name = this.$route.name;
-    console.log(this.$route.name,'this.$route.name',this.default_tab );
-    if(sessionStorage.getItem('nfv_monitor')){
-      Vue.delete(this.tab_list, 'gpu');
-      let vm_info = JSON.parse(sessionStorage.getItem('nfv_monitor'))
-      console.log(vm_info,'vm_info11111');
-      
-      // this.detail_info.ecs_name.value = vm_info.transfer_vm_name;
-      // this.detail_info.ecs_id.value = vm_info.transfer_vm_id;
-      // this.detail_info.az_name.value = vm_info.region_name+'-'+vm_info.az_name;
-      // this.detail_info.system_disk_conf.value = vm_info.transfer_vm_conf_system_disk_type ? `${vm_info.transfer_vm_conf_system_disk_type}  ${vm_info.transfer_vm_conf_system_disk_size}${vm_info.transfer_vm_conf_system_disk_unit}` : ''
-      // this.detail_info.os_info.value = vm_info.transfer_vm_image;
-      // this.detail_info.private_net.value = `${vm_info.transfer_vm_vpc_ip}（vpc ip）<br> ${vm_info.transfer_vm_storage_ip }（存储网 ip）`
-      // this.detail_info.status.value = vm_info.status_cn;
-    }
-    if (this.source_name === 'monitor' && !sessionStorage.getItem('nfv_monitor')) {
-      this.FnGetDetail();
-    }
+    this.FnGetDetail();
   }
   private destroyed() {
-    sessionStorage.removeItem('nfv_monitor')
   }
   @Watch('default_tab')
   private FnChangeTab(newVal, oldVal) {
@@ -556,7 +482,7 @@ export default class Monitor extends Vue{
 </style>
 
 <style lang="scss">
-.tab-card .el-card__body {
+// .tab-card .el-card__body {
   // padding: 0;
-}
+// }
 </style>
