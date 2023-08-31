@@ -35,7 +35,12 @@
               </span>
         </template>
       </el-table-column>
-      <el-table-column prop="response" label="失败原因"></el-table-column>
+      <el-table-column prop="response" label="失败原因">
+        <template #default="scope">
+          <span v-if="scope.row.response">{{scope.row.response}}</span>
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
 <!--      <el-table-column prop="os_id" label="操作对象列表/内容">-->
 <!--        <template #default="scope">-->
 <!--        <el-popover-->
