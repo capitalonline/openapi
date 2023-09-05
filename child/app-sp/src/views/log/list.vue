@@ -31,7 +31,7 @@
         <template #default="scope">
               <span :class="scope.row.status">
                 <span v-if="scope.row.status === 'failed'">失败</span>
-                <span v-if="scope.row.status === 'success'">成功</span>
+                <span v-if="scope.row.status === 'success' || scope.row.status === 'finish'">成功</span>
               </span>
         </template>
       </el-table-column>
