@@ -19,7 +19,7 @@
               </el-cascader>
             </el-form-item>
             <el-form-item label="切分粒度"  v-if="form_data.host_purpose.includes('vGPU')">
-                <el-input class="w-410" placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
+                <el-input class="w-380" placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
                 <el-tooltip popper-class="tooltip-width" content="每块GPU仅能按照一种显存大小和切分类型进行切分；同物理机不同显卡切分粒度/切分类型可以不同；故一台物理机切分粒度/切分类型的数量不能多于物理机GPU数量。最多支持设置4种值。" placement="bottom" effect="light">
                     <el-button type="text">
                         <svg-icon icon="info" class="info"></svg-icon>
