@@ -9,7 +9,7 @@
         <el-form ref="form" :model="form_data" label-width="120px" class="demo-ruleForm">
             <el-form-item label="主机用途">
               <el-cascader
-                  class="w-280"
+                  class="w-410"
                   v-model="form_data.host_purpose"
                   :options="host_types"
                   :props="{ label:'type_name',value:'type',children:'list',expandTrigger: 'hover' }"
@@ -19,7 +19,7 @@
               </el-cascader>
             </el-form-item>
             <el-form-item label="切分粒度"  v-if="form_data.host_purpose.includes('vGPU')">
-                <el-input class="w-280" placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
+                <el-input class="w-410" placeholder="若输入多个值，用英文逗号隔开" v-model="particle"></el-input> GB
                 <el-tooltip popper-class="tooltip-width" content="每块GPU仅能按照一种显存大小和切分类型进行切分；同物理机不同显卡切分粒度/切分类型可以不同；故一台物理机切分粒度/切分类型的数量不能多于物理机GPU数量。最多支持设置4种值。" placement="bottom" effect="light">
                     <el-button type="text">
                         <svg-icon icon="info" class="info"></svg-icon>
@@ -31,7 +31,7 @@
             <div class="error_message tip" v-if="particle.split(',').length>4">最多支持设置4种值</div>
             <div class="error_message tip" v-else-if="particle.includes('，')">请用英文逗号隔开</div>
             <el-form-item label="切分类型" v-if="form_data.host_purpose.includes('vGPU')">
-                <el-select class="w-280" v-model="vgpu_segment_type">
+                <el-select class="w-410" v-model="vgpu_segment_type">
                     <el-option
                         v-for="item in particleList"
                         :key="item"
@@ -41,23 +41,26 @@
                 </el-select>
             </el-form-item>
           <el-form-item label="专属客户">
-            <el-cascader
-                class="w-280"
+            <el-select v-model="customer" placeholder="保持不变" clearable>
+              <el-option label="全部客户" value="all"></el-option>
+              <el-option label="专属客户" value="select"></el-option>
+            </el-select>
+            <el-select
+                style="margin-left: 10px"
                 v-model="form_data.customer_ids"
-                :options="customerOption"
-                :props="{ label: 'labeledName', value: 'id', expandTrigger: 'hover', multiple: true }"
-                clearable
+                multiple
                 filterable
-                :before-filter="getCustomerList"
+                remote
+                :remote-method="getCustomerList"
                 @visible-change="changeCustomer"
-                placeholder="保持不变"
-                @change="change($event, 'customer')"
+                :disabled="customer!=='select'"
             >
-            </el-cascader>
+              <el-option v-for="item in customerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="产品规格族">
             <el-cascader
-                class="w-280"
+                class="w-410"
                 v-model="form_data.spec_family_ids"
                 :options="familyOption"
                 :props="{ label:'name',value:'spec_family_id',expandTrigger: 'hover' ,multiple:true}"
@@ -65,13 +68,13 @@
                 :filter-method="getFamilyList"
                 @visible-change="changeFamily"
                 placeholder="保持不变"
-                @change="change($event, 'spec')"
+                @change="change"
             >
             </el-cascader>
           </el-form-item>
             <el-form-item label="支持存储类型" prop="backend">
                 <el-select
-                    class="w-280"
+                    class="w-410"
                     v-model="form_data.backend_type"
                     clearable
                     placeholder="保持不变"
@@ -80,19 +83,22 @@
                 </el-select>
             </el-form-item>
           <el-form-item label="客户黑名单">
-            <el-cascader
-                class="w-280"
+            <el-select v-model="black_customer" placeholder="保持不变" clearable>
+              <el-option label="不设置客户黑名单" value="all"></el-option>
+              <el-option label="设置客户黑名单" value="select"></el-option>
+            </el-select>
+            <el-select
+                style="margin-left: 10px"
                 v-model="form_data.black_customer_ids"
-                :options="blackCustomerOption"
-                :props="{ label: 'labeledName', value: 'id', expandTrigger: 'hover', multiple: true }"
-                clearable
+                multiple
                 filterable
-                :before-filter="getBlackCustomerList"
+                remote
+                :remote-method="getBlackCustomerList"
                 @visible-change="changeBlackCustomer"
-                placeholder="保持不变"
-                @change="change($event, 'blackCustomer')"
+                :disabled="black_customer!=='select'"
             >
-            </el-cascader>
+              <el-option v-for="item in blackCustomerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -142,6 +148,8 @@ export default class UpdateAttribute extends Vue{
     private familyOption = []
     private customerOption = []
     private blackCustomerOption = []
+    private customer = ''
+    private black_customer = ''
     private backendList:any=[
         {id:'block',name:'云盘'},
         {id:'local',name:'本地盘'},
@@ -152,6 +160,18 @@ export default class UpdateAttribute extends Vue{
         this.getCustomerList('',true);
         this.getFamilyList()
     }
+    @Watch('customer')
+    private watch(val){
+      if(val !== 'select'){
+        this.form_data.customer_ids = []
+      }
+    }
+  @Watch('black_customer')
+  private watch_black(val){
+    if(val !== 'select'){
+      this.form_data.black_customer_ids = []
+    }
+  }
 
     private async getHostTypes(){
         let res:any =await Service.get_host_type({})
@@ -167,40 +187,29 @@ export default class UpdateAttribute extends Vue{
         }
         
     }
-private changeFamily(val){
+    private changeFamily(val){
         if(!val){
             this.getFamilyList()
         }
     }
-  private changeCustomer(val){
+    private changeCustomer(val){
         if(val){
-          this.customerList=[]
-          this.customerOption =  [{id: 'none', labeledName: '全部客户'},
-              {id: 'set', labeledName: '设置专属用户', children: []}]
+            this.customerList=[]
             // this.getCustomerList()
         }
-
     }
     private changeBlackCustomer(val){
         if(val){
             this.blackCustomerList=[]
-            this.blackCustomerOption =  [{id: 'none', labeledName: '不设置黑名单'},
-            {id: 'set', labeledName: '设置黑名单', children: []}]
             // this.getCustomerList()
         }
     }
-    private change(item,type) {
+    private change(item) {
       let tag = item.at(-1)
       let arr = item.filter((e) => {
         return e[0] === tag[0]
       })
-      if(type === 'spec') {
         this.form_data.spec_family_ids = arr
-      } else if(type === 'customer') {
-        this.form_data.customer_ids = arr
-      } else {
-        this.form_data.black_customer_ids = arr
-      }
     }
     private async getFamilyList(val:string=""){
         let res:any=await Service.getFamilyList({
@@ -220,22 +229,17 @@ private changeFamily(val){
     // @Watch("customer_id")
     // private watch_customer_id(nv){
     // }
-    private async getCustomerList(val:string="",loading:boolean=false) {
-      if (!val && !loading) {
-        return
-      }
-      let res: any = await Service.getCustomerList({
-        host_ids: this.rows.map(item => item.host_id),
-        customer_id: val
-      })
-      if (res.code == 'Success') {
-        this.customerList = res.data.customer_list;
-        this.customerOption = [
-          {id: 'none', labeledName: '全部客户'},
-          { id: 'set', labeledName: '设置专属用户', children: this.customerList.map(item => ({ ...item, labeledName: `${item.id}（${item.name}）` })) }
-        ]
-        return false
-      }
+    private async getCustomerList(val:string="",loading:boolean=false){
+        if(!val && !loading){
+            return
+        }
+        let res:any=await Service.getCustomerList({
+            host_ids:this.rows.map(item=>item.host_id),
+            customer_id:val
+        })
+        if (res.code == 'Success'){
+            this.customerList=res.data.customer_list;
+        }
     }
     private async getBlackCustomerList(val:string="",loading:boolean=false){
         if(!val && !loading){
@@ -247,62 +251,31 @@ private changeFamily(val){
         })
         if (res.code == 'Success'){
             this.blackCustomerList=res.data.customer_list;
-            this.blackCustomerOption = [
-              {id: 'none', labeledName: '不设置黑名单'},
-              { id: 'set', labeledName: '设置黑名单', children: this.blackCustomerList.map(item => ({ ...item, labeledName: `${item.id}（${item.name}）` })) }
-            ]
         }
     }
-   private processIds(ids) {
-    if (ids.length!== 0) {
-      const keep = ids.map(item => item[0]);
-      if (keep[0] === 'none') {
-        return [];
-      }
-      return ids.map(item => item[1]);
-    }
-    console.log(ids)
-    return ids;
-  }
     private async confirm() {
+      const spec_id = this.form_data.spec_family_ids.map(item => item[1])
       let req: any = {
         host_ids:this.rows.map(item=>item.host_id),
-        black_customer_ids:this.form_data.black_customer_ids
+        host_type:this.form_data.host_purpose.length>0 ? this.form_data.host_purpose[0] : undefined,
+        host_purpose:this.form_data.host_purpose.length>0 ? this.form_data.host_purpose[1] : undefined,
+        backend_type:this.form_data.backend_type !== '' ? this.form_data.backend_type : undefined,
+        customer_ids: this.form_data.customer_ids.length > 0 ? this.form_data.customer_ids : (this.customer === 'all' ? [] : undefined),
+        black_customer_ids:this.form_data.black_customer_ids.length > 0 ? this.form_data.black_customer_ids : (this.black_customer === 'all' ? [] : undefined),
+        spec_family_ids: this.form_data.spec_family_ids.length > 0 ? (this.form_data.spec_family_ids[0][0] === 'none' ? [] : spec_id) : undefined,
       }
-      for (const key in this.form_data) {
-        if (this.form_data[key] && (this.form_data[key] !== '' &&  this.form_data[key].length>0 )) {
-          req[key] = this.form_data[key];
+      let res: any = await Service.update_attribute(req)
+      if (res.code === 'Success') {
+        if (res.data.fail_host_list.length > 0) {
+          this.$message.warning(res.message)
+          this.back("0");
+          return;
         }
+        this.$message.success(res.message)
+        this.back("1")
+      } else {
+        this.back("0")
       }
-      req.spec_family_ids = this.processIds(this.form_data.spec_family_ids )
-      req.customer_ids = this.processIds(this.form_data.customer_ids )
-      req.black_customer_ids = this.processIds(this.form_data.black_customer_ids)
-      // if (this.form_data.spec_family_ids.length !== 0) {
-      //   const keep = this.form_data.spec_family_ids.map(item => item[0]);
-      //   if (keep[0] === 'none') {
-      //     req.spec_family_ids = [];
-      //   } else {
-      //     req.spec_family_ids = this.form_data.spec_family_ids.map(item => item[1]);
-      //   }
-      // }
-      if(this.form_data.host_purpose.length>0) {
-        const [type, purpose] = this.form_data.host_purpose;
-        req.host_type = type
-        req.host_purpose = purpose
-      }
-      console.log('req', JSON.stringify(req))
-      // let res: any = await Service.update_attribute(req)
-      // if (res.code === 'Success') {
-      //   if (res.data.fail_host_list.length > 0) {
-      //     this.$message.warning(res.message)
-      //     this.back("0");
-      //     return;
-      //   }
-      //   this.$message.success(res.message)
-      //   this.back("1")
-      // } else {
-      //   this.back("0")
-      // }
     }
     @Emit("close")
     private back(val){
@@ -324,7 +297,7 @@ private changeFamily(val){
     .tip{
         margin-left: 140px;
         margin-top: -20px;
-    
+
     }
 }
 </style>
