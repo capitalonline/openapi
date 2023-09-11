@@ -8,7 +8,7 @@
       </action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
-          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>        
+          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
         </el-tooltip>
         <el-tooltip content="刷新" placement="bottom" effect="light">
           <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
@@ -28,11 +28,11 @@
         :max-height="tableHeight"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column 
-          v-for="(item) in custom_host" 
+        <el-table-column
+          v-for="(item) in custom_host"
           :filter-multiple="item.column_key ? false : null"
-          :key="item.prop" 
-          :prop="item.prop" 
+          :key="item.prop"
+          :prop="item.prop"
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
@@ -65,8 +65,13 @@
           <template #default="scope" v-else-if="item.prop==='cpu'">
             <span>{{(parseFloat(scope.row.cpu)).toFixed(2)+'%'}}</span>
           </template>
+          <template #default="scope" v-else-if="item.prop==='hugepages_free'">
+            <span>{{scope.row.hugepages_free +'GB'}}</span>
+          </template>
           <template #default="scope" v-else-if="item.prop==='ram'">
             <span>{{(parseFloat(scope.row.ram)).toFixed(2)+'%'}}</span>
+            <br>
+            <span>({{ (parseFloat(scope.row.raw_available/1024)).toFixed(2)+'GB'}})</span>
           </template>
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text">{{scope.row.ecs_num}}</el-button>
@@ -168,14 +173,14 @@
               <el-tooltip
                 v-if="scope.row.net_model"
                 :content="scope.row.net_model"
-                popper-class="tooltip-width" 
-                placement="right" 
+                popper-class="tooltip-width"
+                placement="right"
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
               <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span>
             </div>
-            
+
           </template>
         </el-table-column>
         <el-table-column label="操作栏">
@@ -230,13 +235,10 @@
       <template v-if="visible && oper_type==='remark'">
         <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
       </template>
-      <!-- <template v-if="visible && oper_type==='under_sync'">
-        <UnderSync :visible.sync="visible" :rows="multi_rows" @close="close"></UnderSync>
-      </template> -->
-      <custom-list-item 
-        :visible.sync="custom_visible" 
+      <custom-list-item
+        :visible.sync="custom_visible"
         :all_item="all_item"
-        :all_column_item="all_column_item" 
+        :all_column_item="all_column_item"
         @fn-custom="get_custom_columns"
       ></custom-list-item>
       <!-- :all_item="all_item" -->
@@ -306,7 +308,7 @@ export default class PhysicalList extends Vue {
       width: '360',
       clearable: true,
       dis_day: 31,
-      defaultTime: [] 
+      defaultTime: []
     },
   }
   private operate_btns:any=[
@@ -375,7 +377,7 @@ export default class PhysicalList extends Vue {
   private new_prop_list:Array<string>=[];
   private filter_info:any={}
   private detail_id="";
-  private detail_visible=false 
+  private detail_visible=false
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -399,7 +401,7 @@ export default class PhysicalList extends Vue {
   private custom_host=[
     'host_name','host_ip','out_band_address','machine_status_name','power_status_name',
     'ecs_num','host_type_ch','host_purpose_ch','host_attribution_name','host_source',
-    'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','create_time'
+    'cpu_model','gpu_model','gpu_count','net_nic','cpu','ram','hugepages_free','create_time'
   ]
   private backendList:any=[
     {value:'block',text:'云盘'},
@@ -412,7 +414,7 @@ export default class PhysicalList extends Vue {
     'local,block':'云盘/本地盘'
   }
   created() {
-      
+
       this.get_room_list()
       this.get_az_list()
       this.get_status_list()
@@ -473,7 +475,7 @@ export default class PhysicalList extends Vue {
       this.get_host_filter_item();
     }
     this.custom_host.map((item:any)=>{
-      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count'].includes(item.prop)){
+      if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','create_time','gpu_count','gpu_allot','ecs_gpu_count','gpu_ff_count','hugepages_free'].includes(item.prop)){
         item = Object.assign(item,{},{sortable:'custom'})
         if(item.prop==='ecs_num'){
           item = Object.assign(item,{},{className:'physical',width:'140px'})
@@ -540,7 +542,7 @@ export default class PhysicalList extends Vue {
     this.page_info.current = 1;
     this.judgeColumns()
     this.get_physical_list();
-    
+
   }
   private beforeDestroy() {
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
@@ -606,8 +608,9 @@ export default class PhysicalList extends Vue {
       sort_ecs_gpu_count:this.search_data.sort_ecs_gpu_count,
       sort_gpu_ff_count:this.search_data.sort_gpu_ff_count,
       sort_host_ip:this.search_data.sort_host_ip,
+      sort_hugepages_free:this.search_data.sort_hugepages_free,
       ...this.filter_info,
-      
+
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -627,7 +630,7 @@ export default class PhysicalList extends Vue {
         this.host_types =deal_list(res.data,label_list,key_list);
         this.setList(this.host_types,'host_type_ch')
       }
-      
+
   }
   private async get_host_filter_item(){
     let res:any = await Service.get_host_filter_item({
@@ -652,7 +655,7 @@ export default class PhysicalList extends Vue {
     if(res.code==="Success"){
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
-      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
+      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list)
       this.setList(this.host_belongs,'host_attribution_name')
     }
   }
@@ -711,7 +714,7 @@ export default class PhysicalList extends Vue {
         start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         ...this.filter_info,
-        field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+        field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop))
     }
     let str=""
     for (let i in obj){
@@ -735,7 +738,7 @@ export default class PhysicalList extends Vue {
   private async get_room_list(){
     let res:any=await Service.get_room_list({})
     if(res.code==="Success"){
-      
+
       res.data.machine_room.forEach(item => {
         this.search_option.room.list.push({
           label:item,
@@ -779,6 +782,7 @@ export default class PhysicalList extends Vue {
     this.search_data.sort_ecs_gpu_count =undefined
     this.search_data.sort_gpu_allot=undefined
     this.search_data.sort_gpu_ff_count = undefined
+    this.search_data.hugepages_free = undefined
     this.search_data[`sort_${obj.prop}`]= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
     this.get_physical_list()
   }
@@ -812,7 +816,7 @@ export default class PhysicalList extends Vue {
       let label_list=['value','text']
       let fil = this.host_types.filter(item=>item.value===this.filter_data.host_type[0]);
       this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[];
-      
+
     }else{
       this.host_uses=[]
     }
@@ -835,8 +839,8 @@ export default class PhysicalList extends Vue {
             this.$set(item,'ecs_detail',res.data.ecs_list)
           }
         })
-        this.loading=false        
-      } 
+        this.loading=false
+      }
       this.expand_rows = expandedRows
     }
   }
@@ -856,7 +860,7 @@ export default class PhysicalList extends Vue {
         this.$message.warning("物理机需为初始化状态或验证失败状态!");
         return;
       }
-        
+
     }
     //底层同步
     // if(value==='under_sync') {
@@ -899,8 +903,8 @@ export default class PhysicalList extends Vue {
     }else{
       this.$message.warning(this.error_msg[value])
     }
-    
-    
+
+
   }
   private judge(val):any{
     const obj = getHostStatus(val)
@@ -933,7 +937,7 @@ export default class PhysicalList extends Vue {
       console.log('remark')
       this.oper_type=label;
       this.visible=true;
-      
+
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{
