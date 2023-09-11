@@ -151,9 +151,7 @@ export default class App extends Vue{
           }
           
         }
-        if (this.$route.query.host_id) {
-          
-        } else {
+        if (!this.$route.query.host_id) {
           this.FnSearch(this.search_reqData);
         }
       }
