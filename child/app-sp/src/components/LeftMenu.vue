@@ -65,6 +65,10 @@ export default class LeftMenu extends Vue {
       label: "云服务器管理"
     },
     {
+      name: "nfv_list",
+      label: "NFV云服务器",
+    },
+    {
       name: 'disk',
       label: '云盘',
       children: [
