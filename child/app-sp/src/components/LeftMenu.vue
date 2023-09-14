@@ -71,12 +71,10 @@ export default class LeftMenu extends Vue {
         {
           name: "gpu_list",
           label: "GPU管理",
-          noAuth:true,
         },
         {
           name: "gpu_fault_record",
           label: "GPU故障记录",
-          noAuth:true,
         }
       ]
     },

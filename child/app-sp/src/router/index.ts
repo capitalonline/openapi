@@ -127,7 +127,7 @@ const routes: RouteConfig[] = [
     path:'/gpu',
     name:'gpu_list',
     component:()=>import('../views/gpu/list.vue'),
-    meta:{menu:'gpu_list'}
+    meta:{menu:'gpu_list' }
   },
   {
     path:'/gpuRecord',

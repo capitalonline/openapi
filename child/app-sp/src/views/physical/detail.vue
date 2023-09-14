@@ -9,7 +9,7 @@
             </el-tab-pane>
             <el-tab-pane label="监控" name="1">
                 <template v-if="active==='1'">
-                    <Monitor :host_id="id" :host_name="title"/>
+                    <Monitor :host_id="id" :host_name="title" :default="default_tab"/>
                 </template>
             </el-tab-pane>
             <el-tab-pane label="存储" name="2">
@@ -41,11 +41,14 @@ export default class Detail extends Vue{
     private active:String="0";
     private title:string="";
     private id:string=""
+    private default_tab:string = ""
     private handleClick(val){
     }
     created() {
         this.title = this.$route.query.name
         this.id = this.$route.query.id
+        this.active = this.$route.params.active ? this.$route.params.active : "0"
+        this.default_tab = this.$route.params.default_tab ? this.$route.params.default_tab : ''
     }
 }
 </script>

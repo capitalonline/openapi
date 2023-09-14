@@ -99,6 +99,7 @@ import moment from 'moment';
 export default class Monitor extends Vue{
   @Prop({default: ''}) readonly host_id;
   @Prop({default: ''}) readonly host_name;
+  @Prop({default: ''}) readonly default;
   private host_info = {
     region_id: '',
     az_id: '',
@@ -321,8 +322,8 @@ export default class Monitor extends Vue{
     })
   }
   private FnHandleMoreGpuNameData(data,ecs_list){//处理多个gpu卡数据，又是多条线
-    let instance:any=[]  
-    let list=[]  
+    let instance:any=[]
+    let list=[]
     let indexs = []
     data.map((item,index)=>{
       if(item.data.xTime){
@@ -346,7 +347,7 @@ export default class Monitor extends Vue{
       if(index!==0){
         obj.data.gpuName= [...obj.data.gpuName,...item.data.gpuName];
         obj.data.yValues=[...obj.data.yValues,...item.data.yValues]
-      }        
+      }
     })
     obj.data.gpuName = obj.data.gpuName.map((gpu,i)=>{
       let name = instance[i].ecs_name.length>20 ? `${instance[i].ecs_name.slice(0,20)}...` : instance[i].ecs_name
@@ -395,7 +396,7 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
-  private async FnGetGpuInfo(type, reqData) {    
+  private async FnGetGpuInfo(type, reqData) {
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
       host_id: this.host_id,
@@ -409,7 +410,7 @@ export default class Monitor extends Vue{
     if (resData.code === 'Success') {
       ecs_list = resData.data.ecs_list.filter(item => {
         return item.status !== 'destroy' && (this.host_info.host_purpose === 'GPU' ? true : item.is_gpu)
-      })      
+      })
     }
     this.gpu_used.yValue = [];
     Promise.all(ecs_list.map(item => {
@@ -489,10 +490,10 @@ export default class Monitor extends Vue{
         this.FnHandleDubleData('gpu_frequency', [this.FnHandleMoreGpuNameData(resData,ecs_list),this.FnHandleMoreGpuNameData(res,ecs_list)])
       })
     })
-    
+
   }
   private created() {
-    this.default_tab = Object.keys(this.tab_list)[0];
+    this.default_tab = this.default ? this.default : Object.keys(this.tab_list)[0];
     this.FnGetDetail();
   }
   @Watch('default_tab')
