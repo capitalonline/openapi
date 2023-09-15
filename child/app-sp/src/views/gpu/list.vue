@@ -3,7 +3,7 @@
     <action-block :search_option="search_con" @fn-search="FnSearch" :type="false"></action-block>
     <el-table
       :data="gpu_list"
-      :hesder-cell-style="{'text-align':'center'}"
+      :header-cell-style="{'text-align':'center'}"
       @filter-change="handleFilterChange"
       border
     >
@@ -23,6 +23,8 @@
         </template>
       </el-table-column>
       <el-table-column label="所属云主机" prop="vm_id"></el-table-column>
+      <el-table-column label="创建时间" prop="create_time"></el-table-column>
+      <el-table-column label="更新时间" prop="update_time"></el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button
@@ -129,7 +131,7 @@ export default class list extends Vue {
         ?  moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
       create_time_end:data.create_time && data.create_time[0]
-        ?  moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
+        ?  moment(data.create_time[1]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
     };
     this.FnGetList();

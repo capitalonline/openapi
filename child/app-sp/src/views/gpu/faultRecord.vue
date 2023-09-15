@@ -9,7 +9,7 @@
     </div>
     <el-table
       :data="history_list"
-      :hesder-cell-style="{'text-align':'center'}"
+      :header-cell-style="{'text-align':'center'}"
       border
     >
       <el-table-column prop="host_id" label="物理机ID"></el-table-column>
@@ -17,6 +17,7 @@
       <el-table-column label="所属云主机" prop="vm_id"></el-table-column>
       <el-table-column label="客户ID" prop="customer_id"></el-table-column>
       <el-table-column label="Slot号" prop="slot"></el-table-column>
+      <el-table-column label="PCIe号" prop="pci_address"></el-table-column>
       <el-table-column label="SN号" prop="sn"></el-table-column>
       <el-table-column label="更新内容" prop="content"></el-table-column>
       <el-table-column label="创建时间" prop="create_time"></el-table-column>
@@ -60,7 +61,7 @@ export default class faultRecord extends Vue {
   }
   private search_con = {
     host_id: { placeholder: "请输入物理机ID" },
-    gpu_name: { placeholder: "请输入显卡名称"},
+    pci_address: { placeholder: "请输入PCIe号"},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -73,16 +74,12 @@ export default class faultRecord extends Vue {
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       host_id:data.host_id,
-      nfv_id: data.nfv_id,
-      gpu_type: data.nat_gateway_id,
-      gpu_name: data.customer_id,
-      gpu_status: data.host_name,
-      sn:data.sn,
+      pci_address: data.pci_address,
       create_time_start:data.create_time && data.create_time[0]
         ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
       create_time_end:data.create_time && data.create_time[0]
-        ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
+        ? moment(data.create_time[1]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
     };
     this.FnGetList();
