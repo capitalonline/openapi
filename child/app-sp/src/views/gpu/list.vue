@@ -7,7 +7,7 @@
       @filter-change="handleFilterChange"
       border
     >
-      <el-table-column prop="host_id" label="物理机ID"></el-table-column>
+      <el-table-column prop="host_id" label="物理机ID" width="200px"></el-table-column>
       <el-table-column prop="card_name" label="GPU"></el-table-column>
       <el-table-column label="Slot号" prop="slot"></el-table-column>
       <el-table-column label="PCIe号" prop="pci_address"></el-table-column>
@@ -25,7 +25,7 @@
       <el-table-column label="所属云主机" prop="vm_id"></el-table-column>
       <el-table-column label="创建时间" prop="create_time"></el-table-column>
       <el-table-column label="更新时间" prop="update_time"></el-table-column>
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="100">
         <template #default="scope">
           <el-button
             type="text"
