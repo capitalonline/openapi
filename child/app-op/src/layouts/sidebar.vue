@@ -110,6 +110,10 @@ export default class SideBar extends Vue {
           label: '云盘库存'
         }
       ]
+    },
+    {
+      name: "nas_inventory_list",
+      label: "NAS库存"
     }
   ]
   private menu: Array<object> = [];
@@ -135,7 +139,7 @@ export default class SideBar extends Vue {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          if (this.$store.state.auth_info[child.name]) {
+          if (this.$store.state.auth_info[child.name] || child.noAuth) {
             child_list.push(child)
           }
         })
