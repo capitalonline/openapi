@@ -164,7 +164,7 @@ export default class NasInventory extends Vue{
     })
     if(res.code === 'Success'){
       this.list = res.data.operation_log_list
-      this.pageInfo.total = res.data.total
+      this.pageInfo.total = res.data.page_info.count
     }
   }
   private async FnPostLine(){
