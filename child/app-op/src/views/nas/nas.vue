@@ -88,11 +88,12 @@ import httpService from "@/https/az/list";
   }
 })
 export default class NasInventory extends Vue{
-  private list:Array = [{az_name:'呼和浩特'}]
+  private list:Array<string> = []
   private operate_auth = []
   private visible:boolean = false
   private data_info ={}
-  private az_list = [{az_id:'09a38804-c1ee-11ec-bd22-4641dfd57315',az_name:'宿迁B'},{az_id:'e5aa47be-da46-11ec-bad2-defff767b3b5',az_name: '呼和浩特B'}]
+  //private az_list = [{az_id:'09a38804-c1ee-11ec-bd22-4641dfd57315',az_name:'宿迁B'},{az_id:'e5aa47be-da46-11ec-bad2-defff767b3b5',az_name: '呼和浩特B'}]
+  private az_list = []
   private timeList: any = [new Date(), new Date()]
   private echartForm: any = {
     az_id: '',
