@@ -124,7 +124,7 @@ export default class NasInventory extends Vue{
 
   async created() {
     await this.getCurrentTime()
-    //await this.get_az_list()
+    await this.get_az_list()
     await this.FnGetList()
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
   }
@@ -179,7 +179,6 @@ export default class NasInventory extends Vue{
         res.data.map(item => item.total),
         res.data.map(item => item.used)
       ]
-      console.log(this.nas_chart.yValue)
       this.nas_chart.legend = ['总体空间容量', '已售NAS容量']
       this.nas_chart.unit = 'TB'
       this.nas_chart.resize++
@@ -193,23 +192,23 @@ export default class NasInventory extends Vue{
         resize: 0
       }
     }
-    console.log('this.nas_chart',this.nas_chart)
+
   }
-  // private async get_az_list() {
-  //   let params = {
-  //     region_name: '',
-  //     az_name: '',
-  //     page_index: 1,
-  //     page_size: 200
-  //   }
-  //   const res:any = await httpService.get_az_list(params)
-  //     if(res.code === 'Success') {
-  //       if(res.data.az_list.length > 0) {
-  //         this.az_list = res.data.az_list.filter(item => item.az_id === '09a38804-c1ee-11ec-bd22-4641dfd57315' || item.az_id === 'e5aa47be-da46-11ec-bad2-defff767b3b5')
-  //             .map(item => ({ az_id: item.az_id, az_name: item.az_name }))
-  //       }
-  //     }
-  // }
+  private async get_az_list() {
+    let params = {
+      region_name: '',
+      az_name: '',
+      page_index: 1,
+      page_size: 200
+    }
+    const res:any = await httpService.get_az_list(params)
+      if(res.code === 'Success') {
+        if(res.data.az_list.length > 0) {
+          this.az_list = res.data.az_list.filter(item => item.az_id === '09a38804-c1ee-11ec-bd22-4641dfd57315' || item.az_id === 'e5aa47be-da46-11ec-bad2-defff767b3b5')
+              .map(item => ({ az_id: item.az_id, az_name: item.az_name }))
+        }
+      }
+  }
   private dateFormat(format, date, day) {
     if (!format) return '';
     let curDate = new Date(date.getTime() - 24 * 60 * 60 * 1000 * day);
@@ -222,7 +221,6 @@ export default class NasInventory extends Vue{
       s: curDate.getSeconds(),
       S: curDate.getMilliseconds()
     };
-    console.log('dateMap',dateMap)
     return format.replace(/(y+)|(M+)|(d+)|(h+)|(m+)|(s+)|(S+)/g, (a) => this._add0(dateMap[a[0]], a.length))
   }
   private _add0(time, len) {
