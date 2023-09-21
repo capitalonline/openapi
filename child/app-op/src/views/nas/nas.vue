@@ -159,7 +159,7 @@ export default class NasInventory extends Vue{
   }
   private async FnGetList(){
     let res:any = await Service.get_nas_inventory({
-      az_id:this.tableForm.az_id,
+      az_id:this.tableForm.az_id ? this.tableForm.az_id :undefined,
       page_index:this.pageInfo.page_index,
       page_size:this.pageInfo.page_size,
     })
