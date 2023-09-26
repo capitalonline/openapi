@@ -1,6 +1,6 @@
 // 物理机管理
 import service from "../http"
-import { getHostOptions } from '../common'
+import { getHostOptions, getEcsOptions } from '../common'
 
 export default{
     //获取物理机列表
@@ -129,10 +129,10 @@ export default{
     },
     // 物理机宕机清理
     crash_clear(req) {
-        return service(getHostOptions('POST', '/ecs_business/v1/host/crash_clear', req))
+        return service(getEcsOptions('POST', '/host/crash_clear/', req))
     },
     // 物理机恢复
     crash_recover(req) {
-        return service(getHostOptions('POST', ' /ecs-business/v1/host/crash_recover', req))
+        return service(getEcsOptions('POST', '/host/crash_recover/', req))
     },
 }
