@@ -144,6 +144,8 @@ export default class Operate extends Vue{
     'migrate_flag':'set_flag',
     'cheat':'set_flag',
     'under_sync':'update_ecs_info',
+    'data_clear': 'crash_clear',
+    'down_recover': 'crash_recover'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()

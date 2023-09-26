@@ -126,5 +126,13 @@ export default{
     // 更新物理机信息
     update_ecs_info(req){
         return service(getHostOptions('POST', '/ecs/update_ecs_info/', req))
-    }
+    },
+    // 物理机宕机清理
+    crash_clear(req) {
+        return service(getHostOptions('POST', '/ecs_business/v1/host/crash_clear', req))
+    },
+    // 物理机恢复
+    crash_recover(req) {
+        return service(getHostOptions('POST', ' /ecs-business/v1/host/crash_recover', req))
+    },
 }

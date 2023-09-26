@@ -4,7 +4,22 @@
           <template #default>
             <!-- :disabled="!auth_list.includes(item.value)" -->
               <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)">{{item.label}}</el-button>
-          </template>
+              <!-- 宕机处理下拉 -->
+              <el-dropdown @command="crashHandleCommand">
+                <el-button type="primary" class="dropdownbtn">
+                  宕机处理 <i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="data_clear">
+                    数据清理同步
+                  </el-dropdown-item>
+                  <el-dropdown-item command="down_recover">
+                    宕机恢复
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              
+            </template>
       </action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
@@ -860,14 +875,36 @@ export default class PhysicalList extends Vue {
         this.$message.warning("物理机需为初始化状态或验证失败状态!");
         return;
       }
-
     }
-    //底层同步
-    // if(value==='under_sync') {
-    //   this.oper_type = value
-    //   this.visible=true;
-    //   return
-    // }
+    // 宕机处理
+    if(value === 'data_clear'){
+      console.log('multi_rows',this.multi_rows)
+      let clearCanNext = this.multi_rows.find(item=>{
+        return ['crash_clear'].includes(item.machine_status)
+      })
+      if(!clearCanNext){
+        this.oper_type=value;
+        this.oper_label = label
+        this.visible=true;
+        return
+      } else {
+        this.$message.warning("机器状态需为待清理状态!");
+        return
+      }
+    } else if(value === 'down_recover') {
+      let recoverCanNext = this.multi_rows.find(item=>{
+        return ['crash_recover'].includes(item.machine_status)
+      })
+      if(recoverCanNext){
+        this.oper_type=value;
+        this.oper_label = label
+        this.visible=true;
+        return
+      } else {
+        this.$message.warning("机器状态需为待恢复状态!");
+        return
+      }
+    }
     if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat','under_sync'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){
@@ -972,6 +1009,14 @@ export default class PhysicalList extends Vue {
     const table =this.$refs.table as Table
     table.clearSelection()
   }
+  private crashHandleCommand(val) {
+    if(val === 'data_clear') {
+      this.handle('数据清理同步', val)
+    } else {
+      this.handle('宕机恢复', val)
+    }
+    
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -996,6 +1041,9 @@ i.el-icon-s-tools{
   text-align: center;
   border: 1px solid #888;
   border-radius: 30px;
+}
+.dropdownbtn {
+  margin-left: 10px;
 }
 </style>
 <style lang="scss">
