@@ -882,7 +882,7 @@ export default class PhysicalList extends Vue {
       let clearCanNext = this.multi_rows.find(item=>{
         return ['crash_clear'].includes(item.machine_status)
       })
-      if(!clearCanNext){
+      if(clearCanNext){
         this.oper_type=value;
         this.oper_label = label
         this.visible=true;
