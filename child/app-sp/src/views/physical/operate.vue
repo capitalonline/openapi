@@ -216,8 +216,11 @@ export default class Operate extends Vue{
       }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover') {
         if(res.data.fail_host_list.length>0) {
           this.$message.warning(res.message + '。' + res.data.error_msg)
+          this.back("0");
+          return;
         } else {
           this.$message.success(res.message)
+          this.back("1")
         }
       } else{
         if(res.data.fail_host_list.length>0){
