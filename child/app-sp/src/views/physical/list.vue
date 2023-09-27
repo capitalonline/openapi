@@ -394,6 +394,7 @@ export default class PhysicalList extends Vue {
   private filter_info:any={}
   private detail_id="";
   private detail_visible=false
+  private timer = null
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -561,6 +562,7 @@ export default class PhysicalList extends Vue {
 
   }
   private beforeDestroy() {
+    this.FnClearTimer()
     this.$store.commit("SET_HOST_SEARCH",this.search_data)
   }
   private FnCustom(){
@@ -636,6 +638,20 @@ export default class PhysicalList extends Vue {
       })
       this.page_info.total = res.data.page_info.count || 0;
 
+    }
+    this.FnSetTimer()
+  }
+  private FnSetTimer() {
+    if(this.timer) {
+      this.FnClearTimer()
+    }
+    this.timer = setTimeout(()=>{
+      this.get_physical_list()
+    }, 1000 * 30)
+  }
+  private FnClearTimer() {
+    if(this.timer) {
+      clearTimeout(this.timer)
     }
   }
   private async getHostTypes(){
@@ -1018,6 +1034,7 @@ export default class PhysicalList extends Vue {
     }
     
   }
+  
 }
 </script>
 <style lang="scss" scoped>
