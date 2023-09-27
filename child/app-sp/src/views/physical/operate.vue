@@ -213,7 +213,13 @@ export default class Operate extends Vue{
       if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
-      }else{
+      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover') {
+        if(res.data.fail_host_list.length>0) {
+          this.$message.warning(res.message + '。' + res.data.error_msg)
+        } else {
+          this.$message.success(res.message)
+        }
+      } else{
         if(res.data.fail_host_list.length>0){
           this.$message.warning(res.message)
           this.back("0");
