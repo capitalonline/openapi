@@ -894,7 +894,6 @@ export default class PhysicalList extends Vue {
     }
     // 宕机处理
     if(value === 'data_clear'){
-      console.log('multi_rows',this.multi_rows)
       let clearCanNext = this.multi_rows.find(item=>{
         return ['crash_clear'].includes(item.machine_status)
       })

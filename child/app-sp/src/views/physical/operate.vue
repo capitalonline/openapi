@@ -157,7 +157,6 @@ export default class Operate extends Vue{
     }
   }
   private async confirm(){
-    console.log('oper_type', this.oper_type)
     if(['shelves','finish_validate'].includes(this.oper_type)){
       let flag:boolean=true
       let form = this.$refs.form as Form;
