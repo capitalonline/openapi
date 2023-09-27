@@ -67,6 +67,7 @@
           <template #default="scope" v-if="item.prop==='machine_status_name'">
             <div>{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
+            <div v-else-if="scope.row.machine_status==='crash'" class="error">{{ scope.row.machine_status_name }}</div>
           </template>
           <template #default="scope" v-else-if="item.prop==='net_nic'">
             <el-tooltip effect="light" v-if="scope.row.net_nic.length>0">
