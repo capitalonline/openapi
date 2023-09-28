@@ -1,6 +1,6 @@
 // 物理机管理
 import service from "../http"
-import { getHostOptions } from '../common'
+import { getHostOptions, getEcsOptions } from '../common'
 
 export default{
     //获取物理机列表
@@ -122,7 +122,17 @@ export default{
     //设置迁移，调度标记
     set_flag(req){
         return service(getHostOptions('POST','/host/set_host_tag/',req))
-    }
-    
-
+    },
+    // 更新物理机信息
+    update_ecs_info(req){
+        return service(getHostOptions('POST', '/ecs/update_ecs_info/', req))
+    },
+    // 物理机宕机清理
+    crash_clear(req) {
+        return service(getEcsOptions('POST', '/host/crash_clear/', req))
+    },
+    // 物理机恢复
+    crash_recover(req) {
+        return service(getEcsOptions('POST', '/host/crash_recover/', req))
+    },
 }
