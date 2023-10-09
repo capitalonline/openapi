@@ -1509,6 +1509,7 @@ export default class App extends Vue {
   private async FnExport() {
     console.log('this.search_product_source',this.search_product_source)
     this.loading = true;
+    let spec_family_ids = this.search_ecs_goods_name.map(item => item.toString());
     let obj = Object.assign(
         {
           billing_method:
@@ -1516,12 +1517,13 @@ export default class App extends Vue {
               ? "no"
               : this.search_billing_method,
           op_source: this.search_op_source,
-          spec_family_ids:this.search_ecs_goods_name.join(','),
+          spec_family_ids:spec_family_ids,
           // 产品来源
           product_source:this.search_product_source,
         },
         this.search_reqData
       )
+    console.log(JSON.stringify(obj))
     const resData = await Service.export_list(
       obj
     );
