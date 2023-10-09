@@ -223,7 +223,7 @@ const routes: RouteConfig[] = [
     path: '/log',
     name: 'log_list',
     component: () => import('../views/log/list.vue'),
-    meta: {meta: 'ecs_destroyed', no_auth: true}
+    meta: {meta: 'ecs_destroyed'}
   },
   {
     path: '/404',
