@@ -152,7 +152,7 @@ export default class SideBar extends Vue {
           })
         }
       } else {
-        if (this.$store.state.auth_info[item.name]) {
+        if (this.$store.state.auth_info[item.name] || item.noAuth) {
           this.menu.push(item)
         }
       }
