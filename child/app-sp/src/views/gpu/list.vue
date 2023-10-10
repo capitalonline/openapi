@@ -3,7 +3,6 @@
     <action-block :search_option="search_con" @fn-search="FnSearch" :type="false"></action-block>
     <el-table
       :data="gpu_list"
-      :header-cell-style="{'text-align':'center'}"
       @filter-change="handleFilterChange"
       border
     >
@@ -152,6 +151,7 @@ export default class list extends Vue {
   //handleSizeChange
   private handleSizeChange(val){
     this.page_info.page_size = val;
+    this.page_info.page_index = 1
     this.FnGetList()
   }
   private handleCurrentChange(cur){

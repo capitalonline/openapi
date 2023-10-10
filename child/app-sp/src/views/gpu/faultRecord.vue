@@ -9,7 +9,6 @@
     </div>
     <el-table
       :data="history_list"
-      :header-cell-style="{'text-align':'center'}"
       border
     >
       <el-table-column prop="host_id" label="物理机ID"></el-table-column>
@@ -101,6 +100,7 @@ export default class faultRecord extends Vue {
   //handleSizeChange
   private handleSizeChange(val){
     this.page_info.page_size = val;
+    this.page_info.page_index = 1
     this.FnGetList()
   }
   private handleCurrentChange(cur){

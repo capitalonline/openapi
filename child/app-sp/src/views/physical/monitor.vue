@@ -99,7 +99,7 @@ import moment from 'moment';
 export default class Monitor extends Vue{
   @Prop({default: ''}) readonly host_id;
   @Prop({default: ''}) readonly host_name;
-  @Prop({default: ''}) readonly default;
+  @Prop({default: ''}) readonly showTab;
   private host_info = {
     region_id: '',
     az_id: '',
@@ -493,7 +493,7 @@ export default class Monitor extends Vue{
 
   }
   private created() {
-    this.default_tab = this.default ? this.default : Object.keys(this.tab_list)[0];
+    this.default_tab = this.showTab ? this.showTab : Object.keys(this.tab_list)[0];
     this.FnGetDetail();
   }
   @Watch('default_tab')

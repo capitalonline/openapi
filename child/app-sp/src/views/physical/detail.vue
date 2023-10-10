@@ -9,7 +9,7 @@
             </el-tab-pane>
             <el-tab-pane label="监控" name="1">
                 <template v-if="active==='1'">
-                    <Monitor :host_id="id" :host_name="title" :default="default_tab"/>
+                    <Monitor :host_id="id" :host_name="title" :showTab="default_tab"/>
                 </template>
             </el-tab-pane>
             <el-tab-pane label="存储" name="2">
