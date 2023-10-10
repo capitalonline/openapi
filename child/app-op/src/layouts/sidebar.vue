@@ -114,7 +114,6 @@ export default class SideBar extends Vue {
     {
       name: "nas_inventory_list",
       label: "NAS库存",
-      noAuth: true
     }
   ]
   private menu: Array<object> = [];
@@ -152,7 +151,7 @@ export default class SideBar extends Vue {
           })
         }
       } else {
-        if (this.$store.state.auth_info[item.name] || item.noAuth) {
+        if (this.$store.state.auth_info[item.name]) {
           this.menu.push(item)
         }
       }
