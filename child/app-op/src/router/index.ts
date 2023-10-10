@@ -76,7 +76,7 @@ const routes: RouteConfig[] = [
     path: '/nas_inventory',
     name: 'nas_inventory_list',
     component: () => import('../views/nas/nas.vue'),
-    meta: {label: 'NAS库存', menu: 'nas_inventory_list'} ,
+    meta: {label: 'NAS库存', menu: 'nas_inventory_list',no_auth: true} ,
   },
   {
     path: '/404',

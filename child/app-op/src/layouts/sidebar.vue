@@ -113,7 +113,8 @@ export default class SideBar extends Vue {
     },
     {
       name: "nas_inventory_list",
-      label: "NAS库存"
+      label: "NAS库存",
+      noAuth: true
     }
   ]
   private menu: Array<object> = [];
