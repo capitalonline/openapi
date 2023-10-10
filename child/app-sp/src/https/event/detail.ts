@@ -11,4 +11,8 @@ export default{
     reTry(req){
         return service(getEcsOptions('POST','/task/task_retry/',req))
     },
+    // 获取当前事件下用户列表
+    get_customer_list(req){
+        return service(getEcsOptions('GET','/event/get_customer_list/',req))    
+    }
 }

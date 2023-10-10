@@ -605,7 +605,7 @@ export default class App extends Vue {
       reqData["op_source"] = this.search_op_source;
     }
     if (this.search_ecs_goods_name.length > 0) {
-      reqData["spec_family_ids"] = this.search_ecs_goods_name.join(',');
+      reqData["spec_family_ids"] = JSON.stringify(this.search_ecs_goods_name);
     }
     if(this.customer_type.length > 0){
       reqData["customer_type"]=this.customer_type[0]
@@ -1141,6 +1141,7 @@ export default class App extends Vue {
   }
   private async FnExport() {
     this.loading = true;
+    let spec_family_ids = this.search_ecs_goods_name.map(item => item.toString());
     const resData = await Service.export_list(
       Object.assign(
         {
@@ -1149,7 +1150,7 @@ export default class App extends Vue {
               ? "no"
               : this.search_billing_method,
           op_source: this.search_op_source,
-          spec_family_ids: this.search_ecs_goods_name.length > 0 ? this.search_ecs_goods_name.join(',') : undefined,
+          spec_family_ids: this.search_ecs_goods_name.length > 0 ? spec_family_ids : undefined,
         },
         this.search_reqData
       )
