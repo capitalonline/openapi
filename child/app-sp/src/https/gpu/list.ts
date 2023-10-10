@@ -1,6 +1,6 @@
 // 事件列表
 import service from "../http"
-import { getEcsOptions }from '../common'
+import { getEcsOptions ,getImportOptions}from '../common'
 import qs from "qs";
 
 export default {
@@ -17,13 +17,16 @@ export default {
     return service(getEcsOptions('GET', '/host/get_gpu_record/', req))
   },
   // 导出excel
+  // gpu_record_download(req) {
+  //   return service({
+  //     method: 'GET',
+  //     url: '/ecs_business/v1/host/gpu_record_download/',
+  //     params: req,
+  //     paramsSerializer: params => qs.stringify(params),
+  //     responseType: 'blob'
+  //   })
+  // },
   gpu_record_download(req) {
-    return service({
-      method: 'GET',
-      url: '/ecs_business/v1/host/gpu_record_download/',
-      params: req,
-      paramsSerializer: params => qs.stringify(params),
-      responseType: 'blob'
-    })
-  },
+    return service(getImportOptions('GET', '/host/gpu_record_download/', req,'blob'))
+  }
 }
