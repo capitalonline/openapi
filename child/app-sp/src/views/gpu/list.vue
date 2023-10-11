@@ -6,7 +6,9 @@
       @filter-change="handleFilterChange"
       border
     >
+      <el-table-column prop="host_name" label="主机名"></el-table-column>
       <el-table-column prop="host_id" label="物理机ID" width="200px"></el-table-column>
+      <el-table-column prop="host_ip" label="管理机IP"></el-table-column>
       <el-table-column prop="card_name" label="GPU"></el-table-column>
       <el-table-column label="Slot号" prop="slot"></el-table-column>
       <el-table-column label="PCIe号" prop="pci_address"></el-table-column>
