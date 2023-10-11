@@ -124,6 +124,18 @@ const routes: RouteConfig[] = [
     meta:{menu:'disk_list'}
   },
   {
+    path:'/gpu',
+    name:'gpu_list',
+    component:()=>import('../views/gpu/list.vue'),
+    meta:{menu:'gpu_list' }
+  },
+  {
+    path:'/gpuRecord',
+    name:'gpu_fault_record',
+    component:()=>import('../views/gpu/faultRecord.vue'),
+    meta:{menu:'gpu_fault_record'}
+  },
+  {
     path:'/mirror',
     name:'mirror_list',
     component:()=>import('../views/mirror/list.vue'),

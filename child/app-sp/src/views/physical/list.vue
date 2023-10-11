@@ -91,6 +91,17 @@
           <template #default="scope" v-else-if="item.prop==='ecs_num'">
             <el-button type="text">{{scope.row.ecs_num}}</el-button>
           </template>
+          <template #default="scope" v-else-if="item.prop==='gpu_info'">
+            <el-tooltip effect="light" v-if="scope.row.gpu_info.length>0">
+              <div slot="content">
+                <div v-for="(item,index) in scope.row.gpu_info" :key="index">
+                  {{item.card_name}}
+                </div>
+              </div>
+              <div class="tooltip-cell">{{scope.row.gpu_info[0].card_name}}</div>
+            </el-tooltip>
+            <div v-else></div>
+          </template>
           <template #default="scope" v-else-if="item.prop==='exclusive_black_customers'">
             <el-tooltip v-if="scope.row.exclusive_black_customers.length>1" effect="light">
               <template #content>
@@ -522,6 +533,9 @@ export default class PhysicalList extends Vue {
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
       }
       if(item.prop==='net_nic'){
+        item = Object.assign(item,{},{width:'180px'})
+      }
+      if(item.prop==='gpu_info'){
         item = Object.assign(item,{},{width:'180px'})
       }
       if(['scheduled_display'].includes(item.prop)){

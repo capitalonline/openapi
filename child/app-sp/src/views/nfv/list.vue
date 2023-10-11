@@ -41,12 +41,12 @@
         <el-table-column prop="vpc_name" label="VPC名称" width="120"></el-table-column>
         <el-table-column label="操作" width="180" >
           <template #default="scope">
-         
+
             <!--  -->
             <el-button
               type="text"
               :disabled="
-                  scope.row.status !== 'running'|| !operate_auth.includes('vnc') 
+                  scope.row.status !== 'running'|| !operate_auth.includes('vnc')
               "
               @click="FnToVnc(scope.row)"
               >远程连接</el-button
@@ -90,7 +90,7 @@
       >
       </el-pagination>
     </div>
-    
+
 </template>
 <script lang="ts">
 import {Vue,Component,Watch,Prop,PropSync} from 'vue-property-decorator';
@@ -149,7 +149,7 @@ export default class App extends Vue{
               value: key
             });
           }
-          
+
         }
         if (!this.$route.query.host_id) {
           this.FnSearch(this.search_reqData);
@@ -170,7 +170,7 @@ export default class App extends Vue{
       clearTimeout(this.timer);
     }
   }
-  
+
     // 点击查询按钮
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
@@ -265,7 +265,7 @@ private handleSizeChange(val){
   private created(){
     this.FnGetList();
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
-    
+
   }
   beforeDestroy() {
     this.FnClearTimer();
