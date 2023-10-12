@@ -4,7 +4,7 @@
       <el-form :model="echartForm" :inline="true" label-width="100px" label-position="right">
         <el-form-item label="节点:">
           <el-select v-model="echartForm.az_id" @change="podChange">
-            <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
+            <el-option v-for="(item, index) in az_list" :key="index" :label="item.name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间">
@@ -35,7 +35,7 @@
         <el-form-item label="节点:">
           <el-select v-model="tableForm.az_id"  @change="az_idChange">
             <el-option label="全部" value=""></el-option>
-            <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
+            <el-option v-for="(item, index) in az_list" :key="index" :label="item.name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -80,7 +80,6 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/nas/list";
 import Edit from "@/views/nas/edit.vue";
 import LineEchart from '../../components/chart/list.vue';
-import httpService from "@/https/az/list";
 @Component({
   components:{
     Edit,
@@ -125,7 +124,7 @@ export default class NasInventory extends Vue{
 
   async created() {
     await this.getCurrentTime()
-    await this.get_az_list()
+    await this.get_az_info()
     await this.FnGetList()
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
   }
@@ -195,20 +194,11 @@ export default class NasInventory extends Vue{
     }
 
   }
-  private async get_az_list() {
-    let params = {
-      region_name: '',
-      az_name: '',
-      page_index: 1,
-      page_size: 200
-    }
-    const res:any = await httpService.get_az_list(params)
+  private async get_az_info(){
+    const res:any = await Service.post_az_nas()
       if(res.code === 'Success') {
-        if(res.data.az_list.length > 0) {
-          this.az_list = res.data.az_list.filter(item => item.az_id === '09a38804-c1ee-11ec-bd22-4641dfd57315' || item.az_id === 'e5aa47be-da46-11ec-bad2-defff767b3b5')
-              .map(item => ({ az_id: item.az_id, az_name: item.az_name }))
-        }
-      }
+        this.az_list = res.data
+    }
   }
   private dateFormat(format, date, day) {
     if (!format) return '';

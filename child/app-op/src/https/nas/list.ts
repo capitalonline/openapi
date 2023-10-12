@@ -14,4 +14,8 @@ export default{
     post_edit_nas(req){
         return service(getEcsOptions('POST','/stock/edit_stock/',req))
     },
+    //获取节点
+    post_az_nas(){
+        return service(getEcsOptions('POST','/stock/az_info/'))
+    },
 }
