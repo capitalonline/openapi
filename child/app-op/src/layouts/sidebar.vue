@@ -139,7 +139,7 @@ export default class SideBar extends Vue {
       if (item.children) {
         let child_list = []
         item.children.forEach(child => {
-          if (this.$store.state.auth_info[child.name] || child.noAuth) {
+          if (this.$store.state.auth_info[child.name]) {
             child_list.push(child)
           }
         })
@@ -155,8 +155,6 @@ export default class SideBar extends Vue {
           this.menu.push(item)
         }
       }
-      console.log('all_menu',this.all_menu)
-      console.log('menu',this.menu)
     })
     // this.routes = this.$router.options.routes.filter(item => !item.meta?.hidden);
     // this.FnWatchRouter(this.$route)
