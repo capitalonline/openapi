@@ -65,6 +65,20 @@ export default class LeftMenu extends Vue {
       label: "云服务器管理"
     },
     {
+      name: 'gpu',
+      label: 'GPU',
+      children: [
+        {
+          name: "gpu_list",
+          label: "GPU管理",
+        },
+        {
+          name: "gpu_fault_record",
+          label: "GPU故障记录",
+        }
+      ]
+    },
+    {
       name: "nfv_list",
       label: "NFV云服务器",
     },
