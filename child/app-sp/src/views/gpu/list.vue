@@ -9,7 +9,6 @@
       <el-table-column prop="customer_id" label="客户ID"></el-table-column>
       <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="host_name" label="主机名"></el-table-column>
-      <el-table-column prop="host_name" label="主机名"></el-table-column>
       <el-table-column prop="host_id" label="物理机ID" width="200px"></el-table-column>
       <el-table-column prop="host_ip" label="管理网IP"></el-table-column>
       <el-table-column prop="card_name" label="GPU"></el-table-column>
@@ -134,6 +133,10 @@ export default class list extends Vue {
       host_id:data.host_id,
       vm_id: data.vm_id,
       card_name: data.card_name,
+      customer_id:data.customer_id,
+      customer_name:data.customer_name,
+      host_ip:data.host_ip,
+      host_name:data.host_name,
       sn:data.sn,
       create_time_start:data.create_time && data.create_time[0]
         ?  moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")

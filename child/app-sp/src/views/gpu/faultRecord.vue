@@ -83,6 +83,9 @@ export default class faultRecord extends Vue {
       host_id:data.host_id,
       pci_address: data.pci_address,
       customer_id:data.customer_id,
+      customer_name:data.customer_name,
+      host_ip:data.host_ip,
+      host_name:data.host_name,
       create_time_start:data.create_time && data.create_time[0]
         ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
