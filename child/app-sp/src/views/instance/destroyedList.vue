@@ -73,7 +73,7 @@
           </template>
         </el-table-column>
       </el-table>
-  
+
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -93,7 +93,7 @@
       </template>
     </div>
   </template>
-  
+
   <script lang="ts">
   import { Component, Vue,Watch } from "vue-property-decorator";
   import LabelBlock from "../../components/labelBlock.vue";
@@ -238,7 +238,7 @@
         }
         this.FnGetList();
       },500)
-      
+
     }
     //handleSizeChange
     private handleSizeChange(val){
@@ -825,7 +825,7 @@
         });
       }
     }
-  
+
     private async FnExport() {
       this.loading = true;
       const resData = await Service.export_list(
@@ -839,7 +839,7 @@
             spec_family_ids:this.search_ecs_goods_name.join(','),
           },
           this.search_reqData,
-          
+
 
         )
       );
@@ -859,7 +859,7 @@
         };
       }
     }
-  
+
     private created() {
       this.operate_auth = this.$store.state.auth_info[this.$route.name];
       this.FnGetStatus();
@@ -898,7 +898,7 @@
     }
   }
   </script>
-  
+
   <style lang="scss" scoped>
   .component-box {
     width: 650px;
@@ -933,4 +933,3 @@
     height: 24px;
   }
   </style>
-  

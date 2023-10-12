@@ -110,6 +110,10 @@ export default class SideBar extends Vue {
           label: '云盘库存'
         }
       ]
+    },
+    {
+      name: "nas_inventory_list",
+      label: "NAS库存",
     }
   ]
   private menu: Array<object> = [];
