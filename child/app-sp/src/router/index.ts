@@ -34,6 +34,18 @@ const routes: RouteConfig[] = [
     meta: {menu: 'instance_list'}
   },
   {
+    path: '/nfv',
+    name: 'nfv_list',
+    component: () => import('../views/nfv/list.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
+    path: '/nfv/monitor/:id/:ip',
+    name: 'monitor',
+    component: () => import('../views/nfv/monitor.vue'),
+    meta: {menu: 'nfv_list'}
+  },
+  {
     path:'/alarmInfo',
     name:'alarm_info',
     component:()=>import('../views/alarm/alarmInfo.vue'),
@@ -110,6 +122,18 @@ const routes: RouteConfig[] = [
     name:'disk_capacity',
     component:()=>import('../views/disk/capacity.vue'),
     meta:{menu:'disk_list'}
+  },
+  {
+    path:'/gpu',
+    name:'gpu_list',
+    component:()=>import('../views/gpu/list.vue'),
+    meta:{menu:'gpu_list' }
+  },
+  {
+    path:'/gpuRecord',
+    name:'gpu_fault_record',
+    component:()=>import('../views/gpu/faultRecord.vue'),
+    meta:{menu:'gpu_fault_record'}
   },
   {
     path:'/mirror',
