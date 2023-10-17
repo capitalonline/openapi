@@ -367,9 +367,7 @@ export default class PhysicalList extends Vue {
     shelves:'已选主机上不能有虚拟机运行',
     disperse:'已选主机需为在线状态',
     migrate:'已选主机需为在线状态',
-    lock:'已选主机需为在线或离线状态',
     unlock:'已选主机需为锁定状态',
-    maintenance:'已选主机需为已锁定状态且已选主机上不能有虚拟机运行'
   };
   private host_belongs=[]
   private search_data:any={}
