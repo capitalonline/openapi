@@ -20,14 +20,14 @@
                 :title="alert_title"
                 type="warning"
                 center
-                v-if="oper_type!=='lock'"
+                v-if="!['lock','maintenance'].includes(oper_type)"
                 :closable="false">
             </el-alert>
           <el-alert
-            title="请确认将下述机器置为锁定状态，置为锁定状态后，无法在此机器上开出云主机"
+            :title="oper_type === 'lock' ? '请确认将下述机器置为锁定状态，置为锁定状态后，无法在此机器上开出云主机' : '请确认将下述机器置为维护状态，置为维护状态后，机器将屏蔽告警和任务下发等功能'"
             type="warning"
             center
-            v-if="oper_type==='lock'"
+            v-if="['lock','maintenance'].includes(oper_type)"
             :closable="false">
           </el-alert>
             <el-table
@@ -54,6 +54,9 @@
                   </template>
                </el-table-column>
             </el-table>
+          <div v-if="notSelectVmList.length > 0" class="m-top10">
+            <span style="color: #DA3B18">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
+          </div>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
                 <el-radio-group v-model="form_data.valid">
@@ -119,6 +122,8 @@ export default class Operate extends Vue{
   private flag_list:Array<String> = ['调度标记','迁移标记','欺骗器管理'];
   private valid:number=1;
   private isFlag:number=1;
+  private selectVmList =[]
+  private notSelectVmList =[]
   private list:any=[]
   private labelObj={
     'schedule':'是否允许调度',
@@ -166,10 +171,22 @@ export default class Operate extends Vue{
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
-    this.list = []
-    this.list = this.rows.map(item=> {
-      return {...item, maintenanceReason: ''};
-    });
+
+    if(this.oper_type === 'maintenance'){
+      this.rows.forEach(row => {
+        if (row.machine_status === 'lock' && row.ecs_list.length === 0 ){
+          this.selectVmList.push(row)
+        } else {
+          this.notSelectVmList.push(row)
+        }
+      })
+      this.list = this.selectVmList.map(item => {
+        return {...item, maintenanceReason: ''};
+      });
+    }else {
+      this.list = []
+      this.list = [...this.list,...this.rows]
+    }
   }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
@@ -222,7 +239,7 @@ export default class Operate extends Vue{
       department_name:this.form_data.recycleId
     } : this.oper_type==="maintenance" ? {
       maintenance_detail:maintenance_detail,
-      host_ids:this.rows.map(item=>item.host_id)
+      host_ids:this.list.map(item=>item.host_id)
     }:{host_ids:this.rows.map(item=>item.host_id)}
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
