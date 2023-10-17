@@ -142,6 +142,7 @@ export default class LogList extends Vue{
   //handleSizeChange
   private handleSizeChange(val){
     this.page_info.page_size = val;
+    this.page_info.page_index = 1
     this.getLogList()
   }
   private handleCurrentChange(cur){
