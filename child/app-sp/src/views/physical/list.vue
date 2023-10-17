@@ -18,7 +18,7 @@
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              
+
             </template>
       </action-block>
       <div class="icon m-bottom10">
@@ -1044,9 +1044,9 @@ export default class PhysicalList extends Vue {
     } else {
       this.handle('宕机恢复', val)
     }
-    
+
   }
-  
+
 }
 </script>
 <style lang="scss" scoped>
