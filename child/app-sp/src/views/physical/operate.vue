@@ -20,24 +20,43 @@
                 :title="alert_title"
                 type="warning"
                 center
+                v-if="!['lock','maintenance'].includes(oper_type)"
                 :closable="false">
             </el-alert>
+          <el-alert
+            :title="oper_type === 'lock' ? '请确认将下述机器置为锁定状态，置为锁定状态后，无法在此机器上开出云主机' : '请确认将下述机器置为维护状态，置为维护状态后，机器将屏蔽告警和任务下发等功能'"
+            type="warning"
+            center
+            v-if="['lock','maintenance'].includes(oper_type)"
+            :closable="false">
+          </el-alert>
             <el-table
-                :data="rows"
+                :data="list"
                 border
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
+                <el-table-column prop="out_band_address" label="宿主机带外" v-if="['lock','maintenance'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="![...status_list,...flag_list].includes(title)"></el-table-column>
-                <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
+                <el-table-column prop="ecs_num" label="虚拟机数量" width="150" v-if="['lock'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="power_status_name" label="电源状态" v-if="!['lock','maintenance'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="scheduled_display" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="migrated_display" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="maintenance"  label="维护原因" v-if="['maintenance'].includes(oper_type)">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.maintenanceReason" type="textarea"  placeholder="请输入维护原因" maxlength="50" show-word-limit></el-input>
+                    <div v-show="!scope.row.maintenanceReason" class="error_message">请输入维护原因</div>
+                  </template>
+               </el-table-column>
             </el-table>
+          <div v-if="notSelectVmList.length > 0" class="m-top10">
+            <span class="tip_message">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
+          </div>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
                 <el-radio-group v-model="form_data.valid">
@@ -62,7 +81,7 @@
             </el-form>
             <!-- <div v-if="oper_type==='finish_validate'" class="text-center m-top20">
               <span>验证结果:</span>
-              
+
             </div>
             <div class="text-center m-top20" v-if="['shelves','finish_validate'].includes(oper_type)">
               <span>{{oper_type==='finish_validate' ? '通知对象：' : '回收部门：'}}</span>
@@ -72,7 +91,7 @@
             </div> -->
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button type="primary" @click="confirm" :disabled="list.length === 0">确认</el-button>
             <el-button @click="back('0')">取消</el-button>
         </span>
     </el-dialog>
@@ -103,6 +122,9 @@ export default class Operate extends Vue{
   private flag_list:Array<String> = ['调度标记','迁移标记','欺骗器管理'];
   private valid:number=1;
   private isFlag:number=1;
+  private selectVmList =[]
+  private notSelectVmList =[]
+  private list:any=[]
   private labelObj={
     'schedule':'是否允许调度',
     'migrate_flag':'是否允许迁移',
@@ -142,10 +164,32 @@ export default class Operate extends Vue{
     'finish_validate':'finish_validate',
     'schedule':'set_flag',
     'migrate_flag':'set_flag',
-    'cheat':'set_flag'
+    'cheat':'set_flag',
+    'under_sync':'update_ecs_info',
+    'data_clear': 'crash_clear',
+    'down_recover': 'crash_recover',
+    'lock':'set_lock',
+    'unlock':'set_unlock',
+    'maintenance':'set_maintenance'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
+
+    if(this.oper_type === 'maintenance'){
+      this.rows.forEach(row => {
+        if (row.machine_status === 'lock' && row.ecs_list.length === 0 ){
+          this.selectVmList.push(row)
+        } else {
+          this.notSelectVmList.push(row)
+        }
+      })
+      this.list = this.selectVmList.map(item => {
+        return {...item, maintenanceReason: ''};
+      });
+    }else {
+      this.list = []
+      this.list = [...this.list,...this.rows]
+    }
   }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
@@ -166,6 +210,13 @@ export default class Operate extends Vue{
         return false
       }
     }
+    if (this.oper_type === 'maintenance') {
+      let flagReason = this.list.some(item => !item.maintenanceReason);
+      if (flagReason) {
+        return false
+      }
+    }
+    const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -185,28 +236,61 @@ export default class Operate extends Vue{
     } : this.oper_type==="shelves" ? {
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
-    } :{host_ids:this.rows.map(item=>item.host_id)}
+    } : this.oper_type==="under_sync" ? {
+      pod_id: this.$store.state.pod_id,
+      host_ecs: {}
+    } : this.oper_type==="maintenance" ? {
+        maintenance_detail:maintenance_detail,
+        host_ids:this.list.map(item=>item.host_id)
+      }: {host_ids:this.rows.map(item=>item.host_id)}
 
+    // 底层同步接口数据组装
+    if(this.oper_type==="under_sync") {
+      for(let i of this.rows){
+        req.host_ecs[i.host_id] = []
+        if(i.ecs_list.length > 0) {
+          i.ecs_list.map(item => {
+            req.host_ecs[i.host_id].push(item.ecs_id)
+          })
+        }
+      }
+    }
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
-    
+
     if(res.code==="Success"){
-      if(this.oper_type==="finish_validate" || this.oper_type==="disperse"){
+      if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
-      }else{
-        if(res.data.fail_host_list.length>0){
-          this.$message.warning(res.message)
+      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover') {
+        if(res.data.fail_host_list.length>0) {
+          this.$message.warning(res.message + '。' + res.data.error_msg)
           this.back("0");
           return;
+        } else {
+          this.$message.success(res.message)
+          this.back("1")
+        }
+      } else{
+        if(res.data.fail_host_list.length>0){
+          if(this.oper_type === 'maintenance'){
+            let message = "";
+            for (let key in res.data.fail_msg_group_by_host) {
+              message += res.data.fail_msg_group_by_host[key] + "\n";
+            }
+            this.$message.error(message);
+            this.back("0");
+          }else {
+            this.$message.warning(res.message)
+            this.back("0");
+            return;
+          }
         }else{
           this.$message.success(res.message)
           this.back("1")
         }
       }
-      
-      
     }else{
       this.back("0")
     }

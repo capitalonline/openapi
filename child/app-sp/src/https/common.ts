@@ -6,7 +6,7 @@ const ALARM_BASE = '/alarm/api/v1';
 const GPU_MONITOR_BASE = "/gpu_monitor/api/v1/metric";
 const NAS_BASE = "/nas_union_business/v1"
 const USED_BASE = "/monitor/api/v1";
-const NAS1_BASE = "/nas_op/v1"   
+const NAS1_BASE = "/nas_op/v1"
 function getOptions(base_url: string, met:('GET'|'POST'|'PUT'|'DELETE'), url: string, data: any = null) {
     if (met === "GET" || met === "DELETE"){
         return {
@@ -22,6 +22,16 @@ function getOptions(base_url: string, met:('GET'|'POST'|'PUT'|'DELETE'), url: st
             data
         }
     }
+}
+function getDownOptions(base_url: string, met:('GET'|'POST'|'PUT'|'DELETE'), url: string, data: any = null,downType) {
+    return {
+      method: met,
+      url: base_url + url,
+      params: data,
+      paramsSerializer: params => qs.stringify(params),
+      responseType: downType
+    }
+
 }
 
 export const getEcsOptions = (met:(string | any), url: string, data: any = null) => {
@@ -51,4 +61,7 @@ export const getSnapshotOptions = (met:(string | any), url: string, data: any = 
 }
 export const getUsedOptions = (met:(string | any), url: string, data: any = null) => {
     return getOptions(USED_BASE, met, url, data)
+}
+export const getImportOptions = (met:(string | any), url: string, data: any = null,downType) => {
+  return getDownOptions(BASE, met, url, data,downType)
 }

@@ -65,6 +65,24 @@ export default class LeftMenu extends Vue {
       label: "云服务器管理"
     },
     {
+      name: 'gpu',
+      label: 'GPU',
+      children: [
+        {
+          name: "gpu_list",
+          label: "GPU管理",
+        },
+        {
+          name: "gpu_fault_record",
+          label: "GPU故障记录",
+        }
+      ]
+    },
+    {
+      name: "nfv_list",
+      label: "NFV云服务器",
+    },
+    {
       name: 'disk',
       label: '云盘',
       children: [
@@ -117,6 +135,10 @@ export default class LeftMenu extends Vue {
     { name: 'event_list', label: "任务管理" },
     { name: 'anomaly_event_list', label: "异常任务处理"},
     { name: 'repair_event_list', label: "异常任务处理2"},
+    {
+      name: "log_list",
+      label: "操作日志审计"
+    },
     {
       name:'alarm_manage',
       label:'报警管理',
