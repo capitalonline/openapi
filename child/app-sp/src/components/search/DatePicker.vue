@@ -22,9 +22,9 @@ import { Component, Prop, Emit, Watch, Vue } from 'vue-property-decorator';
 export default class DatePicker extends Vue {
   @Prop({ default: () => {
     return {
-      placeholder: ['开始时间', '结束时间'], 
-      type: 'daterange', 
-      width: '360', 
+      placeholder: ['开始时间', '结束时间'],
+      type: 'daterange',
+      width: '360',
       clearable: false,
       dis_day: 31,
       min_date: '',
@@ -57,7 +57,7 @@ export default class DatePicker extends Vue {
   public FnClear(): void {
     this.FnChangeDefaultTime(this.time_option.defaultTime);
   }
-  @Watch('time_option.defaultTime') 
+  @Watch('time_option.defaultTime')
   private FnChangeDefaultTime(newVal) {
     console.log('clear',newVal)
     if (newVal.length>0) {
@@ -68,7 +68,7 @@ export default class DatePicker extends Vue {
         this.FnEmit()
     }
   }
- 
+
   @Emit('fn-emit')
   FnEmit() {
     this.min_date=""

@@ -165,6 +165,9 @@ export default class Operate extends Vue{
     'schedule':'set_flag',
     'migrate_flag':'set_flag',
     'cheat':'set_flag',
+    'under_sync':'update_ecs_info',
+    'data_clear': 'crash_clear',
+    'down_recover': 'crash_recover',
     'lock':'set_lock',
     'unlock':'set_unlock',
     'maintenance':'set_maintenance'
@@ -237,19 +240,43 @@ export default class Operate extends Vue{
     } : this.oper_type==="shelves" ? {
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
+    } : this.oper_type==="under_sync" ? {
+      pod_id: this.$store.state.pod_id,
+      host_ecs: {}
     } : this.oper_type==="maintenance" ? {
-      maintenance_detail:maintenance_detail,
-      host_ids:this.list.map(item=>item.host_id)
-    }:{host_ids:this.rows.map(item=>item.host_id)}
+        maintenance_detail:maintenance_detail,
+        host_ids:this.list.map(item=>item.host_id)
+      }: {host_ids:this.rows.map(item=>item.host_id)}
+
+    // 底层同步接口数据组装
+    if(this.oper_type==="under_sync") {
+      for(let i of this.rows){
+        req.host_ecs[i.host_id] = []
+        if(i.ecs_list.length > 0) {
+          i.ecs_list.map(item => {
+            req.host_ecs[i.host_id].push(item.ecs_id)
+          })
+        }
+      }
+    }
     let res:any=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
 
     if(res.code==="Success"){
-      if(this.oper_type==="finish_validate" || this.oper_type==="disperse"){
+      if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
-      }else{
+      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover') {
+        if(res.data.fail_host_list.length>0) {
+          this.$message.warning(res.message + '。' + res.data.error_msg)
+          this.back("0");
+          return;
+        } else {
+          this.$message.success(res.message)
+          this.back("1")
+        }
+      } else{
         if(res.data.fail_host_list.length>0){
           if(this.oper_type === 'maintenance'){
             let message = "";
@@ -268,8 +295,6 @@ export default class Operate extends Vue{
           this.back("1")
         }
       }
-
-
     }else{
       this.back("0")
     }
