@@ -135,4 +135,20 @@ export default{
     crash_recover(req) {
         return service(getEcsOptions('POST', '/host/crash_recover/', req))
     },
+  //设置锁定
+  set_lock(req){
+    return service(getHostOptions('POST','/host/host_lock/',req))
+  },
+  //设置解锁
+  set_unlock(req){
+    return service(getHostOptions('POST','/host/host_unlock/',req))
+  },
+  //设置维护
+  set_maintenance(req){
+    return service(getHostOptions('POST','/host/host_maintenance/',req))
+  },
+  //获取维护记录
+  get_maintenance_record(req){
+    return service(getHostOptions('GET','/host/host_maintenance_record/',req))
+  }
 }
