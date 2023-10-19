@@ -91,7 +91,7 @@
             </div> -->
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button type="primary" @click="confirm" :disabled="list.length === 0">确认</el-button>
             <el-button @click="back('0')">取消</el-button>
         </span>
     </el-dialog>
