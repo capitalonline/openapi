@@ -251,9 +251,18 @@ export default class Operate extends Vue{
         this.back("1")
       }else{
         if(res.data.fail_host_list.length>0){
-          this.$message.warning(res.message)
-          this.back("0");
-          return;
+          if(this.oper_type === 'maintenance'){
+            let message = "";
+            for (let key in res.data.fail_msg_group_by_host) {
+              message += res.data.fail_msg_group_by_host[key] + "\n";
+            }
+            this.$message.error(message);
+            this.back("0");
+          }else {
+            this.$message.warning(res.message)
+            this.back("0");
+            return;
+          }
         }else{
           this.$message.success(res.message)
           this.back("1")
