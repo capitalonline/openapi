@@ -55,7 +55,7 @@
                </el-table-column>
             </el-table>
           <div v-if="notSelectVmList.length > 0" class="m-top10">
-            <span style="color: #DA3B18">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
+            <span class="tip_message">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
           </div>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
@@ -211,11 +211,7 @@ export default class Operate extends Vue{
       }
     }
     if (this.oper_type === 'maintenance') {
-      let flagReason = this.list.some(item => {
-        if (!item.maintenanceReason) {
-          return true;
-        }
-      });
+      let flagReason = this.list.some(item => !item.maintenanceReason);
       if (flagReason) {
         return false
       }
