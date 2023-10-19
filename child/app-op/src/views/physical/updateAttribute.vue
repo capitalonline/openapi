@@ -258,7 +258,7 @@ export default class UpdateAttribute extends Vue{
       let req: any = {
         host_ids:this.rows.map(item=>item.host_id),
         host_type:this.form_data.host_purpose.length>0 ? this.form_data.host_purpose[0] : undefined,
-        host_purpose:this.form_data.host_purpose.length>0 ? this.form_data.host_purpose[1] : undefined,
+        host_purpose:this.form_data.host_purpose.length>1 ? this.form_data.host_purpose[1] : undefined,
         backend_type:this.form_data.backend_type !== '' ? this.form_data.backend_type : undefined,
         customer_ids: this.form_data.customer_ids.length > 0 ? this.form_data.customer_ids : (this.customer === 'all' ? [] : undefined),
         black_customer_ids:this.form_data.black_customer_ids.length > 0 ? this.form_data.black_customer_ids : (this.black_customer === 'all' ? [] : undefined),
