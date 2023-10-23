@@ -6,7 +6,7 @@
       :destroy-on-close="true"
       :close-on-click-modal="false"
     >
-        <el-input type="textarea" v-model="value" maxlength="512" show-word-limit rows="5"></el-input>
+        <el-input type="textarea" v-model="value" maxlength="128" show-word-limit rows="5"></el-input>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
             <el-button @click="visible_sync=false">取消</el-button>
@@ -22,7 +22,7 @@ export default class Remark extends Vue{
     @Prop({default:()=>({host_name:'',remark:''})})rows!:any
     private value:string=this.rows.remark;
     created() {
-        
+
     }
     private async confirm(){
         let res:any = await Service.set_remark({
