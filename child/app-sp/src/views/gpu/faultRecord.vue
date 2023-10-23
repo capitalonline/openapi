@@ -11,12 +11,13 @@
       :data="history_list"
       border
     >
+      <el-table-column prop="customer_id" label="客户ID"></el-table-column>
+      <el-table-column prop="customer_name" label="客户名称"></el-table-column>
       <el-table-column prop="host_name" label="主机名"></el-table-column>
       <el-table-column prop="host_id" label="物理机ID"></el-table-column>
-      <el-table-column prop="host_ip" label="管理机IP"></el-table-column>
+      <el-table-column prop="host_ip" label="管理网IP"></el-table-column>
       <el-table-column prop="card_name" label="GPU"></el-table-column>
       <el-table-column label="所属云主机" prop="vm_id"></el-table-column>
-      <el-table-column label="客户ID" prop="customer_id"></el-table-column>
       <el-table-column label="Slot号" prop="slot"></el-table-column>
       <el-table-column label="PCIe号" prop="pci_address"></el-table-column>
       <el-table-column label="SN号" prop="sn"></el-table-column>
@@ -63,6 +64,10 @@ export default class faultRecord extends Vue {
   private search_con = {
     host_id: { placeholder: "请输入物理机ID" },
     pci_address: { placeholder: "请输入PCIe号"},
+    host_ip:{placeholder:'请输入管理网IP'},
+    host_name:{placeholder:'请输入主机名称'},
+    customer_id: {placeholder:'请输入客户ID'},
+    customer_name: {placeholder:'请输入客户名称'},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -76,6 +81,10 @@ export default class faultRecord extends Vue {
     this.search_reqData = {
       host_id:data.host_id,
       pci_address: data.pci_address,
+      customer_id:data.customer_id,
+      customer_name:data.customer_name,
+      host_ip:data.host_ip,
+      host_name:data.host_name,
       create_time_start:data.create_time && data.create_time[0]
         ? moment(data.create_time[0]).local().format("YYYY-MM-DDTHH:mm:ss[Z]")
         : undefined,
