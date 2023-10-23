@@ -94,16 +94,17 @@
                 >
                     <el-input v-model="form_data.address" placeholder="请输入报警回调地址" />
                 </el-form-item>
-                
+
                 <el-form-item
                     prop="notice_user"
                     label="通知对象:"
                     :rules="[{required:true,message:'请选择通知对象',trigger:'blur'}]"
                 >
                     <div class="notice-user">
-                        <el-select 
-                            v-model="form_data.notice_user" 
-                            multiple 
+                        <el-select
+                            v-model="form_data.notice_user"
+                            multiple
+                            multiple-limit="7"
                             placeholder="请选择通知对象"
                             filterable
                             :filter-method="getContactGroupList"
@@ -120,7 +121,7 @@
                             </el-option>
                         </el-select>
                     </div>
-                    
+
                 </el-form-item>
             </el-form>
             <div class="foot-btn">
@@ -184,17 +185,17 @@ export default class ApplyStrategy extends Vue{
         this.$nextTick(()=>{
             const form = this.$refs[name] as Form
             form && form.validate(async (valid)=>{
-            
-            })  
+
+            })
         })
-        
+
     }
     //关闭面板时重新获取联系人组列表
     private changeGroup(val){
         if(!val){
             this.getContactGroupList("")
         }
-        
+
     }
     //获取联系人组列表
      private async getContactGroupList(name:string=""){
@@ -203,7 +204,7 @@ export default class ApplyStrategy extends Vue{
         })
         if(res.code==='Success'){
             this.contact_group_list = res.data.datas
-            
+
         }
     }
     private validate_customer:any = (rule:any, value:string, callback:any)=>{
@@ -228,7 +229,7 @@ export default class ApplyStrategy extends Vue{
             }else{
                 this.form_data.customer_name=""
             }
-        }) 
+        })
     }
     @Watch("form_data.notice_user")
     private watch_notice_user(newVal){
@@ -248,8 +249,8 @@ export default class ApplyStrategy extends Vue{
         if (resData.code == 'Success') {
             this.area_list = resData.data;
             // this.area_list = usble_area_list
-            
-            
+
+
         }
     }
     //设置区域ID
@@ -257,7 +258,7 @@ export default class ApplyStrategy extends Vue{
         this.form_data.area = obj.regions
 
         this.form_data.az = obj.az
-        
+
     }
     //设置可用区ID
     // private get_az_id(val){
@@ -321,9 +322,9 @@ export default class ApplyStrategy extends Vue{
                 }
             }
         })
-        
+
     }
-    
+
     @Emit("close")
     private close(val){
         this.drawer_sync=false
@@ -354,7 +355,7 @@ export default class ApplyStrategy extends Vue{
     // .el-tag--small {
     //     height: 25px !important;
     // }
-    
+
 }
 
 </style>
