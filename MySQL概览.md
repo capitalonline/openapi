@@ -591,11 +591,12 @@ def create_mysql():
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明             |
-| :----------- | :--- | :----- | ---------------- |
-| InstanceUuid | 否   | string | 要过滤的实例编号 |
-| InstanceName | 否   | string | 要过滤的实例名称 |
-| IP           | 否   | string | 要过滤的实例IP   |
+| 参数名       | 必选 | 类型   | 说明               |
+| :----------- | :--- | :----- | ------------------ |
+| InstanceUuid | 否   | string | 要过滤的实例编号   |
+| InstanceName | 否   | string | 要过滤的实例名称   |
+| IP           | 否   | string | 要过滤的实例IP     |
+| TagName      | 否   | string | 要过滤的实例标签名 |
 
 **返回参数：**
 
@@ -628,6 +629,9 @@ def create_mysql():
 | CreatedTime     | string | 实例创建时间                     |
 | ResourceId      | string | 账单ID，查询账单时的唯一标识     |
 | ProjectName      | string | 项目名称     |
+| Tags | list | 标签信息 |
+| TagID | int | 标签ID |
+| TagName | string | 标签名称 |
 
 **请求示例：**
 
@@ -690,6 +694,12 @@ def get_mysql_instances_list():
         "StatusStr": "运行中",
         "SubProductKey": "mysql-replication",
         "SubProductName": "MySQL 高可用版",
+      	"Tags":[
+            {
+               "TagID":24644,
+               "TagName":"test_tag"
+            }
+         ],
         "VdcId": "d459c74b-d60e-4f28-adbb-67be402f76f3",
         "VdcName": "香港PaaS1",
         "Version": "5.7.24"

@@ -497,11 +497,12 @@ def create_redis():
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明             |
-| :----------- | :--- | :----- | ---------------- |
-| InstanceUuid | 否   | string | 要过滤的实例编号 |
-| InstanceName | 否   | string | 要过滤的实例名称 |
-| IP           | 否   | string | 要过滤的实例IP   |
+| 参数名       | 必选 | 类型   | 说明               |
+| :----------- | :--- | :----- | ------------------ |
+| InstanceUuid | 否   | string | 要过滤的实例编号   |
+| InstanceName | 否   | string | 要过滤的实例名称   |
+| IP           | 否   | string | 要过滤的实例IP     |
+| TagName      | 否   | string | 要过滤的实例标签名 |
 
 **返回参数**：
 
@@ -529,6 +530,9 @@ def create_redis():
 | CreatedTime     | string | 实例创建时间                                        |
 | ResourceId      | string | 账单ID，查询账单时的唯一标识                        |
 | ProjectName      | string | 项目名称     |
+| Tags | list | 标签信息 |
+| TagID | int | 标签ID |
+| TagName | string | 标签名称 |
 
 **请求示例：**
 
@@ -576,6 +580,12 @@ def get_redis_instances_list():
         "StatusStr": "运行中",
         "SubProductKey": "redis-replication",
         "SubProductName": "Redis 主从版",
+      	"Tags":[
+            {
+               "TagID":24644,
+               "TagName":"test_tag"
+            }
+         ],
         "VdcId": "4b7c78da-6d38-4b90-8bbf-c8a6bf4a405b",
         "VdcName": "无锡A-PAAS",
         "Version": "5.0"
