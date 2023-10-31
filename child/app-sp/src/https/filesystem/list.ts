@@ -59,4 +59,8 @@ export default{
     get_nas_record(req){
         return service(getNas1Options('GET','/op_log/history_record',req))
     },
+  //获取nas所挂载的虚拟机
+  get_nas_ecs(req){
+    return service(getNasOptions('GET','/nas/nas_ecs_list/',req))
+  },
 }
