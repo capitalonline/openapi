@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import ActionBlock from '../../components/search/actionBlock.vue';
 import Service from "@/https/gpu/list";
 import SvgIcon from '../../components/svgIcon/index.vue';
@@ -77,6 +77,13 @@ export default class faultRecord extends Vue {
       defaultTime: []
     },
   }
+  @Watch("$store.state.pod_id")
+  private watch_pod(nv){
+    if(!nv){
+      return;
+    }
+    this.FnGetList()
+  }
   private FnSearch(data: any = {}) {
     this.search_reqData = {
       host_id:data.host_id,
@@ -99,6 +106,7 @@ export default class faultRecord extends Vue {
   }
   private async FnGetList(){
     const resData: any = await Service.get_gpu_record({
+      pod_id:this.$store.state.pod_id,
       page_index:this.page_info.page_index,
       page_size:this.page_info.page_size,
       ...this.search_reqData
