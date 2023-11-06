@@ -2450,7 +2450,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 | 名称       | 类型   | 是否必选 | 示例值      | 描述                           |
 | ---------- | ------ | -------- | ----------- | ------------------------------ |
-| RegionCode | string | 是       | CN_Hongkong | VPC区域code, 见附件五          |
+| RegionCode | string | 否       | CN_Hongkong | VPC区域code, 见附件五          |
 | PageNumber | int    | 否       | 1           | 列表页码。起始值：1, 默认值：1 |
 | Keyword    | string | 否       | vpc名称     | 查询关键字                     |
 
