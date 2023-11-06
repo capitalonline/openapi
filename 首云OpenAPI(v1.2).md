@@ -2692,7 +2692,7 @@ def delete_vpc(vpc_id):
 | Keyword           | string | 否       | name                                 | 查询关键字 名称/ID             |
 | PageNumber        | string | 否       | 1                                    | 列表页码。起始值：1, 默认值：1 |
 | VPCId             | string | 否       | d5e16d74-30a4-49d0-bc1d-06cc40035999 | VPC ID                         |
-| AvailableZoneCode | string | 否       | CN_Hongkong                          | VPC可用区code, 见附件五        |
+| AvailableZoneCode | string | 否       | CN_Hongkong_B                        | VPC可用区code, 见附件五        |
 
   **返回参数：**
 
