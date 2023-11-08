@@ -1407,8 +1407,8 @@ export default class App extends Vue {
   }
   private addCommon(obj){
     this.FnClearTimer()
-    this.common_visible = true;
     this.ecs_info = obj
+    this.common_visible = true;
   }
   @Watch("common_visible")
   private watch_common_visible(nv){
