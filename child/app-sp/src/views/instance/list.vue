@@ -606,7 +606,6 @@ import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 import storage from '../../store/storage';
 import netSet from './netSet.vue'
-import th from "element-ui/src/locale/lang/th";
 @Component({
   components: {
     LabelBlock,
@@ -1408,8 +1407,8 @@ export default class App extends Vue {
   }
   private addCommon(obj){
     this.FnClearTimer()
-    this.ecs_info = obj
     this.common_visible = true;
+    this.ecs_info = obj
   }
   @Watch("common_visible")
   private watch_common_visible(nv){
