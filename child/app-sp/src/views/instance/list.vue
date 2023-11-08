@@ -606,6 +606,7 @@ import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 import storage from '../../store/storage';
 import netSet from './netSet.vue'
+import th from "element-ui/src/locale/lang/th";
 @Component({
   components: {
     LabelBlock,
@@ -1120,6 +1121,10 @@ export default class App extends Vue {
     }
   }
   private async mount_gpu_card(){
+    if (this.gpu_card_operate === 'ecs_detach_gpu_card' && this.multiple_selection[0].status === 'deleted') {
+      this.$message.warning('不支持对已删除的云服务器进行卸载显卡操作')
+      return;
+    }
     let res:any = await Service.mount_gpu_card({
       ecs_id:this.multiple_selection[0].ecs_id,
       customer_id:this.multiple_selection[0].customer_id,
