@@ -19,7 +19,7 @@
                             </span></el-descriptions-item>
                     </el-descriptions>
                 </el-card>
-                
+
                 <!-- <el-divider></el-divider> -->
                 <el-card>
                     <div slot="header" class="clearfix">
@@ -38,7 +38,7 @@
                                 <div>系统盘:{{detailInfo.transfer_vm_conf_system_disk_size ? `${detailInfo.transfer_vm_conf_system_disk_size}${detailInfo.transfer_vm_conf_system_disk_unit} (${detailInfo.transfer_vm_conf_system_disk_type})` : ''}}</div>
                             </div>
                             <span v-else>{{detailInfo[i]}}</span>
-                            
+
                         </el-descriptions-item>
                     </el-descriptions>
                 </el-card>
@@ -48,9 +48,14 @@
                     <Monitor :info="{'id':$route.query.id,'region_id':detailInfo.region_id}"></Monitor>
                 </template>
             </el-tab-pane>
+          <el-tab-pane label="客户端" name="client">
+            <template v-if="activeName === 'client'">
+              <client :nas_id="$route.query.id"></client>
+            </template>
+          </el-tab-pane>
         </el-tabs>
     </div>
-     
+
 </template>
 <script lang="ts">
 import {Vue,Component,Prop,PropSync,Emit} from 'vue-property-decorator';
@@ -60,8 +65,10 @@ import backHeader from '@/components/backHeader.vue';
 import detail from '@/https/event/detail';
 import Monitor from './monitor.vue';
 import Clipboard from '../../components/clipboard.vue';
+import Client from "@/views/filesystem/client.vue";
 @Component({
     components:{
+        Client,
         backHeader,
         Monitor,
         Clipboard
@@ -125,8 +132,8 @@ export default class NasDetail extends Vue{
                     this.fileInfo[i].value=res.data.create_time ? moment(res.data.create_time).format('YYYY-MM-DD HH:mm:ss') : ''
                 }else{
                     this.fileInfo[i].value = res.data[i]
-                }   
-                
+                }
+
             }
         }
     }
@@ -163,7 +170,7 @@ export default class NasDetail extends Vue{
             return this.computeUnit(value/1024,++num)
         }else{
             return value.toFixed(2) + this.units[num];
-        }        
+        }
     }
     beforeDestroy() {
         this.FnClearTimer()
