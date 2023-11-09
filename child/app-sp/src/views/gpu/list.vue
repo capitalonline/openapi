@@ -112,6 +112,13 @@ export default class list extends Vue {
       this.FnGetList()
     }
   }
+  @Watch("$store.state.pod_id")
+  private watch_pod(nv){
+    if(!nv){
+      return;
+    }
+    this.FnGetList()
+  }
   private handleFilterChange(val){
     this.search_status = val.status;
     console.log('this.search_status',this.search_status)
@@ -149,12 +156,12 @@ export default class list extends Vue {
   }
   private async FnGetList(){
     const resData: any = await Service.get_gpu_list({
+      pod_id:this.$store.state.pod_id,
       page_index:this.page_info.page_index,
       page_size:this.page_info.page_size,
       status:this.search_status.length>0 ? this.search_status.join(',') : this.search_status.map(item=>item.value).join(','),
       ...this.search_reqData
     })
-    console.log('this.search_status',this.search_status)
     if (resData.code === "Success") {
       this.gpu_list = resData.data.page_info_list
       this.page_info.total = resData.data.page_info.count
