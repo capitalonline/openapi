@@ -32,7 +32,7 @@ const auth = {
 }
 const host_status={//error为新增状态，异常
   start_up_host:{power:['shutdown'],host:['offline','online','exception'],msg:'已选主机需为在线或离线或异常状态',label:'开机'},
-  shutdown_host:{power:['running'],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态',msg2:'操作关机前，请确保物理机上无云主机运行' ,label:'关机'},
+  shutdown_host:{power:['running'],host:['offline','online','maintenance'],vm:1,msg:'已选主机需为在线或离线或维护中状态',msg2:'操作关机前，请确保物理机上无云主机运行' ,label:'关机'},
   restart_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'重启'},
   online_maintenance:{power:[],host:['online','exception'],msg:'已选主机需为在线状态',label:'在线维护'},
   maintenance:{power:[],host:[],msg:'',label:'设置维护'},
