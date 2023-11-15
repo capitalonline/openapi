@@ -683,7 +683,7 @@ export default class App extends Vue {
     {text:'关闭',value:'2'},
   ]
   // 产品来源
-  private product_source_list:any=[]
+  private product_source_list:any= []
   // 服务账号ID
   private product_server_id:string=''
   private search_card_status_type:string=''
