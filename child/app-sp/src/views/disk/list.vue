@@ -68,11 +68,11 @@
       </el-table-column>
       <el-table-column prop="product_source" label="产品来源" :filter-multiple="true" :filters="product_source_list" column-key="product_source">
         <template slot-scope="scope">
-          <span v-if="scope.row.product_source === 'gcw'">云桌面</span>
-          <span v-else-if="scope.row.product_source === 'nas'">文件存储转发</span>
-          <span v-if="scope.row.product_source === 'eks'">容器</span>
-          <span v-if="scope.row.product_source === 'ecs'">云服务器</span>
-          <span v-if="scope.row.product_source === 'bm'">裸金属</span>
+          <span v-for="item in product_source_list">
+            <span v-if="item.value === scope.row.product_source">
+              {{ item.text }}
+            </span>
+          </span>
         </template>
       </el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>

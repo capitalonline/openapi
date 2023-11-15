@@ -122,12 +122,7 @@ export default class PrivateMirror extends Vue{
     private search_data:any={};
     private auth_list:any=[];
     private mirror_type:any=[];
-    private source_list:any=[
-        {text:'云桌面',value:'云桌面'},
-        {text:'云主机',value:'云主机'},
-        {text:'文件存储转发',value:'文件存储转发'},
-        {text:'容器',value:'容器'},
-    ]
+    private source_list:any=[]
     private compute_type:any=[
         {text:'GPU',value:'GPU'},
         {text:'CPU',value:'CPU'},
@@ -149,6 +144,7 @@ export default class PrivateMirror extends Vue{
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.get_mirror_type();
+        this.get_source_type()
         this.get_status_list()
         this.search();
     }
@@ -162,6 +158,14 @@ export default class PrivateMirror extends Vue{
             })
             this.mirror_type = list
         }
+    }
+    private async get_source_type(){
+      let res:any = await Service.get_product_source()
+      if(res.code==="Success"){
+        res.data.map(item=>{
+          this.source_list.push({text:item.value,value:item.value})
+        })
+      }
     }
     @Watch('$store.state.pod_id')
     private watch_pod(){
