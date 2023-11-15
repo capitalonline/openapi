@@ -73,6 +73,12 @@ const routes: RouteConfig[] = [
     meta: {label: '云盘库存', menu: 'disk_inventory'},
   },
   {
+    path: '/nas_inventory',
+    name: 'nas_inventory_list',
+    component: () => import('../views/nas/nas.vue'),
+    meta: {label: 'NAS库存', menu: 'nas_inventory_list'} ,
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue'),

@@ -8,9 +8,9 @@
       <div>失败：{{fail_num}}</div>
       <div class="error">失败率：{{error_percent}}</div>
     </div>
-    <el-table 
-      :data="event_list" 
-      border 
+    <el-table
+      :data="event_list"
+      border
       class="event-table"
       @sort-change="FnSortChange"
       @filter-change="filterAttribute"
@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="任务">
         <template slot-scope="scope">
-          <el-button type="text" 
+          <el-button type="text"
             @click="view(scope.row.event_id,scope.row.event_name)"
             :disabled="!event_detail"
           >查看</el-button>
@@ -93,7 +93,7 @@ export default class List extends Vue {
       defaultTime:[moment(new Date()).format("YYYY-MM-DD 00:00:00"),moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
     },
   };
-  
+
   private event_num:number = 0;
   private finish_num:number = 0;
   private finished_percent:string = '0.00%';
@@ -189,7 +189,7 @@ export default class List extends Vue {
   private view(id:string,name:string) {
     this.$router.push({path:`/event/${id}`,query:{name:name ? name : '123'}})
   }
-  
+
 }
 </script>
 <style lang="scss" scoped>

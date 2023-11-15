@@ -55,7 +55,7 @@
                                     <template slot-scope="{ node, data }">
                                         <span>{{data.label}}</span>
                                         <!-- <el-tooltip class="item" effect="dark" :content="data.description" placement="right" v-if="node.isLeaf">
-                                            
+
                                         </el-tooltip>
                                         <span v-else>{{ data.label }}</span> -->
                                     </template>
@@ -83,7 +83,7 @@
                                             <span slot="suffix">{{inn.metricUnit}}</span>
                                         </el-input>
                                         <span class="error_message remark" v-if="inn.num===''">{{'请输入指标项值'}}</span>
-                                        
+
                                      <el-select v-model="inn.cycle_time" size="small">
                                             <el-option
                                                 v-for="item in static_list.cycle_time"
@@ -209,7 +209,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
     <el-dropdown @command="handle" class="m-top10">
         <el-button type="primary">
@@ -228,8 +228,8 @@
         >
         </el-option>
     </el-select> -->
-     
-</div>   
+
+</div>
 </template>
 <script lang="ts">
 import { Component, Vue,Emit,Watch,PropSync,Prop } from 'vue-property-decorator';
@@ -275,15 +275,15 @@ export default class RuleConfig extends Vue{
     private selected_products:any = []
     created() {
         this.getProductList()
-    } 
+    }
     private valid(name){
         this.$nextTick(()=>{
             const form = this.$refs[name] as Form
             form && form[0].validate(async (valid)=>{
-            
-            })  
+
+            })
         })
-        
+
     }
     private get event(){
         const {event_type,event_name,alram_type,notice}=this.rule_data
@@ -320,7 +320,7 @@ export default class RuleConfig extends Vue{
         this.rule_data.level.map(item=>item.metricUnit = unit)
     }
     // @Watch("rule_data.event_type")
-    private watch_event_type(nv,list,pro_id){        
+    private watch_event_type(nv,list,pro_id){
         let key_list=['event_name_zh','event_id']
         let label_list=['title','id']
         let fil:any = list.filter((item:any)=>item.event_type===nv);
@@ -329,12 +329,12 @@ export default class RuleConfig extends Vue{
             if(item.id === pro_id){
                 item.event_name = fil.length>0 ? deal_list(fil[0].list,label_list,key_list) : [];
                 const ids = item.event_name.map(ev=>ev.id)//事件列表所有的id
-                if((new Set([...ids,this.rule_data.event_name])).size>ids.length){//如果属于当前这个事件名称里，长度最大为ids的长度                    
+                if((new Set([...ids,this.rule_data.event_name])).size>ids.length){//如果属于当前这个事件名称里，长度最大为ids的长度
                     this.rule_data.event_name=''
                 }
             }
-        })        
-        
+        })
+
     }
     private setEventList(data){
         let key_list=['event_name_zh','event_id']
@@ -381,7 +381,7 @@ export default class RuleConfig extends Vue{
         });
         return index_list
     }
-    private setRules(element,list,index_list,event_list){                
+    private setRules(element,list,index_list,event_list){
         const obj = {//相当于rule_data
                 id:element.id,
                 tab_key:element.ruleRecords[0].alarmType==="event" ? '1' : '0',
@@ -394,13 +394,13 @@ export default class RuleConfig extends Vue{
                 notice:element.ruleRecords[0].alarmType==="event" ? element.ruleRecords[0].alarmMethod : [],
                 level:list,
                 desc:element.ruleRecords[0].alarmType==="event" ?
-                [`${this.trans_arr(element.ruleRecords[0].level.toString(),this.static_list.alarm_type)} | ${this.trans_arr(element.ruleRecords[0].eventId,event_list[1])}`] 
-                
+                [`${this.trans_arr(element.ruleRecords[0].level.toString(),this.static_list.alarm_type)} | ${this.trans_arr(element.ruleRecords[0].eventId,event_list[1])}`]
+
                     :
                     list.map(inn=>{
                     return `${this.getDescription(element.ruleRecords[0].metricID,index_list)} ${inn.range} ${inn.num}${inn.metricUnit} ${this.trans_arr(inn.alram_type,this.static_list.alarm_type)} 持续${inn.cycle_num}次就报警`
                 })
-            }            
+            }
             const fil:any = this.selected_products.filter(item=>item.id===element.productType)
             if(fil.length>0){
                 this.selected_products.map(item=>{
@@ -481,7 +481,7 @@ export default class RuleConfig extends Vue{
             fil[0].event_name = this.setEventList(res[1].data)[1];
             this.selected_products=[...this.selected_products,...fil ];
         })
-        
+
     }
     private del_product(id:String){
         this.selected_products = this.selected_products.filter(item=>item.id!==id)
@@ -491,7 +491,7 @@ export default class RuleConfig extends Vue{
     }
     private show_rule_box(id:string="",val:String="add"){//todo表单未清空
         this.selected_products.map(item=>{
-            if(item.id===id){   
+            if(item.id===id){
                 item.visible = !item.visible;
                 if(this.edit_key==="" && item.visible){//新增规则打开弹窗
                     this.clear()
@@ -499,14 +499,14 @@ export default class RuleConfig extends Vue{
                 if(val==="edit" && !item.visible){
                     this.edit_key=""
                 }
-                
+
             }else{
                 item.visible = false
             }
             return item;
         })
     }
-    private add_level(){        
+    private add_level(){
         let len:number = this.rule_data.level.length
         const obj={
             range:'>=',
@@ -519,7 +519,7 @@ export default class RuleConfig extends Vue{
         }
         this.rule_data = {...this.rule_data,level:[...this.rule_data.level,obj]}
     }
-    private del_level(){        
+    private del_level(){
         const {level}=this.rule_data
         this.rule_data = {...this.rule_data,level:level.filter((item,index)=>index<level.length-1)}
     }
@@ -559,12 +559,12 @@ export default class RuleConfig extends Vue{
                                 return inn;
                             })
                         }
-                        
-                        
+
+
                     }
                     return item;
                 })
-                
+
                 this.edit_key=""
                 this.edit_rule_id=""
                 this.show_rule_box()
@@ -572,13 +572,13 @@ export default class RuleConfig extends Vue{
             }
         })
     }
-     
+
     private cancel(){
         this.edit_key=""
         this.show_rule_box()
-        
+
     }
-    private del_rule(pro_id:string,id:string){        
+    private del_rule(pro_id:string,id:string){
         this.selected_products.map(item=>{
             if(item.id===pro_id){
                 item.rule_list = item.rule_list.filter(inn=>inn.id!==id)
@@ -587,9 +587,9 @@ export default class RuleConfig extends Vue{
         })
     }
     private clear(){
-        this.tab_key="0";                   
+        this.tab_key="0";
         this.$nextTick(()=>{
-            const rules_form:any = this.$refs.rules_form[0] as Form 
+            const rules_form:any = this.$refs.rules_form[0] as Form
             const event_form:any = this.$refs.event_form[0] as Form
             rules_form.resetFields()
             event_form.resetFields()
@@ -625,21 +625,21 @@ export default class RuleConfig extends Vue{
             //     }
             // ]
         })
-        
+
     }
     private edit_rules(pro_id:string,id:string,key:string){
         this.tab_key = key
         this.edit_key = key
         this.edit_rule_id=id
-        this.show_rule_box(pro_id,'edit')                
-        const fil:any = this.selected_products.filter(item=>item.id === pro_id)        
+        this.show_rule_box(pro_id,'edit')
+        const fil:any = this.selected_products.filter(item=>item.id === pro_id)
         const fil_rule:any = fil[0].rule_list.filter(item=>item.id===id)
-        this.rule_data = JSON.parse(JSON.stringify(fil_rule[0]))        
-        if(fil_rule[0].tab_key==='1'){              
+        this.rule_data = JSON.parse(JSON.stringify(fil_rule[0]))
+        if(fil_rule[0].tab_key==='1'){
             this.watch_event_type(fil_rule[0].event_type,fil[0].event_type,fil[0].id)
 
         }
-        
+
     }
     private change_rule_notice(val){
     }
@@ -658,8 +658,8 @@ export default class RuleConfig extends Vue{
             })
             return fil
         }
-        
-        
+
+
     }
 }
 </script>
@@ -718,7 +718,7 @@ export default class RuleConfig extends Vue{
         border-color: transparent;
         border-style: solid;
     }
-    
+
 }
     .rule-level{
         background: #f5f6fa;
@@ -738,7 +738,7 @@ export default class RuleConfig extends Vue{
                     cursor: pointer;
                     margin-right: 10px;
                     color: #455cc6;
-                    
+
                 }
             }
         }
@@ -755,7 +755,7 @@ export default class RuleConfig extends Vue{
         //         bottom: -15px;
 
         //     }
-            
+
         // }
         .remark{
             position: absolute;
@@ -766,21 +766,21 @@ export default class RuleConfig extends Vue{
                 width: 193px;
                 margin-right: 5px;
             }
-        
+
     }
     .check{
         display: flex;
     }
     .el-cascader .el-input{
         width: 400px;
-    } 
-    
-    
+    }
+
+
 
 </style>
 <style lang="scss">
     .rule-warn{
-        
+
         .el-select.el-select--small {
             margin-right: 5px !important;
             margin-bottom: 10px !important;

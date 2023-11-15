@@ -22,6 +22,9 @@
   font-size: 12px;
   color: #f56c6c;
 }
+.tip_message{
+  color: #DA3B18;
+}
 
 .building,
 .restarting,
@@ -39,7 +42,9 @@
 .creating_image {
   color:#4984E7;
 }
-.running {
+.running,
+.success,
+.finish {
   color:#2DA867;
 }
 .deleted,

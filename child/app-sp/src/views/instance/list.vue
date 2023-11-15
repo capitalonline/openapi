@@ -250,6 +250,32 @@
             <span>{{ scope.row.product_source}}</span>
           </template>
       </el-table-column>
+      <el-table-column prop="tag" label="标签" width="110px">
+        <template slot-scope="scope">
+          <span class="time-box" v-if="scope.row.tag.length>0">
+              <span v-if="scope.row.tag.length === 1">
+                <span v-for="tag in scope.row.tag" :key="tag.label_id">{{tag.label_value}}</span>
+              </span>
+            <span v-else>
+                <el-popover
+                  placement="top-start"
+                  width="200"
+                  trigger="hover">
+                <div>
+                      <span v-for="(tag,index) in scope.row.tag" :key="tag.label_id">
+                        <span style="width: 100%; display: inline-block">{{tag.label_value}}</span>
+                      </span>
+                </div>
+                <el-button slot="reference" type="text" size="mini" style="white-space: normal" >
+                  <span>{{scope.row.tag[0].label_value + '+'}}</span>
+                  <span>{{  scope.row.tag.length-1}}</span>
+                </el-button>
+              </el-popover>
+              </span>
+          </span>
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
       <!-- 计费账户ID -->
       <el-table-column prop="product_server_id" label="计费账户ID"></el-table-column>
       <el-table-column label="操作" width="180">
@@ -610,6 +636,7 @@ export default class App extends Vue {
     host_name: { placeholder: "请输入物理机名称", },
     host_ip: { placeholder: "请输入物理机管理IP"},
     out_band_address: { placeholder: "请输入物理机带外IP"},
+    tag: {placeholder: "请选择标签", list: [],filter:true},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
@@ -689,6 +716,7 @@ export default class App extends Vue {
   private sort_prop_name = '';
   private sort_order = undefined;
   private ecs_status_list:any=[];
+  private select_tag =[]
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -697,6 +725,14 @@ export default class App extends Vue {
       this.FnSearch(this.search_reqData)
     }
   private FnSearch(data: any = {}) {
+    if(data.tag) {
+      this.select_tag = []
+      this.search_con.tag.list.forEach(item => {
+        if (data.tag === item.type) {
+          this.select_tag.push(item)
+        }
+      })
+    }
     this.FnClearTimer();
     this.search_reqData = {
       pod_id:this.$store.state.pod_id,
@@ -711,6 +747,7 @@ export default class App extends Vue {
       host_name: data.host_name,
       host_ip: data.host_ip,
       out_band_address: data.out_band_address,
+      tag_list:data.tag ? this.select_tag.map(item =>{return {label_id:item.type,customer_id:item. customer_id}}) : [] ,
       //产品来源
       // product_source:data.product_source,
       // 服务账户ID
@@ -726,6 +763,21 @@ export default class App extends Vue {
     };
     this.page_info.page_index = 1;
     this.FnGetList();
+  }
+  //获取标签列表
+  private async FnGetTag() {
+    const resData = await Service.get_tag_list();
+    if (resData.code === "Success") {
+      this.search_con.tag.list = [];
+      const all_tag_list = resData.data.label_info.map((item) => {
+        return {
+          label: item.label_value,
+          type: item.label_id,
+          customer_id:item.customer_id
+        };
+      });
+      this.search_con.tag.list = all_tag_list
+    }
   }
   // 筛选实例来源
   private handleFilterChange(val) {
@@ -1068,6 +1120,10 @@ export default class App extends Vue {
     }
   }
   private async mount_gpu_card(){
+    if (this.gpu_card_operate === 'ecs_detach_gpu_card' && this.multiple_selection[0].status === 'deleted') {
+      this.$message.warning('不支持对已删除的云服务器进行卸载显卡操作')
+      return;
+    }
     let res:any = await Service.mount_gpu_card({
       ecs_id:this.multiple_selection[0].ecs_id,
       customer_id:this.multiple_selection[0].customer_id,
@@ -1457,6 +1513,7 @@ export default class App extends Vue {
   private async FnExport() {
     console.log('this.search_product_source',this.search_product_source)
     this.loading = true;
+    let spec_family_ids = this.search_ecs_goods_name.map(item => item.toString());
     let obj = Object.assign(
         {
           billing_method:
@@ -1464,12 +1521,13 @@ export default class App extends Vue {
               ? "no"
               : this.search_billing_method,
           op_source: this.search_op_source,
-          spec_family_ids:this.search_ecs_goods_name.join(','),
+          spec_family_ids:spec_family_ids,
           // 产品来源
           product_source:this.search_product_source,
         },
         this.search_reqData
       )
+    console.log(JSON.stringify(obj))
     const resData = await Service.export_list(
       obj
     );
@@ -1495,6 +1553,7 @@ export default class App extends Vue {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
     this.get_az_list();
+    this.FnGetTag()
     this.FnGetCateGoryList();
     // this.search_con.os_type.list = [
     //   {

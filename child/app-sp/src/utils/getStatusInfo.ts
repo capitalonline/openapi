@@ -35,12 +35,15 @@ const host_status={//error为新增状态，异常
   shutdown_host:{power:['running'],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态',msg2:'操作关机前，请确保物理机上无云主机运行' ,label:'关机'},
   restart_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'重启'},
   online_maintenance:{power:[],host:['online','exception'],msg:'已选主机需为在线状态',label:'在线维护'},
+  maintenance:{power:[],host:[],msg:'',label:'设置维护'},
   offline_maintenance:{power:[],host:['offline','online','exception'],vm:1,msg:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',label:'离线维护'},
-  finish:{power:[],host:['online_maintenance','offline_maintenance'],msg:'已选主机需为在线维护中或离线维护中',label:'完成维护'},
+  finish:{power:[],host:['maintenance','online_maintenance','offline_maintenance'],msg:'已选主机需为维护中状态',label:'完成维护'},
   shelves:{power:[],host:[],vm:1,msg:'已选主机上不能有虚拟机运行',label:'下架'},
   disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
   out_of_band:{power:[],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'进入带外管理'},
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
+  lock:{power:[],host:[],msg:'',label:'锁定'},
+  unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
 }
 export default {
   getInsOperateAuth(type) {
