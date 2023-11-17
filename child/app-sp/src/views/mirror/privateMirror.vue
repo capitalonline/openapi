@@ -6,9 +6,9 @@
                 <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table 
-            :data="list" 
-            border 
+        <el-table
+            :data="list"
+            border
             class="event-table"
             @sort-change="FnSortChange"
             @filter-change="filterAttribute"
@@ -122,12 +122,7 @@ export default class PrivateMirror extends Vue{
     private search_data:any={};
     private auth_list:any=[];
     private mirror_type:any=[];
-    private source_list:any=[
-        {text:'云桌面',value:'云桌面'},
-        {text:'云主机',value:'云主机'},
-        {text:'文件存储转发',value:'文件存储转发'},
-        {text:'容器',value:'容器'},
-    ]
+    private source_list:any=[]
     private compute_type:any=[
         {text:'GPU',value:'GPU'},
         {text:'CPU',value:'CPU'},
@@ -149,6 +144,7 @@ export default class PrivateMirror extends Vue{
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.get_mirror_type();
+        this.get_source_type()
         this.get_status_list()
         this.search();
     }
@@ -162,6 +158,14 @@ export default class PrivateMirror extends Vue{
             })
             this.mirror_type = list
         }
+    }
+    private async get_source_type(){
+      let res:any = await Service.get_product_source()
+      if(res.code==="Success"){
+        res.data.map(item=>{
+          this.source_list.push({text:item.value,value:item.value})
+        })
+      }
     }
     @Watch('$store.state.pod_id')
     private watch_pod(){
@@ -229,7 +233,7 @@ export default class PrivateMirror extends Vue{
     private filterAttribute(obj:any){
         this.filter_data = {...this.filter_data,...obj};
         this.search(this.search_data)
-        
+
     }
     private record(obj){
         this.oper_info=obj;
@@ -268,7 +272,7 @@ export default class PrivateMirror extends Vue{
         let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
         window.location.href=`/ecs_business/v1/img/private_image_list_download/${query}`
     }
-    
+
 }
 </script>
 <style lang="scss" scoped>

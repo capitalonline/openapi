@@ -183,12 +183,7 @@ export default class CommonMirror extends Vue{
         {text:'Enflame',value:'Enflame'},
         {text:'GRID',value:'GRID'},
     ];
-    private source_type:any=[
-        {text:'云桌面',value:'云桌面'},
-        {text:'云主机',value:'云主机'},
-        {text:'文件存储转发',value:'文件存储转发'},
-        {text:'容器',value:'容器'},
-    ]
+    private source_type:any=[]
     private operateBtns:any=[
         {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
         {label:'删除',authLabel:'del_mirror',fun:'del',list:['running','blocking','create_fail'],msg:'仅支持可用,停用或者创建失败状态的镜像操作'},
@@ -203,6 +198,7 @@ export default class CommonMirror extends Vue{
     created() {
         this.auth_list = this.$store.state.auth_info[this.$route.name];
         this.get_mirror_type();
+        this.get_source_type()
         this.get_status_list()
         this.search()
     }
@@ -238,6 +234,15 @@ export default class CommonMirror extends Vue{
 
         }
     }
+  private async get_source_type(){
+    let res:any = await Service.get_product_source()
+    if(res.code==="Success"){
+      res.data.map(item=>{
+        this.source_type.push({text:item.value,value:item.value})
+      })
+
+    }
+  }
     private async get_status_list(){
         let res:any = await Service.get_status_list({})
         if(res.code==="Success"){

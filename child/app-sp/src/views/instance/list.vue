@@ -594,6 +594,7 @@ import getInsStatus from "../../utils/getStatusInfo";
 import { trans } from "../../utils/transIndex";
 import Service from "../../https/instance/list";
 import EcsService from "../../https/instance/create";
+import MirrorService from '../../https/mirror/list';
 import Record from "./record.vue";
 import Detail from "./detail.vue";
 import resetPwd from "./resetPwd.vue";
@@ -682,12 +683,7 @@ export default class App extends Vue {
     {text:'关闭',value:'2'},
   ]
   // 产品来源
-  private product_source_list:any=[
-    {text:'云桌面',value:'云桌面'},
-    {text:'云主机',value:'云主机'},
-    {text:'文件存储转发',value:'文件存储转发'},
-    {text:'容器',value:'容器'},
-  ]
+  private product_source_list:any= []
   // 服务账号ID
   private product_server_id:string=''
   private search_card_status_type:string=''
@@ -763,6 +759,16 @@ export default class App extends Vue {
     };
     this.page_info.page_index = 1;
     this.FnGetList();
+  }
+
+  private async get_source_type(){
+    let res:any = await MirrorService.get_product_source()
+    if(res.code==="Success"){
+      res.data.map(item=>{
+        this.product_source_list.push({text:item.value,value:item.value})
+      })
+
+    }
   }
   //获取标签列表
   private async FnGetTag() {
@@ -1553,6 +1559,7 @@ export default class App extends Vue {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.FnGetStatus();
     this.get_az_list();
+    this.get_source_type()
     this.FnGetTag()
     this.FnGetCateGoryList();
     // this.search_con.os_type.list = [
