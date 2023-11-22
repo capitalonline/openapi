@@ -162,6 +162,7 @@
     private record_id: string = "";
     private detail_visible: boolean = false;
     private detail_id: string = "";
+    private isComponentDestroying:boolean = false
     private page_info = {
       page_sizes: [20, 50, 100],
       page_size: 20,
@@ -309,7 +310,9 @@
         }
         this.page_info.total = resData.data.page.count;
       }
-      this.FnSetTimer();
+      if (!this.isComponentDestroying) { // 检查销毁标记
+        this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
+      }
     }
     private handleSelectionChange(val) {
       this.multiple_selection = val;
@@ -889,7 +892,8 @@
         this.FnSearch();
       }
     }
-    private beforeDestroy() {
+     beforeDestroy() {
+      this.isComponentDestroying = true;
       this.FnClearTimer();
     }
   }
