@@ -132,9 +132,9 @@
         placeholder: ["开始时间", "结束时间"],
         type: "daterange",
         width: "360",
-        clearable: true,
+        clearable: false,
         dis_day: 1,
-        defaultTime: []
+        defaultTime:[moment().subtract(1, 'month').format("YYYY-MM-DD"), moment(new Date()).format("YYYY-MM-DD")]
       },
     };
     private search_reqData = {};
@@ -208,13 +208,9 @@
         host_ip: data.host_ip,
         out_band_address: data.out_band_address,
         start_time:
-          data.create_time && data.create_time[0]
-            ? moment(data.create_time[0]).format("YYYY-MM-DD")
-            : undefined,
+          data.create_time ? moment(data.create_time[0]).format("YYYY-MM-DD") : moment().subtract(30, 'days').format("YYYY-MM-DD"),
         end_time:
-          data.create_time && data.create_time[1]
-            ? moment(data.create_time[1]).format("YYYY-MM-DD")
-            : undefined
+          data.create_time ? moment(data.create_time[1]).format("YYYY-MM-DD") : moment(new Date()).format("YYYY-MM-DD")
       };
       this.page_info.page_index = 1;
       this.FnGetList();
