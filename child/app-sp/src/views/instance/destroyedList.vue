@@ -209,7 +209,7 @@
         host_ip: data.host_ip,
         out_band_address: data.out_band_address,
         start_time:
-          data.create_time ? moment(data.create_time[0]).format("YYYY-MM-DD") : moment().subtract(30, 'days').format("YYYY-MM-DD"),
+          data.create_time ? moment(data.create_time[0]).format("YYYY-MM-DD") : moment().subtract(1, 'month').format("YYYY-MM-DD"),
         end_time:
           data.create_time ? moment(data.create_time[1]).format("YYYY-MM-DD") : moment(new Date()).format("YYYY-MM-DD")
       };
