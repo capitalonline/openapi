@@ -713,6 +713,7 @@ export default class App extends Vue {
   private sort_order = undefined;
   private ecs_status_list:any=[];
   private select_tag =[]
+  private isComponentDestroying:boolean = false
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -927,7 +928,10 @@ export default class App extends Vue {
       }
       this.page_info.total = resData.data.page.count;
     }
-    this.FnSetTimer();
+    if (!this.isComponentDestroying) { // 检查销毁标记
+      this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
+    }
+    //this.FnSetTimer();
   }
   private handleSelectionChange(val) {
     this.multiple_selection = val;
@@ -1586,6 +1590,7 @@ export default class App extends Vue {
   }
   beforeDestroy() {
     this.FnClearTimer();
+    this.isComponentDestroying = true;
   }
 }
 </script>

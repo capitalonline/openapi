@@ -132,9 +132,9 @@
         placeholder: ["开始时间", "结束时间"],
         type: "daterange",
         width: "360",
-        clearable: true,
+        clearable: false,
         dis_day: 1,
-        defaultTime: []
+        defaultTime:[moment().subtract(1, 'month').format("YYYY-MM-DD"), moment(new Date()).format("YYYY-MM-DD")]
       },
     };
     private search_reqData = {};
@@ -162,6 +162,7 @@
     private record_id: string = "";
     private detail_visible: boolean = false;
     private detail_id: string = "";
+    private isComponentDestroying:boolean = false
     private page_info = {
       page_sizes: [20, 50, 100],
       page_size: 20,
@@ -208,13 +209,9 @@
         host_ip: data.host_ip,
         out_band_address: data.out_band_address,
         start_time:
-          data.create_time && data.create_time[0]
-            ? moment(data.create_time[0]).format("YYYY-MM-DD")
-            : undefined,
+          data.create_time ? moment(data.create_time[0]).format("YYYY-MM-DD") : moment().subtract(1, 'month').format("YYYY-MM-DD"),
         end_time:
-          data.create_time && data.create_time[1]
-            ? moment(data.create_time[1]).format("YYYY-MM-DD")
-            : undefined
+          data.create_time ? moment(data.create_time[1]).format("YYYY-MM-DD") : moment(new Date()).format("YYYY-MM-DD")
       };
       this.page_info.page_index = 1;
       this.FnGetList();
@@ -313,7 +310,9 @@
         }
         this.page_info.total = resData.data.page.count;
       }
-      this.FnSetTimer();
+      if (!this.isComponentDestroying) { // 检查销毁标记
+        this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
+      }
     }
     private handleSelectionChange(val) {
       this.multiple_selection = val;
@@ -893,7 +892,8 @@
         this.FnSearch();
       }
     }
-    private beforeDestroy() {
+     beforeDestroy() {
+      this.isComponentDestroying = true;
       this.FnClearTimer();
     }
   }
