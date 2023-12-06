@@ -130,6 +130,9 @@ export default class SyncMirror extends Vue{
         this.list.map(item=>{
             data=[...data,...item.checkList]
         })
+      if(data.length<1){
+        return false
+      }
         let res:any = await Service.sync_mirror({
             os_id:this.os_id,
             az_ids:data
