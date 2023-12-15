@@ -15061,6 +15061,7 @@ def get_status(task_id):
 | 雅加达A       | APAC_Jakarta_A    | 是             | 亚太地区 |
 | 胡志明A       | APAC_HoChiMinh_A  | 是             | 亚太地区 |
 | 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
+| 达拉斯N       | US_Dallas_N       | 是             | 北美地区 |
 
 ## 附件二
 
