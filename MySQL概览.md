@@ -1677,6 +1677,7 @@ def create_backup(instance_uuid):
 | BackupSize     | string | 备份文件大小，单位字节                                       |
 | Desc           | string | 备份描述                                                     |
 | BackupStrategy | string | 备份范围，取值范围：<br />整个实例："instance"<br />指定数据库："db" |
+| BackupFinishTime| string | 备份完成时间 |
 
 **请求示例：**
 
@@ -1714,6 +1715,7 @@ def get_mysql_backups(instance_uuid):
         "StartTime": "2020-06-18 04:09:59",
         "Status": "finished",
         "BackupStrategy":"db"
+        "BackupFinishTime":"2020-06-15 15:04:59"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1725,6 +1727,7 @@ def get_mysql_backups(instance_uuid):
         "StartTime": "2020-06-17 04:10:08",
         "Status": "finished",
         "BackupStrategy":"instance"
+        "BackupFinishTime":"2020-06-15 15:04:59"
     }, {
         "BackupId": "**************************",
         "BackupMode": "auto",
@@ -1736,6 +1739,7 @@ def get_mysql_backups(instance_uuid):
         "StartTime": "2020-06-16 04:10:03",
         "Status": "finished",
         "BackupStrategy":"instance"
+        "BackupFinishTime":""
     }, {
         "BackupId": "**************************",
         "BackupMode": "manual",
@@ -1747,6 +1751,7 @@ def get_mysql_backups(instance_uuid):
         "StartTime": "2020-06-15 15:04:41",
         "Status": "finished",
         "BackupStrategy":"instance"
+        "BackupFinishTime":""
     }],
     "Message": "Success."
 }
