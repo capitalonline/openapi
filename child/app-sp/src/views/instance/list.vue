@@ -128,11 +128,20 @@
         </template>
       </el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
+<!--        <template #default="scope">-->
+<!--          <div v-if="scope.row.private_net">-->
+<!--            {{ scope.row.private_net }}-->
+<!--            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）-->
+<!--            &lt;!&ndash; （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） &ndash;&gt;-->
+<!--          </div>-->
+<!--        </template>-->
         <template #default="scope">
-          <div v-if="scope.row.private_net">
-            {{ scope.row.private_net }}
-            （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+          <div v-for="net in  scope.row.private_net.split(';')" :key="net">
+          <span v-if="scope.row.eip_info[net]">
+            {{ net }}
+            （vlan {{ scope.row.eip_info[net].vlan_id }}）
             <!-- （vlan {{ scope.row.vlan[FnGetNet(scope.row.private_net)] }}） -->
+          </span>
           </div>
         </template>
       </el-table-column>

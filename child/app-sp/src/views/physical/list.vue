@@ -153,9 +153,15 @@
                     <span :class="scope.row.status">{{scope.row.status_display}}</span>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='private_net'">
-                    <div v-if="scope.row.private_net">
-                      {{ scope.row.private_net }}
-                      （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）
+<!--                    <div v-if="scope.row.private_net">-->
+<!--                      {{ scope.row.private_net }}-->
+<!--                      （vlan {{ scope.row.eip_info[scope.row.private_net].vlan_id }}）-->
+<!--                    </div>-->
+                    <div v-for="net in  scope.row.private_net.split(';')" :key="net">
+                      <span v-if="scope.row.eip_info[net]">
+                        {{ net }}
+                        （vlan {{ scope.row.eip_info[net].vlan_id }}）
+                      </span>
                     </div>
                   </template>
                   <template #default="scope" v-else-if="inn.prop==='pub_net'">
