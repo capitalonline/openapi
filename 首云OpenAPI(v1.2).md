@@ -15203,8 +15203,10 @@ def get_status(task_id):
 |             | Centos_6.5_64                    |                                        |
 |             | Centos_6.4_64                    |                                        |
 |             | Centos_5.9_64                    |                                        |
-| Debian      | Debian_10.2_64                   |                                        |
+| Debian      | Debian_11.3_64                   |                                        |
+|             | Debian_10.2_64                   |                                        |
 |             | Debian_9.11_64                   |                                        |
+|             | Debian_9.8_64                    |                                        |
 |             | Debian_8.11_64                   |                                        |
 |             | Debian_8.1_64                    |                                        |
 |             | Debian_7.4_64                    |                                        |
