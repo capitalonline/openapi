@@ -15210,7 +15210,8 @@ def get_status(task_id):
 |             | Debian_7.4_64                    |                                        |
 | Redhat      | Redhat_7.4_64                    |                                        |
 |             | Redhat_6.5_64                    |                                        |
-| Ubuntu      | Ubuntu_20.04_64                  |                                        |
+| Ubuntu      | Ubuntu_22.04_64                  |                                        |
+|             | Ubuntu_20.04_64                  |                                        |
 |             | Ubuntu_18.04_64                  |                                        |
 |             | Ubuntu_16.04_64                  |                                        |
 |             | Ubuntu_14.04_64                  |                                        |
