@@ -7,9 +7,6 @@
             <el-option v-for="(item, index) in az_list" :key="index" :label="item.az_name" :value="item.az_id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button  type="primary">刷新</el-button>
-        </el-form-item>
       </el-form>
       <div>说明：当使用率或售卖率超过阈值时，块存储将自动禁售。</div>
       <span class="detail">名词释义</span>
@@ -35,9 +32,20 @@
       <el-table-column prop="actual_sell_rate" label="实际售卖率"></el-table-column>
       <el-table-column prop="use_rate_threshold" label="使用率阈值"></el-table-column>
       <el-table-column prop="sell_rate_threshold" label="售卖率阈值"></el-table-column>
-      <el-table-column prop="status" label="当前状态">
+      <el-table-column prop="status" width="110">
+        <template slot="header" slot-scope="scope">
+          <span class="m-right10">当前状态</span>
+          <el-button type="text" @click="get_pool_info">刷新</el-button>
+        </template>
         <template slot-scope="scope">
-         <span class="error" v-if="scope.row.status === 'BANNED'">已禁售</span>
+          <el-tooltip
+              v-if="scope.row.status === 'BANNED'"
+              :content="scope.row.message"
+              popper-class="tooltip-width"
+              placement="top"
+              effect="light">
+            <span class="error">已禁售</span>
+          </el-tooltip>
           <span v-else>正常</span>
         </template>
       </el-table-column>
@@ -50,7 +58,7 @@
       </el-table-column>
     </el-table>
     <growth-rate :visible.sync="show_growth_rate" :pool_id=pool_id :az_id="salesForm.az_id"></growth-rate>
-    <threshold :visible.sync="show_threshold" :row="threshold_info" :az_id="salesForm.az_id"></threshold>
+    <threshold :visible.sync="show_threshold" :row="threshold_info" :az_id="salesForm.az_id" @fn-refresh="get_pool_info"></threshold>
   </div>
 </template>
 
@@ -66,7 +74,7 @@ import item from "@/components/params/item.vue";
 })
 
 export default class salesRate extends Vue {
-  private list:any = [{pool_name:'POD219-POOL01',total_amount:'100TB',sold_amount:'90TB',actual_use_rate:'78%',status:1,actual_sell_rate:'90%',use_rate_threshold:'75%',sell_rate_threshold:'130%'},{event_id:'1111',status:0}]
+  private list:any = []
   private operate_auth = [];
   private az_list = []
   private pool_id = ''
@@ -105,18 +113,17 @@ export default class salesRate extends Vue {
       }
       content += readyCount === 1 ? `</ul><div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`您将禁售的是${row.pool_name},禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？`
       this.$confirm(content, '禁售设置', {
-        confirmButtonText:'确认',
+        confirmButtonText: '确认',
         dangerouslyUseHTMLString: true,
-
       }).then(async() => {
         let res: any = await Service.handle_pool_info({
           az_id: this.salesForm.az_id,
           pool_id: row.pool_id,
           op_type: type
-        })
-        if (res.code === 'Success') {
-          this.$message.success(res.message)
-          this.get_pool_info()
+        });
+        if (res && res.code === 'Success') {
+          this.$message.success(res.message);
+          this.get_pool_info();
         }
       }).catch(() => {
         this.$message({
@@ -124,7 +131,7 @@ export default class salesRate extends Vue {
           message: '已取消禁售设置'
         });
       });
-    } else {
+    }else{
       let res:any = await Service.handle_pool_info({
         az_id:this.salesForm.az_id,
         pool_id:row.pool_id,

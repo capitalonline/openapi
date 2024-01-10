@@ -41,7 +41,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="剩余可售容量：">
-        <span v-if="row.status === 'BANNED'">0</span>
+        <span v-if="row.status === 'BANNED'">0---</span>
        <span v-else>{{enable_sale}}TB</span>
       </el-form-item>
     </el-form>
@@ -95,11 +95,13 @@ export default class GrowthRate extends Vue{
       az_id:this.az_id,
       pool_id:this.row['pool_id'],
       op_type:'set_rate_threshold',
-      use_rate_threshold:this.thresholdFrom.use_rate_threshold+'%',
-      sell_rate_threshold:this.thresholdFrom.sell_rate_threshold+'%'
+      use_rate_threshold:this.thresholdFrom.use_rate_threshold/100,
+      sell_rate_threshold:this.thresholdFrom.sell_rate_threshold/100
     })
     if(res.code === 'Success'){
       this.$message.success(res.message)
+      this.FnClose()
+      this.FnEmit()
     }
   }
   private FnClose(){
@@ -107,12 +109,15 @@ export default class GrowthRate extends Vue{
     this.thresholdFrom = {}
   }
   get enable_sale(){
+    console.log('****')
     let sale_threshold:number = 0
     if(this.thresholdFrom.sell_rate_threshold) {
        sale_threshold = this.thresholdFrom.sell_rate_threshold/100 * Number(this.row['total_amount'].replace(/TB/g, '')) - Number(this.row['sold_amount'].replace(/TB/g, ''))
     }
-    return sale_threshold
+    return Number(sale_threshold.toFixed(2))
   }
+  @Emit('fn-refresh')
+  public FnEmit(){}
   @Watch('syncVisible')
   private FnGetRow(newVal) {
     if (!newVal) {
