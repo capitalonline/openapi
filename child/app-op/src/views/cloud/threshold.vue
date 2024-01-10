@@ -41,7 +41,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="剩余可售容量：">
-        <span v-if="row.status === 'BANNED'">0---</span>
+        <span v-if="row.status === 'BANNED'">0</span>
        <span v-else>{{enable_sale}}TB</span>
       </el-form-item>
     </el-form>
