@@ -148,7 +148,7 @@ export default class salesRate extends Vue {
       az_id:this.salesForm.az_id
     })
     if(res.code === 'Success'){
-      //this.list = res.data.pool_info
+      this.list = res.data.pool_info
     }
   }
   private get_az_list() {
