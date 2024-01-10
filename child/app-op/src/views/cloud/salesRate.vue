@@ -111,7 +111,7 @@ export default class salesRate extends Vue {
       for(let pool_name in sell_status){
         content += `<ol>${pool_name}: ${sell_status[pool_name]}</ol>`;
       }
-      content += readyCount === 1 ? `</ul><div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`您将禁售的是${row.pool_name},禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？`
+      content += readyCount === 1 ? `</ul><div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`</ul><div>您将禁售的是${row.pool_name},<br>禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？</div>`
       this.$confirm(content, '禁售设置', {
         confirmButtonText: '确认',
         dangerouslyUseHTMLString: true,
@@ -148,7 +148,7 @@ export default class salesRate extends Vue {
       az_id:this.salesForm.az_id
     })
     if(res.code === 'Success'){
-      this.list = res.data.pool_info
+      //this.list = res.data.pool_info
     }
   }
   private get_az_list() {
