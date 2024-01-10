@@ -2,9 +2,9 @@
   <div class="growth-box">
     <el-dialog :visible.sync="syncVisible" @close="FnClose">
       <el-table :data="list" border>
-      <el-table-column label="日期"></el-table-column>
-      <el-table-column label="可售容量"></el-table-column>
-      <el-table-column label="较前一日增长量"></el-table-column>
+      <el-table-column prop="date_truncated" label="日期"></el-table-column>
+      <el-table-column prop="can_sell_amount" label="可售容量"></el-table-column>
+      <el-table-column prop="add_amount" label="较前一日增长量"></el-table-column>
     </el-table>
   </el-dialog>
   </div>
@@ -18,9 +18,11 @@ import Service from "@/https/blockStorage/list";
 export default class GrowthRate extends Vue{
   @PropSync('visible', {type: Boolean}) syncVisible!: boolean;
   @Prop({default:''}) pool_id!:string;
+  @Prop({default:''}) az_id!:string
   private list:any =[]
   private async pool_add_rate(){
     let res:any = await Service.search_pool_add_rate({
+      az_id:this.az_id,
       pool_id:this.pool_id
     })
     if(res.code === 'Success'){

@@ -41,7 +41,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="剩余可售容量：">
-        <span v-if="row.status === 0">0</span>
+        <span v-if="row.status === 'BANNED'">0</span>
        <span v-else>{{enable_sale}}TB</span>
       </el-form-item>
     </el-form>
@@ -61,6 +61,7 @@ export default class GrowthRate extends Vue{
   @Prop({default: () => {
       return {}
     }}) row!: Object;
+  @Prop({default:''}) az_id!:string
   private actual_data = {
     use_rate: '',
     sell_rate: '',
@@ -91,6 +92,7 @@ export default class GrowthRate extends Vue{
   private dataList:any = []
   private async FnConfirm(){
     let res:any = await Service.handle_pool_info({
+      az_id:this.az_id,
       pool_id:this.row['pool_id'],
       op_type:'set_rate_threshold',
       use_rate_threshold:this.thresholdFrom.use_rate_threshold+'%',
@@ -102,6 +104,7 @@ export default class GrowthRate extends Vue{
   }
   private FnClose(){
     this.syncVisible = false;
+    this.thresholdFrom = {}
   }
   get enable_sale(){
     let sale_threshold:number = 0

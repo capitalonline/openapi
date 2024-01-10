@@ -37,20 +37,20 @@
       <el-table-column prop="sell_rate_threshold" label="售卖率阈值"></el-table-column>
       <el-table-column prop="status" label="当前状态">
         <template slot-scope="scope">
-         <span class="error" v-if="scope.row.status === 0">已禁售</span>
+         <span class="error" v-if="scope.row.status === 'BANNED'">已禁售</span>
           <span v-else>正常</span>
         </template>
       </el-table-column>
       <el-table-column prop="event_id" label="操作" width="150px">
         <template slot-scope="scope">
           <el-button type="text" @click="handle_pool_info(scope.row,'set_rate_threshold')" :disabled="!operate_auth.includes('set_threshold')">设置阈值</el-button>
-          <el-button type="text" @click="handle_pool_info(scope.row,'cancel_forbid_sell')" v-if="scope.row.status===0" :disabled="!operate_auth.includes('cancel_forbid_sale')">取消禁售</el-button>
+          <el-button type="text" @click="handle_pool_info(scope.row,'cancel_forbid_sell')" v-if="scope.row.status==='BANNED'" :disabled="!operate_auth.includes('cancel_forbid_sale')">取消禁售</el-button>
           <el-button type="text" @click="handle_pool_info(scope.row,'forbid_sell')" v-else :disabled="!operate_auth.includes('forbid_sale')">禁售</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <growth-rate :visible.sync="show_growth_rate" :pool_id=pool_id></growth-rate>
-    <threshold :visible.sync="show_threshold" :row="threshold_info"></threshold>
+    <growth-rate :visible.sync="show_growth_rate" :pool_id=pool_id :az_id="salesForm.az_id"></growth-rate>
+    <threshold :visible.sync="show_threshold" :row="threshold_info" :az_id="salesForm.az_id"></threshold>
   </div>
 </template>
 
@@ -60,6 +60,7 @@ import httpService from "@/https/az/list";
 import Service from "@/https/blockStorage/list";
 import GrowthRate from "@/views/cloud/growthRate.vue";
 import Threshold from "@/views/cloud/threshold.vue";
+import item from "@/components/params/item.vue";
 @Component({
   components: {Threshold, GrowthRate}
 })
@@ -86,13 +87,52 @@ export default class salesRate extends Vue {
     if(type === 'set_rate_threshold') {
       this.show_threshold = true
       this.threshold_info = row
+    } else if(type === 'forbid_sell') {
+      let readyCount = this.list.filter(item=>item.status === 'READY').length
+      let sell_status = {}
+      let content = ''
+      this.list.forEach(item=>{
+        if(item.pool_id !== row.pool_id) {
+          let status = item.status === 'READY' ? '正常' : '已禁售'
+          sell_status[item.pool_name] = status
+        }
+      })
+      if(Object.keys(sell_status).length>0) {
+         content += `<div>此集群的其他POOL状态</div><ul>`
+      }
+      for(let pool_name in sell_status){
+        content += `<ol>${pool_name}: ${sell_status[pool_name]}</ol>`;
+      }
+      content += readyCount === 1 ? `</ul><div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`您将禁售的是${row.pool_name},禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？`
+      this.$confirm(content, '禁售设置', {
+        confirmButtonText:'确认',
+        dangerouslyUseHTMLString: true,
+
+      }).then(async() => {
+        let res: any = await Service.handle_pool_info({
+          az_id: this.salesForm.az_id,
+          pool_id: row.pool_id,
+          op_type: type
+        })
+        if (res.code === 'Success') {
+          this.$message.success(res.message)
+          this.get_pool_info()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消禁售设置'
+        });
+      });
     } else {
       let res:any = await Service.handle_pool_info({
+        az_id:this.salesForm.az_id,
         pool_id:row.pool_id,
         op_type:type
       })
       if(res.code === 'Success'){
        this.$message.success(res.message)
+        this.get_pool_info()
       }
     }
   }
