@@ -96,6 +96,7 @@ export default class salesRate extends Vue {
       this.show_threshold = true
       this.threshold_info = row
     } else if(type === 'forbid_sell') {
+      //禁售提示信息根据操作禁售的POOL是否是该可用区唯一正常售卖的POOL
       let readyCount = this.list.filter(item=>item.status === 'READY').length
       let sell_status = {}
       let content = ''
@@ -131,15 +132,30 @@ export default class salesRate extends Vue {
           message: '已取消禁售设置'
         });
       });
-    }else{
-      let res:any = await Service.handle_pool_info({
-        az_id:this.salesForm.az_id,
-        pool_id:row.pool_id,
-        op_type:type
-      })
-      if(res.code === 'Success'){
-       this.$message.success(res.message)
-        this.get_pool_info()
+    }else {
+      let use_rate_threshold = parseFloat(row.use_rate_threshold)
+      let actual_use_rate = parseFloat(row.actual_use_rate)
+      let sell_rate_threshold = parseFloat(row.sell_rate_threshold)
+      let actual_sell_rate = parseFloat(row.actual_sell_rate)
+      if (use_rate_threshold > actual_use_rate && sell_rate_threshold > actual_sell_rate) {
+        let res: any = await Service.handle_pool_info({
+          az_id: this.salesForm.az_id,
+          pool_id: row.pool_id,
+          op_type: type
+        })
+        if (res.code === 'Success') {
+          this.$message.success(res.message)
+          this.get_pool_info()
+        }
+      } else {
+        let reasons = [];
+        if (use_rate_threshold <= actual_use_rate) {
+          reasons.push('实际使用率超过使用率阈值');
+        }
+        if (sell_rate_threshold <= actual_sell_rate) {
+          reasons.push('实际售卖率超过售卖率阈值');
+        }
+        this.$message.error( reasons.join('、')+ '，不支持取消禁售');
       }
     }
   }
