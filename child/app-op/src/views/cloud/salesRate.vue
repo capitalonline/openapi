@@ -118,6 +118,7 @@ export default class salesRate extends Vue {
         dangerouslyUseHTMLString: true,
       }).then(async() => {
         let res: any = await Service.handle_pool_info({
+          pool_name:row.pool_name,
           az_id: this.salesForm.az_id,
           pool_id: row.pool_id,
           op_type: type
@@ -139,6 +140,7 @@ export default class salesRate extends Vue {
       let actual_sell_rate = parseFloat(row.actual_sell_rate)
       if (use_rate_threshold > actual_use_rate && sell_rate_threshold > actual_sell_rate) {
         let res: any = await Service.handle_pool_info({
+          pool_name:row.pool_name,
           az_id: this.salesForm.az_id,
           pool_id: row.pool_id,
           op_type: type

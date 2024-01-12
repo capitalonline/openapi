@@ -92,6 +92,7 @@ export default class GrowthRate extends Vue{
   private dataList:any = []
   private async FnConfirm(){
     let res:any = await Service.handle_pool_info({
+      pool_name:this.row['pool_name'],
       az_id:this.az_id,
       pool_id:this.row['pool_id'],
       op_type:'set_rate_threshold',
