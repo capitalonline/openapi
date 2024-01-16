@@ -89,7 +89,7 @@ export default class salesRate extends Vue {
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
   }
   private az_idChange(){
-
+    this.get_pool_info()
   }
   private async handle_pool_info(row,type){
     if(type === 'set_rate_threshold') {
