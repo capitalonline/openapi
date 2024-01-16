@@ -52,16 +52,16 @@ export default class SideBar extends Vue {
   private routes: Array<Object>=[];
   private default_active: string = '';
   private all_menu:any=[
-    {
-      name: 'statistical',
-      label: '数据统计',
-      children: [
-        {
-          name: "resource_statistical_list",
-          label: "资源统计"
-        },
-      ]
-    },
+    // {
+    //   name: 'statistical',
+    //   label: '数据统计',
+    //   children: [
+    //     {
+    //       name: "resource_statistical_list",
+    //       label: "资源统计"
+    //     },
+    //   ]
+    // },
     {
       name: "az_list",
       label: "可用区管理"
