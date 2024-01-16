@@ -53,7 +53,7 @@
         <template slot-scope="scope">
           <el-button type="text" @click="handle_pool_info(scope.row,'set_rate_threshold')" :disabled="!operate_auth.includes('set_threshold')">设置阈值</el-button>
           <el-button type="text" @click="handle_pool_info(scope.row,'cancel_forbid_sell')" v-if="scope.row.status==='BANNED'" :disabled="!operate_auth.includes('cancel_forbid_sale')">取消禁售</el-button>
-          <el-button type="text" @click="handle_pool_info(scope.row,'forbid_sell')" v-else :disabled="!operate_auth.includes('forbid_sale')">禁售</el-button>
+          <el-button type="text" @click="handle_pool_info(scope.row,'forbid_sell',scope.$index)" v-else :disabled="!operate_auth.includes('forbid_sale')">禁售</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,28 +91,24 @@ export default class salesRate extends Vue {
   private az_idChange(){
     this.get_pool_info()
   }
-  private async handle_pool_info(row,type){
+  private async handle_pool_info(row,type,index){
     if(type === 'set_rate_threshold') {
       this.show_threshold = true
       this.threshold_info = row
     } else if(type === 'forbid_sell') {
-      //禁售提示信息根据操作禁售的POOL是否是该可用区唯一正常售卖的POOL
-      let readyCount = this.list.filter(item=>item.status === 'READY').length
-      let sell_status = {}
       let content = ''
-      this.list.forEach(item=>{
-        if(item.pool_id !== row.pool_id) {
-          let status = item.status === 'READY' ? '正常' : '已禁售'
-          sell_status[item.pool_name] = status
+      //获取除去选择行POOL池的列表数据new_list，当new_list有值时，展示其名称和状态，
+      let new_list = this.list.filter((item, i) => i !== index);
+      if(new_list.length>0) {
+         content += `<div>此集群的其他POOL状态</div><div style="overflow: auto;height: 80px">`
+        for(let item of new_list){
+          content += `<div style="margin-left: 20px">${item.pool_name}: ${item.status === 'READY' ? '正常' : '已禁售'}</div>`;
         }
-      })
-      if(Object.keys(sell_status).length>0) {
-         content += `<div>此集群的其他POOL状态</div><ul>`
+        content += `</div>`
       }
-      for(let pool_name in sell_status){
-        content += `<ol>${pool_name}: ${sell_status[pool_name]}</ol>`;
-      }
-      content += readyCount === 1 ? `</ul><div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`</ul><div>您将禁售的是${row.pool_name},<br>禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？</div>`
+      //禁售提示信息根据操作禁售的POOL是否是该可用区唯一正常售卖的POOL,当选择禁售的POOL为该可用区唯一正常状态时提示无法开通计算实例，否则提示无法调度
+      let ready_list = new_list.filter(item=>(item.status === 'READY'))
+      content += ready_list.length === 0 ? `<div style="margin-top: 10px">您将禁售的是${row.pool_name},<br>此POOL禁售后，将会导致整个集群云盘禁售，<span style="color: red">无法开通计算实例</span>，是否确认操作？</div>` :`<div>您将禁售的是${row.pool_name},<br>禁售后，此可用区将无法调度${row.pool_name}的存储资源，是否确认操作？</div>`
       this.$confirm(content, '禁售设置', {
         confirmButtonText: '确认',
         dangerouslyUseHTMLString: true,

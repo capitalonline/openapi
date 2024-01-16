@@ -5,22 +5,29 @@
       <div>使用率：使用率阈值通常建议不超过75%，使用率过高可能会出现<span class="error">数据丢失，平台瘫痪</span>的风险。</div>
       <div>售卖率：售卖率阈值通常建议不超过130%，售卖率过高可能会出现块存储资源池突然备占满的情况，存在<span class="error">数据丢失、平台瘫痪</span>的风险。</div>
     </div>
-    <el-table
-        ref="table"
-        align="center"
-        border
-        :data="dataList"
-    >
-      <el-table-column
-          v-for="(item, index) in rowTitle"
-          :label="item.label"
-          :key="index"
-          :min-width="item.width"
-          :show-overflow-tooltip="true"
-      >
-        <template slot-scope="scope">{{ scope.row[index] }}</template>
-      </el-table-column>
-    </el-table>
+    <div>
+      <table class="el-table el-table--fit el-table--border el-table--enable-row-hover el-table--enable-row-transition" width="500px" height="70px" cellspacing="0">
+        <thead>
+        <tr>
+          <th class="el-table_3_column_26 el-table__cell"><div></div></th>
+          <th class="el-table_3_column_26 el-table__cell"><div class="title has-gutter">当前实际值</div></th>
+          <th class="el-table_3_column_26 el-table__cell"><div class="title has-gutter">当前阈值</div></th>
+        </tr>
+        </thead>
+        <tbody class="el-table__body-wrapper is-scrolling-none">
+        <tr class="el-table__row">
+          <td class="el-table_3_column_26 el-table__cell" style="width: 100px"><div class="title">使用率阈值</div></td>
+          <td class="el-table_3_column_26 el-table__cell"><div class="cell el-tooltip" >{{actual_data.use_rate}}</div></td>
+          <td class="el-table_3_column_26 el-table__cell" ><div class="cell el-tooltip" >{{threshold_data.use_rate}}</div></td>
+        </tr>
+        <tr class="el-table__row">
+          <td class="el-table_3_column_26 el-table__cell"><div class="title">售卖率阈值</div></td>
+          <td class="el-table_3_column_26 el-table__cell"><div class="cell el-tooltip" >{{actual_data.sell_rate}}</div></td>
+          <td class="el-table_3_column_26 el-table__cell"><div class="cell el-tooltip">{{threshold_data.sell_rate}}</div></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
     <el-form :model="thresholdFrom"  label-width="120px" label-position="left" style="margin-top: 20px">
       <el-form-item label="使用率阈值：">
         <el-input
@@ -41,8 +48,7 @@
         </el-input>
       </el-form-item>
       <el-form-item label="剩余可售容量：">
-        <span v-if="row.status === 'BANNED'">0</span>
-       <span v-else>{{enable_sale}}TB</span>
+          <span>{{row.status === 'BANNED' ? 0 : enable_sale + 'TB'}}</span>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -70,21 +76,6 @@ export default class GrowthRate extends Vue{
     use_rate:'',
     sell_rate:'',
   }
-  private  keyList:any = [
-    {
-      key: 'use_rate',
-      label: '使用率阈值'
-    },
-    {
-      key: 'sell_rate',
-      label: '售卖率阈值'
-    }
-  ]
-  private rowTitle:any= [
-    { label: '', width: 80 },
-    { label: '当前实际值', width: 200 },
-    { label: '当前阈值',width: 200 }
-  ]
   private thresholdFrom:any = {
     use_rate_threshold:'',
     sell_rate_threshold:''
@@ -110,7 +101,6 @@ export default class GrowthRate extends Vue{
     this.thresholdFrom = {}
   }
   get enable_sale(){
-    console.log('****')
     let sale_threshold:number = 0
     if(this.thresholdFrom.sell_rate_threshold) {
        sale_threshold = this.thresholdFrom.sell_rate_threshold/100 * Number(this.row['total_amount'].replace(/TB/g, '')) - Number(this.row['sold_amount'].replace(/TB/g, ''))
@@ -131,13 +121,6 @@ export default class GrowthRate extends Vue{
     this.threshold_data.use_rate = this.row['use_rate_threshold'];
     this.threshold_data.sell_rate = this.row['sell_rate_threshold'];
     this.dataList = [this.actual_data,this.threshold_data]
-    if(this.keyList && this.keyList.length>0) {
-      this.dataList = this.keyList.map((item, i) => {
-        return [this.keyList[i].label,...this.dataList.map((row) => {
-          return row[this.keyList[i].key]
-        })]
-      })
-    }
   }
 
 }
@@ -160,5 +143,7 @@ export default class GrowthRate extends Vue{
   margin-top: 10px !important;
   padding-top: 20px;
 }
-
+.title{
+  padding: 5px;
+}
 </style>
