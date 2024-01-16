@@ -73,6 +73,12 @@ const routes: RouteConfig[] = [
     meta: {label: '云盘库存', menu: 'disk_inventory'},
   },
   {
+    path: '/cloud_sales_rate',
+    name: 'disk_sales_rate',
+    component: () => import('../views/cloud/salesRate.vue'),
+    meta: {label: '块存储设置', menu: 'disk_sales_rate'},
+  },
+  {
     path: '/nas_inventory',
     name: 'nas_inventory_list',
     component: () => import('../views/nas/nas.vue'),

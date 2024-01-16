@@ -103,11 +103,15 @@ export default class SideBar extends Vue {
     },
     {
       name: 'cloud_management',
-      label: '云盘管理',
+      label: '块存储管理',
       children: [
         {
           name: 'disk_inventory',
           label: '云盘库存'
+        },
+        {
+          name: 'disk_sales_rate',
+          label: '块存储设置'
         }
       ]
     },

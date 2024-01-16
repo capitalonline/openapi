@@ -97,6 +97,7 @@ export default class LogList extends Vue{
     {type:'ecs',label:'云主机'},
     {type:'image',label:'镜像'},
     {type:'disk',label:'云盘'},
+    {type:'pool',label:'块存储'},
     {type:'troubleshoot',label:'故障处理任务'},
   ]
   private search_option:any={
