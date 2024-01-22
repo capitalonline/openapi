@@ -29,11 +29,11 @@ function render (props: prop = {}) {
   // if(props){
   //   props.onGlobalStateChange((state, prev) => {
   //     // state: 变更后的状态; prev 变更前的状态
-      
+
   //   },true)
   // }
-  
-  for (const item of all_routes) {
+  routes.push(all_routes[0])
+  for (const item of all_routes[0].children) {
     if (store.state.auth_info[item.name]) {
       routes.push(item)
     } else if (item.meta.no_auth) {
@@ -85,7 +85,7 @@ export function mount (props: any={}) {
       store.commit('SET_AUTH_INFO', state.permission_dict);
     }, true);
   }
-  
+
   render(props)
 }
 
