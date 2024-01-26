@@ -29,6 +29,7 @@ export default new Vuex.Store({
     ],
     host_search:{},
     pod_id:storage && storage.get ? storage.get('pod_id') : '',
+    pod_name:storage && storage.get ? storage.get('pod_name') : '',
   },
   getters: {
   },

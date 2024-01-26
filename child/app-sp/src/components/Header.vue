@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <div class="left-content">
-      <el-select 
-        v-model="default_pod" 
+      <el-select
+        v-model="default_pod"
         filterable
         :filter-method="getPodList"
         @visible-change="change_pod"
@@ -35,7 +35,7 @@ export default class Header extends Vue {
   }
   created(){
     this.getPodList();
-    
+
   }
   private async getPodList(val:String=""){
     let res = await getPodList({

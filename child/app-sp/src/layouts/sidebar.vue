@@ -1,247 +1,163 @@
 <template>
-  <el-menu :default-active="active_menu">
-    <template v-for="item in routes">
-      <el-submenu
-        :index="item.name"
-        :key="item.name"
-        v-if="item.children">
-        <template #title>
-          {{ item.meta.label }}
-        </template>
-        <el-menu-item
-          v-for="child in item.children"
-          :index="child.name"
-          :key="child.name"
-          @click="FnChangeUrl(child.name)">
-          <template #title>
-            {{ child.meta.label }}
-          </template>
-        </el-menu-item>
-      </el-submenu>
+  <div>
+  <el-menu :default-active="active_menu" mode="horizontal">
+    <template v-for="item in menu">
       <el-menu-item
+        @click="change(item)"
         :index="item.name"
         :key="item.name"
-        @click="FnChangeUrl(item.name)"
-        v-else>
+        :disabled="item.disabled"
+        >
         <template #title>
-          {{ item.meta.label }}
+          {{ item.label }}
         </template>
       </el-menu-item>
     </template>
   </el-menu>
+    <div class="left-content">
+      <el-select
+        style="width: 230px"
+        v-model="default_pod"
+        filterable
+        :filter-method="getPodList"
+        @visible-change="change_pod"
+      >
+        <el-option
+          v-for="(item,key) in pod_list"
+          :key="key"
+          :value="key"
+          :label="item"
+        ></el-option>
+      </el-select>
+    </div>
+    <template v-if="treeType === 'tree'">
+      <left-tree :currentLivingId="current" :tree_data="treeData"></left-tree>
+    </template>
+    <template v-if="treeType === 'menu'">
+     <new-menu :menu_list=menu_list :active_menu="current"></new-menu>
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Watch, Vue } from 'vue-property-decorator';
+import { getPodList } from '../https/public';
+import storage from "@/store/storage";
+import LeftTree from "@/layouts/LeftTree.vue";
+import NewMenu from "@/layouts/newMenu.vue"
 
 @Component({
   components: {
-
+    LeftTree,
+    NewMenu
   },
 })
-export default class LeftMenu extends Vue {
+export default class Sidebar extends Vue {
   $router;
   $store;
-  private active_menu: string = '';
-  private active_name: string = ''
-  private routes:any = [
-    {
-      name: "physical_list",
-      label: "物理机管理"
-    },
-    {
-      name: "instance_list",
-      label: "云服务器管理"
-    },
-    {
-      name: 'gpu',
-      label: 'GPU',
-      children: [
-        {
-          name: "gpu_list",
-          label: "GPU管理",
-        },
-        {
-          name: "gpu_fault_record",
-          label: "GPU故障记录",
-        }
-      ]
-    },
-    {
-      name: "nfv_list",
-      label: "NFV云服务器",
-    },
-    {
-      name: 'disk',
-      label: '云盘',
-      children: [
-        {
-          name: "disk_list",
-          label: "云盘管理"
-        },
-        // {
-        //   name: "snapshot_list",
-        //   label: "快照管理"
-        // },
-      ]
-    },
-    {
-      name: 'mirror',
-      label: '镜像管理',
-      children: [
-        {
-          name: "mirror_list",
-          label: "公共镜像管理"
-        },
-        {
-          name: "private_mirror_list",
-          label: "私有镜像管理"
-        }
-      ]
-    },
-    {
-      name: 'filesystem',
-      label: '文件存储',
-      children: [
-        {
-          name: "filesystem_list",
-          label: "文件系统"
-        },
-        {
-          name: "vm_list",
-          label: "NAS转发虚拟机"
-        },
-        {
-          name: "notFilesystem",
-          label: "不可用文件系统"
-        },
-        {
-          name: "nasSet",
-          label: "NAS设置"
-        },
-      ]
-    },
-    { name: 'event_list', label: "任务管理" },
-    { name: 'anomaly_event_list', label: "异常任务处理"},
-    { name: 'repair_event_list', label: "异常任务处理2"},
-    {
-      name: "log_list",
-      label: "操作日志审计"
-    },
-    {
-      name:'alarm_manage',
-      label:'报警管理',
-      children:[
-        {name:'alarm_info',label:'报警信息'},
-        {name:'alarm_strategy',label:'报警策略'},
-        {name:'alarm_contact',label:'报警联系人'},
-      ]
-    },
-    {
-      name: "message_list",
-      label: "消息通知"
-    },
-    {
-      name: "task_config",
-      label: "底层任务配置",
-      children: [
-        { name: 'main_task_list', label: "主任务配置" },
-        { name: 'sub_task_list', label: "子任务配置" },
-        { name: 'project_list', label: "项目管理" },
-      ]
-    },
-    {
-      name: "destroyed",
-      label: "已销毁资源",
-      children: [
-        { name: 'ecs_destroyed', label: "云服务器",noAuth:true, },
-      ]
-    },
+  private active_menu: string = 'cluster';
+  private default_pod = '';
+  private current='1'
+  private treeType:string = 'tree'
+  private pod_list = {}
+  private menu: Array<object> = [
+    {label:'集群',name:'cluster',type:'tree'},
+    {label:'镜像',name:'mirror',type: 'menu'},
+    {label:'存储',name:'storage',disabled:true,tree: false},
+    {label:'网络',name:'network',disabled:true,tree: false}
   ];
-  private menu: Array<object> = [];
-  private FnChangeUrl(name): void {
-    if(this.active_name == name) {
-      this.$router.go(0)
-    } else {
-      this.$router.push({ name: name })
+  private menu_list=[
+    {label:'公有镜像',name:'mirror_list'},
+    {label:'私有镜像',name:'private_mirror_list'}
+  ]
+  private treeData:any = [{
+    id: 1,
+    label: '一级 2',
+    type:'pod',
+    children: [{
+      id: 3,
+      label: '二级 2-1',
+      type:'cluster',
+      children: [{
+        id: 4,
+        label: '三级 3-1-1',
+        type:'host',
+      }, {
+        id: 5,
+        label: '三级 3-1-2',
+        type:'host',
+      }]
+    }, {
+      id: 2,
+      label: '二级 2-2',
+      type:'cluster',
+      children: [{
+        id: 6,
+        label: '三级 3-2-1',
+        type:'host',
+      }, {
+        id: 7,
+        label: '三级 3-2-2',
+        type:'host',
+      }]
+    }]
+  }]
+  created(){
+    this.getPodList();
+    this.getTreeData()
+  }
+  //获取pod列表
+  private async getPodList(val:String=""){
+    let res = await getPodList({
+      az_pod_name:val
+    });
+    if(res.code==='Success'){
+      this.pod_list = res.data;
+      this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : '';
     }
-  };
-  // created() {
-  //   this.all_menu.forEach(item => {
-  //     if (item.children) {
-  //       let child_list = []
-  //       item.children.forEach(child => {
-  //         if (this.$store.state.auth_info[child.name] || child.noAuth) {
-  //           child_list.push(child)
-  //         }
-  //       })
-  //       if (child_list.length > 0) {
-  //         this.menu.push({
-  //           name: item.name,
-  //           label: item.label,
-  //           children: child_list
-  //         })
-  //       }
-  //     } else {
-  //       if (this.$store.state.auth_info[item.name] || item.noAuth) {
-  //         this.menu.push(item)
-  //       }
-  //     }
-  //   })
-  // }
-   created() {
-    this.routes = this.$router.options.routes[0].children;
-    this.FnWatchRouter(this.$route)
   }
-
-  @Watch('$route')
-  private FnWatchRouter(to) {
-    this.default_active = to.meta.menu || to.name;
+  private change_pod(val){
+    if(!val){
+      this.getPodList()
+    }
   }
-
-
-  @Watch('$route')
-  private FnWatchRouter(to, from) {
-    this.active_name = to.name;
-    this.active_menu = to.meta.menu || to.name;
+  //改变左侧头部menu时触发
+  private change(item){
+    this.active_menu = item.name
+    this.treeType = item.type
+    if(this.active_menu === 'mirror' && this.$route.name !== 'mirror_list'){
+      this.current ='mirror_list'
+      this.$router.push({name:'mirror_list'})
+    }
+    if(this.active_menu === 'cluster'){
+      this.current = '1'
+    }
+  }
+  //获取左侧树结构
+  private getTreeData(){
+    this.current = this.treeData[0].id
+  }
+  @Watch('default_pod')
+  private watch_pod(){
+    this.$store.commit('SET_POD',this.default_pod);
+    storage.set('pod_name',this.pod_list[this.default_pod])
   }
 }
 </script>
 
 <style lang="scss">
-.menu-title {
-  padding-top: 30px;
-  padding-bottom: 20px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  img {
-    width: 50px;
-    margin-bottom: 10px;
+.el-menu-item{
+  padding: 0 10px;
+}
+.left-content {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  .el-input--suffix .el-input__inner{
+    background: #F2F2F2;
   }
 }
-.el-menu {
-  border-right: none;
-}
-.el-submenu__title {
-  text-align: center;
-}
-.el-submenu__icon-arrow {
-  right: 8px;
-}
-.el-submenu .el-menu-item {
-  min-width: 180px;
-  height: 32px;
-  line-height: 32px;
-  margin: 10px 0 20px;
-  text-align: center;
-  &:hover,
-  &:focus {
-    // background: #fff;
-  }
-}
-.el-menu-item.is-active {
-  border-right: 4px solid;
-}
+
 </style>
 

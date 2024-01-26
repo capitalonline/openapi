@@ -1,22 +1,31 @@
 <template>
-  <el-container class="container">
-    <el-header width="180px">
-      <Sidebar></Sidebar>
-    </el-header>
-    <el-container class="main-content">
-      <el-main>
-        <router-view :key="key"></router-view>
-      </el-main>
+  <div style="height: 100%">
+    <Header :class="{'header-box': $store.state.qiankun}"></Header>
+    <el-container class="container">
+      <el-aside width="260px">
+        <div style="width: 100%;text-align: right;background: #fafafa">
+          <el-button type="text" @click="changeLayout"><i class="el-icon-arrow-left"></i></el-button>
+          <el-divider></el-divider>
+        </div>
+          <sidebar></sidebar>
+      </el-aside>
+      <el-container class="main-content">
+        <el-main>
+          <router-view :key="key"></router-view>
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+  </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import Sidebar from "@/layouts/sidebar.vue";
+import Header from '../components/Header.vue';
 @Component({
   components: {
-    Sidebar
+    Sidebar,
+    Header
 
   },
 })
@@ -25,26 +34,31 @@ export default class Layout extends Vue{
   get key(){
     return this.$route.path + Math.random()
   }
+  private changeLayout(){
+    this.$router.push({name:'overview'})
+
+  }
 
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/handle';
 .container {
   height: 100%;
   overflow: auto;
-  @include background_color('background_color1');
+  .el-divider--horizontal{
+    margin: 5px 0;
+  }
 }
-.main-content {//
-  padding: 0 !important;
-  margin:0 !important;
-  @include background_color('background_color5');
+.main-content {
+  background: #fafafa;
+  .bottom-header{
+    border-bottom: solid 1px #e6e6e6
+  }
 }
 .el-aside {
   border-right: 1px solid #e6e6e6;
   overflow-x: hidden;
-  @include background_color('background_color1');
 }
 .el-header {
   // background: #fff;
@@ -53,6 +67,6 @@ export default class Layout extends Vue{
 </style>
 <style lang="scss">
 .el-main {
-  padding: 0 0 20px 0;
+  padding: 5px;
 }
 </style>

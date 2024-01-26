@@ -206,3 +206,8 @@ pre {
     border-right: 0 !important;
   }
 }
+.tabBox{
+  .el-tabs__active-bar{
+    transition:none;
+  }
+}

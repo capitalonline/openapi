@@ -3,8 +3,7 @@
     <Header :class="{'header-box': $store.state.qiankun}"></Header>
     <el-container class="container">
       <el-aside width="200px">
-        <left-menu></left-menu>
-        <sidebar></sidebar>
+          <left-menu></left-menu>
       </el-aside>
       <el-main class="main-content">
         <router-view :key="key"></router-view>
