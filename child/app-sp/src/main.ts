@@ -11,6 +11,7 @@ import { getUserInfo } from '../src/init';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
 import VueClipboard  from 'vue-clipboard2';
+import "./assets/aliIconfont/iconfont.css"
 VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard);
 Vue.use(ElementUI)

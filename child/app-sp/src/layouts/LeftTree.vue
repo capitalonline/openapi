@@ -34,14 +34,14 @@ export default class LeftTree extends Vue{
     this.$nextTick(()=>{
       (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
     })
-    this.$router.push({name:'pod_list',params:{type:'overview'}})
+    this.$router.push({name:'pod_list',params:{type:'info'}})
   }
   private handleNodeClick(data) {
-    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_list', { type: 'overview' })){
-      this.$router.push({name:'pod_list',params:{type:'overview'}})
+    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_list', { type: 'info' })){
+      this.$router.push({name:'pod_list',params:{type:'info'}})
     }
-    if(data.type === 'cluster' && !this.isCurrentRoute('cluster_list', { type: 'overview', id: data.id })){
-      this.$router.push({name:'cluster_list',params:{type:'overview',id:data.id}})
+    if(data.type === 'cluster' && !this.isCurrentRoute('cluster_list', { type: 'info', id: data.id })){
+      this.$router.push({name:'cluster_list',params:{type:'info',id:data.id}})
     }
     if(data.type === 'host' && !this.isCurrentRoute('repair_event_list', { id: data.id })){
       console.log(data.id)

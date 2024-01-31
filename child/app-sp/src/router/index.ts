@@ -8,7 +8,7 @@ const routes= [
   {
     path: '/new',
     component: () => import('../layouts/Layout.vue'),
-    redirect: {path: '/new/overview1'},
+    redirect: {path: '/new/'},
     children: [
       // {
       //   path: '/cluster',
@@ -23,15 +23,15 @@ const routes= [
       //   meta: {meta: 'overview1',no_auth: true}
       // },
       {
-        path: '/pod_list/:type',
+        path: '/pod/:type',
         name: 'pod_list',
-        component: () => import('../views/vmOp2/pod/pod.vue'),
+        component: () => import('../views/vmOp2/cluster/pod/gather.vue'),
         meta: {meta: 'pod_list',no_auth: true}
       },
       {
-        path: '/cluster_list/:id/:type',
+        path: '/cluster/:id/:type',
         name: 'cluster_list',
-        component: () => import('../views/vmOp2/cluster/cluster.vue'),
+        component: () => import('../views/vmOp2/cluster/clusterItem/gather.vue'),
         meta: {meta: 'cluster_list',no_auth: true}
       },
       {
@@ -68,6 +68,18 @@ const routes= [
         component: () => import('../views/overview/index.vue'),
         meta: {menu: 'overview'}
       },
+      {
+            path: '/disk',
+            name: 'disk_list',
+            component: () => import('../views/disk/list.vue'),
+            meta: {menu: 'disk_list'}
+          },
+      {
+            path: '/physical',
+            name: 'physical_list',
+            component: () => import('../views/physical/list.vue'),
+            meta: {menu: 'physical_list'}
+          },
     ]
 }
   // {

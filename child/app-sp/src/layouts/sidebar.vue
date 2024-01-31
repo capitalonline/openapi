@@ -74,20 +74,25 @@ export default class Sidebar extends Vue {
     id: 1,
     label: '一级 2',
     type:'pod',
-    children: [{
+    children: [
+      {
       id: 3,
       label: '二级 2-1',
       type:'cluster',
-      children: [{
+      children: [
+        {
         id: 4,
         label: '三级 3-1-1',
         type:'host',
-      }, {
+      },
+        {
         id: 5,
         label: '三级 3-1-2',
         type:'host',
-      }]
-    }, {
+      }
+      ]
+    },
+      {
       id: 2,
       label: '二级 2-2',
       type:'cluster',
