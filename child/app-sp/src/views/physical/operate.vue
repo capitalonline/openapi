@@ -53,12 +53,6 @@
                     <div v-show="!scope.row.maintenanceReason" class="error_message">请输入维护原因</div>
                   </template>
                </el-table-column>
-              <el-table-column prop="lock"  label="锁定原因" v-if="['lock'].includes(oper_type)">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.lockReason" type="textarea"  placeholder="请输入锁定原因" maxlength="50" show-word-limit></el-input>
-                  <div v-show="!scope.row.lockReason" class="error_message">请输入锁定原因</div>
-                </template>
-              </el-table-column>
             </el-table>
           <div v-if="notSelectVmList.length > 0" class="m-top10">
             <span class="tip_message">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
@@ -192,11 +186,7 @@ export default class Operate extends Vue{
       this.list = this.selectVmList.map(item => {
         return {...item, maintenanceReason: ''};
       });
-    } else if(this.oper_type === 'lock'){
-      this.list = this.rows.map(item => {
-        return {...item, lockReason: ''};
-      });
-    } else {
+    }else {
       this.list = []
       this.list = [...this.list,...this.rows]
     }
@@ -222,12 +212,6 @@ export default class Operate extends Vue{
     }
     if (this.oper_type === 'maintenance') {
       let flagReason = this.list.some(item => !item.maintenanceReason);
-      if (flagReason) {
-        return false
-      }
-    }
-    if (this.oper_type === 'lock') {
-      let flagReason = this.list.some(item => !item.lockReason);
       if (flagReason) {
         return false
       }
@@ -302,7 +286,7 @@ export default class Operate extends Vue{
             this.$message.error(message);
             this.back("0");
           }else {
-            this.$message.warning(res.message + res.data.fail_msg)
+            this.$message.warning(res.message)
             this.back("0");
             return;
           }

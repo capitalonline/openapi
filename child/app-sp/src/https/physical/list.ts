@@ -150,9 +150,5 @@ export default{
   //获取维护记录
   get_maintenance_record(req){
     return service(getHostOptions('GET','/host/host_maintenance_record/',req))
-  },
-  //获取锁定记录
-  get_lock_record(req){
-    return service(getHostOptions('GET','/host/host_lock_record/',req))
   }
 }
