@@ -73,19 +73,19 @@
              <span v-else>{{item.label}}</span>
           </template>
           <template #default="scope" v-if="item.prop==='machine_status_name'">
-            <div v-if="scope.row.machine_status!=='maintenance' && scope.row.machine_status!=='lock'" :class="scope.row.machine_status==='crash' ? 'error' : ''">{{scope.row.machine_status_name}}</div>
+            <div v-if="scope.row.machine_status!=='maintenance'" :class="scope.row.machine_status==='crash' ? 'error' : ''">{{scope.row.machine_status_name}}</div>
             <div v-if="scope.row.machine_status==='off_shelves'" class="destroy">{{scope.row.recycle_department}}</div>
-            <div v-if="scope.row.machine_status==='maintenance' || scope.row.machine_status==='lock'" class="destroy">
+            <div v-if="scope.row.machine_status==='maintenance'" class="destroy">
               <el-popover
                 placement="bottom"
                 width="350"
                 trigger="click">
-                <el-table :data="reason_list">
+                <el-table :data="maintenance_Data">
                   <el-table-column width="150" property="reason" label="备注信息"></el-table-column>
                   <el-table-column width="90" property="create_time" label="时间"></el-table-column>
                   <el-table-column width="100" property="op_user" label="操作人"></el-table-column>
                 </el-table>
-                <el-button slot="reference" type="text" @click="get_reason_list(scope.row.machine_status,scope.row.host_id)">{{scope.row.machine_status_name}}</el-button>
+                <el-button slot="reference" type="text" @click="get_maintenance_list(scope.row.host_id)">{{scope.row.machine_status_name}}</el-button>
               </el-popover>
             </div>
           </template>
@@ -440,7 +440,7 @@ export default class PhysicalList extends Vue {
   private detail_id="";
   private detail_visible=false
   private timer = null
-  private reason_list =[]
+  private maintenance_Data =[]
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -528,18 +528,10 @@ export default class PhysicalList extends Vue {
 
     }
   }
-  private async get_reason_list(type,id){
-    console.log(type,'type')
-    if(type === 'lock'){
-      let res: any = await Service.get_lock_record({host_id: id})
-      if (res.code === "Success") {
-        this.reason_list = res.data
-      }
-    } else {
-      let res: any = await Service.get_maintenance_record({host_id: id})
-      if (res.code === "Success") {
-        this.reason_list = res.data
-      }
+  private async get_maintenance_list(id){
+    let res:any = await Service.get_maintenance_record({host_id:id})
+    if(res.code==="Success"){
+      this.maintenance_Data = res.data
     }
   }
   private async get_custom_columns(list){
