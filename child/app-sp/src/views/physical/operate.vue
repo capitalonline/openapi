@@ -217,6 +217,7 @@ export default class Operate extends Vue{
       }
     }
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
+    const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -242,6 +243,9 @@ export default class Operate extends Vue{
     } : this.oper_type==="maintenance" ? {
         maintenance_detail:maintenance_detail,
         host_ids:this.list.map(item=>item.host_id)
+      }:this.oper_type==="lock" ? {
+      lock_detail:lock_detail,
+      host_ids:this.list.map(item=>item.host_id)
       }: {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
