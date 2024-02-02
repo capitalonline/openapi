@@ -10,18 +10,6 @@ const routes= [
     component: () => import('../layouts/Layout.vue'),
     redirect: {path: '/new/'},
     children: [
-      // {
-      //   path: '/cluster',
-      //   name: 'cluster_list',
-      //   component: () => import('../views/vmOp2/pod/clusterList.vue'),
-      //   meta: {meta: 'cluster_list',no_auth: true}
-      // },
-      // {
-      //   path: '/overview1',
-      //   name: 'overview1',
-      //   component: () => import('../views/overview/index.vue'),
-      //   meta: {meta: 'overview1',no_auth: true}
-      // },
       {
         path: '/pod/:type',
         name: 'pod_list',
@@ -35,10 +23,10 @@ const routes= [
         meta: {meta: 'cluster_list',no_auth: true}
       },
       {
-        path: '/repairEvent/:id',
-        name: 'repair_event_list',
-        component: () => import('../views/repairEvent/repairEventList.vue'),
-        meta: {menu: 'repair_event_list'}
+        path: '/host/:id',
+        name: 'host_list',
+        component: () => import('../views/vmOp2/cluster/host/list.vue'),
+        meta: {menu: 'host_list',no_auth: true}
         },
 
 

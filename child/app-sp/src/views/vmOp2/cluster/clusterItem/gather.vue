@@ -25,9 +25,9 @@ export default class Pod extends Vue{
   private cluster_id = this.$route.params.id
   private tab_list = {
     info: '概要',
-    host: '主机',
-    virtual_machine: '虚拟机',
-    gpu:'GPU'
+    // host: '主机',
+    // virtual_machine: '虚拟机',
+    // gpu:'GPU'
   }
   private handleClick(tab, event) {
     this.$router.push({

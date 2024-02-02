@@ -85,9 +85,13 @@ export default class Layout extends Vue{
   left: 0;
   top: 50%;
   width: 16px;
-  height: 30px;
+  height: 33px;
   line-height: 35px;
-  border: 0.05rem solid #ccc;
+  background: #Ffffff;
+  border-bottom: 0.05rem solid #ccc;
+  border-top: 0.05rem solid #ccc;
+  border-right: 0.05rem solid #ccc;
+  border-left-color:initial;
   font-size: 15px;
   z-index: 800;
   cursor: pointer;

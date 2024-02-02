@@ -43,9 +43,9 @@ export default class LeftTree extends Vue{
     if(data.type === 'cluster' && !this.isCurrentRoute('cluster_list', { type: 'info', id: data.id })){
       this.$router.push({name:'cluster_list',params:{type:'info',id:data.id}})
     }
-    if(data.type === 'host' && !this.isCurrentRoute('repair_event_list', { id: data.id })){
+    if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
       console.log(data.id)
-      this.$router.push({name:'repair_event_list',params:{id:data.id}})
+      this.$router.push({name:'host_list',params:{id:data.id}})
     }
   }
   private isCurrentRoute(name, params) {

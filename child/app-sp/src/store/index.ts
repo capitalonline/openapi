@@ -27,6 +27,13 @@ export default new Vuex.Store({
       '中转虚拟机ID','中转虚拟机IP','计费方式','状态','创建时间'
 
     ],
+    pod:{
+      cluster_host:JSON.parse(storage.get('cluster_host')) || [
+        '名称','物理机','云主机','CPU型号','GPU型号','GPU数量',
+        '存储容量','CPU消耗量','内存消耗量','GPU消耗量','存储消耗量'
+      ],
+    },
+
     host_search:{},
     pod_id:storage && storage.get ? storage.get('pod_id') : '',
     pod_name:storage && storage.get ? storage.get('pod_name') : '',
@@ -67,6 +74,10 @@ export default new Vuex.Store({
     },
     SET_HOST_SEARCH(state,data){
       state.host_search = data
+    },
+    SET_CLUSTER_HOST(state,list){
+      storage.set('cluster_host',JSON.stringify(list))
+      state.pod.cluster_host = list
     },
     SET_POD(state,id){
       if(storage && storage.set){

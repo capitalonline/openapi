@@ -6,8 +6,10 @@
     <el-tabs v-model="active_tab" @tab-click="handleClick">
       <el-tab-pane v-for="(value,key) in tab_list" :key="key" :label="value" :name="key"></el-tab-pane>
     </el-tabs>
-    <cluster-list v-if="active_tab === 'cluster'"></cluster-list>
     <info v-if="active_tab === 'info'"></info>
+    <cluster-list v-if="active_tab === 'cluster'"></cluster-list>
+    <host-list v-if="active_tab === 'host'"></host-list>
+    <vm-list v-if="active_tab === 'virtual_machine'"></vm-list>
   </div>
 </template>
 
@@ -15,10 +17,14 @@
 import {Component, Vue} from "vue-property-decorator";
 import ClusterList from '@/views/vmOp2/cluster/pod/cluster_list'
 import Info from "@/views/vmOp2/cluster/pod/info.vue";
+import VmList from "@/views/vmOp2/cluster/pod/vm_list"
+import HostList from "@/views/vmOp2/cluster/pod/host_list"
 @Component({
   components:{
     ClusterList,
-    Info
+    Info,
+    VmList,
+    HostList
   }
 })
 export default class Pod extends Vue{
@@ -28,7 +34,7 @@ export default class Pod extends Vue{
     cluster: '集群',
     host: '主机',
     virtual_machine: '虚拟机',
-    gpu:'GPU'
+    //gpu:'GPU'
   }
   // private tab_list ={}
   private handleClick(tab, event) {
