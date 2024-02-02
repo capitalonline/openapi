@@ -53,6 +53,12 @@
                     <div v-show="!scope.row.maintenanceReason" class="error_message">请输入维护原因</div>
                   </template>
                </el-table-column>
+              <el-table-column prop="lock"  label="锁定原因" v-if="['lock'].includes(oper_type)">
+                <template slot-scope="scope">
+                  <el-input v-model="scope.row.lockReason" type="textarea"  placeholder="请输入锁定原因" maxlength="50" show-word-limit></el-input>
+                  <div v-show="!scope.row.lockReason" class="error_message">请输入锁定原因</div>
+                </template>
+              </el-table-column>
             </el-table>
           <div v-if="notSelectVmList.length > 0" class="m-top10">
             <span class="tip_message">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
@@ -186,7 +192,11 @@ export default class Operate extends Vue{
       this.list = this.selectVmList.map(item => {
         return {...item, maintenanceReason: ''};
       });
-    }else {
+    } else if(this.oper_type === 'lock'){
+      this.list = this.rows.map(item => {
+        return {...item, lockReason: ''};
+      });
+    } else {
       this.list = []
       this.list = [...this.list,...this.rows]
     }
@@ -216,33 +226,74 @@ export default class Operate extends Vue{
         return false
       }
     }
+    if (this.oper_type === 'lock') {
+      let flagReason = this.list.some(item => !item.lockReason);
+      if (flagReason) {
+        return false
+      }
+    }
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
-    let req=this.status_list.includes(this.title) ? {
-      op_type:this.oper_type,
-      host_ids:this.rows.map(item=>item.host_id)
-    }:['schedule','migrate_flag','cheat'].includes(this.oper_type) ? {
-      host_ids:this.rows.map(item=>item.host_id),
-      [this.op_typ_req[this.oper_type]]:Number(this.form_data.isSet),
-      description:this.form_data.reason,
-      op_type:this.op_typ_list[this.oper_type]
-    } : ['online_maintenance','offline_maintenance'].includes(this.oper_type) ? {
-      maintenance_type:this.oper_type,
-      host_ids:this.rows.map(item=>item.host_id)
-    }:this.oper_type==="finish_validate" ? {
-      host_ids:this.rows.map(item=>item.host_id),
-      status:this.form_data.valid==='1' ? 'READY' : 'INIT_ERROR',
-      noticer:this.form_data.recycleId,
-      reason:this.form_data.valid==='0' ?this.form_data.reason : undefined,
-    } : this.oper_type==="shelves" ? {
-      host_ids:this.rows.map(item=>item.host_id),
-      department_name:this.form_data.recycleId
-    } : this.oper_type==="under_sync" ? {
-      pod_id: this.$store.state.pod_id,
-      host_ecs: {}
-    } : this.oper_type==="maintenance" ? {
-        maintenance_detail:maintenance_detail,
-        host_ids:this.list.map(item=>item.host_id)
-      }: {host_ids:this.rows.map(item=>item.host_id)}
+    const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
+    let req;
+    switch (true) {
+      case this.status_list.includes(this.title):
+        req = {
+          op_type: this.oper_type,
+          host_ids: this.rows.map(item => item.host_id)
+        };
+        break;
+      case ['schedule', 'migrate_flag', 'cheat'].includes(this.oper_type):
+        req = {
+          host_ids: this.rows.map(item => item.host_id),
+          [this.op_typ_req[this.oper_type]]: Number(this.form_data.isSet),
+          description: this.form_data.reason,
+          op_type: this.op_typ_list[this.oper_type]
+        };
+        break;
+      case ['online_maintenance', 'offline_maintenance'].includes(this.oper_type):
+        req = {
+          maintenance_type: this.oper_type,
+          host_ids: this.rows.map(item => item.host_id)
+        };
+        break;
+      case this.oper_type === "finish_validate":
+        req = {
+          host_ids: this.rows.map(item => item.host_id),
+          status: this.form_data.valid === '1' ? 'READY' : 'INIT_ERROR',
+          noticer: this.form_data.recycleId,
+          reason: this.form_data.valid === '0' ? this.form_data.reason : undefined,
+        };
+        break;
+      case this.oper_type === "shelves":
+        req = {
+          host_ids: this.rows.map(item => item.host_id),
+          department_name: this.form_data.recycleId
+        };
+        break;
+      case this.oper_type === "under_sync":
+        req = {
+          pod_id: this.$store.state.pod_id,
+          host_ecs: {}
+        };
+        break;
+      case this.oper_type === "maintenance":
+        req = {
+          maintenance_detail: maintenance_detail,
+          host_ids: this.list.map(item => item.host_id)
+        };
+        break;
+      case this.oper_type === "lock":
+        req = {
+          lock_detail: lock_detail,
+          host_ids: this.list.map(item => item.host_id)
+        };
+        break;
+      default:
+        req = {
+          host_ids: this.rows.map(item => item.host_id)
+        };
+        break;
+    }
 
     // 底层同步接口数据组装
     if(this.oper_type==="under_sync") {
@@ -282,7 +333,7 @@ export default class Operate extends Vue{
             this.$message.error(message);
             this.back("0");
           }else {
-            this.$message.warning(res.message)
+            this.$message.warning(res.message + res.data.fail_msg)
             this.back("0");
             return;
           }
