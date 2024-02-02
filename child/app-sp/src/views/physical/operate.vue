@@ -234,66 +234,35 @@ export default class Operate extends Vue{
     }
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
-    let req;
-    switch (true) {
-      case this.status_list.includes(this.title):
-        req = {
-          op_type: this.oper_type,
-          host_ids: this.rows.map(item => item.host_id)
-        };
-        break;
-      case ['schedule', 'migrate_flag', 'cheat'].includes(this.oper_type):
-        req = {
-          host_ids: this.rows.map(item => item.host_id),
-          [this.op_typ_req[this.oper_type]]: Number(this.form_data.isSet),
-          description: this.form_data.reason,
-          op_type: this.op_typ_list[this.oper_type]
-        };
-        break;
-      case ['online_maintenance', 'offline_maintenance'].includes(this.oper_type):
-        req = {
-          maintenance_type: this.oper_type,
-          host_ids: this.rows.map(item => item.host_id)
-        };
-        break;
-      case this.oper_type === "finish_validate":
-        req = {
-          host_ids: this.rows.map(item => item.host_id),
-          status: this.form_data.valid === '1' ? 'READY' : 'INIT_ERROR',
-          noticer: this.form_data.recycleId,
-          reason: this.form_data.valid === '0' ? this.form_data.reason : undefined,
-        };
-        break;
-      case this.oper_type === "shelves":
-        req = {
-          host_ids: this.rows.map(item => item.host_id),
-          department_name: this.form_data.recycleId
-        };
-        break;
-      case this.oper_type === "under_sync":
-        req = {
-          pod_id: this.$store.state.pod_id,
-          host_ecs: {}
-        };
-        break;
-      case this.oper_type === "maintenance":
-        req = {
-          maintenance_detail: maintenance_detail,
-          host_ids: this.list.map(item => item.host_id)
-        };
-        break;
-      case this.oper_type === "lock":
-        req = {
-          lock_detail: lock_detail,
-          host_ids: this.list.map(item => item.host_id)
-        };
-        break;
-      default:
-        req = {
-          host_ids: this.rows.map(item => item.host_id)
-        };
-        break;
-    }
+    let req=this.status_list.includes(this.title) ? {
+      op_type:this.oper_type,
+      host_ids:this.rows.map(item=>item.host_id)
+    }:['schedule','migrate_flag','cheat'].includes(this.oper_type) ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      [this.op_typ_req[this.oper_type]]:Number(this.form_data.isSet),
+      description:this.form_data.reason,
+      op_type:this.op_typ_list[this.oper_type]
+    } : ['online_maintenance','offline_maintenance'].includes(this.oper_type) ? {
+      maintenance_type:this.oper_type,
+      host_ids:this.rows.map(item=>item.host_id)
+    }:this.oper_type==="finish_validate" ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      status:this.form_data.valid==='1' ? 'READY' : 'INIT_ERROR',
+      noticer:this.form_data.recycleId,
+      reason:this.form_data.valid==='0' ?this.form_data.reason : undefined,
+    } : this.oper_type==="shelves" ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      department_name:this.form_data.recycleId
+    } : this.oper_type==="under_sync" ? {
+      pod_id: this.$store.state.pod_id,
+      host_ecs: {}
+    } : this.oper_type==="maintenance" ? {
+        maintenance_detail:maintenance_detail,
+        host_ids:this.list.map(item=>item.host_id)
+      }:this.oper_type==="lock" ? {
+      lock_detail:lock_detail,
+      host_ids:this.list.map(item=>item.host_id)
+      }: {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
     if(this.oper_type==="under_sync") {
