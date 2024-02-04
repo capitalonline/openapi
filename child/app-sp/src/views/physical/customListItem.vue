@@ -127,12 +127,18 @@ export default class CustomListItem extends Vue {
   private typeObj={
     'host':{func:'SET_CUSTOM_HOST',value:'custom_host'},
     'nas':{func:'SET_NAS_HOST',value:'nas_host'},
-    'cluster':{func:'SET_CLUSTER_HOST',value:'cluster_host'},
+    'cluster':{func:'SET_CLUSTER_HOST',value:'pod'},
+    'pod_host':{func:'SET_HOST_LIST',value:'pod'},
+    'pod_vm':{func:'SET_VM_HOST',value:'pod'},
   }
   private created() {
-    if(this.typeObj[this.type] === 'cluster'){
-      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].pod.value])
-    }else {
+    if(this.type === 'cluster'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].cluster_host)
+    }else if(this.type === 'pod_host'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].host_list)
+    } else if(this.type === 'pod_vm'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].vm_host)
+    } else {
       this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
     }
   }

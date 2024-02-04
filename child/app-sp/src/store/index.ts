@@ -32,6 +32,14 @@ export default new Vuex.Store({
         '名称','物理机','云主机','CPU型号','GPU型号','GPU数量',
         '存储容量','CPU消耗量','内存消耗量','GPU消耗量','存储消耗量'
       ],
+      host_list:JSON.parse(storage.get('host_list')) || [
+        '名称','状态','电源','管理网IP','带外IP','集群',
+        'CPU型号','GPU型号','GPU数量','虚机数量','CPU消耗量','内存消耗量','GPU消耗量','物理产品名称'
+      ],
+      vm_host:JSON.parse(storage.get('vm_host')) || [
+        '虚拟机ID','虚拟机名称','状态','规格族','vCPU','内存',
+        'GPU','显卡状态','主机','私网IP','公网IP','网关IP','客户ID','客户名称','创建时间','更新时间','产品来源'
+      ],
     },
 
     host_search:{},
@@ -78,6 +86,14 @@ export default new Vuex.Store({
     SET_CLUSTER_HOST(state,list){
       storage.set('cluster_host',JSON.stringify(list))
       state.pod.cluster_host = list
+    },
+    SET_HOST_LIST(state,list){
+      storage.set('host_list',JSON.stringify(list))
+      state.pod.host_list = list
+    },
+    SET_VM_HOST(state,list){
+      storage.set('vm_host',JSON.stringify(list))
+      state.pod.vm_host = list
     },
     SET_POD(state,id){
       if(storage && storage.set){
