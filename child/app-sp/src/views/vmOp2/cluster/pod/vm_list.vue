@@ -7,11 +7,11 @@
           <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
         </el-tooltip>
         <el-tooltip content="刷新" placement="bottom" effect="light">
-          <el-button type="text" ><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+          <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
         </el-tooltip>
-        <el-tooltip content="导出" placement="bottom" effect="light">
-          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>
-        </el-tooltip>
+<!--        <el-tooltip content="导出" placement="bottom" effect="light">-->
+<!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
+<!--        </el-tooltip>-->
       </div>
     </div>
     <el-table
@@ -33,15 +33,21 @@
         :width="item.width ? item.width : null"
         :type="item.type"
         :label="item.label"
+        :show-overflow-tooltip='item.overflow'
       >
-        <template #default="scope" v-if="item.prop==='cpu'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu"></el-progress>
+        <template #default="scope" v-if="item.prop==='eip_info'">
+          <span>{{ scope.row.eip_info[scope.row.pub_net] ? scope.row.eip_info[scope.row.pub_net].eip_ip : '-'}}</span>
         </template>
-        <template #default="scope" v-else-if="item.prop==='memory'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.memory"></el-progress>
+        <template #default="scope" v-else-if="item.prop==='private_net'">
+          <div v-for="net in  scope.row.private_net.split(';')" :key="net">
+          <span>
+            {{scope.row.eip_info[net] ?  net : '-' }}
+<!--            （vlan {{ scope.row.eip_info[net].vlan_id }}）-->
+          </span>
+          </div>
         </template>
-        <template #default="scope" v-else-if="item.prop==='gpu'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu"></el-progress>
+        <template #default="scope" v-else-if="item.prop==='pub_net'">
+          <span>{{scope.row.pub_net ? scope.row.pub_net : '-'}}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -67,10 +73,11 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import SvgIcon from '@/components/svgIcon/index';
+import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
+import Service from "@/https/vmOp2/cluster/pod";
 @Component({
   components: {
     SearchFrom,
@@ -89,189 +96,64 @@ export default class VmList extends Vue{
     size:20,
     total:0
   }
-  private all_item:Array<any>=[{
-    "name": "基本信息",
-    "filed": [
-      {
-        "field_name": "customer_id",
-        "show_name": "虚拟机ID"
-      },
-      {
-        "field_name": "nas_id_name",
-        "show_name": "虚拟机名称"
-      },
-      {
-        "field_name": "nas_type",
-        "show_name": "状态"
-      },
-      {
-        "field_name": "region_az_name",
-        "show_name": "规格族"
-      },
-      {
-        "field_name": "protocol_type",
-        "show_name": "vCPU"
-      },
-      {
-        "field_name": "vpc",
-        "show_name": "内存"
-      },
-      {
-        "field_name": "cpu_type",
-        "show_name": "GPU"
-      },
-      {
-        "field_name": "gpu_type",
-        "show_name": "显卡状态"
-      },
-      {
-        "field_name": "gpu_num",
-        "show_name": "主机"
-      },
-      {
-        "field_name": "vm",
-        "show_name": "私网IP"
-      },
-      {
-        "field_name": "cpu",
-        "show_name": "公网IP"
-      },
-      {
-        "field_name": "memory",
-        "show_name": "网关IP"
-      },
-      {
-        "field_name": "gpu",
-        "show_name": "客户ID"
-      },
-      {
-        "field_name": "name",
-        "show_name": "客户名称"
-      },
-      {
-        "field_name": "create",
-        "show_name": "创建时间"
-      },
-      {
-        "field_name": "update",
-        "show_name": "更新时间"
-      },
-      {
-        "field_name": "source",
-        "show_name": "产品来源"
-      },
-    ]
-  }
-  ]
+  private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
   created(){
     this.get_field()
+    this.get_pod_ecs_list()
+  }
+  private refresh(){
+    this.get_pod_ecs_list()
   }
   private async get_field(){
-    // let res:any = await Service.get_field({})
-    // if(res.code==="Success"){
+     let res:any = await Service.get_pod_ecs_field()
+     if(res.code==="Success"){
     let key_list=['field_name','show_name'];
     let label_list=['prop','label'];
-    // let list:Array<any>=[]
-    // res.data.map(item=>{
-    //   list=[...list,...item.filed];
-    //   return item;
-    // })
-    let list= [
-      {
-        "field_name": "customer_id",
-        "show_name": "虚拟机ID"
-      },
-      {
-        "field_name": "nas_id_name",
-        "show_name": "虚拟机名称"
-      },
-      {
-        "field_name": "nas_type",
-        "show_name": "状态"
-      },
-      {
-        "field_name": "region_az_name",
-        "show_name": "规格族"
-      },
-      {
-        "field_name": "protocol_type",
-        "show_name": "vCPU"
-      },
-      {
-        "field_name": "vpc",
-        "show_name": "内存"
-      },
-      {
-        "field_name": "cpu_type",
-        "show_name": "GPU"
-      },
-      {
-        "field_name": "gpu_type",
-        "show_name": "显卡状态"
-      },
-      {
-        "field_name": "gpu_num",
-        "show_name": "主机"
-      },
-      {
-        "field_name": "vm",
-        "show_name": "私网IP"
-      },
-      {
-        "field_name": "cpu",
-        "show_name": "公网IP"
-      },
-      {
-        "field_name": "memory",
-        "show_name": "网关IP"
-      },
-      {
-        "field_name": "gpu",
-        "show_name": "客户ID"
-      },
-      {
-        "field_name": "name",
-        "show_name": "客户名称"
-      },
-      {
-        "field_name": "create",
-        "show_name": "创建时间"
-      },
-      {
-        "field_name": "update",
-        "show_name": "更新时间"
-      },
-      {
-        "field_name": "source",
-        "show_name": "产品来源"
-      },
-    ]
-    //this.all_item = res.data;
+    let list:Array<any>=[]
+    res.data.map(item=>{
+      list=[...list,...item.filed];
+      return item;
+    })
+    this.all_item = res.data;
     this.all_column_item = deal_list(list,label_list,key_list);
-    console.log('this.all',this.all_column_item)
-    this.get_custom_columns(this.$store.state.pod.host_list)
+    this.get_custom_columns(this.$store.state.pod.vm_host)
 
-
-    // }
+     }
   }
   private get_custom_columns(list) {
     if(list.length===0){
       return;
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
-    console.log('this.custom_host',this.custom_host)
     this.custom_host.map((item:any)=>{
-      item = Object.assign(item,{},{sortable:'custom',width:'120px'})
+      item = Object.assign(item,{},{sortable:'custom'})
+      if(['ecs_id','ecs_name','host_name','create_time','update_time','gpu_card_status'].includes(item.prop)){
+        item = Object.assign(item,{},{width:'150px',overflow:true})
+      }
+      if(['gpu_card_status','eip_info','private_net','customer_id','customer_name','status_display','ecs_goods_name','pub_net','product_source'].includes(item.prop)){
+        item = Object.assign(item,{},{width:'120px',overflow:true})
+      }
       return item;
     })
   }
   private FnCustom() {
     this.show_custom = true;
   }
-  private get_cluster_list(){
-
+  private async get_pod_ecs_list(){
+    let reqData = {
+      page_index: this.page_info.current,
+      page_size: this.page_info.size,
+      is_op:true,
+      az_id:this.$store.state.az_id,
+      pod_id:this.$route.params.id,
+    }
+    let res:any = await Service.get_pod_ecs_list(reqData)
+    if(res.code === 'Success'){
+      this.list = res.data.ecs_list
+      this.page_info.total = res.data.page.count
+    }
   }
   private handleSelectionChange(data){
     this.multi_rows = data
@@ -280,11 +162,11 @@ export default class VmList extends Vue{
   }
   private handleSizeChange(size){
     this.page_info.size = size
-    this.get_cluster_list()
+    this.get_pod_ecs_list()
   }
   private handleCurrentChange(cur){
     this.page_info.current = cur
-    this.get_cluster_list()
+    this.get_pod_ecs_list()
   }
 }
 </script>

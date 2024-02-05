@@ -1,12 +1,16 @@
 <template>
   <div class="top-header">
     <div class="left-content">
-      <el-button type="text">
-        <el-autocomplete prefix-icon="el-icon-search"
-          v-model="state"
-          @select="handleSelect"
-        ></el-autocomplete>
-      </el-button>
+<!--      <el-button type="text">-->
+<!--        <el-autocomplete prefix-icon="el-icon-search"-->
+<!--          v-model="state"-->
+<!--          @select="handleSelect"-->
+<!--        ></el-autocomplete>-->
+<!--      </el-button>-->
+      <i class="el-icon-search"></i>
+    </div>
+    <div class="right-content">
+      <el-button @click="changeLayout()"><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
 </template>
@@ -16,9 +20,8 @@ import {Component,Vue} from "vue-property-decorator";
 
 @Component({})
 export default class TopHeader extends Vue{
-  private state=''
-  private handleSelect(item) {
-    console.log(item);
+  private changeLayout(){
+    this.$router.push({name:'overview'})
   }
 }
 </script>

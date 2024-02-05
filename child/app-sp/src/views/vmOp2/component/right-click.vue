@@ -32,7 +32,7 @@ export default class RightClick extends Vue{
       // 要做的事情
       console.log(']]]]]',this.multi_rows)
     }
-    let menu = document.querySelector("#menu");
+    let menu = document.querySelector("#menu") as HTMLElement;
     menu.style.display = "none";
   }
 

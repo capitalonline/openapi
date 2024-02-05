@@ -34,7 +34,7 @@ function render (props: prop = {}) {
   //   },true)
   // }
   // 函数来检查inn是否应该被保留
-  function shouldRouteBeKept(inn) {
+  function shouldRouteBeKept(inn):boolean {
     // 如果路由有meta属性中的no_auth字段，则始终保留
     if (inn.meta && inn.meta.no_auth) {
       return true;
@@ -56,7 +56,7 @@ function render (props: prop = {}) {
   all_routes.forEach(item => {
     // 处理children
     if (item.children && item.children.length > 0) {
-      item.children = item.children.filter(inn => shouldRouteBeKept(inn));
+      item.children = (item.children as any).filter(inn => shouldRouteBeKept(inn));
       // 如果children中还有剩余的路由，则将其添加到routes中
       if (item.children.length > 0) {
         routes.push({

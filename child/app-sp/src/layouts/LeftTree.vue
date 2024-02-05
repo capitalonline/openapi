@@ -23,30 +23,45 @@ import {Component, Vue, Prop, Watch} from "vue-property-decorator";
 @Component({})
 
 export default class LeftTree extends Vue{
-  @Prop({default:'1'})currentLivingId!:string
-  @Prop({default:()=>[]})tree_data!:Array
+  @Prop({default:''})currentLivingId!:string
+  @Prop({default:()=>[]})tree_data!:Array<object>
   @Watch('$route')
   private FnWatchRouter(to, from) {
     this.active_name = to.name;
+  }
+  @Watch('tree_data',{ immediate: true, deep: true })
+  private watch_tree_data(n){
+    if(n.length>0){
+      this.tree_data = n
+      this.$router.push({name:'pod_list',params:{type:'info',id:this.tree_data[0]['id']}})
+    }
+  }
+  @Watch('currentLivingId')
+  private watch_current(n){
+    if(n){
+      this.$nextTick(()=>{
+        (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
+      })
+    }
   }
   private active_name: string = ''
   created(){
     this.$nextTick(()=>{
       (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
     })
-    this.$router.push({name:'pod_list',params:{type:'info'}})
   }
   private handleNodeClick(data) {
-    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_list', { type: 'info' })){
-      this.$router.push({name:'pod_list',params:{type:'info'}})
+    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_list', { type: 'info' ,id:data.id})){
+      this.$router.push({name:'pod_list',params:{type:'info',id:data.id}})
     }
     if(data.type === 'cluster' && !this.isCurrentRoute('cluster_list', { type: 'info', id: data.id })){
       this.$router.push({name:'cluster_list',params:{type:'info',id:data.id}})
     }
     if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
-      console.log(data.id)
       this.$router.push({name:'host_list',params:{id:data.id}})
     }
+    this.$store.commit('SET_DISPLAY_NAME',data.label);
+    this.$store.commit('SET_DISPLAY_NAME',data.label);
   }
   private isCurrentRoute(name, params) {
     const currentRoute = this.$route;

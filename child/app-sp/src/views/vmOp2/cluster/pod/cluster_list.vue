@@ -7,11 +7,11 @@
         <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
       </el-tooltip>
       <el-tooltip content="刷新" placement="bottom" effect="light">
-        <el-button type="text" ><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
+        <el-button type="text" @click="refresh" ><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
       </el-tooltip>
-      <el-tooltip content="导出" placement="bottom" effect="light">
-        <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>
-      </el-tooltip>
+<!--      <el-tooltip content="导出" placement="bottom" effect="light">-->
+<!--        <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
+<!--      </el-tooltip>-->
     </div>
     </div>
     <el-table
@@ -33,18 +33,20 @@
         :width="item.width ? item.width : null"
         :type="item.type"
         :label="item.label"
+        :show-overflow-tooltip='item.overflow'
+        :min-width="item.minWidth"
       >
-        <template #default="scope" v-if="item.prop==='cpu'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu"></el-progress>
+        <template #default="scope" v-if="item.prop==='cpu_rate'">
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu_rate* 100"></el-progress>
         </template>
-        <template #default="scope" v-else-if="item.prop==='memory'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.memory"></el-progress>
+        <template #default="scope" v-else-if="item.prop==='ram_rate'">
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.ram_rate* 100"></el-progress>
         </template>
-        <template #default="scope" v-else-if="item.prop==='gpu'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu"></el-progress>
+        <template #default="scope" v-else-if="item.prop==='gpu_rate'">
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu_rate* 100"></el-progress>
         </template>
-        <template #default="scope" v-else-if="item.prop==='storage'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.storage"></el-progress>
+        <template #default="scope" v-else-if="item.prop==='storage_rate'">
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.storage_rate* 100"></el-progress>
         </template>
       </el-table-column>
     </el-table>
@@ -70,10 +72,11 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import SvgIcon from '@/components/svgIcon/index';
+import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
+import Service from "@/https/vmOp2/cluster/pod";
 @Component({
   components: {
     SearchFrom,
@@ -92,133 +95,44 @@ export default class List extends Vue{
     size:20,
     total:0
   }
-  private all_item:Array<any>=[{
-    "name": "基本信息",
-    "filed": [
-      {
-        "field_name": "customer_id",
-        "show_name": "名称"
-      },
-      {
-        "field_name": "customer_name",
-        "show_name": "物理机"
-      },
-      {
-        "field_name": "nas_id_name",
-        "show_name": "云主机"
-      },
-      {
-        "field_name": "nas_type",
-        "show_name": "CPU型号"
-      },
-      {
-        "field_name": "protocol_type",
-        "show_name": "GPU型号"
-      },
-      {
-        "field_name": "region_az_name",
-        "show_name": "GPU数量"
-      },
-      {
-        "field_name": "vpc",
-        "show_name": "存储容量"
-      },
-      {
-        "field_name": "cpu",
-        "show_name": "CPU消耗量"
-      },
-      {
-        "field_name": "memory",
-        "show_name": "内存消耗量"
-      },
-      {
-        "field_name": "gpu",
-        "show_name": "GPU消耗量"
-      },
-      {
-        "field_name": "storage",
-        "show_name": "存储消耗量"
-      },
-    ]
-  }
-  ]
+  private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
   created(){
     this.get_field()
+    this.get_pod_cluster_list()
+  }
+  private refresh(){
+    this.get_pod_cluster_list()
   }
   private async get_field(){
-   // let res:any = await Service.get_field({})
-    // if(res.code==="Success"){
+   let res:any = await Service.get_cluster_field()
+    if(res.code==="Success"){
       let key_list=['field_name','show_name'];
       let label_list=['prop','label'];
-      // let list:Array<any>=[]
-      // res.data.map(item=>{
-      //   list=[...list,...item.filed];
-      //   return item;
-      // })
-       let list= [
-         {
-           "field_name": "customer_id",
-           "show_name": "名称"
-         },
-         {
-           "field_name": "customer_name",
-           "show_name": "物理机"
-         },
-         {
-           "field_name": "nas_id_name",
-           "show_name": "云主机"
-         },
-         {
-           "field_name": "nas_type",
-           "show_name": "CPU型号"
-         },
-         {
-           "field_name": "protocol_type",
-           "show_name": "GPU型号"
-         },
-         {
-           "field_name": "region_az_name",
-           "show_name": "GPU数量"
-         },
-         {
-           "field_name": "vpc",
-           "show_name": "存储容量"
-         },
-         {
-           "field_name": "cpu",
-           "show_name": "CPU消耗量"
-         },
-         {
-           "field_name": "memory",
-           "show_name": "内存消耗量"
-         },
-         {
-           "field_name": "gpu",
-           "show_name": "GPU消耗量"
-         },
-         {
-           "field_name": "storage",
-           "show_name": "存储消耗量"
-         },
-    ]
-      //this.all_item = res.data;
+      let list:Array<any>=[]
+      res.data.map(item=>{
+        list=[...list,...item.filed];
+        return item;
+      })
+      this.all_item = res.data;
       this.all_column_item = deal_list(list,label_list,key_list);
-       console.log('this.all',this.all_column_item)
       this.get_custom_columns(this.$store.state.pod.cluster_host)
-
-
-    // }
+    }
   }
   private get_custom_columns(list) {
     if(list.length===0){
       return;
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
-    console.log('this.custom_host',this.custom_host)
     this.custom_host.map((item:any)=>{
       item = Object.assign(item,{},{sortable:'custom'})
+      if(['cluster_id','cpu_model','gpu_model'].includes(item.prop)){
+        item = Object.assign(item,{},{minWidth:'240px',overflow:true})
+      }
+      if(['storage_cluster_name','cluster_name','cpu_rate','ram_rate','gpu_rate','storage_rate','host_count','ecs_count','gpu_count','storage_count'].includes(item.prop)){
+        item = Object.assign(item,{},{width:'120px'})
+      }
       return item;
     })
     console.log('custom',this.custom_host)
@@ -226,8 +140,18 @@ export default class List extends Vue{
   private FnCustom() {
     this.show_custom = true;
   }
-  private get_cluster_list(){
-
+  private async get_pod_cluster_list(){
+    let reqData = {
+      page_index: this.page_info.current,
+      page_size: this.page_info.size,
+      az_id:this.$store.state.az_id,
+      pod_id:this.$route.params.id,
+    }
+    let res:any = await Service.get_pod_cluster_list(reqData)
+    if(res.code === 'Success'){
+      this.list = res.data.result
+      this.page_info.total = res.data.page_info.count
+    }
   }
   private handleSelectionChange(data){
     this.multi_rows = data
@@ -236,11 +160,11 @@ export default class List extends Vue{
   }
   private handleSizeChange(size){
     this.page_info.size = size
-    this.get_cluster_list()
+    this.get_pod_cluster_list()
   }
   private handleCurrentChange(cur){
     this.page_info.current = cur
-    this.get_cluster_list()
+    this.get_pod_cluster_list()
   }
 }
 </script>

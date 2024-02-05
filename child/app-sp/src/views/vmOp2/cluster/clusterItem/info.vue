@@ -21,7 +21,7 @@
         <el-progress :stroke-width="16" color="#455cc6" :percentage="item.percentage"></el-progress>
         <div class="flex-between m-top5">
           <span>已用：{{item.used+'/'+item.total}}</span>
-          <span>可用：{{item.remain}}</span>
+          <span>可用：{{item.available}}</span>
         </div>
       </div>
     </div>
@@ -31,6 +31,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue'
+import Service from "@/https/vmOp2/cluster/clusterItem";
 
 @Component({
   components:{
@@ -39,17 +40,61 @@ import SvgIcon from '@/components/svgIcon/index.vue'
 })
 export default class COverview extends Vue{
   @Prop({default:''})cluster_id!:string
+  private detail_info :any={}
   private base_info={
-    host:{label:'主机',value:'20'},
-    instance:{label:'虚拟机',value:'100'},
-    storage:{label:'存储',value:'100'},
-    network:{label:'网络',value:'20'},
+    host_count:{label:'主机',value:'20'},
+    ecs_count:{label:'虚拟机',value:'100'},
   }
   private progress_info={
-    cpu:{label:'CPU',used:'200GHz',remain:'3.8Thz',total:'4THz',percentage:0},
-    memory:{label:'内存',used:'0TB',remain:'0GB',total:'0TB',percentage:0},
-    gpu:{label:'GPU',used:'0块',remain:'100%',total:'100块',breakdown:'20块',percentage:0},
-    storage:{label:'存储',used:'0TB',remain:'0GB',total:'0TB',percentage:0}
+    cpu:{label:'CPU',used:'200GHz',available:'3.8Thz',total:'4THz',percentage:0},
+    memory:{label:'内存',used:'0TB',available:'0GB',total:'0TB',percentage:0},
+    gpu:{label:'GPU',used:'0块',available:'100%',total:'100块',breakdown:'20块',percentage:0},
+    storage:{label:'存储',used:'0TB',available:'0GB',total:'0TB',percentage:0}
+  }
+  created(){
+    this.get_cluster_outline()
+  }
+  private async get_cluster_outline(){
+    let res:any = await Service.get_cluster_outline({
+      // az_id:this.$store.state.az_id,
+      // pod_id:'d40362006e6711ee8fa0be688589ed9a',
+      cluster_id:this.$route.params.id
+    })
+    if(res.code === 'Success'){
+      this.detail_info = res.data
+      for(let i in this.base_info){
+        this.base_info[i].value = this.detail_info[i]
+      }
+      this.progress_info.cpu ={
+        ...this.progress_info.cpu,
+        used: this.detail_info.cpu_statistic.used+ '核',
+        total: this.detail_info.cpu_statistic.total + '核',
+        available:this.detail_info.cpu_statistic.available + '核',
+        percentage: this.detail_info.cpu_statistic.rate * 100
+      }
+      this.progress_info.memory ={
+        ...this.progress_info.memory,
+        used: this.detail_info.ram_statistic.used + 'GB',
+        total: this.detail_info.ram_statistic.total + 'GB',
+        available:this.detail_info.ram_statistic.available + 'GB',
+        percentage: this.detail_info.ram_statistic.rate * 100
+      }
+      this.progress_info.gpu ={
+        ...this.progress_info.gpu,
+        used: this.detail_info.gpu_statistic.used + '个',
+        total: this.detail_info.gpu_statistic.total + '个',
+        available:this.detail_info.gpu_statistic.available + '个',
+        percentage: this.detail_info.gpu_statistic.rate * 100,
+        breakdown: this.detail_info.gpu_statistic.fault + '块'
+      }
+      this.progress_info.storage ={
+        ...this.progress_info.storage,
+        used: this.detail_info.storage_statistic.used + 'GB',
+        total: this.detail_info.storage_statistic.total + 'GB',
+        available:this.detail_info.storage_statistic.available + 'GB',
+        percentage: this.detail_info.storage_statistic.rate * 100
+      }
+    }
   }
 
 }

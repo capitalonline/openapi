@@ -22,7 +22,7 @@ import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 
 })
 export default class Menu extends Vue{
-  @Prop({default:()=>[]})menu_list!:Array
+  @Prop({default:()=>[]})menu_list!:Array<string>
   @Prop({default:''})active_menu!:string
   created(){
 

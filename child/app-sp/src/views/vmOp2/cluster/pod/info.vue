@@ -20,7 +20,7 @@
         <el-progress :stroke-width="16"  color="#455cc6" :percentage="item.percentage"></el-progress>
         <div class="flex-between m-top5">
           <span>已用：{{item.used+'/'+item.total}}</span>
-          <span>可用：{{item.remain}}</span>
+          <span>可用：{{item.available}}</span>
         </div>
       </div>
     </div>
@@ -30,6 +30,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue'
+import Service from '@/https/vmOp2/cluster/pod/index'
 
 @Component({
   components:{
@@ -39,18 +40,63 @@ import SvgIcon from '@/components/svgIcon/index.vue'
 export default class COverview extends Vue{
   @Prop({default:''})cluster_id!:string
   private base_info={
-    cluster:{label:'集群',value:'10'},
-    host:{label:'主机',value:'20'},
-    instance:{label:'虚拟机',value:'100'},
-    storage:{label:'存储',value:'100'},
-    network:{label:'网络',value:'20'},
+    cluster_count:{label:'集群',value:'10'},
+    host_count:{label:'主机',value:'20'},
+    ecs_count:{label:'虚拟机',value:'100'},
   }
   private progress_info={
-    cpu:{label:'CPU',used:'200GHz',remain:'3.8Thz',total:'4THz',percentage:0},
-    memory:{label:'内存',used:'0TB',remain:'0GB',total:'0TB',percentage:0},
-    gpu:{label:'GPU',used:'0块',remain:'100%',total:'100块',breakdown:'20块',percentage:0},
-    storage:{label:'存储',used:'0TB',remain:'0GB',total:'0TB',percentage:0}
+    cpu:{label:'CPU',used:'200GHz',available:'', total:'4THz',percentage:0},
+    memory:{label:'内存',used:'0',available:'',total:'0TB',percentage:0},
+    gpu:{label:'GPU',used:'0块',available:'',total:'100块',breakdown:'20块',percentage:0},
+    storage:{label:'存储',used:'0TB',available:'',total:'0TB',percentage:0}
   }
+  private detail_info:any={}
+  created(){
+    this.get_pod_outline()
+  }
+  private async get_pod_outline(){
+    let res:any = await Service.get_pod_outline({
+      az_id:this.$store.state.az_id,
+      pod_id:this.$route.params.id,
+    })
+    if(res.code === 'Success') {
+      this.detail_info = res.data
+        for (let i in this.base_info) {
+          this.base_info[i].value = this.detail_info[i]
+        }
+          this.progress_info.cpu = {
+            ...this.progress_info.cpu,
+            used: this.detail_info.cpu_statistic.used + '核',
+            total: this.detail_info.cpu_statistic.total + '核',
+            available: (this.detail_info.cpu_statistic.total - this.detail_info.cpu_statistic.used) + '核',
+            percentage: this.detail_info.cpu_statistic.rate * 100
+          }
+          this.progress_info.memory = {
+            ...this.progress_info.memory,
+            used: this.detail_info.ram_statistic.used + 'GB',
+            total: this.detail_info.ram_statistic.total + 'GB',
+            available: (this.detail_info.ram_statistic.total - this.detail_info.ram_statistic.used) + 'GB',
+            percentage: this.detail_info.ram_statistic.rate * 100
+          }
+          this.progress_info.gpu = {
+            ...this.progress_info.gpu,
+            used: this.detail_info.gpu_statistic.used + '个',
+            total: this.detail_info.gpu_statistic.total + '个',
+            available: (this.detail_info.gpu_statistic.total - this.detail_info.gpu_statistic.used) + '个',
+            percentage: this.detail_info.gpu_statistic.rate * 100,
+            breakdown: this.detail_info.gpu_statistic.fault + '块'
+          }
+          this.progress_info.storage = {
+            ...this.progress_info.storage,
+            used: this.detail_info.storage_statistic.used + 'GB',
+            total: this.detail_info.storage_statistic.total + 'GB',
+            available: (this.detail_info.storage_statistic.total - this.detail_info.storage_statistic.used) + 'GB',
+            percentage: this.detail_info.storage_statistic.rate * 100
+          }
+      }
+  }
+
+
 
 }
 </script>

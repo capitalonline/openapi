@@ -17,16 +17,16 @@
     <div class="left-content">
       <el-select
         style="width: 230px"
-        v-model="default_pod"
+        v-model="default_az"
         filterable
-        :filter-method="getPodList"
+        :filter-method="get_az_list"
         @visible-change="change_pod"
       >
         <el-option
-          v-for="(item,key) in pod_list"
-          :key="key"
-          :value="key"
-          :label="item"
+          v-for="item in az_list"
+          :key="item.az_id"
+          :value="item.az_id"
+          :label="item.az_name"
         ></el-option>
       </el-select>
     </div>
@@ -41,10 +41,12 @@
 
 <script lang="ts">
 import { Component, Watch, Vue } from 'vue-property-decorator';
-import { getPodList } from '../https/public';
 import storage from "@/store/storage";
 import LeftTree from "@/layouts/LeftTree.vue";
 import NewMenu from "@/layouts/newMenu.vue"
+import EcsService from "@/https/instance/create";
+import Service from "@/https/vmOp2/cluster/tree"
+import store from "../../../app-op/src/store";
 
 @Component({
   components: {
@@ -56,13 +58,13 @@ export default class Sidebar extends Vue {
   $router;
   $store;
   private active_menu: string = 'cluster';
-  private default_pod = '';
-  private current='1'
+  private default_az = '';
+  private current=''
   private treeType:string = 'tree'
-  private pod_list = {}
+  private az_list = []
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
-    {label:'镜像',name:'mirror',type: 'menu'},
+    {label:'镜像',name:'mirror',disabled:true,type: 'menu'},
     {label:'存储',name:'storage',disabled:true,tree: false},
     {label:'网络',name:'network',disabled:true,tree: false}
   ];
@@ -70,60 +72,27 @@ export default class Sidebar extends Vue {
     {label:'公有镜像',name:'mirror_list'},
     {label:'私有镜像',name:'private_mirror_list'}
   ]
-  private treeData:any = [{
-    id: 1,
-    label: '一级 2',
-    type:'pod',
-    children: [
-      {
-      id: 3,
-      label: '二级 2-1',
-      type:'cluster',
-      children: [
-        {
-        id: 4,
-        label: '三级 3-1-1',
-        type:'host',
-      },
-        {
-        id: 5,
-        label: '三级 3-1-2',
-        type:'host',
-      }
-      ]
-    },
-      {
-      id: 2,
-      label: '二级 2-2',
-      type:'cluster',
-      children: [{
-        id: 6,
-        label: '三级 3-2-1',
-        type:'host',
-      }, {
-        id: 7,
-        label: '三级 3-2-2',
-        type:'host',
-      }]
-    }]
-  }]
+  private treeData:any = []
   created(){
-    this.getPodList();
+    this.get_az_list();
     this.getTreeData()
   }
-  //获取pod列表
-  private async getPodList(val:String=""){
-    let res = await getPodList({
-      az_pod_name:val
-    });
-    if(res.code==='Success'){
-      this.pod_list = res.data;
-      this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : '';
+  //获取az列表
+  private async get_az_list(){
+    this.az_list=[]
+    let res:any=await EcsService.get_region_az_list({})
+    if(res.code==="Success"){
+      res.data.forEach(item=>{
+        item.region_list.forEach(inn=>{
+          this.az_list=[...this.az_list,...inn.az_list]
+        })
+      })
+      this.default_az = this.$store.state.az_id ? this.$store.state.az_id :this.az_list[0].az_id
     }
   }
   private change_pod(val){
     if(!val){
-      this.getPodList()
+      this.get_az_list()
     }
   }
   //改变左侧头部menu时触发
@@ -135,17 +104,51 @@ export default class Sidebar extends Vue {
       this.$router.push({name:'mirror_list'})
     }
     if(this.active_menu === 'cluster'){
-      this.current = '1'
+      this.current = this.treeData[0].id
     }
   }
   //获取左侧树结构
-  private getTreeData(){
+  private async getTreeData(){
+    let res:any = await Service.get_host_tree_data({
+      az_id:this.$store.state.az_id
+    })
+    if(res.code === 'Success'){
+      this.treeData = this.transformData(res.data.tree_data_list)
+    }
     this.current = this.treeData[0].id
   }
-  @Watch('default_pod')
+  private  transformData(data) {
+    return data.map(pod => {
+      const { pod_id, pod_name, type, children } = pod;
+      const clusters = children.map(cluster => {
+        const { cluster_id, cluster_name, type, children } = cluster;
+        const hosts = children.map(host => {
+          const { host_id, host_name, type } = host;
+          return {
+            id: host_id,
+            label: host_name,
+            type: type,
+          };
+        });
+        return {
+          id: cluster_id,
+          label: cluster_name,
+          type: type,
+          children: hosts,
+        };
+      });
+      return {
+        id: pod_id,
+        label: pod_name,
+        type: type,
+        children: clusters,
+      };
+    });
+  }
+
+  @Watch('default_az')
   private watch_pod(){
-    this.$store.commit('SET_POD',this.default_pod);
-    storage.set('pod_name',this.pod_list[this.default_pod])
+    this.$store.commit('SET_AZ',this.default_az);
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="tabBox">
     <div class="currentInfo">
-      POD219 (SUQIAN-B)
+      {{$store.state.display}}
     </div>
     <el-tabs v-model="active_tab" @tab-click="handleClick">
       <el-tab-pane v-for="(value,key) in tab_list" :key="key" :label="value" :name="key"></el-tab-pane>
@@ -15,10 +15,10 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import ClusterList from '@/views/vmOp2/cluster/pod/cluster_list'
+import ClusterList from '@/views/vmOp2/cluster/pod/cluster_list.vue'
 import Info from "@/views/vmOp2/cluster/pod/info.vue";
-import VmList from "@/views/vmOp2/cluster/pod/vm_list"
-import HostList from "@/views/vmOp2/cluster/pod/host_list"
+import VmList from "@/views/vmOp2/cluster/pod/vm_list.vue"
+import HostList from "@/views/vmOp2/cluster/pod/host_list.vue"
 @Component({
   components:{
     ClusterList,
