@@ -11,9 +11,8 @@
     highlight-current
   >
     <span slot-scope="{node,data}">
-      <span>
-       {{node.label}}
-        </span>
+      <i :class="iconClasses[node.level]"></i>
+      {{ node.label }}
     </span>
   </el-tree>
 </template>
@@ -25,6 +24,12 @@ import {Component, Vue, Prop, Watch} from "vue-property-decorator";
 export default class LeftTree extends Vue{
   @Prop({default:''})currentLivingId!:string
   @Prop({default:()=>[]})tree_data!:Array<object>
+  private iconClasses= {
+    1: 'iconfont icon-tree',
+    2: 'iconfont icon-machine',
+    3: 'iconfont icon-serve',
+  }
+  private active_name: string = ''
   @Watch('$route')
   private FnWatchRouter(to, from) {
     this.active_name = to.name;
@@ -44,7 +49,6 @@ export default class LeftTree extends Vue{
       })
     }
   }
-  private active_name: string = ''
   created(){
     this.$nextTick(()=>{
       (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
