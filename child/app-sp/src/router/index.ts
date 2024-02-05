@@ -1,9 +1,8 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import store from '../store'
 
 Vue.use(VueRouter);
-const routes= [
+const routes:RouteConfig[] = [
   {
     path: '/new',
     component: () => import('../layouts/Layout.vue'),
