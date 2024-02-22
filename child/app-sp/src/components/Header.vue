@@ -39,7 +39,7 @@ export default class Header extends Vue {
 
   }
   private changeLayout(){
-    this.$router.push({name:'pod_list',params:{type:'111',id:'111'}})
+    this.$router.push({name:'new_op'})
     console.log(this.$router)
   }
   private async getPodList(val:String=""){

@@ -6,10 +6,11 @@ const routes:RouteConfig[] = [
   {
     path: '/new',
     component: () => import('../layouts/Layout.vue'),
-    redirect: {name: 'pod_list'},
+    name:'new_op',
+    // redirect: {name: 'pod_list'},
     children: [
       {
-        path: '/pod/?:id/?:type',
+        path: '/pod/:id/:type',
         name: 'pod_list',
         component: () => import('../views/vmOp2/cluster/pod/gather.vue'),
         meta: {meta: 'pod_list',no_auth: true}
