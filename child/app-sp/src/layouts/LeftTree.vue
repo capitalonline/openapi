@@ -38,7 +38,7 @@ export default class LeftTree extends Vue{
   private watch_tree_data(n){
     if(n.length>0){
       this.tree_data = n
-      this.$router.push({name:'pod_list',params:{type:'info',id:this.tree_data[0]['id']}})
+      this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
     }
   }
   @Watch('currentLivingId')
@@ -55,11 +55,11 @@ export default class LeftTree extends Vue{
     })
   }
   private handleNodeClick(data) {
-    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_list', { type: 'info' ,id:data.id})){
-      this.$router.push({name:'pod_list',params:{type:'info',id:data.id}})
+    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_info', { id:data.id})){
+      this.$router.push({name:'pod_info',params:{id:data.id}})
     }
-    if(data.type === 'cluster' && !this.isCurrentRoute('cluster_list', { type: 'info', id: data.id })){
-      this.$router.push({name:'cluster_list',params:{type:'info',id:data.id}})
+    if(data.type === 'cluster' && !this.isCurrentRoute('cluster_info', { id: data.id })){
+      this.$router.push({name:'cluster_info',params:{id:data.id}})
     }
     if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
       this.$router.push({name:'host_list',params:{id:data.id}})

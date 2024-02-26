@@ -9,15 +9,15 @@
       <el-tooltip content="刷新" placement="bottom" effect="light">
         <el-button type="text" @click="refresh" ><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
       </el-tooltip>
-<!--      <el-tooltip content="导出" placement="bottom" effect="light">-->
-<!--        <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
-<!--      </el-tooltip>-->
     </div>
     </div>
     <el-table
       :data="list"
       border
       ref="table"
+      :row-class-name="rowStyle"
+      @row-contextmenu="FnRightClick"
+      @row-click="FnOperRow"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
     >
@@ -66,6 +66,7 @@
       @fn-custom="get_custom_columns"
       :type="'cluster'"
     ></custom-list-item>
+    <right-click :multi_rows="multi_rows"></right-click>
   </div>
 
 </template>
@@ -77,16 +78,20 @@ import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
 import Service from "@/https/vmOp2/cluster/pod";
+import { rightClick } from "@/utils/vmOp2/rightClick"
+import { hideMenu} from "@/utils/vmOp2/hideMenu"
+import RightClick from "@/views/vmOp2/component/right-click.vue";
 @Component({
   components: {
     SearchFrom,
     SvgIcon,
-    CustomListItem
+    CustomListItem,
+    RightClick
   }
 })
 
 export default class List extends Vue{
-  private list=[{customer_id:'1111',cpu:25 }]
+  private list=[]
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
@@ -101,9 +106,30 @@ export default class List extends Vue{
   created(){
     this.get_field()
     this.get_pod_cluster_list()
+    //监听点击事件，点击时隐藏右键菜单
+    document.addEventListener('click', hideMenu);
   }
   private refresh(){
     this.get_pod_cluster_list()
+  }
+  private FnRightClick(row,column,event){
+    //判断当前行是否被选中，没选中时需选中并弹出菜单
+    const isSelected = this.multi_rows.some(item => item.cluster_id === row.cluster_id);
+    if (!isSelected) {
+      (this.$refs.table as any).toggleRowSelection(row)
+    }
+    rightClick(row,column,event)
+  }
+  //改变点击行得选中状态
+  private FnOperRow(row){
+    (this.$refs.table as any).toggleRowSelection(row)
+  }
+  //改变选中行的背景颜色
+  rowStyle({row}) {
+    const isSelected = this.multi_rows.some(item => item.cluster_id === row.cluster_id);
+    if (isSelected) {
+      return 'rowStyle'
+    }
   }
   private async get_field(){
    let res:any = await Service.get_cluster_field()
@@ -194,6 +220,14 @@ i.el-icon-s-tools{
 }
 ::v-deep .el-progress__text{
   font-size: 14px!important;
+}
+//table选中高亮
+::v-deep .el-table .rowStyle {
+  background-color: #8CC4fc !important;
+
+}
+::v-deep .el-table .rowStyle:hover>td {
+  background-color: #8CC4fc !important
 }
 
 </style>

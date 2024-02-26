@@ -6,10 +6,7 @@
     <el-tabs v-model="active_tab" @tab-click="handleClick">
       <el-tab-pane v-for="(value,key) in tab_list" :key="key" :label="value" :name="key"></el-tab-pane>
     </el-tabs>
-    <info v-if="active_tab === 'info'"></info>
-    <cluster-list v-if="active_tab === 'cluster'"></cluster-list>
-    <host-list v-if="active_tab === 'host'"></host-list>
-    <vm-list v-if="active_tab === 'virtual_machine'"></vm-list>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -28,33 +25,26 @@ import HostList from "@/views/vmOp2/cluster/pod/host_list.vue"
   }
 })
 export default class Pod extends Vue{
-  private active_tab=this.$route.params.type || 'info'
+  private active_tab=''
+  private pod_id = this.$route.params.id
   private tab_list = {
-    info: '概要',
-    cluster: '集群',
-    host: '主机',
-    virtual_machine: '虚拟机',
+    pod_info: '概要',
+    pod_cluster: '集群',
+    pod_host: '主机',
+    pod_vm: '虚拟机',
     //gpu:'GPU'
   }
   // private tab_list ={}
   private handleClick(tab, event) {
-    this.$router.push({
-      name:'pod_list',
-      params:{type:tab.name},
-    })
+    if(this.$route.name!== tab.name){
+      this.$router.push({
+        name:tab.name,
+        params:{id:this.pod_id},
+      })
+    }
   }
   created(){
-    // Object.keys(this.tab_all).forEach(item=>{
-    //   console.log('000',item)
-    //   if (this.$store.state.auth_info[item]) {
-    //     console.log('****',this.$store.state.auth_info[item])
-    //     Object.keys(this.tab_list).push({
-    //       item
-    //     })
-    //   }
-    // })
-    // console.log('---',this.tab_list)
-    this.active_tab = this.$route.params.type
+   this.active_tab = this.$route.name
   }
 }
 </script>

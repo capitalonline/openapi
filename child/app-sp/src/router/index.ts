@@ -10,16 +10,50 @@ const routes:RouteConfig[] = [
     // redirect: {name: 'pod_list'},
     children: [
       {
-        path: '/pod/:id/:type',
+        path: '/pod/:id/',
         name: 'pod_list',
         component: () => import('../views/vmOp2/cluster/pod/gather.vue'),
-        meta: {meta: 'pod_list',no_auth: true}
+        meta: {meta: 'pod_list',no_auth: true},
+        children: [
+          {// 概要
+            path: '/pod/info/:id?',
+            name: 'pod_info',
+            component: () => import('../views/vmOp2/cluster/pod/info.vue'),
+            meta: {meta: 'pod_info',no_auth: true}
+          },
+          { // 集群
+            path: '/pod/cluster/:id?',
+            name: 'pod_cluster',
+            component: () => import('../views/vmOp2/cluster/pod/cluster_list.vue'),
+            meta: {meta: 'pod_cluster',no_auth: true}
+          },
+          { // 主机
+            path: '/pod/host/:id?',
+            name: 'pod_host',
+            component: () => import('../views/vmOp2/cluster/pod/host_list.vue'),
+            meta: {meta: 'pod_host',no_auth: true}
+          },
+          { // 虚拟机
+            path: '/pod/virtual_machine/:id?',
+            name: 'pod_vm',
+            component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
+            meta: {meta: 'pod_vm',no_auth: true}
+          }
+        ],
       },
       {
-        path: '/cluster/:id/:type',
+        path: '/cluster/:id',
         name: 'cluster_list',
         component: () => import('../views/vmOp2/cluster/clusterItem/gather.vue'),
-        meta: {meta: 'cluster_list',no_auth: true}
+        meta: {meta: 'cluster_list',no_auth: true},
+        children: [
+          {// 概要
+            path: '/cluster/info/:id?',
+            name: 'cluster_info',
+            component: () => import('../views/vmOp2/cluster/clusterItem/info.vue'),
+            meta: {meta: 'pod_info',no_auth: true}
+          },
+        ],
       },
       {
         path: '/host/:id',

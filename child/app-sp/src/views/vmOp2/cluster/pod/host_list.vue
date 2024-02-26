@@ -42,7 +42,7 @@
           <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu_rate"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='ram_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.ram_rate"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="parseInt(scope.row.ram_rate)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='gpu_rage'">
           <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu_rage"></el-progress>
@@ -88,7 +88,7 @@ import Service from "@/https/vmOp2/cluster/pod";
 })
 
 export default class HostList extends Vue{
-  private list=[{customer_id:'1111',cpu:25 },{customer_id:'2222',cpu:25 }]
+  private list=[]
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
