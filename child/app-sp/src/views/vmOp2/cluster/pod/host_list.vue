@@ -20,7 +20,7 @@
       :row-class-name="rowStyle"
       @row-click="FnOperRow"
       ref="table"
-      @row-contextmenu="rightClick"
+      @row-contextmenu="FnRightClick"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
     >
@@ -65,7 +65,7 @@
       @fn-custom="get_custom_columns"
       :type="'pod_host'"
     ></custom-list-item>
-    <right-click :multi_rows="multi_rows"></right-click>
+    <right-click :multi_rows="multi_rows" :menus="menus" :name=" multi_rows.length>0 ? multi_rows[0].host_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
   </div>
 
 </template>
@@ -78,6 +78,8 @@ import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import Service from "@/https/vmOp2/cluster/pod";
+import { rightClick } from "@/utils/vmOp2/rightClick"
+import { hideMenu} from "@/utils/vmOp2/hideMenu"
 @Component({
   components: {
     RightClick,
@@ -100,11 +102,44 @@ export default class HostList extends Vue{
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
+  private switch_power:any=[{label:'开机',value:'start_up_host',disabled:this.judge},{label:'关机',value:'shutdown_host'}]
+  private menus= [
+    {label: '详情',value: 'physical_detail'},
+    {label:'开关机',value:'start_or_shutdown', batch:true,list:this.switch_power},
+    {label:'机器锁定',value:'lock', batch:true},
+    {label:'机器维护',value:'maintenance', batch:true},
+    {label: '宕机处理',value: 'crash', batch:true},
+    {label: '设备标记',value: 'sign', batch:true},
+    {label:'导入',value:'upload', batch:true},
+    {label:'底层同步',value:'under_sync', batch:true},
+    {label:'驱散',value:'disperse', batch:true},
+    {label:'欺骗器管理',value:'cheat', batch:true},
+    {label:'业务测试',value:'business_test', batch:true},
+    // {label:'完成验证',value:'finish_validate'},
+    // {label:'重启',value:'restart_host'},
+    // {label:'完成维护',value:'finish'},
+    // {label:'调度标记',value:'schedule'},
+    // {label:'迁移标记',value:'migrate_flag'},
+  ]
+  private error_msg={
+    start_up_host:'仅支持已关机的物理机进行开机操作'
+  }
   created(){
     this.get_field()
     this.get_pod_host_list()
     //监听点击事件，点击时隐藏右键菜单
-    document.addEventListener('click', this.hideMenu);
+    document.addEventListener('click', hideMenu);
+  }
+  private judge(){
+    let operate_auth = this.$store.state.auth_info[this.$route.name];
+    console.log(']]]]',operate_auth)
+    return operate_auth
+  }
+  private infoClick(item) {
+    console.log(item)
+    if(!item.list){
+      hideMenu()
+    }
   }
   private refresh(){
     this.get_pod_host_list()
@@ -120,29 +155,14 @@ export default class HostList extends Vue{
         return 'rowStyle'
       }
   }
-  private hideMenu() {
-    // 隐藏菜单的逻辑
-    let menu = document.querySelector("#menu") as HTMLElement;
-    if (menu) {
-      menu.style.display = "none";
-    }
-  }
   //右键弹出操作
-  rightClick(row,column,event){
-    //组织浏览器默认右键菜单弹出
-    event.preventDefault();
+  FnRightClick(row,column,event){
     //判断当前行是否被选中，没选中时需选中并弹出菜单
     const isSelected = this.multi_rows.some(item => item.host_id === row.host_id);
     if (!isSelected) {
       (this.$refs.table as any).toggleRowSelection(row)
     }
-    let menu = document.querySelector("#menu") as HTMLElement;
-    if(menu) {
-      menu.style.left = event.clientX - 258 + "px";
-      menu.style.top = event.clientY - 75 + "px";
-      menu.style.display = "block";
-      menu.style.zIndex = '1000';
-    }
+    rightClick(row,column,event)
   }
   private async get_field(){
     let res:any = await Service.get_pod_host_field()
@@ -172,7 +192,7 @@ export default class HostList extends Vue{
       if(['host_name'].includes(item.prop)){
         item = Object.assign(item,{},{width:'150px',overflow:true})
       }
-      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','gpu_model'].includes(item.prop)){
+      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','gpu_model','machine_status_name'].includes(item.prop)){
         item = Object.assign(item,{},{width:'120px'})
       }
       return item;

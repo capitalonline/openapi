@@ -3,6 +3,12 @@
     <div class="search-box" >
       <el-input prefix-icon="el-icon-search"></el-input>
     <div class="icon m-bottom10">
+      <el-dropdown @command="handleOperate">
+        <el-button type="text"><i class="iconfont icon-more" style="font-weight: bold;margin-right: 5px;font-size: 18px"></i></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value}" :key="item.value" >{{item.label}}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <el-tooltip content="自定义列表项" placement="bottom" effect="light">
         <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
       </el-tooltip>
@@ -66,7 +72,8 @@
       @fn-custom="get_custom_columns"
       :type="'cluster'"
     ></custom-list-item>
-    <right-click :multi_rows="multi_rows"></right-click>
+    <right-click :multi_rows="multi_rows" :menus="menus" :name="multi_rows.length>0? multi_rows[0].cluster_name: ''" :error_msg="error_msg" @fn-click="infoClick"></right-click>
+    <create-cluster :visible.sync="visible" :oper_info="multi_rows" :isCreate="isCreate"></create-cluster>
   </div>
 
 </template>
@@ -81,8 +88,10 @@ import Service from "@/https/vmOp2/cluster/pod";
 import { rightClick } from "@/utils/vmOp2/rightClick"
 import { hideMenu} from "@/utils/vmOp2/hideMenu"
 import RightClick from "@/views/vmOp2/component/right-click.vue";
+import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
 @Component({
   components: {
+    CreateCluster,
     SearchFrom,
     SvgIcon,
     CustomListItem,
@@ -95,6 +104,20 @@ export default class List extends Vue{
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
+  private isCreate:boolean=false
+  private visible:boolean=false
+  private rows_operate_btns:any=[
+    {label:'新建集群',value:'create_cluster'},
+  ]
+  private menus= [
+    { label: "添加主机", value: 'add_host',disabled: false},
+    { label: "添加虚拟机", value: 'add_vm',disabled: false},
+    { label: "编辑集群", value: 'edit_cluster',disabled: false },
+    { label: "删除集群", value: 'delete_cluster', batch:true,disabled: false},
+  ]
+  private error_msg={
+    delete_cluster:'仅支持无物理机的cluster进行删除'
+  }
   private page_info:any={
     current:1,
     size:20,
@@ -108,6 +131,63 @@ export default class List extends Vue{
     this.get_pod_cluster_list()
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', hideMenu);
+    //判断右键菜单项是否置灰
+    this.menus.forEach(item => {
+      item.disabled = this.judge(item.value);
+    });
+  }
+  private judge(value){
+    let flag = false;
+      switch (value) {
+        case 'delete_cluster':
+          flag = !this.multi_rows.some(item => item.host_count === 0);
+          break;
+        case 'add_vm':
+          // 执行添加虚拟机的逻辑
+          break;
+        case 'edit_cluster':
+          // 执行编辑集群的逻辑
+          break;
+      }
+    let operate_auth = !this.$store.state.auth_info[this.$route.name];
+    return flag && operate_auth
+  }
+
+  private handleOperate(label){
+    this.isCreate =true
+    this.visible = true
+  }
+  private infoClick(item) {
+    if (item.disabled) {
+      return; // 禁用元素时不执行点击事件
+    }
+    if (item.value === 'edit_cluster') {
+      this.isCreate =false
+      this.visible = true
+    }else if(item.value === 'delete_cluster'){
+      let delete_cluster = this.multi_rows.map(item=>{return item.cluster_name})
+      this.$confirm(`是否确认删除集群：${delete_cluster}?`, '删除集群', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        let cluster_ids =this.multi_rows.map(item=>{ return item.cluster_id})
+        let res:any = await Service.delete_cluster({
+          cluster_id:cluster_ids
+        })
+        if(res.code === 'Success'){
+          this.$message.success(res.message)
+        }
+      }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    }
+    if(!item.list){
+      hideMenu()
+    }
   }
   private refresh(){
     this.get_pod_cluster_list()
@@ -161,7 +241,6 @@ export default class List extends Vue{
       }
       return item;
     })
-    console.log('custom',this.custom_host)
   }
   private FnCustom() {
     this.show_custom = true;
