@@ -44,6 +44,7 @@ const host_status={//error为新增状态，异常
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
   lock:{power:[],host:[],msg:'',label:'锁定'},
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
+  unstore_exception:{power:[],host:[],msg:'',label:'解除存储异常'}
 }
 export default {
   getInsOperateAuth(type) {
