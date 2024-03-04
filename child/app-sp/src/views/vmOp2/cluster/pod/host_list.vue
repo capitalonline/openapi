@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
@@ -80,6 +80,7 @@ import RightClick from "@/views/vmOp2/component/right-click.vue";
 import Service from "@/https/vmOp2/cluster/pod";
 import { rightClick } from "@/utils/vmOp2/rightClick"
 import { hideMenu} from "@/utils/vmOp2/hideMenu"
+import {getHostStatus} from "@/utils/getStatusInfo";
 @Component({
   components: {
     RightClick,
@@ -102,27 +103,42 @@ export default class HostList extends Vue{
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
-  private switch_power:any=[{label:'开机',value:'start_up_host',disabled:this.judge},{label:'关机',value:'shutdown_host'}]
+  private switch_power:any= [
+      {label:'开机',value:'start_up_host',disabled:false},
+      {label:'关机',value:'shutdown_host'}
+  ]
+  private crash_list:any=[
+    {label:'数据清理同步',value:'data_clear',disabled:false},
+    {label:'宕机恢复',value:'down_recover',disabled:false}
+  ]
   private menus= [
-    {label: '详情',value: 'physical_detail'},
-    {label:'开关机',value:'start_or_shutdown', batch:true,list:this.switch_power},
-    {label:'机器锁定',value:'lock', batch:true},
-    {label:'机器维护',value:'maintenance', batch:true},
-    {label: '宕机处理',value: 'crash', batch:true},
-    {label: '设备标记',value: 'sign', batch:true},
-    {label:'导入',value:'upload', batch:true},
-    {label:'底层同步',value:'under_sync', batch:true},
-    {label:'驱散',value:'disperse', batch:true},
-    {label:'欺骗器管理',value:'cheat', batch:true},
-    {label:'业务测试',value:'business_test', batch:true},
-    // {label:'完成验证',value:'finish_validate'},
-    // {label:'重启',value:'restart_host'},
-    // {label:'完成维护',value:'finish'},
-    // {label:'调度标记',value:'schedule'},
-    // {label:'迁移标记',value:'migrate_flag'},
+    {label: '详情',value: 'physical_detail',single:true,disabled:false},
+    {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
+    {label:'机器锁定',value:'lock', disabled:false},
+    {label:'机器维护',value:'maintenance', disabled:false},
+    {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},
+    {label: '设备标记',value: 'sign', disabled:false},
+    {label:'导入',value:'upload', disabled:false},
+    {label:'底层同步',value:'under_sync', disabled:false},
+    {label:'驱散',value:'disperse', disabled:false},
+    {label:'欺骗器管理',value:'cheat', disabled:false},
+    {label:'业务测试',value:'business_test', disabled:false},
   ]
   private error_msg={
-    start_up_host:'仅支持已关机的物理机进行开机操作'
+    start_up_host:'已选主机需为在线或离线状态',
+    shutdown_host:'已选主机需为在线或离线状态且无虚拟机运行',
+    restart_host:'已选主机需为在线或离线状态',
+    finish:'已选主机需为在线维护中或离线维护中',
+    shelves:'已选主机上不能有虚拟机运行',
+    disperse:'已选主机需为在线状态',
+    migrate:'已选主机需为在线状态',
+    unlock:'已选主机需为锁定状态',
+    data_clear:'机器状态需为待清理状态',
+    down_recover:'机器状态需为待恢复状态!'
+  }
+  @Watch('multi_rows',{immediate:true,deep:true})
+  private watch_multi(){
+    this.handleMenus()
   }
   created(){
     this.get_field()
@@ -130,10 +146,67 @@ export default class HostList extends Vue{
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', hideMenu);
   }
-  private judge(){
-    let operate_auth = this.$store.state.auth_info[this.$route.name];
-    console.log(']]]]',operate_auth)
-    return operate_auth
+  private handleMenus() {
+    // 处理菜单项
+    for (const item of this.menus) {
+      if (!item.list) {
+        item.disabled = this.handle(item.label, item.value);
+      } else {
+        // 处理子菜单项
+        for (const inn of item.list) {
+          inn.disabled = this.handle(inn.label, inn.value);
+        }
+      }
+    }
+  }
+  private handle(label,value){
+    if(value==='finish_validate'){
+      if(this.multi_rows.every(item=>['init_error','init','offline'].includes(item.machine_status))){
+        return false
+      }else{
+        this.error_msg['finish_validate'] = '物理机需为初始化状态或验证失败状态'!
+        return true
+      }
+    }
+    if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat','under_sync'].includes(value)){
+      if(value==='business_test'){
+        if(this.list.length===0){
+          this.error_msg['business_test']='当前无宿主机可进行业务测试!'
+          return true
+        }
+      }
+      return false
+    }
+    if(this.judge(value)){
+      if(value==="disperse"){
+        //筛选出GPU物理机
+        let fil = this.multi_rows.filter(item=>item.host_purpose==='GPU');
+        let bool:boolean = fil.every(item=>{//判断GPU物理机上的GPU云主机是不是处于已关机
+          return item.ecs_list.every(inn=>(inn.is_gpu && inn.status==="已关机") || !inn.is_gpu)
+        })
+        if(!bool){
+          this.error_msg['disperse']="GPU物理机中的GPU云主机需为关机状态!"
+          return false
+        }
+      }
+    }else{
+      return  true
+    }
+  }
+  private judge(val):any{
+    const obj = getHostStatus(val)
+    let flag_list = this.multi_rows.every(item=>{
+      let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
+      let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
+      let vm_flag= obj.vm ? obj.vm=== item.ecs_count + 1 : true;
+      // if(!vm_flag && ['shutdown_host'].includes(val)){
+      //   this.error_msg[val]=getHostStatus(val).msSg2
+      // }else{
+      //   return false
+      // }
+      return power_flag && host_flag && vm_flag
+    })
+    return flag_list
   }
   private infoClick(item) {
     console.log(item)

@@ -59,6 +59,8 @@ export default class Sidebar extends Vue {
   $store;
   private active_menu: string = 'cluster';
   private default_az = '';
+  private az_name=''
+  private az_code=''
   private current=''
   private treeType:string = 'tree'
   private az_list = []
@@ -88,6 +90,8 @@ export default class Sidebar extends Vue {
         })
       })
       this.default_az = this.$store.state.az_id ? this.$store.state.az_id :this.az_list[0].az_id
+      this.az_name = this.$store.state.az_name ? this.$store.state.az_name :this.az_list[0].az_name
+      this.az_code = this.$store.state.az_code ? this.$store.state.az_code :this.az_list[0].az_code
     }
   }
   private change_pod(val){
@@ -149,6 +153,8 @@ export default class Sidebar extends Vue {
   @Watch('default_az')
   private watch_pod(){
     this.$store.commit('SET_AZ',this.default_az);
+    this.$store.commit('SET_AZ_NAME',this.az_name);
+    this.$store.commit('SET_AZ_CODE',this.az_code);
   }
 }
 </script>

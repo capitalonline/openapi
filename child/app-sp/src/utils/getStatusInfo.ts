@@ -44,6 +44,15 @@ const host_status={//error为新增状态，异常
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
   lock:{power:[],host:[],msg:'',label:'锁定'},
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
+
+  physical_detail:{power:[],host:[],msg:'',label:'详情'},
+  data_clear:{power:[],host:['crash_clear'],msg:'',label:'数据清理同步'},
+  down_recover:{power:[],host:['crash_recover'],msg:'',label:'宕机恢复'},
+  sign:{power:[],host:[],msg:'',label:'设备标记'},
+  upload:{power:[],host:[],msg:'',label:'导入'},
+  under_sync:{power:[],host:[],msg:'',label:'底层同步'},
+  cheat:{power:[],host:[],msg:'',label:'欺骗器管理'},
+  business_test:{power:[],host:[],msg:'',label:'业务测试'},
 }
 export default {
   getInsOperateAuth(type) {

@@ -49,5 +49,9 @@ export default{
   //获取cpu/gpu型号信息
   get_model_info_list(req){
     return service(getEcsOptions('GET','/cluster/get_model_info_list/',req))
+  },
+  //获取存储集群信息
+  get_storage_cluster_info(req){
+    return service(getEcsOptions('GET','/cluster/get_storage_cluster_info/',req))
   }
 }

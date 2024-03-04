@@ -5,13 +5,13 @@
       <li
         v-for="(item, index) in menus"
         :key="index"
-        v-if="(multi_rows.length>1 && item.batch) || multi_rows.length===1"
+        v-if="(multi_rows.length>1 && !item.single) || multi_rows.length===1"
         @click.stop="FnClick(item,index)"
       >
         <span v-if="!item.disabled">
             {{ item.label }}
         </span>
-        <el-tooltip v-else effect="light" :content="disabledTooltipContent(item)">
+        <el-tooltip v-else effect="light" placement="left" :content="disabledTooltipContent(item)">
           <span class="disabled">
             {{ item.label }}
           </span>
@@ -27,7 +27,7 @@
               <span v-if="!inn.disabled">
             {{ inn.label }}
               </span>
-              <el-tooltip v-else effect="light" :content="disabledTooltipContent(inn)">
+              <el-tooltip v-else effect="light" placement="left" :content="disabledTooltipContent(inn)">
                 <span class="disabled">
                   {{ inn.label }}
                 </span>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Prop, Vue} from "vue-property-decorator";
+import {Component, Emit, Prop, Vue, Watch} from "vue-property-decorator";
 import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
 @Component({
   components: {CreateCluster}
@@ -53,11 +53,18 @@ export default class RightClick extends Vue{
   @Prop({default:()=>{}}) error_msg!:any
   @Prop({default:''}) name!:any
   private operate_auth = [];
+  private msg:any = {}
+  @Watch('error_msg')
+  private watch_error_msg(v){
+    this.msg = v
+  }
   created(){
     //this.operate_auth = this.$store.state.auth_info[this.$route.name];
+    this.msg = this.error_msg
+    console.log('error_msg',this.error_msg)
   }
   private disabledTooltipContent(item){
-    return this.error_msg[item.value]
+    return this.msg[item.value]
   }
   @Emit("fn-click")
   private FnClick(menu){
