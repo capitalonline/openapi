@@ -2469,6 +2469,12 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 |     EndTime      | String | '2023-08-29'                       |             测试金结束时间             |
 |    Balance     | String | 1000.0                                                         |            剩余金额            |
 |    Income    | String | 99.0                                                     |                测试总金额                |
+|    GoodsIds    | String |                                                     |                 支持的商品id               |
+|    GoodsTypes    | String |                                                    |                 支持的商品类型                |
+|    SiteIds    | String |                                                      |                支持的节点id                |
+|    SiteNames    | String |                                                      |                支持的节点名称                |
+|    BillMethod    | String |              "0"                                        |                计费方式；0:按需，1:包月              |
+
 
 **请求示例**
 
@@ -2492,22 +2498,34 @@ def DescribePubAccountSubject():
     "Code": "Success",
     "Data": [
         {
-            "Balance": 10.0,
+            "AreaId": "CN",
+            "Balance": "1999.05",
             "BeginTime": "2023-08-26",
+            "BillMethod": "0",
             "Duration": 201,
             "EndTime": "2024-03-14",
+            "GoodsIds": "",
+            "GoodsTypes": "",
             "Id": 123,
-            "Income": 9.0,
-            "Name": "测试金1"
+            "Income": "4000.00",
+            "Name": "test-NAT",
+            "SiteIds": "",
+            "SiteNames": ""
         },
         {
-            "Balance": 10.0,
+            "AreaId": "CN",
+            "Balance": "1000.00",
             "BeginTime": "2024-02-22",
+            "BillMethod": "0",
             "Duration": 30,
             "EndTime": "2024-03-23",
+            "GoodsIds": "",
+            "GoodsTypes": "",
             "Id": 123,
-            "Income": 9.0,
-            "Name": "测试金2"
+            "Income": "1000.00",
+            "Name": "节点-香港A",
+            "SiteIds": "35304122-8504-400c-a61c-56ba244c5dda",
+            "SiteNames": "香港A"
         }
     ],
     "Message": "success"
