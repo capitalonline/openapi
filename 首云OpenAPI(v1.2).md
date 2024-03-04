@@ -15061,6 +15061,7 @@ def get_status(task_id):
 | 雅加达A       | APAC_Jakarta_A    | 是             | 亚太地区 |
 | 胡志明A       | APAC_HoChiMinh_A  | 是             | 亚太地区 |
 | 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
+| 达拉斯N       | US_Dallas_N       | 是             | 北美地区 |
 
 ## 附件二
 
@@ -15202,14 +15203,18 @@ def get_status(task_id):
 |             | Centos_6.5_64                    |                                        |
 |             | Centos_6.4_64                    |                                        |
 |             | Centos_5.9_64                    |                                        |
-| Debian      | Debian_10.2_64                   |                                        |
+| Debian      | Debian_12.4_64                   |                                        |
+|             | Debian_11.3_64                   |                                        |
+|             | Debian_10.2_64                   |                                        |
 |             | Debian_9.11_64                   |                                        |
+|             | Debian_9.8_64                    |                                        |
 |             | Debian_8.11_64                   |                                        |
 |             | Debian_8.1_64                    |                                        |
 |             | Debian_7.4_64                    |                                        |
 | Redhat      | Redhat_7.4_64                    |                                        |
 |             | Redhat_6.5_64                    |                                        |
-| Ubuntu      | Ubuntu_20.04_64                  |                                        |
+| Ubuntu      | Ubuntu_22.04_64                  |                                        |
+|             | Ubuntu_20.04_64                  |                                        |
 |             | Ubuntu_18.04_64                  |                                        |
 |             | Ubuntu_16.04_64                  |                                        |
 |             | Ubuntu_14.04_64                  |                                        |
@@ -15238,22 +15243,8 @@ def get_status(task_id):
 
 | 区域名称 | RegionCode    | 区域类型   | 所在大区 |
 | -------- | ------------- | ---------- | -------- |
-| 东莞     | CN_Dongguan   | 边缘节点   | 中国大陆 |
-| 中卫     | CN_Zhongwei   | 边缘节点   | 中国大陆 |
-| 保定     | CN_Baoding    | 边缘节点   | 中国大陆 |
 | 呼和浩特 | CN_Huhhot     | 边缘节点   | 中国大陆 |
-| 娄底     | CN_Loudi      | 边缘节点   | 中国大陆 |
 | 宿迁     | CN_Suqian     | 边缘节点   | 中国大陆 |
-| 洛阳     | CN_Luoyang    | 边缘节点   | 中国大陆 |
-| 济南     | CN_Jinan      | 边缘节点   | 中国大陆 |
-| 眉山     | CN_Meishan    | 边缘节点   | 中国大陆 |
-| 福州     | CN_Fuzhou     | 边缘节点   | 中国大陆 |
-| 衢州     | CN_Quzhou     | 边缘节点   | 中国大陆 |
-| 襄阳     | CN_Xiangyang  | 边缘节点   | 中国大陆 |
-| 西安     | CN_Xian       | 边缘节点   | 中国大陆 |
-| 贵阳     | CN_Guiyang    | 边缘节点   | 中国大陆 |
-| 重庆两江 | CN_Liangjiang | 边缘节点   | 中国大陆 |
-| 金华     | CN_Jinhua     | 边缘节点   | 中国大陆 |
 | 中国香港 | CN_HongKong   | 云平台节点 | 亚太地区 |
 
 
@@ -15261,23 +15252,8 @@ def get_status(task_id):
 
 | 可用区名称 | AvailableZoneCode | 站点类型   | 所在区域 |
 | ---------- | ----------------- | ---------- | -------- |
-| 东莞A      | CN_Dongguan_A     | 边缘节点   | 东莞     |
-| 中卫A      | CN_Zhongwei_A     | 边缘节点   | 中卫     |
-| 保定A      | CN_Baoding_A      | 边缘节点   | 保定     |
 | 呼和浩特B  | CN_Hohhot_B       | 边缘节点   | 呼和浩特 |
-| 娄底A      | CN_Loudi_A        | 边缘节点   | 娄底     |
-| 宿迁A      | CN_Suqian_A       | 边缘节点   | 宿迁     |
 | 宿迁B      | CN_Suqian_B       | 边缘节点   | 宿迁     |
-| 洛阳A      | CN_Louyang_A      | 边缘节点   | 洛阳     |
-| 济南A      | CN_Jinan_A        | 边缘节点   | 济南     |
-| 眉山A      | CN_Meishan_A      | 边缘节点   | 眉山     |
-| 福州A      | CN_Fuzhou_A       | 边缘节点   | 福州     |
-| 衢州A      | CN_Quzhou_A       | 边缘节点   | 衢州     |
-| 襄阳A      | CN_Xiangyang_A    | 边缘节点   | 襄阳     |
-| 西安A      | CN_Xian_A         | 边缘节点   | 西安     |
-| 贵阳A      | CN_Guiyang_A      | 边缘节点   | 贵阳     |
-| 重庆两江A  | CN_Liangjiang_A   | 边缘节点   | 重庆两江 |
-| 金华A      | CN_Jinhua_A       | 边缘节点   | 金华     |
 | 香港B      | CN_HongKong_B     | 云平台节点 | 中国香港 |
 
 ## 示例
