@@ -85,6 +85,7 @@
        * [18.DeleteGPN](./虚拟数据中心概览.md#18deletegpn)
        * [19.ModifyVdcName](./虚拟数据中心概览.md#19modifyvdcname)
        * [20.DescribePipeUtilization](./虚拟数据中心概览.md#20describepipeutilization)
+       * [21.DescribePubAccountSubject](./虚拟数据中心概览.md#21DescribePubAccountSubject)
      * [私有网络相关](./私有网络概览.md#私有网络相关)
        * [1.DescribeVPC](./私有网络概览.md#1describevpc)
        * [2.CreateVPC](./私有网络概览.md#2createvpc)
