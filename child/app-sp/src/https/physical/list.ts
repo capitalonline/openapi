@@ -154,5 +154,9 @@ export default{
   //获取锁定记录
   get_lock_record(req){
     return service(getHostOptions('GET','/host/host_lock_record/',req))
+  },
+  //解除存储异常
+  recover_storage_error(req){
+    return service(getHostOptions('GET','/host/recover_storage_error',req))
   }
 }

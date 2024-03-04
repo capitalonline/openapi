@@ -360,13 +360,7 @@ export default class PhysicalList extends Vue {
     {label:'关机',value:'shutdown_host'},
     {label:'重启',value:'restart_host'},
     {label:'设置维护',value:'maintenance'},
-    {
-      text: '完成维护',
-      subItems: [
-        { label:'完成维护', value: 'finish' },
-        { label: '解除存储异常', value: 'unstore_exception' },
-      ]
-    },
+    { label:'完成维护', value: 'finish' },
     {label:'驱散',value:'disperse'},
     {label:'业务测试',value:'business_test'},
     {label:'调度标记',value:'schedule'},
@@ -385,6 +379,12 @@ export default class PhysicalList extends Vue {
       subItems: [
         { label: '锁定机器', value: 'lock' },
         { label: '解锁机器', value: 'unlock' },
+      ]
+    },
+    {
+      text: '解除异常',
+      subItems: [
+        { label: '解除存储异常', value: 'unstore_exception' },
       ]
     },
   ]

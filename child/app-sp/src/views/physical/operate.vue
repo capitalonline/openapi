@@ -176,14 +176,15 @@ export default class Operate extends Vue{
     'down_recover': 'crash_recover',
     'lock':'set_lock',
     'unlock':'set_unlock',
-    'maintenance':'set_maintenance'
+    'maintenance':'set_maintenance',
+    'unstore_exception':'recover_storage_error'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
 
     if(this.oper_type === 'maintenance'){
       this.rows.forEach(row => {
-        if (['lock','存储异常'].includes(row.machine_status) && row.ecs_list.length === 0 ){
+        if (['lock','storage_error'].includes(row.machine_status) && row.ecs_list.length === 0 ){
           this.selectVmList.push(row)
         } else {
           this.notSelectVmList.push(row)
