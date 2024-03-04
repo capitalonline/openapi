@@ -157,6 +157,6 @@ export default{
   },
   //解除存储异常
   recover_storage_error(req){
-    return service(getHostOptions('POST','/host/recover_storage_error',req))
+    return service(getHostOptions('POST','/host/recover_storage_error/',req))
   }
 }
