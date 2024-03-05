@@ -277,6 +277,8 @@ export default class List extends Vue{
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
+      sort_field:this.search_data.sort_field,
+      sort_type:this.search_data.sort_type
     }
     let res:any = await Service.get_pod_cluster_list(reqData)
     if(res.code === 'Success'){
@@ -288,6 +290,9 @@ export default class List extends Vue{
     this.multi_rows = data
   }
   private FnSortChange(obj){
+    this.search_data.sort_field = obj.order ? obj.prop : undefined
+    this.search_data.sort_type = obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
+    this.get_pod_cluster_list()
   }
   private handleSizeChange(size){
     this.page_info.size = size
