@@ -87,10 +87,12 @@ import Service from "@/https/vmOp2/cluster/pod";
 })
 
 export default class VmList extends Vue{
-  private list=[{customer_id:'1111',cpu:25 }]
+  private list=[]
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
+  private sort_prop_name = '';
+  private sort_order = undefined;
   private page_info:any={
     current:1,
     size:20,
@@ -148,6 +150,7 @@ export default class VmList extends Vue{
       is_op:true,
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
+      [this.sort_prop_name]: this.sort_order,
     }
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){
@@ -158,7 +161,16 @@ export default class VmList extends Vue{
   private handleSelectionChange(data){
     this.multi_rows = data
   }
-  private FnSortChange(obj){
+  private FnSortChange(val){
+    let relation = {};
+    this.all_item.forEach(item => {
+      item.filed.forEach(inn => {
+        relation[inn.field_name] = `sort_${inn.field_name}`;
+      });
+    });
+    this.sort_prop_name = relation[val.prop];
+    this.sort_order = val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
+    this.get_pod_ecs_list()
   }
   private handleSizeChange(size){
     this.page_info.size = size

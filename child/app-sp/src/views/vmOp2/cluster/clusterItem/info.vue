@@ -18,7 +18,7 @@
             故障：{{item.breakdown}}
           </span>
         </div>
-        <el-progress :stroke-width="16" color="#455cc6" :percentage="item.percentage"></el-progress>
+        <el-progress :stroke-width="16" color="#455cc6" :percentage="Math.round(item.percentage)"></el-progress>
         <div class="flex-between m-top5">
           <span>已用：{{item.used+'/'+item.total}}</span>
           <span>可用：{{item.available}}</span>
@@ -118,7 +118,7 @@ export default class COverview extends Vue{
     }
   }
   .progress{
-    width: 60%;
+    width: 65%;
     flex-wrap: wrap;
     display: flex;
     .bar{
