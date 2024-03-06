@@ -29,7 +29,7 @@ export default new Vuex.Store({
     ],
     pod:{
       cluster_host:JSON.parse(storage.get('cluster_host')) || [
-        '名称','物理机','云主机','CPU型号','GPU型号','GPU数量',
+        '集群ID','名称','物理机','云主机','CPU型号','GPU型号','GPU数量',
         '存储容量','CPU消耗量','内存消耗量','GPU消耗量','存储消耗量'
       ],
       host_list:JSON.parse(storage.get('host_list')) || [
@@ -86,6 +86,7 @@ export default new Vuex.Store({
     },
     SET_CLUSTER_HOST(state,list){
       storage.set('cluster_host',JSON.stringify(list))
+      console.log(list,'list')
       state.pod.cluster_host = list
     },
     SET_HOST_LIST(state,list){

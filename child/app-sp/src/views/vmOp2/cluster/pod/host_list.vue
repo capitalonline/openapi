@@ -37,15 +37,16 @@
         :type="item.type"
         :label="item.label"
         :show-overflow-tooltip='item.overflow'
+        :min-width="item.minWidth"
       >
         <template #default="scope" v-if="item.prop==='cpu_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu_rate"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.cpu_rate)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='ram_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="parseInt(scope.row.ram_rate)"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.ram_rate)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='gpu_rage'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu_rage"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.gpu_rate)"></el-progress>
         </template>
       </el-table-column>
     </el-table>
@@ -174,8 +175,8 @@ export default class HostList extends Vue{
       if(['host_name'].includes(item.prop)){
         item = Object.assign(item,{},{width:'150px',overflow:true})
       }
-      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','gpu_model'].includes(item.prop)){
-        item = Object.assign(item,{},{width:'120px'})
+      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','gpu_model','machine_status_name'].includes(item.prop)){
+        item = Object.assign(item,{},{minWidth:'120px'})
       }
       return item;
     })
