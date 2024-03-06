@@ -1391,7 +1391,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 | RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的可用区Id                      |
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
 | PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200} | 参考附件三带宽类型                     |
-| SubjectId      | int | 否       | 123                                                  | 本账户测试金Id(DescribeSubjects 获取)                      |
+| SubjectId      | int | 否       | 123                                                  | 测试金Id                      |
 
   **返回参数：**
 
@@ -1522,7 +1522,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | IPNum          | int    | 是       |                                      | 购买的Ip数量，可选参数:{4,8,16,32,64}                        |
 | AutoRenew      | int    | 是       |                                      | 带宽类型为流量包和95峰值时，是否自动续费，1为自动续费（默认），0为不自动续费 |
 | FloatBandwidth | int    | 是       |                                      | 公网类型为95峰值时，带宽大小的封顶带宽，为空时，默认为带宽大小的120% |
-| SubjectId      | int | 否       | 123                                                  | 本账户测试金Id(DescribeSubjects 获取)                      |
+| SubjectId      | int | 否       | 123                                                  | 测试金Id                   |
 
   **返回参数：**
 
@@ -2208,7 +2208,7 @@ def modify_public_qos(publicId, qos):
 |      Qos       |  Int   |    是    | 5                                                            | GPN带宽                                                      |
 |  AccessPoint   |  list  |    是    | [{"VdcId":"",<br/>"AccessPointType":"vdc",<br/>"PrivateId":""}] | Vdc_id: 虚拟数据中心id<br/>AccessPointType:接入点类型<br/>PrivateId:私网id |
 | PopAccessPoint |  list  |    是    | [{"AccessPointType":"pop",<br/>"PopId":""}]                  | AccessPointType:接入点类型<br/>PopId:pop点id                 |
-| SubjectId      | int | 否       | 123                                                  | 本账户测试金Id(DescribeSubjects 获取)                      |
+| SubjectId      | int | 否       | 123                                                  | 测试金Id                    |
 
    **返回参数:**
 
@@ -3283,7 +3283,7 @@ def describe_eip(regin_code, key, page, vpc_id, az_code):
 | Qos               | int    | 是                            | 5                       | 带宽大小                                                     |
 | Size              | int    | 是                            | 1                       | 创建个数                                                     |
 | Description       | string | 否                            | test                    | EIP描述                                                      |
-| SubjectId      | int | 否       | 123                                                  | 本账户测试金Id(DescribeSubjects 获取)                      |
+| SubjectId      | int | 否       | 123                                                  | 测试金Id                     |
 
   **返回参数：**
 
@@ -3725,7 +3725,7 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 | BillScheme        | string | 是       | BandwIdth                            | 计费方案<br/>BandwIdth_Shared（固定带宽）<br/>Traffic_Shared（流量按需） |
 | Qos               | int    | 是       | 5                                    | 带宽大小                                                     |
 | NETID             | string | 否       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 子网ID，边缘节点必传                                         |
-| SubjectId      | int | 否       | 123                                                  | 本账户测试金Id(DescribeSubjects 获取)                      |
+| SubjectId      | int | 否       | 123                                                  | 测试金Id                     |
 
   **返回参数：**
 
