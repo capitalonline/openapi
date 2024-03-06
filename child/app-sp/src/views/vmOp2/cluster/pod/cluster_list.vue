@@ -43,16 +43,16 @@
         :min-width="item.minWidth"
       >
         <template #default="scope" v-if="item.prop==='cpu_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.cpu_rate* 100"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.cpu_rate* 100)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='ram_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.ram_rate* 100"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.ram_rate* 100)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='gpu_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.gpu_rate* 100"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.gpu_rate* 100)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='storage_rate'">
-          <el-progress :stroke-width="14" color="#455cc6" :percentage="scope.row.storage_rate* 100"></el-progress>
+          <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.storage_rate* 100)"></el-progress>
         </template>
         <template #default="scope" v-else-if="item.prop==='cpu_model'">
           <el-tooltip effect="dark" v-if="scope.row.cpu_model.length>0">

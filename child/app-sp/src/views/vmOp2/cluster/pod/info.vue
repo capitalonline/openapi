@@ -68,29 +68,29 @@ export default class COverview extends Vue{
             ...this.progress_info.cpu,
             used: this.detail_info.cpu_statistic.used + '核',
             total: this.detail_info.cpu_statistic.total + '核',
-            available: (this.detail_info.cpu_statistic.total - this.detail_info.cpu_statistic.used) + '核',
+            available: this.detail_info.cpu_statistic.available + '核',
             percentage: this.detail_info.cpu_statistic.rate * 100
           }
           this.progress_info.memory = {
             ...this.progress_info.memory,
-            used: this.detail_info.ram_statistic.used + 'GB',
-            total: this.detail_info.ram_statistic.total + 'GB',
-            available: (this.detail_info.ram_statistic.total - this.detail_info.ram_statistic.used) + 'GB',
+            used: this.detail_info.ram_statistic.used + 'TB',
+            total: this.detail_info.ram_statistic.total + 'TB',
+            available: this.detail_info.ram_statistic.available + 'TB',
             percentage: this.detail_info.ram_statistic.rate * 100
           }
           this.progress_info.gpu = {
             ...this.progress_info.gpu,
             used: this.detail_info.gpu_statistic.used + '个',
             total: this.detail_info.gpu_statistic.total + '个',
-            available: (this.detail_info.gpu_statistic.total - this.detail_info.gpu_statistic.used) + '个',
+            available: this.detail_info.gpu_statistic.available + '个',
             percentage: this.detail_info.gpu_statistic.rate * 100,
             breakdown: this.detail_info.gpu_statistic.fault + '块'
           }
           this.progress_info.storage = {
             ...this.progress_info.storage,
-            used: this.detail_info.storage_statistic.used + 'GB',
-            total: this.detail_info.storage_statistic.total + 'GB',
-            available: (this.detail_info.storage_statistic.total - this.detail_info.storage_statistic.used) + 'GB',
+            used: this.detail_info.storage_statistic.used + 'TB',
+            total: this.detail_info.storage_statistic.total + 'TB',
+            available: this.detail_info.storage_statistic.available + 'TB',
             percentage: this.detail_info.storage_statistic.rate * 100
           }
       }
