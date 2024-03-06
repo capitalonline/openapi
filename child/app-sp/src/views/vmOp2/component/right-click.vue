@@ -61,7 +61,6 @@ export default class RightClick extends Vue{
   created(){
     //this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.msg = this.error_msg
-    console.log('error_msg',this.error_msg)
   }
   private disabledTooltipContent(item){
     return this.msg[item.value]

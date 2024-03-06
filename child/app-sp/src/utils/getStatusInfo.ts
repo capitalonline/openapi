@@ -53,6 +53,9 @@ const host_status={//error为新增状态，异常
   under_sync:{power:[],host:[],msg:'',label:'底层同步'},
   cheat:{power:[],host:[],msg:'',label:'欺骗器管理'},
   business_test:{power:[],host:[],msg:'',label:'业务测试'},
+  record:{power:[],host:[],msg:'',label:'操作记录'},
+  resource:{power:[],host:[],msg:'',label:'分配资源'},
+  remark:{power:[],host:[],msg:'',label:'编辑备注'}
 }
 export default {
   getInsOperateAuth(type) {

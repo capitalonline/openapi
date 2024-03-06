@@ -58,6 +58,27 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="page_info.total">
     </el-pagination>
+    <template v-if="visible && !['physical_detail','upload','migrate','record','resource','update_attribute','business_test','remark'].includes(oper_type)">
+      <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
+    </template>
+    <template v-if="visible && oper_type==='upload'">
+      <upload-file :visible.sync="visible" @close="close"></upload-file>
+    </template>
+    <template v-if="visible && oper_type==='migrate'">
+      <Migrate :visible.sync="visible" :rows="multi_rows" @close="close"></Migrate>
+    </template>
+    <template v-if="visible && oper_type==='record'">
+      <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
+    </template>
+    <template v-if="visible && oper_type==='resource'">
+      <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
+    </template>
+    <template v-if="visible && oper_type==='business_test'">
+      <business-test :visible.sync="visible" :az_info="az_info"></business-test>
+    </template>
+    <template v-if="visible && oper_type==='remark'">
+      <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
+    </template>
     <custom-list-item
       :visible.sync="show_custom"
       :all_item="all_item"
@@ -81,12 +102,28 @@ import Service from "@/https/vmOp2/cluster/pod";
 import { rightClick } from "@/utils/vmOp2/rightClick"
 import { hideMenu} from "@/utils/vmOp2/hideMenu"
 import {getHostStatus} from "@/utils/getStatusInfo";
+import {Table} from "element-ui";
+import Operate from "@/components/vmOp2/cluster/pod/host/operate.vue"
+import UploadFile from "@/components/vmOp2/cluster/pod/host/upload.vue"
+import Migrate from '@/components/vmOp2/cluster/pod/host/migrate.vue';
+import Record from '@/components/vmOp2/cluster/pod/host/record.vue';
+import Resource from '@/components/vmOp2/cluster/pod/host/resource.vue';
+import BusinessTest from '@/components/vmOp2/cluster/pod/host/businessTest.vue';
+import Remark from '@/components/vmOp2/cluster/pod/host/editRemark.vue';
+
 @Component({
   components: {
     RightClick,
     SearchFrom,
     SvgIcon,
-    CustomListItem
+    CustomListItem,
+    Operate,
+    UploadFile,
+    Migrate,
+    Record,
+    Resource,
+    BusinessTest,
+    Remark
   }
 })
 
@@ -95,6 +132,10 @@ export default class HostList extends Vue{
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
+  private az_info:any={}
+  private visible:Boolean=false;
+  private oper_type:string="";
+  private oper_label:string="";
   private page_info:any={
     current:1,
     size:20,
@@ -113,6 +154,10 @@ export default class HostList extends Vue{
   ]
   private menus= [
     {label: '详情',value: 'physical_detail',single:true,disabled:false},
+    {label:'迁移',value:'migrate',single:true,disabled:false},
+    {label:'操作记录',value:'record',single:true,disabled:false},
+    {label:'分配资源',value:'resource',single:true,disabled:false},
+    {label:'编辑备注',value:'remark',single:true,disabled:false},
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
     {label:'机器锁定',value:'lock', disabled:false},
     {label:'机器维护',value:'maintenance', disabled:false},
@@ -145,6 +190,16 @@ export default class HostList extends Vue{
     this.get_pod_host_list()
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', hideMenu);
+  }
+  private close(val){
+    //this.oper_type==="upload" && this.get_room_list()
+    val==='1' && this.get_pod_host_list()
+    this.visible=false;
+    this.oper_type='';
+    this.oper_label=""
+    this.multi_rows=[]
+    const table =this.$refs.table as Table
+    table.clearSelection()
   }
   private handleMenus() {
     // 处理菜单项
@@ -209,8 +264,17 @@ export default class HostList extends Vue{
     return flag_list
   }
   private infoClick(item) {
-    console.log(item)
-    if(!item.list){
+    const {label, value}=item
+    if(!item.list && !item.disabled){
+      if(value==='business_test'){
+        this.az_info={
+          az_id:this.$store.state.az_id,
+          az_name:this.$store.state.az_name,
+        }
+      }
+        this.oper_type = value;
+        this.oper_label = label
+        this.visible = true;
       hideMenu()
     }
   }
@@ -309,7 +373,7 @@ export default class HostList extends Vue{
   }
   beforeDestroy() {
     // 移除全局点击事件监听
-    document.removeEventListener('click', this.hideMenu);
+    document.removeEventListener('click', hideMenu);
   }
 }
 </script>
