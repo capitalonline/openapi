@@ -1,5 +1,5 @@
 import service from "@/https/http"
-import { getEcsOptions } from '@/https/common'
+import {getEcsOptions, getHostOptions} from '@/https/common'
 
 export default{
   //获取pod概要
@@ -29,5 +29,12 @@ export default{
   //获取pod虚拟机表头
   get_pod_ecs_field(){
     return service(getEcsOptions('GET','/pod/get_pod_ecs_field/'))
+  },
+  //获取电源与机器状态
+  get_status_list(req){
+    return service(getHostOptions('GET','/host/host_status_list/',req))
+  },
+  get_vm_status_list() {
+    return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
   },
 }

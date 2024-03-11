@@ -23,6 +23,7 @@
       @row-contextmenu="rightClick"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
+      @filter-change="filterAttribute"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column
@@ -79,6 +80,7 @@ import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import Service from "@/https/vmOp2/cluster/pod";
+import th from "element-ui/src/locale/lang/th";
 @Component({
   components: {
     RightClick,
@@ -93,6 +95,12 @@ export default class HostList extends Vue{
   private all_column_item=[];
   private multi_rows:any=[];
   private search_data:any={}
+  private power_list=[];
+  private filter_data:any={}
+  private machine_list=[]
+  private power_status:any=""
+  private machine_status:any =''
+  private filter_info:any={}
   private page_info:any={
     current:1,
     size:20,
@@ -104,6 +112,7 @@ export default class HostList extends Vue{
   created(){
     this.get_field()
     this.get_pod_host_list()
+    this.get_status_list()
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', this.hideMenu);
   }
@@ -166,7 +175,7 @@ export default class HostList extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-      if(!['cpu_model','gpu_model','bare_metal_name'].includes(item.prop)) {
+      if(!['cpu_model','gpu_model','bare_metal_name','power_status_name','machine_status_name'].includes(item.prop)) {
         item = Object.assign(item, {}, {sortable: 'custom'})
       }
       if(['host_id','bare_metal_name','cpu_model'].includes(item.prop)){
@@ -178,8 +187,25 @@ export default class HostList extends Vue{
       if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','gpu_model','machine_status_name'].includes(item.prop)){
         item = Object.assign(item,{},{minWidth:'120px'})
       }
+      if(item.prop==='power_status_name'){
+        item = Object.assign(item,{},{column_key:'power_status',list:this.power_list})
+      }
+      if(item.prop==='machine_status_name'){
+        item = Object.assign(item,{},{column_key:'machine_status',list:this.machine_list})
+      }
       return item;
     })
+  }
+  private async get_status_list(){
+    let res:any=await Service.get_status_list({})
+    if(res.code==="Success"){
+      for(let i in res.data.power_status){
+        this.power_list.push({text:res.data.power_status[i],value:i})
+      }
+      for(let i in res.data.machine_status){
+        this.machine_list.push({text:res.data.machine_status[i],value:i})
+      }
+    }
   }
   private FnCustom() {
     this.show_custom = true;
@@ -191,13 +217,33 @@ export default class HostList extends Vue{
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
       sort_field:this.search_data.sort_field,
-      sort_type:this.search_data.sort_type
+      sort_type:this.search_data.sort_type,
+      ...this.filter_info
     }
     let res:any = await Service.get_pod_host_list(reqData)
     if(res.code === 'Success'){
       this.list = res.data.result
       this.page_info.total = res.data.page_info.count
     }
+  }
+  //校验列表项是否存在此项
+  private judgeColumns(){
+    let keys = Object.keys(this.filter_data)
+    let temp = ['power_status','machine_status']
+    keys.map(item=>{
+      if(!temp.includes(item)){
+        delete(this.filter_data[item])
+      }
+    });
+    this.filter_info={}
+    for(let i in this.filter_data){
+      this.filter_info[i]=this.filter_data[i][0]
+    }
+  }
+  private filterAttribute(obj:any){
+    this.filter_data = {...this.filter_data,...obj}
+    this.judgeColumns()
+    this.get_pod_host_list()
   }
   private handleSelectionChange(data){
     this.multi_rows = data
