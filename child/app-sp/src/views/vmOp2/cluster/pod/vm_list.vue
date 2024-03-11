@@ -23,6 +23,7 @@
       :row-class-name="rowStyle"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
+      @filter-change="handleFilterChange"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column
@@ -40,6 +41,10 @@
       >
         <template #default="scope" v-if="item.prop==='eip_info'">
           <span>{{ scope.row.eip_info[scope.row.pub_net] ? scope.row.eip_info[scope.row.pub_net].eip_ip : '-'}}</span>
+        </template>
+        <template #default="scope" v-else-if="item.prop==='status_display'">
+          <div :class="scope.row.status">{{ scope.row.status_display }}</div>
+          <div class="warning_message" v-if="scope.row.no_charge_shutdown_ecs && scope.row.status==='shutdown'">关机不计费</div>
         </template>
         <template #default="scope" v-else-if="item.prop==='private_net'">
           <div v-for="net in  scope.row.private_net.split(';')" :key="net">
@@ -149,6 +154,7 @@ export default class VmList extends Vue{
   private search_data:any={}
   private sort_prop_name = '';
   private sort_order = undefined;
+  private ecs_status_list:any=[];
   private search_reqData = {};
   private search_billing_method = "all";
   private search_op_source = "";
@@ -213,6 +219,11 @@ export default class VmList extends Vue{
     size:20,
     total:0
   }
+  private gpu_status_list:any=[
+    {text:'正常',value:'0'},
+    {text:'卸载',value:'1'},
+    {text:'关闭',value:'2'},
+  ]
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
@@ -276,7 +287,10 @@ export default class VmList extends Vue{
     }
   }
 
+  private search_status=[]
+  private search_card_status_type:string=''
   created(){
+    this.FnGetStatus()
     this.get_field()
     this.get_pod_ecs_list()
     document.addEventListener('click', hideMenu);
@@ -509,15 +523,51 @@ export default class VmList extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-      item = Object.assign(item,{},{sortable:'custom'})
+     if(!['gpu_card_status','status_display'].includes(item.prop)) {
+       item = Object.assign(item, {}, {sortable: 'custom'})
+     }
       if(['ecs_id','ecs_name','host_name','create_time','update_time','gpu_card_status'].includes(item.prop)){
         item = Object.assign(item,{},{width:'150px',overflow:true})
       }
       if(['gpu_card_status','eip_info','private_net','customer_id','customer_name','status_display','ecs_goods_name','pub_net','product_source'].includes(item.prop)){
         item = Object.assign(item,{},{width:'120px',overflow:true})
       }
+      if(item.prop==='status_display'){
+        item = Object.assign(item,{},{column_key:'status',list:this.ecs_status_list})
+      }
+      if(item.prop==='gpu_card_status'){
+        item = Object.assign(item,{},{column_key:'card_status_type',list:this.gpu_status_list})
+      }
       return item;
     })
+  }
+  private async FnGetStatus() {
+    const resData = await Service.get_vm_status_list();
+    if (resData.code === "Success") {
+      this.ecs_status_list = [];
+      for (let key in resData.data) {
+        if(key!=='destroy'){
+          this.ecs_status_list.push({
+            text: resData.data[key],
+            value: key
+          });
+        }
+      }
+      this.get_pod_ecs_list()
+    }
+  }
+  // 筛选实例来源
+  private handleFilterChange(val) {
+    setTimeout(()=>{
+      if(val.status){
+        this.search_status = val.status;
+      }
+      if(val.card_status_type){
+        this.search_card_status_type = val.card_status_type[0];
+      }
+      this.get_pod_ecs_list();
+    },500)
+
   }
   private FnCustom() {
     this.show_custom = true;
@@ -530,6 +580,10 @@ export default class VmList extends Vue{
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
       [this.sort_prop_name]: this.sort_order,
+      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
+    }
+    if (this.search_card_status_type) {
+      reqData["card_status_type"] = this.search_card_status_type;
     }
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){
