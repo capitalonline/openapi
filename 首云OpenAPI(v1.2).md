@@ -8449,7 +8449,7 @@ def describe_goodsId():
                                         "BillMethod":  "0",
                                         "BillMethodDisplay":  "按需计费",
                                         "GoodsIds":  "8534,8528",
-                                        "GoodsNames":  "CCK镜像仓库增强配置,测试带宽(假公网)-流量计费",
+                                        "GoodsNames":  "CCK镜像仓库增强配置,带宽",
                                         "SiteIds":  "35304122-8504-400c-a61c-56ba244c5dda,1296b88a-8903-11ea-a207-9a8ee1b6ac8c,35aef6e1-34ee-4f32-bcc4-62ede720ba80,a04f56cf-55d4-11e5-aa04-482199072629,b13d22e9-c078-4979-a06e-cc1c2cbaeb9c,bb2e22cf-5643-11e7-81eb-184f329fa47a,04d42ff3-bb26-4063-89e9-1c38509843a3,25c7978e-c820-4cd6-8bd3-77f90e410ffb,ca0bd848-9b59-40a2-9f57-d64fbc72a9df,d01a7924-6454-11ea-b26e-00505691938c,750b39e0-03d4-485c-8b07-8aec2329050a,b70c5130-629d-11ea-94fb-00505691f8f1,fdd523fe-fe6c-434a-a817-9b415a0206e8,fba8121c-e5a1-4038-b240-790db3ed5b5d,61fb444a-f0ad-41cf-aef2-19297c7dbf37,b4d0a486-71b3-4e6c-a136-2c9beb98546f,b26322d9-6dc0-4a60-a46e-c8aa6a00163b,ba46b02f-eb4e-457a-a800-1f2bfb9d80be,de0b0931-4c14-4f0b-ab60-7e1768241136",
                                         "SiteNames":  "北京C,香港B,北京D,香港1,迪拜1,纽约1,研发kvm,广州网络节点,研发GIC,上海1,达拉斯1,北京10,台北1,北京2,北京5,北京F,无锡3,上海3,北京3"
                               },
