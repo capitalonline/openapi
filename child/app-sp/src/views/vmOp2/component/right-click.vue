@@ -63,7 +63,11 @@ export default class RightClick extends Vue{
     this.msg = this.error_msg
   }
   private disabledTooltipContent(item){
-    return this.msg[item.value]
+    if(this.msg[item.value]) {
+      return  this.msg[item.value]
+    } else {
+      return '无操作权限'
+    }
   }
   @Emit("fn-click")
   private FnClick(menu){
@@ -84,55 +88,58 @@ export default class RightClick extends Vue{
   width: 200px;
   border: 1px solid #e4e7ed;
   font-size: 13px;
-}
 
-#menu ul {
-  list-style: none;
-  margin: 0px;
-  padding: 0px;
-}
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-#menu ul li {
-  padding: 0 10px;
-  height: 30px;
-  line-height: 30px;
-  position: relative;
-  box-sizing: border-box;
-  text-indent: 8px;
-}
-#menu ul li .iconfont {
-  float: right;
-}
+    li {
+      padding: 0 10px;
+      height: 30px;
+      line-height: 30px;
+      position: relative;
+      box-sizing: border-box;
+      text-indent: 8px;
+      .iconfont {
+        float: right;
+      }
 
-#menu ul li ul {
-  display: none;
-  position: absolute;
-  left: 200px;
-  top: 0;
-  width: 160px;
-  border: 1px solid #e4e7ed;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-}
+      ul {
+        display: none;
+        position: absolute;
+        left: 200px;
+        top: 0;
+        width: 160px;
+        border: 1px solid #e4e7ed;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+        li {
+          background: #ffffff;
+        }
+      }
 
-#menu ul li ul li {
-  background-color: #fff;
-}
+      &:hover {
+        background-color: #ecf5ff;
 
-#menu ul li:hover {
-  background-color: #ecf5ff;
-}
+        ul {
+          display: block;
+        }
+      }
+    }
+  }
 
-#menu ul li:hover ul {
-  display: block;
-}
-#menu .tip{
-  height:30px;
-  margin-bottom: 5px;
-  background: #ECEFF2;padding-left: 17px;
-  line-height: 30px
-}
-#menu .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  .tip {
+    height: 30px;
+    margin-bottom: 5px;
+    background: #eceff2;
+    padding-left: 17px;
+    line-height: 30px;
+  }
+
+  .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 </style>
+

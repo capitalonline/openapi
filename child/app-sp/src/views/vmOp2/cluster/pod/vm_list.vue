@@ -18,6 +18,9 @@
       :data="list"
       border
       ref="table"
+      @row-click="FnOperRow"
+      @row-contextmenu="FnRightClick"
+      :row-class-name="rowStyle"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
     >
@@ -67,32 +70,144 @@
       @fn-custom="get_custom_columns"
       :type="'pod_vm'"
     ></custom-list-item>
+    <template v-if="record_visible">
+      <Record
+        :visible="record_visible"
+        :record_id="record_id"
+        @close="closeRecord"
+      />
+    </template>
+    <template v-if="detail_visible">
+      <Detail
+        :visible="detail_visible"
+        :detail_id="detail_id"
+        @close-detail="closeDetail"
+      />
+    </template>
+    <template v-if="common_visible">
+      <add-common
+        :visible.sync="common_visible"
+        :ecs_info="ecs_info"
+      />
+    </template>
+    <template v-if="net_visible">
+      <net-set
+        :visible.sync="net_visible"
+        :ecs_list="multiple_selection"
+      />
+    </template>
+    <operate
+      :title="operate_title"
+      :visible.sync="show_operate_dialog"
+      :oper_type="default_operate_type"
+      :multiple_selection="multiple_selection"
+      :customer_id="customer_id"
+      :az_id="az_id"
+      :is_gpu="is_gpu"
+      @close="close">
+    </operate>
+    <right-click :multi_rows="multiple_selection" :menus="menus" :name=" multiple_selection.length>0 ? multiple_selection[0].ecs_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
   </div>
 
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
 import Service from "@/https/vmOp2/cluster/pod";
+import {rightClick} from "@/utils/vmOp2/rightClick";
+import {hideMenu} from "@/utils/vmOp2/hideMenu";
+import RightClick from "@/views/vmOp2/component/right-click.vue";
+import Record from "@/views/instance/record.vue"
+import Detail from "@/views/instance/detail.vue"
+import AddCommon from '@/views/instance/addCommonMirror.vue'
+import netSet from '@/views/instance/netSet.vue'
+import Operate from "@/components/vmOp2/cluster/pod/instance/operate.vue";
+import {Table} from "element-ui";
+import {getVmOperateAuth} from '@/utils/getStatusInfo';
 @Component({
   components: {
+    Operate,
     SearchFrom,
     SvgIcon,
-    CustomListItem
+    CustomListItem,
+    RightClick,
+    Record,
+    Detail,
+    AddCommon,
+    netSet
   }
 })
 
 export default class VmList extends Vue{
   private list=[]
   private all_column_item=[];
-  private multi_rows:any=[];
+  private multiple_selection:any=[];
   private search_data:any={}
   private sort_prop_name = '';
   private sort_order = undefined;
+  private search_reqData = {};
+  private search_billing_method = "all";
+  private search_op_source = "";
+  // 产品线来源
+  private search_product_source='';
+  private search_ecs_goods_name = [];
+  private search_status=[]
+  private instance_list: Array<Object> = [];
+  private customer_id: string = "";
+  private az_id: string = "";
+  private is_gpu: number = 0;
+  private origin_disk_size: number = 0;
+  private support_gpu_driver: string = "";
+  private spec_family_id: string = "";
+  private gpu_card_operate:string=''
+  private os_type = "";
+  private billing_method: string = "0";
+  private multiple_selection_id: Array<string> = [];
+  private operate_auth = [];
+  private show_operate_dialog: boolean = false;
+  private operate_title: string = "";
+  private default_operate_type: string = "";
+  private shutdown_ecs_type: string = "shutdown_ecs";
+  private restart_ecs_type: string = "restart_ecs";
+  private record_visible: boolean = false;
+  private record_id: string = "";
+  private detail_visible: boolean = false;
+  private detail_id: string = "";
+  private net_visible:boolean=false;
+  private gpu_status_list:any=[
+    {text:'正常',value:'0'},
+    {text:'卸载',value:'1'},
+    {text:'关闭',value:'2'},
+  ]
+  // 产品来源
+  private product_source_list:any= []
+  // 服务账号ID
+  private product_server_id:string=''
+  private search_card_status_type:string=''
+  private search_product_status_type:string=''
+  private billing_method_relation = {
+    "": "不计费",
+    0: "按需计费",
+    1: "包年包月"
+  };
+  private billing_method_list = [];
+  private ecs_goods_name_list = [];
+  private timer = null;
+  private os_info = {};
+  private ecs_info = {};
+  private common_visible:boolean=false
+  private disk_billing_info = {};
+  private total_price = "";
+  private ecs_list_price = {};
+  private loading = false;
+  private ecs_status_list:any=[];
+  private select_tag =[]
+  private isComponentDestroying:boolean = false
+  private ecs_id=""
   private page_info:any={
     current:1,
     size:20,
@@ -101,9 +216,273 @@ export default class VmList extends Vue{
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
+  private switch_power:any= [
+    {label:'开机',value:'start_up'},
+    {label:'关机',value:'shutdown'},
+    {label:'重启',value:'restart'},
+  ]
+  private menus= [
+    {label: '详情',value: 'instance_detail',single:true},
+    {label:'开关机',value:'start_or_shutdown', list:this.switch_power},
+    {label:'操作记录',value:'instance_record',single:true},
+    {label: '监控',value: 'monitor',single:true},
+    {label: '远程连接',value: 'vnc',single:true},
+    {label: '制作公共镜像',value: 'add_common_mirror',single:true},
+    {label: '显卡管理',value: 'gpu_manage',single:true},
+    {label: '逻辑删除',value: 'delete'},
+    {label: '销毁',value: 'destroy'},
+    {label: '恢复',value: 'restore'},
+    {label: '更换实例规格',value: 'update_spec'},
+    {label: '更换操作系统',value: 'update_system'},
+    {label: '重置密码',value: 'reset_pwd'},
+    {label: '网络设置',value: 'set_net'},
+  ]
+  private error_msg={
+    vnc:'已选虚拟机状态需为运行中',
+    add_common_mirror:'仅内部账号且状态为已关机的实例支持操作',
+    gpu_manage:'仅支持对GPU型实例支持显卡管理',
+    set_net:'实例需为运行中'
+  }
+  @Watch('multiple_selection',{immediate:true,deep:true})
+  private watch_multi(){
+    this.handleMenus()
+  }
+  private handleMenus() {
+    // 处理菜单项
+    for (const item of this.menus) {
+      if (!item.list) {
+        switch(item.value) {
+          case 'gpu_manage':
+            item.disabled = !this.multiple_selection.every(gpu => gpu.is_gpu);
+            break;
+          case 'vnc':
+            item.disabled = !this.operate_auth.includes(item.value) || this.multiple_selection.every(vnc => vnc.status !== 'running');
+            break;
+          case 'add_common_mirror':
+            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'shutdown') || this.multiple_selection.every(vnc => vnc.customer_type !== '内部') || !this.operate_auth.includes(item.value);
+            break;
+          case 'set_net':
+            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
+            break;
+          default:
+            item.disabled = !this.operate_auth.includes(item.value);
+        }
+      } else {
+        // 处理子菜单项
+        for (const inn of item.list) {
+          inn.disabled = !this.operate_auth.includes(inn.value);
+        }
+      }
+    }
+  }
+
   created(){
     this.get_field()
     this.get_pod_ecs_list()
+    document.addEventListener('click', hideMenu);
+    this.operate_auth = this.$store.state.auth_info['instance_list'];
+  }
+  private infoClick(item) {
+    const {label, value}=item
+    if(!item.list && !item.disabled){
+      if(value === 'instance_record'){
+        this.record_id = this.ecs_id
+        this.record_visible = true;
+      }
+      if(value === 'instance_detail'){
+        this.detail_id = this.ecs_id;
+        this.detail_visible = true;
+      }
+      if(value === 'add_common_mirror'){
+        this.ecs_info = this.multiple_selection[0]
+        this.common_visible = true;
+      }
+      if(value === 'set_net'){
+        this.net_visible = true
+      }
+      if(['start_up','shutdown','restart','delete','restore','destroy','update_spec','update_system','reset_pwd','set_net'].includes(value)) {
+        const operate_info = getVmOperateAuth(value);
+        if (
+          ["reset_pwd", "update_spec", "update_system", "open_bill", "net_set"].indexOf(
+            value
+          ) >= 0
+        ) {
+          if (!this.FnJudegCustomerAz(operate_info, value)) {
+            return;
+          }
+          if (item.value === "open_bill") {
+            this.FnGetEcsPrice();
+          }
+          if (item.value === 'net_set') {
+            this.netSet('batch');
+            return;
+          }
+        } else {
+          if (!this.FnJudgeCustomer(operate_info, value)) {
+            return;
+          }
+        }
+        this.operate_title = operate_info.label;
+        this.show_operate_dialog = true;
+        this.default_operate_type = value;
+      }
+      hideMenu()
+    }
+  }
+  private close(val){
+    val==='1' && this.get_pod_ecs_list()
+    this.show_operate_dialog=false;
+    this.default_operate_type='';
+    this.operate_title=""
+    this.multiple_selection=[]
+    const table =this.$refs.table as Table
+    table.clearSelection()
+  }
+  private FnJudgeCustomer(operate_info, type): boolean {
+    this.customer_id = "";
+    let flag = true;
+    this.multiple_selection_id = [];
+    for (let index = 0; index < this.multiple_selection.length; index++) {
+      let item: any = this.multiple_selection[index];
+      this.multiple_selection_id.push(item.ecs_id);
+      if (index === 0) {
+        this.customer_id = item.customer_id;
+        this.is_gpu = Number(item.is_gpu);
+      }
+      if (item.customer_id !== this.customer_id) {
+        this.$message.warning("只允许对同一客户的实例进行批量操作！");
+        flag = false;
+        break;
+      }
+      if (["recover_ecs"].indexOf(type) >= 0 && item.is_gpu != this.is_gpu) {
+        this.$message.warning(
+          `只允许对同一类型实例进行批量${operate_info.label}操作！`
+        );
+        flag = false;
+        break;
+      }
+      if (operate_info.auth.indexOf(item.status) < 0) {
+        this.$message.warning(operate_info.msg);
+        flag = false;
+        break;
+      }
+    }
+    return flag;
+  }
+  private FnJudegCustomerAz(operate_info, type): boolean {
+    this.customer_id = "";
+    this.az_id = "";
+    this.billing_method = "0";
+    this.origin_disk_size = 0;
+    this.support_gpu_driver = "";
+    this.spec_family_id = "";
+    this.os_type = "";
+    let flag = true;
+    this.multiple_selection_id = [];
+
+    for (let index = 0; index < this.multiple_selection.length; index++) {
+      let item: any = this.multiple_selection[index];
+      this.multiple_selection_id.push(item.ecs_id);
+      if (index === 0) {
+        this.customer_id = item.customer_id;
+        this.az_id = item.az_id;
+        this.billing_method = item.billing_method;
+        this.is_gpu = Number(item.is_gpu);
+        this.support_gpu_driver = item.support_gpu_driver;
+        this.spec_family_id = item.spec_family_id;
+        this.os_type = item.os_type;
+      }
+      if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
+        this.$message.warning(
+          "只允许对同一客户的同一可用区下实例进行批量操作！"
+        );
+        flag = false;
+        break;
+      }
+      if (
+        ["update_spec", "update_system"].indexOf(type) >= 0 &&
+        (item.is_gpu != this.is_gpu ||
+          item.billing_method !== this.billing_method)
+      ) {
+        this.$message.warning(
+          `只允许对同一类型同一计费方式实例进行批量${operate_info.label}操作！`
+        );
+        flag = false;
+        break;
+      }
+      if (type === "open_bill" && item.is_charge) {
+        this.$message.warning("只允许对未开启计费的实例开启计费！");
+        flag = false;
+        break;
+      }
+      if (
+        type === "update_system" &&
+        item.support_gpu_driver != this.support_gpu_driver
+      ) {
+        this.$message.warning(
+          `只允许对同一驱动类型实例进行批量${operate_info.label}操作！`
+        );
+        flag = false;
+        break;
+      }
+      if (
+        type === "update_system" &&
+        item.spec_family_id != this.spec_family_id
+      ) {
+        this.$message.warning(
+          `只允许对同一规格族实例进行批量${operate_info.label}操作！`
+        );
+        flag = false;
+        break;
+      }
+      if (type === "update_system" && item.os_type != this.os_type) {
+        this.$message.warning(`Windows和linux系统不可以互换重装！`);
+        flag = false;
+        break;
+      }
+      if (type === "update_spec" && this.is_gpu) {
+        this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
+        flag = false;
+        break;
+      }
+      if(['update_spec','update_system'].includes(type) && item.no_charge_shutdown_ecs){
+        this.$message.warning(`不允许对关机不计费的实例${operate_info.label}操作！`);
+        flag = false;
+        break;
+      }
+      if (operate_info.auth.indexOf(item.status) < 0) {
+        this.$message.warning(operate_info.msg);
+        flag = false;
+        break;
+      }
+      this.origin_disk_size = Math.max(
+        this.origin_disk_size,
+        item.system_disk_size
+      );
+    }
+    return flag;
+  }
+  private async FnGetEcsPrice() {
+    this.ecs_list_price = {};
+    const resData = await Service.each_resource_price({
+      customer_id: this.customer_id,
+      az_id: this.az_id,
+      billing_method: "0",
+      resource_ids: this.multiple_selection_id,
+      resource_type: "ecs"
+    });
+    if (resData.code === "Success") {
+      for (let item in resData.data.total_price) {
+        this.$set(
+          this.ecs_list_price,
+          item,
+          resData.data.price_symbol +
+          resData.data.total_price[item].toFixed(2) +
+          "/" +
+          resData.data.price_unit
+        );
+      }
+    }
   }
   private refresh(){
     this.get_pod_ecs_list()
@@ -158,8 +537,35 @@ export default class VmList extends Vue{
       this.page_info.total = res.data.page.count
     }
   }
+  //右键弹出操作
+  FnRightClick(row,column,event){
+    //判断当前行是否被选中，没选中时需选中并弹出菜单
+    const isSelected = this.multiple_selection.some(item => item.ecs_id === row.ecs_id);
+    if (!isSelected) {
+      (this.$refs.table as any).toggleRowSelection(row)
+    }
+    this.ecs_id = row.ecs_id
+    rightClick(row,column,event)
+  }
+  //改变点击行得选中状态
+  private FnOperRow(row){
+    (this.$refs.table as any).toggleRowSelection(row)
+  }
+  //改变选中行的背景颜色
+  rowStyle({row}) {
+    const isSelected = this.multiple_selection.some(item => item.ecs_id === row.ecs_id);
+    if (isSelected) {
+      return 'rowStyle'
+    }
+  }
+  private closeRecord() {
+    this.record_visible = false;
+  }
+  private closeDetail() {
+    this.detail_visible = false;
+  }
   private handleSelectionChange(data){
-    this.multi_rows = data
+    this.multiple_selection = data
   }
   private FnSortChange(val){
     let relation = {};
@@ -208,6 +614,14 @@ i.el-icon-s-tools{
 }
 ::v-deep .el-progress__text{
   font-size: 14px!important;
+}
+//table选中高亮
+::v-deep .el-table .rowStyle {
+  background-color: #8CC4fc !important;
+
+}
+::v-deep .el-table .rowStyle:hover>td {
+  background-color: #8CC4fc !important
 }
 
 </style>
