@@ -8393,7 +8393,7 @@ def describe_goodsId():
 
 ### 1.DescribeSubjects
 
-**Action：CreateInstance**
+**Action：DescribeSubjects**
 
 **描述** 获取当前账户下的测试项目。
 
