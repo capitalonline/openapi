@@ -208,7 +208,7 @@
 
 <script lang="ts">
 import {Component, Emit, Prop, PropSync, Vue} from "vue-property-decorator";
-import Service from "@/https/vmOp2/cluster/pod";
+import Service from "@/https/vmOp2/cluster/pod/instance";
 import Recover from "@/views/instance/recover.vue";
 import updateSpec from "@/views/instance/updateSpec.vue";
 import updateOs from "@/views/instance/updateOs.vue";
@@ -236,58 +236,25 @@ export default class Operate extends Vue{
   @Prop(String) customer_id!:string
   @Prop(String) az_id!:string
   @Prop(Number) is_gpu!:number
-  private search_reqData = {};
-  private search_billing_method = "all";
-  private search_op_source = "";
-  // 产品线来源
-  private search_product_source='';
-  private search_ecs_goods_name = [];
-  private search_status=[]
-  private instance_list: Array<Object> = [];
+  @Prop({default:()=>[]}) multiple_selection_id!:any
   private origin_disk_size: number = 0;
   private support_gpu_driver: string = "";
   private spec_family_id: string = "";
   private gpu_card_operate:string=''
   private os_type = "";
   private billing_method: string = "0";
-  private multiple_selection_id: Array<string> = [];
-  private operate_auth = [];
   private shutdown_ecs_type: string = "shutdown_ecs";
   private restart_ecs_type: string = "restart_ecs";
-  private record_visible: boolean = false;
-  private record_id: string = "";
-  private detail_visible: boolean = false;
-  private detail_id: string = "";
-  private net_visible:boolean=false;
-  private gpu_status_list:any=[
-    {text:'正常',value:'0'},
-    {text:'卸载',value:'1'},
-    {text:'关闭',value:'2'},
-  ]
-  // 产品来源
-  private product_source_list:any= []
-  // 服务账号ID
-  private product_server_id:string=''
-  private search_card_status_type:string=''
-  private search_product_status_type:string=''
-  private billing_method_relation = {
-    "": "不计费",
-    0: "按需计费",
-    1: "包年包月"
-  };
-  private billing_method_list = [];
-  private ecs_goods_name_list = [];
-  private timer = null;
   private os_info = {};
-  private ecs_info = {};
-  private common_visible:boolean=false
   private disk_billing_info = {};
   private total_price = "";
   private ecs_list_price = {};
-  private loading = false;
-  private ecs_status_list:any=[];
-  private select_tag =[]
-  private isComponentDestroying:boolean = false
+  private page_info = {
+    page_sizes: [20, 50, 100],
+    page_size: 20,
+    page_index: 1,
+    total: 0
+  };
   @Emit("close")
   private back(val){
     this.show_operate_dialog=false
@@ -368,7 +335,7 @@ export default class Operate extends Vue{
       ecs_ids: this.multiple_selection_id
     };
     if (
-      ["start_up", "shutdown", "restart"].indexOf(
+      ["start_up_ecs", "shutdown_ecs", "restart_ecs"].indexOf(
         this.oper_type
       ) >= 0
     ) {
@@ -552,9 +519,45 @@ export default class Operate extends Vue{
       this.FnClose();
     }
   }
+  private FnClose() {
+    this.total_price = "";
+    this.gpu_card_operate='';
+    this.back('1')
+  }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.component-box {
+  width: 650px;
+  margin: 20px auto;
+}
+.time-box {
+  width: 70px;
+}
+.operate-table {
+  max-height: 300px;
+  overflow: auto;
+}
+.m-top23 {
+  margin-top: 23px;
+}
+.mark-tip {
+  margin-left: -20px;
+  vertical-align: top;
+}
+.circel-border {
+  display: inline-block;
+  width: 30px;
+  line-height: 28px;
+  text-align: center;
+  border: 1px solid #888;
+  border-radius: 30px;
+}
+</style>
+<style lang="scss">
+.instance-list .el-loading-spinner .circular {
+  width: 24px;
+  height: 24px;
+}
 </style>

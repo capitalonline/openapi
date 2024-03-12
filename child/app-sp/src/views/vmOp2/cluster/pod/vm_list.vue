@@ -28,7 +28,7 @@
       <el-table-column type="selection"></el-table-column>
       <el-table-column
         v-for="(item) in custom_host"
-        :filter-multiple="item.column_key ? false : null"
+        :filter-multiple="item.column_key ? item.multiple : null"
         :key="item.prop"
         :prop="item.prop"
         :column-key="item.column_key ? item.column_key : null"
@@ -109,6 +109,7 @@
       :customer_id="customer_id"
       :az_id="az_id"
       :is_gpu="is_gpu"
+      :multiple_selection_id="multiple_selection_id"
       @close="close">
     </operate>
     <right-click :multi_rows="multiple_selection" :menus="menus" :name=" multiple_selection.length>0 ? multiple_selection[0].ecs_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
@@ -122,7 +123,7 @@ import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
 import {deal_list} from "@/utils/transIndex";
-import Service from "@/https/vmOp2/cluster/pod";
+import Service from "@/https/vmOp2/cluster/pod/instance";
 import {rightClick} from "@/utils/vmOp2/rightClick";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import RightClick from "@/views/vmOp2/component/right-click.vue";
@@ -132,7 +133,8 @@ import AddCommon from '@/views/instance/addCommonMirror.vue'
 import netSet from '@/views/instance/netSet.vue'
 import Operate from "@/components/vmOp2/cluster/pod/instance/operate.vue";
 import {Table} from "element-ui";
-import {getVmOperateAuth} from '@/utils/getStatusInfo';
+import getInsStatus from "@/utils/getStatusInfo";
+import MirrorService from "@/https/mirror/list";
 @Component({
   components: {
     Operate,
@@ -184,11 +186,6 @@ export default class VmList extends Vue{
   private detail_visible: boolean = false;
   private detail_id: string = "";
   private net_visible:boolean=false;
-  private gpu_status_list:any=[
-    {text:'正常',value:'0'},
-    {text:'卸载',value:'1'},
-    {text:'关闭',value:'2'},
-  ]
   // 产品来源
   private product_source_list:any= []
   // 服务账号ID
@@ -210,7 +207,6 @@ export default class VmList extends Vue{
   private total_price = "";
   private ecs_list_price = {};
   private loading = false;
-  private ecs_status_list:any=[];
   private select_tag =[]
   private isComponentDestroying:boolean = false
   private ecs_id=""
@@ -228,31 +224,31 @@ export default class VmList extends Vue{
   private custom_host=[]
   private show_custom:boolean=false;
   private switch_power:any= [
-    {label:'开机',value:'start_up'},
-    {label:'关机',value:'shutdown'},
-    {label:'重启',value:'restart'},
+    {label:'开机',value:'start_up_ecs',disabled:false},
+    {label:'关机',value:'shutdown_ecs',disabled:false},
+    {label:'重启',value:'restart_ecs',disabled:false},
   ]
   private menus= [
-    {label: '详情',value: 'instance_detail',single:true},
-    {label:'开关机',value:'start_or_shutdown', list:this.switch_power},
-    {label:'操作记录',value:'instance_record',single:true},
-    {label: '监控',value: 'monitor',single:true},
-    {label: '远程连接',value: 'vnc',single:true},
-    {label: '制作公共镜像',value: 'add_common_mirror',single:true},
-    {label: '显卡管理',value: 'gpu_manage',single:true},
-    {label: '逻辑删除',value: 'delete'},
-    {label: '销毁',value: 'destroy'},
-    {label: '恢复',value: 'restore'},
-    {label: '更换实例规格',value: 'update_spec'},
-    {label: '更换操作系统',value: 'update_system'},
-    {label: '重置密码',value: 'reset_pwd'},
-    {label: '网络设置',value: 'set_net'},
+    {label: '详情',value: 'instance_detail',single:true,disabled:false},
+    {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
+    {label:'操作记录',value:'instance_record',single:true,disabled:false},
+    {label: '监控',value: 'monitor',single:true,disabled:false},
+    {label: '远程连接',value: 'vnc',single:true,disabled:false},
+    {label: '制作公共镜像',value: 'add_common_mirror',single:true,disabled:false},
+    {label: '显卡管理',value: 'gpu_manage',single:true,disabled:false},
+    {label: '逻辑删除',value: 'delete_ecs',disabled:false},
+    {label: '销毁',value: 'destroy_ecs',disabled:false},
+    {label: '恢复',value: 'restore',disabled:false},
+    {label: '更换实例规格',value: 'update_spec',disabled:false},
+    {label: '更换操作系统',value: 'update_system',disabled:false},
+    {label: '重置密码',value: 'reset_pwd',disabled:false},
+    {label: '网络设置',value: 'net_set',disabled:false},
   ]
   private error_msg={
     vnc:'已选虚拟机状态需为运行中',
     add_common_mirror:'仅内部账号且状态为已关机的实例支持操作',
     gpu_manage:'仅支持对GPU型实例支持显卡管理',
-    set_net:'实例需为运行中'
+    net_set:'实例需为运行中'
   }
   @Watch('multiple_selection',{immediate:true,deep:true})
   private watch_multi(){
@@ -272,27 +268,24 @@ export default class VmList extends Vue{
           case 'add_common_mirror':
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'shutdown') || this.multiple_selection.every(vnc => vnc.customer_type !== '内部') || !this.operate_auth.includes(item.value);
             break;
-          case 'set_net':
+          case 'net_set':
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
             break;
           default:
-            item.disabled = !this.operate_auth.includes(item.value);
+            item.disabled = false
         }
       } else {
         // 处理子菜单项
         for (const inn of item.list) {
-          inn.disabled = !this.operate_auth.includes(inn.value);
+          inn.disabled = false
         }
       }
     }
   }
 
-  private search_status=[]
-  private search_card_status_type:string=''
   created(){
     this.FnGetStatus()
     this.get_field()
-    this.get_pod_ecs_list()
     document.addEventListener('click', hideMenu);
     this.operate_auth = this.$store.state.auth_info['instance_list'];
   }
@@ -311,11 +304,14 @@ export default class VmList extends Vue{
         this.ecs_info = this.multiple_selection[0]
         this.common_visible = true;
       }
-      if(value === 'set_net'){
-        this.net_visible = true
+      if(value === 'vnc'){
+        this.FnToVnc(this.ecs_id)
       }
-      if(['start_up','shutdown','restart','delete','restore','destroy','update_spec','update_system','reset_pwd','set_net'].includes(value)) {
-        const operate_info = getVmOperateAuth(value);
+      if(value === 'gpu_manage'){
+        this.operateGpu()
+      }
+      if(['start_up_ecs','shutdown_ecs','restart_ecs','delete_ecs','restore','destroy_ecs','update_spec','update_system','reset_pwd','net_set'].includes(value)) {
+        const operate_info = getInsStatus.getInsOperateAuth(value);
         if (
           ["reset_pwd", "update_spec", "update_system", "open_bill", "net_set"].indexOf(
             value
@@ -326,9 +322,11 @@ export default class VmList extends Vue{
           }
           if (item.value === "open_bill") {
             this.FnGetEcsPrice();
+            hideMenu()
           }
           if (item.value === 'net_set') {
-            this.netSet('batch');
+            this.net_visible=true;
+            hideMenu()
             return;
           }
         } else {
@@ -343,8 +341,43 @@ export default class VmList extends Vue{
       hideMenu()
     }
   }
+  private async operateGpu() {
+    let {ecs_id} = this.multiple_selection[0]
+    const resData: any = await Service.update_gpu_status({ecs_id})
+    if (resData.code === 'Success') {
+      this.FnGetGraphics(ecs_id)
+    }
+  }
+  private async FnGetGraphics(ecs_id) {
+    let reqData = {
+      page_index: this.page_info.current,
+      page_size: this.page_info.size,
+      is_op:true,
+      az_id:this.$store.state.az_id,
+      pod_id:this.$route.params.id,
+      [this.sort_prop_name]: this.sort_order,
+    }
+    reqData["ecs_id"] = ecs_id
+    const resData: any = await Service.get_pod_ecs_list(reqData);
+    if (resData.code == 'Success') {
+      this.multiple_selection=resData.data.ecs_list;
+      this.show_operate_dialog = true;
+      this.operate_title = '显卡管理';
+      this.default_operate_type = 'operateGpu';
+    }
+  }
+  private async FnToVnc(id) {
+    let resData: any = await Service.get_vnc_url({
+      ecs_id: id
+    });
+    if (resData.code === "Success") {
+      let vnc_info = resData.data.vnc_info.split("/vnc_lite.html");
+      let url = `${vnc_info[0]}/vnc_lite.html?op-token=${this.$store.state.token}?path=/?id=${id}`;
+      window.open(url);
+    }
+  }
   private close(val){
-    val==='1' && this.get_pod_ecs_list()
+    this.get_pod_ecs_list()
     this.show_operate_dialog=false;
     this.default_operate_type='';
     this.operate_title=""
@@ -546,7 +579,7 @@ export default class VmList extends Vue{
     if (resData.code === "Success") {
       this.ecs_status_list = [];
       for (let key in resData.data) {
-        if(key!=='destroy'){
+        if(key!=='destroy_ecs'){
           this.ecs_status_list.push({
             text: resData.data[key],
             value: key

@@ -22,14 +22,6 @@ export default{
   get_pod_host_list(req){
     return service(getEcsOptions('GET','/pod/get_pod_host_list/',req))
   },
-  //获取pod虚拟机数据
-  get_pod_ecs_list(req){
-    return service(getEcsOptions('POST','/ecs/get_pod_ecs_list/',req))
-  },
-  //获取pod虚拟机表头
-  get_pod_ecs_field(){
-    return service(getEcsOptions('GET','/pod/get_pod_ecs_field/'))
-  },
   //新建集群
   create_cluster(req){
     return service(getEcsOptions('POST','/cluster/create_cluster/',req))
@@ -57,8 +49,5 @@ export default{
   //获取电源与机器状态
   get_status_list(req){
     return service(getHostOptions('GET','/host/host_status_list/',req))
-  },
-  get_vm_status_list() {
-    return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
-  },
+  }
 }
