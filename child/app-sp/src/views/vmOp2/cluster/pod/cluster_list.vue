@@ -127,6 +127,8 @@ export default class List extends Vue{
   private error_msg={
     delete_cluster:'仅支持无物理机的cluster进行删除'
   }
+  private sort_prop_name = '';
+  private sort_order = undefined;
   private page_info:any={
     current:1,
     size:20,
@@ -255,8 +257,10 @@ export default class List extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-      item = Object.assign(item,{},{sortable:'custom'})
-      if(['cluster_id','gpu_model'].includes(item.prop)){
+      if(!['cpu_model','gpu_model'].includes(item.prop)) {
+        item = Object.assign(item, {}, {sortable: 'custom'})
+      }
+      if(['cluster_id','cpu_model','gpu_model'].includes(item.prop)){
         item = Object.assign(item,{},{minWidth:'240px',overflow:true})
       }
       if(['cpu_model'].includes(item.prop)){
@@ -267,6 +271,7 @@ export default class List extends Vue{
       }
       return item;
     })
+    console.log('custom',this.custom_host)
   }
   private FnCustom() {
     this.show_custom = true;
@@ -277,8 +282,7 @@ export default class List extends Vue{
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
-      sort_field:this.search_data.sort_field,
-      sort_type:this.search_data.sort_type
+      [this.sort_prop_name]: this.sort_order,
     }
     let res:any = await Service.get_pod_cluster_list(reqData)
     if(res.code === 'Success'){
@@ -289,9 +293,15 @@ export default class List extends Vue{
   private handleSelectionChange(data){
     this.multi_rows = data
   }
-  private FnSortChange(obj){
-    this.search_data.sort_field = obj.order ? obj.prop : undefined
-    this.search_data.sort_type = obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
+  private FnSortChange(val){
+    let relation = {};
+    this.all_item.forEach(item => {
+      item.filed.forEach(inn => {
+        relation[inn.field_name] = `sort_${inn.field_name}`;
+      });
+    });
+    this.sort_prop_name = relation[val.prop];
+    this.sort_order = val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
     this.get_pod_cluster_list()
   }
   private handleSizeChange(size){

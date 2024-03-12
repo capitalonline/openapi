@@ -586,6 +586,7 @@ export default class VmList extends Vue{
     this.all_item = res.data;
     this.all_column_item = deal_list(list,label_list,key_list);
     this.get_custom_columns(this.$store.state.pod.vm_host)
+    this.get_custom_columns(this.$store.state.pod.vm_host)
 
      }
   }
