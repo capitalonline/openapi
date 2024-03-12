@@ -43,9 +43,9 @@
           <span>{{scope.row.disk_type==="data" ? `数据盘` : '系统盘'}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="ecs_id" label="实例名称/ID">
+      <el-table-column prop="ecs_id" label="实例ID">
         <template slot-scope="scope">
-          <pre>{{scope.row.ecs_id ? `${scope.row.ecs_name} / ${scope.row.ecs_id}` : ''}}</pre>
+          <pre>{{scope.row.ecs_id ? scope.row.ecs_id : ''}}</pre>
         </template>
       </el-table-column>
       <el-table-column prop="is_follow_delete" label="删除设置">
