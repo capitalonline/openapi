@@ -18,9 +18,6 @@
       :data="list"
       border
       ref="table"
-      @row-click="FnOperRow"
-      @row-contextmenu="FnRightClick"
-      :row-class-name="rowStyle"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
       @filter-change="handleFilterChange"
