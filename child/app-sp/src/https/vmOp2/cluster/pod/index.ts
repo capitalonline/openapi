@@ -24,7 +24,7 @@ export default{
   },
   //获取pod虚拟机数据
   get_pod_ecs_list(req){
-    return service(getEcsOptions('POST','/ecs/get_pod_ecs_list/',req))
+    return service(getEcsOptions('GET','/pod/get_pod_ecs_list/',req))
   },
   //获取pod虚拟机表头
   get_pod_ecs_field(){
@@ -37,4 +37,11 @@ export default{
   get_vm_status_list() {
     return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
   },
+  get_family_data() {
+    return service(getEcsOptions('GET', '/ecs/get_family_data/'))
+  },
+  get_product_source(){
+    return service(getEcsOptions('GET','/ecs/get_product_source/'))
+  }
+
 }

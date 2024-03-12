@@ -25,7 +25,7 @@
       <el-table-column type="selection"></el-table-column>
       <el-table-column
         v-for="(item) in custom_host"
-        :filter-multiple="item.column_key ? false : null"
+        :filter-multiple="item.column_key ? item.multiple : null"
         :key="item.prop"
         :prop="item.prop"
         :column-key="item.column_key ? item.column_key : null"
@@ -53,6 +53,13 @@
         </template>
         <template #default="scope" v-else-if="item.prop==='pub_net'">
           <span>{{scope.row.pub_net ? scope.row.pub_net : '-'}}</span>
+        </template>
+        <template #default="scope" v-else-if="item.prop==='product_source'">
+          <span v-for="item in product_list">
+            <span v-if="item.key === scope.row.product_source">
+              {{item.value}}
+            </span>
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -109,17 +116,53 @@ export default class VmList extends Vue{
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
   ]
+  private product_list:any=[
+    {key:"", value: "云主机"},
+    {key: "gcw", value: "云桌面"},
+    {key: "nas", value: "文件存储转发"},
+    {key: "eks", value: "容器"},
+    {key: "slb", value: "负载均衡"},
+    {key: "paas", value: "数据库"},
+    {key: "bm", value: "裸金属"}
+  ]
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
   private search_status=[]
   private search_card_status_type:string=''
+  private search_product_source='';
+  private search_ecs_goods_name = [];
+  private ecs_goods_name_list = [];
+  private product_source_list:any= []
   created(){
+    this.FnGetCateGoryList()
+    this.get_source_type()
     this.FnGetStatus()
     this.get_field()
   }
   private refresh(){
     this.get_pod_ecs_list()
+  }
+  private async get_source_type(){
+    let res:any = await Service.get_product_source()
+    if(res.code==="Success"){
+      res.data.map(item=>{
+        this.product_source_list.push({text:item.value,value:item.value})
+      })
+
+    }
+  }
+  // 获取云服务器类型信息
+  private async FnGetCateGoryList() {
+    const resData = await Service.get_family_data();
+    if (resData.code === "Success") {
+      this.ecs_goods_name_list = resData.data.spec_family_list.map(item => {
+        return {
+          value: item.spec_family_id,
+          text: item.name
+        };
+      });
+    }
   }
   private async get_field(){
      let res:any = await Service.get_pod_ecs_field()
@@ -143,7 +186,7 @@ export default class VmList extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-     if(!['gpu_card_status','status_display'].includes(item.prop)) {
+     if(!['gpu_card_status','status_display','ecs_goods_name','product_source'].includes(item.prop)) {
        item = Object.assign(item, {}, {sortable: 'custom'})
      }
       if(['ecs_id','ecs_name','host_name','create_time','update_time','gpu_card_status'].includes(item.prop)){
@@ -153,10 +196,16 @@ export default class VmList extends Vue{
         item = Object.assign(item,{},{width:'120px',overflow:true})
       }
       if(item.prop==='status_display'){
-        item = Object.assign(item,{},{column_key:'status',list:this.ecs_status_list})
+        item = Object.assign(item,{},{column_key:'status',list:this.ecs_status_list,multiple:true})
       }
       if(item.prop==='gpu_card_status'){
-        item = Object.assign(item,{},{column_key:'card_status_type',list:this.gpu_status_list})
+        item = Object.assign(item,{},{column_key:'card_status_type',list:this.gpu_status_list,multiple:false})
+      }
+      if(item.prop==='ecs_goods_name'){
+        item = Object.assign(item,{},{column_key:'ecs_goods_name',list:this.ecs_goods_name_list,multiple:true})
+      }
+      if(item.prop==='product_source'){
+        item = Object.assign(item,{},{column_key:'product_source',list:this.product_source_list,multiple:false})
       }
       return item;
     })
@@ -185,6 +234,12 @@ export default class VmList extends Vue{
       if(val.card_status_type){
         this.search_card_status_type = val.card_status_type[0];
       }
+      if (val.ecs_goods_name) {
+        this.search_ecs_goods_name = val.ecs_goods_name;
+      }
+      if(val.product_source){
+        this.search_product_source = val.product_source[0]
+      }
       this.get_pod_ecs_list();
     },500)
 
@@ -199,16 +254,28 @@ export default class VmList extends Vue{
       is_op:true,
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
-      [this.sort_prop_name]: this.sort_order,
-      status:this.search_status.length>0 ? this.search_status.join(',') : this.ecs_status_list.map(item=>item.value).join(','),
+      [this.sort_prop_name]: this.sort_order
+    }
+    if (this.search_status.length > 0) {
+      reqData["status"] = this.search_status.join(',')
+    }
+    if (this.search_card_status_type) {
+      reqData["card_status_type"] = this.search_card_status_type;
+    }
+    if (this.search_ecs_goods_name.length > 0) {
+      reqData["spec_family_ids"] = this.search_ecs_goods_name.join(',')
+    }
+    // 产品来源
+    if(this.search_product_source){
+      reqData["product_source"] = this.search_product_source;
     }
     if (this.search_card_status_type) {
       reqData["card_status_type"] = this.search_card_status_type;
     }
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){
-      this.list = res.data.ecs_list
-      this.page_info.total = res.data.page.count
+      this.list = res.data.result
+      this.page_info.total = res.data.page_info.count
     }
   }
   private handleSelectionChange(data){
