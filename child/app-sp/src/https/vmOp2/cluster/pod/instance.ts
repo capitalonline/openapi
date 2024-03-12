@@ -57,4 +57,7 @@ export default{
   get_family_data() {
     return service(getEcsOptions('GET', '/ecs/get_family_data/'))
   },
+  get_product_source(){
+    return service(getEcsOptions('GET','/ecs/get_product_source/'))
+  }
 }
