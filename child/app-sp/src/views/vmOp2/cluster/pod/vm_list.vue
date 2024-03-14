@@ -115,6 +115,7 @@ export default class VmList extends Vue{
     {text:'正常',value:'0'},
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
+    {text:'非GPU无显卡',value: '3'}
   ]
   private product_list:any=[
     {key:"", value: "云主机"},
