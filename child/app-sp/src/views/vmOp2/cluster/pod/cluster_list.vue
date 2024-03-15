@@ -178,6 +178,9 @@ export default class List extends Vue{
     this.show_custom = true;
   }
   private async get_pod_cluster_list(){
+    if(!this.$store.state.az_id){
+      return
+    }
     let reqData = {
       page_index: this.page_info.current,
       page_size: this.page_info.size,

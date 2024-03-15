@@ -62,6 +62,9 @@ export default class COverview extends Vue{
     this.get_pod_outline()
   }
   private async get_pod_outline(){
+    if(!this.$store.state.az_id){
+      return
+    }
     let res:any = await Service.get_pod_outline({
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,

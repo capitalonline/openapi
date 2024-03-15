@@ -257,6 +257,9 @@ export default class VmList extends Vue{
     this.show_custom = true;
   }
   private async get_pod_ecs_list(){
+    if(!this.$store.state.az_id){
+      return
+    }
     let reqData = {
       page_index: this.page_info.current,
       page_size: this.page_info.size,
