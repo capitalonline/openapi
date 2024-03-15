@@ -39,6 +39,7 @@ export default class LeftTree extends Vue{
     if(n.length>0){
       this.tree_data = n
       this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
+      this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
     }
   }
   @Watch('currentLivingId')
@@ -64,7 +65,6 @@ export default class LeftTree extends Vue{
     if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
       this.$router.push({name:'host_list',params:{id:data.id}})
     }
-    this.$store.commit('SET_DISPLAY_NAME',data.label);
     this.$store.commit('SET_DISPLAY_NAME',data.label);
   }
   private isCurrentRoute(name, params) {

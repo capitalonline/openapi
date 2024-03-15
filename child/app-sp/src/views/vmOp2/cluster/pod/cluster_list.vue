@@ -154,6 +154,13 @@ export default class List extends Vue{
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', hideMenu);
   }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
+    this.refresh()
+  }
   private handleMenus(){
     //判断右键菜单项是否置灰
     this.menus.forEach(item => {

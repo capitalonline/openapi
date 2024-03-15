@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue'
 import Service from '@/https/vmOp2/cluster/pod/index'
 
@@ -52,6 +52,13 @@ export default class COverview extends Vue{
   }
   private detail_info:any={}
   created(){
+    this.get_pod_outline()
+  }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
     this.get_pod_outline()
   }
   private async get_pod_outline(){

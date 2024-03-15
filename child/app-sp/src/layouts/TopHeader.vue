@@ -10,7 +10,7 @@
       <i class="el-icon-search"></i>
     </div>
     <div class="right-content">
-      <el-button @click="changeLayout()"><i class="el-icon-sort"></i>切换旧页面</el-button>
+      <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
 </template>

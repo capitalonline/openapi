@@ -12,6 +12,7 @@
 <!--        <el-tooltip content="导出" placement="bottom" effect="light">-->
 <!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
 <!--        </el-tooltip>-->
+      </div>
     </div>
     <el-table
       :data="list"
@@ -227,6 +228,7 @@ export default class VmList extends Vue{
     {text:'正常',value:'0'},
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
+    {text:'非GPU无显卡',value: '3'}
   ]
   private product_list:any=[
     {key:"", value: "云主机"},
@@ -508,7 +510,6 @@ export default class VmList extends Vue{
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
       }
-      console.log('$$$',this.az_id)
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
           "只允许对同一客户的同一可用区下实例进行批量操作！"
@@ -614,6 +615,13 @@ export default class VmList extends Vue{
       clearTimeout(this.timer);
     }
   }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
+    this.refresh()
+  }
   private refresh(){
     this.get_pod_ecs_list()
   }
@@ -630,12 +638,12 @@ export default class VmList extends Vue{
   private async FnGetCateGoryList() {
     const resData = await Service.get_family_data();
     if (resData.code === "Success") {
-      this.ecs_goods_name_list = resData.data.spec_family_list.map(item => {
-        return {
-          value: item.spec_family_id,
-          text: item.name
-        };
-      });
+      for (let item of resData.data.spec_family_list) {
+          this.ecs_goods_name_list.push({
+            value: item.spec_family_id,
+            text: item.name
+          });
+      }
     }
   }
   private async get_field(){
@@ -829,10 +837,6 @@ export default class VmList extends Vue{
     this.FnClearTimer();
     this.page_info.current = cur
     this.get_pod_ecs_list()
-  }
-  beforeDestroy() {
-    this.FnClearTimer();
-    this.isComponentDestroying = true;
   }
 }
 </script>
