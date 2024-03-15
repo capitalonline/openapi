@@ -223,6 +223,7 @@ export default class VmList extends Vue{
     {text:'正常',value:'0'},
     {text:'卸载',value:'1'},
     {text:'关闭',value:'2'},
+    {text:'非GPU无显卡',value: '3'}
   ]
   private product_list:any=[
     {key:"", value: "云主机"},
@@ -546,6 +547,13 @@ export default class VmList extends Vue{
       }
     }
   }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
+    this.refresh()
+  }
   private refresh(){
     this.get_pod_ecs_list()
   }
@@ -562,12 +570,12 @@ export default class VmList extends Vue{
   private async FnGetCateGoryList() {
     const resData = await Service.get_family_data();
     if (resData.code === "Success") {
-      this.ecs_goods_name_list = resData.data.spec_family_list.map(item => {
-        return {
-          value: item.spec_family_id,
-          text: item.name
-        };
-      });
+      for (let item of resData.data.spec_family_list) {
+          this.ecs_goods_name_list.push({
+            value: item.spec_family_id,
+            text: item.name
+          });
+      }
     }
   }
   private async get_field(){
