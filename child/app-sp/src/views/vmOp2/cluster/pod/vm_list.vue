@@ -13,7 +13,6 @@
 <!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
 <!--        </el-tooltip>-->
       </div>
-    </div>
     <el-table
       :data="list"
       border
