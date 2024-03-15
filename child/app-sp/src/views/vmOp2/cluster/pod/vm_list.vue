@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="search-box" >
-      <el-input prefix-icon="el-icon-search"></el-input>
+      <action-block :search_option="search_con" @fn-search="FnSearch" :type="true"></action-block>
+<!--      <el-input prefix-icon="el-icon-search"></el-input>-->
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
           <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
@@ -12,7 +12,6 @@
 <!--        <el-tooltip content="导出" placement="bottom" effect="light">-->
 <!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
 <!--        </el-tooltip>-->
-      </div>
     </div>
     <el-table
       :data="list"
@@ -141,7 +140,8 @@ import netSet from '@/views/instance/netSet.vue'
 import Operate from "@/components/vmOp2/cluster/pod/instance/operate.vue";
 import {Table} from "element-ui";
 import getInsStatus from "@/utils/getStatusInfo";
-import MirrorService from "@/https/mirror/list";
+import actionBlock from "@/components/search/actionBlock.vue";
+import moment from "moment";
 @Component({
   components: {
     Operate,
@@ -152,7 +152,8 @@ import MirrorService from "@/https/mirror/list";
     Record,
     Detail,
     AddCommon,
-    netSet
+    netSet,
+    actionBlock
   }
 })
 
@@ -236,6 +237,27 @@ export default class VmList extends Vue{
     {key: "paas", value: "数据库"},
     {key: "bm", value: "裸金属"}
   ]
+  private search_con = {
+    ecs_id: { placeholder: "请输入云服务器ID" },
+    ecs_name: { placeholder: "请输入云服务器名称" },
+    customer_id: { placeholder: "请输入客户ID" },
+    customer_name: { placeholder: "请输入客户名称" },
+    os_info: { placeholder: "请输入操作系统ID/名称"},
+    private_net: { placeholder: "请输入私网IP" },
+    public_net: { placeholder: "请输入公网IP" },
+    host_id: { placeholder: "请输入物理机ID"},
+    host_name: { placeholder: "请输入物理机名称", },
+    host_ip: { placeholder: "请输入物理机管理IP"},
+    out_band_address: { placeholder: "请输入物理机带外IP"},
+    create_time: {
+      placeholder: ["开始时间", "结束时间"],
+      type: "daterange",
+      width: "360",
+      clearable: true,
+      dis_day: 1,
+      defaultTime: []
+    },
+  };
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
@@ -307,6 +329,33 @@ export default class VmList extends Vue{
     document.addEventListener('click', hideMenu);
     this.operate_auth = this.$store.state.auth_info['instance_list'];
   }
+  private FnSearch(data: any = {}) {
+    this.FnClearTimer();
+    this.search_reqData = {
+      pod_id:this.$store.state.pod_id,
+      ecs_id: data.ecs_id,
+      ecs_name: data.ecs_name,
+      customer_id: data.customer_id,
+      customer_name: data.customer_name,
+      os_info: data.os_info,
+      private_net: data.private_net,
+      public_net: data.public_net,
+      host_id: data.host_id,
+      host_name: data.host_name,
+      host_ip: data.host_ip,
+      out_band_address: data.out_band_address,
+      start_time:
+        data.create_time && data.create_time[0]
+          ? moment(data.create_time[0]).format("YYYY-MM-DD")
+          : undefined,
+      end_time:
+        data.create_time && data.create_time[1]
+          ? moment(data.create_time[1]).format("YYYY-MM-DD")
+          : undefined
+    };
+    this.page_info.page_index = 1;
+    this.get_pod_ecs_list();
+  }
   private infoClick(item) {
     const {label, value}=item
     if(!item.list && !item.disabled){
@@ -355,6 +404,7 @@ export default class VmList extends Vue{
         this.operate_title = operate_info.label;
         this.show_operate_dialog = true;
         this.default_operate_type = value;
+        this.FnClearTimer();
       }
       hideMenu()
     }
@@ -382,6 +432,7 @@ export default class VmList extends Vue{
       this.show_operate_dialog = true;
       this.operate_title = '显卡管理';
       this.default_operate_type = 'operateGpu';
+      this.FnClearTimer();
     }
   }
   private async FnToVnc(id) {
@@ -457,6 +508,7 @@ export default class VmList extends Vue{
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
       }
+      console.log('$$$',this.az_id)
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
           "只允许对同一客户的同一可用区下实例进行批量操作！"
@@ -549,6 +601,19 @@ export default class VmList extends Vue{
       }
     }
   }
+  private FnSetTimer() {
+    if (this.timer) {
+      this.FnClearTimer();
+    }
+    this.timer = setTimeout(() => {
+      this.get_pod_ecs_list(false);
+    }, 1000 * 5);
+  }
+  private FnClearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+  }
   private refresh(){
     this.get_pod_ecs_list()
   }
@@ -637,6 +702,7 @@ export default class VmList extends Vue{
   }
   // 筛选实例来源
   private handleFilterChange(val) {
+    this.FnClearTimer();
     setTimeout(()=>{
       if(val.status){
         this.search_status = val.status;
@@ -657,14 +723,22 @@ export default class VmList extends Vue{
   private FnCustom() {
     this.show_custom = true;
   }
-  private async get_pod_ecs_list(){
+  private async get_pod_ecs_list(loading: boolean = true){
+    this.multiple_selection_id = [];
+    if (!loading) {
+      this.$store.commit("SET_LOADING", false);
+      this.multiple_selection_id = this.multiple_selection.map((row: any) => {
+        return row.ecs_id;
+      });
+    }
     let reqData = {
       page_index: this.page_info.current,
       page_size: this.page_info.size,
       is_op:true,
       az_id:this.$store.state.az_id,
       pod_id:this.$route.params.id,
-      [this.sort_prop_name]: this.sort_order
+      [this.sort_prop_name]: this.sort_order,
+      ...this.search_reqData
     }
     if (this.search_status.length > 0) {
       reqData["status"] = this.search_status.join(',')
@@ -685,7 +759,23 @@ export default class VmList extends Vue{
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){
       this.list = res.data.result
+      var rows = [];
+      if (this.multiple_selection_id.length > 0) {
+        rows = res.data.result.filter(row =>
+          this.multiple_selection_id.includes(row.ecs_id)
+        );
+      }
+      if (rows && rows.length > 0) {
+        this.$nextTick(() => {
+          rows.forEach(row => {
+            (this.$refs.table as any).toggleRowSelection(row);
+          });
+        });
+      }
       this.page_info.total = res.data.page_info.count
+    }
+    if (!this.isComponentDestroying) { // 检查销毁标记
+      this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
     }
   }
   //右键弹出操作
@@ -719,6 +809,7 @@ export default class VmList extends Vue{
     this.multiple_selection = data
   }
   private FnSortChange(val){
+    this.FnClearTimer();
     let relation = {};
     this.all_item.forEach(item => {
       item.filed.forEach(inn => {
@@ -730,12 +821,18 @@ export default class VmList extends Vue{
     this.get_pod_ecs_list()
   }
   private handleSizeChange(size){
+    this.FnClearTimer();
     this.page_info.size = size
     this.get_pod_ecs_list()
   }
   private handleCurrentChange(cur){
+    this.FnClearTimer();
     this.page_info.current = cur
     this.get_pod_ecs_list()
+  }
+  beforeDestroy() {
+    this.FnClearTimer();
+    this.isComponentDestroying = true;
   }
 }
 </script>
