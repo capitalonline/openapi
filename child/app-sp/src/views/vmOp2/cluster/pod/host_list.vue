@@ -428,10 +428,6 @@ export default class HostList extends Vue{
     this.page_info.current = cur
     this.get_pod_host_list()
   }
-  beforeDestroy() {
-    // 移除全局点击事件监听
-    document.removeEventListener('click', hideMenu);
-  }
 }
 </script>
 
