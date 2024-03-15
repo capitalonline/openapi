@@ -109,6 +109,9 @@ export default class Sidebar extends Vue {
   }
   //获取左侧树结构
   private async getTreeData(){
+    if(!this.$store.state.az_id){
+      return
+    }
     let res:any = await Service.get_host_tree_data({
       az_id:this.$store.state.az_id
     })
@@ -149,6 +152,7 @@ export default class Sidebar extends Vue {
   @Watch('default_az')
   private watch_pod(){
     this.$store.commit('SET_AZ',this.default_az);
+    this.getTreeData()
   }
 }
 </script>

@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
@@ -117,6 +117,13 @@ export default class HostList extends Vue{
     this.get_status_list()
     //监听点击事件，点击时隐藏右键菜单
     document.addEventListener('click', this.hideMenu);
+  }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
+    this.refresh()
   }
   private refresh(){
     this.get_pod_host_list()

@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
@@ -140,6 +140,13 @@ export default class VmList extends Vue{
     this.get_source_type()
     this.FnGetStatus()
     this.get_field()
+  }
+  @Watch("$store.state.az_id")
+  private watch_az(nv){
+    if(!nv){
+      return;
+    }
+    this.refresh()
   }
   private refresh(){
     this.get_pod_ecs_list()
