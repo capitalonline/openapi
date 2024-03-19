@@ -730,7 +730,7 @@ export default class VmList extends Vue{
   private FnCustom() {
     this.show_custom = true;
   }
-  private async get_pod_ecs_list(){
+  private async get_pod_ecs_list(loading: boolean = true){
     if(!this.$store.state.az_id){
       return
     }
