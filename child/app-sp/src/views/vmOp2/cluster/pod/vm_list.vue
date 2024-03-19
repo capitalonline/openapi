@@ -730,7 +730,7 @@ export default class VmList extends Vue{
   private FnCustom() {
     this.show_custom = true;
   }
-  private async get_pod_ecs_list(){
+  private async get_pod_ecs_list(loading:boolean = true){
     if(!this.$store.state.az_id){
       return
     }
@@ -868,14 +868,6 @@ i.el-icon-s-tools{
 }
 ::v-deep .el-progress__text{
   font-size: 14px!important;
-}
-//table选中高亮
-::v-deep .el-table .rowStyle {
-  background-color: #8CC4fc !important;
-
-}
-::v-deep .el-table .rowStyle:hover>td {
-  background-color: #8CC4fc !important
 }
 
 </style>

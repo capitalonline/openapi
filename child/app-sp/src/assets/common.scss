@@ -211,3 +211,10 @@ pre {
     transition:none;
   }
 }
+.el-table .rowStyle {
+  background-color: #8CC4fc !important;
+
+}
+.el-table .rowStyle:hover>td {
+  background-color: #8CC4fc !important
+}

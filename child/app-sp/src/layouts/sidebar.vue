@@ -66,14 +66,11 @@ export default class Sidebar extends Vue {
   private az_list = []
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
-    {label:'镜像',name:'mirror',disabled:true,type: 'menu'},
-    {label:'存储',name:'storage',disabled:true,tree: false},
+    {label:'镜像',name:'mirror',type: 'menu'},
+    {label:'存储',name:'storage',type: 'menu'},
     {label:'网络',name:'network',disabled:true,tree: false}
   ];
-  private menu_list=[
-    {label:'公有镜像',name:'mirror_list'},
-    {label:'私有镜像',name:'private_mirror_list'}
-  ]
+  private menu_list=[]
   private treeData:any = []
   created(){
     this.get_az_list();
@@ -103,9 +100,21 @@ export default class Sidebar extends Vue {
   private change(item){
     this.active_menu = item.name
     this.treeType = item.type
-    if(this.active_menu === 'mirror' && this.$route.name !== 'mirror_list'){
-      this.current ='mirror_list'
-      this.$router.push({name:'mirror_list'})
+    console.log('treeType',this.treeType)
+    if(this.active_menu === 'mirror' && this.$route.name !== 'mirror'){
+      this.current ='mirror'
+      this.menu_list=[
+        {label:'公有镜像',name:'mirror'},
+        {label:'私有镜像',name:'private_mirror'}
+      ]
+      this.$router.push({name:'mirror'})
+    }
+    if(this.active_menu === 'storage'){
+      this.current ='disk'
+      this.menu_list=[
+        {label:'云盘管理',name:'disk'},
+      ]
+      this.$router.push({name:'disk'})
     }
     if(this.active_menu === 'cluster'){
       this.current = this.treeData[0].id

@@ -61,6 +61,24 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/cluster/host/list.vue'),
         meta: {menu: 'host_list',no_auth: true}
         },
+      {
+        path: '/mirror_list',
+        name: 'mirror',
+        component: () => import('../views/vmOp2/mirror/list.vue'),
+        meta: {menu: 'mirror_list',no_auth: true}
+      },
+      {
+        path: '/privateMirror_list',
+        name: 'private_mirror',
+        component: () => import('../views/vmOp2/mirror/privateMirror.vue'),
+        meta: {menu: 'private_mirror',no_auth: true}
+      },
+      {
+        path: '/disk_list',
+        name: 'disk',
+        component: () => import('../views/vmOp2/storage/list.vue'),
+        meta: {menu: 'disk_list',no_auth: true}
+      },
     ]
   },
   {
