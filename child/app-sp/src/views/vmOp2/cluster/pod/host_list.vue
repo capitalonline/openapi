@@ -21,6 +21,9 @@
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
       @filter-change="filterAttribute"
+      @row-click="FnOperRow"
+      @row-contextmenu="FnRightClick"
+      :row-class-name="rowStyle"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column
