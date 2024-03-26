@@ -10,9 +10,9 @@
     :default-expanded-keys="[currentLivingId]"
     highlight-current
   >
-    <span slot-scope="{node,data}">
+    <span slot-scope="{node,data}" class="treeLabel">
       <i :class="iconClasses[node.level]"></i>
-      {{ node.label }}
+      <span class="m-left5" :title="node.label">{{  node.label }}</span>
     </span>
   </el-tree>
 </template>
@@ -38,6 +38,12 @@ export default class LeftTree extends Vue{
   private watch_tree_data(n){
     if(n.length>0){
       this.tree_data = n
+      if(this.$route?.params?.id){
+        let routeId = this.$route?.params?.id
+        if(this.tree_data[0]['id'] === routeId){
+          return;
+        }
+      }
       this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
       this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
     }
@@ -56,25 +62,22 @@ export default class LeftTree extends Vue{
     })
   }
   private handleNodeClick(data) {
-    if(data.type=== 'pod'  && !this.isCurrentRoute('pod_info', { id:data.id})){
+    if(this.$route?.params?.id){
+      let routeId = this.$route?.params?.id
+      if(data.id === routeId){
+        return;
+      }
+    }
+    if(data.type=== 'pod'){
       this.$router.push({name:'pod_info',params:{id:data.id}})
     }
-    if(data.type === 'cluster' && !this.isCurrentRoute('cluster_info', { id: data.id })){
+    if(data.type === 'cluster'){
       this.$router.push({name:'cluster_info',params:{id:data.id}})
     }
-    if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
+    if(data.type === 'host'){
       this.$router.push({name:'host_list',params:{id:data.id}})
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);
-  }
-  private isCurrentRoute(name, params) {
-    const currentRoute = this.$route;
-    const targetRoute = { name, params };
-
-    return (
-      currentRoute.name === targetRoute.name &&
-      JSON.stringify(currentRoute.params) === JSON.stringify(targetRoute.params)
-    );
   }
   private handleRight(event,data,node,com){
     console.log(event,data,node,com)
@@ -83,5 +86,10 @@ export default class LeftTree extends Vue{
 </script>
 
 <style scoped>
+.treeLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 </style>
