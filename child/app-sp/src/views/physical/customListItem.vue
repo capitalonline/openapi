@@ -11,10 +11,10 @@
         </div>
       </template>
     </div>
-    
-    
+
+
     <span>已选择：<span class="num_message">{{select_item.length}}</span></span>
-    
+
     <span slot="footer">
       <el-button type="primary" @click="FnConfirm">确 定</el-button>
       <el-button @click="FnClose">取 消</el-button>
@@ -99,10 +99,10 @@ export default class CustomListItem extends Vue {
         </div>
       </template>
     </div>
-    
-    
+
+
     <span>已选择：<span class="num_message">{{select_item.length}}</span></span>
-    
+
     <span slot="footer">
       <el-button type="primary" @click="FnConfirm">确 定</el-button>
       <el-button @click="FnClose">取 消</el-button>
@@ -127,9 +127,20 @@ export default class CustomListItem extends Vue {
   private typeObj={
     'host':{func:'SET_CUSTOM_HOST',value:'custom_host'},
     'nas':{func:'SET_NAS_HOST',value:'nas_host'},
+    'cluster':{func:'SET_CLUSTER_HOST',value:'pod'},
+    'pod_host':{func:'SET_HOST_LIST',value:'pod'},
+    'pod_vm':{func:'SET_VM_HOST',value:'pod'},
   }
   private created() {
-    this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
+    if(this.type === 'cluster'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].cluster_host)
+    }else if(this.type === 'pod_host'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].host_list)
+    } else if(this.type === 'pod_vm'){
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value].vm_host)
+    } else {
+      this.FnHandleSelectItem(this.$store.state[this.typeObj[this.type].value])
+    }
   }
   private FnHandleSelectItem(item) {
     if (item.length>0) {
