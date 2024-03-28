@@ -55,7 +55,8 @@ const host_status={//error为新增状态，异常
   business_test:{power:[],host:[],msg:'',label:'业务测试'},
   record:{power:[],host:[],msg:'',label:'操作记录'},
   resource:{power:[],host:[],msg:'',label:'分配资源'},
-  remark:{power:[],host:[],msg:'',label:'编辑备注'}
+  remark:{power:[],host:[],msg:'',label:'编辑备注'},
+  add_cluster:{power:[],host:[],msg:'',label:'加入集群'}
 }
 export default {
   getInsOperateAuth(type) {

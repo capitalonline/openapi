@@ -3,6 +3,7 @@ export function rightClick(row, column, event) {
   event.preventDefault();
   // 获取菜单元素
   document.addEventListener('contextmenu', (event) => {
+  if (event.target.closest('.el-table')) {
     let menu = document.querySelector("#menu") as HTMLElement;
     if (menu) {
       menu.style.display = 'block';
@@ -39,5 +40,6 @@ export function rightClick(row, column, event) {
       menu.style.display = "block";
       menu.style.zIndex = '1000';
     }
+  }
   })
 }

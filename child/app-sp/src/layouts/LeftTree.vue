@@ -5,7 +5,7 @@
     @node-contextmenu="handleRight"
     node-key="id"
     ref="tree"
-    :current-node-key="currentLivingId"
+
     :expand-on-click-node="false"
     :default-expanded-keys="[currentLivingId]"
     highlight-current
@@ -64,6 +64,9 @@ export default class LeftTree extends Vue{
     }
     if(data.type === 'host' && !this.isCurrentRoute('host_list', { id: data.id })){
       this.$router.push({name:'host_list',params:{id:data.id}})
+    }
+    if(data.type === 'waiting_hosts' && !this.isCurrentRoute('waiting_hosts',{})){
+      this.$router.push(({name:'waiting_hosts'}))
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);
   }

@@ -61,6 +61,12 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/cluster/host/list.vue'),
         meta: {menu: 'host_list',no_auth: true}
         },
+      {
+        path: '/waiting_hosts',
+        name: 'waiting_hosts',
+        component: () => import('../views/vmOp2/cluster/pod/noClusterHostList.vue'),
+        meta: {menu: 'waiting_hosts',no_auth: true}
+      },
     ]
   },
   {
