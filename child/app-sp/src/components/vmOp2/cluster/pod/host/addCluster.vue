@@ -20,7 +20,7 @@
         <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
         <el-table-column prop="cpu_model" label="CPU型号" width="150px"></el-table-column>
         <el-table-column prop="gpu_model" label="GPU型号"></el-table-column>
-        <el-table-column prop="block_type" label="存储集群"></el-table-column>
+        <el-table-column prop="storage_cluster_name" label="存储集群"></el-table-column>
         <el-table-column prop="recomend_cluster" label="匹配集群名称" width="150px">
           <template slot-scope="scope">
             <el-select v-model="scope.row.selected_cluster" filterable value-key="cluster_id">
@@ -98,7 +98,12 @@ export default class updateRecommend extends Vue{
     const req = this.list.map(item=>{return {host_id:item.host_id,cluster_id:item.selected_cluster.cluster_id}})
     let res:any = await Service.add_cluster({param:req})
     if(res.code === 'Success'){
-      this.$message.success(res.message)
+      if(res.error_msg == ''){
+        this.$message.success(res.message)
+      }else {
+        this.$message.warning(res.error_msg)
+      }
+
       this.back('1')
     }else {
       this.back('0')

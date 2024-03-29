@@ -368,7 +368,7 @@ export default class HostList extends Vue{
     rightClick(row,column,event)
   }
   private async get_field(){
-    let res:any = await Service.get_pod_host_field({is_added : '1'})
+    let res:any = await Service.get_pod_host_field()
     if(res.code==="Success"){
     let key_list=['field_name','show_name'];
     let label_list=['prop','label'];
@@ -397,7 +397,7 @@ export default class HostList extends Vue{
       if(['host_name','gpu_model','recomend_cluster'].includes(item.prop)){
         item = Object.assign(item,{},{width:'150px',overflow:true})
       }
-      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','machine_status_name'].includes(item.prop)){
+      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','machine_status_name','storage_cluster_name'].includes(item.prop)){
         item = Object.assign(item,{},{minWidth:'120px'})
       }
       if(item.prop==='power_status_name'){
