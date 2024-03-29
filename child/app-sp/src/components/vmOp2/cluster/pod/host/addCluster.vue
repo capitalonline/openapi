@@ -99,7 +99,7 @@ export default class updateRecommend extends Vue{
     let res:any = await Service.add_cluster({param:req})
     if(res.code === 'Success'){
       if(res.data.error_msg == ''){
-        this.$message.success(res.data.message)
+        this.$message.success(res.message)
       }else {
         this.$message.warning(res.data.error_msg)
       }
