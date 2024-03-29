@@ -23,6 +23,7 @@ import {Component, Vue, Prop, Watch} from "vue-property-decorator";
 
 export default class LeftTree extends Vue{
   @Prop({default:''})currentLivingId!:string
+  @Prop({default:true})refresh!:boolean
   @Prop({default:()=>[]})tree_data!:Array<object>
   private iconClasses= {
     1: 'iconfont icon-tree',
@@ -38,9 +39,11 @@ export default class LeftTree extends Vue{
   private watch_tree_data(n){
     if(n.length>0){
       this.tree_data = n
-      console.log('nn',n)
-      this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
-      this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
+      if(this.refresh) {
+        console.log('####')
+        this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
+        this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
+      }
     }
   }
   @Watch('currentLivingId')

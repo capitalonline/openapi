@@ -104,7 +104,8 @@ export default class updateRecommend extends Vue{
       }else {
         this.$message.warning(res.data.error_msg)
       }
-      bus.$emit('getTreeData')
+      this.back('1')
+      bus.$emit('getTreeData',false)
     }else {
       this.back('0')
     }

@@ -31,7 +31,7 @@
       </el-select>
     </div>
     <template v-if="treeType === 'tree'">
-      <left-tree :currentLivingId="current" :tree_data="treeData"></left-tree>
+      <left-tree :currentLivingId="current" :refresh="refresh" :tree_data="treeData"></left-tree>
     </template>
     <template v-if="treeType === 'menu'">
      <new-menu :menu_list=menu_list :active_menu="current"></new-menu>
@@ -64,6 +64,7 @@ export default class Sidebar extends Vue {
   private current=''
   private treeType:string = 'tree'
   private az_list = []
+  private refresh:boolean = true
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',disabled:true,type: 'menu'},
@@ -81,6 +82,7 @@ export default class Sidebar extends Vue {
   }
   mounted(){
     bus.$on('getTreeData',e=>{
+      this.refresh = e
       this.getTreeData()
     })
   }
