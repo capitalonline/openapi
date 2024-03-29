@@ -38,6 +38,7 @@ export default class LeftTree extends Vue{
   private watch_tree_data(n){
     if(n.length>0){
       this.tree_data = n
+      console.log('nn',n)
       this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
       this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
     }
@@ -66,6 +67,7 @@ export default class LeftTree extends Vue{
       this.$router.push({name:'host_list',params:{id:data.id}})
     }
     if(data.type === 'waiting_hosts' && !this.isCurrentRoute('waiting_hosts',{})){
+      console.log('data.id',data.id)
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);

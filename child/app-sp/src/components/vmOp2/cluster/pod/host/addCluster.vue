@@ -98,12 +98,11 @@ export default class updateRecommend extends Vue{
     const req = this.list.map(item=>{return {host_id:item.host_id,cluster_id:item.selected_cluster.cluster_id}})
     let res:any = await Service.add_cluster({param:req})
     if(res.code === 'Success'){
-      if(res.error_msg == ''){
-        this.$message.success(res.message)
+      if(res.data.error_msg == ''){
+        this.$message.success(res.data.message)
       }else {
-        this.$message.warning(res.error_msg)
+        this.$message.warning(res.data.error_msg)
       }
-
       this.back('1')
     }else {
       this.back('0')

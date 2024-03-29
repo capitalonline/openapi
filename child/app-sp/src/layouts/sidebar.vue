@@ -128,7 +128,7 @@ export default class Sidebar extends Vue {
     return data.map(pod => {
       const { pod_id, pod_name, type, children } = pod;
       const clusters = children.map(cluster => {
-        const { cluster_id, cluster_name, type, children } = cluster;
+        const { cluster_id,pod_id, cluster_name, type, children } = cluster;
         const hosts = children.map(host => {
           const { host_id, host_name, type } = host;
           return {
@@ -138,7 +138,7 @@ export default class Sidebar extends Vue {
           };
         });
         return {
-          id: cluster_id,
+          id: pod_id ? pod_id : cluster_id,
           label: cluster_name,
           type: type,
           children: hosts,
