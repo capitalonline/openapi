@@ -66,6 +66,7 @@
 <script lang="ts">
 import {Component, Emit, Prop, PropSync, Vue} from "vue-property-decorator";
 import Service from '@/https/vmOp2/cluster/pod/index'
+import bus from "@/utils/vmOp2/eventBus"
 @Component({})
 export default class updateRecommend extends Vue{
   @PropSync('visible') visible_sync!:Boolean;
@@ -103,7 +104,7 @@ export default class updateRecommend extends Vue{
       }else {
         this.$message.warning(res.data.error_msg)
       }
-      this.back('1')
+      bus.$emit('getTreeData')
     }else {
       this.back('0')
     }

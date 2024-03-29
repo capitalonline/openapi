@@ -46,7 +46,7 @@ import LeftTree from "@/layouts/LeftTree.vue";
 import NewMenu from "@/layouts/newMenu.vue"
 import EcsService from "@/https/instance/create";
 import Service from "@/https/vmOp2/cluster/tree"
-import store from "../../../app-op/src/store";
+import bus from "@/utils/vmOp2/eventBus"
 
 @Component({
   components: {
@@ -78,6 +78,11 @@ export default class Sidebar extends Vue {
   created(){
     this.get_az_list();
     this.getTreeData()
+  }
+  mounted(){
+    bus.$on('getTreeData',e=>{
+      this.getTreeData()
+    })
   }
   //获取az列表
   private async get_az_list(){
@@ -112,7 +117,7 @@ export default class Sidebar extends Vue {
     }
   }
   //获取左侧树结构
-  private async getTreeData(){
+  public async getTreeData(){
     if(!this.$store.state.az_id){
       return
     }
