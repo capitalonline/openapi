@@ -66,7 +66,7 @@ export default class LeftTree extends Vue{
       this.$router.push({name:'host_list',params:{id:data.id}})
     }
     if(data.type === 'waiting_hosts' && !this.isCurrentRoute('waiting_hosts',{})){
-      this.$router.push(({name:'waiting_hosts'}))
+      this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);
   }
