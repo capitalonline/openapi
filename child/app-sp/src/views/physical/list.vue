@@ -242,7 +242,7 @@
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
               <!-- :disabled="!auth_list.includes(item.value)" -->
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value,value:scope.row}" :key="item.value" >{{item.label}}</el-dropdown-item>
+                <el-dropdown-item v-for="item in rows_operate_btns" :command="{title:item.label,label:item.value,value:scope.row}" :key="item.value" >{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
           </template>
@@ -269,8 +269,8 @@
       <template v-if="visible && oper_type==='record'">
         <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
       </template>
-      <template v-if="visible && oper_type==='resource'">
-        <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
+      <template v-if="visible && ['resource','service'].includes(oper_type)">
+        <Resource :visible.sync="visible" :title="oper_label" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
       </template>
       <template v-if="detail_visible">
         <Detail
@@ -396,6 +396,8 @@ export default class PhysicalList extends Vue {
     {label:'操作记录',value:'record'},
     {label:'分配资源',value:'resource'},
     {label:'编辑备注',value:'remark'},
+    {label:'服务更新',value:'service'},
+    {label:'回滚',value:'rollback'},
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
@@ -1054,7 +1056,7 @@ export default class PhysicalList extends Vue {
     return flag_list
   }
   private handleOperate(obj){
-    const {label,value}=obj;
+    const {title,label,value}=obj;
     this.multi_rows=[value]
     if(label==="physical_detail"){
       this.$router.push({name:label,query:{id:value.host_id,name:value.host_name}})
@@ -1065,16 +1067,12 @@ export default class PhysicalList extends Vue {
         }else{
           this.$message.warning(this.error_msg[label])
         }
-    }else if(label==='remark'){
-      console.log('remark')
-      this.oper_type=label;
-      this.visible=true;
-
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{
       this.visible=true
       this.oper_type=label
+      this.oper_label = title
     }
 
   }

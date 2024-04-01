@@ -1,7 +1,7 @@
 <template>
   <div>
      <el-dialog
-      title="分配资源"
+      :title="title"
       :visible.sync="visible_sync"
       width="760px"
       :destroy-on-close="true"
@@ -26,7 +26,7 @@
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
                 <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
             </el-table>
-            <div class="ecs-belong m-top20">
+            <div class="ecs-belong m-top20" v-if="['resource'].includes(oper_type)">
                 <span class="m-right20">设置主机归属：</span>
                 <el-select v-model="ecs_id" placeholder="请选择">
                     <el-option
@@ -37,7 +37,19 @@
                     </el-option>
                 </el-select>
             </div>
-            
+          <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-else label-position="left">
+            <el-form-item prop="reason" label="tag:" :rules="[{ required: true, message: '请输入tag', trigger: 'blur' }]">
+              <el-input v-model="form_data.tag"/>
+            </el-form-item>
+            <el-form-item prop="valid" label="服务类型:" :rules="[{ required: true, message: '请选择服务类型', trigger: 'blur' }]">
+              <el-radio-group v-model="form_data.serviceType">
+                <el-radio :label="'0'">agent</el-radio>
+                <el-radio :label="'1'" disabled>monitor-instance</el-radio>
+                <el-radio :label="'2'" disabled>monitor-host</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确认</el-button>
@@ -64,11 +76,17 @@ export default class Resource extends Vue{
   $message;
   @PropSync('visible') visible_sync!:Boolean;
   @Prop({default:()=>[]}) rows!:any
-  private alert_title = `是否确定对以下${this.rows.length}台物理机执行分配资源操作吗？`
+  @Prop(String) title!:string;
+  @Prop(String) oper_type!:string;
+  private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作？`
   private ecs_list:any=[];
   private ecs_id:string="";
+  private form_data={
+    tag:'',
+    serviceType:'0'
+  }
   created() {
-      this.get_host_attribution()
+    ['resource'].includes(this.oper_type) && this.get_host_attribution()
   }
   private async get_host_attribution (){
       let res:any =await Service.get_host_attribution({})
@@ -101,7 +119,7 @@ export default class Resource extends Vue{
   private back(val){
       this.visible_sync=false
   }
-  
+
 }
 </script>
 <style lang="scss">
