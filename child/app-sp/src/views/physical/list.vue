@@ -257,7 +257,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark','service','rollback'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -269,8 +269,8 @@
       <template v-if="visible && oper_type==='record'">
         <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
       </template>
-      <template v-if="visible && ['resource','service'].includes(oper_type)">
-        <Resource :visible.sync="visible" :title="oper_label" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
+      <template v-if="visible && ['resource','service','rollback'].includes(oper_type)">
+        <Resource :visible.sync="visible" :title="oper_label" :isBatch="isBatch" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
       </template>
       <template v-if="detail_visible">
         <Detail
@@ -383,7 +383,9 @@ export default class PhysicalList extends Vue {
     {label:'调度标记',value:'schedule'},
     {label:'迁移标记',value:'migrate_flag'},
     {label:'欺骗器管理',value:'cheat'},
-    {label:'底层同步',value:'under_sync'}
+    {label:'底层同步',value:'under_sync'},
+    {label:'服务更新',value:'service'},
+    {label:'回滚',value:'rollback'},
 
   ]
   private operate_btns2 = [
@@ -443,6 +445,7 @@ export default class PhysicalList extends Vue {
   private detail_visible=false
   private timer = null
   private reason_list =[]
+  private isBatch:boolean = false
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -943,7 +946,7 @@ export default class PhysicalList extends Vue {
   }
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
-    if(this.multi_rows.length===0 && !['upload','business_test'].includes(value)){
+    if(this.multi_rows.length===0 && !['upload','business_test','service','rollback'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
     }
@@ -1018,6 +1021,8 @@ export default class PhysicalList extends Vue {
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
+      this.isBatch = true
+      console.log('111',this.oper_label)
     }else{
       this.$message.warning(this.error_msg[value])
     }
@@ -1070,6 +1075,7 @@ export default class PhysicalList extends Vue {
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{
+      this.isBatch = false
       this.visible=true
       this.oper_type=label
       this.oper_label = title

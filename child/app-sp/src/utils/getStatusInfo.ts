@@ -44,6 +44,8 @@ const host_status={//error为新增状态，异常
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
   lock:{power:[],host:[],msg:'',label:'锁定'},
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
+  service:{power:[],host:[],msg:'',label:'服务更新'},
+  rollback:{power:[],host:[],label:'回滚'}
 }
 export default {
   getInsOperateAuth(type) {

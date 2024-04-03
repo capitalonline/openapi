@@ -154,5 +154,13 @@ export default{
   //获取锁定记录
   get_lock_record(req){
     return service(getHostOptions('GET','/host/host_lock_record/',req))
+  },
+  //服务更新
+  agent_update(req){
+      return service(getHostOptions('POST','/host/handle_host_agent_update/',req))
+  },
+  //服务回滚
+  agent_rollback(req){
+    return service(getHostOptions('POST','/host/handle_host_agent_rollback/',req))
   }
 }
