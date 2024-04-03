@@ -23,7 +23,7 @@
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
-                <el-table-column prop="az_name" label="主机名"></el-table-column>
+                <el-table-column prop="az_name" label="节点"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
                 <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
