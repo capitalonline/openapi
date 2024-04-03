@@ -28,8 +28,8 @@
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
                 <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
             </el-table>
-            <el-form ref="form" class="m-top20" v-if="['resource'].includes(oper_type)">
-                <el-form-item class="m-right20" label="设置主机归属：">
+            <div class="ecs-belong m-top20" v-if="['resource'].includes(oper_type)">
+                <span class="m-right20">设置主机归属：</span>
                 <el-select v-model="ecs_id" placeholder="请选择">
                     <el-option
                     v-for="item in ecs_list"
@@ -38,8 +38,7 @@
                     :value="item.host_attribution_id">
                     </el-option>
                 </el-select>
-                </el-form-item>
-            </el-form>
+            </div>
           <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-else label-position="left">
             <el-form-item prop="tag" label="tag:" v-if="['service'].includes(oper_type)" :rules="[{ required: true, message: '请输入tag', trigger: 'blur' }]">
               <el-input v-model="form_data.tag" :maxlength="64"></el-input>
@@ -56,7 +55,7 @@
             </el-form-item>
             <el-form-item prop="serviceType" label="服务类型:" :rules="[{ required: true, message: '请选择服务类型', trigger: 'blur' }]">
               <el-radio-group v-model="form_data.serviceType">
-                <el-radio :label="'agent'">agent</el-radio>
+                <el-radio :label="'cds-os-agent'">agent</el-radio>
                 <el-radio :label="'monitor-instance'" disabled>monitor-instance</el-radio>
                 <el-radio :label="'monitor-host'" disabled>monitor-host</el-radio>
               </el-radio-group>
@@ -100,7 +99,7 @@ export default class Resource extends Vue{
   private form_data={
     tag:'',
     az_id:'',
-    serviceType:'agent',
+    serviceType:'cds-os-agent',
   }
   created() {
     if(this.oper_type === 'resource'){
@@ -130,6 +129,7 @@ export default class Resource extends Vue{
   }
   private async confirm() {
     let res: any
+    let flag:boolean=true
     if (this.oper_type === 'resource') {
       res = await Service.set_host_attribution({
         host_ids: this.rows.map(item => item.host_id),
@@ -137,32 +137,41 @@ export default class Resource extends Vue{
       });
     } else {
       let form = this.$refs.form as Form;
-      form.validate(async valid=>{
-        if(valid) {
-          const requestData = {
-            az_id: this.form_data.az_id ? this.form_data.az_id : this.rows[0].az_id,
-            host_ids: this.rows.map(item => item.host_id),
-            server_name: this.form_data.serviceType,
-            is_node_update: this.isBatch ? '1' : undefined
+        form.validate((valid)=>{
+          if(!valid){
+            flag = false
           }
+        })
+      if(!flag){
+        return false
+      }
+      const requestData = {
+        az_id: this.form_data.az_id ? this.form_data.az_id : this.rows[0].az_id,
+        host_ids: this.rows.map(item => item.host_id),
+        server_name: this.form_data.serviceType,
+        is_node_update: this.isBatch ? '1' : undefined
+      }
 
-          if (this.oper_type === 'service') {
-            res = await Service.agent_update({
-              ...requestData,
-              server_tag: this.form_data.tag
-            });
-          } else {
-            res = await Service.agent_rollback(requestData);
-          }
-        }
-    })
+      if (this.oper_type === 'service') {
+        res = await Service.agent_update({
+          ...requestData,
+          server_tag: this.form_data.tag
+        });
+      } else {
+        res = await Service.agent_rollback(requestData);
+      }
     }
     if (res.code === "Success") {
-      if (res.data.fail_host_list.length > 0) {
-        this.$message.warning(res.message);
-        this.back("1");
-      } else {
-        this.$message.success(res.message);
+      if (this.oper_type === 'resource') {
+        if (res.data.fail_host_list.length > 0) {
+          this.$message.warning(res.message);
+          this.back("1");
+        } else {
+          this.$message.success(res.message);
+          this.back("1");
+        }
+      }else {
+        this.$message.success(res.message)
         this.back("1");
       }
     } else {
