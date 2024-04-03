@@ -270,7 +270,7 @@
         <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
       </template>
       <template v-if="visible && ['resource','service','rollback'].includes(oper_type)">
-        <Resource :visible.sync="visible" :title="oper_label" :isBatch="isBatch" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
+        <Resource :visible.sync="visible" :title="oper_label" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
       </template>
       <template v-if="detail_visible">
         <Detail
@@ -445,7 +445,6 @@ export default class PhysicalList extends Vue {
   private detail_visible=false
   private timer = null
   private reason_list =[]
-  private isBatch:boolean = false
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -1021,7 +1020,6 @@ export default class PhysicalList extends Vue {
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
-      this.isBatch = true
       console.log('111',this.oper_label)
     }else{
       this.$message.warning(this.error_msg[value])
@@ -1075,7 +1073,6 @@ export default class PhysicalList extends Vue {
     }else if(label==="out_of_band"){
       this.out_of_band()
     }else{
-      this.isBatch = false
       this.visible=true
       this.oper_type=label
       this.oper_label = title

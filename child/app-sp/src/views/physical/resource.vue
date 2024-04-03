@@ -10,14 +10,14 @@
     >
         <div>
             <el-alert
-                v-if="!isBatch"
+                v-if="rows.length!==0"
                 :title="alert_title"
                 type="warning"
                 center
                 :closable="false">
             </el-alert>
             <el-table
-                v-if="!isBatch"
+                v-if="rows.length!==0"
                 :data="rows"
                 border
                 max-height="253"
@@ -43,7 +43,7 @@
             <el-form-item prop="tag" label="tag:" v-if="['service'].includes(oper_type)" :rules="[{ required: true, message: '请输入tag', trigger: 'blur' }]">
               <el-input v-model="form_data.tag" :maxlength="64"></el-input>
             </el-form-item>
-            <el-form-item prop="az_id" label="节点:" v-if="isBatch" :rules="[{ required: true, message: '请选择节点', trigger: 'blur' }]">
+            <el-form-item prop="az_id" label="节点:" v-if="rows.length===0" :rules="[{ required: true, message: '请选择节点', trigger: 'blur' }]">
               <el-select v-model="form_data.az_id" style="width: 100%">
                 <el-option
                   v-for="item in az_list"
@@ -91,7 +91,6 @@ export default class Resource extends Vue{
   @Prop({default:()=>[]}) rows!:any
   @Prop(String) title!:string;
   @Prop(String) oper_type!:string;
-  @Prop(Boolean) isBatch!:boolean
   private alert_title = `是否确定对以下${this.rows.length}台物理机执行${this.title}操作？`
   private ecs_list:any=[];
   private ecs_id:string="";
@@ -149,7 +148,7 @@ export default class Resource extends Vue{
         az_id: this.form_data.az_id ? this.form_data.az_id : this.rows[0].az_id,
         host_ids: this.rows.map(item => item.host_id),
         server_name: this.form_data.serviceType,
-        is_node_update: this.isBatch ? '1' : undefined
+        is_node_update: this.rows.length ===0 ? '1' : undefined
       }
 
       if (this.oper_type === 'service') {
