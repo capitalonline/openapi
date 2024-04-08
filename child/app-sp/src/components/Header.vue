@@ -1,8 +1,8 @@
 <template>
   <div class="header">
     <div class="left-content">
-      <el-select 
-        v-model="default_pod" 
+      <el-select
+        v-model="default_pod"
         filterable
         :filter-method="getPodList"
         @visible-change="change_pod"
@@ -18,6 +18,7 @@
     <div class="right-content">
       <el-button type="text" @click="FnToWiki('public')">公网设置问题排查sop</el-button>
       <el-button type="text" @click="FnToWiki('')" class="m-right10">运维OP使用手册V1.0</el-button>
+      <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换新页面</el-button>
     </div>
   </div>
 </template>
@@ -35,7 +36,11 @@ export default class Header extends Vue {
   }
   created(){
     this.getPodList();
-    
+
+  }
+  private changeLayout(){
+    this.$router.push({name:'new_op'})
+    console.log(this.$router)
   }
   private async getPodList(val:String=""){
     let res = await getPodList({
