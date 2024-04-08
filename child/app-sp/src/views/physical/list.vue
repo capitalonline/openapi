@@ -1038,18 +1038,12 @@ export default class PhysicalList extends Vue {
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;
-      console.log('111',this.oper_label)
     }else{
       this.$message.warning(this.error_msg[value])
     }
-
-
-
-
   }
   private handleMore(obj){
     const {label,value}=obj;
-    console.log('===',obj)
     this.handle(label,value)
   }
   private judge(val):any{
