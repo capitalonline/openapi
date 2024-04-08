@@ -2,32 +2,20 @@
     <div>
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
-            <!-- :disabled="!auth_list.includes(item.value)" -->
-              <el-button type="primary" v-for="item in operate_btns" :key="item.value"  @click="handle(item.label,item.value)">{{item.label}}</el-button>
-              <!-- 宕机处理下拉 -->
-              <el-dropdown @command="crashHandleCommand">
-                <el-button type="primary" class="dropdownbtn">
-                  宕机处理 <i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="data_clear">
-                    数据清理同步
-                  </el-dropdown-item>
-                  <el-dropdown-item command="down_recover">
-                    宕机恢复
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            <el-dropdown style="margin-left: 10px" @command="handleMore">
-              <el-button type="primary">
-                机器锁定<i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="item in operate_btns2" :key="item.value" :command="{label:item.label,value:item.value}">{{item.label}}</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-
-            </template>
+              <template v-for="item in operate_btns">
+                <el-dropdown v-if="item.subItems && item.subItems.length > 0" :key="item.value" @command="handleMore">
+                  <el-button type="primary" class="dropdownbtn">
+                    {{ item.text }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="(subItem, subIndex) in item.subItems" :key="subIndex" :command="{label:subItem.label,value:subItem.value}">
+                      {{ subItem.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <el-button v-else type="primary" class="dropdownbtn" :key="item.value" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+              </template>
+          </template>
       </action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
@@ -371,24 +359,34 @@ export default class PhysicalList extends Vue {
     {label:'开机',value:'start_up_host'},
     {label:'关机',value:'shutdown_host'},
     {label:'重启',value:'restart_host'},
-    // {label:'在线维护',value:'online_maintenance'},
-    // {label:'离线维护',value:'offline_maintenance'},
     {label:'设置维护',value:'maintenance'},
-    {label:'完成维护',value:'finish'},
-    // {label:'下架',value:'shelves'},
+    { label:'完成维护', value: 'finish' },
     {label:'驱散',value:'disperse'},
-    // {label:'分配资源',value:'resource'},
-    // {label:'更改属性',value:'update_attribute'},
     {label:'业务测试',value:'business_test'},
     {label:'调度标记',value:'schedule'},
     {label:'迁移标记',value:'migrate_flag'},
     {label:'欺骗器管理',value:'cheat'},
-    {label:'底层同步',value:'under_sync'}
-
-  ]
-  private operate_btns2 = [
-    {label:'锁定机器',value:'lock'},
-    {label:'解锁机器',value:'unlock'},
+    {label:'底层同步',value:'under_sync'},
+    {
+      text: '宕机处理',
+      subItems: [
+        { label: '数据清理同步', value: 'data_clear' },
+        { label: '宕机恢复', value: 'down_recover' },
+        ]
+    },
+    {
+      text: '机器锁定',
+      subItems: [
+        { label: '锁定机器', value: 'lock' },
+        { label: '解锁机器', value: 'unlock' },
+      ]
+    },
+    {
+      text: '解除异常',
+      subItems: [
+        { label: '解除存储异常', value: 'unstore_exception' },
+      ]
+    },
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -441,6 +439,7 @@ export default class PhysicalList extends Vue {
   private detail_visible=false
   private timer = null
   private reason_list =[]
+  private multiple_selection_id:Array<string> = []
   private ecs_fields:any=[
     {label:'客户ID',prop:'customer_id'},
     {label:'客户名称',prop:'customer_name'},
@@ -642,7 +641,13 @@ export default class PhysicalList extends Vue {
     }
     this.refresh()
   }
-  private async get_physical_list(){
+  private async get_physical_list(loading:boolean=true){
+    if (!loading) {
+      this.$store.commit('SET_LOADING', false);
+      this.multiple_selection_id = this.multi_rows.map((row: any) => {
+        return row.host_id;
+      });
+    }
     const {
       room,
       host_name,
@@ -699,6 +704,19 @@ export default class PhysicalList extends Vue {
         item.ecs_detail = [];
         return item;
       })
+      var rows = [];
+      if (this.multi_rows.length > 0) {
+        rows = res.data.host_list.filter(row =>
+          this.multiple_selection_id.includes(row.host_id)
+        );
+      }
+      if (rows && rows.length > 0) {
+        this.$nextTick(() => {
+          rows.forEach(row => {
+            (this.$refs.table as any).toggleRowSelection(row);
+          });
+        });
+      }
       this.page_info.total = res.data.page_info.count || 0;
 
     }
@@ -709,7 +727,7 @@ export default class PhysicalList extends Vue {
       this.FnClearTimer()
     }
     this.timer = setTimeout(()=>{
-      this.get_physical_list()
+      this.get_physical_list(false)
     }, 1000 * 30)
   }
   private FnClearTimer() {
@@ -1026,17 +1044,8 @@ export default class PhysicalList extends Vue {
   }
   private handleMore(obj){
     const {label,value}=obj;
-    if(this.multi_rows.length===0){
-      this.$message.warning("请先勾选物理机!");
-      return;
-    }
-    if(this.judge(value) ){
-      this.oper_type=value;
-      this.oper_label = label
-      this.visible=true;
-    }else{
-      this.$message.warning(this.error_msg[value])
-    }
+    console.log('===',obj)
+    this.handle(label,value)
   }
   private judge(val):any{
     const obj = getHostStatus(val)
@@ -1139,7 +1148,8 @@ i.el-icon-s-tools{
   border-radius: 30px;
 }
 .dropdownbtn {
-  margin-left: 10px;
+  margin-left:10px;
+  margin-bottom: 3px;
 }
 </style>
 <style lang="scss">
