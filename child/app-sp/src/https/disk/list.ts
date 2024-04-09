@@ -54,5 +54,9 @@ export default{
     //获取产品来源
     get_product_source(req){
         return service(getEcsOptions('GET', '/ebs/disk_product_source/', req))
-    }
+    },
+    //修改IOPS和吞吐量
+    change_iops_mbps(req){
+      return service(getEcsOptions('POST', '/ebs/change_iops_mbps/', req))
+    },
 }

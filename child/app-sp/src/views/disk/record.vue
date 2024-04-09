@@ -56,8 +56,7 @@ export default class DiskRecord extends Vue{
   private search_dom = {
     disk_id:{placeholder:'请输入云盘ID'},
     ecs_id:{placeholder:'请输入实例ID'},
-    customer_id:{placeholder:'请输入客户ID'},
-    customer_name: {placeholder:'请输入客户名称'},
+    customer:{placeholder:'请输入客户ID/名称'},
   }
   private handleSizeChange(size){
     this.size = size
