@@ -75,10 +75,10 @@ OSS产品提供以下相关API接口
 
 **请求示例demo（假如有1个桶）：**
 
+通过curl方式调用接口时，使用signature函数返回url替换即可
+
 ```
-POST http://gic-ossapi.capitalonline.net/ossapi/ossapi/GetBucketUsedCapacity/?Action=GetBucketUsedCapacity&AccessKeyId=akxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&SignatureMethod=HMAC-SHA1&SignatureNonce=0d29a3f8-d133-11ee-8797-4c445b646135&SignatureVersion=1.0&Timestamp=2024-02-22T03%3A32%3A48Z&Version=2019-08-08&Signature=p0lJpLPoCzxwL7JFG499RXW4psE%3D
---header 'content-type': 'application/json'
---header 'host': 'oss-cnsq02.cdsgss.com'
+curl -X POST 'https://gic-ossapi.capitalonline.net/ossapi/GetAllBucketUsedCapacity/?Action=GetAllBucketUsedCapacity&AccessKeyId=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&SignatureMethod=HMAC-SHA1&SignatureNonce=XXXXXXXXXXXXXXXXXXXXXXXX&SignatureVersion=1.0&Timestamp=2024-04-09T10%3A53%3A12Z&Version=2019-08-08&Signature=XXXXXXXXXXXXXXXXXXXXXXXXX' -H 'content-type: application/json'  -H 'host: oss-cnsq02.cdsgss.com'
 ```
 
 **返回示例demo（假如有1个桶）：**
