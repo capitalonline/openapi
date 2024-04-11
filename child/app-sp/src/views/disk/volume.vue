@@ -178,7 +178,7 @@ export default class DiskVolume extends Vue{
     this.current = cur
     this.getDataList()
   }
-  private async getDataList(loading:boolean = true){
+  private async getDataList(){
     const {req_data}=this
     let res:any = await Service.get_disk_list({
       pod_id:this.$store.state.pod_id,
