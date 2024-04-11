@@ -45,7 +45,7 @@
           ></el-input-number>
         </el-form-item>
         <el-radio-group v-model="data.set">
-          <div><el-radio label="1">云盘变更（容量变更/重装系统）时，按默认规则更新限速值。</el-radio></div>
+          <el-radio label="1" style="margin-bottom: 10px">云盘变更（容量变更/重装系统）时，按默认规则更新限速值。</el-radio>
           <el-radio label="0">云盘变更（容量变更/重装系统）时，限速保持此设置值不变。</el-radio>
         </el-radio-group>
       </el-form>

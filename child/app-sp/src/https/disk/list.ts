@@ -59,4 +59,8 @@ export default{
     change_iops_mbps(req){
       return service(getEcsOptions('POST', '/ebs/change_iops_mbps/', req))
     },
+    //获取云盘操作记录
+    iops_mbps_record(req){
+      return service(getEcsOptions('POST','/ebs/iops_mbps_record/',req))
+    }
 }

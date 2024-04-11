@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column prop="dev_id" label="dev_id"></el-table-column>
       <el-table-column prop="dev_name" label="dev_name"></el-table-column>
-      <el-table-column prop="cluster_name" label="集群名称"></el-table-column>
+      <el-table-column prop="cluster_name" label="集群名称" min-width="95px"></el-table-column>
       <el-table-column prop="pool_name" label="存储池名称"></el-table-column>
     </el-table>
     <el-pagination
@@ -60,17 +60,14 @@
     <template v-if="visible">
       <Iops :visible="visible" :title="oper_label" :oper_type="oper_type" :mount_id="mount_id" @close = "close_disk"></Iops>
     </template>
-<!--    <template v-if="mbps_visible">-->
-<!--      <Mbps :visible="mbps_visible" :title="title" :mount_id="mount_id" @close = "close_disk"></Mbps>-->
-<!--    </template>-->
+
   </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import ActionBlock from '../../components/search/actionBlock.vue';
-import Iops from "@/views/disk/iops.vue";
-import Mbps from "@/views/disk/mbps.vue";
+import Iops from "@/views/disk/iopsMbps.vue";
 import {Table} from "element-ui";
 import Service from "@/https/disk/list";
 import {trans} from "@/utils/transIndex";
@@ -78,7 +75,6 @@ import {trans} from "@/utils/transIndex";
   components: {
     ActionBlock,
     Iops,
-    Mbps
   }
 })
 export default class DiskVolume extends Vue{
@@ -96,10 +92,7 @@ export default class DiskVolume extends Vue{
   private search_dom = {
     customer_id:{placeholder:'请输入客户ID'},
     disk_id:{placeholder:'请输入云盘ID'},
-    ecs_id:{placeholder:'请输入实例ID'},
-    dev_id: {placeholder:'请输入dev_id'},
-    dev_name: {placeholder:'请输入dev_name'},
-    customer_name: {placeholder:'请输入集群名称'},
+    ecs_id:{placeholder:'请输入实例ID'}
   }
   private operate_btns:any=[
     {label:'设置IOPS',value:'iops'},
@@ -192,14 +185,7 @@ export default class DiskVolume extends Vue{
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
       status:req_data.status ? req_data.status[0] : '',
-      product_source:req_data.product_source ? req_data.product_source:[],
       customer_id:req_data.customer_id || '',
-      customer_name:req_data.customer_name || '',
-      product_server_id:req_data.product_server_id || '',
-      product_server_name:req_data.product_server_name || '',
-      disk_property:req_data.disk_property ? req_data.disk_property[0] : '',
-      op_source:req_data.op_source ? req_data.op_source[0] : '',
-      billing_method:req_data.fee_way ? req_data.fee_way[0] : 'all',
       page_index:this.current,
       page_size:this.size,
     })
