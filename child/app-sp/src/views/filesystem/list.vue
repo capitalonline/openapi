@@ -9,7 +9,7 @@
             <el-tooltip content="自定义列表项" placement="bottom" effect="light">
                 <el-button type="text" @click="FnCustom">
                 <i class="el-icon-s-tools" ></i>
-                </el-button>        
+                </el-button>
             </el-tooltip>
             <el-tooltip content="导出" placement="bottom" effect="light">
                 <el-button type="text" @click="down" :disabled="auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
@@ -18,15 +18,15 @@
                 <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
             </el-tooltip>
         </div>
-        <el-table 
-            :data="list" 
-            border 
+        <el-table
+            :data="list"
+            border
         >
-            <el-table-column 
-                v-for="(item) in custom_host" 
+            <el-table-column
+                v-for="(item) in custom_host"
                 :filter-multiple="item.column_key ? false : null"
-                :key="item.prop" 
-                :prop="item.prop" 
+                :key="item.prop"
+                :prop="item.prop"
                 :column-key="item.column_key ? item.column_key : null"
                 :filters="item.column_key ? item.list : null"
                 :sortable="item.sortable ? item.sortable : null"
@@ -36,9 +36,9 @@
                 >
                 <template #default="scope" v-if="item.prop==='nas_id_name'">
                     <div>
-                        <el-tooltip 
-                            :content="scope.row.nas_id" 
-                            placement="bottom" 
+                        <el-tooltip
+                            :content="scope.row.nas_id"
+                            placement="bottom"
                             effect="light">
                                 <span class="not-clickable" v-if="['building','build_fail'].includes(scope.row.status)">{{ scope.row.nas_id }}</span>
                                 <span v-else class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
@@ -59,13 +59,13 @@
                     <div>{{scope.row.subnet_name}}</div>
                 </template>
                 <template #default="scope" v-else-if="item.prop==='mount_path'">
-                    <el-tooltip 
-                        :content="scope.row.mount_path[0]" 
-                        placement="bottom" 
+                    <el-tooltip
+                        :content="scope.row.mount_path[0]"
+                        placement="bottom"
                         effect="light">
                             <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
                     </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard> 
+                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>
                 </template>
                 <template #default="scope" v-else-if="item.prop==='transfer_vpc_storage_ip'">
                     <div>VPC:{{scope.row.transfer_vm_vpc_ip}}</div>
@@ -86,9 +86,9 @@
             <el-table-column prop="nas_id" label="文件系统ID/名称" width="120px">
                 <template slot-scope="scope">
                     <div>
-                        <el-tooltip 
-                            :content="scope.row.nas_id" 
-                            placement="bottom" 
+                        <el-tooltip
+                            :content="scope.row.nas_id"
+                            placement="bottom"
                             effect="light">
                                 <span class="not-clickable" v-if="['building','build_fail'].includes(scope.row.status)">{{ scope.row.nas_id }}</span>
                                 <span v-else class="id-cell clickble" @click="detail(scope.row.nas_id)">{{ scope.row.nas_id }}</span>
@@ -119,13 +119,13 @@
             </el-table-column>
             <el-table-column prop="mount_path" label="挂载地址" width="180">
                 <template slot-scope="scope">
-                    <el-tooltip 
-                        :content="scope.row.mount_path[0]" 
-                        placement="bottom" 
+                    <el-tooltip
+                        :content="scope.row.mount_path[0]"
+                        placement="bottom"
                         effect="light">
                             <span class="id-cell">{{ scope.row.mount_path[0]}}</span>
                     </el-tooltip>
-                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>                
+                    <Clipboard :content="scope.row.mount_path[0]" v-if="scope.row.mount_path"></Clipboard>
                 </template>
             </el-table-column>
             <el-table-column prop="use_total_size" label="使用量/总容量"  width="140"></el-table-column>
@@ -155,11 +155,11 @@
             <el-table-column prop="operate" label="操作" width="140">
                 <template slot-scope="scope">
                     <el-tooltip placement="right" v-if="scope.row.status!=='running' || !auth_list.includes('file_capacity')" effect="light" content="只有运行中的文件系统才可以扩容">
-                        <span type="text" class="not-clickable m-right10">扩容</span> 
+                        <span type="text" class="not-clickable m-right10">扩容</span>
                     </el-tooltip>
-                    <el-button type="text" v-else @click="capacity(scope.row)">扩容</el-button> 
+                    <el-button type="text" v-else @click="capacity(scope.row)">扩容</el-button>
                     <!-- <el-button type="text" @click="record(scope.row)" :disabled="!auth_list.includes('record')">删除</el-button>  -->
-                    <el-button type="text" @click="record(scope.row)">操作记录</el-button> 
+                    <el-button type="text" @click="record(scope.row)">操作记录</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -179,9 +179,9 @@
             <record :visible="recordVisible" :record_id="operateInfo.nas_id" :type="'nas'" @close="closeRecord"></record>
         </template>
         <custom-list-item
-            :visible.sync="show_custom" 
+            :visible.sync="show_custom"
             :all_item="all_item"
-            :all_column_item="all_column_item" 
+            :all_column_item="all_column_item"
             @fn-custom="get_custom_columns"
             :type="'nas'"
         ></custom-list-item>
@@ -292,7 +292,7 @@ export default class List extends Vue{
     private down(){
         let obj = {
             pod_id:this.$store.state.pod_id,
-            field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop)) 
+            field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop))
         }
         let str=""
         for (let i in obj){
@@ -396,7 +396,7 @@ export default class List extends Vue{
             return this.computeUnit(value/1024,++num)
         }else{
             return value.toFixed(2) + this.units[num];
-        }        
+        }
     }
     private record(row){
         this.FnClearTimer()
