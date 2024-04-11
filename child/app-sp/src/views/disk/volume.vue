@@ -2,7 +2,7 @@
   <div>
     <action-block :search_option="search_dom" @fn-search="search">
       <template #default>
-        <el-button type="primary" v-for="item in operate_btns" :key="item.value" @click="handleBtn(item.label,item.value)">{{item.label}}</el-button>
+        <el-button type="primary" v-for="item in operate_btns" :disabled="!auth_list.includes(item.value)" :key="item.value" @click="handleBtn(item.label,item.value)">{{item.label}}</el-button>
       </template>
     </action-block>
     <el-table
@@ -89,6 +89,7 @@ export default class DiskVolume extends Vue{
   private disk_state:any = [];
   private mount_id:any=[]
   private req_data:any={}
+  private auth_list:any=[]
   private search_dom = {
     customer_id:{placeholder:'请输入客户ID'},
     disk_id:{placeholder:'请输入云盘ID'},
@@ -104,6 +105,7 @@ export default class DiskVolume extends Vue{
     this.getDataList()
   }
    created(){
+    this.auth_list=this.$store.state.auth_info[this.$route.name]
     this.get_disk_state()
     this.search()
   }

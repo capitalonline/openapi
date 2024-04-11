@@ -148,15 +148,15 @@ const routes:RouteConfig[] = [
       },
       {
         path: '/diskRecord',
-        name: 'record_list',
+        name: 'disk_record',
         component: () => import('../views/disk/record.vue'),
-        meta: {menu: 'record_list',no_auth: true}
+        meta: {menu: 'disk_record'}
       },
       {
         path: '/diskVolume',
         name: 'disk_volume',
         component: () => import('../views/disk/volume.vue'),
-        meta: {menu: 'disk_volume',no_auth: true}
+        meta: {menu: 'disk_volume'}
       },
       {
         path: '/snapshot',

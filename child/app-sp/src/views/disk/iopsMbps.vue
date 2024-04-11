@@ -112,10 +112,10 @@ export default class Iops extends Vue{
     const form = this.$refs.confirmForm as Form
     form.validate(async (valid)=> {
       if (valid) {
-        console.log('====')
         let req = {
           disk_ids: this.mount_id.map(item => item.disk_id),
-          customer_id: this.mount_id[0].customer_id
+          customer_id: this.mount_id[0].customer_id,
+          change_reason:this.data.reason
         }
         if(this.oper_type === 'iops'){
           req['disk_iops'] = this.data.update_data
