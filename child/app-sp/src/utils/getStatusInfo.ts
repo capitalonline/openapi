@@ -41,7 +41,7 @@ const host_status={//error为新增状态，异常
   shelves:{power:[],host:[],vm:1,msg:'已选主机上不能有虚拟机运行',label:'下架'},
   disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
   out_of_band:{power:[],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'进入带外管理'},
-  migrate:{power:['running'],host:['online','storage_error'],msg:'已选主机需为在线或存储异常状态',label:'迁移'},
+  migrate:{power:['running'],host:['online','storage_error','crash'],msg:'已选主机需为在线、存储异常或宕机状态',label:'迁移'},
   lock:{power:[],host:[],msg:'',label:'锁定'},
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
   unstore_exception:{power:[],host:['storage_error'],msg:'已选主机需为存储异常状态',label:'解除存储异常'}
