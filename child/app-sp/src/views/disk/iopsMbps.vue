@@ -41,7 +41,7 @@
             style="width: 200px"
             v-model="data.update_data"
             :min="0"
-            :max="26000"
+            :max="oper_type === 'iops' ? 26000 : 260"
           ></el-input-number>
         </el-form-item>
         <el-radio-group v-model="data.set">
