@@ -6,4 +6,7 @@ export default{
   get_host_tree_data(req){
     return service(getEcsOptions('GET','/host/get_host_tree_data/',req))
   },
+  open_region_az_info(req){
+    return service(getEcsOptions('POST','/ecs/open_region_az_info/',req))
+  }
 }

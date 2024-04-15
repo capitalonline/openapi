@@ -61,6 +61,12 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/cluster/host/list.vue'),
         meta: {menu: 'host_list',no_auth: true}
         },
+      {
+        path: '/error',
+        name: 'error',
+        component: () => import('../views/vmOp2/404.vue'),
+        meta: {menu: '404', no_auth: true}
+      }
     ]
   },
   {
