@@ -40,7 +40,7 @@
             :controls="false"
             style="width: 200px"
             v-model="data.update_data"
-            :min="0"
+            :min="oper_type === 'iops' ? 1800 : 120"
             :max="oper_type === 'iops' ? 26000 : 260"
           ></el-input-number>
         </el-form-item>
