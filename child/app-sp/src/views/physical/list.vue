@@ -662,7 +662,8 @@ export default class PhysicalList extends Vue {
       nic,
       bare_metal_name,
       bare_metal_id,
-      vgpu_segment_type
+      vgpu_segment_type,
+      host_info
     }=this.search_data;
     let res:any=await Service.get_host_list({
       pod_id:this.$store.state.pod_id,
@@ -678,6 +679,7 @@ export default class PhysicalList extends Vue {
       nic,
       bare_metal_name,
       bare_metal_id,
+      host_info,
       vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
