@@ -75,11 +75,11 @@
         >{{ create_btn }}</el-button
       >
     </slot>
-      <el-dialog title="批量查询" :visible="syncVisible" width="500px" :destroy-on-close="true" :close-on-click-modal="false">
+      <el-dialog title="批量查询" :visible="syncVisible" width="400px" :destroy-on-close="true" :close-on-click-modal="false">
         <el-input
           type="textarea"
-          :rows="6"
-          placeholder="请输入主机ID/名称"
+          :rows="13"
+          :placeholder="`请输入主机ID/名称,格式如下：\nPOD01-CLU01-H001\nPOD01-CLU01-H002\nPOD01-CLU01-H003\n...`"
           v-model="search_value['host_info']">
         </el-input>
         <span slot="footer" class="dialog-footer">
