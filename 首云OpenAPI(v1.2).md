@@ -15291,7 +15291,8 @@ def get_status(task_id):
 | 模板大类型  | 模板类型                         | 中文名称                               |
 | ----------- | -------------------------------- | -------------------------------------- |
 | Anolis OS   | AnolisOS_8.6_64                  |                                        |
-| Rocky Linux | RockyLinux_9.0_64                |                                        |
+| Rocky Linux | RockyLinux_9.3_64                |                                        |
+|             | RockyLinux_9.0_64                |                                        |
 |             | RockyLinux_8.6_64                |                                        |
 |             | RockyLinux_8.5_64                |                                        |
 | Centos      | Centos_Stream_8                  |                                        |
