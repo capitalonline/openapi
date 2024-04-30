@@ -82,7 +82,114 @@ curl -X POST 'https://gic-ossapi.capitalonline.net/ossapi/GetAllBucketUsedCapaci
 **返回示例demo（假如有2个桶）：**
 
 ```
-{"Code": "Success", "Msg": "Success", "Data": {"bucket1": {"capacity_used": 6259635108, "obj_count": 4397333, "in_bandwidth": 6388855, "out_bandwidth": 15498830, "get_avg_time": {"total_time": 2404311, "reqs_count": 216, "avg_time": 11131.07}, "put_avg_time": {"total_time": 6160814, "reqs_count": 273, "avg_time": 22567.08}, "head_avg_time": {"total_time": 0, "reqs_count": 0, "avg_time": 0}, "del_avg_time": {"total_time": 9019, "reqs_count": 2, "avg_time": 4509.5}, "GET": {"2xx": 216, "3xx": 0, "4xx": 0, "5xx": 0}, "PUT": {"2xx": 273, "3xx": 0, "4xx": 0, "5xx": 0}, "HEAD": {"2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0}, "DELETE": {"2xx": 2, "3xx": 0, "4xx": 0, "5xx": 0}}, "bucket2": {"capacity_used": 1727619660, "obj_count": 660222, "in_bandwidth": 6978223, "out_bandwidth": 6957037, "get_avg_time": {"total_time": 998818, "reqs_count": 193, "avg_time": 5175.22}, "put_avg_time": {"total_time": 4430208, "reqs_count": 199, "avg_time": 22262.35}, "head_avg_time": {"total_time": 1506797, "reqs_count": 193, "avg_time": 7807.24}, "del_avg_time": {"total_time": 0, "reqs_count": 0, "avg_time": 0}, "GET": {"2xx": 193, "3xx": 0, "4xx": 0, "5xx": 0}, "PUT": {"2xx": 199, "3xx": 0, "4xx": 0, "5xx": 0}, "HEAD": {"2xx": 193, "3xx": 0, "4xx": 0, "5xx": 0}, "DELETE": {"2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0}},"start_time": "2024-04-29T14:30:00"}, "RequestId": "4ddbd437-97cc-44a7-8d5a-b94902ccb977"}
+{
+    "Code": "Success",
+    "Msg": "Success",
+    "Data": {
+        "bucket1": {
+            "capacity_used": 6259635108,
+            "obj_count": 4397333,
+            "in_bandwidth": 6388855,
+            "out_bandwidth": 15498830,
+            "get_avg_time": {
+                "total_time": 2404311,
+                "reqs_count": 216,
+                "avg_time": 11131.07
+            },
+            "put_avg_time": {
+                "total_time": 6160814,
+                "reqs_count": 273,
+                "avg_time": 22567.08
+            },
+            "head_avg_time": {
+                "total_time": 0,
+                "reqs_count": 0,
+                "avg_time": 0
+            },
+            "del_avg_time": {
+                "total_time": 9019,
+                "reqs_count": 2,
+                "avg_time": 4509.5
+            },
+            "GET": {
+                "2xx": 216,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "PUT": {
+                "2xx": 273,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "HEAD": {
+                "2xx": 0,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "DELETE": {
+                "2xx": 2,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            }
+        },
+        "bucket2": {
+            "capacity_used": 1727619660,
+            "obj_count": 660222,
+            "in_bandwidth": 6978223,
+            "out_bandwidth": 6957037,
+            "get_avg_time": {
+                "total_time": 998818,
+                "reqs_count": 193,
+                "avg_time": 5175.22
+            },
+            "put_avg_time": {
+                "total_time": 4430208,
+                "reqs_count": 199,
+                "avg_time": 22262.35
+            },
+            "head_avg_time": {
+                "total_time": 1506797,
+                "reqs_count": 193,
+                "avg_time": 7807.24
+            },
+            "del_avg_time": {
+                "total_time": 0,
+                "reqs_count": 0,
+                "avg_time": 0
+            },
+            "GET": {
+                "2xx": 193,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "PUT": {
+                "2xx": 199,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "HEAD": {
+                "2xx": 193,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            },
+            "DELETE": {
+                "2xx": 0,
+                "3xx": 0,
+                "4xx": 0,
+                "5xx": 0
+            }
+        },
+        "start_time": "2024-04-29T14:30:00"
+    },
+    "RequestId": "4ddbd437-97cc-44a7-8d5a-b94902ccb977"
+}
 ```
 
 
