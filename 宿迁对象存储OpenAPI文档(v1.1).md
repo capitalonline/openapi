@@ -6,7 +6,7 @@ OSS产品提供以下相关API接口
 
 | API                      | 描述                                                         |
 | ------------------------ | ------------------------------------------------------------ |
-| GetAllBucketUsedCapacity | 统计所有存储桶（Bucket）的当前时间的用量，一定时间内（当前时间往前推的）的流入带宽，流出带宽，GET，PUT，HEAD，DELETE请求的时延、获取状态码个数等监控信息，时间颗粒度为5min。 |
+| GetAllBucketUsedCapacity | 统计所有存储桶（Bucket）最近一个5min时间的用量（具体时间按照调用结果为准），流入带宽，流出带宽，GET，PUT，HEAD，DELETE请求的时延、获取状态码个数等监控信息，时间颗粒度为5min。 |
 
 - 认证方式
   - [1.公共请求参数](https://github.com/capitalonline/openapi/blob/master/首云OpenAPI(v1.2).md#1公共请求参数)
@@ -53,8 +53,6 @@ OSS产品提供以下相关API接口
 | bucket_name   | /            | 存储桶名称                               |
 | capacity_used | KB           | 存储桶已使用的容量                       |
 | obj_count     | 个           | 存储桶的对象数目                         |
-| unit          | /            | 存储桶已使用的容量的单位                 |
-| site_id       | /            | 节点id                                   |
 | in_bandwidth  | 字节（byte） | 上传带宽，支持周期：5minute              |
 | out_bandwidth | 字节（byte） | 下载带宽，支持周期：5minute              |
 | get_avg_time  | 微秒（μs）   | GET请求平均时延，支持周期：5minute       |
@@ -73,7 +71,7 @@ OSS产品提供以下相关API接口
 - GetAllBucketUsedCapacity，有如下注意事项：
   - 仅限宿迁站点指定用户
 
-**请求示例demo（假如有1个桶）：**
+**请求示例demo（假如有2个桶）：**
 
 通过curl方式调用接口时，使用signature函数返回url替换即可
 
@@ -81,22 +79,10 @@ OSS产品提供以下相关API接口
 curl -X POST 'https://gic-ossapi.capitalonline.net/ossapi/GetAllBucketUsedCapacity/?Action=GetAllBucketUsedCapacity&AccessKeyId=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&SignatureMethod=HMAC-SHA1&SignatureNonce=XXXXXXXXXXXXXXXXXXXXXXXX&SignatureVersion=1.0&Timestamp=2024-04-09T10%3A53%3A12Z&Version=2019-08-08&Signature=XXXXXXXXXXXXXXXXXXXXXXXXX' -H 'content-type: application/json'  -H 'host: oss-cnsq02.cdsgss.com'
 ```
 
-**返回示例demo（假如有1个桶）：**
+**返回示例demo（假如有2个桶）：**
 
 ```
-{'Code': 'Success', 'Msg': 'Success', 'Data': 
-[
-{'site_id': '33', 'customer_id': 'xxxxx', 'user_id': 'dd1dc582-8f71-11ee-ac88-646c80cc671e', 'bucket_name': 'bucket_name', 'bucket_id': 'c1036dbe-c400-11ee-bd70-7a50d87ea341', 'capacity_used': 2093746632, 'obj_count': 56723, 'start_time': '2024-04-03 14:00', 'unit': 'KB'}, 
-{'bucket_name': 'bucket_name', 'metric_key': 'in_bandwidth', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'value': 248149}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'out_bandwidth', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'value': 43909265130}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'get_avg_time', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'total_time': 9209301334, 'reqs_count': 1313252, 'avg_time': 7012.59}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'put_avg_time', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'total_time': 14881482, 'reqs_count': 1299, 'avg_time': 11456.11}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'head_avg_time', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'total_time': 228601936, 'reqs_count': 25073, 'avg_time': 9117.45}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'del_avg_time', 'http_method': None, 'response': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', 'total_time': 1952654, 'reqs_count': 479, 'avg_time': 4076.52}]}, 
- {'bucket_name': 'bucket_name', 'metric_key': 'http_codes', 'GET': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', '2xx': 1313252, '3xx': 0, '4xx': 0, '5xx': 0}], 'PUT': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', '2xx': 1299, '3xx': 0, '4xx': 0, '5xx': 0}], 'HEAD': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', '2xx': 11901, '3xx': 0, '4xx': 13172, '5xx': 0}], 'DELETE': [{'site_id': '33', 'customer_id': 'XXXX', 'bucket_name': 'bucket_name', 'bucket_id': 'lph4h4be-c400-11ee-gbnghfg444h44h544', 'start_time': '2024-04-03 13:50', '2xx': 479, '3xx': 0, '4xx': 0, '5xx': 0}]
- }, '2024-04-03T13:50:00'],
-    "RequestId":"c2e49f30-81b3-4395-a123-892e69459369"
-}
+{"Code": "Success", "Msg": "Success", "Data": {"bucket1": {"capacity_used": 6259635108, "obj_count": 4397333, "in_bandwidth": 6388855, "out_bandwidth": 15498830, "get_avg_time": {"total_time": 2404311, "reqs_count": 216, "avg_time": 11131.07}, "put_avg_time": {"total_time": 6160814, "reqs_count": 273, "avg_time": 22567.08}, "head_avg_time": {"total_time": 0, "reqs_count": 0, "avg_time": 0}, "del_avg_time": {"total_time": 9019, "reqs_count": 2, "avg_time": 4509.5}, "GET": {"2xx": 216, "3xx": 0, "4xx": 0, "5xx": 0}, "PUT": {"2xx": 273, "3xx": 0, "4xx": 0, "5xx": 0}, "HEAD": {"2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0}, "DELETE": {"2xx": 2, "3xx": 0, "4xx": 0, "5xx": 0}}, "bucket2": {"capacity_used": 1727619660, "obj_count": 660222, "in_bandwidth": 6978223, "out_bandwidth": 6957037, "get_avg_time": {"total_time": 998818, "reqs_count": 193, "avg_time": 5175.22}, "put_avg_time": {"total_time": 4430208, "reqs_count": 199, "avg_time": 22262.35}, "head_avg_time": {"total_time": 1506797, "reqs_count": 193, "avg_time": 7807.24}, "del_avg_time": {"total_time": 0, "reqs_count": 0, "avg_time": 0}, "GET": {"2xx": 193, "3xx": 0, "4xx": 0, "5xx": 0}, "PUT": {"2xx": 199, "3xx": 0, "4xx": 0, "5xx": 0}, "HEAD": {"2xx": 193, "3xx": 0, "4xx": 0, "5xx": 0}, "DELETE": {"2xx": 0, "3xx": 0, "4xx": 0, "5xx": 0}},"start_time": "2024-04-29T14:30:00"}, "RequestId": "4ddbd437-97cc-44a7-8d5a-b94902ccb977"}
 ```
 
 
@@ -116,17 +102,12 @@ from hashlib import sha1
 import requests
 import xmltodict as xmlparse
 
-
 OSSPREBASEURL = 'https://gic-ossapi.capitalonline.net/ossapi'
 
-#替换自己的endpoint
-endpoint = "xxxxxxxxxxxxxxxxx.com"
 
-#替换自己的ak
-a_key = 'xxxxxxxxxxxxxxxxxxxxxxxx'
-
-#替换自己的sk
-s_key = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+endpoint = "oss-cnsq02.cdsgss.com"
+a_key = 'XXXXXXXXXXXXXXXXXXXX'
+s_key = 'XXXXXXXXXXXXXXXXXXXX'
 
 def percent_encode(string):
     """将特殊转义字符替换"""
@@ -173,61 +154,31 @@ def signature(action, ak, access_key_secret, method, url, param={}):
     url = url + '/?' + parse.urlencode(D)
     return url
 
-def Listbucket(data):
-    for info in data[:-1]:
-        if list(info.keys())[0] == "site_id":
-            print('存储桶名称:%s 使用容量为 %s TB 对象数量：%s ' % (info.get("bucket_name"), round(info.get("capacity_used") / 1024 / 1024 / 1024 , 2),info.get("obj_count")))
+def bucketinfo(data):
+    for key,value in data.items():
+        if key == "start_time":
+            continue
+        print("桶名：",key)
+        print("桶使用量capacity_used:",value.get("capacity_used"))
+        print("桶对象个数obj_count:",value.get("obj_count"))
+        print("上传带宽in_bandwidth:  %s Mbps" % (value.get("in_bandwidth")/1024/1024))
+        print("下载带宽out_bandwidth: %s Mbps" % (value.get("out_bandwidth")/1024/1024))
 
-def ListInfo(data):
-    for info in data[:-1]:
-        if list(info.keys())[0] == "bucket_name" :
-            if info["metric_key"] == "in_bandwidth":
-                if info["response"]:
-                    print('桶名：%s, 上传带宽in_bandwidth is :%s Mbps' % (info["bucket_name"], info["response"][0]['value']/1024/1024))
-                else:
-                    print('桶名：%s, 上传带宽in_bandwidth is :%s Mbps' % (info["bucket_name"], 0))
+        print("GET平均延时:    total_time:"+str(value.get("get_avg_time").get("total_time")) + " reqs_count:"+str(value.get("get_avg_time").get("reqs_count")) + " avg:" + str(round(value.get("get_avg_time").get("avg_time") / 1000, 2)))
+        print("PUT平均延时:    total_time:"+str(value.get("put_avg_time").get("total_time")) + " reqs_count:"+str(value.get("put_avg_time").get("reqs_count")) + " avg:" + str(round(value.get("put_avg_time").get("avg_time") / 1000, 2)))
+        print("HEAD平均延时:   total_time:"+str(value.get("head_avg_time").get("total_time")) + " reqs_count:"+str(value.get("head_avg_time").get("reqs_count")) + " avg:" + str(round(value.get("head_avg_time").get("avg_time") / 1000, 2)))
+        print("DELETE平均延时: total_time:"+str(value.get("del_avg_time").get("total_time")) + " reqs_count:"+str(value.get("del_avg_time").get("reqs_count")) + " avg:" + str(round(value.get("del_avg_time").get("avg_time") / 1000, 2)))
 
-            elif info["metric_key"] == "out_bandwidth":
-                if info["response"]:
-                    print('桶名：%s, 下载带宽out_bandwidth is :%s Mbps' % (info["bucket_name"], info["response"][0]['value']/1024/1024))
-                else:
-                    print('桶名：%s, 下载带宽out_bandwidth is :%s Mbps' % (info["bucket_name"], 0))
+        print("GET状态码:      2xx:"+str(value.get("GET").get("2xx")) + " 3xx:"+str(value.get("GET").get("3xx")) + " 4xx:" + str(value.get("GET").get("4xx"))+ " 5xx:" + str(value.get("GET").get("5xx")))
+        print("PUT状态码:      2xx:"+str(value.get("PUT").get("2xx")) + " 3xx:"+str(value.get("PUT").get("3xx")) + " 4xx:" + str(value.get("PUT").get("4xx"))+ " 5xx:" + str(value.get("GET").get("5xx")))
+        print("HEAD状态码:     2xx:"+str(value.get("HEAD").get("2xx")) + " 3xx:"+str(value.get("HEAD").get("3xx")) + " 4xx:" + str(value.get("HEAD").get("4xx"))+ " 5xx:" + str(value.get("GET").get("5xx")))
+        print("DELETE状态码:   2xx:"+str(value.get("DELETE").get("2xx")) + " 3xx:"+str(value.get("DELETE").get("3xx")) + " 4xx:" + str(value.get("DELETE").get("4xx"))+ "5xx: " + str(value.get("GET").get("5xx")))
 
-            elif info["metric_key"] == "get_avg_time":
-                if info["response"]:
-                    print('桶名：%s, GET平均延时 total_time:%s reqs_count:%s avg:%s' %
-                          (info["bucket_name"], info["response"][0]["total_time"], info["response"][0]['reqs_count'], round(info["response"][0]['avg_time'] / 1000, 2)))
-                else:
-                    print('桶名：%s, 无GET请求 ' % (info["bucket_name"]))
+        print()
 
-            elif info["metric_key"] == "put_avg_time":
-                if info["response"]:
-                    print('桶名：%s, PUT平均延时 total_time:%s reqs_count:%s avg:%s' %
-                          (info["bucket_name"], info["response"][0]["total_time"], info["response"][0]['reqs_count'], round(info["response"][0]['avg_time'] / 1000, 2)))
-                else:
-                    print('桶名：%s, 无PUT请求 ' % (info["bucket_name"]))
 
-            elif info["metric_key"] == "head_avg_time":
-                if info["response"]:
-                    print('桶名：%s, HEAD平均延时 total_time:%s reqs_count:%s avg:%s' %
-                          (info["bucket_name"], info["response"][0]["total_time"], info["response"][0]['reqs_count'], round(info["response"][0]['avg_time'] / 1000, 2)))
-                else:
-                    print('桶名：%s, 无HEAD请求 ' % (info["bucket_name"]))
 
-            elif info["metric_key"] == "del_avg_time":
-                if info["response"]:
-                    print('桶名：%s, DELETE平均延时 total_time:%s reqs_count:%s avg:%s' %
-                          (info["bucket_name"], info["response"][0]["total_time"], info["response"][0]['reqs_count'], round(info["response"][0]['avg_time'] / 1000, 2)))
-                else:
-                    print('桶名：%s, 无DELETE请求 ' % (info["bucket_name"]))
 
-            elif info["metric_key"] == "http_codes":
-                for http_method in ['GET', 'PUT', 'HEAD', 'DELETE']:
-                    if info[http_method]:
-                        print('桶名：%s，%s请求状态码为: 2xx:%s 3xx:%s 4xx:%s 5xx:%s' % (info["bucket_name"], http_method, info[http_method][0]["2xx"], info[http_method][0]["3xx"], info[http_method][0]["4xx"], info[http_method][0]["5xx"]))
-                    else:
-                        print('桶名：%s, %s请求状态码为: 2xx:%s 3xx:%s 4xx:%s 5xx:%s' % (info["bucket_name"], http_method,  0, 0, 0, 0))
-                print()
 
 class OpenAPI(object):
     centent_type = "application/json"
@@ -245,7 +196,7 @@ class OpenAPI(object):
         action = "GetAllBucketUsedCapacity"
         method = "POST"
         param = {}
-        self.headers.update({"host": '%s' % (endpoint)})
+        self.headers.update({"host":'%s' %(endpoint)})
         url = signature(action, self.access_key, self.secret_key, method, url, param)
         resp = requests.post(url, headers=self.headers)
         if resp.status_code == 200:
@@ -255,14 +206,12 @@ class OpenAPI(object):
 
 if __name__ == '__main__':
     api = OpenAPI(a_key, s_key)
-    #获取最近一次查询的所有桶的监控数据
+    #获取最近一次查询的所有桶的数据
     res_data = api.GetAllBucketUsedCapacity()
-    print("监控开始时间：", res_data.get("Data")[-1])
+    # print(res_data)
+    print("开始时间：", res_data.get("Data").get("start_time"))
     print()
-    Listbucket(res_data.get("Data"))
-    print()
-    ListInfo(res_data.get("Data"))
-
+    bucketinfo(res_data.get("Data"))
 
 ```
 
@@ -271,29 +220,32 @@ if __name__ == '__main__':
 ```
 监控开始时间： 2024-04-03T17:50:00
 
-存储桶名称:bucket_test1 使用容量为 9.7 TB 对象数量：464655 
-存储桶名称:bucket_test2 使用容量为 2.1 TB 对象数量：11254
+桶名： bucket1
+桶使用量capacity_used: 1666297628
+桶对象个数obj_count: 2862656
+上传带宽in_bandwidth:  0.0 Mbps
+下载带宽out_bandwidth: 0.0 Mbps
+GET平均延时:    total_time:0 reqs_count:0 avg:0.0
+PUT平均延时:    total_time:0 reqs_count:0 avg:0.0
+HEAD平均延时:   total_time:0 reqs_count:0 avg:0.0
+DELETE平均延时: total_time:0 reqs_count:0 avg:0.0
+GET状态码:      2xx:0 3xx:0 4xx:0 5xx:0
+PUT状态码:      2xx:0 3xx:0 4xx:0 5xx:0
+HEAD状态码:     2xx:0 3xx:0 4xx:0 5xx:0
+DELETE状态码:   2xx:0 3xx:0 4xx:05xx: 0
 
-桶名：bucket_test1, 上传带宽in_bandwidth is :0 Mbps
-桶名：bucket_test1, 下载带宽out_bandwidth is :0 Mbps
-桶名：bucket_test1, 无GET请求 
-桶名：bucket_test1, 无PUT请求 
-桶名：bucket_test1, 无HEAD请求 
-桶名：bucket_test1, 无DELETE请求 
-桶名：bucket_test1, GET请求状态码为: 2xx:0 3xx:0 4xx:0 5xx:0
-桶名：bucket_test1, PUT请求状态码为: 2xx:0 3xx:0 4xx:0 5xx:0
-桶名：bucket_test1, HEAD请求状态码为: 2xx:0 3xx:0 4xx:0 5xx:0
-桶名：bucket_test1, DELETE请求状态码为: 2xx:0 3xx:0 4xx:0 5xx:0
-
-桶名：bucket_test2, 上传带宽in_bandwidth is :0.22241687774658203 Mbps
-桶名：bucket_test2, 下载带宽out_bandwidth is :55568.7183265686 Mbps
-桶名：bucket_test2, GET平均延时 total_time:7023548191 reqs_count:820358 avg:8561.56
-桶名：bucket_test2, PUT平均延时 total_time:14001120 reqs_count:1332 avg:10511.35
-桶名：bucket_test2, HEAD平均延时 total_time:393775490 reqs_count:49277 avg:7991.06
-桶名：bucket_test2, DELETE平均延时 total_time:2598211 reqs_count:665 avg:3907.08
-桶名：bucket_test2，GET请求状态码为: 2xx:820358 3xx:0 4xx:0 5xx:0
-桶名：bucket_test2，PUT请求状态码为: 2xx:1332 3xx:0 4xx:0 5xx:0
-桶名：bucket_test2，HEAD请求状态码为: 2xx:25917 3xx:0 4xx:23360 5xx:0
-桶名：bucket_test2，DELETE请求状态码为: 2xx:665 3xx:0 4xx:0 5xx:0
+桶名： bucket2
+桶使用量capacity_used: 0
+桶对象个数obj_count: 0
+上传带宽in_bandwidth:  0.0 Mbps
+下载带宽out_bandwidth: 0.0 Mbps
+GET平均延时:    total_time:0 reqs_count:0 avg:0.0
+PUT平均延时:    total_time:0 reqs_count:0 avg:0.0
+HEAD平均延时:   total_time:0 reqs_count:0 avg:0.0
+DELETE平均延时: total_time:0 reqs_count:0 avg:0.0
+GET状态码:      2xx:0 3xx:0 4xx:0 5xx:0
+PUT状态码:      2xx:0 3xx:0 4xx:0 5xx:0
+HEAD状态码:     2xx:0 3xx:0 4xx:0 5xx:0
+DELETE状态码:   2xx:0 3xx:0 4xx:05xx: 0
 ```
 
