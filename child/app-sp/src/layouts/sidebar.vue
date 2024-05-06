@@ -82,7 +82,7 @@ export default class Sidebar extends Vue {
   //获取az列表
   private async get_az_list(){
     this.az_list=[]
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await Service.open_region_az_info({})
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
@@ -120,7 +120,12 @@ export default class Sidebar extends Vue {
       az_id:this.$store.state.az_id
     })
     if(res.code === 'Success'){
-      this.treeData = this.transformData(res.data.tree_data_list)
+      if(res.data.tree_data_list.length>0){
+        this.treeData = this.transformData(res.data.tree_data_list)
+      }else {
+        this.treeData= []
+        this.$router.push({name:'error'})
+      }
     }
     this.current = this.treeData[0].id
   }

@@ -584,11 +584,10 @@ export default class VmList extends Vue{
     let key_list=['field_name','show_name'];
     let label_list=['prop','label'];
     let list:Array<any>=[]
-    res.data.map(item=>{
+    this.all_item = res.data.map(item=>{
       list=[...list,...item.filed];
       return item;
     })
-    this.all_item = res.data;
     this.all_column_item = deal_list(list,label_list,key_list);
     this.get_custom_columns(this.$store.state.pod.vm_host)
     this.get_custom_columns(this.$store.state.pod.vm_host)
@@ -686,9 +685,6 @@ export default class VmList extends Vue{
     // 产品来源
     if(this.search_product_source){
       reqData["product_source"] = this.search_product_source;
-    }
-    if (this.search_card_status_type) {
-      reqData["card_status_type"] = this.search_card_status_type;
     }
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){

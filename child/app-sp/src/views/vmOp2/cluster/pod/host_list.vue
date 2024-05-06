@@ -322,11 +322,10 @@ export default class HostList extends Vue{
     let key_list=['field_name','show_name'];
     let label_list=['prop','label'];
     let list:Array<any>=[]
-    res.data.map(item=>{
+    this.all_item = res.data.map(item=>{
       list=[...list,...item.filed];
       return item;
     })
-    this.all_item = res.data;
     this.all_column_item = deal_list(list,label_list,key_list);
     this.get_custom_columns(this.$store.state.pod.host_list)
     }
