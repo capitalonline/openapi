@@ -61,6 +61,12 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/cluster/host/list.vue'),
         meta: {menu: 'host_list',no_auth: true}
         },
+      {
+        path: '/error',
+        name: 'error',
+        component: () => import('../views/vmOp2/404.vue'),
+        meta: {menu: '404', no_auth: true}
+      }
     ]
   },
   {
@@ -145,6 +151,18 @@ const routes:RouteConfig[] = [
         name: 'disk_list',
         component: () => import('../views/disk/list.vue'),
         meta: {menu: 'disk_list'}
+      },
+      {
+        path: '/diskRecord',
+        name: 'disk_record',
+        component: () => import('../views/disk/record.vue'),
+        meta: {menu: 'disk_record'}
+      },
+      {
+        path: '/diskVolume',
+        name: 'disk_volume',
+        component: () => import('../views/disk/volume.vue'),
+        meta: {menu: 'disk_volume'}
       },
       {
         path: '/snapshot',
