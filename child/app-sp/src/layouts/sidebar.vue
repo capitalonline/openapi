@@ -68,7 +68,8 @@ export default class Sidebar extends Vue {
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',type: 'menu'},
     {label:'存储',name:'storage',type: 'menu'},
-    {label:'网络',name:'network',disabled:true,tree: false}
+    // {label:'网络',name:'network',disabled:true,tree: false},
+    {label:'审计',name:'log',type: 'menu'},
   ];
   private menu_list=[]
   private treeData:any = []
@@ -115,6 +116,14 @@ export default class Sidebar extends Vue {
         {label:'云盘管理',name:'disk'},
       ]
       this.$router.push({name:'disk'})
+    }
+    if(this.active_menu === 'log'){
+      this.current ='log'
+      this.menu_list=[
+        {label:'操作日志审计',name:'log'},
+        {label:'已销毁资源',name:'destroyed'},
+      ]
+      this.$router.push({name:'log'})
     }
     if(this.active_menu === 'cluster'){
       this.current = this.treeData[0].id

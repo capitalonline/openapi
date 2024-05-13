@@ -79,6 +79,18 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/storage/list.vue'),
         meta: {menu: 'disk_list',no_auth: true}
       },
+      {
+        path: '/ecs_destroyed',
+        name: 'destroyed',
+        component: () => import('../views/instance/destroyedList.vue'),
+        meta: {meta: 'ecs_destroyed', no_auth: true}
+      },
+      {
+        path: '/log',
+        name: 'log',
+        component: () => import('../views/log/list.vue'),
+        meta: {meta: 'ecs_destroyed',no_auth: true}
+      },
     ]
   },
   {
