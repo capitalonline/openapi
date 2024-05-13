@@ -54,5 +54,17 @@ export default{
     //获取产品来源
     get_product_source(req){
         return service(getEcsOptions('GET', '/ebs/disk_product_source/', req))
-    }
+    },
+    //修改IOPS和吞吐量
+    change_iops_mbps(req){
+      return service(getEcsOptions('POST', '/ebs/change_iops_mbps/', req))
+    },
+    //获取云盘操作记录
+    iops_mbps_record(req){
+      return service(getEcsOptions('POST','/ebs/iops_mbps_record/',req))
+    },
+   //获取IOPS和吞吐量范围
+   get_iops_mbps_limit(){
+       return service(getEcsOptions('GET','/ebs/get_iops_mbps_limit/'))
+  }
 }

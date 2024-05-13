@@ -57,7 +57,7 @@ module.exports = {
         target: 'http://cloudos-nas-op.gic.test',
         // target:'http://10.131.171.99:80',
         changeOrigin: true,
-       
+
       },
       '/api': {
         target: 'http://cds-os-tasker.gic.test',

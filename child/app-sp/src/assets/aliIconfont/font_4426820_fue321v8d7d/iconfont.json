@@ -1,0 +1,86 @@
+{
+  "id": "4426820",
+  "name": "kvm-op",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "559613",
+      "name": "消息",
+      "font_class": "message",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "7629084",
+      "name": "消息",
+      "font_class": "message2",
+      "unicode": "e6c0",
+      "unicode_decimal": 59072
+    },
+    {
+      "icon_id": "34198263",
+      "name": "降序",
+      "font_class": "jiangxu",
+      "unicode": "e851",
+      "unicode_decimal": 59473
+    },
+    {
+      "icon_id": "34198321",
+      "name": "升序",
+      "font_class": "shengxu",
+      "unicode": "e853",
+      "unicode_decimal": 59475
+    },
+    {
+      "icon_id": "11882887",
+      "name": "bg-screen",
+      "font_class": "bg-screen",
+      "unicode": "e643",
+      "unicode_decimal": 58947
+    },
+    {
+      "icon_id": "7620268",
+      "name": "机房",
+      "font_class": "machine",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
+    },
+    {
+      "icon_id": "37507642",
+      "name": "更多-圆-L",
+      "font_class": "more",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "657506",
+      "name": "信息",
+      "font_class": "xinxi",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "10268972",
+      "name": "故障&投诉",
+      "font_class": "breakdown",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "16562571",
+      "name": "服务器",
+      "font_class": "serve",
+      "unicode": "e6d7",
+      "unicode_decimal": 59095
+    },
+    {
+      "icon_id": "18267917",
+      "name": "分支",
+      "font_class": "tree",
+      "unicode": "e98e",
+      "unicode_decimal": 59790
+    }
+  ]
+}

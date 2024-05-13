@@ -90,6 +90,14 @@ export default class LeftMenu extends Vue {
           name: "disk_list",
           label: "云盘管理"
         },
+        {
+          name: "disk_record",
+          label: "操作记录"
+        },
+        {
+          name: "disk_volume",
+          label: "云盘-卷"
+        },
         // {
         //   name: "snapshot_list",
         //   label: "快照管理"
