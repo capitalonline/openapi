@@ -26,7 +26,7 @@
                 <el-table-column prop="az_name" label="节点"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途"></el-table-column>
-                <el-table-column prop="host_attribution__name" label="主机归属"></el-table-column>
+                <el-table-column prop="host_attribution_name" label="主机归属"></el-table-column>
             </el-table>
             <div class="ecs-belong m-top20" v-if="['resource'].includes(oper_type)">
                 <span class="m-right20">设置主机归属：</span>
