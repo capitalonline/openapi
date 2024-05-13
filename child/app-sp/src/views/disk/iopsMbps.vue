@@ -40,8 +40,8 @@
             :controls="false"
             style="width: 200px"
             v-model="data.update_data"
-            :min="oper_type === 'iops' ? 1800 : 120"
-            :max="oper_type === 'iops' ? 26000 : 260"
+            :min="oper_type === 'iops' ? min_iops : min_mbps"
+            :max="oper_type === 'iops' ? max_iops : max_mbps"
           ></el-input-number>
         </el-form-item>
         <el-radio-group v-model="data.set">
@@ -91,6 +91,10 @@ export default class Iops extends Vue{
   @Prop(String) oper_type!:string;
   private prod_def:string = ''
   private second_visible:boolean=false
+  private min_iops:number = 0
+  private max_iops:number = 0
+  private min_mbps:number = 0
+  private max_mbps:number = 0
   private second_confirm =this.oper_type === 'iops' ? '是否确认修改IOPS?': '是否确认修改吞吐量?'
   private data = {
     update_data: '',
@@ -98,7 +102,17 @@ export default class Iops extends Vue{
     reason:''
   }
   created() {
-    this.prod_def = this.oper_type === 'iops' ? '单盘IOPS=min{1800+30*容量，26000}' : '单块云盘吞吐量=min{120,0.2*容量，260}'
+    this.GetLimit()
+    this.prod_def = this.oper_type === 'iops' ? `单盘IOPS=min{${this.min_iops}+30*容量，${this.max_iops}}` : `单块云盘吞吐量=min{${this.min_mbps},0.2*容量，${this.max_mbps}}`
+  }
+  private async GetLimit(){
+    let res:any =await Service.get_iops_mbps_limit()
+      if (res.code === 'Success') {
+        this.min_iops=res.data.CLOUD_DISK_MIN_IPOS
+        this.max_iops=res.data.CLOUD_DISK_MAX_IPOS
+        this.min_mbps=res.data.CLOUD_DISK_MIN_THROUGE_PUT
+        this.max_mbps=res.data.CLOUD_DISK_MAX_THROUGE_PUT
+      }
   }
   private FnEmit(){
     const form = this.$refs.resetForm as Form
@@ -127,18 +141,18 @@ export default class Iops extends Vue{
         let res: any = await Service.change_iops_mbps(req)
         if (res.code === 'Success') {
           this.$message.success(res.message)
-          this.back("1", 'iops')
+          this.back("1")
         } else {
-          this.back("0", 'iops')
+          this.back("0")
         }
       }
     })
   }
   private cancel(){
-    this.back("0",'iops')
+    this.back("0")
   }
   @Emit("close")
-  private back(val,type){
+  private back(val){
   }
 
 }

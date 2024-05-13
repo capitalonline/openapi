@@ -62,5 +62,9 @@ export default{
     //获取云盘操作记录
     iops_mbps_record(req){
       return service(getEcsOptions('POST','/ebs/iops_mbps_record/',req))
-    }
+    },
+   //获取IOPS和吞吐量范围
+   get_iops_mbps_limit(){
+       return service(getEcsOptions('GET','/ebs/get_iops_mbps_limit/'))
+  }
 }
