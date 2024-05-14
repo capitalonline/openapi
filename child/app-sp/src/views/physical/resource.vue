@@ -145,7 +145,7 @@ export default class Resource extends Vue{
         return false
       }
       const requestData = {
-        az_id: this.form_data.az_id ? this.form_data.az_id : this.rows[0].az_id,
+        az_id: this.rows.length===0 ? this.form_data.az_id : this.rows[0].az_id,
         host_ids: this.rows.map(item => item.host_id),
         server_name: this.form_data.serviceType,
         is_node_update: this.rows.length ===0 ? '1' : undefined
