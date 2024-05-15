@@ -65,6 +65,12 @@ export default class Layout extends Vue{
     margin: 5px 0;
   }
 }
+.header-box {
+  position: absolute;
+  top: 0px;
+  left: 100px;
+  width: calc(100% - 370px);
+}
 .main-content {
   background: #f5f6fa;
   position: relative;
