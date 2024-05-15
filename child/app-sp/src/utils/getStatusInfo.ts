@@ -44,7 +44,9 @@ const host_status={//error为新增状态，异常
   migrate:{power:['running'],host:['online','storage_error','crash'],msg:'已选主机需为在线、存储异常或宕机状态',label:'迁移'},
   lock:{power:[],host:[],msg:'',label:'锁定'},
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
-  unstore_exception:{power:[],host:['storage_error'],msg:'已选主机需为存储异常状态',label:'解除存储异常'}
+  unstore_exception:{power:[],host:['storage_error'],msg:'已选主机需为存储异常状态',label:'解除存储异常'},
+  service:{power:[],host:[],msg:'',label:'服务更新'},
+  rollback:{power:[],host:[],label:'回滚'}
 }
 export default {
   getInsOperateAuth(type) {

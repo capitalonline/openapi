@@ -158,5 +158,13 @@ export default{
   //解除存储异常
   recover_storage_error(req){
     return service(getHostOptions('POST','/host/recover_storage_error/',req))
-  }
+  },
+  //服务更新
+  agent_update(req){
+      return service(getHostOptions('POST','/host/handle_host_agent_update/',req))
+  },
+  //服务回滚
+  agent_rollback(req){
+    return service(getHostOptions('POST','/host/handle_host_agent_rollback/',req))
+  },
 }
