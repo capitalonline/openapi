@@ -89,7 +89,6 @@ export default class Iops extends Vue{
   @Prop(String) title:string
   @Prop({default:()=>[]}) mount_id!:any
   @Prop(String) oper_type!:string;
-  private prod_def:string = ''
   private second_visible:boolean=false
   private min_iops:number = 0
   private max_iops:number = 0
@@ -104,6 +103,9 @@ export default class Iops extends Vue{
    created() {
     this.GetLimit()
   }
+  get prod_def(){
+    return this.oper_type === 'iops' ? `单盘IOPS=min{${this.min_iops}+30*容量，${this.max_iops}}` : `单块云盘吞吐量=min{${this.min_mbps},0.2*容量，${this.max_mbps}}`
+  }
   private async GetLimit(){
     let res:any =await Service.get_iops_mbps_limit()
       if (res.code === 'Success') {
@@ -111,7 +113,6 @@ export default class Iops extends Vue{
         this.max_iops=res.data.CLOUD_DISK_MAX_IPOS
         this.min_mbps=res.data.CLOUD_DISK_MIN_THROUGE_PUT
         this.max_mbps=res.data.CLOUD_DISK_MAX_THROUGE_PUT
-        this.prod_def = this.oper_type === 'iops' ? `单盘IOPS=min{${this.min_iops}+30*容量，${this.max_iops}}` : `单块云盘吞吐量=min{${this.min_mbps},0.2*容量，${this.max_mbps}}`
         //获取到数据后重新设置表单的初始值
         this.$nextTick(() => {
           this.data.update_data = this.oper_type === 'iops' ? this.min_iops : this.min_mbps;
