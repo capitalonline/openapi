@@ -17,10 +17,7 @@
     <el-table
       :data="list"
       border
-      :row-class-name="rowStyle"
-      @row-click="FnOperRow"
       ref="table"
-      @row-contextmenu="rightClick"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
       @filter-change="filterAttribute"
