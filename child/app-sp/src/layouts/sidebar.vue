@@ -14,22 +14,6 @@
       </el-menu-item>
     </template>
   </el-menu>
-    <div class="left-content">
-      <el-select
-        style="width: 230px"
-        v-model="default_az"
-        filterable
-        :filter-method="get_az_list"
-        @visible-change="change_pod"
-      >
-        <el-option
-          v-for="item in az_list"
-          :key="item.az_id"
-          :value="item.az_id"
-          :label="item.az_name"
-        ></el-option>
-      </el-select>
-    </div>
     <template v-if="treeType === 'tree'">
       <left-tree :currentLivingId="current" :tree_data="treeData"></left-tree>
     </template>
@@ -58,10 +42,8 @@ export default class Sidebar extends Vue {
   $router;
   $store;
   private active_menu: string = 'cluster';
-  private default_az = '';
   private current=''
   private treeType:string = 'tree'
-  private az_list = []
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',disabled:true,type: 'menu'},
@@ -74,26 +56,7 @@ export default class Sidebar extends Vue {
   ]
   private treeData:any = []
   created(){
-    this.get_az_list();
     this.getTreeData()
-  }
-  //获取az列表
-  private async get_az_list(){
-    this.az_list=[]
-    let res:any=await Service.open_region_az_info({})
-    if(res.code==="Success"){
-      res.data.forEach(item=>{
-        item.region_list.forEach(inn=>{
-          this.az_list=[...this.az_list,...inn.az_list]
-        })
-      })
-      this.default_az = this.$store.state.az_id ? this.$store.state.az_id :this.az_list[0].az_id
-    }
-  }
-  private change_pod(val){
-    if(!val){
-      this.get_az_list()
-    }
   }
   //改变左侧头部menu时触发
   private change(item){
@@ -154,9 +117,8 @@ export default class Sidebar extends Vue {
     });
   }
 
-  @Watch('default_az')
+  @Watch('$store.state.az_id')
   private watch_pod(){
-    this.$store.commit('SET_AZ',this.default_az);
     this.getTreeData()
   }
 }
