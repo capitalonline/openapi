@@ -113,7 +113,7 @@ export default class Resource extends Vue{
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
-          this.az_list=[...this.az_list,...inn.az_list]
+          this.az_list=[...inn.az_list]
         })
       })
       this.form_data.az_id = this.az_list[0].az_id
