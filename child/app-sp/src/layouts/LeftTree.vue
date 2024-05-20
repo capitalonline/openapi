@@ -4,8 +4,7 @@
     @node-click="handleNodeClick"
     @node-contextmenu="handleRight"
     node-key="id"
-    ref="tree"
-    :current-node-key="currentLivingId"
+    ref="treeControl"
     :expand-on-click-node="false"
     :default-expanded-keys="[currentLivingId]"
     highlight-current
@@ -30,6 +29,7 @@ export default class LeftTree extends Vue{
     3: 'iconfont icon-serve',
   }
   private active_name: string = ''
+  private host_id:''
   @Watch('$route')
   private FnWatchRouter(to, from) {
     this.active_name = to.name;
@@ -44,21 +44,19 @@ export default class LeftTree extends Vue{
           return;
         }
       }
-      this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
-      this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
     }
   }
   @Watch('currentLivingId')
   private watch_current(n){
     if(n){
       this.$nextTick(()=>{
-        (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
+        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
       })
     }
   }
   created(){
     this.$nextTick(()=>{
-      (this.$refs.tree as any).setCurrentKey(this.currentLivingId)
+      (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
     })
   }
   private handleNodeClick(data) {
@@ -75,12 +73,18 @@ export default class LeftTree extends Vue{
       this.$router.push({name:'cluster_info',params:{id:data.id}})
     }
     if(data.type === 'host'){
-      this.$router.push({name:'host_list',params:{id:data.id}})
+      this.$router.push({name:'host_info',params:{id:data.id}})
+    }
+    if(data.type === 'waiting_hosts'){
+      console.log('data.id',data.id)
+      this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);
+    this.$store.commit('SET_NODE',data.type);
   }
   private handleRight(event,data,node,com){
-    console.log(event,data,node,com)
+    (this.$refs.treeControl as any).setCurrentKey(data.id)
+    this.handleNodeClick(data)
   }
 }
 </script>

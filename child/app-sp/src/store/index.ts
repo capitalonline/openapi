@@ -46,6 +46,7 @@ export default new Vuex.Store({
     pod_id:storage && storage.get ? storage.get('pod_id') : '',
     az_id:storage && storage.get ? storage.get('az_id') : '',
     display:'',
+    node:''
   },
   getters: {
   },
@@ -111,6 +112,9 @@ export default new Vuex.Store({
     },
     SET_DISPLAY_NAME(state,value){
       state.display = value
+    },
+    SET_NODE(state,value){
+      state.node = value
     },
   },
   actions: {

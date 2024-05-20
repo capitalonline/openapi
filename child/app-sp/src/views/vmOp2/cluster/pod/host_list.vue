@@ -223,9 +223,14 @@ export default class HostList extends Vue{
       page_index: this.page_info.current,
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
-      pod_id:this.$route.params.id,
       [this.sort_prop_name]: this.sort_order,
       ...this.filter_info
+    }
+    if(this.$store.state.node === 'pod'){
+      reqData['pod_id'] = this.$route.params.id
+    }
+    if(this.$store.state.node === 'cluster'){
+      reqData['cluster_id'] = this.$route.params.id
     }
     let res:any = await Service.get_pod_host_list(reqData)
     if(res.code === 'Success'){

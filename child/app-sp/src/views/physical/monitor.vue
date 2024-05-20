@@ -253,7 +253,7 @@ export default class Monitor extends Vue{
   }
   private async FnGetDetail() {
     const resData = await DetailService.get_detail_overview({
-      host_id: this.host_id
+      host_id: this.$route.params.id ? this.$route.params.id : this.host_id
     })
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
@@ -493,7 +493,7 @@ export default class Monitor extends Vue{
 
   }
   private created() {
-    this.default_tab = this.showTab ? this.showTab : Object.keys(this.tab_list)[0];
+    this.default_tab = this.showTab ? this.showTab : this.$route.params.gpuTab ? this.$route.params.gpuTab :Object.keys(this.tab_list)[0];
     this.FnGetDetail();
   }
   @Watch('default_tab')
