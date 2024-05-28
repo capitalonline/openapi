@@ -60,7 +60,7 @@ const routes:RouteConfig[] = [
             meta: {meta: 'cluster_host',no_auth: true}
           },
           {// 虚拟机
-            path: '/cluster/info/:id?',
+            path: '/cluster/virtual_machine/:id?',
             name: 'cluster_vm',
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'pod_info',no_auth: true}
@@ -80,7 +80,7 @@ const routes:RouteConfig[] = [
             meta: {meta: 'host_info',no_auth: true}
           },
           {// 虚拟机
-            path: '/cluster/info/:id?',
+            path: '/host/virtual_machine/:id?',
             name: 'host_vm',
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'host_vm',no_auth: true}
