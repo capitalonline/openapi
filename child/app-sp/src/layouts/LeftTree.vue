@@ -207,6 +207,7 @@ export default class LeftTree extends Vue{
   height: 30px;
   margin-bottom: 5px;
   background: #eceff2;
+  font-size: 14px;
   padding-left: 17px;
   line-height: 30px;
   white-space: nowrap; /* 不换行 */
