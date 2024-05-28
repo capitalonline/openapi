@@ -27,9 +27,6 @@ import Gpu_faultRecord from "@/views/vmOp2/cluster/host/gpu_faultRecord.vue";
 })
 export default class Gpu extends Vue{
   private activeName='first'
-  created(){
-    console.log('-----')
-  }
 }
 </script>
 

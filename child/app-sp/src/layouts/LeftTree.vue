@@ -101,7 +101,7 @@ export default class LeftTree extends Vue{
   }
   get contextMenuStyle(){
     return {
-      zIndex: 1000,
+      zIndex: 9999,
       position: 'fixed',
       left: `${this.contextMenu.x}px`,
       top: `${this.contextMenu.y}px`,
@@ -122,14 +122,17 @@ export default class LeftTree extends Vue{
     this.$nextTick(()=>{
       (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
     })
+  }
+  mounted() {
     document.addEventListener('click', this.OptionCardClose);
+    document.addEventListener('contextmenu', this.OptionCardClose);
   }
   private infoClick(item) {
-    const {label, value}=item
-    this.oper_type = value;
+    const {label, key}=item
+    this.oper_type = key;
     this.oper_label = label
     this.visible = true;
-    this.OptionCardClose()
+    this.OptionCardClose
 
   }
   private close(val){
@@ -160,6 +163,7 @@ export default class LeftTree extends Vue{
   }
   private handleRight(event,data,node){
     if(data.type === 'host') {
+      event.preventDefault();
       (this.$refs.treeControl as any).setCurrentKey(data.id)
       this.handleNodeClick(data)
       this.showContextMenu = true;
@@ -184,8 +188,11 @@ export default class LeftTree extends Vue{
     let flag_list = power_flag && host_flag && vm_flag;
     return flag_list
   }
-  private OptionCardClose() {
-    this.showContextMenu = false;
+  private OptionCardClose(event: MouseEvent) {
+    const treeElement = (this.$refs.treeControl as Vue).$el;
+    if (!treeElement.contains(event.target as Node)) {
+      this.showContextMenu = false;
+    }
   }
 }
 </script>

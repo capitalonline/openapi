@@ -94,11 +94,16 @@ export default class Sidebar extends Vue {
       const clusters = children.map(cluster => {
         const { cluster_id, cluster_name, type, children } = cluster;
         const hosts = children.map(host => {
-          const { host_id, host_name, type } = host;
+          const { host_id, host_name,machine_status,power_status,ecs_count,machine_status_name,power_status_name, type } = host;
           return {
             id: host_id,
             label: host_name,
             type: type,
+            machine_status:machine_status,
+            power_status:power_status,
+            ecs_count:ecs_count,
+            machine_status_name:machine_status_name,
+            power_status_name:power_status_name
           };
         });
         return {

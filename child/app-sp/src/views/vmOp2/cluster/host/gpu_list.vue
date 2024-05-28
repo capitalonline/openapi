@@ -160,7 +160,7 @@ export default class list extends Vue {
     this.FnGetList();
     this.operate_auth = this.$store.state.auth_info[this.$route.name];
     //监听点击事件，点击时隐藏右键菜单
-    document.addEventListener('click', hideMenu);
+   // document.addEventListener('click', hideMenu);
   }
   private async FnEdit(row){
     this.visible = true
