@@ -101,7 +101,7 @@ export default class LeftTree extends Vue{
   }
   get contextMenuStyle(){
     return {
-      zIndex: 9999,
+      zIndex: 1000,
       position: 'fixed',
       left: `${this.contextMenu.x}px`,
       top: `${this.contextMenu.y}px`,
