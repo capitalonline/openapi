@@ -33,6 +33,7 @@ export default class Pod extends Vue{
         name:tab.name,
         params:{id:this.cluster_id},
       })
+      console.log(tab.name,'22222')
     }
   }
   created() {
