@@ -24,6 +24,12 @@
       <i class="el-icon-search"></i>
     </div>
     <div class="right-content">
+      <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
+      <el-button type="text" @click="goToMessage">
+        <i class="iconfont icon-message" style="font-size: 25px"></i>
+      </el-button>
+      </el-tooltip>
+      <el-button type="text">底层任务配置</el-button>
       <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
@@ -36,6 +42,8 @@ import Service from "@/https/vmOp2/cluster/tree";
 @Component({})
 export default class TopHeader extends Vue{
   private default_az = ''
+  private az_name = ''
+  private az_code = ''
   private az_list = []
   created(){
     this.get_az_list();
@@ -61,9 +69,14 @@ export default class TopHeader extends Vue{
   private changeLayout(){
     this.$router.push({name:'overview'})
   }
+  private goToMessage(){
+    this.$router.push({name:'message'})
+  }
   @Watch('default_az')
   private watch_pod(){
     this.$store.commit('SET_AZ',this.default_az);
+    this.$store.commit('SET_AZ_NAME',this.az_name);
+    this.$store.commit('SET_AZ_CODE',this.az_code);
   }
 }
 </script>

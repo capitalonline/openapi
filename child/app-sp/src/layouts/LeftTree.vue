@@ -6,6 +6,7 @@
     @node-contextmenu="handleRight"
     node-key="id"
     ref="treeControl"
+    :current-node-key="currentLivingId"
     :expand-on-click-node="false"
     :default-expanded-keys="[currentLivingId]"
     highlight-current
@@ -144,11 +145,13 @@ export default class LeftTree extends Vue{
   private handleNodeClick(data) {
     if(this.$route?.params?.id){
       let routeId = this.$route?.params?.id
-      if(data.id === routeId){
-        return;
+
+        if (data.id === routeId && (data.type !== 'waiting_hosts' && data.type !== 'pod')) {
+          return;
+
       }
     }
-    if(data.type=== 'pod'){
+    if(data.type=== 'pod' && this.$route.name !== 'pod_info'){
       this.$router.push({name:'pod_info',params:{id:data.id}})
     }
     if(data.type === 'cluster'){
@@ -157,7 +160,7 @@ export default class LeftTree extends Vue{
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
     }
-    if(data.type === 'waiting_hosts'){
+    if(data.type === 'waiting_hosts' && this.$route.name !== 'waiting_hosts'){
       console.log('data.id',data.id)
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }

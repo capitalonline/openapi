@@ -38,7 +38,14 @@ const routes:RouteConfig[] = [
             name: 'pod_vm',
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'pod_vm',no_auth: true}
-          }
+          },
+          //虚机监控
+          {
+            path: '/pod/vm_monitor/:id',
+            name: 'pod_monitor',
+            component: () => import('../views/instance/monitor.vue'),
+            meta: {menu: 'pod_monitor',no_auth: true}
+          },
         ],
       },
       {
@@ -146,6 +153,12 @@ const routes:RouteConfig[] = [
         name: 'waiting_hosts',
         component: () => import('../views/vmOp2/cluster/pod/noClusterHostList.vue'),
         meta: {menu: 'waiting_hosts',no_auth: true}
+      },
+      {
+        path: '/message_list',
+        name: 'message',
+        component: () => import('../views/message/list.vue'),
+        meta: {meta: 'message',no_auth: true}
       },
     ]
   },
