@@ -745,9 +745,18 @@ export default class VmList extends Vue{
       page_size: this.page_info.size,
       is_op:true,
       az_id:this.$store.state.az_id,
-      pod_id:this.$route.params.id,
+      //pod_id:this.$route.params.id,
       [this.sort_prop_name]: this.sort_order,
       ...this.search_reqData
+    }
+    if(this.$store.state.node === 'pod'){
+      reqData['pod_id'] = this.$route.params.id
+    }
+    if(this.$store.state.node === 'cluster'){
+      reqData['cluster_id'] = this.$route.params.id
+    }
+    if(this.$store.state.node === 'host'){
+      reqData['host_id'] = this.$route.params.id
     }
     if (this.search_status.length > 0) {
       reqData["status"] = this.search_status.join(',')

@@ -53,14 +53,58 @@ const routes:RouteConfig[] = [
             component: () => import('../views/vmOp2/cluster/clusterItem/info.vue'),
             meta: {meta: 'pod_info',no_auth: true}
           },
+          { // 宿主机
+            path: '/cluster/host/:id?',
+            name: 'cluster_host',
+            component: () => import('../views/vmOp2/cluster/pod/host_list.vue'),
+            meta: {meta: 'cluster_host',no_auth: true}
+          },
+          {// 虚拟机
+            path: '/cluster/virtual_machine/:id?',
+            name: 'cluster_vm',
+            component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
+            meta: {meta: 'pod_info',no_auth: true}
+          },
         ],
       },
       {
         path: '/host/:id',
         name: 'host_list',
-        component: () => import('../views/vmOp2/cluster/host/list.vue'),
-        meta: {menu: 'host_list',no_auth: true}
-        },
+        component: () => import('../views/vmOp2/cluster/host/gather.vue'),
+        meta: {menu: 'host_list',no_auth: true},
+        children: [
+          {// 概要
+            path: '/host/info/:id?',
+            name: 'host_info',
+            component: () => import('../views/vmOp2/cluster/host/info.vue'),
+            meta: {meta: 'host_info',no_auth: true}
+          },
+          {// 虚拟机
+            path: '/host/virtual_machine/:id?',
+            name: 'host_vm',
+            component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
+            meta: {meta: 'host_vm',no_auth: true}
+          },
+          {// 监控
+            path: '/host/monitor/:id?',
+            name: 'host_monitor',
+            component: () => import('../views/physical/monitor.vue'),
+            meta: {meta: 'host_monitor',no_auth: true}
+          },
+          {// 存储
+            path: '/host/storage/:id?',
+            name: 'host_storage',
+            component: () => import('../views/physical/storage.vue'),
+            meta: {meta: 'host_storage',no_auth: true}
+          },
+          {// GPU
+            path: '/host/gpu/:id?',
+            name: 'host_gpu',
+            component: () => import('../views/vmOp2/cluster/host/gpu.vue'),
+            meta: {meta: 'host_gpu',no_auth: true}
+          },
+        ],
+      },
       {
         path: '/mirror_list',
         name: 'mirror',

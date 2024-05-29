@@ -152,7 +152,7 @@ export default class List extends Vue{
     this.get_field()
     this.get_pod_cluster_list()
     //监听点击事件，点击时隐藏右键菜单
-    document.addEventListener('click', hideMenu);
+    //document.addEventListener('click', hideMenu);
   }
   @Watch("$store.state.az_id")
   private watch_az(nv){
