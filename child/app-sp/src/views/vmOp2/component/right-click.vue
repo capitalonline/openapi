@@ -96,8 +96,8 @@ export default class RightClick extends Vue{
 
     li {
       padding: 0 10px;
-      height: 30px;
-      line-height: 30px;
+      height: 25px;
+      line-height: 25px;
       position: relative;
       box-sizing: border-box;
       text-indent: 8px;
@@ -110,7 +110,7 @@ export default class RightClick extends Vue{
         position: absolute;
         left: 200px;
         top: 0;
-        width: 160px;
+        width: 120px;
         border: 1px solid #e4e7ed;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
         li {
@@ -134,6 +134,10 @@ export default class RightClick extends Vue{
     background: #eceff2;
     padding-left: 17px;
     line-height: 30px;
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden; /* 溢出部分隐藏 */
+    text-overflow: ellipsis; /* 显示省略号 */
+    max-width: 200px; /* 设置最大宽度，根据需要调整 */
   }
 
   .disabled {

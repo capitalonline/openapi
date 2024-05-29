@@ -94,6 +94,7 @@ export default class updateSpec extends Vue{
   }
   private async FnGetCategoryList() {
     if (!this.az_id) {
+      console.log('++++')
       return
     }
     this.family_list = [];
@@ -201,10 +202,12 @@ export default class updateSpec extends Vue{
     }else{
       this.ram_size_list = this.all_ram_size_list;
     }
+    console.log('444')
     this.FnGetCategoryList()
   }
   @Watch('default_ram_size')
   private FnChangeRamSize(newVal) {
+    console.log('333')
     this.FnGetCategoryList()
   }
   @Watch('data.category_id')
@@ -216,10 +219,12 @@ export default class updateSpec extends Vue{
   }
   @Watch('az_id')
   private FnChangeAz(newVal, oldVal) {
+    console.log('1111')
     this.FnGetCategoryList();
   }
   @Watch('customer_id', {immediate: true})
   private FnChangeCustomer(newVal, oldVal) {
+    console.log('222',this.customer_id)
     this.FnGetCategoryList();
   }
 }

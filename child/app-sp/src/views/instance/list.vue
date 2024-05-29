@@ -1033,6 +1033,7 @@ export default class App extends Vue {
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
       }
+      console.log('%%%',this.az_id)
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
           "只允许对同一客户的同一可用区下实例进行批量操作！"

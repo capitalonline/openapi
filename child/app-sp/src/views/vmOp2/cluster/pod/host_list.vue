@@ -21,6 +21,9 @@
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
       @filter-change="filterAttribute"
+      @row-click="FnOperRow"
+      @row-contextmenu="FnRightClick"
+      :row-class-name="rowStyle"
     >
       <el-table-column type="selection"></el-table-column>
       <el-table-column
@@ -153,11 +156,24 @@ export default class HostList extends Vue{
   private show_custom:boolean=false;
   private switch_power:any= [
       {label:'开机',value:'start_up_host',disabled:false},
-      {label:'关机',value:'shutdown_host'}
+      {label:'关机',value:'shutdown_host',disabled:false},
+    {label:'重启',value:'restart_host',disabled:false},
+  ]
+  private lock_machine:any =[
+    {label:'锁定机器',value:'lock',disabled:false},
+    {label:'解锁机器',value:'unlock',disabled:false}
   ]
   private crash_list:any=[
     {label:'数据清理同步',value:'data_clear',disabled:false},
     {label:'宕机恢复',value:'down_recover',disabled:false}
+  ]
+  private maintenance_host:any =[
+    {label:'设置维护',value:'maintenance',disabled:false},
+    {label:'完成维护',value:'finish',disabled:false},
+  ]
+  private sign_host:any =[
+    {label:'调度标记',value:'schedule',disabled:false},
+    {label:'迁移标记',value:'migrate_flag',disabled:false},
   ]
   private menus= [
     {label: '详情',value: 'physical_detail',single:true,disabled:false},
@@ -166,10 +182,10 @@ export default class HostList extends Vue{
     {label:'分配资源',value:'resource',single:true,disabled:false},
     {label:'编辑备注',value:'remark',single:true,disabled:false},
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
-    {label:'机器锁定',value:'lock', disabled:false},
-    {label:'机器维护',value:'maintenance', disabled:false},
+    {label:'机器锁定',value:'lock_machine', disabled:false,list:this.lock_machine},
+    {label:'机器维护',value:'maintenance', disabled:false,list: this.maintenance_host},
     {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},
-    {label: '设备标记',value: 'sign', disabled:false},
+    {label: '设备标记',value: 'sign', disabled:false,list: this.sign_host},
     {label:'导入',value:'upload', disabled:false},
     {label:'底层同步',value:'under_sync', disabled:false},
     {label:'驱散',value:'disperse', disabled:false},
