@@ -1,3 +1,5 @@
+import {hideMenu} from "@/utils/vmOp2/hideMenu";
+
 export function rightClick(row, column, event) {
   // 阻止浏览器默认右键菜单弹出
   event.preventDefault();
@@ -40,7 +42,10 @@ export function rightClick(row, column, event) {
       menu.style.top = posY - 50 + "px";
       menu.style.display = "block";
       menu.style.zIndex = '1000';
+      //监听点击事件，点击时隐藏右键菜单
+      document.addEventListener('click', hideMenu);
     }
   }
   })
+  document.addEventListener('contextmenu', hideMenu);
 }

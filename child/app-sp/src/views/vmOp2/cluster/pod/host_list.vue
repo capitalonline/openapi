@@ -212,8 +212,6 @@ export default class HostList extends Vue{
     this.get_field()
     this.get_pod_host_list()
     this.get_status_list()
-    //监听点击事件，点击时隐藏右键菜单
-    document.addEventListener('click', hideMenu);
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()

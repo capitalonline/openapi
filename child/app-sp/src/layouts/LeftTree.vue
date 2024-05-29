@@ -10,6 +10,7 @@
     :expand-on-click-node="false"
     :default-expanded-keys="[currentLivingId]"
     highlight-current
+    @click.stop
   >
     <span slot-scope="{node,data}" class="treeLabel">
       <i :class="iconClasses[node.level]"></i>
@@ -17,7 +18,7 @@
     </span>
   </el-tree>
 <!--    右键菜单-->
-    <div v-show="showContextMenu">
+    <div v-if="showContextMenu">
       <el-menu
         :style="contextMenuStyle"
         id="menu"
@@ -128,10 +129,6 @@ export default class LeftTree extends Vue{
       (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
     })
   }
-  mounted() {
-    document.addEventListener('click', this.OptionCardClose);
-    document.addEventListener('contextmenu', this.OptionCardClose);
-  }
   private infoClick(item) {
     const {label, key}=item
     this.oper_type = key;
@@ -145,13 +142,11 @@ export default class LeftTree extends Vue{
   private handleNodeClick(data) {
     if(this.$route?.params?.id){
       let routeId = this.$route?.params?.id
-
-        if (data.id === routeId && (data.type !== 'waiting_hosts' && data.type !== 'pod')) {
+        if (data.id === routeId) {
           return;
-
       }
     }
-    if(data.type=== 'pod' && this.$route.name !== 'pod_info'){
+    if(data.type=== 'pod'){
       this.$router.push({name:'pod_info',params:{id:data.id}})
     }
     if(data.type === 'cluster'){
@@ -160,7 +155,7 @@ export default class LeftTree extends Vue{
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
     }
-    if(data.type === 'waiting_hosts' && this.$route.name !== 'waiting_hosts'){
+    if(data.type === 'waiting_hosts'){
       console.log('data.id',data.id)
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
@@ -178,6 +173,8 @@ export default class LeftTree extends Vue{
       this.contextMenu.y = event.clientY;
       this.optionData = data
       this.handleMenus(data)
+      document.addEventListener('click', this.OptionCardClose);
+      document.addEventListener('contextmenu', this.OptionCardClose);
     }
   }
   private handleMenus(data) {
@@ -199,6 +196,7 @@ export default class LeftTree extends Vue{
     const treeElement = (this.$refs.treeControl as Vue).$el;
     if (!treeElement.contains(event.target as Node)) {
       this.showContextMenu = false;
+      document.removeEventListener('click',this.OptionCardClose);
     }
   }
 }

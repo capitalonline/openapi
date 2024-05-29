@@ -61,6 +61,7 @@ export default class RightClick extends Vue{
   created(){
     //this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.msg = this.error_msg
+    console.log('22222')
   }
   private disabledTooltipContent(item){
     if(this.msg[item.value]) {
@@ -79,6 +80,7 @@ export default class RightClick extends Vue{
 
 <style scoped lang="scss">
 #menu {
+  z-index: 9999;
   position: absolute;
   display: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);

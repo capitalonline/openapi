@@ -4,5 +4,6 @@ export function hideMenu(){
   let menu = document.querySelector("#menu") as HTMLElement;
   if (menu) {
     menu.style.display = "none";
+    document.removeEventListener('click', hideMenu);
   }
 }

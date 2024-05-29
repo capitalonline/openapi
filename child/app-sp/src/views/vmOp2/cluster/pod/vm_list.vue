@@ -327,7 +327,6 @@ export default class VmList extends Vue{
     this.get_source_type()
     this.FnGetStatus()
     this.get_field()
-    document.addEventListener('click', hideMenu);
     this.operate_auth = this.$store.state.auth_info['instance_list'];
   }
   private FnSearch(data: any = {}) {

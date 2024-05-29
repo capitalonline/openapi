@@ -132,7 +132,7 @@ export default class Sidebar extends Vue {
           };
         });
         return {
-          id: pod_id ? pod_id : cluster_id,
+          id: pod_id ? `${pod_id}-` : cluster_id,
           label: cluster_name,
           type: type,
           children: hosts,

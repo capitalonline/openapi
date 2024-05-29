@@ -270,6 +270,7 @@ export default class extends Vue {
     this.get_product_source()
     this.search()
     this.auth_list=this.$store.state.auth_info[this.$route.name]
+    document.addEventListener('click', hideMenu);
   }
 
   private beforeDestroy() {

@@ -239,8 +239,6 @@ export default class HostList extends Vue{
     this.get_field()
     this.get_pod_host_list()
     this.get_status_list()
-    //监听点击事件，点击时隐藏右键菜单
-    document.addEventListener('click', hideMenu);
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()
@@ -427,11 +425,12 @@ export default class HostList extends Vue{
     if(!this.$store.state.az_id){
       return
     }
+    let podId = this.$route.params.id.slice(0, this.$route.params.id.length - 1);
     let reqData = {
       page_index: this.page_info.current,
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
-      pod_id:this.$route.params.id,
+      pod_id:podId,
       [this.sort_prop_name]: this.sort_order,
       ...this.filter_info,
       is_unassigned_cluster:'1'

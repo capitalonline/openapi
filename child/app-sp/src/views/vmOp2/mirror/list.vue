@@ -217,7 +217,6 @@ export default class CommonMirror extends Vue{
         this.get_source_type()
         this.get_status_list()
         this.search()
-        document.addEventListener('click', hideMenu);
     }
     @Watch('visible')
     private watch_visible(nv){

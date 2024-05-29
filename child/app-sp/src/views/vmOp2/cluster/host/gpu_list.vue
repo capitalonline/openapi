@@ -141,7 +141,7 @@ export default class list extends Vue {
   }
   //改变选中行的背景颜色
   rowStyle({row}) {
-    const isSelected = this.multi_rows.some(item => item.host_id === row.host_id);
+    const isSelected = this.multi_rows.some(item => item.index === row.index);
     if (isSelected) {
       return 'rowStyle'
     }
@@ -150,7 +150,7 @@ export default class list extends Vue {
   FnRightClick(row,column,event){
     //判断当前行是否被选中，没选中时需选中并弹出菜单
     console.log(event)
-    const isSelected = this.multi_rows.some(item => item.host_id === row.host_id);
+    const isSelected = this.multi_rows.some(item => item.index === row.index);
     if (!isSelected) {
       (this.$refs.table as any).toggleRowSelection(row)
     }
