@@ -23,6 +23,7 @@ import {Component, Vue, Prop, Watch} from "vue-property-decorator";
 
 export default class LeftTree extends Vue{
   @Prop({default:''})currentLivingId!:string
+  @Prop({default:true})refresh!:boolean
   @Prop({default:()=>[]})tree_data!:Array<object>
   private iconClasses= {
     1: 'iconfont icon-tree',
@@ -44,8 +45,11 @@ export default class LeftTree extends Vue{
           return;
         }
       }
-      this.$router.push({name:'pod_info',params:{id:this.tree_data[0]['id']}})
-      this.$store.commit('SET_DISPLAY_NAME',this.tree_data[0]['label']);
+      if(this.refresh) {
+        console.log('####')
+        this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
+        this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
+      }
     }
   }
   @Watch('currentLivingId')
@@ -76,6 +80,10 @@ export default class LeftTree extends Vue{
     }
     if(data.type === 'host'){
       this.$router.push({name:'host_list',params:{id:data.id}})
+    }
+    if(data.type === 'waiting_hosts'){
+      console.log('data.id',data.id)
+      this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.$store.commit('SET_DISPLAY_NAME',data.label);
   }

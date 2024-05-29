@@ -15,7 +15,7 @@
     </template>
   </el-menu>
     <template v-if="treeType === 'tree'">
-      <left-tree :currentLivingId="current" :tree_data="treeData"></left-tree>
+      <left-tree :currentLivingId="current" :refresh="refresh" :tree_data="treeData"></left-tree>
     </template>
     <template v-if="treeType === 'menu'">
      <new-menu :menu_list=menu_list :active_menu="current"></new-menu>
@@ -30,7 +30,7 @@ import LeftTree from "@/layouts/LeftTree.vue";
 import NewMenu from "@/layouts/newMenu.vue"
 import EcsService from "@/https/instance/create";
 import Service from "@/https/vmOp2/cluster/tree"
-import store from "../../../app-op/src/store";
+import bus from "@/utils/vmOp2/eventBus"
 
 @Component({
   components: {
@@ -44,6 +44,7 @@ export default class Sidebar extends Vue {
   private active_menu: string = 'cluster';
   private current=''
   private treeType:string = 'tree'
+  private refresh:boolean = true
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',type: 'menu'},
@@ -55,6 +56,12 @@ export default class Sidebar extends Vue {
   private treeData:any = []
   created(){
     this.getTreeData()
+  }
+  mounted(){
+    bus.$on('getTreeData',e=>{
+      this.refresh = e
+      this.getTreeData()
+    })
   }
   //改变左侧头部menu时触发
   private change(item){
@@ -89,7 +96,7 @@ export default class Sidebar extends Vue {
     }
   }
   //获取左侧树结构
-  private async getTreeData(){
+  public async getTreeData(){
     if(!this.$store.state.az_id){
       return
     }
@@ -110,7 +117,7 @@ export default class Sidebar extends Vue {
     return data.map(pod => {
       const { pod_id, pod_name, type, children } = pod;
       const clusters = children.map(cluster => {
-        const { cluster_id, cluster_name, type, children } = cluster;
+        const { cluster_id,pod_id, cluster_name, type, children } = cluster;
         const hosts = children.map(host => {
           const { host_id, host_name, type } = host;
           return {
@@ -120,7 +127,7 @@ export default class Sidebar extends Vue {
           };
         });
         return {
-          id: cluster_id,
+          id: pod_id ? pod_id : cluster_id,
           label: cluster_name,
           type: type,
           children: hosts,

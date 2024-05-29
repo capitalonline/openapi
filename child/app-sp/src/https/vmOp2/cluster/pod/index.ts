@@ -49,5 +49,13 @@ export default{
   //获取电源与机器状态
   get_status_list(req){
     return service(getHostOptions('GET','/host/host_status_list/',req))
+  },
+  //获取推荐宿主机相匹配的集群
+  recommend_cluster(req){
+    return service(getHostOptions('POST','/host/recommend_cluster/',req))
+  },
+  //主机导入集群
+  add_cluster(req){
+    return service(getHostOptions('POST','/host/host_add_cluster/',req))
   }
 }
