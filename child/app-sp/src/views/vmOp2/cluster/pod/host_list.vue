@@ -475,13 +475,4 @@ i.el-icon-s-tools{
 ::v-deep .el-progress__text{
   font-size: 14px!important;
 }
-//table选中高亮
-::v-deep .el-table .rowStyle {
-  background-color: #8CC4fc !important;
-
-}
-::v-deep .el-table .rowStyle:hover>td {
-  background-color: #8CC4fc !important
-}
-
 </style>
