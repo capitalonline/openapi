@@ -1,7 +1,7 @@
 <template>
   <div class="monitor">
     <div v-if="source_name === 'monitor'">
-      <back-header title="云服务器监控" back_url="/instance"></back-header>
+      <back-header title="云服务器监控" v-if="!$route.path.includes('vm_monitor')" back_url="/instance"></back-header>
       <el-card class="m-bottom20">
         <template #header>
           <span>云服务器详情</span>
@@ -457,7 +457,7 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
-  
+
   private FnGetGpuInfo(type, reqData) {
     this.gpu_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'gpu_usage'}, reqData)).then(resData => {

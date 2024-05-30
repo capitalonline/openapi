@@ -133,7 +133,7 @@
             :username="os_info.username"
           ></reset-pwd>
         </template>
-        <div v-if="oper_type === 'operateGpu'">
+        <div v-if="oper_type === 'gpu_manage'">
           操作：
           <el-radio-group v-model="gpu_card_operate">
             <el-radio label="ecs_attach_gpu_card" :disabled="!multiple_selection[0].gpu_operate_list.includes('ecs_attach_gpu_card')">挂载显卡</el-radio>
@@ -354,7 +354,7 @@ export default class Operate extends Vue{
       this.FnOpenBill(
         Object.assign({ billing_method: this.billing_method }, reqData)
       );
-    }else if(this.oper_type === "operateGpu"){
+    }else if(this.oper_type === "gpu_manage"){
       this.mount_gpu_card()
     }
   }

@@ -142,6 +142,7 @@ import {Table} from "element-ui";
 import getInsStatus from "@/utils/getStatusInfo";
 import actionBlock from "@/components/search/actionBlock.vue";
 import moment from "moment";
+import InstanceService from "@/https/instance/list";
 @Component({
   components: {
     Operate,
@@ -302,7 +303,8 @@ export default class VmList extends Vue{
             item.disabled = !this.multiple_selection.every(gpu => gpu.is_gpu);
             break;
           case 'vnc':
-            item.disabled = !this.operate_auth.includes(item.value) || this.multiple_selection.every(vnc => vnc.status !== 'running');
+            //item.disabled = !this.operate_auth.includes(item.value) || this.multiple_selection.every(vnc => vnc.status !== 'running');
+            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
             break;
           case 'add_common_mirror':
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'shutdown') || this.multiple_selection.every(vnc => vnc.customer_type !== '内部') || !this.operate_auth.includes(item.value);
@@ -377,6 +379,9 @@ export default class VmList extends Vue{
       if(value === 'gpu_manage'){
         this.operateGpu()
       }
+      if(value === 'monitor'){
+        this.$router.push({path: `/vm_monitor/${this.multiple_selection[0].ecs_id}`});
+      }
       if(['start_up_ecs','shutdown_ecs','restart_ecs','delete_ecs','restore','destroy_ecs','update_spec','update_system','reset_pwd','net_set'].includes(value)) {
         const operate_info = getInsStatus.getInsOperateAuth(value);
         if (
@@ -426,12 +431,12 @@ export default class VmList extends Vue{
       [this.sort_prop_name]: this.sort_order,
     }
     reqData["ecs_id"] = ecs_id
-    const resData: any = await Service.get_pod_ecs_list(reqData);
+    const resData: any = await InstanceService.get_instance_list(reqData);
     if (resData.code == 'Success') {
       this.multiple_selection=resData.data.ecs_list;
       this.show_operate_dialog = true;
       this.operate_title = '显卡管理';
-      this.default_operate_type = 'operateGpu';
+      this.default_operate_type = 'gpu_manage';
       this.FnClearTimer();
     }
   }
@@ -773,24 +778,24 @@ export default class VmList extends Vue{
     let res:any = await Service.get_pod_ecs_list(reqData)
     if(res.code === 'Success'){
       this.list = res.data.result
-      var rows = [];
-      if (this.multiple_selection_id.length > 0) {
-        rows = res.data.result.filter(row =>
-          this.multiple_selection_id.includes(row.ecs_id)
-        );
-      }
-      if (rows && rows.length > 0) {
-        this.$nextTick(() => {
-          rows.forEach(row => {
-            (this.$refs.table as any).toggleRowSelection(row);
-          });
-        });
-      }
+      // var rows = [];
+      // if (this.multiple_selection_id.length > 0) {
+      //   rows = res.data.result.filter(row =>
+      //     this.multiple_selection_id.includes(row.ecs_id)
+      //   );
+      // }
+      // if (rows && rows.length > 0) {
+      //   this.$nextTick(() => {
+      //     rows.forEach(row => {
+      //       (this.$refs.table as any).toggleRowSelection(row);
+      //     });
+      //   });
+      // }
       this.page_info.total = res.data.page_info.count
     }
-    if (!this.isComponentDestroying) { // 检查销毁标记
-      this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
-    }
+    // if (!this.isComponentDestroying) { // 检查销毁标记
+    //   this.FnSetTimer(); // 仅当组件未销毁时才重新设置定时器
+    // }
   }
   //右键弹出操作
   FnRightClick(row,column,event){

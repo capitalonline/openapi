@@ -39,13 +39,6 @@ const routes:RouteConfig[] = [
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'pod_vm',no_auth: true}
           },
-          //虚机监控
-          {
-            path: '/pod/vm_monitor/:id',
-            name: 'pod_monitor',
-            component: () => import('../views/instance/monitor.vue'),
-            meta: {menu: 'pod_monitor',no_auth: true}
-          },
         ],
       },
       {
@@ -111,6 +104,13 @@ const routes:RouteConfig[] = [
             meta: {meta: 'host_gpu',no_auth: true}
           },
         ],
+      },
+      //虚机监控
+      {
+        path: '/vm_monitor/:id',
+        name: 'monitor',
+        component: () => import('../views/instance/monitor.vue'),
+        meta: {menu: 'monitor',no_auth: true}
       },
       {
         path: '/mirror_list',
