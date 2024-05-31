@@ -51,6 +51,7 @@ import {Component, Vue, Prop, Watch} from "vue-property-decorator";
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import Operate from "@/views/vmOp2/cluster/host/operate.vue";
 import {getHostStatus} from "@/utils/getStatusInfo";
+import {hideMenu} from "@/utils/vmOp2/hideMenu";
 @Component({
   components: {Operate, RightClick}
 })
@@ -91,9 +92,9 @@ export default class LeftTree extends Vue{
         }
       }
       if(this.refresh) {
-        console.log('####')
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
+        this.$store.commit('SET_NODE',this.tree_data[0]['type']);
       }
     }
   }
@@ -164,6 +165,7 @@ export default class LeftTree extends Vue{
     this.$store.commit('SET_NODE',data.type);
   }
   private handleRight(event,data,node){
+     hideMenu()
     if(data.type === 'host') {
       event.preventDefault();
       (this.$refs.treeControl as any).setCurrentKey(data.id)
