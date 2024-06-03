@@ -65,6 +65,12 @@ const routes:RouteConfig[] = [
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'pod_info',no_auth: true}
           },
+          {
+            path: '/cluster/alarm/:id?',
+            name: 'cluster_alarm',
+            component: () => import('../views/vmOp2/cluster/clusterItem/alarm.vue'),
+            meta: {menu: 'cluster_alarm'}
+          },
         ],
       },
       {
@@ -131,16 +137,16 @@ const routes:RouteConfig[] = [
         meta: {menu: 'disk_list',no_auth: true}
       },
       {
-        path: '/ecs_destroyed',
-        name: 'destroyed',
+        path: '/ecs_destroyed_list',
+        name: 'ecs_destroyed_list',
         component: () => import('../views/instance/destroyedList.vue'),
-        meta: {meta: 'ecs_destroyed', no_auth: true}
+        meta: {meta: 'ecs_destroyed_list', no_auth: true}
       },
       {
-        path: '/log',
-        name: 'log',
+        path: '/log_list',
+        name: 'log_list',
         component: () => import('../views/log/list.vue'),
-        meta: {meta: 'ecs_destroyed',no_auth: true}
+        meta: {meta: 'log_list',no_auth: true}
       },
       {
         path: '/error',

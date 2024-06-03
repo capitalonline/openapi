@@ -25,6 +25,7 @@ export default class Pod extends Vue{
     cluster_info: '概要',
     cluster_host: '主机',
     cluster_vm: '虚拟机',
+    cluster_alarm:'报警'
     // gpu:'GPU'
   }
   private handleClick(tab, event) {
