@@ -143,10 +143,10 @@ const routes:RouteConfig[] = [
         meta: {meta: 'ecs_destroyed_list', no_auth: true}
       },
       {
-        path: '/log_list',
-        name: 'log_list',
+        path: '/log',
+        name: 'log',
         component: () => import('../views/log/list.vue'),
-        meta: {meta: 'log_list',no_auth: true}
+        meta: {meta: 'log',no_auth: true}
       },
       {
         path: '/error',

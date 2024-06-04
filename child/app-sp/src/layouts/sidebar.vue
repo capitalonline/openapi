@@ -84,9 +84,9 @@ export default class Sidebar extends Vue {
       this.$router.push({name:'disk'})
     }
     if(this.active_menu === 'log'){
-      this.current ='log_list'
+      this.current ='log'
       this.menu_list=[
-        {label:'操作日志审计',name:'log_list'},
+        {label:'操作日志审计',name:'log'},
         {label:'已销毁资源',name:'ecs_destroyed_list'},
       ]
       this.$router.push({name:'log_list'})
