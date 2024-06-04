@@ -62,6 +62,7 @@
     </div>
     <div class="m-bottom20" v-if="type">
       <el-button type="primary" @click="FnSearch">查 询</el-button>
+      <el-button type="primary" v-if="type === 'physical'" @click="FnMultiSearch">批量查询</el-button>
       <el-button type="default" @click="FnClear">清 空</el-button>
       <el-button type="text" class="m-bottom10" @click="operate">{{isOpen ? '折叠' : '展开'}}</el-button>
     </div>
@@ -74,6 +75,18 @@
         >{{ create_btn }}</el-button
       >
     </slot>
+      <el-dialog title="批量查询" :visible="syncVisible" width="400px" :destroy-on-close="true" :close-on-click-modal="false">
+        <el-input
+          type="textarea"
+          :rows="13"
+          :placeholder="`请输入主机ID/名称,格式如下：\nPOD01-CLU01-H001\nPOD01-CLU01-H002\nPOD01-CLU01-H003\n...`"
+          v-model="search_value['host_info']">
+        </el-input>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="FnSearch">确认</el-button>
+          <el-button @click="syncVisible=false">取消</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -96,6 +109,7 @@ export default class ActionBlock extends Vue {
   private search_value = {};
   private time: any = null;
   private date_key: string = "";
+  private syncVisible:boolean = false
   private isOpen:boolean=true;//默认展开
 
 
@@ -106,6 +120,7 @@ export default class ActionBlock extends Vue {
 
   @Emit("fn-search")
   private FnSearch() {
+    this.syncVisible = false
     this.search_value[this.date_key] = this.time;
     return this.search_value;
   }
@@ -122,6 +137,9 @@ export default class ActionBlock extends Vue {
       }
       this.FnOperate()
     })
+  }
+  private FnMultiSearch(){
+    this.syncVisible= true
   }
   private operate(){
     this.isOpen = !this.isOpen;
