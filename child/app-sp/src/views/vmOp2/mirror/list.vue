@@ -428,6 +428,11 @@ export default class CommonMirror extends Vue{
 .icon{
   width:100%;
   text-align: right;
+  .el-dropdown{
+    position:absolute;
+    right:65px;
+    top: 101px;
+  }
 }
 i.el-icon-s-tools{
   font-size: 18px;

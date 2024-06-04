@@ -348,5 +348,14 @@ i.el-icon-s-tools{
 ::v-deep .el-progress__text{
   font-size: 14px!important;
 }
+.icon{
+  width:100%;
+  text-align: right;
+  .el-dropdown{
+    position:absolute;
+    right:55px;
+    top: 80px;
+  }
+}
 
 </style>
