@@ -8,10 +8,10 @@
       ref="table"
       class="event-table"
       @filter-change="fil_info"
-      @selection-change="handleSelectionChange"
-      @row-click="FnOperRow"
-      @row-contextmenu="FnRightClick"
-      :row-class-name="rowStyle">
+      @selection-change="handleSelectionChange">
+<!--      @row-click="FnOperRow"-->
+<!--      @row-contextmenu="FnRightClick"-->
+<!--      :row-class-name="rowStyle">-->
       <el-table-column type="selection"></el-table-column>
       <el-table-column prop="productType" label="产品类型"></el-table-column>
       <el-table-column prop="instanceID" label="故障资源ID"></el-table-column>
@@ -57,13 +57,13 @@
           <span>{{scope.row.dealStatus ? '已处理' : '未处理'}}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column prop="action" label="操作栏">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button type="text" @click="detail(scope.row)" :disabled="!authList.includes('infoDetail')">详情</el-button>-->
-<!--          <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1 || !(authList.includes('alarm_create') && authList.includes('edit'))">屏蔽</el-button>-->
-<!--          <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0 || !authList.includes('stop')">停止屏蔽</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column prop="action" label="操作栏">
+        <template slot-scope="scope">
+          <el-button type="text" @click="detail(scope.row)" >详情</el-button>
+          <el-button type="text" @click="shield(scope.row)" :disabled="scope.row.enable===1">屏蔽</el-button>
+          <el-button type="text" @click="stopShield(scope.row)" :disabled="!scope.row.shieldID || scope.row.enable===0">停止屏蔽</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"

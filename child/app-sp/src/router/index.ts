@@ -166,6 +166,12 @@ const routes:RouteConfig[] = [
         component: () => import('../views/message/list.vue'),
         meta: {meta: 'message',no_auth: true}
       },
+      {
+        path: '/config_task',
+        name: 'config_task',
+        component: () => import('../views/vmOp2/task/task.vue'),
+        meta: {menu: 'config_task',no_auth: true}
+      }
     ]
   },
   {

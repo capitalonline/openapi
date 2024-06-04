@@ -1,9 +1,16 @@
 <template>
   <div>
     <action-block :search_option="search" @fn-search="fn_search">
-      <el-button type="primary" v-for="(item,i) in headerOperateBtns" :key="i" @click="handle(i)" :disabled="!authList.includes(i)">{{item}}</el-button>
+      <el-button type="primary" v-for="(item,i) in headerOperateBtns" :key="i" @click="handle(i)">{{item}}</el-button>
     </action-block>
-    <el-table :data="list" border class="event-table" @selection-change="handleSelectionChange">
+    <el-table
+      :data="list"
+      border
+      ref="table"
+      @selection-change="handleSelectionChange">
+<!--      @row-click="FnOperRow"-->
+<!--      @row-contextmenu="FnRightClick"-->
+<!--      :row-class-name="rowStyle"-->
       <el-table-column type="selection"></el-table-column>
       <el-table-column prop="shield_name" label="屏蔽名称"></el-table-column>
       <el-table-column prop="createTime" label="屏蔽状态">
@@ -22,11 +29,11 @@
           <span>{{moment(scope.row.updated_time).format('YYYY-MM-DD HH:mm:ss')}}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column prop="operation" label="操作">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button type="text" v-for="(item,i) in operateBtns" :key="item" :disabled="!FnDisable(i,scope.row) || !authList.includes(i)" @click="handle(i,scope.row)">{{item}}</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column prop="operation" label="操作">
+        <template slot-scope="scope">
+          <el-button type="text" v-for="(item,i) in operateBtns" :key="item" :disabled="!FnDisable(i,scope.row)" @click="handle(i,scope.row)">{{item}}</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -40,6 +47,7 @@
     <template v-if="visible">
       <shield-detail :detaiId="multipleSelection[0].id" :visible.sync="visible"></shield-detail>
     </template>
+    <right-click :multi_rows="multipleSelection" :menus="menus" :name="multipleSelection.length>0 ? multipleSelection[0].instanceID: ''"  @fn-click="infoClick"></right-click>
   </div>
 </template>
 <script lang="ts">
@@ -48,10 +56,13 @@ import ActionBlock from '@/components/search/actionBlock.vue';
 import moment from 'moment';
 import Service from '@/https/alarm/list';
 import ShieldDetail from '@/views/alarm/shieldDetail.vue';
+import {rightClick} from "@/utils/vmOp2/rightClick";
+import RightClick from "@/views/vmOp2/component/right-click.vue";
 @Component({
   components:{
     ActionBlock,
-    ShieldDetail
+    ShieldDetail,
+    RightClick
   }
 })
 export default class Shield extends Vue{
@@ -85,10 +96,34 @@ export default class Shield extends Vue{
     stop:'停用',
     del:'删除',
   }
+  private menus= [
+    {label: '详情',value: 'detail',single:true,disabled:false},
+    {label: '修改',value: 'edit',single:true,disabled:false},
+  ]
   //
   created() {
     this.getShieldList();
     this.authList = this.$store.state.auth_info[this.$route.name]
+  }
+  //改变点击行得选中状态
+  private FnOperRow(row){
+    (this.$refs.table as any).toggleRowSelection(row)
+  }
+  //改变选中行的背景颜色
+  rowStyle({row}) {
+    const isSelected = this.multipleSelection.some(item => item.id === row.id);
+    if (isSelected) {
+      return 'rowStyle'
+    }
+  }
+  //右键弹出操作
+  FnRightClick(row,column,event){
+    //判断当前行是否被选中，没选中时需选中并弹出菜单
+    const isSelected = this.multipleSelection.some(item => item.id === row.id);
+    if (!isSelected) {
+      (this.$refs.table as any).toggleRowSelection(row)
+    }
+    rightClick(row,column,event)
   }
   private async getShieldList(){
     let res:any = await Service.get_shield_list({

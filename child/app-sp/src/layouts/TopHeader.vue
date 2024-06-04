@@ -24,12 +24,14 @@
       <i class="el-icon-search"></i>
     </div>
     <div class="right-content">
+      <el-button type="text" @click="FnToWiki('public')">公网设置问题排查sop</el-button>
+      <el-button type="text" @click="FnToWiki('')" class="m-right10">运维OP使用手册V1.0</el-button>
       <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
       <el-button type="text" @click="goToMessage">
         <i class="iconfont icon-message" style="font-size: 25px"></i>
       </el-button>
       </el-tooltip>
-      <el-button type="text">底层任务配置</el-button>
+      <el-button type="text" @click="goToTask">底层任务配置</el-button>
       <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
@@ -71,6 +73,16 @@ export default class TopHeader extends Vue{
   }
   private goToMessage(){
     this.$router.push({name:'message'})
+  }
+  private goToTask(){
+    this.$router.push({name:'config_task'})
+  }
+  private FnToWiki(type) {
+    if (type === 'public') {
+      window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018114')
+    } else {
+      window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
+    }
   }
   @Watch('default_az')
   private watch_pod(){
