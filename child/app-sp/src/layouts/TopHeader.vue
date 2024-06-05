@@ -61,6 +61,8 @@ export default class TopHeader extends Vue{
         })
       })
       this.default_az = this.$store.state.az_id ? this.$store.state.az_id : this.az_list[0].az_id
+      this.az_name = this.$store.state.az_name ? this.$store.state.az_name :this.az_list[0].az_name
+      this.az_code = this.$store.state.az_code ? this.$store.state.az_code :this.az_list[0].az_code
     }
   }
   private change_pod(val){
