@@ -9,6 +9,11 @@
         <el-tooltip content="刷新" placement="bottom" effect="light">
           <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
         </el-tooltip>
+        <el-tooltip content="导出" placement="bottom" effect="light">
+          <el-button type="text" @click="FnExport" v-loading="loading">
+            <svg-icon icon="export" class="export"></svg-icon>
+          </el-button>
+        </el-tooltip>
 <!--        <el-tooltip content="导出" placement="bottom" effect="light">-->
 <!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
 <!--        </el-tooltip>-->
@@ -143,6 +148,8 @@ import getInsStatus from "@/utils/getStatusInfo";
 import actionBlock from "@/components/search/actionBlock.vue";
 import moment from "moment";
 import InstanceService from "@/https/instance/list";
+import storage from "@/store/storage";
+import EcsService from "@/https/instance/list";
 @Component({
   components: {
     Operate,
@@ -627,6 +634,42 @@ export default class VmList extends Vue{
   }
   private refresh(){
     this.get_pod_ecs_list()
+  }
+  private async FnExport() {
+    this.loading = true;
+    let spec_family_ids = this.search_ecs_goods_name.map(item => item.toString());
+    let obj = Object.assign(
+      {
+        billing_method:
+          this.search_billing_method == ""
+            ? "no"
+            : this.search_billing_method,
+        op_source: this.search_op_source,
+        spec_family_ids:spec_family_ids,
+        // 产品来源
+        product_source:this.search_product_source,
+      },
+      this.search_reqData
+    )
+    const resData = await EcsService.export_list(
+      obj
+    );
+    if (resData) {
+      this.loading = false;
+      let blob = new Blob([resData], {
+        type: "application/octet-stream"
+      });
+      let reader = new FileReader();
+      let title ='云服务器-'+storage.get('pod_name') +'-'+ moment(new Date()).format('YYYYMMDD')
+      reader.readAsText(blob, "utf-8");
+      reader.onload = () => {
+        let link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = title + ".xlsx";
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      };
+    }
   }
   private async get_source_type(){
     let res:any = await Service.get_product_source()

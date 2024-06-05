@@ -9,9 +9,9 @@
         <el-tooltip content="刷新" placement="bottom" effect="light">
           <el-button type="text" @click="refresh" ><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
         </el-tooltip>
-<!--        <el-tooltip content="导出" placement="bottom" effect="light">-->
-<!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
-<!--        </el-tooltip>-->
+        <el-tooltip content="导出" placement="bottom" effect="light">
+          <el-button type="text" @click="down"><svg-icon icon="export" class="export"></svg-icon></el-button>
+        </el-tooltip>
       </div>
     </div>
     <el-table
@@ -112,6 +112,7 @@ import Record from '@/components/vmOp2/cluster/pod/host/record.vue';
 import Resource from '@/components/vmOp2/cluster/pod/host/resource.vue';
 import BusinessTest from '@/components/vmOp2/cluster/pod/host/businessTest.vue';
 import Remark from '@/components/vmOp2/cluster/pod/host/editRemark.vue';
+import moment from "moment";
 
 @Component({
   components: {
@@ -384,6 +385,52 @@ export default class HostList extends Vue{
   }
   private FnCustom() {
     this.show_custom = true;
+  }
+  private async down(){
+    const {
+      room,
+      host_name,
+      vm_id,
+      out_band_address,
+      host_ip,
+      host_id,
+      gpu_model,
+      host_rack,
+      sort_host_ip,
+      create_time,
+      cpu,
+      nic,
+      bare_metal_name,
+      bare_metal_id,
+    }=this.search_data
+    let obj = {
+      pod_id:this.$route.params.id,
+      machine_room_name:room,
+      host_name,
+      vm_id,
+      out_band_address,
+      host_ip,
+      host_id,
+      gpu_model,
+      host_rack,
+      sort_host_ip,
+      cpu,
+      nic,
+      bare_metal_name,
+      bare_metal_id,
+      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      ...this.filter_info,
+      field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop))
+    }
+    let str=""
+    for (let i in obj){
+      if(obj[i]){
+        str =str+`${i}=${obj[i]}&`
+      }
+    }
+    let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
+    window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
   private async get_pod_host_list(){
     if(!this.$store.state.az_id){

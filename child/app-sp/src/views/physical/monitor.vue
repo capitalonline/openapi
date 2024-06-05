@@ -227,12 +227,13 @@ export default class Monitor extends Vue{
   }
 
   private FnGetChartData() {
+    console.log('55555555',this.$store.state.display)
     let type = 'kvm';
-    if (!this.host_name) {
+    if (!this.host_name && !this.$store.state.display) {
       return
     }
     let reqData = {
-      hostId: this.host_name,
+      hostId: this.host_name ? this.host_name :this.$route.params.id,
       region: this.host_info.region_id,
       replica: this.host_info.az_id,
       ip: this.host_info.host_ip,
@@ -240,6 +241,7 @@ export default class Monitor extends Vue{
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
+    console.log('====',this.default_tab)
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);

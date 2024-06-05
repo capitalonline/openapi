@@ -119,8 +119,8 @@ export default class List extends Vue{
     {label:'新建集群',value:'create_cluster'},
   ]
   private menus= [
-    { label: "添加主机", value: 'add_host',single:true,disabled: false},
-    { label: "添加虚拟机", value: 'add_vm',single:true,disabled: false},
+    // { label: "添加主机", value: 'add_host',single:true,disabled: false},
+    // { label: "添加虚拟机", value: 'add_vm',single:true,disabled: false},
     { label: "编辑集群", value: 'edit_cluster',single:true,disabled: false },
     { label: "删除集群", value: 'delete_cluster', disabled: false},
   ]
