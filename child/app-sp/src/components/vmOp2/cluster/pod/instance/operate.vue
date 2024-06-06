@@ -340,9 +340,9 @@ export default class Operate extends Vue{
       ) >= 0
     ) {
       this.FnPowerOperate(reqData);
-    } else if (this.oper_type === "delete") {
+    } else if (this.oper_type === "delete_ecs") {
       this.FnDelete(reqData);
-    } else if (this.oper_type === "destroy") {
+    } else if (this.oper_type === "destroy_ecs") {
       this.FnDestroy(reqData);
     } else if (this.oper_type === "reset_pwd") {
       this.FnResetPwd(reqData);

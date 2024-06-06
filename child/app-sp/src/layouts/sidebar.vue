@@ -13,6 +13,7 @@
         </template>
       </el-menu-item>
     </template>
+    <i class="el-icon-delete"></i>
   </el-menu>
     <template v-if="treeType === 'tree'">
       <left-tree :currentLivingId="current" :refresh="refresh" :tree_data="treeData"></left-tree>
@@ -51,6 +52,7 @@ export default class Sidebar extends Vue {
     {label:'存储',name:'storage',type: 'menu'},
     // {label:'网络',name:'network',disabled:true,tree: false},
     {label:'审计',name:'log',type: 'menu'},
+    //{label: '设置',name: 'set',type: 'menu'}
   ];
   private menu_list=[]
   private treeData:any = []

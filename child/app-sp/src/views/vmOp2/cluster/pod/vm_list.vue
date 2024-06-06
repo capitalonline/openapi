@@ -319,6 +319,9 @@ export default class VmList extends Vue{
           case 'net_set':
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
             break;
+          case 'restore':
+            item.disabled = true
+            break;
           default:
             item.disabled = false
         }
@@ -329,6 +332,7 @@ export default class VmList extends Vue{
         }
       }
     }
+    console.log('this.menus',this.menus)
   }
 
   created(){

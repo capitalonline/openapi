@@ -65,10 +65,10 @@ const routes:RouteConfig[] = [
             component: () => import('../views/vmOp2/cluster/pod/vm_list.vue'),
             meta: {meta: 'pod_info',no_auth: true}
           },
-          {
+          {//报警
             path: '/cluster/alarm/:id?',
             name: 'cluster_alarm',
-            component: () => import('../views/vmOp2/cluster/clusterItem/alarm.vue'),
+            component: () => import('../views/vmOp2/cluster/clusterItem/alarm_info.vue'),
             meta: {menu: 'cluster_alarm'}
           },
         ],

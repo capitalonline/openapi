@@ -21,17 +21,22 @@
           :label="item.az_name"
         ></el-option>
       </el-select>
-      <i class="el-icon-search"></i>
+<!--      <i class="el-icon-search"></i>-->
     </div>
     <div class="right-content">
-      <el-button type="text" @click="FnToWiki('public')">公网设置问题排查sop</el-button>
-      <el-button type="text" @click="FnToWiki('')" class="m-right10">运维OP使用手册V1.0</el-button>
       <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
       <el-button type="text" @click="goToMessage">
         <i class="iconfont icon-message" style="font-size: 25px"></i>
       </el-button>
       </el-tooltip>
-      <el-button type="text" @click="goToTask">底层任务配置</el-button>
+      <el-dropdown @command="FnToWiki">
+        <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item :command="{type:'public'}">公网设置问题排查sop</el-dropdown-item>
+          <el-dropdown-item :command="{type:''}">运维OP使用手册V1.0</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+<!--      <el-button type="text" @click="goToTask">底层任务配置</el-button>-->
       <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
@@ -40,8 +45,13 @@
 <script lang="ts">
 import {Component, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/vmOp2/cluster/tree";
+import SvgIcon from '@/components/svgIcon/index.vue';
 
-@Component({})
+@Component({
+  components: {
+    SvgIcon
+  }
+})
 export default class TopHeader extends Vue{
   private default_az = ''
   private az_name = ''
@@ -119,7 +129,8 @@ export default class TopHeader extends Vue{
     }
   }
   svg {
-    width: 60px;
+    width: 30px;
+    margin:10px
   }
   .right-content {
     display: flex;
