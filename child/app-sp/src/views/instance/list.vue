@@ -127,6 +127,7 @@
           >
         </template>
       </el-table-column>
+      <el-table-column label="管理网IP" prop="host_ip"></el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
 <!--        <template #default="scope">-->
 <!--          <div v-if="scope.row.private_net">-->
@@ -635,15 +636,15 @@ import netSet from './netSet.vue'
 })
 export default class App extends Vue {
   private search_con = {
-    ecs_id: { placeholder: "请输入云服务器ID" },
-    ecs_name: { placeholder: "请输入云服务器名称" },
+    ecs_id: { placeholder: "请输入云服务器ID" ,multi:true},
+    ecs_name: { placeholder: "请输入云服务器名称" ,multi:true},
     customer_id: { placeholder: "请输入客户ID" },
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
-    private_net: { placeholder: "请输入私网IP" },
-    public_net: { placeholder: "请输入公网IP" },
+    private_net: { placeholder: "请输入私网IP" ,multi:true},
+    public_net: { placeholder: "请输入公网IP" ,multi:true},
     host_id: { placeholder: "请输入物理机ID"},
-    host_name: { placeholder: "请输入物理机名称", },
+    host_name: { placeholder: "请输入物理机名称",multi:true },
     host_ip: { placeholder: "请输入物理机管理IP"},
     out_band_address: { placeholder: "请输入物理机带外IP"},
     tag: {placeholder: "请选择标签", list: [],filter:true},
