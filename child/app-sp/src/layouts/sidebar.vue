@@ -13,7 +13,6 @@
         </template>
       </el-menu-item>
     </template>
-    <i class="el-icon-delete"></i>
   </el-menu>
     <template v-if="treeType === 'tree'">
       <left-tree :currentLivingId="current" :refresh="refresh" :tree_data="treeData"></left-tree>
