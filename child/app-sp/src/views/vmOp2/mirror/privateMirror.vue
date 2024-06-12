@@ -156,6 +156,7 @@ export default class PrivateMirror extends Vue{
       {label: '操作记录',value: 'record',single:true,disabled:false},
     ]
     private error_msg={}
+    private selectedRow = null
     created() {
         this.auth_list = this.$store.state.auth_info['private_mirror_list'];
         this.get_mirror_type();
@@ -198,7 +199,7 @@ export default class PrivateMirror extends Vue{
     }
     //改变点击行得选中状态
   private FnOperRow(row) {
-    const table = this.$refs.table;
+    const table = (this.$refs.table as any);
     if (this.selectedRow !== row) {
       // 清除之前选中的行
       if (this.selectedRow) {
