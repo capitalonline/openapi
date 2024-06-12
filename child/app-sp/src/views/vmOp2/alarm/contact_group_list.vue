@@ -1,35 +1,54 @@
 <template>
-  <div class="contact-group">
+  <div>
     <action-block :search_option="search" @fn-search="fn_search">
         <template #default>
             <el-button type="primary" @click="add" :disabled="!auth_list.includes('add_contact_group')">新建联系人组</el-button>
             <el-button type="primary" @click="del" :disabled="!auth_list.includes('delete_contact_group')">删除联系人组</el-button>
         </template>
     </action-block>
-    <el-collapse accordion>
-        <el-collapse-item v-for="item in group_list" :key="item.id">
-            <template slot="title">
-                <el-checkbox v-model="item.check" @change="sel_users(item.id,$event)">{{item.name}}</el-checkbox>
-                <el-button type="text" @click.stop="edit(item.id)" class="edit" :disabled="!auth_list.includes('edit_contact_group')">编辑</el-button>
-            </template>
-            <div class="table-box">
-                <el-table :data="item.members" border class="event-table" max-height="396">
-                    <el-table-column prop="name" label="姓名"></el-table-column>
-                    <el-table-column prop="email" label="邮箱"></el-table-column>
-                    <el-table-column prop="phone" label="电话号码"></el-table-column>
-                    <el-table-column prop="groups" label="所属报警组">
-                        <template slot-scope="scope">
-                            <span v-for="(item,index) in scope.row.groups" :key="item.id">{{index===scope.row.groups.length-1 ? `${item.name}` : `${item.name},`}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <el-button type="text" @click="remove(scope.row.id,item.id,item.name)" :disabled="!auth_list.includes('remove_contact')">移除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>
-        </el-collapse-item>
+    <el-collapse accordion class="contact-group">
+      <el-collapse-item v-for="item in group_list" :key="item.id">
+        <template slot="title">
+          <div class="collapse-header">
+            <el-checkbox v-model="item.check" @change="sel_users(item.id, $event)">
+              {{ item.name }}
+            </el-checkbox>
+            <el-button
+              type="text"
+              @click.stop="edit(item.id)"
+              class="edit"
+              :disabled="!auth_list.includes('edit_contact_group')"
+            >
+              编辑
+            </el-button>
+          </div>
+        </template>
+        <div class="table-box">
+          <el-table :data="item.members" border class="event-table" max-height="396">
+            <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="email" label="邮箱"></el-table-column>
+            <el-table-column prop="phone" label="电话号码"></el-table-column>
+            <el-table-column prop="groups" label="所属报警组">
+              <template slot-scope="scope">
+              <span v-for="(group, index) in scope.row.groups" :key="group.id">
+                {{ index === scope.row.groups.length - 1 ? group.name : `${group.name},` }}
+              </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  @click="remove(scope.row.id, item.id, item.name)"
+                  :disabled="!auth_list.includes('remove_contact')"
+                >
+                  移除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-collapse-item>
     </el-collapse>
     <el-pagination
         @size-change="handleSizeChange"
@@ -50,10 +69,10 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ActionBlock from '../../components/search/actionBlock.vue'
-import AddGroup from './add_group.vue';
-import Service from '../../https/alarm/list'
-import CommonDel from './commonDel.vue'
+import ActionBlock from '@/components/search/actionBlock.vue'
+import AddGroup from '@/views/alarm/add_group.vue';
+import Service from '@/https/alarm/list'
+import CommonDel from '@/views/alarm/commonDel.vue'
 @Component({
     components:{
         ActionBlock,
@@ -80,7 +99,7 @@ export default class ContactList extends Vue{
     private auth_list:any=[]
     created() {
         this.fn_search()
-        this.auth_list=this.$store.state.auth_info[this.$route.name]
+        this.auth_list=this.$store.state.auth_info['alarm_contact']
     }
     private fn_search(data:any={}){
         this.search_data = data
@@ -208,8 +227,7 @@ label.el-checkbox{
     margin-left: 30px;
 }
 .edit{
-    position: absolute;
-    right: 30px;
+    padding: 20px;
 }
 .el-message-box.message-box{
     i{
@@ -219,15 +237,28 @@ label.el-checkbox{
 }
 </style>
 <style lang="scss">
-.contact-group{
-    i.el-collapse-item__arrow.el-icon-arrow-right {
-        position: absolute !important;
-        left: 10px !important;
-    }
-    .el-collapse-item__content {
-        background: #f5f6fa !important;
-        padding: 20px !important;
-    }
+.contact-group {
+  .collapse-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  // 覆盖 el-collapse-item__header 样式以反转图标和内容的顺序
+  ::v-deep .el-collapse-item__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  i.el-collapse-item__arrow.el-icon-arrow-right {
+    order: -1;
+    margin-right: -22px;
+  }
+  .el-collapse-item__content {
+    background: #f5f6fa !important;
+    padding: 20px !important;
+  }
 }
 
 </style>

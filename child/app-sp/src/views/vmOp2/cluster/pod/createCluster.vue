@@ -54,6 +54,7 @@
 import {Component, Prop, PropSync, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/vmOp2/cluster/pod/index"
 import {Form} from "element-ui";
+import bus from "@/utils/vmOp2/eventBus";
 @Component({})
 
 export default class CreateCluster extends Vue{
@@ -112,7 +113,9 @@ export default class CreateCluster extends Vue{
         block_storage_cluster:{
           id:this.oper_info[0].storage_cluster_id,
           name:this.oper_info[0].storage_cluster_name
-        }
+        },
+        max_host_number:this.oper_info[0].max_host_count,
+        cpu_brand:this.oper_info[0].cpu_brand
       };
       console.log('this.form_data',this.form_data)
     }
@@ -203,6 +206,7 @@ export default class CreateCluster extends Vue{
         if (res.code === 'Success') {
           this.$message.success(res.message)
           this.cancel()
+          bus.$emit('getTreeData',false)
         }
       }
     })

@@ -64,10 +64,10 @@ export default class RightClick extends Vue{
     console.log('22222')
   }
   private disabledTooltipContent(item){
-    if(this.msg[item.value]) {
+    if(this.msg && this.msg[item.value]) {
       return  this.msg[item.value]
     } else {
-      return '无操作权限'
+      return '此状态无法操作或无操作权限'
     }
   }
   @Emit("fn-click")

@@ -51,7 +51,7 @@ export default class Sidebar extends Vue {
     {label:'存储',name:'storage',type: 'menu'},
     // {label:'网络',name:'network',disabled:true,tree: false},
     {label:'审计',name:'log',type: 'menu'},
-    //{label: '设置',name: 'set',type: 'menu'}
+    {label: '配置',name: 'config',type: 'menu'}
   ];
   private menu_list=[]
   private treeData:any = []
@@ -94,6 +94,30 @@ export default class Sidebar extends Vue {
     }
     if(this.active_menu === 'cluster'){
       this.current = this.treeData[0].id
+    }
+    if(this.active_menu === 'config'){
+      this.current ='alarm_shield'
+      this.menu_list=[
+        {
+          name:'alarm_manage',
+          label:'报警管理',
+          children:[
+            {name:'alarm_shield',label:'屏蔽管理'},
+            {name:'alarm_strategy_list',label:'报警策略'},
+            {name:'alarm_contact_list',label:'报警联系人'},
+          ]
+        },
+        {
+          name: "task_config",
+          label: "底层任务配置",
+          children: [
+            { name: 'config_main_task', label: "主任务配置" },
+            { name: 'config_sub_task', label: "子任务配置" },
+            { name: 'project', label: "项目管理" },
+          ]
+        },
+      ]
+      this.$router.push({name:'alarm_shield'})
     }
   }
   //获取左侧树结构

@@ -1,7 +1,8 @@
 <template>
     <div class="create-stategy">
-        <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
         <el-card class="main_box">
+          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
+          <el-divider></el-divider>
             <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                 <el-form-item
                     prop="name"
@@ -15,10 +16,10 @@
                     label="选择已有策略"
                     v-if="edit_id===''"
                 >
-                    <el-select 
-                        v-model="form_data.stategy" 
+                    <el-select
+                        v-model="form_data.stategy"
                         placeholder="请选择已有策略"
-                        filterable 
+                        filterable
                         :filter-method="getStrategyList"
                         @visible-change="change_strategy"
                     >
@@ -37,9 +38,10 @@
         </el-card>
         <div class="button_box">
             <el-button type="primary" @click="create">{{edit_id==="" ? '创建' : '确定'}}</el-button>
+          <el-button class="confirm"  @click="$router.go(-1)" style="margin-left: 5px">返回</el-button>
         </div>
     </div>
-    
+
 </template>
 <script lang="ts">
 import { Component, Vue,Prop, Watch } from 'vue-property-decorator';
@@ -79,7 +81,7 @@ export default class Index extends Vue{
         if(!val){
             this.getStrategyList()
         }
-        
+
     }
     private async getStrategyList(name:string=''){
         let res:any = await Service.get_strategy_list({
@@ -105,14 +107,14 @@ export default class Index extends Vue{
             if(this.edit_id!==""){
                 this.form_data.name = res.data.name
             }
-            
+
         }
-        
+
     }
     private create(){
         const form = this.$refs.form as Form
         const rule_config = this.$refs.rule_config as any
-        
+
         form.validate(async (valid)=>{
             if(valid){
                 const selected_products = rule_config.selected_products
@@ -154,7 +156,7 @@ export default class Index extends Vue{
                                 level:parseInt(inn.alram_type),
 
                             }],
-                            
+
                         }
                         list.push(obj)
                     })
@@ -184,25 +186,25 @@ export default class Index extends Vue{
                         enable,
                         id,
                         regions,
-                        
+
                     })
                     if(res.code==='Success'){
                         this.$message.success("编辑策略任务下发成功")
                         this.$router.push('/alarmStrategy')
                     }
                 }
-                
 
-                
+
+
 
             }
         })
     }
-   
-    
-    
-    
-    
+
+
+
+
+
 }
 </script>
 <style lang="scss" scoped>
@@ -219,7 +221,7 @@ export default class Index extends Vue{
             color: #F56C6C;
             margin: 5px 0 0 2px;
         }
-        
+
     }
     .button_box{
         position: fixed;

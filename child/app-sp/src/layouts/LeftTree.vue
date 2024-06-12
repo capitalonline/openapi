@@ -13,7 +13,9 @@
     @click.stop
   >
     <span slot-scope="{node,data}" class="treeLabel">
-      <i :class="iconClasses[node.level]"></i>
+<!--      <svg-icon :iconName="iconClasses[node.level]"></svg-icon>-->
+<!--      <svg-icon iconName="icon-baojingshijian"></svg-icon>-->
+      <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
       <span class="m-left5" :title="node.label">{{ node.label }}</span>
     </span>
   </el-tree>
@@ -52,6 +54,7 @@ import RightClick from "@/views/vmOp2/component/right-click.vue";
 import Operate from "@/views/vmOp2/cluster/host/operate.vue";
 import {getHostStatus} from "@/utils/getStatusInfo";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
+import Service from "@/https/alarm/list";
 @Component({
   components: {Operate, RightClick}
 })
@@ -61,9 +64,9 @@ export default class LeftTree extends Vue{
   @Prop({default:true})refresh!:boolean
   @Prop({default:()=>[]})tree_data!:Array<object>
   private iconClasses= {
-    1: 'iconfont icon-tree',
-    2: 'iconfont icon-machine',
-    3: 'iconfont icon-serve',
+    1: 'icon-tree',
+    2: 'icon-machine',
+    3: 'icon-serve',
   }
   private showContextMenu:boolean = false
   private contextMenu = { x: 0, y: 0 }
@@ -72,6 +75,7 @@ export default class LeftTree extends Vue{
   private oper_type:string="";
   private oper_label:string="";
   private visible:Boolean=false;
+  private list:any=[]
   private buttons:any =[
     {label:'开机',key:'start_up_host',disable:false},
     {label:'关机',key:'shutdown_host',disable:false},
@@ -117,6 +121,19 @@ export default class LeftTree extends Vue{
       boxShadow: '0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)'
     }
   }
+  private async getAlarmList(){
+    let res:any=await Service.get_alarm_list({})
+    if(res.code==='Success'){
+      this.list = res.data.datas || []
+    }
+  }
+  private getIconName(node) {
+    const instance = this.list.find(item => item.instanceID === node.label);
+    if (instance && instance.dealStatus === 0) {
+      return "icon-baojingshijian";
+    }
+    return this.iconClasses[node.level];
+  }
   private tooltip(item){
     const obj = getHostStatus(item)
     if(obj.msg) {
@@ -129,6 +146,7 @@ export default class LeftTree extends Vue{
     this.$nextTick(()=>{
       (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
     })
+    this.getAlarmList()
   }
   private infoClick(item) {
     const {label, key}=item

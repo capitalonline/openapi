@@ -80,22 +80,22 @@
       </el-table-column>
       <el-table-column prop="product_server_id" width="120px" label="内部服务账号ID"></el-table-column>
       <el-table-column prop="product_server_name" width="120px" label="内部服务账号名称"></el-table-column>
-      <el-table-column label="操作栏">
-        <template slot-scope="scope">
-          <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>
-          <!-- <el-dropdown @command="handleOperate">
-            <span class="el-dropdown-link">
-              更多<i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="{label:'detail',value:scope.row}">详情</el-dropdown-item>
-              <el-dropdown-item v-for="item in operateBtns.slice(1)" :key="item.value" :command="{label:item.value,value:scope.row}" :disabled="!limit_disk_operate(item.value,scope.row)">{{item.label}}</el-dropdown-item>
-              <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>
-              <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>
-            </el-dropdown-menu>
-        </el-dropdown> -->
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作栏">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button type="text" @click="operateRecord(scope.row)">操作记录</el-button>-->
+<!--          &lt;!&ndash; <el-dropdown @command="handleOperate">-->
+<!--            <span class="el-dropdown-link">-->
+<!--              更多<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--            </span>-->
+<!--            <el-dropdown-menu slot="dropdown">-->
+<!--              <el-dropdown-item :command="{label:'detail',value:scope.row}">详情</el-dropdown-item>-->
+<!--              <el-dropdown-item v-for="item in operateBtns.slice(1)" :key="item.value" :command="{label:item.value,value:scope.row}" :disabled="!limit_disk_operate(item.value,scope.row)">{{item.label}}</el-dropdown-item>-->
+<!--              <el-dropdown-item :command="{label:'edit_attr',value:scope.row}" :disabled="!limit_disk_operate('edit_attr',scope.row)">编辑属性</el-dropdown-item>-->
+<!--              <el-dropdown-item :command="{label:'edit_name',value:scope.row}" :disabled="!limit_disk_operate('edit_name',scope.row)">修改云盘名称</el-dropdown-item>-->
+<!--            </el-dropdown-menu>-->
+<!--        </el-dropdown> &ndash;&gt;-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -164,125 +164,128 @@ export default class extends Vue {
   $router;
   $store;
   $route
-  private disk_list:any=[]
-  private current:number = 1;
-  private size:number=20;
-  private total:number = 0;
-  private disk_state:any = [];
-  private auth_list:any=[]
+  private disk_list: any = []
+  private current: number = 1;
+  private size: number = 20;
+  private total: number = 0;
+  private disk_state: any = [];
+  private auth_list: any = []
   private search_dom = {
-    disk_id:{placeholder:'请输入云盘ID'},
-    ecs_id:{placeholder:'请输入实例ID'},
+    disk_id: {placeholder: '请输入云盘ID'},
+    ecs_id: {placeholder: '请输入实例ID'},
     // status:{list:[],placeholder:'请选择与云盘状态'},
-    customer_id:{placeholder:'请输入客户ID'},
-    customer_name: {placeholder:'请输入客户名称'},
-    product_server_id:{placeholder:'请输入内部服务账号ID'},
-    product_server_name: {placeholder:'请输入内部服务账号名称'},
+    customer_id: {placeholder: '请输入客户ID'},
+    customer_name: {placeholder: '请输入客户名称'},
+    product_server_id: {placeholder: '请输入内部服务账号ID'},
+    product_server_name: {placeholder: '请输入内部服务账号名称'},
   }
-  private visible:Boolean = false;
-  private operate_type:string=""
-  private mount_id:any = [];
+  private visible: Boolean = false;
+  private operate_type: string = ""
+  private mount_id: any = [];
   private filter_obj = null
   private clear = null
-  private product_source_list=[]
-  private common_operate:any = {
-    delete:'逻辑删除',
-    restore:'恢复',
-    destroy:'销毁',
-    open_bill:'开启计费'
+  private product_source_list = []
+  private common_operate: any = {
+    delete: '逻辑删除',
+    restore: '恢复',
+    destroy: '销毁',
+    open_bill: '开启计费'
   }
 
-  private operateBtns=[
+  private operateBtns = [
     {
-      label:'创建云盘',
-      value:'disk_create'
+      label: '创建云盘',
+      value: 'disk_create'
     },
     {
-      label:'挂载',
-      value:'mount'
+      label: '挂载',
+      value: 'mount'
     },
     {
-      label:'卸载',
-      value:'unInstall'
+      label: '卸载',
+      value: 'unInstall'
     },
     {
-      label:'逻辑删除',
-      value:'delete'
+      label: '逻辑删除',
+      value: 'delete'
     },
     {
-      label:'恢复',
-      value:'restore'
+      label: '恢复',
+      value: 'restore'
     },
     {
-      label:'销毁',
-      value:'destroy'
+      label: '销毁',
+      value: 'destroy'
     },
     {
-      label:'扩容',
-      value:'disk_capacity'
+      label: '扩容',
+      value: 'disk_capacity'
     },
     {
-      label:'开启计费',
-      value:'open_bill'
-    },
-  ]
-  private req_data:any={}
-  private diskAttribute=[
-    {
-      text:'数据盘',
-      value:'data'
-    },
-    {
-      text:'系统盘',
-      value:'system'
+      label: '开启计费',
+      value: 'open_bill'
     },
   ]
-  private op_source_fil=[
+  private req_data: any = {}
+  private diskAttribute = [
     {
-      text:'运维后台',
-      value:'cloud_op'
+      text: '数据盘',
+      value: 'data'
     },
     {
-      text:'GIC',
-      value:'gic'
+      text: '系统盘',
+      value: 'system'
+    },
+  ]
+  private op_source_fil = [
+    {
+      text: '运维后台',
+      value: 'cloud_op'
+    },
+    {
+      text: 'GIC',
+      value: 'gic'
     },
     {
       text: '内部API',
       value: 'internal_api'
     }
   ]
-  private fee_way_fil=[
+  private fee_way_fil = [
     {
-      text:'按量计费',
-      value:'0'
+      text: '按量计费',
+      value: '0'
     },
     {
-      text:'不计费',
-      value:'no'
+      text: '不计费',
+      value: 'no'
     },
   ]
-  private menus= [
-    {label: '操作记录',value: 'record',single:true,disabled:false},
+  private menus = [
+    {label: '操作记录', value: 'record', single: true, disabled: false},
   ]
-  private error_msg={}
+  private error_msg = {}
+
   created() {
     this.get_disk_state();
     this.get_product_source()
     this.search()
-    this.auth_list=this.$store.state.auth_info[this.$route.name]
+    this.auth_list = this.$store.state.auth_info[this.$route.name]
     document.addEventListener('click', hideMenu);
   }
 
   private beforeDestroy() {
     this.FnClearTimer()
   }
+
   @Watch("$store.state.pod_id")
-  private watch_pod(nv){
-    if(!nv){
+  private watch_pod(nv) {
+    if (!nv) {
       return;
     }
     this.search(this.req_data)
   }
+
   // @Watch("visible")
   // private watch_visble(nv,ov){
   //   if(!nv && this.opera){
@@ -290,39 +293,56 @@ export default class extends Vue {
   //   }
   // }
   //获取产品来源
-  private async get_product_source(){
-    this.product_source_list=[]
-    let res:any = await Service.get_product_source({})
-    if(res.code==="Success"){
-      res.data.map((item,index)=>{
+  private async get_product_source() {
+    this.product_source_list = []
+    let res: any = await Service.get_product_source({})
+    if (res.code === "Success") {
+      res.data.map((item, index) => {
         this.product_source_list.push({
-          text:Object.values(item)[0],
-          value:Object.keys(item)[0]
+          text: Object.values(item)[0],
+          value: Object.keys(item)[0]
         })
         return item;
       })
 
     }
   }
+
   //获取云盘状态列表
-  private async get_disk_state(){
-    let res:any = await Service.get_disk_state({})
-    if(res.code==="Success"){
-      this.disk_state = trans(res.data,'status_name','status','text','value')
+  private async get_disk_state() {
+    let res: any = await Service.get_disk_state({})
+    if (res.code === "Success") {
+      this.disk_state = trans(res.data, 'status_name', 'status', 'text', 'value')
     }
   }
+
   //右键弹出操作
-  FnRightClick(row,column,event){
+  FnRightClick(row, column, event) {
+    (this.$refs.disk_table as any).clearSelection();
     //判断当前行是否被选中，没选中时需选中并弹出菜单
     const isSelected = this.mount_id.some(item => item.disk_id === row.disk_id);
     if (!isSelected) {
       (this.$refs.disk_table as any).toggleRowSelection(row)
     }
-    rightClick(row,column,event)
+    rightClick(row, column, event)
   }
+
   //改变点击行得选中状态
-  private FnOperRow(row){
-    (this.$refs.disk_table as any).toggleRowSelection(row)
+  private FnOperRow(row) {
+    const table = this.$refs.disk_table;
+    if (this.selectedRow !== row) {
+      // 清除之前选中的行
+      if (this.selectedRow) {
+        table.clearSelection()
+      }
+      // 选中当前点击的行
+      table.toggleRowSelection(row, true);
+      this.selectedRow = row; // 更新选中的行
+    } else {
+      // 点击已选中的行时取消选中
+      table.toggleRowSelection(row, false);
+      this.selectedRow = null; // 清除选中的行
+    }
   }
   //改变选中行的背景颜色
   rowStyle({row}) {

@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="search-box" >
-      <el-input prefix-icon="el-icon-search"></el-input>
+<!--      <el-input prefix-icon="el-icon-search"></el-input>-->
     <div class="icon m-bottom10">
-      <el-dropdown @command="handleOperate">
-        <el-button type="text"><i class="iconfont icon-more" style="font-weight: bold;margin-right: 5px;font-size: 18px"></i></el-button>
+      <el-dropdown @command="handleOperate" class="aliFont">
+        <el-button type="text"><svg-icon-font iconName="icon-gengduo"></svg-icon-font></el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value}" :key="item.value" >{{item.label}}</el-dropdown-item>
         </el-dropdown-menu>
@@ -98,6 +98,7 @@ import { rightClick } from "@/utils/vmOp2/rightClick"
 import { hideMenu} from "@/utils/vmOp2/hideMenu"
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
+import bus from "@/utils/vmOp2/eventBus";
 @Component({
   components: {
     CreateCluster,
@@ -207,6 +208,7 @@ export default class List extends Vue{
         if(res.code === 'Success'){
           this.$message.success(res.message)
           this.refresh()
+          bus.$emit('getTreeData',false)
         }
       }).catch(() => {
           this.$message({
@@ -348,13 +350,12 @@ i.el-icon-s-tools{
 ::v-deep .el-progress__text{
   font-size: 14px!important;
 }
-.icon{
-  width:100%;
-  text-align: right;
-  .el-dropdown{
-    position:absolute;
-    right:55px;
-    top: 80px;
+.aliFont{
+  .svg-icon{
+    width: 2em;
+    height: 1.5em;
+    vertical-align: -5px;
+    padding-right:5px
   }
 }
 

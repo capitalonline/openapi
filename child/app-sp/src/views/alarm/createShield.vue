@@ -1,7 +1,8 @@
 <template>
     <div>
-        <back-header :title="`${edit_id==='' ? '创建' : '编辑'}告警屏蔽`" back_url="/alarmInfo"></back-header>
         <el-card>
+          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}告警屏蔽`" back_url="/alarmInfo"></back-header>
+          <el-divider></el-divider>
             <el-form :model="shieldData" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                 <el-form-item prop="name" label="屏蔽名称">
                     <el-input :disabled="!!edit_id" v-model="shieldData.name" minlength=2 maxlength=60 placeholder="2-60个字符" show-word-limit />
@@ -10,7 +11,7 @@
                 <el-form-item prop="mechanism" label="告警机制">
                     <el-select
                         :disabled="!!edit_id"
-                        v-model="shieldData.mechanism" 
+                        v-model="shieldData.mechanism"
                         placeholder="请选择告警机制"
                     >
                         <el-option
@@ -24,12 +25,12 @@
                     <mark-tip :content="'静默机制：对符合条件的特定告警在特定时间范围内直接静默。'" class="m-left10">
                         <el-button type="text"><svg-icon icon="info" viewBox="0 0 18 18"></svg-icon></el-button>
                     </mark-tip>
-                    
+
                 </el-form-item>
                 <el-form-item prop="scope" label="抑制范围">
                     <el-select
                         :disabled="!!edit_id"
-                        v-model="shieldData.scope" 
+                        v-model="shieldData.scope"
                         placeholder="请选择抑制范围"
                         @change="changeScope"
                     >
@@ -73,9 +74,9 @@
                                 >
                                 <span v-if="Number(item.id)===1">
                                     {{item.name}}
-                                    <el-tooltip 
+                                    <el-tooltip
                                         class="m-left10"
-                                        :placement="'right'" 
+                                        :placement="'right'"
                                         :effect="'light'"
                                         popper-class="tooltip-class">
                                         <template #content>
@@ -99,7 +100,7 @@
                                 <template v-else-if="['to_group','alertname'].includes(con.label)">
                                     <!--策略和规则-->
                                     <el-select
-                                        v-model="con.value" 
+                                        v-model="con.value"
                                         class="w-420"
                                         filterable
                                         multiple
@@ -117,7 +118,7 @@
                                 </template>
                                 <template v-else>
                                     <el-select
-                                        v-model="con.value" 
+                                        v-model="con.value"
                                         class="w-420"
                                         multiple
                                     >
@@ -133,7 +134,7 @@
                             </template>
                             <template v-else>
                                 <el-input v-model="con.value" placeholder="请输入正则表达式" class="w-420" />
-                                
+
                             </template>
                             <el-button type="text" @click="delCondition(con.label)" v-if="shieldData.condition.length>1 && con.label!=='id'"><i class="el-icon-remove"></i></el-button>
                             <div v-if="!con.value || con.value.length===0" class="error_message err">{{Number(con.oper)===0 ? con.label==='id' ? '输入故障资源ID，多个值用英文逗号隔开' : '请输入或选择条件值' : '输入正则表达式，多个值用英文逗号隔开'}}</div>
@@ -141,7 +142,7 @@
                          <el-button type="text" @click="addCondition" v-if="shieldData.condition.length < conditionList.length"><i class="el-icon-circle-plus"></i></el-button>
 
                     </div>
-                    
+
                 </el-form-item>
                 <el-form-item prop="time" label="静默时间">
                      <template #label>
@@ -151,7 +152,7 @@
                         </mark-tip>
                     </template>
                     <el-select
-                        v-model="shieldData.timeScope" 
+                        v-model="shieldData.timeScope"
                     >
                         <el-option
                             v-for="item in timeScopeList"
@@ -176,7 +177,7 @@
                         end-placeholder="结束日期">
                     </el-date-picker>
                 </div>
-                
+
                 <div v-if="shieldData.timeScope===1" class="time">
                     <el-date-picker
                         v-model="shieldData.endTime"
@@ -189,10 +190,11 @@
                 </div>
                 <div class="time error_message m-top10" v-if="(Number(shieldData.timeScope)===0 && shieldData.timeRange.length===0) || (Number(shieldData.timeScope)===1 && !shieldData.endTime)">请选择时间</div>
             </el-form>
+            <el-button class="confirm"  @click="$router.go(-1)" style="margin-left: 5px">返回</el-button>
             <el-button type="primary" class="confirm" @click="confirm">确定</el-button>
 
         </el-card>
-        
+
     </div>
 </template>
 <script lang="ts">
@@ -272,9 +274,9 @@ export default class CreateShield extends Vue{
         this.getRegionAz();
         this.getStrategyInfo();
         this.getRuleInfo();
-        
+
     }
-    private async getDetail(){        
+    private async getDetail(){
         let res:any = await Service.shield_detail({id:this.edit_id})
         if(res.code==='Success'){
             this.shieldData.name = res.data.shield_name;
@@ -297,7 +299,7 @@ export default class CreateShield extends Vue{
                     oper:item.operator,
                     value:Number(item.operator)===0 ? !['id'].includes(item.condition_object) ? item.condition_value.split(',') : item.condition_value:item.condition_value,
                     id:item.id
-                }   
+                }
                 list.push(obj)
             })
             this.shieldData.condition=[...list];
@@ -311,20 +313,20 @@ export default class CreateShield extends Vue{
             this.conditionList = res.data.condition_object;
             this.timeScopeList = res.data.shield_time;
             this.IDConditionList = res.data.condition_object.filter(item=>item.label==='id')
-            
+
             // if(!this.edit_id){
             this.shieldData.mechanism = this.mechanismList[0]?.id;
-            this.shieldData.scope = this.scopeList[0]?.id;   
+            this.shieldData.scope = this.scopeList[0]?.id;
             if(Number(this.shieldData.scope)===3){
                 this.conditionList = this.conditionList.filter(item=>item.label!=='id');
-            }             
+            }
             this.shieldData.condition[0].label =Number(this.shieldData.scope)===3 ? this.conditionList[0]?.label :this.IDConditionList[0]?.label
             this.shieldData.condition[0].oper = this.operateIcon[0].id
             this.shieldData.timeScope = this.timeScopeList[0]?.id
             if(this.edit_id){
                 this.getDetail()
             }
-            
+
         }
     }
     private async getRegionAz(){
@@ -332,8 +334,8 @@ export default class CreateShield extends Vue{
         this.labelContent.az=[];
         let res:any = await CreateService.get_region_az_list({})
         if(res.code==='Success'){
-            res.data.map(item=>{                
-                this.labelContent.region = [...this.labelContent.region,...item.region_list];                
+            res.data.map(item=>{
+                this.labelContent.region = [...this.labelContent.region,...item.region_list];
                 item.region_list.map(inn=>{
                     this.labelContent.az = [...this.labelContent.az,...inn.az_list]
                 })
@@ -397,10 +399,10 @@ export default class CreateShield extends Vue{
     private changeScope(){
         if(Number(this.shieldData.scope)===3){
             this.conditionList = this.conditionList.filter(item=>item.label!=='id')
-            if(this.selectedIds.includes('id')){                
+            if(this.selectedIds.includes('id')){
                 this.delCondition('id')
             }
-        }else{            
+        }else{
             if(this.conditionList.filter(item=>item.label==='id').length===0){
                 this.conditionList = [...this.conditionList,...this.IDConditionList]
             }
@@ -412,7 +414,7 @@ export default class CreateShield extends Vue{
 
                 })
             }
-            
+
         }
     }
     private changeLabel(index){

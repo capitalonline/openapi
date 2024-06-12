@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="action-box">
-      <el-button type="primary" 
+      <el-button type="primary"
         @click="FnShowCreate"
         :disabled="!operate_auth.includes('create')"
       >新建项目</el-button>
-    </div> 
+    </div>
     <el-table :data="project_list" border>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="project_id" label="项目ID"></el-table-column>
@@ -75,7 +75,7 @@ export default class App extends Vue {
   private operate_auth = [];
   private default_id = "";
   private project_config = {
-    project_id: '', 
+    project_id: '',
     project_name: '',
     project_domain: '',
   }
@@ -149,7 +149,7 @@ export default class App extends Vue {
 
 
   created() {
-    this.operate_auth = this.$store.state.auth_info[this.$route.name];
+    this.operate_auth = this.$store.state.auth_info['project_list'];
     this.FnGetList()
   }
 }

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="search-box" >
-      <el-input prefix-icon="el-icon-search"></el-input>
+    <div >
+<!--      <el-input prefix-icon="el-icon-search"></el-input>-->
+      <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'"></action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
           <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
@@ -95,6 +96,7 @@
 
 <script lang="ts">
 import {Component, Vue, Watch} from "vue-property-decorator";
+import ActionBlock from '@/components/search/actionBlock.vue';
 import SvgIcon from '@/components/svgIcon/index.vue';
 import SearchFrom from "@/components/search/searchFrom.vue";
 import CustomListItem from '@/views/physical/customListItem.vue';
@@ -126,7 +128,8 @@ import moment from "moment";
     Record,
     Resource,
     BusinessTest,
-    Remark
+    Remark,
+    ActionBlock
   }
 })
 
@@ -155,6 +158,28 @@ export default class HostList extends Vue{
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
+  private search_option:any={
+    out_band_address:{placeholder:'请输入带外IP'},
+    host_ip:{placeholder:'请输入管理网IP'},
+    host_name:{placeholder:'请输入主机名称'},
+    host_id:{placeholder:'请输入主机ID'},
+    vm_id:{placeholder:'请输入虚拟机ID'},
+    cpu:{placeholder:'请输入CPU型号'},
+    gpu_model:{placeholder:'请输入显卡型号'},
+    nic:{placeholder:'请输入网卡型号'},
+    room:{placeholder:'请选择机房',list:[]},
+    host_rack:{placeholder:'请输入机柜编号'},
+    bare_metal_id:{placeholder:'请输入物理机产品ID'},
+    bare_metal_name:{placeholder:'请输入物理机产品名称'},
+    create_time: {
+      placeholder: ['开始时间', '结束时间'],
+      type: 'datetimerange',
+      width: '360',
+      clearable: true,
+      dis_day: 31,
+      defaultTime: []
+    },
+  }
   private switch_power:any= [
       {label:'开机',value:'start_up_host',disabled:false},
       {label:'关机',value:'shutdown_host',disabled:false},
@@ -213,6 +238,13 @@ export default class HostList extends Vue{
     this.get_field()
     this.get_pod_host_list()
     this.get_status_list()
+  }
+  private fn_search(data:any={}){
+    this.search_data = {...data};
+    this.page_info.current = 1;
+    this.judgeColumns()
+    this.get_pod_host_list();
+
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()
@@ -504,13 +536,13 @@ export default class HostList extends Vue{
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
-  ::v-deep .el-input{
-    width: 260px;
-  }
-  ::v-deep .el-input__inner{
-    width: 260px;
-    border-radius: 20px;
-  }
+  //::v-deep .el-input{
+  //  width: 260px;
+  //}
+  //::v-deep .el-input__inner{
+  //  width: 260px;
+  //  border-radius: 20px;
+  //}
 }
 i.el-icon-s-tools{
   font-size: 18px;

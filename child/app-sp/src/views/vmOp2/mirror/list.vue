@@ -6,8 +6,8 @@
             </template>
         </action-block>
         <div class="icon m-bottom10">
-          <el-dropdown @command="add">
-            <el-button type="text"><i class="iconfont icon-more" style="font-weight: bold;margin-right: 5px;font-size: 18px"></i></el-button>
+          <el-dropdown @command="add" class="aliFont">
+            <el-button type="text"><svg-icon-font iconName="icon-gengduo"></svg-icon-font></el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value}" :key="item.value" >{{item.label}}</el-dropdown-item>
             </el-dropdown-menu>
@@ -461,6 +461,14 @@ i.el-icon-s-tools{
 }
 .table-expand:last-child{
     margin-bottom: 0;
+}
+.aliFont{
+  .svg-icon{
+    width: 2em;
+    height: 1.5em;
+    vertical-align: -5px;
+    padding-right:5px
+  }
 }
 
 </style>

@@ -145,7 +145,7 @@ export default class Shield extends Vue{
             return moment(new Date()).diff( moment(time),'seconds')>0 // true到期，false未到期
         }
     }
-    private judgeOperate(){//true表示能操作，false表示不能操作,0表示停用，1表示屏蔽中        
+    private judgeOperate(){//true表示能操作，false表示不能操作,0表示停用，1表示屏蔽中
         return this.judge(this.operateType,this.multipleSelection)
     }
     private judge(type,list){
@@ -230,7 +230,7 @@ export default class Shield extends Vue{
 <style lang="scss" scoped>
 .time_btns{
     margin-bottom: 20px;
-    
+
 }
 .event-table{
     margin-top: 20px;

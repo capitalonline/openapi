@@ -90,9 +90,7 @@
         <template v-if="visible">
             <Record :visible.sync="visible" :type="'message'" :record_id="oper_info.os_id" @close="close"></Record>
         </template>
-      <span v-if="multiple_selection.length===1">
-        <right-click :multi_rows="multiple_selection" :menus="menus" :name=" multiple_selection.length>0 ? multiple_selection[0].display_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
-      </span>
+      <right-click :multi_rows="multiple_selection" :menus="menus" :name=" multiple_selection.length>0 ? multiple_selection[0].display_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
     </div>
 </template>
 <script lang="ts">
@@ -190,6 +188,7 @@ export default class PrivateMirror extends Vue{
     }
     //右键弹出操作
    FnRightClick(row,column,event){
+     (this.$refs.table as any).clearSelection();
     //判断当前行是否被选中，没选中时需选中并弹出菜单
      const isSelected = this.multiple_selection.some(item => item.os_id === row.os_id);
      if (!isSelected) {
@@ -198,9 +197,22 @@ export default class PrivateMirror extends Vue{
      rightClick(row,column,event)
     }
     //改变点击行得选中状态
-  private FnOperRow(row){
-      (this.$refs.table as any).toggleRowSelection(row)
+  private FnOperRow(row) {
+    const table = this.$refs.table;
+    if (this.selectedRow !== row) {
+      // 清除之前选中的行
+      if (this.selectedRow) {
+        table.clearSelection()
+      }
+      // 选中当前点击的行
+      table.toggleRowSelection(row, true);
+      this.selectedRow = row; // 更新选中的行
+    } else {
+      // 点击已选中的行时取消选中
+      table.toggleRowSelection(row, false);
+      this.selectedRow = null; // 清除选中的行
     }
+  }
   //改变选中行的背景颜色
   rowStyle({row}) {
     const isSelected = this.multiple_selection.some(item => item.os_id === row.os_id);

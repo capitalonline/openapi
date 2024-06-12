@@ -167,11 +167,59 @@ const routes:RouteConfig[] = [
         meta: {meta: 'message',no_auth: true}
       },
       {
-        path: '/config_task',
-        name: 'config_task',
-        component: () => import('../views/vmOp2/task/task.vue'),
-        meta: {menu: 'config_task',no_auth: true}
-      }
+        path: '/main_task',
+        name: 'config_main_task',
+        component: () => import('../views/vmOp2/task/main-task-list.vue'),
+        meta: {menu: 'main_task_list',no_auth: true}
+      },
+      {
+        path: '/main_task/:id',
+        name: 'main_task_detail',
+        component: () => import( '../views/task/main-task-detail.vue'),
+        meta: {menu: 'main_task_list',no_auth: true}
+      },
+      {
+        path: '/sub_task',
+        name: 'config_sub_task',
+        component: () => import('../views/vmOp2/task/sub-task-list.vue'),
+        meta: {menu: 'sub_task_list',no_auth: true}
+      },
+      {
+        path: '/project_list',
+        name: 'project',
+        component: () => import('../views/project/list.vue'),
+        meta: {menu: 'project',no_auth: true}
+      },
+      {
+        path: '/alarmShield',
+        name: 'alarm_shield',
+        component: () => import('../views/vmOp2/alarm/alarm_shield.vue'),
+        meta: {menu: 'alarm_shield',no_auth: true}
+      },
+      {
+        path: '/alarm_strategy',
+        name: 'alarm_strategy_list',
+        component: () => import('../views/vmOp2/alarm/strategy.vue'),
+        meta: {menu: 'alarm_strategy_list',no_auth: true}
+      },
+      {
+        path: '/alarm_strategy/create',
+        name: 'alarm_strategy_list_create',
+        component: () => import('../views/alarm/add_strategy.vue'),
+        meta: {menu: 'alarm_strategy',no_auth: true}
+      },
+      {
+        path: '/alarm_contact',
+        name: 'alarm_contact_list',
+        component: () => import('../views/vmOp2/alarm/contact_group_list.vue'),
+        meta: {menu: 'alarm_contact_list',no_auth: true}
+      },
+      {
+        path: '/alarm_info/create',
+        name: 'alarm_create',
+        component: () => import('../views/alarm/createShield.vue'),
+        meta: {menu: 'alarm_info',no_auth: true}
+      },
     ]
   },
   {
