@@ -456,11 +456,11 @@
           <template v-if="default_operate_type === 'update_spec'">
             <update-spec
               ref="update_spec"
+              :ecs_list_info="multiple_selection"
               :customer_id="customer_id"
               :az_id="az_id"
               type="batch_update"
               :default_is_gpu="is_gpu"
-              @fn-spec="FnChangeSpec"
             ></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
@@ -714,8 +714,8 @@ export default class App extends Vue {
   private os_info = {};
   private ecs_info = {};
   private common_visible:boolean=false
-  private disk_billing_info = {};
   private total_price = "";
+  private disk_billing_info = {};
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = '';
@@ -1274,17 +1274,20 @@ export default class App extends Vue {
   private async FnUpdateSpec(reqData) {
     let data = (this.$refs.update_spec as any).FnSubmit();
     if (data.flag) {
-      reqData.billing_info =
-        data.spec_info.billing_info[data.spec_info.ecs_goods_id];
-      reqData.is_gpu = this.is_gpu;
+      reqData.ecs_list = data.spec_info.ecs_list
+      reqData.billing_info = data.spec_info.billing_info[data.spec_info.ecs_goods_id];
       reqData.ecs_info = {
-        ecs_goods_info: {
-          ecs_goods_id: data.spec_info.ecs_goods_id,
-          gic_goods_id: reqData.billing_info.gic_goods_id,
-          cpu: data.spec_info.cpu,
-          ram: data.spec_info.ram,
-          gpu: data.spec_info.gpu
-        }
+        ecs_family_name: data.spec_info.ecs_goods_name,
+        cpu: data.spec_info.cpu,
+        gpu: data.spec_info.gpu,
+        ram: data.spec_info.ram,
+        spec_id: data.spec_info.spec_id,
+        ecs_goods_id: data.spec_info.ecs_goods_id,
+        spec_family_id: data.spec_info.spec_family_id,
+        cpu_name: data.spec_info.cpu_model,
+        gpu_card_name: data.spec_info.gpu_card_name,
+        gpu_type_id: data.spec_info.gpu_id,
+        cpu_real_name: data.spec_info.cpu_real_name,
       };
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === "Success") {
@@ -1341,6 +1344,7 @@ export default class App extends Vue {
       reqData.os_id = os_data.os_info.os_id;
       reqData.os_type = os_data.os_info.os_type;
       reqData.username = os_data.os_info.username;
+      reqData.billing_method = this.billing_method
       reqData.disk_info = {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
