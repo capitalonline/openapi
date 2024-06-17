@@ -79,6 +79,7 @@ interface EcsListItem {
   system_disk_feature: string;
   az_id: string;
   customer_id: string;
+  support_gpu_driver:string
 }
 type EcsList = EcsListItem[];
 
@@ -244,9 +245,7 @@ export default class updateSpec extends Vue{
       this.ecs_goods_info = resData.data.ecs_goods_info || "";
       // 计算差价请求接口用
       // this.ecs_goods_id =  resData.data.ecs_goods_info[0].ecs_goods_id;
-      this.billing_info = deal_fee_info(resData.data.billing_info, {
-        gic_goods_id: "",
-      });
+      this.billing_info = deal_fee_info(resData.data.billing_info, true);
       this.price = resData.data.all_ecs_spec_price;
       this.data.id = "";
       if (!this.data.id) {
