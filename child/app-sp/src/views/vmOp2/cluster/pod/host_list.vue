@@ -4,6 +4,12 @@
 <!--      <el-input prefix-icon="el-icon-search"></el-input>-->
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'"></action-block>
       <div class="icon m-bottom10">
+        <el-dropdown @command="handleOperate" class="aliFont">
+          <el-button type="text"><svg-icon-font iconName="icon-gengduo"></svg-icon-font></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value}" :key="item.value" >{{item.label}}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
           <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
         </el-tooltip>
@@ -158,6 +164,9 @@ export default class HostList extends Vue{
   private all_item:Array<any>=[]
   private custom_host=[]
   private show_custom:boolean=false;
+  private rows_operate_btns:any=[
+    {label:'导入',value:'upload'},
+  ]
   private search_option:any={
     out_band_address:{placeholder:'请输入带外IP'},
     host_ip:{placeholder:'请输入管理网IP'},
@@ -212,7 +221,6 @@ export default class HostList extends Vue{
     {label:'机器维护',value:'maintenance', disabled:false,list: this.maintenance_host},
     {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},
     {label: '设备标记',value: 'sign', disabled:false,list: this.sign_host},
-    {label:'导入',value:'upload', disabled:false},
     {label:'底层同步',value:'under_sync', disabled:false},
     {label:'驱散',value:'disperse', disabled:false},
     {label:'欺骗器管理',value:'cheat', disabled:false},
@@ -245,6 +253,10 @@ export default class HostList extends Vue{
     this.judgeColumns()
     this.get_pod_host_list();
 
+  }
+  private handleOperate(label){
+    this.oper_type ='upload'
+    this.visible = true
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()
@@ -468,7 +480,38 @@ export default class HostList extends Vue{
     if(!this.$store.state.az_id){
       return
     }
+    const {
+      room,
+      host_name,
+      vm_id,
+      out_band_address,
+      host_ip,
+      host_id,
+      gpu_model,
+      host_rack,
+      create_time,
+      cpu,
+      nic,
+      bare_metal_name,
+      bare_metal_id,
+      vgpu_segment_type
+    }=this.search_data;
     let reqData = {
+      host_name,
+      vm_id,
+      out_band_address,
+      host_ip,
+      host_id,
+      gpu_model,
+      host_rack,
+      cpu,
+      nic,
+      bare_metal_name,
+      bare_metal_id,
+      machine_room_name:room,
+      vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
+      start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       page_index: this.page_info.current,
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
@@ -556,5 +599,13 @@ i.el-icon-s-tools{
 }
 ::v-deep .el-progress__text{
   font-size: 14px!important;
+}
+.aliFont{
+  .svg-icon{
+    width: 2em;
+    height: 1.5em;
+    vertical-align: -5px;
+    padding-right:5px
+  }
 }
 </style>
