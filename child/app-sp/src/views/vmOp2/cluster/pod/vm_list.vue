@@ -279,6 +279,7 @@ export default class VmList extends Vue{
     {label: '详情',value: 'instance_detail',single:true,disabled:false},
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
     {label:'操作记录',value:'instance_record',single:true,disabled:false},
+    {label:'迁移',value:'migrate',disabled:false},
     {label: '监控',value: 'monitor',single:true,disabled:false},
     {label: '远程连接',value: 'vnc',single:true,disabled:false},
     {label: '制作公共镜像',value: 'add_common_mirror',single:true,disabled:false},
