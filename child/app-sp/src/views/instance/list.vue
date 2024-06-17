@@ -518,7 +518,8 @@
           </template>
         </div>
         <div class="text-right m-right20" v-if="total_price">
-          变更后总价：
+          <span v-if="default_operate_type === 'update_system'">变更后需支付费用</span>
+          <span v-else>变更后总价：</span>
           <span class="num_message">{{ total_price }}</span>
         </div>
         <div class="text-center" v-if="default_operate_type === 'shutdown_ecs'">
@@ -1329,11 +1330,16 @@ export default class App extends Vue {
     }
     const resData = await Service.change_system_price(reqData);
     if (resData.code === "Success") {
-      this.total_price =
-        resData.data.price_symbol +
-        resData.data.total_price.toFixed(2) +
-        "/" +
-        resData.data.price_unit;
+      if (this.billing_method === "0") {
+        this.total_price =
+          resData.data.price_symbol +
+          resData.data.total_price.toFixed(2) +
+          "/" +
+          resData.data.price_unit;
+      } else {
+        this.total_price =
+          resData.data.price_symbol + resData.data.total_price.toFixed(2);
+      }
     }
   }
   private async FnUpdateSystem(reqData) {
