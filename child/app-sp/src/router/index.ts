@@ -211,7 +211,7 @@ const routes:RouteConfig[] = [
       {
         path: '/alarm_contact',
         name: 'alarm_contact_list',
-        component: () => import('../views/vmOp2/alarm/contact_group_list.vue'),
+        component: () => import('../views/vmOp2/alarm/contact.vue'),
         meta: {menu: 'alarm_contact_list',no_auth: true}
       },
       {
