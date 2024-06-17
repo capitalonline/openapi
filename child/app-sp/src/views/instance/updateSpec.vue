@@ -263,7 +263,6 @@ export default class updateSpec extends Vue{
       } else {
         this.DifferencePrice();
       }
-      this.FnGetPrice()
     }
   }
   private FnGetDefaultFamily(spec_id: string) {
