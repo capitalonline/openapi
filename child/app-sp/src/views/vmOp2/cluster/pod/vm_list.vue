@@ -438,7 +438,7 @@ export default class VmList extends Vue{
       page_size: this.page_info.size,
       is_op:true,
       az_id:this.$store.state.az_id,
-      pod_id:this.$route.params.id,
+      pod_id:this.$store.state.pod_id,
       [this.sort_prop_name]: this.sort_order,
     }
     reqData["ecs_id"] = ecs_id
