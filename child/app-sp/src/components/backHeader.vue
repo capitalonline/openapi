@@ -7,7 +7,7 @@
     </div>
     <div>
       <slot></slot>
-<!--      <el-button type="primary" plain @click="FnBack">返回</el-button>-->
+      <el-button v-if="!no_back" type="primary" plain @click="FnBack">返回</el-button>
     </div>
 
   </div>
@@ -23,6 +23,7 @@ import { Component, Prop , Vue } from 'vue-property-decorator';
 export default class backHeader extends Vue {
   @Prop({ default: "" }) private title!: string;
   @Prop({ default: "" }) private back_url!: string;
+  @Prop({default:false}) private no_back:boolean
 
   $router;
   private FnBack() {

@@ -10,6 +10,7 @@
     :expand-on-click-node="false"
     :default-expanded-keys="[currentLivingId]"
     highlight-current
+    :filter-node-method="filterNode"
     @click.stop
   >
     <span slot-scope="{node,data}" class="treeLabel">
@@ -55,6 +56,7 @@ import Operate from "@/views/vmOp2/cluster/host/operate.vue";
 import {getHostStatus} from "@/utils/getStatusInfo";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import Service from "@/https/alarm/list";
+import bus from "@/utils/vmOp2/eventBus"
 @Component({
   components: {Operate, RightClick}
 })
@@ -130,9 +132,13 @@ export default class LeftTree extends Vue{
   private getIconName(node) {
     const instance = this.list.find(item => item.instanceID === node.label);
     if (instance && instance.dealStatus === 0) {
-      return "icon-baojingshijian";
+      return "icon-menjin-zhujibaojing";
     }
     return this.iconClasses[node.level];
+  }
+  private filterNode(value, data) {
+    if (!value) return true;
+    return data.label.indexOf(value) !== -1;
   }
   private tooltip(item){
     const obj = getHostStatus(item)
@@ -147,6 +153,11 @@ export default class LeftTree extends Vue{
       (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
     })
     this.getAlarmList()
+  }
+  mounted() {
+    bus.$on('filterTextChanged', (filterText) => {
+      (this.$refs.treeControl as any).filter(filterText);
+    });
   }
   private infoClick(item) {
     const {label, key}=item

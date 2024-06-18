@@ -112,6 +112,12 @@
         :ecs_list="multiple_selection"
       />
     </template>
+    <template v-if="migrate_visible">
+      <Migrate
+      :visible.sync="migrate_visible"
+      :ecs_list="multiple_selection">
+      </Migrate>
+    </template>
     <operate
       :title="operate_title"
       :visible.sync="show_operate_dialog"
@@ -150,8 +156,10 @@ import moment from "moment";
 import InstanceService from "@/https/instance/list";
 import storage from "@/store/storage";
 import EcsService from "@/https/instance/list";
+import Migrate from "@/views/vmOp2/cluster/pod/migrate.vue";
 @Component({
   components: {
+    Migrate,
     Operate,
     SearchFrom,
     SvgIcon,
@@ -202,6 +210,7 @@ export default class VmList extends Vue{
   private detail_visible: boolean = false;
   private detail_id: string = "";
   private net_visible:boolean=false;
+  private migrate_visible:boolean = false
   // 产品来源
   private product_source_list:any= []
   // 服务账号ID
@@ -296,7 +305,8 @@ export default class VmList extends Vue{
     vnc:'已选虚拟机状态需为运行中',
     add_common_mirror:'仅内部账号且状态为已关机的实例支持操作',
     gpu_manage:'仅支持对GPU型实例支持显卡管理',
-    net_set:'实例需为运行中'
+    net_set:'实例需为运行中',
+    migrate:'迁移虚拟机需全为关机或全为开机'
   }
   @Watch('multiple_selection',{immediate:true,deep:true})
   private watch_multi(){
@@ -308,21 +318,24 @@ export default class VmList extends Vue{
       if (!item.list) {
         switch(item.value) {
           case 'gpu_manage':
-            item.disabled = !this.multiple_selection.every(gpu => gpu.is_gpu);
+            item.disabled = !this.multiple_selection.every(gpu => gpu.is_gpu) || !this.operate_auth.includes(item.value);
             break;
           case 'vnc':
             //item.disabled = !this.operate_auth.includes(item.value) || this.multiple_selection.every(vnc => vnc.status !== 'running');
-            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
+            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running') || !this.operate_auth.includes(item.value);
             break;
           case 'add_common_mirror':
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'shutdown') || this.multiple_selection.every(vnc => vnc.customer_type !== '内部') || !this.operate_auth.includes(item.value);
             break;
           case 'net_set':
-            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running');
+            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running') || !this.operate_auth.includes(item.value);
             break;
           case 'restore':
             item.disabled = true
             break;
+            case 'migrate':
+              item.disabled = this.setUsableList()
+              break
           default:
             item.disabled = false
         }
@@ -343,6 +356,49 @@ export default class VmList extends Vue{
     this.get_field()
     this.operate_auth = this.$store.state.auth_info['instance_list'];
   }
+  private setUsableList() {
+    if (!this.multiple_selection || this.multiple_selection.length === 0) {
+      return false;
+    }
+    const allRunningStatus = this.multiple_selection.every(item => item.status_display === '运行中');
+    const allShotDownStatus = this.multiple_selection.every(item => item.status_display === '已关机');
+    const allSameIsGPU =  this.multiple_selection.every(item => item.is_gpu === true);
+
+    // 如果状态不全相同或isgpu不全相同，返回false
+    if (allRunningStatus || allShotDownStatus) {
+      console.log(allRunningStatus,allSameIsGPU,allShotDownStatus)
+      return false;
+    }
+    if(allShotDownStatus) {
+      // 处理isgpu为true的情况
+      if (allSameIsGPU) {
+        // 检查状态是否为关机并且no_charge_shutdown_ecs为true
+        const allNoChargeShutdownEcs = this.multiple_selection.every(item => item.no_charge_shutdown_ecs);
+        if (allNoChargeShutdownEcs) {
+          return false;
+        }
+      } else {
+        // 处理isgpu为false的情况
+        const disk_info = this.multiple_selection[0].disk_info;
+
+        // 检查disk_info是否存在并且system为local，状态为已关机
+        if (disk_info && disk_info.system === 'local') {
+          return false;
+        }
+      }
+    }else if(allRunningStatus){
+      const disk_info = this.multiple_selection[0].disk_info;
+
+      // 检查disk_info是否存在并且system为local，状态为已关机
+      if (disk_info && disk_info.system !== 'local' && !allSameIsGPU) {
+        return false;
+      }
+    }
+
+    // 其他情况下返回true
+    return true;
+  }
+
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
@@ -390,6 +446,9 @@ export default class VmList extends Vue{
       }
       if(value === 'gpu_manage'){
         this.operateGpu()
+      }
+      if(value === 'migrate'){
+        this.migrate_visible = true
       }
       if(value === 'monitor'){
         this.$router.push({path: `/vm_monitor/${this.multiple_selection[0].ecs_id}`});

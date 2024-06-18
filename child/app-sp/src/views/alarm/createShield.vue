@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card>
-          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}告警屏蔽`" back_url="/alarmInfo"></back-header>
+          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}告警屏蔽`" back_url="/alarmInfo" no_back="true"></back-header>
           <el-divider></el-divider>
             <el-form :model="shieldData" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                 <el-form-item prop="name" label="屏蔽名称">

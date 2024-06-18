@@ -82,6 +82,7 @@ export default class Layout extends Vue{
 .aside_main {
   width: 245px !important;
   transition: width 0.2s;
+  height: 100%;
 }
 .aside_main_show {
   width: 0 !important;

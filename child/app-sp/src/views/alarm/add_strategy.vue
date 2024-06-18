@@ -1,7 +1,7 @@
 <template>
     <div class="create-stategy">
         <el-card class="main_box">
-          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy"></back-header>
+          <back-header :title="`${edit_id==='' ? '创建' : '编辑'}报警策略`" back_url="/alarmStrategy" no_back="true"></back-header>
           <el-divider></el-divider>
             <el-form :model="form_data" ref="form" label-width="100px" label-position="left" class="demo-dynamic" :rules="rules">
                 <el-form-item
@@ -168,7 +168,7 @@ export default class Index extends Vue{
                     })
                     if(res.code==='Success'){
                         this.$message.success("创建策略任务下发成功")
-                        this.$router.push('/alarmStrategy')
+                        this.$router.go(-1)
                     }
                 }else{
                     const {az,callbackURL,effectEndTime,effectStartTime,enable,id,regions,contactGroupIDs}=this.strategy_data
@@ -190,7 +190,7 @@ export default class Index extends Vue{
                     })
                     if(res.code==='Success'){
                         this.$message.success("编辑策略任务下发成功")
-                        this.$router.push('/alarmStrategy')
+                        this.$router.go(-1)
                     }
                 }
 
