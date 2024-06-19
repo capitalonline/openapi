@@ -24,7 +24,6 @@
     </div>
     <div class="center-content">
       <el-autocomplete
-        prefix-icon="el-icon-search"
         v-model="filterText"
         :fetch-suggestions="querySearch"
         :trigger-on-focus="false"
@@ -33,7 +32,11 @@
         @select="handleSelect"
         @blur="hidePlaceholder"
         @input="handleInput"
-      ></el-autocomplete>
+      >
+        <template #prefix>
+          <svg-icon-font iconName="icon-sousuo"></svg-icon-font>
+        </template>
+      </el-autocomplete>
     </div>
     <div class="right-content">
       <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
@@ -196,6 +199,16 @@ export default class TopHeader extends Vue{
     }
     .el-autocomplete{
       width: 100%;
+    }
+    .el-input__prefix{
+      left: -6px;
+      top: -4px;
+    }
+    .svg-icon{
+      width: 2em;
+      height: 1.5em;
+      vertical-align: -5px;
+      padding-right:5px
     }
   }
   .right-content {
