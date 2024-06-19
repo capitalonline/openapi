@@ -199,12 +199,12 @@ export default class Strategy extends Vue{
       detail: () => this.detail(row),
       apply: () => this.apply(true, row),
       stop: () => this.apply(false, row),
-      del: () => this.del(row)
+      delete: () => this.del(row)
     };
     const batchActions = {
       apply: () => this.apply(true,''),
       stop: () => this.apply(false,''),
-      del: () => this.del(false)
+      delete: () => this.del(false)
     };
     if (singleRow) {
       if (actions[value]) {

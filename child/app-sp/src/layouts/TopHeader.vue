@@ -23,15 +23,22 @@
       </el-select>
     </div>
     <div class="center-content">
-      <el-input
+
+      <el-autocomplete
         prefix-icon="el-icon-search"
         v-model="filterText"
-        @focus="showPlaceholder"
-        @blur="hidePlaceholder"
+        :fetch-suggestions="querySearch"
+        :trigger-on-focus="false"
         ref="input"
-        @input="onFilterTextChange"
-        >
-      </el-input>
+        @focus="showPlaceholder"
+        @select="handleSelect"
+        @blur="hidePlaceholder"
+        @input="handleInput"
+      ></el-autocomplete>
+<!--      <el-input-->
+<!--        @focus="showPlaceholder"-->
+<!--        @blur="hidePlaceholder"-->
+<!--      </el-input>-->
     </div>
     <div class="right-content">
       <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
@@ -69,6 +76,12 @@ export default class TopHeader extends Vue{
   private az_code = ''
   private az_list = []
   private filterText = ''
+  private search_list= [
+    { type: 'host', id: 'ea159da9-43fa-4734-bd4d-9746b39266ea', name: 'POD0A-CLU01-H022' },
+    { type: 'host', id: '1255b32a-2812-11ed-9de3-2aa5f60b1e4c', name: 'POD0A-CLU01-H108' },
+    { type: 'cluster', id: '0d865f76-2d69-11ef-b2a2-c6f152dac670', name: 'test' },
+    { type: 'host', id: 'ea98af0a-1fdb-11ee-8918-46a60bf0548b', name: 'eks-otie7itlcjkj97q9' ,vm:1},
+  ]
   created(){
     this.get_az_list();
   }
@@ -108,14 +121,32 @@ export default class TopHeader extends Vue{
       window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
     }
   }
-  private onFilterTextChange() {
-    bus.$emit('filterTextChanged', this.filterText);
+  private  querySearch(queryString, cb) {
+    console.log('Query:', queryString);  // 确认方法是否被调用
+    console.log('Search List:', this.search_list);  // 检查数据格式是否正确
+    const results = this.search_list.map(item => ({
+      value: item.name,
+      ...item
+    }));
+    cb(results);
+    console.log(queryString,'queryString',this.filterText,'filterText')
+  }
+  private handleSelect(item){
+    console.log('@@@@@@@@')
+    bus.$emit('filterTextChanged',item)
   }
   private showPlaceholder() {
-    (this.$refs.input as any).$refs.input.setAttribute('placeholder', '输入关键字进行过滤');
+    const inputElement = (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
+    inputElement.setAttribute('placeholder', '输入关键字进行过滤');
   }
   hidePlaceholder() {
-    (this.$refs.input as any).$refs.input.setAttribute('placeholder', '');
+    const inputElement =  (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
+    inputElement.setAttribute('placeholder', '');
+  }
+  private  handleInput(value) {
+    if (value === '') {
+      this.$store.commit('SET_SEARCH_VM', ''); // 提交Vuex mutation
+    }
   }
   @Watch('default_az')
   private watch_pod(){

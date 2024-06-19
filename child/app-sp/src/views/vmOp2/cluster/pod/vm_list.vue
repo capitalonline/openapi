@@ -312,6 +312,17 @@ export default class VmList extends Vue{
   private watch_multi(){
     this.handleMenus()
   }
+  @Watch('$store.state.search_vm')
+  private watch_search(n){
+    if(n){
+      this.search_reqData = {
+        ecs_id:this.$store.state.search_vm
+      }
+    }else {
+      this.search_reqData = {}
+    }
+    this.get_pod_ecs_list()
+  }
   private handleMenus() {
     // 处理菜单项
     for (const item of this.menus) {
@@ -355,6 +366,13 @@ export default class VmList extends Vue{
     this.FnGetStatus()
     this.get_field()
     this.operate_auth = this.$store.state.auth_info['instance_list'];
+    if(this.$store.state.search_vm){
+      this.search_reqData = {
+        ecs_id:this.$store.state.search_vm
+      }
+    }else {
+      this.search_reqData = {}
+    }
   }
   private setUsableList() {
     if (!this.multiple_selection || this.multiple_selection.length === 0) {

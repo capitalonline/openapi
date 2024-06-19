@@ -32,7 +32,7 @@ export default class List extends Vue{
     host_storage: '存储',
     host_gpu:'GPU'
   }
-  private handleClick(tab, event) {
+  private handleClick(tab) {
     if(this.$route.name!== tab.name){
       this.$router.push({
         name:tab.name,
@@ -41,6 +41,9 @@ export default class List extends Vue{
     }
   }
   created(){
+    if(this.$store.state.search_vm){
+      this.handleClick({name:'host_vm'})
+    }
     this.active_tab = this.$route.name
     console.log('this.active_tab',this.active_tab)
   }

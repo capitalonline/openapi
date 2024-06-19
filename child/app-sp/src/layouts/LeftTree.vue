@@ -6,9 +6,9 @@
     @node-contextmenu="handleRight"
     node-key="id"
     ref="treeControl"
-    :current-node-key="currentLivingId"
+    :current-node-key="currentLivingIdLocal"
     :expand-on-click-node="false"
-    :default-expanded-keys="[currentLivingId]"
+    :default-expanded-keys="[currentLivingIdLocal]"
     highlight-current
     :filter-node-method="filterNode"
     @click.stop
@@ -78,6 +78,7 @@ export default class LeftTree extends Vue{
   private oper_label:string="";
   private visible:Boolean=false;
   private list:any=[]
+  private currentLivingIdLocal = this.currentLivingId
   private buttons:any =[
     {label:'开机',key:'start_up_host',disable:false},
     {label:'关机',key:'shutdown_host',disable:false},
@@ -107,9 +108,11 @@ export default class LeftTree extends Vue{
   @Watch('currentLivingId')
   private watch_current(n){
     if(n){
+      this.currentLivingIdLocal = n;
       this.$nextTick(()=>{
-        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
+        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal)
       })
+
     }
   }
   get contextMenuStyle(){
@@ -156,8 +159,18 @@ export default class LeftTree extends Vue{
   }
   mounted() {
     bus.$on('filterTextChanged', (filterText) => {
-      (this.$refs.treeControl as any).filter(filterText);
+      this.handleNodeClick(filterText)
+      this.setTreeCurrentNode(filterText.id);
+      console.log('filterText',filterText)
     });
+  }
+  private  setTreeCurrentNode(id) {
+    this.currentLivingIdLocal = id;
+    if ((this.$refs.treeControl as any)) {
+      this.$nextTick(() => {
+        (this.$refs.treeControl as any).setCurrentKey(id)
+      });
+    }
   }
   private infoClick(item) {
     const {label, key}=item
@@ -184,6 +197,9 @@ export default class LeftTree extends Vue{
     }
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
+      if(data.vm){
+        console.log('0000000')
+        this.$store.commit('SET_SEARCH_VM',data.name);}
     }
     if(data.type === 'waiting_hosts'){
       console.log('data.id',data.id)
