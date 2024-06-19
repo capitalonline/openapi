@@ -136,7 +136,7 @@ export default class DiskVolume extends Vue{
         this.$message.warning('仅支持对实例状态为运行中且云盘状态为使用中，或云盘状态为待挂载的云盘进行批量操作！')
         return;
       }
-      let title = value === 'iops' ? '修改IOPS限制' : '修改吞吐量限制'
+      let title = value === 'iops' ? 'IOPS' : '吞吐量'
       this.operate(value, title, this.mount_id)
   }
   //判断已选择云盘是否符合操作要求

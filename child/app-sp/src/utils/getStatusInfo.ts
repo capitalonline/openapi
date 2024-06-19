@@ -31,9 +31,9 @@ const auth = {
   net_set: {auth: ['running'], msg: '已选实例状态需为运行中！', label: '网络设置'}
 }
 const host_status={//error为新增状态，异常
-  start_up_host:{power:['shutdown'],host:['offline','online','exception'],msg:'已选主机需为在线或离线或异常状态',label:'开机'},
-  shutdown_host:{power:['running'],host:['offline','online'],vm:1,msg:'已选主机需为在线或离线状态',msg2:'操作关机前，请确保物理机上无云主机运行' ,label:'关机'},
-  restart_host:{power:['running'],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'重启'},
+  start_up_host:{power:['shutdown'],host:['offline','online','exception','maintenance'],msg:'已选主机需为在线、离线、异常或维护状态',label:'开机'},
+  shutdown_host:{power:['running'],host:['offline','online','maintenance'],vm:1,msg:'已选主机需为在线、离线或维护状态',msg2:'操作关机前，请确保物理机上无云主机运行' ,label:'关机'},
+  restart_host:{power:['running'],host:['offline','online','maintenance'],msg:'已选主机需为在线、离线或维护状态',label:'重启'},
   online_maintenance:{power:[],host:['online','exception'],msg:'已选主机需为在线状态',label:'在线维护'},
   maintenance:{power:[],host:[],msg:'',label:'设置维护'},
   offline_maintenance:{power:[],host:['offline','online','exception'],vm:1,msg:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',label:'离线维护'},
