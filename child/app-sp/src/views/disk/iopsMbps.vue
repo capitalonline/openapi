@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      :title="title"
+      :title="`修改${title}限制`"
       :visible.sync="visibleSync"
       width="50%"
       :destroy-on-close="true"
@@ -43,6 +43,7 @@
             :min="oper_type === 'iops' ? min_iops : min_mbps"
             :max="oper_type === 'iops' ? max_iops : max_mbps"
           ></el-input-number>
+          <span style="margin-left: 20px">{{`${title}最高${oper_type === 'iops' ? max_iops : max_mbps + 'MB/s'}`}}</span>
         </el-form-item>
         <el-radio-group v-model="data.set">
           <el-radio label="1" style="margin-bottom: 10px">云盘变更（容量变更/重装系统）时，按默认规则更新限速值。</el-radio>
