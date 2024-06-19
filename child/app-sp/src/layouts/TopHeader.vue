@@ -135,7 +135,7 @@ export default class TopHeader extends Vue{
   }
   private showPlaceholder() {
     const inputElement = (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
-    inputElement.setAttribute('placeholder', '请输入集群名称/主机名称/虚拟机ID进行过滤');
+    inputElement.setAttribute('placeholder', '请输入集群名称/主机名称/虚拟机ID进行搜索');
   }
   hidePlaceholder() {
     const inputElement =  (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
