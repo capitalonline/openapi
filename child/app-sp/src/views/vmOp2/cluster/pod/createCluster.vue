@@ -150,8 +150,8 @@ export default class CreateCluster extends Vue{
     })
     if(res.code ==='Success'){
       this.storage_cluster_list = res.data.clusters
-      if(this.isCreate && this.storage_cluster_list[0]){
-        this.form_data.block_storage_cluster =  this.storage_cluster_list[0]
+      if(this.isCreate){
+        this.form_data.block_storage_cluster =  ''
       }else {
         this.form_data.block_storage_cluster.name = this.oper_info[0].storage_cluster_name
         this.form_data.block_storage_cluster.id = this.oper_info[0].storage_cluster_id
@@ -178,7 +178,7 @@ export default class CreateCluster extends Vue{
         }
       } else if(type === 'gpu'){
         this.gpu_model_list = res.data.model_info_list;
-        this.form_data.gpu_model = this.isCreate && this.gpu_model_list[0] ? this.gpu_model_list[0].real_name: this.oper_info[0].gpu_model;
+        this.form_data.gpu_model = this.isCreate && '' ? this.gpu_model_list[0].real_name: this.oper_info[0].gpu_model;
       }
     }
   }
