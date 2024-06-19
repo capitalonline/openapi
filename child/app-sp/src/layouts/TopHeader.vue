@@ -23,7 +23,6 @@
       </el-select>
     </div>
     <div class="center-content">
-
       <el-autocomplete
         prefix-icon="el-icon-search"
         v-model="filterText"
@@ -35,10 +34,6 @@
         @blur="hidePlaceholder"
         @input="handleInput"
       ></el-autocomplete>
-<!--      <el-input-->
-<!--        @focus="showPlaceholder"-->
-<!--        @blur="hidePlaceholder"-->
-<!--      </el-input>-->
     </div>
     <div class="right-content">
       <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
@@ -79,7 +74,7 @@ export default class TopHeader extends Vue{
   private search_list= [
     { type: 'host', id: 'ea159da9-43fa-4734-bd4d-9746b39266ea', name: 'POD0A-CLU01-H022' },
     { type: 'host', id: '1255b32a-2812-11ed-9de3-2aa5f60b1e4c', name: 'POD0A-CLU01-H108' },
-    { type: 'cluster', id: '0d865f76-2d69-11ef-b2a2-c6f152dac670', name: 'test' },
+    { type: 'cluster', id: '343fa382-d9d3-11ee-bdc1-32df027a9345', name: 'test' },
     { type: 'host', id: 'ea98af0a-1fdb-11ee-8918-46a60bf0548b', name: 'eks-otie7itlcjkj97q9' ,vm:1},
   ]
   created(){
@@ -137,7 +132,7 @@ export default class TopHeader extends Vue{
   }
   private showPlaceholder() {
     const inputElement = (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
-    inputElement.setAttribute('placeholder', '输入关键字进行过滤');
+    inputElement.setAttribute('placeholder', '请输入集群名称/主机名称/虚拟机ID进行过滤');
   }
   hidePlaceholder() {
     const inputElement =  (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
@@ -197,7 +192,10 @@ export default class TopHeader extends Vue{
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选：增加阴影效果 */
     }
     .el-input-number, .el-input__icon{
-      font-size: 23px;
+      font-size: 20px;
+    }
+    .el-autocomplete{
+      width: 100%;
     }
   }
   .right-content {
