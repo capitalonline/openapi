@@ -485,6 +485,7 @@
               :spec_family_id="spec_family_id"
               @fn-billing-info="FnGetDiskBillingInfo"
               @fn-system-disk="FnChangeSystem"
+              :disk_feature="system_disk_feature"
             >
             </update-disk>
             <reset-pwd
