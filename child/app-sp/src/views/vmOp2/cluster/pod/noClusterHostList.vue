@@ -202,7 +202,6 @@ export default class HostList extends Vue{
     {label:'迁移标记',value:'migrate_flag',disabled:false},
   ]
   private menus= [
-    {label: '详情',value: 'physical_detail',single:true,disabled:false},
     {label:'迁移',value:'migrate',single:true,disabled:false},
     {label:'操作记录',value:'record',single:true,disabled:false},
     {label:'分配资源',value:'resource',single:true,disabled:false},
