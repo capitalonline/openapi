@@ -34,7 +34,7 @@
         @input="handleInput"
       >
         <template #prefix>
-          <svg-icon-font iconName="icon-sousuo"></svg-icon-font>
+          <svg-icon-font iconName="icon-sousuo" @dblclick="showPlaceholder"></svg-icon-font>
         </template>
       </el-autocomplete>
     </div>
@@ -119,18 +119,19 @@ export default class TopHeader extends Vue{
       window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
     }
   }
-  private  querySearch(queryString, cb) {
-    console.log('Query:', queryString);  // 确认方法是否被调用
-    console.log('Search List:', this.search_list);  // 检查数据格式是否正确
+  private async  querySearch(queryString, cb) {
+    const res:any = await Service.global_search({
+      az_id:this.$store.state.az_id,
+      search_content:queryString
+    })
+    this.search_list = res.data
     const results = this.search_list.map(item => ({
       value: item.name,
       ...item
     }));
     cb(results);
-    console.log(queryString,'queryString',this.filterText,'filterText')
   }
   private handleSelect(item){
-    console.log('@@@@@@@@')
     bus.$emit('filterTextChanged',item)
   }
   private showPlaceholder() {
@@ -143,7 +144,7 @@ export default class TopHeader extends Vue{
   }
   private  handleInput(value) {
     if (value === '') {
-      this.$store.commit('SET_SEARCH_VM', ''); // 提交Vuex mutation
+      this.$store.commit('SET_SEARCH_VM', '');
     }
   }
   @Watch('default_az')

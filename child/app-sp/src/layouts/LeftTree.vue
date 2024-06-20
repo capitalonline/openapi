@@ -198,8 +198,9 @@ export default class LeftTree extends Vue{
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
       if(data.vm){
-        console.log('0000000')
-        this.$store.commit('SET_SEARCH_VM',data.name);}
+        this.$store.commit('SET_SEARCH_VM',data.name);
+        this.$router.push({name:'host_vm',params:{id:data.id}})
+      }
     }
     if(data.type === 'waiting_hosts'){
       console.log('data.id',data.id)

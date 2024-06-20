@@ -1,5 +1,5 @@
 <template>
-  <svg :class="svgClass" aria-hidden="true">
+  <svg :class="svgClass" aria-hidden="true" @dblclick="handleDblClick">
     <use :xlink:href="iconClassName" :fill="color" />
   </svg>
 </template>
@@ -20,6 +20,9 @@ export  default class SvgIcon extends Vue {
       return `svg-icon ${this.className}`;
     }
     return 'svg-icon';
+  }
+  private handleDblClick(event) {
+    this.$emit('dblclick', event);
   }
 }
 </script>

@@ -41,11 +41,7 @@ export default class List extends Vue{
     }
   }
   created(){
-    if(this.$store.state.search_vm){
-      this.handleClick({name:'host_vm'})
-    }
     this.active_tab = this.$route.name
-    console.log('this.active_tab',this.active_tab)
   }
 }
 </script>
