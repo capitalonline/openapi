@@ -47,4 +47,8 @@ export default{
     getResourceStatus(){
       return service(getEcsOptions('GET','/event/resource_status/'))
     },
+    //任务流检测
+   task_flow_check(req){
+      return service(getEcsOptions('GET','/event/task_flow_check/',req))
+   }
 }
