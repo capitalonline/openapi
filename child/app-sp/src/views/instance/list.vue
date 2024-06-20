@@ -724,6 +724,7 @@ export default class App extends Vue {
   private ecs_status_list:any=[];
   private select_tag =[]
   private isComponentDestroying:boolean = false
+  private system_disk_feature = "";
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -1018,6 +1019,7 @@ export default class App extends Vue {
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
+    this.system_disk_feature = "";
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
@@ -1033,6 +1035,7 @@ export default class App extends Vue {
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
+        this.system_disk_feature = item.system_disk_feature;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
@@ -1319,7 +1322,7 @@ export default class App extends Vue {
       billing_info: this.disk_billing_info[data.ecs_goods_id],
 
     };
-    if (this.is_gpu) {
+    if (this.system_disk_feature === "local") {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
       reqData.ebs_goods_info["local_disk-space"] = data.storage_space;
       reqData.ebs_goods_info["local_disk-throughput"] = data.handling_capacity;
