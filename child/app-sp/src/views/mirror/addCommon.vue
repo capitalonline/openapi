@@ -15,7 +15,7 @@
             <el-form-item label="镜像名称" prop="display_name">
                 <el-input v-model="form_data.display_name" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="镜像类型" prop="os_type">
+            <el-form-item label="操作系统类型" prop="os_type">
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
                 <el-select v-model="form_data.os_type" v-else>
                     <el-option v-for="item in mirror_type_list" :key="item" :label="item" :value=" item "></el-option>
@@ -25,7 +25,7 @@
                 <span v-if="oper_info.os_id">{{ form_data.os_version }}</span>
                 <el-input v-else v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
             </el-form-item>
-            <el-form-item label="位数" prop="os_bit">
+            <el-form-item label="系统架构" prop="os_bit">
                 <span v-if="oper_info.os_id">{{ form_data.os_bit }}</span>
                 <el-select v-model="form_data.os_bit" v-else>
                     <el-option v-for="item in bit_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
@@ -38,13 +38,17 @@
                 <customer-input @FnCustomer="FnCustomer" :customers="customer_list" :list="oper_info.customer_list"></customer-input>
                 <!-- <el-input v-model="form_data.customer_ids"></el-input> -->
             </el-form-item>
-            <el-form-item label="规格" prop="size">
+            <el-form-item label="镜像大小" prop="size">
                 <span v-if="oper_info.os_id">{{ form_data.size ?`${ form_data.size }GB` : form_data.size}}</span>
                 <template v-else>
                     <el-input-number v-model="form_data.size" :min="form_data.os_type==='Windows' ? 40 : 20"></el-input-number>  GB
                 </template>
 
             </el-form-item>
+          <el-form-item label="内核版本" prop="os_version">
+            <span v-if="oper_info.os_id">{{ form_data.core_version }}</span>
+            <el-input v-else v-model="form_data.core_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
+          </el-form-item>
             <el-form-item label="可用区" prop="az_id">
                 <span v-if="oper_info.os_id">
                     <span class="az" v-for="item in oper_info.az_list" :key="item.az_id">{{item.az_name}}{{oper_info.az_list.length>0 ? ';' : ''}}</span>
@@ -66,7 +70,7 @@
                     <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="计算类型" prop="support_type">
+            <el-form-item label="镜像类型" prop="support_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.support_type }}</span> -->
                 <el-select v-model="form_data.support_type" :class="{compute:!oper_info.os_id}" :disabled="form_data.os_file_type==='iso'">
                     <el-option v-for="item in compute_type_list" :key="item" :label="item" :value=" item"></el-option>
@@ -81,6 +85,9 @@
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
+          <el-form-item label="驱动版本" prop="support_gpu_driver_version" v-if="form_data.support_type==='GPU'">
+            <el-input v-model="form_data.support_gpu_driver_version"></el-input>
+          </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span> -->
                 <el-select v-model="form_data.os_file_type">
@@ -95,6 +102,16 @@
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
                 <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
+          <el-form-item label="官方维护" prop="vali_time">
+            <el-radio-group v-model="form_data.validity">
+              <el-radio :label="'1'">长期</el-radio>
+              <el-radio :label="'0'">有限
+                <el-input style="margin-left: 10px"
+                          v-if="form_data.validity === '0'"
+                          v-model="form_data.vali_time"></el-input></el-radio>
+            </el-radio-group>
+
+          </el-form-item>
             <!-- <el-form-item label="上传日期" prop="upload_time" v-if="!oper_info.os_id">
                 <el-date-picker
                     v-model="form_data.upload_time"
@@ -156,7 +173,7 @@ export default class AddCommon extends Vue{
         // 产品来源
     private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器','负载均衡'];
 
-    private compute_type_list:any=['CPU/GPU','GPU','CPU']
+    private compute_type_list:any=['标准镜像','GPU']
     private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
     private file_type_list:any=['iso','qcow2'];
     private query_url:string="";
@@ -179,7 +196,11 @@ export default class AddCommon extends Vue{
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
         upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
-        oss_file_name:''
+        oss_file_name:'',
+        core_version:this.oper_info.core_version ? this.oper_info.core_version : '',
+        support_gpu_driver_version:'',
+        validity:'1',
+        vali_time:''
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -193,6 +214,8 @@ export default class AddCommon extends Vue{
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
         path_md5:[{ required: true, validator:this.path_md5_check, trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
+        support_gpu_driver_version:[{ required: true, message: '请输入驱动版本', trigger: 'change' }],
+        vali_time:[{ required: true,  validator: this.validateTime, trigger: 'blur' }]
     }
     created(){
         // if(this.oper_info.os_id){
@@ -215,6 +238,15 @@ export default class AddCommon extends Vue{
         } else {
             return callback()
         }
+    }
+    private validateTime(rule, value, callback) {
+      if(this.form_data.validity === '0'){
+        if(!value){
+          return callback(new Error('请输入维护有效'))
+        }
+      }else{
+        callback()
+      }
     }
     private validate_name(rule, value, callback){
         if(!value){
@@ -318,7 +350,7 @@ export default class AddCommon extends Vue{
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
         if(nv==='iso'){
-            this.form_data.support_type='CPU/GPU'
+            this.form_data.support_type='标准镜像'
         }
         // this.query_url = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
         //  console.log("this.query_url",this.query_url)
