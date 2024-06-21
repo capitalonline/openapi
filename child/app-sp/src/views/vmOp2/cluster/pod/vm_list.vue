@@ -733,6 +733,13 @@ export default class VmList extends Vue{
       },
       this.search_reqData
     )
+    if (this.$route.name === 'pod_vm') {
+      obj['pod_id'] = this.$route.params.id;
+    } else if (this.$route.name === 'cluster_vm') {
+      obj['cluster_id'] = this.$route.params.id;
+    } else if (this.$route.name === 'host_vm') {
+      obj['host_id'] = this.$route.params.id;
+    }
     const resData = await EcsService.export_list(
       obj
     );

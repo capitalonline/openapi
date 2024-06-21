@@ -448,7 +448,7 @@ export default class HostList extends Vue{
       bare_metal_id,
     }=this.search_data
     let obj = {
-      pod_id:this.$route.params.id,
+      //pod_id:this.$route.params.id,
       machine_room_name:room,
       host_name,
       vm_id,
@@ -466,6 +466,12 @@ export default class HostList extends Vue{
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       ...this.filter_info,
       field_names:JSON.stringify(this.custom_host.map((item:any)=>item.prop))
+    }
+    if(this.$route.name === 'pod_host'){
+      obj['pod_id'] = this.$route.params.id
+    }
+    if(this.$route.name === 'cluster_host'){
+      obj['cluster_id'] = this.$route.params.id
     }
     let str=""
     for (let i in obj){
