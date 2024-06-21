@@ -25,7 +25,7 @@
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="操作系统类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type" min-width="120px"></el-table-column>
             <el-table-column prop="" label="系统架构"></el-table-column>
-            <el-table-column prop="" label="内核版本"></el-table-column>
+            <el-table-column prop="kernel_version" label="内核版本"></el-table-column>
             <el-table-column prop="os_file_type" label="镜像文件类型"></el-table-column>
             <el-table-column prop="size" label="镜像大小" sortable="custom">
                 <template slot-scope="scope">
@@ -34,7 +34,7 @@
             </el-table-column>
             <el-table-column prop="support_type" label="镜像类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
-            <el-table-column prop="" label="驱动版本"></el-table-column>
+            <el-table-column prop="driver_version" label="驱动版本"></el-table-column>
             <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="source_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="customer" label="客户权限">
@@ -81,7 +81,7 @@
                     <span :class="[scope.row.status]">{{scope.row.status_display}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="" label="官方维护"></el-table-column>
+            <el-table-column prop="maintenance_expiration_date" label="官方维护"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" sortable="custom" width="120"></el-table-column>
             <el-table-column prop="update_time" label="更新时间" width="120"></el-table-column>
             <el-table-column prop="operate" label="操作" width="180">

@@ -85,8 +85,11 @@
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
-          <el-form-item label="驱动版本" prop="support_gpu_driver_version" v-if="form_data.support_type==='GPU'">
-            <el-input v-model="form_data.support_gpu_driver_version"></el-input>
+          <el-form-item label="驱动版本" prop="driver_version" v-if="form_data.support_type==='GPU'">
+            <el-input v-model="form_data.driver_version"></el-input>
+          </el-form-item>
+          <el-form-item label="CUDA版本" prop="cuda_version" v-if="form_data.support_type==='GPU'">
+            <el-input v-model="form_data.cuda_version"></el-input>
           </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span> -->
@@ -102,13 +105,17 @@
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
                 <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
-          <el-form-item label="官方维护" prop="vali_time">
+          <el-form-item label="官方维护" prop="validity">
             <el-radio-group v-model="form_data.validity">
               <el-radio :label="'1'">长期</el-radio>
               <el-radio :label="'0'">有限
-                <el-input style="margin-left: 10px"
-                          v-if="form_data.validity === '0'"
-                          v-model="form_data.vali_time"></el-input></el-radio>
+                <el-date-picker
+                  v-if="form_data.validity === '0'"
+                  v-model="form_data.vali_time"
+                  type="datetime"
+                  placeholder="选择日期时间">
+                </el-date-picker>
+                </el-radio>
             </el-radio-group>
 
           </el-form-item>
@@ -197,10 +204,11 @@ export default class AddCommon extends Vue{
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
         upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
         oss_file_name:'',
-        core_version:this.oper_info.core_version ? this.oper_info.core_version : '',
-        support_gpu_driver_version:'',
-        validity:'1',
-        vali_time:''
+        core_version:this.oper_info.kernel_version ? this.oper_info.kernel_version : '',
+        driver_version:this.oper_info.core_version ? this.oper_info.driver_version :'',
+        cuda_version:this.oper_info.cuda_version ? this.oper_info.cuda_version : '',
+        validity:this.oper_info.maintenance_expiration_date ? '0':'1',
+        vali_time:this.oper_info.maintenance_expiration_date ? this.oper_info.maintenance_expiration_date :''
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -214,8 +222,9 @@ export default class AddCommon extends Vue{
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
         path_md5:[{ required: true, validator:this.path_md5_check, trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
-        support_gpu_driver_version:[{ required: true, message: '请输入驱动版本', trigger: 'change' }],
-        vali_time:[{ required: true,  validator: this.validateTime, trigger: 'blur' }]
+        driver_version:[{ required: true, message: '请输入驱动版本', trigger: 'change' }],
+        cuda_version:[{ required: true, message: '请输入CUDA版本', trigger: 'change' }],
+        validity:[{ required: true, message: '请选择官方维护时间', trigger: 'change' }]
     }
     created(){
         // if(this.oper_info.os_id){
