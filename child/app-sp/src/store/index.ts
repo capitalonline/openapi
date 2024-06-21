@@ -48,7 +48,6 @@ export default new Vuex.Store({
     az_name: '',
     az_code: '',
     display:'',
-    node:'',
     search_vm:''
   },
   getters: {
@@ -121,9 +120,6 @@ export default new Vuex.Store({
     },
     SET_DISPLAY_NAME(state,value){
       state.display = value
-    },
-    SET_NODE(state,value){
-      state.node = value
     },
     SET_SEARCH_VM(state,value){
       state.search_vm = value

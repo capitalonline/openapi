@@ -101,7 +101,6 @@ export default class LeftTree extends Vue{
       if(this.refresh) {
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
-        this.$store.commit('SET_NODE',this.tree_data[0]['type']);
       }
     }
   }
@@ -208,7 +207,6 @@ export default class LeftTree extends Vue{
     }
     this.showContextMenu = false
     this.$store.commit('SET_DISPLAY_NAME',data.label);
-    this.$store.commit('SET_NODE',data.type);
   }
   private handleRight(event,data,node){
      hideMenu()

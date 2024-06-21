@@ -24,7 +24,7 @@
         <el-table-column prop="recomend_cluster" label="匹配集群名称" width="150px">
           <template slot-scope="scope">
             <el-select v-model="scope.row.selected_cluster" filterable value-key="cluster_id">
-              <el-option v-for="item in cluster_list" :value="item" :key="item.cluster_id" :label="item.cluster_name"></el-option>
+              <el-option v-for="item in scope.row.recommend_clusters" :value="item" :key="item.cluster_id" :label="item.cluster_name"></el-option>
             </el-select>
             <div v-show="!scope.row.selected_cluster" class="error_message">请选择加入集群</div>
           </template>
@@ -41,7 +41,7 @@
         </el-table-column>
         <el-table-column prop="block_type" label="集群CPU型号" width="200px">
           <template slot-scope="scope">
-            <span>{{scope.row.selected_cluster.cpu_model}}</span>
+            <span v-for="cpu in scope.row.selected_cluster.cpu_model" :key="cpu">{{cpu}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="block_type" label="集群GPU型号" min-width="100px">
@@ -79,21 +79,21 @@ export default class updateRecommend extends Vue{
     this.list = this.rows.map(item => {
       return {...item, selected_cluster: item.recommend_clusters.length>0 ? item.recommend_clusters[0]: ''};
     });
-    this.getClusterList()
+    //this.getClusterList()
   }
-  private async getClusterList(){
-    let reqData = {
-      page_index: 1,
-      page_size: 1000,
-      az_id:this.$store.state.az_id,
-      pod_id:this.$store.state.pod_id
-    }
-    let res:any = await Service.get_pod_cluster_list(reqData)
-    if(res.code === 'Success'){
-      this.cluster_list = res.data.result
-    }
-
-  }
+  // private async getClusterList(){
+  //   let reqData = {
+  //     page_index: 1,
+  //     page_size: 1000,
+  //     az_id:this.$store.state.az_id,
+  //     pod_id:this.$store.state.pod_id
+  //   }
+  //   let res:any = await Service.get_pod_cluster_list(reqData)
+  //   if(res.code === 'Success'){
+  //     this.cluster_list = res.data.result
+  //   }
+  //
+  // }
   private async confirm(){
     if (this.list.some(item => !item.selected_cluster)) return;
     const req = this.list.map(item=>{return {host_id:item.host_id,cluster_id:item.selected_cluster.cluster_id}})

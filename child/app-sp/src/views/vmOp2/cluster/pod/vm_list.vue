@@ -878,13 +878,13 @@ export default class VmList extends Vue{
       [this.sort_prop_name]: this.sort_order,
       ...this.search_reqData
     }
-    if(this.$store.state.node === 'pod'){
+    if(this.$route.name === 'pod_vm'){
       reqData['pod_id'] = this.$route.params.id
     }
-    if(this.$store.state.node === 'cluster'){
+    if(this.$route.name === 'cluster_vm'){
       reqData['cluster_id'] = this.$route.params.id
     }
-    if(this.$store.state.node === 'host'){
+    if(this.$route.name === 'host_vm'){
       reqData['host_id'] = this.$route.params.id
     }
     if (this.search_status.length > 0) {

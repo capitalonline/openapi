@@ -518,10 +518,10 @@ export default class HostList extends Vue{
       [this.sort_prop_name]: this.sort_order,
       ...this.filter_info
     }
-    if(this.$store.state.node === 'pod'){
+    if(this.$route.name === 'pod_host'){
       reqData['pod_id'] = this.$route.params.id
     }
-    if(this.$store.state.node === 'cluster'){
+    if(this.$route.name === 'cluster_host'){
       reqData['cluster_id'] = this.$route.params.id
     }
     let res:any = await Service.get_pod_host_list(reqData)

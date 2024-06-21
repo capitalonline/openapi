@@ -98,14 +98,6 @@ export default class CreateCluster extends Vue{
     },
     max_host_number: '50'
     };
-    if (!n) {
-      this.form_data = { ...defaultFormData };
-    } else {
-      this.get_pod_list();
-      this.get_storage_cluster_info();
-      this.getModelInfoList('cpu');
-      this.getModelInfoList('gpu');
-    }
     if (n && !this.isCreate) {
       this.form_data = {
         ...defaultFormData,
@@ -118,6 +110,14 @@ export default class CreateCluster extends Vue{
         cpu_brand:this.oper_info[0].cpu_brand
       };
       console.log('this.form_data',this.form_data)
+    }
+    if (!n) {
+      this.form_data = { ...defaultFormData };
+    } else {
+      this.get_pod_list();
+      this.get_storage_cluster_info();
+      this.getModelInfoList('cpu');
+      this.getModelInfoList('gpu');
     }
   }
   private FnSelectedCpus(item){
