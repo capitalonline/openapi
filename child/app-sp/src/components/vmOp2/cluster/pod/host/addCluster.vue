@@ -86,7 +86,7 @@ export default class updateRecommend extends Vue{
       page_index: 1,
       page_size: 1000,
       az_id:this.$store.state.az_id,
-      pod_id:this.$store.state.pod_id
+      pod_id:(this.$route.params.id).slice(0,-1)
     }
     let res:any = await Service.get_pod_cluster_list(reqData)
     if(res.code === 'Success'){
