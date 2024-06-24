@@ -130,6 +130,7 @@ export default class Sidebar extends Vue {
     })
     if(res.code === 'Success'){
       if(res.data.tree_data_list.length>0){
+        this.$store.commit('SET_TREE_LIST',res.data.tree_data_list);
         this.treeData = this.transformData(res.data.tree_data_list)
       }else {
         this.treeData= []

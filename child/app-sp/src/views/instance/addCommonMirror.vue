@@ -92,7 +92,7 @@ export default class AddCommonMirror extends Vue{
                 this.visible_sync=false
             }
         })
-        
+
     }
     private cancel(){
         this.visible_sync=false

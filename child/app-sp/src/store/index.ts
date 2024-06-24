@@ -48,7 +48,8 @@ export default new Vuex.Store({
     az_name: '',
     az_code: '',
     display:'',
-    search_vm:''
+    search_vm:'',
+    tree_list: JSON.parse(storage.get('tree_list')) || [],
   },
   getters: {
   },
@@ -123,7 +124,11 @@ export default new Vuex.Store({
     },
     SET_SEARCH_VM(state,value){
       state.search_vm = value
-    }
+    },
+    SET_TREE_LIST(state,list){
+      storage.set('tree_list',JSON.stringify(list))
+      state.tree_list = list
+    },
   },
   actions: {
   },

@@ -47,6 +47,7 @@
                 <el-table-column prop="scheduled_display" label="允许调度" v-if="['schedule'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="migrated_display" label="允许迁移" v-if="['migrate_flag'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="dummy_display" label="欺骗器" v-if="['cheat'].includes(oper_type)"></el-table-column>
+              <el-table-column prop="cluster_name"  label="当前集群" v-if="['change_cluster'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="maintenance"  label="维护原因" v-if="['maintenance'].includes(oper_type)">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.maintenanceReason" type="textarea"  placeholder="请输入维护原因" maxlength="50" show-word-limit></el-input>
@@ -63,7 +64,7 @@
           <div v-if="notSelectVmList.length > 0" class="m-top10">
             <span class="tip_message">仅支持对状态为“锁定中”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
           </div>
-            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat'].includes(oper_type)" label-position="left">
+            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat','change_cluster'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
                 <el-radio-group v-model="form_data.valid">
                   <el-radio :label="'1'">成功</el-radio>
@@ -79,10 +80,15 @@
               <el-form-item prop="reason" label="说明:" v-if="['schedule','migrate_flag','cheat'].includes(oper_type) || (oper_type==='finish_validate' && form_data.valid==='0')">
                 <el-input v-model="form_data.reason" type="textarea" show-word-limit :maxlength="['schedule','migrate_flag','cheat'].includes(oper_type) ? 128 : 256" />
               </el-form-item>
-              <el-form-item prop="recycleId" v-if="!['schedule','migrate_flag','cheat'].includes(oper_type)" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
+              <el-form-item prop="recycleId" v-if="!['schedule','migrate_flag','cheat','change_cluster'].includes(oper_type)" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
                   <el-select v-model="form_data.recycleId">
                     <el-option v-for="item in recycle_list" :key="item.department_en" :label="item.department_name" :value="item.department_name"></el-option>
                   </el-select>
+              </el-form-item>
+              <el-form-item prop="reason" label="选择集群:" v-if="oper_type === 'change_cluster'">
+                <el-select v-model="form_data.toCluster" placeholder="请选择要加入的集群">
+                  <el-option v-for="item in cluster_list" :value="item.cluster_id" :key="item.cluster_id" :label="item.cluster_name"></el-option>
+                </el-select>
               </el-form-item>
             </el-form>
             <!-- <div v-if="oper_type==='finish_validate'" class="text-center m-top20">
@@ -110,8 +116,10 @@
 import { Component, Emit, Prop, Vue,PropSync } from 'vue-property-decorator';
 import ActionBlock from '@/components/search/actionBlock.vue';
 import Service from '@/https/physical/list';
+import ClusterService from '@/https/vmOp2/cluster/pod/index'
 import moment from 'moment';
 import {Form} from 'element-ui'
+import bus from "@/utils/vmOp2/eventBus";
 @Component({
   components:{
     ActionBlock
@@ -131,6 +139,7 @@ export default class Operate extends Vue{
   private selectVmList =[]
   private notSelectVmList =[]
   private list:any=[]
+  private cluster_list:any =[]
   private labelObj={
     'schedule':'是否允许调度',
     'migrate_flag':'是否允许迁移',
@@ -157,6 +166,7 @@ export default class Operate extends Vue{
     recycleId:'',
     reason:'',
     isSet:this.oper_type==='cheat' ? '0' : '1',
+    toCluster:''
   }
   private operate_info={
     'start_up_host':'host_operate',
@@ -176,10 +186,14 @@ export default class Operate extends Vue{
     'down_recover': 'crash_recover',
     'lock':'set_lock',
     'unlock':'set_unlock',
-    'maintenance':'set_maintenance'
+    'maintenance':'set_maintenance',
+    'change_cluster':'add_cluster',
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
+      if(this.oper_type === 'change_cluster'){
+        this.getClusterList()
+      }
 
     if(this.oper_type === 'maintenance'){
       this.rows.forEach(row => {
@@ -199,6 +213,31 @@ export default class Operate extends Vue{
     } else {
       this.list = []
       this.list = [...this.list,...this.rows]
+    }
+  }
+  private findPodIdByClusterId() {
+    console.log('1010101010')
+    for (let pod of this.$store.state.tree_list) {
+      for (let cluster of pod.children) {
+        if (cluster.cluster_id === this.$route.params.id) {
+          return pod.pod_id;
+        }
+      }
+    }
+    return null;
+  }
+  private async getClusterList(){
+    let podID=this.findPodIdByClusterId()
+    let reqData = {
+      page_index: 1,
+      page_size: 1000,
+      az_id:this.$store.state.az_id,
+      pod_id:this.$route.name === 'pod_host' ? this.$route.params.id : podID
+    }
+    let res:any = await ClusterService.get_pod_cluster_list(reqData)
+    if(res.code === 'Success'){
+      let init_cluster =[{cluster_name:'待加入集群',cluster_id:'0-0'}]
+      this.cluster_list = [...init_cluster,...res.data.result]
     }
   }
   private async get_host_recycle_department(){
@@ -234,6 +273,7 @@ export default class Operate extends Vue{
     }
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
+    const change_cluster = this.list.map(item=>{return {host_id:item.host_id,cluster_id:this.form_data.toCluster}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -262,7 +302,9 @@ export default class Operate extends Vue{
       }:this.oper_type==="lock" ? {
       lock_detail:lock_detail,
       host_ids:this.list.map(item=>item.host_id)
-      }: {host_ids:this.rows.map(item=>item.host_id)}
+      }:this.oper_type === 'change_cluster'?{
+      param:change_cluster
+    }: {host_ids:this.rows[0].host_id}
 
     // 底层同步接口数据组装
     if(this.oper_type==="under_sync") {
@@ -275,15 +317,22 @@ export default class Operate extends Vue{
         }
       }
     }
-    let res:any=await Service[this.operate_info[this.oper_type]]({
+    let res :any ={}
+    if(this.oper_type!=="change_cluster"){
+      res=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
+    }else {
+      res=await ClusterService.add_cluster({
+        ...req
+      })
+    }
 
     if(res.code==="Success"){
       if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
-      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover') {
+      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover' || this.oper_type === 'change_cluster') {
         if(res.data.fail_host_list.length>0) {
           this.$message.warning(res.message + '。' + res.data.error_msg)
           this.back("0");
@@ -291,6 +340,9 @@ export default class Operate extends Vue{
         } else {
           this.$message.success(res.message)
           this.back("1")
+          if(this.oper_type === 'change_cluster'){
+            bus.$emit('getTreeData',false)
+          }
         }
       } else{
         if(res.data.fail_host_list.length>0){
