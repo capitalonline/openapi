@@ -10,7 +10,6 @@
                         <el-checkbox label="virtualized" disabled>GPU虚拟化</el-checkbox>
                     </el-checkbox-group>
                 </span>
-        <span class="clickble" v-else-if="id==='vm_count'" @click="goToInstance">{{item.value}}</span>
         <el-tooltip v-else-if="id==='netcard_count'" class="item" effect="light" placement="right">
           <div slot="content">
             <p v-for="(net,index) in detail_info.host_nic" :key="index">{{net}}</p>
@@ -126,14 +125,6 @@ export default class Info extends Vue{
       }
 
     }
-  }
-  private goToInstance(){
-    this.$router.push({
-      name:'instance_list',
-      query:{
-        host_id:this.host_id
-      }
-    })
   }
 }
 </script>
