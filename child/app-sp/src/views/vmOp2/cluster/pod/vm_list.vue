@@ -104,6 +104,7 @@
       <add-common
         :visible.sync="common_visible"
         :ecs_info="ecs_info"
+        :new="true"
       />
     </template>
     <template v-if="net_visible">
