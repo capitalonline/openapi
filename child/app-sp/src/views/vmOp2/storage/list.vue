@@ -279,7 +279,7 @@ export default class extends Vue {
     this.FnClearTimer()
   }
 
-  @Watch("$store.state.pod_id")
+  @Watch("$store.state.az_id")
   private watch_pod(nv) {
     if (!nv) {
       return;
@@ -366,7 +366,7 @@ export default class extends Vue {
     }
     const {req_data}=this
     let res:any = await Service.get_disk_list({
-      pod_id:this.$store.state.pod_id,
+      az_id:this.$store.state.az_id,
       disk_id:req_data.disk_id || '',
       ecs_id:req_data.ecs_id || '',
       status:req_data.status ? req_data.status[0] : '',

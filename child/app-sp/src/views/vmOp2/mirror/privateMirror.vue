@@ -183,7 +183,7 @@ export default class PrivateMirror extends Vue{
         })
       }
     }
-    @Watch('$store.state.pod_id')
+    @Watch('$store.state.az_id')
     private watch_pod(){
         this.search(this.search_data)
     }
@@ -245,7 +245,7 @@ export default class PrivateMirror extends Vue{
         let res:any = await Service.get_private_mirror_list({
             image_info,
             customer_info,
-            pod_id:this.$store.state.pod_id,
+            az_id:this.$store.state.az_id,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,

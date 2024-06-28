@@ -120,6 +120,7 @@ import ClusterService from '@/https/vmOp2/cluster/pod/index'
 import moment from 'moment';
 import {Form} from 'element-ui'
 import bus from "@/utils/vmOp2/eventBus";
+import { findPodIdByClusterId } from "@/utils/vmOp2/findPodId"
 @Component({
   components:{
     ActionBlock
@@ -215,19 +216,8 @@ export default class Operate extends Vue{
       this.list = [...this.list,...this.rows]
     }
   }
-  private findPodIdByClusterId() {
-    console.log('1010101010')
-    for (let pod of this.$store.state.tree_list) {
-      for (let cluster of pod.children) {
-        if (cluster.cluster_id === this.$route.params.id) {
-          return pod.pod_id;
-        }
-      }
-    }
-    return null;
-  }
   private async getClusterList(){
-    let podID=this.findPodIdByClusterId()
+    let podID = findPodIdByClusterId(this.$route.params.id)
     let reqData = {
       page_index: 1,
       page_size: 1000,

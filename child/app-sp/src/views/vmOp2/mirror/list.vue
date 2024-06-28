@@ -225,7 +225,7 @@ export default class CommonMirror extends Vue{
             this.getMirrorList()
         }
     }
-    @Watch('$store.state.pod_id')
+    @Watch('$store.state.az_id')
     private watch_pod(){
         this.search(this.search_data)
     }
@@ -322,7 +322,7 @@ export default class CommonMirror extends Vue{
     private async getMirrorList(){
         const{os_id,display_name,time,os_type,sort_size,support_gpu_driver,sort_create_time,support_type,status,product_source} = this.search_data
         let res:any = await Service.get_pub_mirror_list({
-            pod_id:this.$store.state.pod_id,
+            az_id:this.$store.state.az_id,
             image_id:os_id,
             image_name:display_name,
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,

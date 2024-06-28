@@ -158,6 +158,7 @@ import InstanceService from "@/https/instance/list";
 import storage from "@/store/storage";
 import EcsService from "@/https/instance/list";
 import Migrate from "@/views/vmOp2/cluster/pod/migrate.vue";
+import { findPodIdByClusterId ,findPodIdByHostId} from "@/utils/vmOp2/findPodId"
 @Component({
   components: {
     Migrate,
@@ -517,8 +518,14 @@ export default class VmList extends Vue{
       page_size: this.page_info.size,
       is_op:true,
       az_id:this.$store.state.az_id,
-      pod_id:this.$store.state.pod_id,
       [this.sort_prop_name]: this.sort_order,
+    }
+    if (this.$route.name === 'pod_vm') {
+      reqData['pod_id'] = this.$route.params.id;
+    } else if (this.$route.name === 'cluster_vm') {
+      reqData['pod_id'] = findPodIdByClusterId(this.$route.params.id);
+    } else if (this.$route.name === 'host_vm') {
+      reqData['pod_id'] = findPodIdByHostId(this.$route.params.id);
     }
     reqData["ecs_id"] = ecs_id
     const resData: any = await InstanceService.get_instance_list(reqData);

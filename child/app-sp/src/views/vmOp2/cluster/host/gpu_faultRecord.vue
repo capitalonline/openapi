@@ -46,6 +46,7 @@ import SvgIcon from '@/components/svgIcon/index.vue';
 import moment from "moment";
 import {getEcsOptions} from "@/https/common";
 import storage from "@/store/storage";
+import {findPodIdByClusterId, findPodIdByHostId} from "@/utils/vmOp2/findPodId"
 @Component({
   components:{
     ActionBlock,
@@ -103,8 +104,9 @@ export default class faultRecord extends Vue {
     this.FnGetList();
   }
   private async FnGetList(){
+    let pod=findPodIdByHostId(this.$route.params.id)
     const resData: any = await Service.get_gpu_record({
-      pod_id:this.$store.state.pod_id,
+      pod_id:pod,
       page_index:this.page_info.page_index,
       page_size:this.page_info.page_size,
       host_id:this.$route.params.id,

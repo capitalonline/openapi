@@ -63,6 +63,7 @@ import GpuEdit from "@/views/gpu/gpuEdit.vue";
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import {rightClick} from "@/utils/vmOp2/rightClick";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
+import { findPodIdByHostId } from "@/utils/vmOp2/findPodId"
 @Component({
   components:{
     RightClick,
@@ -188,8 +189,9 @@ export default class list extends Vue {
     this.FnGetList();
   }
   private async FnGetList(){
+    let pod=findPodIdByHostId(this.$route.params.id)
     const resData: any = await Service.get_gpu_list({
-      pod_id:this.$store.state.pod_id,
+      pod_id:pod,
       page_index:this.page_info.page_index,
       page_size:this.page_info.page_size,
       status:this.search_status.length>0 ? this.search_status.join(',') : this.search_status.map(item=>item.value).join(','),
