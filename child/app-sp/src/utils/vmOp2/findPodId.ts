@@ -12,17 +12,13 @@ export function findPodIdByClusterId(id) {
 }
 export function findPodIdByHostId(id) {
   for (let pod of store.state.tree_list) {
-    if (pod.type === 'pod') {
       for (let cluster of pod.children || []) {
-        if (cluster.type === 'cluster') {
           for (let host of cluster.children || []) {
             if (host.host_id === id) {
               return pod.pod_id;
             }
           }
-        }
       }
-    }
   }
   return null; // 如果未找到匹配的 host_id，则返回 null
 }

@@ -104,13 +104,7 @@ export default class faultRecord extends Vue {
     this.FnGetList();
   }
   private async FnGetList(){
-    let id = ''
-    if(this.$route.name === 'waiting_hosts'){
-      id = this.$route.params.id.slice(0, this.$route.params.id.length - 1);
-    }else {
-      id = this.$route.params.id
-    }
-    let pod=findPodIdByHostId(id)
+    let pod=findPodIdByHostId(this.$route.params.id)
     const resData: any = await Service.get_gpu_record({
       pod_id:pod,
       page_index:this.page_info.page_index,

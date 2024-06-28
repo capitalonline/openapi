@@ -88,6 +88,7 @@ import DetailService from '../../https/physical/list';
 import Service from '../../https/monitor/index';
 import EcsService from '../../https/instance/list';
 import moment from 'moment';
+import {findPodIdByHostId} from "@/utils/vmOp2/findPodId";
 
 @Component({
   components: {
@@ -399,11 +400,20 @@ export default class Monitor extends Vue{
     })
   }
   private async FnGetGpuInfo(type, reqData) {
+    console.log('*****')
+    let pod = ''
+    if(this.$route.name === 'host_monitor'){
+      pod=findPodIdByHostId(this.$route.params.id)
+    }else {
+      pod=this.$store.state.pod_id
+    }
+    console.log('pod',pod)
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
       host_id: this.host_id,
-      pod_id:this.$store.state.pod_id
+      pod_id: pod
     })
+
     let ecs_list = []
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
