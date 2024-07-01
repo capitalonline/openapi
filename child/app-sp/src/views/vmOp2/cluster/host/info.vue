@@ -105,7 +105,7 @@ export default class Info extends Vue{
       this.base_info.SRIOV.value =this.base_info.SRIOV.value  ? '支持' :'不支持';
       this.progress_info.cpu = {
         ...this.progress_info.cpu,
-        used:this.detail_info.cpu_usage,
+        used:this.detail_info.cpu_usage + '%',
         remain:(100-this.detail_info.cpu_usage)+'%',
         percentage:this.detail_info.cpu_usage
       }
