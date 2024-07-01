@@ -400,17 +400,15 @@ export default class Monitor extends Vue{
     })
   }
   private async FnGetGpuInfo(type, reqData) {
-    console.log('*****')
     let pod = ''
     if(this.$route.name === 'host_monitor'){
       pod=findPodIdByHostId(this.$route.params.id)
     }else {
       pod=this.$store.state.pod_id
     }
-    console.log('pod',pod)
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
-      host_id: this.host_id,
+      host_id: this.$route.params.id ? this.$route.params.id : this.host_id,
       pod_id: pod
     })
 
