@@ -127,7 +127,12 @@
       :customer_id="customer_id"
       :az_id="az_id"
       :is_gpu="is_gpu"
+      :origin_disk_size="origin_disk_size"
       :multiple_selection_id="multiple_selection_id"
+      :system_disk_feature="system_disk_feature"
+      :spec_family_id="spec_family_id"
+      :os_type="os_type"
+      :support_gpu_driver="support_gpu_driver"
       @close="close">
     </operate>
     <right-click :multi_rows="multiple_selection" :menus="menus" :name=" multiple_selection.length>0 ? multiple_selection[0].ecs_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
@@ -237,6 +242,7 @@ export default class VmList extends Vue{
   private select_tag =[]
   private isComponentDestroying:boolean = false
   private ecs_id=""
+  private system_disk_feature = "";
   private page_info:any={
     current:1,
     size:20,
@@ -594,6 +600,7 @@ export default class VmList extends Vue{
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
+    this.system_disk_feature = "";
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
@@ -609,6 +616,7 @@ export default class VmList extends Vue{
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
+        this.system_disk_feature = item.system_disk_feature;
       }
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(

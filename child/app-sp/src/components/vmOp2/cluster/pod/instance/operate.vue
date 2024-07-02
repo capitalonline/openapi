@@ -95,11 +95,11 @@
         <template v-if="oper_type === 'update_spec'">
           <update-spec
             ref="update_spec"
+            :ecs_list_info="multiple_selection"
             :customer_id="customer_id"
             :az_id="az_id"
             type="batch_update"
             :default_is_gpu="is_gpu"
-            @fn-spec="FnChangeSpec"
           ></update-spec>
         </template>
         <template v-if="oper_type === 'update_system'">
@@ -121,9 +121,10 @@
             :is_gpu="is_gpu"
             :os_disk_size="Number(os_info.disk_size)"
             :origin_disk_size="origin_disk_size"
-            :spec_family_id="spec_family_id"
+             :spec_family_id="spec_family_id"
             @fn-billing-info="FnGetDiskBillingInfo"
             @fn-system-disk="FnChangeSystem"
+            :disk_feature="system_disk_feature"
           >
           </update-disk>
           <reset-pwd
@@ -156,8 +157,9 @@
           ></reset-pwd>
         </template>
       </div>
-      <div class="text-right m-right20" v-if="total_price">
-        变更后总价：
+      <div class="text-right m-right20" v-if="total_price && oper_type !== 'update_spec' ">
+        <span v-if="oper_type === 'update_system'">变更后需支付费用</span>
+        <span v-else>变更后总价：</span>
         <span class="num_message">{{ total_price }}</span>
       </div>
       <div class="text-center" v-if="oper_type === 'shutdown_ecs'">
@@ -237,11 +239,12 @@ export default class Operate extends Vue{
   @Prop(String) az_id!:string
   @Prop(Number) is_gpu!:number
   @Prop({default:()=>[]}) multiple_selection_id!:any
-  private origin_disk_size: number = 0;
-  private support_gpu_driver: string = "";
-  private spec_family_id: string = "";
+  @Prop({default:''}) private system_disk_feature!:string
+  @Prop(Number) origin_disk_size!:number
+  @Prop(String) spec_family_id!:string
+  @Prop(String) os_type!:string
+  @Prop(String) support_gpu_driver!: string
   private gpu_card_operate:string=''
-  private os_type = "";
   private billing_method: string = "0";
   private shutdown_ecs_type: string = "shutdown_ecs";
   private restart_ecs_type: string = "restart_ecs";
@@ -305,7 +308,7 @@ export default class Operate extends Vue{
       billing_info: this.disk_billing_info[data.ecs_goods_id],
 
     };
-    if (this.is_gpu) {
+    if (this.system_disk_feature === "local") {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
       reqData.ebs_goods_info["local_disk-space"] = data.storage_space;
       reqData.ebs_goods_info["local_disk-throughput"] = data.handling_capacity;
@@ -315,12 +318,15 @@ export default class Operate extends Vue{
       reqData.ebs_goods_info["handling_capacity"] = data.handling_capacity;
     }
     const resData = await Service.change_system_price(reqData);
-    if (resData.code === "Success") {
+    if (this.billing_method === "0") {
       this.total_price =
         resData.data.price_symbol +
         resData.data.total_price.toFixed(2) +
         "/" +
         resData.data.price_unit;
+    } else {
+      this.total_price =
+        resData.data.price_symbol + resData.data.total_price.toFixed(2);
     }
   }
   private FnConfirm() {
@@ -422,17 +428,20 @@ export default class Operate extends Vue{
   private async FnUpdateSpec(reqData) {
     let data = (this.$refs.update_spec as any).FnSubmit();
     if (data.flag) {
-      reqData.billing_info =
-        data.spec_info.billing_info[data.spec_info.ecs_goods_id];
-      reqData.is_gpu = this.is_gpu;
+      reqData.ecs_list = data.spec_info.ecs_list
+      reqData.billing_info = data.spec_info.billing_info[data.spec_info.ecs_goods_id];
       reqData.ecs_info = {
-        ecs_goods_info: {
-          ecs_goods_id: data.spec_info.ecs_goods_id,
-          gic_goods_id: reqData.billing_info.gic_goods_id,
-          cpu: data.spec_info.cpu,
-          ram: data.spec_info.ram,
-          gpu: data.spec_info.gpu
-        }
+        ecs_family_name: data.spec_info.ecs_goods_name,
+        cpu: data.spec_info.cpu,
+        gpu: data.spec_info.gpu,
+        ram: data.spec_info.ram,
+        spec_id: data.spec_info.spec_id,
+        ecs_goods_id: data.spec_info.ecs_goods_id,
+        spec_family_id: data.spec_info.spec_family_id,
+        cpu_name: data.spec_info.cpu_model,
+        gpu_card_name: data.spec_info.gpu_card_name,
+        gpu_type_id: data.spec_info.gpu_id,
+        cpu_real_name: data.spec_info.cpu_real_name,
       };
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === "Success") {
@@ -451,6 +460,7 @@ export default class Operate extends Vue{
       reqData.os_id = os_data.os_info.os_id;
       reqData.os_type = os_data.os_info.os_type;
       reqData.username = os_data.os_info.username;
+      reqData.billing_method = this.billing_method
       reqData.disk_info = {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,
