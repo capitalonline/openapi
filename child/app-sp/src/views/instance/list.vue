@@ -456,11 +456,11 @@
           <template v-if="default_operate_type === 'update_spec'">
             <update-spec
               ref="update_spec"
+              :ecs_list_info="multiple_selection"
               :customer_id="customer_id"
               :az_id="az_id"
               type="batch_update"
               :default_is_gpu="is_gpu"
-              @fn-spec="FnChangeSpec"
             ></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
@@ -485,6 +485,7 @@
               :spec_family_id="spec_family_id"
               @fn-billing-info="FnGetDiskBillingInfo"
               @fn-system-disk="FnChangeSystem"
+              :disk_feature="system_disk_feature"
             >
             </update-disk>
             <reset-pwd
@@ -518,7 +519,8 @@
           </template>
         </div>
         <div class="text-right m-right20" v-if="total_price">
-          变更后总价：
+          <span v-if="default_operate_type === 'update_system'">变更后需支付费用</span>
+          <span v-else>变更后总价：</span>
           <span class="num_message">{{ total_price }}</span>
         </div>
         <div class="text-center" v-if="default_operate_type === 'shutdown_ecs'">
@@ -715,8 +717,8 @@ export default class App extends Vue {
   private os_info = {};
   private ecs_info = {};
   private common_visible:boolean=false
-  private disk_billing_info = {};
   private total_price = "";
+  private disk_billing_info = {};
   private ecs_list_price = {};
   private loading = false;
   private sort_prop_name = '';
@@ -724,6 +726,7 @@ export default class App extends Vue {
   private ecs_status_list:any=[];
   private select_tag =[]
   private isComponentDestroying:boolean = false
+  private system_disk_feature = "";
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -1018,6 +1021,7 @@ export default class App extends Vue {
     this.origin_disk_size = 0;
     this.support_gpu_driver = "";
     this.spec_family_id = "";
+    this.system_disk_feature = "";
     this.os_type = "";
     let flag = true;
     this.multiple_selection_id = [];
@@ -1033,6 +1037,7 @@ export default class App extends Vue {
         this.support_gpu_driver = item.support_gpu_driver;
         this.spec_family_id = item.spec_family_id;
         this.os_type = item.os_type;
+        this.system_disk_feature = item.system_disk_feature;
       }
       console.log('%%%',this.az_id)
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
@@ -1276,17 +1281,20 @@ export default class App extends Vue {
   private async FnUpdateSpec(reqData) {
     let data = (this.$refs.update_spec as any).FnSubmit();
     if (data.flag) {
-      reqData.billing_info =
-        data.spec_info.billing_info[data.spec_info.ecs_goods_id];
-      reqData.is_gpu = this.is_gpu;
+      reqData.ecs_list = data.spec_info.ecs_list
+      reqData.billing_info = data.spec_info.billing_info[data.spec_info.ecs_goods_id];
       reqData.ecs_info = {
-        ecs_goods_info: {
-          ecs_goods_id: data.spec_info.ecs_goods_id,
-          gic_goods_id: reqData.billing_info.gic_goods_id,
-          cpu: data.spec_info.cpu,
-          ram: data.spec_info.ram,
-          gpu: data.spec_info.gpu
-        }
+        ecs_family_name: data.spec_info.ecs_goods_name,
+        cpu: data.spec_info.cpu,
+        gpu: data.spec_info.gpu,
+        ram: data.spec_info.ram,
+        spec_id: data.spec_info.spec_id,
+        ecs_goods_id: data.spec_info.ecs_goods_id,
+        spec_family_id: data.spec_info.spec_family_id,
+        cpu_name: data.spec_info.cpu_model,
+        gpu_card_name: data.spec_info.gpu_card_name,
+        gpu_type_id: data.spec_info.gpu_id,
+        cpu_real_name: data.spec_info.cpu_real_name,
       };
       let resData: any = await Service.update_spec(reqData);
       if (resData.code === "Success") {
@@ -1317,7 +1325,7 @@ export default class App extends Vue {
       billing_info: this.disk_billing_info[data.ecs_goods_id],
 
     };
-    if (this.is_gpu) {
+    if (this.system_disk_feature === "local") {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
       reqData.ebs_goods_info["local_disk-space"] = data.storage_space;
       reqData.ebs_goods_info["local_disk-throughput"] = data.handling_capacity;
@@ -1328,11 +1336,16 @@ export default class App extends Vue {
     }
     const resData = await Service.change_system_price(reqData);
     if (resData.code === "Success") {
-      this.total_price =
-        resData.data.price_symbol +
-        resData.data.total_price.toFixed(2) +
-        "/" +
-        resData.data.price_unit;
+      if (this.billing_method === "0") {
+        this.total_price =
+          resData.data.price_symbol +
+          resData.data.total_price.toFixed(2) +
+          "/" +
+          resData.data.price_unit;
+      } else {
+        this.total_price =
+          resData.data.price_symbol + resData.data.total_price.toFixed(2);
+      }
     }
   }
   private async FnUpdateSystem(reqData) {
@@ -1343,6 +1356,7 @@ export default class App extends Vue {
       reqData.os_id = os_data.os_info.os_id;
       reqData.os_type = os_data.os_info.os_type;
       reqData.username = os_data.os_info.username;
+      reqData.billing_method = this.billing_method
       reqData.disk_info = {
         system_disk: {
           ecs_goods_id: disk_data.system_disk.ecs_goods_id,

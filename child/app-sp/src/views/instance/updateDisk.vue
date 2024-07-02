@@ -116,6 +116,7 @@ export default class updateDisk extends Vue {
   @Prop({default: 0}) private origin_disk_size!: number;
   @Prop({default: ''}) private spec_family_id!: string;
   @Prop({default: 0}) private is_gpu!: 1 | 0;
+  @Prop({default:''}) private disk_feature!: string
   $message;
   private all_disk_info = {
     system_disk: [],
@@ -182,7 +183,9 @@ export default class updateDisk extends Vue {
   }
   private FnFilterDisk(): void {
     let disk_type_list = [];
-    this.system_disk_info = this.all_disk_info.system_disk;
+    this.system_disk_info = this.all_disk_info.system_disk.filter(
+        (item) => item.disk_feature === this.disk_feature
+        )
     this.data_disk_info = this.all_disk_info.data_disk;
     // if (this.is_gpu) {
     //   this.system_disk_info = this.all_disk_info.system_disk.filter(item => item.disk_feature === 'local');
@@ -407,9 +410,9 @@ export default class updateDisk extends Vue {
     return this.data.system_disk_min
   }
   private created() {
-    // if (this.az_id) {
-    //   this.FnGetDiskInfo();
-    // }
+    if (this.az_id) {
+      this.FnGetDiskInfo();
+    }
   }
 
   // @Watch('customer_id')

@@ -92,9 +92,10 @@
                         </el-tooltip>
                     </div>
                 </div>
+                <div v-else-if="selected <1" class="error_message m-top10">请选择迁移的虚机</div>
                 <div v-else class="error_message m-top10">无合适的物理机，无法迁移。可选择单台虚机再次尝试</div>
             </div>
-            
+
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm" :disabled="this.recommend.length===0">确认</el-button>
@@ -126,15 +127,30 @@ export default class Migrate extends Vue{
     private list:any= this.rows[0].ecs_list
     private selected:any=[];
     private checked:Boolean=false;
+    private allSelect:Boolean = false
     private isIndeterminate:Boolean=false
     private physical:Array<string>=[]
     private physical_list:any=[]
     private recommend=[];
     private useable_list:any=[];
     created() {
-        this.get_recommended_host();
-        this.setUsableList(this.rows)      
+        this.setUsableList(this.rows)
         this.list=this.rows[0].ecs_list;
+    }
+    @Watch('selected')
+    private watch_selected(nv){
+      if(!this.allSelect && nv.length>0){
+        let list:any = []
+        let isFirstCPU = this.selected.length > 0 ? !this.selected[0].is_gpu : true; //获取选中的第一个数据是GPU还是CPU，
+        this.rows[0].ecs_list.forEach(item=>{
+          if(item.is_gpu === !isFirstCPU){ // 和第一个虚机类型符合的可以进行迁移(也就是迁移需虚机必须全是cpu或全是gpu)
+            list.push(item.ecs_id)
+          }
+        })
+        this.useable_list = this.useable_list.filter(value => list.includes(value));
+      }else {
+        this.setUsableList(this.rows)
+      }
     }
     private setUsableList(data){
         let status_list = data[0].ecs_list.filter(item=>['已关机','运行中'].includes(item.status))//筛选出符合状态的；
@@ -154,7 +170,7 @@ export default class Migrate extends Vue{
                 }
             }
         })
-        this.useable_list=list//可以进行迁移的云主机  
+        this.useable_list=list//可以进行迁移的云主机
     }
     private async getHostList(){
         // this.$store.commit("SET_LOADING", false);
@@ -163,9 +179,9 @@ export default class Migrate extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.host_list[0].ecs_list;
-            this.setUsableList(res.data.host_list) 
+            this.setUsableList(res.data.host_list)
         }
-        
+
     }
     private getMsg(item){
         if(item.is_gpu || (item.disk_info && Object.keys(item.disk_info.system)[0]==='local')){
@@ -174,19 +190,19 @@ export default class Migrate extends Vue{
             return '仅运行中和已关机状态下迁移'
         }
     }
-    // //关闭面板时重新获取实例列表  
+    // //关闭面板时重新获取实例列表
     // private change_physical(val){
     //     if(!val){
     //         this.get_physical_list()
     //     }
-        
+
     // }
     private checkSelectable(row,index){
         if(this.useable_list.includes(row.ecs_id)){
             return true;
         }else{
             return false;
-        } 
+        }
     }
     private judge(){
         let cpu:any=this.physical_list.filter(item=>item.host_purpose==='CPU')
@@ -217,6 +233,7 @@ export default class Migrate extends Vue{
         const table = this.$refs.table as Table
         val ? table.toggleAllSelection() : table.clearSelection()
         this.isIndeterminate = false;
+        this.allSelect = !this.allSelect
     }
     private handleSelectionChange(val){
         this.selected=val
@@ -253,7 +270,7 @@ export default class Migrate extends Vue{
     private back(val){
         this.visible_sync=false
     }
-  
+
 }
 </script>
 <style lang="scss" scope>

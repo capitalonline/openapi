@@ -32,5 +32,12 @@ export default {
   get_ecs_limit(reqData) {
     return service(getEcsOptions('POST', '/ecs/get_ecs_limit/', reqData))
   },
-  
+  get_ram_cpu_price_list(reqData){
+    return service(getEcsOptions('POST','/ecs/ecs_spec_attach_price/',reqData))
+  },
+  // 获取包年差价
+  difference_price(reqData){
+    return service(getEcsOptions("POST","/ecs/ecs_difference_price/",reqData))
+  },
+
 }
