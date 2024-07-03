@@ -91,6 +91,9 @@
           <el-form-item label="CUDA版本" prop="cuda_version" v-if="form_data.support_type==='GPU'">
             <el-input v-model="form_data.cuda_version"></el-input>
           </el-form-item>
+          <el-form-item label="其他软件" prop="other_software" v-if="form_data.support_type==='GPU'">
+            <el-input v-model="form_data.other_software"></el-input>
+          </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span> -->
                 <el-select v-model="form_data.os_file_type">
@@ -113,6 +116,7 @@
                   v-if="form_data.validity === '0'"
                   v-model="form_data.vali_time"
                   type="datetime"
+                  value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择日期时间">
                 </el-date-picker>
                 </el-radio>
@@ -180,9 +184,9 @@ export default class AddCommon extends Vue{
         // 产品来源
     private product_source_type_list:any=['云桌面','云主机','文件存储转发','容器','负载均衡'];
 
-    private compute_type_list:any=['标准镜像','GPU']
+    private compute_type_list:any=['GPU','基础镜像']
     private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
-    private file_type_list:any=['iso','qcow2'];
+    private file_type_list:any=['qcow2','iso'];
     private query_url:string="";
     private os_file:any=[];
     private customer_list:Array<String>=this.oper_info.os_id ? this.oper_info.white_customer_list : []
@@ -207,8 +211,9 @@ export default class AddCommon extends Vue{
         core_version:this.oper_info.kernel_version ? this.oper_info.kernel_version : '',
         driver_version:this.oper_info.core_version ? this.oper_info.driver_version :'',
         cuda_version:this.oper_info.cuda_version ? this.oper_info.cuda_version : '',
+        other_software:this.oper_info.other_software ? this.oper_info.other_software : '',
         validity:this.oper_info.maintenance_expiration_date ? '0':'1',
-        vali_time:this.oper_info.maintenance_expiration_date ? this.oper_info.maintenance_expiration_date :''
+        vali_time:this.oper_info.maintenance_expiration_date ? this.oper_info.maintenance_expiration_date :'',
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -224,7 +229,8 @@ export default class AddCommon extends Vue{
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
         driver_version:[{ required: true, message: '请输入驱动版本', trigger: 'change' }],
         cuda_version:[{ required: true, message: '请输入CUDA版本', trigger: 'change' }],
-        validity:[{ required: true, message: '请选择官方维护时间', trigger: 'change' }]
+        validity:[{ required: true, message: '请选择官方维护时间', trigger: 'change' }],
+        other_software:[{ required: true, message: '请输入其他软件', trigger: 'change' }]
     }
     created(){
         // if(this.oper_info.os_id){
@@ -359,7 +365,7 @@ export default class AddCommon extends Vue{
     @Watch('form_data.os_file_type')
     private watch_os_file_type(nv){
         if(nv==='iso'){
-            this.form_data.support_type='标准镜像'
+            this.form_data.support_type='基础镜像'
         }
         // this.query_url = str==="" ? "" : `?${str.slice(0,str.length-1)}`;
         //  console.log("this.query_url",this.query_url)
@@ -394,7 +400,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
+        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time,core_version,driver_version,cuda_version,other_software,validity,vali_time}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -429,7 +435,12 @@ export default class AddCommon extends Vue{
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
-                        oss_file_name
+                        oss_file_name,
+                        kernel_version:core_version,
+                        driver_version,
+                        cuda_version,
+                        other_software,
+                        maintenance_expiration_date:validity === '1' ? 'LongTerm' : vali_time
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)

@@ -24,7 +24,11 @@
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
             <el-table-column prop="os_type" label="操作系统类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type" min-width="120px"></el-table-column>
-            <el-table-column prop="" label="系统架构"></el-table-column>
+            <el-table-column prop="os_bit" label="系统架构">
+              <template slot-scope="scope">
+                <span>{{ scope.row.os_bit}}位</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="kernel_version" label="内核版本"></el-table-column>
             <el-table-column prop="os_file_type" label="镜像文件类型"></el-table-column>
             <el-table-column prop="size" label="镜像大小" sortable="custom">
@@ -35,6 +39,8 @@
             <el-table-column prop="support_type" label="镜像类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type"></el-table-column>
             <el-table-column prop="driver_version" label="驱动版本"></el-table-column>
+            <el-table-column prop="cuda_version" label="CUDA版本"></el-table-column>
+            <el-table-column prop="other_software" label="其他软件"></el-table-column>
             <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="source_type"></el-table-column>
             <el-table-column prop="backend_type" label="存储类型"></el-table-column>
             <el-table-column prop="customer" label="客户权限">
@@ -178,7 +184,7 @@ export default class CommonMirror extends Vue{
     private filter_data:any={}
     private compute_type:any=[
         {text:'GPU',value:'GPU'},
-        {text:'标准镜像',value:'CPU'},
+        {text:'基础镜像',value:'CPU'},
     ];
     private drive_type:any=[
         {text:'DataCenter',value:'DataCenter'},
