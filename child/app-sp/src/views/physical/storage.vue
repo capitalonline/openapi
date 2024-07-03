@@ -38,12 +38,12 @@ export default class Storage extends Vue{
     }
     private async get_list(){
         let res:any=await Service.get_detail_storage({
-            host_id:this.host_id
+            host_id: this.$route.params.id ? this.$route.params.id : this.host_id
         })
         if(res.code==="Success"){
             this.list = res.data.ram_list
         }
     }
-    
+
 }
 </script>

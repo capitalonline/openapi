@@ -55,12 +55,13 @@ import CustomerInput from '../../components/customerInput.vue'
 export default class AddCommonMirror extends Vue{
     @PropSync('visible')visible_sync!:boolean;
     @Prop({default:()=>{}})ecs_info!:any;
+    @Prop({default:false}) new!:boolean
     private form_data={
         ecs:`${this.ecs_info.ecs_name} / ${this.ecs_info.ecs_id}`,
         customer:`${this.ecs_info.customer_name} / ${this.ecs_info.customer_id}`,
         az:this.ecs_info.az_name,
         spec:this.ecs_info.is_gpu ? `${this.ecs_info.cpu_size}vCPU${this.ecs_info.ram_size}GiB  ${this.ecs_info.gpu_size}*${this.ecs_info.gpu_show_type}` : `${this.ecs_info.cpu_size}vCPU${this.ecs_info.ram_size}GiB`,
-        system_disk:`${this.ecs_info.system_disk_type} ${this.ecs_info.system_disk_size}GB`,
+        system_disk: this.new ? `${this.ecs_info.disk_info.system.system_disk_type} ${this.ecs_info.disk_info.system.disk_size}GB` : `${this.ecs_info.system_disk_type} ${this.ecs_info.system_disk_size}GB`,
         mirror:this.ecs_info.os_name,
         name:'',
         test_id:'',
@@ -92,7 +93,7 @@ export default class AddCommonMirror extends Vue{
                 this.visible_sync=false
             }
         })
-        
+
     }
     private cancel(){
         this.visible_sync=false

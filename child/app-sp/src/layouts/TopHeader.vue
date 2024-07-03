@@ -8,7 +8,7 @@
 <!--        ></el-autocomplete>-->
 <!--      </el-button>-->
       <el-select
-        style="width: 218px"
+        style="width: 140px"
         v-model="default_az"
         filterable
         :filter-method="get_az_list"
@@ -21,9 +21,37 @@
           :label="item.az_name"
         ></el-option>
       </el-select>
-      <i class="el-icon-search"></i>
+    </div>
+    <div class="center-content">
+      <el-autocomplete
+        v-model="filterText"
+        :fetch-suggestions="querySearch"
+        :trigger-on-focus="false"
+        ref="input"
+        @focus="showPlaceholder"
+        @select="handleSelect"
+        @blur="hidePlaceholder"
+        @input="handleInput"
+      >
+        <template #prefix>
+          <svg-icon-font iconName="icon-sousuo" @dblclick="showPlaceholder"></svg-icon-font>
+        </template>
+      </el-autocomplete>
     </div>
     <div class="right-content">
+      <el-tooltip class="item" effect="dark" content="消息通知" placement="bottom">
+      <el-button type="text" @click="goToMessage">
+        <i class="iconfont icon-message" style="font-size: 25px"></i>
+      </el-button>
+      </el-tooltip>
+      <el-dropdown @command="FnToWiki">
+        <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item :command="{type:'public'}">公网设置问题排查sop</el-dropdown-item>
+          <el-dropdown-item :command="{type:''}">运维OP使用手册V1.0</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+<!--      <el-button type="text" @click="goToTask">底层任务配置</el-button>-->
       <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换旧页面</el-button>
     </div>
   </div>
@@ -32,11 +60,26 @@
 <script lang="ts">
 import {Component, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/vmOp2/cluster/tree";
+import SvgIcon from '@/components/svgIcon/index.vue';
+import bus from "@/utils/vmOp2/eventBus"
 
-@Component({})
+@Component({
+  components: {
+    SvgIcon
+  }
+})
 export default class TopHeader extends Vue{
   private default_az = ''
+  private az_name = ''
+  private az_code = ''
   private az_list = []
+  private filterText = ''
+  private search_list= [
+    { type: 'host', id: 'ea159da9-43fa-4734-bd4d-9746b39266ea', name: 'POD0A-CLU01-H022' },
+    { type: 'host', id: '1255b32a-2812-11ed-9de3-2aa5f60b1e4c', name: 'POD0A-CLU01-H108' },
+    { type: 'cluster', id: '343fa382-d9d3-11ee-bdc1-32df027a9345', name: 'test' },
+    { type: 'host', id: 'ea98af0a-1fdb-11ee-8918-46a60bf0548b', name: 'eks-otie7itlcjkj97q9' ,vm:1},
+  ]
   created(){
     this.get_az_list();
   }
@@ -51,6 +94,8 @@ export default class TopHeader extends Vue{
         })
       })
       this.default_az = this.$store.state.az_id ? this.$store.state.az_id : this.az_list[0].az_id
+      this.az_name = this.$store.state.az_name ? this.$store.state.az_name :this.az_list[0].az_name
+      this.az_code = this.$store.state.az_code ? this.$store.state.az_code :this.az_list[0].az_code
     }
   }
   private change_pod(val){
@@ -61,9 +106,52 @@ export default class TopHeader extends Vue{
   private changeLayout(){
     this.$router.push({name:'overview'})
   }
+  private goToMessage(){
+    this.$router.push({name:'message'})
+  }
+  private goToTask(){
+    this.$router.push({name:'config_task'})
+  }
+  private FnToWiki(type) {
+    if (type === 'public') {
+      window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018114')
+    } else {
+      window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
+    }
+  }
+  private async  querySearch(queryString, cb) {
+    const res:any = await Service.global_search({
+      az_id:this.$store.state.az_id,
+      search_content:queryString
+    })
+    this.search_list = res.data
+    const results = this.search_list.map(item => ({
+      value: item.name,
+      ...item
+    }));
+    cb(results);
+  }
+  private handleSelect(item){
+    bus.$emit('filterTextChanged',item)
+  }
+  private showPlaceholder() {
+    const inputElement = (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
+    inputElement.setAttribute('placeholder', '请输入集群名称/主机名称/虚拟机ID进行搜索');
+  }
+  hidePlaceholder() {
+    const inputElement =  (this.$refs.input as any).$refs.input.$refs.input || (this.$refs.input as any).$refs.input;
+    inputElement.setAttribute('placeholder', '');
+  }
+  private  handleInput(value) {
+    if (value === '') {
+      this.$store.commit('SET_SEARCH_VM', '');
+    }
+  }
   @Watch('default_az')
   private watch_pod(){
     this.$store.commit('SET_AZ',this.default_az);
+    this.$store.commit('SET_AZ_NAME',this.az_name);
+    this.$store.commit('SET_AZ_CODE',this.az_code);
   }
 }
 </script>
@@ -92,7 +180,37 @@ export default class TopHeader extends Vue{
     }
   }
   svg {
-    width: 60px;
+    width: 30px;
+    margin:10px
+  }
+  .center-content{
+    align-items: center;
+    display: flex;
+    flex: 1;
+    .el-input__inner {
+      border: none; /* 默认不显示边框 */
+      box-shadow: none; /* 去掉默认的阴影 */
+    }
+    .el-input__inner:focus {
+      border: 1px solid #455cc6; /* 焦点时显示边框 */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 可选：增加阴影效果 */
+    }
+    .el-input-number, .el-input__icon{
+      font-size: 20px;
+    }
+    .el-autocomplete{
+      width: 100%;
+    }
+    .el-input__prefix{
+      left: -6px;
+      top: -4px;
+    }
+    .svg-icon{
+      width: 2em;
+      height: 1.5em;
+      vertical-align: -5px;
+      padding-right:5px
+    }
   }
   .right-content {
     display: flex;

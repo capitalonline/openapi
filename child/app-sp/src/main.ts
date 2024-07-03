@@ -11,11 +11,14 @@ import { getUserInfo } from '../src/init';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
 import VueClipboard  from 'vue-clipboard2';
-import "./assets/aliIconfont/iconfont.css"
+import "./assets/aliIconfont/font_4426820_fue321v8d7d/iconfont.css"
+import './assets/aliIconfont-/iconfont'
+import svgIconFont from './components/svgIcon/svgFont.vue'
 VueClipboard.config.autoSetContainer = true
 Vue.use(VueClipboard);
 Vue.use(ElementUI)
 // Vue.use(Clipboard)
+Vue.component('svgIconFont', svgIconFont);
 Vue.config.productionTip = false;
 
 let router = null;

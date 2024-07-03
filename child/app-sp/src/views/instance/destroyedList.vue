@@ -194,10 +194,17 @@
         }
         this.FnSearch(this.search_reqData)
       }
+    @Watch("$store.state.az_id")
+    private watch_az(nv){
+      if(!nv){
+        return;
+      }
+      this.FnSearch(this.search_reqData)
+    }
     private FnSearch(data: any = {}) {
       this.FnClearTimer();
       this.search_reqData = {
-        pod_id:this.$store.state.pod_id,
+        //pod_id:this.$store.state.pod_id,
         ecs_id: data.ecs_id,
         ecs_name: data.ecs_name,
         customer_id: data.customer_id,
@@ -213,6 +220,11 @@
         end_time:
           data.create_time ? moment(data.create_time[1]).format("YYYY-MM-DD") : moment(new Date()).format("YYYY-MM-DD")
       };
+      if(this.$route.name === 'ecs_destroyed'){
+        this.search_reqData['pod_id']= this.$store.state.pod_id
+      }else {
+        this.search_reqData['az_id'] = this.$store.state.az_id
+      }
       this.page_info.page_index = 1;
       this.FnGetList();
     }

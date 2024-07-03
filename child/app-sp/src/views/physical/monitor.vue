@@ -88,6 +88,7 @@ import DetailService from '../../https/physical/list';
 import Service from '../../https/monitor/index';
 import EcsService from '../../https/instance/list';
 import moment from 'moment';
+import {findPodIdByHostId} from "@/utils/vmOp2/findPodId";
 
 @Component({
   components: {
@@ -227,12 +228,13 @@ export default class Monitor extends Vue{
   }
 
   private FnGetChartData() {
+    console.log('55555555',this.$store.state.display)
     let type = 'kvm';
-    if (!this.host_name) {
+    if (!this.host_name && !this.$store.state.display) {
       return
     }
     let reqData = {
-      hostId: this.host_name,
+      hostId: this.host_name ? this.host_name :this.$route.params.id,
       region: this.host_info.region_id,
       replica: this.host_info.az_id,
       ip: this.host_info.host_ip,
@@ -240,6 +242,7 @@ export default class Monitor extends Vue{
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
+    console.log('====',this.default_tab)
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
@@ -253,7 +256,7 @@ export default class Monitor extends Vue{
   }
   private async FnGetDetail() {
     const resData = await DetailService.get_detail_overview({
-      host_id: this.host_id
+      host_id: this.$route.params.id ? this.$route.params.id : this.host_id
     })
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
@@ -397,11 +400,18 @@ export default class Monitor extends Vue{
     })
   }
   private async FnGetGpuInfo(type, reqData) {
+    let pod = ''
+    if(this.$route.name === 'host_monitor'){
+      pod=findPodIdByHostId(this.$route.params.id)
+    }else {
+      pod=this.$store.state.pod_id
+    }
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
-      host_id: this.host_id,
-      pod_id:this.$store.state.pod_id
+      host_id: this.$route.params.id ? this.$route.params.id : this.host_id,
+      pod_id: pod
     })
+
     let ecs_list = []
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
@@ -493,7 +503,7 @@ export default class Monitor extends Vue{
 
   }
   private created() {
-    this.default_tab = this.showTab ? this.showTab : Object.keys(this.tab_list)[0];
+    this.default_tab = this.showTab ? this.showTab : this.$route.params.gpuTab ? this.$route.params.gpuTab :Object.keys(this.tab_list)[0];
     this.FnGetDetail();
   }
   @Watch('default_tab')

@@ -15,7 +15,7 @@
           <label-block label="客户名称">
             {{ customer_name }}
           </label-block>
-         
+
           <label-block label="是否计费">
             <el-switch v-model="is_billing">
             </el-switch>
@@ -216,7 +216,7 @@ export default class App extends Vue {
     az_list: []
   };
 
- 
+
 
   private default_az = {
     az_id: '',
@@ -270,7 +270,7 @@ export default class App extends Vue {
   };
 
   private confirm_create_visible: boolean = false;
- 
+
   private async FnGetCustomerName () {
     const resData = await Service.get_customer_name({ customer_id: this.customer_id_input });
     if (resData.code === 'Success') {
@@ -339,7 +339,7 @@ export default class App extends Vue {
     if (this.ecs_spec_info.is_gpu === data.is_gpu) {
       this.ecs_spec_info = data;
       this.FnGetLimitNum()
-      this.FnGetPrice('spec')
+      //this.FnGetPrice('spec')
     } else {
       this.ecs_spec_info = data; // 当cpu和gpu类型相互交换时，由系统盘改变触发算价
     }
@@ -365,7 +365,7 @@ export default class App extends Vue {
   private FnGetSystemDisk (data): void {
     this.system_info = data;
     this.FnGetLimitNum()
-    this.FnGetPrice('system');
+    //this.FnGetPrice('system');
   }
   private FnGetDataDisk (data): void {
     this.data_disks = data

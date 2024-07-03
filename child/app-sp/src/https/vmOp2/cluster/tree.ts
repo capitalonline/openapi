@@ -8,5 +8,8 @@ export default{
   },
   open_region_az_info(req){
     return service(getEcsOptions('POST','/ecs/open_region_az_info/',req))
+  },
+  global_search(req){
+    return service(getEcsOptions('GET','/host/global_search/',req))
   }
 }

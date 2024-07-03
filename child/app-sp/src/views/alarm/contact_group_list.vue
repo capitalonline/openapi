@@ -136,10 +136,10 @@ export default class ContactList extends Vue{
           this.$message({
             type: 'info',
             message: '已取消移除'
-          });          
+          });
         });
-        
-        
+
+
     }
     private close_group(val){
         this.group_visible=false
@@ -158,7 +158,7 @@ export default class ContactList extends Vue{
         this.group_visible=true
     }
     private sel_users(){
-        
+
     }
     private del(){
         this.group_rows = this.group_list.filter(item=>item.check)
@@ -193,12 +193,12 @@ export default class ContactList extends Vue{
             this.$message({
                 type: 'info',
                 message: '已取消删除'
-            }); 
+            });
             this.getContactGroupList()
         })
     }
     private addToWarnGroup(){
-        
+
     }
 }
 </script>
@@ -215,7 +215,7 @@ label.el-checkbox{
     i{
         word-wrap:break-word
     }
-    
+
 }
 </style>
 <style lang="scss">

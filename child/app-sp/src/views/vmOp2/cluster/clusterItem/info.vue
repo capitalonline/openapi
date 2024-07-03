@@ -13,10 +13,10 @@
       <div class="bar" v-for="(item,id) in progress_info" :key="id">
         <div class="flex-between m-bottom5">
           <span>{{item.label}}</span>
-          <span v-if="item.label === 'GPU'">
-            <i class="iconfont icon-breakdown" style="font-size: 20px"></i>
-            故障：{{item.breakdown}}
-          </span>
+<!--          <span v-if="item.label === 'GPU'">-->
+<!--            <i class="iconfont icon-breakdown" style="font-size: 20px"></i>-->
+<!--            故障：{{item.breakdown}}-->
+<!--          </span>-->
         </div>
         <el-progress :stroke-width="16" color="#455cc6" :percentage="Math.round(item.percentage)"></el-progress>
         <div class="flex-between m-top5">

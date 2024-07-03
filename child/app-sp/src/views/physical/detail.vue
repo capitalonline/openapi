@@ -1,7 +1,7 @@
 <template>
     <div>
         <back-header :title="title" back_url='/physical'></back-header>
-        <el-tabs type="border-card" v-model="active" @tab-click="handleClick">
+        <el-tabs type="border-card" v-model="active" @tab-click="handleClick" style="margin-top:28px">
             <el-tab-pane label="概要" name="0">
                 <template v-if="active==='0'">
                     <Info :host_id="id" />

@@ -35,9 +35,9 @@
                     <span>{{scope.row.alarmMethod.length===2 ? '邮箱+短信' : notice[scope.row.alarmMethod[0]]}}</span>
                 </template>
             </el-table-column>
-            <el-table-column 
-                prop="dealStatus" 
-                label="处理结果" 
+            <el-table-column
+                prop="dealStatus"
+                label="处理结果"
                 :filters="fil_list"
                 :filter-multiple="false"
                 filter-placement="bottom-end"
@@ -122,7 +122,7 @@ export default class Contact extends Vue{
             value:'0'
         },
     ]
-    
+
     private list=[]
     private current:number = 1
     private size:number = 20
@@ -143,7 +143,7 @@ export default class Contact extends Vue{
     private async getContactGroupList(){
         let res:any=await Service.get_contact_group_list({})
         if(res.code==='Success'){
-            this.search.contact.list = trans(res.data.datas,'name','id','label','type') 
+            this.search.contact.list = trans(res.data.datas,'name','id','label','type')
         }
     }
     private async getAlarmList(){
@@ -160,7 +160,7 @@ export default class Contact extends Vue{
             page:this.current,
             pageSize:this.size
         })
-        
+
         if(res.code==='Success'){
             this.list = res.data.datas || []
             this.total = res.data.total || 0
@@ -237,7 +237,7 @@ export default class Contact extends Vue{
 <style lang="scss" scoped>
 .time_btns{
     margin-bottom: 20px;
-    
+
 }
 .event-table{
     margin-top: 20px;

@@ -60,7 +60,7 @@
         <el-button type="default" @click="FnClear">清 空</el-button>
       </div>
     </div>
-    <div class="m-bottom20" v-if="type">
+    <div class="m-bottom5" v-if="type">
       <el-button type="primary" @click="FnSearch">查 询</el-button>
       <el-button type="primary" v-if="type === 'physical'" @click="FnMultiSearch">批量查询</el-button>
       <el-button type="default" @click="FnClear">清 空</el-button>
@@ -200,7 +200,6 @@ export default class ActionBlock extends Vue {
   padding: 20px;
   background: #f2f2f2;
   border: 1px solid #e7e7e7;
-  margin-bottom: 20px;
 }
 .search-box {
   display: flex;

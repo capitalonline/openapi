@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7620268",
+      "name": "机房",
+      "font_class": "machine",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
+    },
+    {
+      "icon_id": "37507642",
+      "name": "更多-圆-L",
+      "font_class": "more",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
       "icon_id": "657506",
       "name": "信息",
       "font_class": "xinxi",
@@ -32,13 +46,6 @@
       "font_class": "tree",
       "unicode": "e98e",
       "unicode_decimal": 59790
-    },
-    {
-      "icon_id": "24574867",
-      "name": "机房",
-      "font_class": "machine",
-      "unicode": "e600",
-      "unicode_decimal": 58880
     }
   ]
 }

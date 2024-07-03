@@ -22,26 +22,40 @@ export default{
   get_pod_host_list(req){
     return service(getEcsOptions('GET','/pod/get_pod_host_list/',req))
   },
-  //获取pod虚拟机数据
-  get_pod_ecs_list(req){
-    return service(getEcsOptions('GET','/pod/get_pod_ecs_list/',req))
+  //新建集群
+  create_cluster(req){
+    return service(getEcsOptions('POST','/cluster/create_cluster/',req))
   },
-  //获取pod虚拟机表头
-  get_pod_ecs_field(){
-    return service(getEcsOptions('GET','/pod/get_pod_ecs_field/'))
+  //编辑集群
+  update_cluster(req){
+    return service(getEcsOptions('POST','/cluster/update_cluster/',req))
+  },
+  //删除集群
+  delete_cluster(req){
+    return service(getEcsOptions('POST','/cluster/delete_cluster/',req))
+  },
+  //获取pod信息
+  get_pod_list(req){
+    return service(getEcsOptions('GET','/pod/get_pod_list/',req))
+  },
+  //获取cpu/gpu型号信息
+  get_model_info_list(req){
+    return service(getEcsOptions('GET','/cluster/get_model_info_list/',req))
+  },
+  //获取存储集群信息
+  get_storage_cluster_info(req){
+    return service(getEcsOptions('GET','/cluster/get_storage_cluster_info/',req))
   },
   //获取电源与机器状态
   get_status_list(req){
     return service(getHostOptions('GET','/host/host_status_list/',req))
   },
-  get_vm_status_list() {
-    return service(getEcsOptions('GET', '/ecs/ecs_status_list/'))
+  //获取推荐宿主机相匹配的集群
+  recommend_cluster(req){
+    return service(getHostOptions('POST','/host/recommend_cluster/',req))
   },
-  get_family_data() {
-    return service(getEcsOptions('GET', '/ecs/get_family_data/'))
-  },
-  get_product_source(){
-    return service(getEcsOptions('GET','/ecs/get_product_source/'))
+  //主机导入集群
+  add_cluster(req){
+    return service(getHostOptions('POST','/host/host_add_cluster/',req))
   }
-
 }

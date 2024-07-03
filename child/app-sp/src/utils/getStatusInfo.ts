@@ -46,7 +46,21 @@ const host_status={//error为新增状态，异常
   unlock:{power:[],host:['lock'],msg:'已选主机需为锁定状态',label:'解锁'},
   unstore_exception:{power:[],host:['storage_error'],msg:'已选主机需为存储异常状态',label:'解除存储异常'},
   service:{power:[],host:[],msg:'',label:'服务更新'},
-  rollback:{power:[],host:[],label:'回滚'}
+  rollback:{power:[],host:[],label:'回滚'},
+
+  physical_detail:{power:[],host:[],msg:'',label:'详情'},
+  data_clear:{power:[],host:['crash_clear'],msg:'',label:'数据清理同步'},
+  down_recover:{power:[],host:['crash_recover'],msg:'',label:'宕机恢复'},
+  sign:{power:[],host:[],msg:'',label:'设备标记'},
+  upload:{power:[],host:[],msg:'',label:'导入'},
+  under_sync:{power:[],host:[],msg:'',label:'底层同步'},
+  cheat:{power:[],host:[],msg:'',label:'欺骗器管理'},
+  business_test:{power:[],host:[],msg:'',label:'业务测试'},
+  record:{power:[],host:[],msg:'',label:'操作记录'},
+  resource:{power:[],host:[],msg:'',label:'分配资源'},
+  remark:{power:[],host:[],msg:'',label:'编辑备注'},
+  add_cluster:{power:[],host:[],msg:'',label:'加入集群'},
+  change_cluster: {power:[],host:[],msg:'',label:'更换集群'}
 }
 export default {
   getInsOperateAuth(type) {
