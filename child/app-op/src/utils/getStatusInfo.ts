@@ -30,7 +30,7 @@ const host_status={//error为新增状态，异常
   online_maintenance:{power:[],host:['online','exception'],msg:'已选主机需为在线状态',label:'在线维护'},
   offline_maintenance:{power:[],host:['offline','online','exception'],vm:1,msg:'已选主机需为在线或离线状态且已选主机上不能有虚拟机运行',label:'离线维护'},
   finish:{power:[],host:['maintenance','online_maintenance','offline_maintenance'],msg:'已选主机需为维护中状态',label:'完成维护'},
-  shelves:{power:[],host:['maintenance'],vm:1,msg:'已选主机需为维护中状态且已选主机上不能有虚拟机运行',label:'下架'},
+  shelves:{power:[],host:['maintenance'],vm:1,msg:'已选主机需为维护状态且已选主机上不能有虚拟机运行',label:'下架'},
   disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
   out_of_band:{power:[],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'进入带外管理'},
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
