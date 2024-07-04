@@ -15166,12 +15166,14 @@ def get_status(task_id):
 | 达拉斯L       | US_Dallas_L       | 是             | 北美地区 |
 | 新加坡E       | APAC_Singapore_E  | 是             | 亚太地区 |
 | 呼和浩特A     | CN_Huhehaote_A    | 是             | 中国大陆 |
+| 呼和浩特B     | CN_Huhehaote_B    | 是             | 中国大陆 |
 | 圣保罗A       | SR_SaintPaul_A    | 是             | 南美地区 |
 | 苏州A         | CN_Suzhou_A       | 是             | 中国大陆 |
 | 雅加达A       | APAC_Jakarta_A    | 是             | 亚太地区 |
 | 胡志明A       | APAC_HoChiMinh_A  | 是             | 亚太地区 |
 | 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
 | 达拉斯N       | US_Dallas_N       | 是             | 北美地区 |
+| 宿迁B         | CN_Suqian_B       | 是             | 中国大陆 |
 
 ## 附件二
 
