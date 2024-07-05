@@ -514,18 +514,18 @@ def get_mysql_spec_info():
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                                         |
-| :----------- | :--- | :----- | ------------------------------------------------------------ |
-| RegionId     | 是   | string | 站点编号                                                     |
-| VdcId        | 是   | string | 数据中心的编号                                               |
-| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配IP               |
-| InstanceName | 是   | string | 实例名称                                                     |
-| PaasGoodsId  | 是   | int    | 产品的规格编号                                               |
-| DiskType     | 是   | string | 磁盘类型 只能选择支持的磁盘类型                              |
-| DiskValue    | 是   | int    | 磁盘大小                                                     |
+| 参数名       | 必选 | 类型   | 说明                                                                                                                                                                                                                                                                                      |
+| :----------- | :--- | :----- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| RegionId     | 是   | string | 站点编号  （请参考 : [1 DescribeRegions](#1describeregions))                                                                                                                                                                                                                                    |
+| VdcId        | 是   | string | 数据中心的编号  （请参考:[获取数据中列表接口](https://github.com/capitalonline/openapi/blob/master/%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%A6%82%E8%A7%88.md#1describevdc))                                                                                                               |
+| BasePipeId   | 是   | string | 数据中心的私网编号，创建服务将按这个私网分配IP   (请参考:[获取数据中列表接口](https://github.com/capitalonline/openapi/blob/master/%E8%99%9A%E6%8B%9F%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%A6%82%E8%A7%88.md#1describevdc))                                                                                             |
+| InstanceName | 是   | string | 实例名称                                                                                                                                                                                                                                                                                    |
+| PaasGoodsId  | 是   | int    | 产品的规格编号   (请参考: [2 DescribeAvailableDBConfig](#2describeavailabledbconfig))                                                                                                                                                                                                             |
+| DiskType     | 是   | string | 磁盘类型 只能选择支持的磁盘类型   (请参考:[2 DescribeAvailableDBConfig](#2describeavailabledbconfig))                                                                                                                                                                                                     |
+| DiskValue    | 是   | int    | 磁盘大小                                                                                                                                                                                                                                                                                    |
 | TimeZone     | 否   | string | 实例的UTC时区，默认值根据地域不同变化，输入参数范围：<br />["-12:00","-11:00","-10:00","-09:00","-08:00","-07:00","-06:00","-05:00","-04:00","-03:00","-02:00","-01:00","+00:00","+01:00","+02:00","+03:00","+04:00","+05:00","+05:30","+06:00","+07:00","+08:00","+09:00","+10:00","+11:00","+12:00","+13:00",] |
-| Amount       | 否   | int    | 购买的数量，一次最多购买10个                                 |
-| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
+| Amount       | 否   | int    | 购买的数量，一次最多购买10个                                                                                                                                                                                                                                                                         |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效）                                                                                                                                                                                                                                           |
 
 **返回参数：**
 
@@ -1249,12 +1249,12 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                                         |
-| :----------- | :--- | :----- | ------------------------------------------------------------ |
-| InstanceUuid | 是   | string | 要修改配置的实例编号                                         |
-| PaasGoodsId  | 否   | int    | 变更后规格的商品编号                                         |
-| DiskType     | 否   | string | 磁盘类型，磁盘的添加类型。只能跟最开始购买时候类型一致。不能一个实例加多种类型磁盘，比如最开始添加高性能磁盘，后面也只能选择添加高性能磁盘 |
-| DiskValue    | 否   | string | 新增磁盘大小                                                     |
+| 参数名       | 必选 | 类型   | 说明                                                                                                                                      |
+| :----------- | :--- | :----- |-----------------------------------------------------------------------------------------------------------------------------------------|
+| InstanceUuid | 是   | string | 要修改配置的实例编号   （请参考 [4.DescribeDBInstances](#4describedbinstances)）                                                                                                                     |
+| PaasGoodsId  | 否   | int    | 变更后规格的商品编号   （请参考 [11.DescribeModifiableDBSpec](#11describemodifiabledbspec) ）                                                          |
+| DiskType     | 否   | string | 磁盘类型，磁盘的添加类型。只能跟最开始购买时候类型一致。不能一个实例加多种类型磁盘，比如最开始添加高性能磁盘，后面也只能选择添加高性能磁盘 （请参考 [11.DescribeModifiableDBSpec](#11describemodifiabledbspec) ） |
+| DiskValue    | 否   | string | 新增磁盘大小                                                                                                                                  |
 
 **返回参数：**
 
@@ -1527,16 +1527,16 @@ def get_mysql_modifiable_spec(instance_uuid):
 
 **请求参数：**
 
-| 参数名       | 必选 | 类型   | 说明                                                         |
-| :----------- | :--- | :----- | ------------------------------------------------------------ |
-| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例                             |
-| InstanceName | 是   | string | 只读实例名称                                                 |
-| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格                       |
-| DiskType     | 是   | string | 磁盘类型                                                     |
-| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例                     |
-| TestGroupId  | 否   | int    | 是否使用测试组计费                                           |
-| Amount       | 否   | int    | 购买的数量一次最多购买三个                                   |
-| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效） |
+| 参数名       | 必选 | 类型   | 说明                                                                                                 |
+| :----------- | :--- | :----- |----------------------------------------------------------------------------------------------------|
+| InstanceUuid | 是   | string | 实例编号，为该数据库添加只读实例     （请参考 [4.DescribeDBInstances](#4describedbinstances)）                          |
+| InstanceName | 是   | string | 只读实例名称                                                                                             |
+| PaasGoodsId  | 是   | int    | 只读实例商品规格，要大于等于主实例规格   请参考 [14 DescribeAvailableReadOnlyConfig](#14describeavailablereadonlyconfig) |
+| DiskType     | 是   | string | 磁盘类型       请参考 [14 DescribeAvailableReadOnlyConfig](#14describeavailablereadonlyconfig)            |
+| DiskValue    | 是   | int    | 磁盘大小，只读实例磁盘规格不能低于主实例                                                                               |
+| TestGroupId  | 否   | int    | 是否使用测试组计费                                                                                          |
+| Amount       | 否   | int    | 购买的数量一次最多购买三个                                                                                      |
+| ServicePort  | 否   | int    | MySQL实例端口，默认3306，取值范围：1024-65535（9100和9101无效）                                                      |
 
 **返回参数：**
 
