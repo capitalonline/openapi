@@ -150,6 +150,8 @@
        * [4.DescribeAccountInfo](#4describeAccountInfo)
        * [5.DescribeCostSummaryByPro](#5describecostsummarybypro)
        * [6.DescribeCostSummaryByProject](#6describecostsummarybyproject)
+     * [测试项目相关](#测试项目相关)
+       * [1.DescribeSubjects](#1describesubjects)
      * [冷云计量相关](#冷云计量相关)
        * [1.GetMetering](#1GetMetering)
      * [网络告警相关](#网络告警相关)
@@ -8393,6 +8395,110 @@ def describe_goodsId():
 }
 ```
 
+## 测试项目相关
+
+### 1.DescribeSubjects
+
+**Action：DescribeSubjects**
+
+**描述** 获取当前账户下的测试项目。
+
+**请求地址:** api.capitalonline.net/platform/subject
+
+**请求方法：GET**
+
+**返回参数:**
+
+| 名称              | 类型   | 示例                                 | 描述                                                         |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| Id                | Int    | 3273566                              | 测试项目id                                                   |
+| Name              | String | 测试项目-按需                        | 名称                                                         |
+| Balance           | String | 1110.00                              | 可用余额，单位 元/美元                                       |
+| BeginTime         | String | 2024-02-21                           | 开始测试时间                                                 |
+| EndTime           | String | 2024-03-02                           | 结束测试时间                                                 |
+| BillMethod        | String | 0                                    | 支持的计费方式                                               |
+| BillMethodDisplay | String | 按需计费                             | 支持的计费方式展示                                           |
+| GoodsIds          | String | 8534,8528                            | 支持的商品，该字段**unlimited**代表所有商品支持（与GoodsNames限制一致） |
+| GoodsNames        | String | 商品名称                             | 支持的商品，该字段**无限制**代表所有商品支持（与GoodsIds限制一致） |
+| SiteIds           | String | 35304122-8504-400c-a61c-56ba244c5dda | 支持创建的节点，该字段**unlimited**代表所有节点支持（与SiteNames限制一致） |
+| SiteNames         | String | 石家庄A                              | 支持创建的节点，该字段**无限制**代表所有节点支持（与SiteIds限制一致） |
+
+返回示例：
+
+~~~json
+{
+          "Code":  "Success",
+          "Msg":  "Success",
+          "Data":  {
+                    "Total":  3,
+                    "Currency":  "人民币",
+                    "SubjectList":  [
+                              {
+                                        "Id":  3273359,
+                                        "Name":  "测试项目-按需",
+                                        "Balance":  "13808.27",
+                                        "BeginTime":  "2021-12-31",
+                                        "EndTime":  "2026-04-14",
+                                        "BillMethod":  "0",
+                                        "BillMethodDisplay":  "按需计费",
+                                        "GoodsIds":  "unlimited",
+                                        "GoodsNames":  "无限制",
+                                        "SiteIds":  "unlimited",
+                                        "SiteNames":  "无限制"
+                              },
+                              {
+                                        "Id":  3273566,
+                                        "Name":  "指定区域测试",
+                                        "Balance":  "111110.00",
+                                        "BeginTime":  "2023-12-07",
+                                        "EndTime":  "2024-03-16",
+                                        "BillMethod":  "0",
+                                        "BillMethodDisplay":  "按需计费",
+                                        "GoodsIds":  "8534,8528",
+                                        "GoodsNames":  "CCK镜像仓库增强配置,带宽",
+                                        "SiteIds":  "35304122-8504-400c-a61c-56ba244c5dda,1296b88a-8903-11ea-a207-9a8ee1b6ac8c,35aef6e1-34ee-4f32-bcc4-62ede720ba80,a04f56cf-55d4-11e5-aa04-482199072629,b13d22e9-c078-4979-a06e-cc1c2cbaeb9c,bb2e22cf-5643-11e7-81eb-184f329fa47a,04d42ff3-bb26-4063-89e9-1c38509843a3,25c7978e-c820-4cd6-8bd3-77f90e410ffb,ca0bd848-9b59-40a2-9f57-d64fbc72a9df,d01a7924-6454-11ea-b26e-00505691938c,750b39e0-03d4-485c-8b07-8aec2329050a,b70c5130-629d-11ea-94fb-00505691f8f1,fdd523fe-fe6c-434a-a817-9b415a0206e8,fba8121c-e5a1-4038-b240-790db3ed5b5d,61fb444a-f0ad-41cf-aef2-19297c7dbf37,b4d0a486-71b3-4e6c-a136-2c9beb98546f,b26322d9-6dc0-4a60-a46e-c8aa6a00163b,ba46b02f-eb4e-457a-a800-1f2bfb9d80be,de0b0931-4c14-4f0b-ab60-7e1768241136",
+                                        "SiteNames":  "北京C,香港B,北京D,香港1,迪拜1,纽约1,研发kvm,广州网络节点,研发GIC,上海1,达拉斯1,北京10,台北1,北京2,北京5,北京F,无锡3,上海3,北京3"
+                              },
+                              {
+                                        "Id":  3273580,
+                                        "Name":  "测试",
+                                        "Balance":  "1000.00",
+                                        "BeginTime":  "2024-02-21",
+                                        "EndTime":  "2024-03-02",
+                                        "BillMethod":  "0",
+                                        "BillMethodDisplay":  "按需计费",
+                                        "GoodsIds":  "unlimited",
+                                        "GoodsNames":  "无限制",
+                                        "SiteIds":  "unlimited",
+                                        "SiteNames":  "无限制"
+                              }
+                    ]
+          },
+          "RequestId":  "9e50f1f7a1d0f688f0e2515192848612"
+}
+~~~
+
+**调用代码示例:**
+
+~~~python
+def describe_subjects():
+    ak = "xxxxxxxx"
+    sk = "xxxxxxxx"
+    url = "https://api.capitalonline.net/platform/subject"
+    action = "DescribeSubjects"
+    method = "GET"
+    url = get_signature(action, ak, sk, method, url)
+    resp = requests.get(url)
+    result = json.loads(resp.content)
+    result = json.dumps(result)  # json格式化
+    result = result.encode('utf-8').decode('unicode_escape')  # 转中文
+    print(result)
+    return result
+~~~
+
+
+
+
 ## 冷云计量相关
 
 ### 1.GetMetering
@@ -15070,6 +15176,7 @@ def get_status(task_id):
 | 达拉斯L       | US_Dallas_L       | 是             | 北美地区 |
 | 迈阿密A       | US_Miami_A       | 是             | 北美地区 |
 | 呼和浩特A     | CN_Huhehaote_A    | 是             | 中国大陆 |
+| 呼和浩特B     | CN_Huhehaote_B    | 是             | 中国大陆 |
 | 圣保罗A       | SR_SaintPaul_A    | 是             | 南美地区 |
 | 苏州A         | CN_Suzhou_A       | 是             | 中国大陆 |
 | 雅加达A       | APAC_Jakarta_A    | 是             | 亚太地区 |
@@ -15077,6 +15184,8 @@ def get_status(task_id):
 | 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
 | 达拉斯N       | US_Dallas_N       | 是             | 北美地区 |
 | 长沙A        | CN_Changsha_A     | 否             | 中国大陆 |
+| 宿迁B         | CN_Suqian_B       | 是             | 中国大陆 |
+
 ## 附件二
 
 #### 主机类型
@@ -15231,8 +15340,6 @@ def get_status(task_id):
 | 东南亚区域优化带宽|Bandwidth_SoutheastAsia_Optimization  |  东南亚区域优化带宽-流量按需  |Traffic |
 | 东南亚区域优化带宽|Bandwidth_SoutheastAsia_Optimization  |   东南亚区域优化带宽-95峰值 |Bandwidth_95  |
 
-
-### 对应带宽类型支持的计费方法
 ## 附件四
 
 #### 公共模板
@@ -15240,7 +15347,8 @@ def get_status(task_id):
 | 模板大类型  | 模板类型                         | 中文名称                               |
 | ----------- | -------------------------------- | -------------------------------------- |
 | Anolis OS   | AnolisOS_8.6_64                  |                                        |
-| Rocky Linux | RockyLinux_9.0_64                |                                        |
+| Rocky Linux | RockyLinux_9.3_64                |                                        |
+|             | RockyLinux_9.0_64                |                                        |
 |             | RockyLinux_8.6_64                |                                        |
 |             | RockyLinux_8.5_64                |                                        |
 | Centos      | Centos_Stream_8                  |                                        |
