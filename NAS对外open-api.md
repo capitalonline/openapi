@@ -89,11 +89,11 @@ Object参数为：
 
 其中AZList对应的参数为：
 
-| 参数              | 类型   | 示例                                 | 说明       |
-| ----------------- | ------ | ------------------------------------ | ---------- |
-| AzId              | string | f7c3c7a6-8d5f-11ec-9311-5293695d0ddd | 可用区ID   |
-| AvailableZoneCode | String | CN_Hohhot_B                          | 可用区Code |
-| AzName            | String | 呼和浩特B                            | 可用区名称 |
+| 参数              | 类型   | 示例                                 | 说明                                                         |
+| ----------------- | ------ | ------------------------------------ | ------------------------------------------------------------ |
+| AzId              | string | f7c3c7a6-8d5f-11ec-9311-5293695d0ddd | 可用区ID                                                     |
+| AvailableZoneCode | String | CN_Hohhot_B                          | 可用区Code（参考[附件一](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%99%84%E4%BB%B6%E4%B8%80)RegionId字段） |
+| AzName            | String | 呼和浩特B                            | 可用区名称                                                   |
 
 **返回参数**：
 
@@ -165,14 +165,14 @@ def describe_regions():
 
 **请求参数**：
 
-| 参数              | 说明       | 类型   | 是否必传 | 示例                                 |
-| ----------------- | ---------- | ------ | -------- | ------------------------------------ |
-| AvailableZoneCode | 可用区Code | string | 否       | CN_Suqian_A                          |
-| RegionCode        | 地域Code   | string | 否       | CN_Suqian                            |
-| FileSystemIds     | 文件系统ID | string | 否       | nas-123,nas-324                      |
-| VpcId             | 私有网络ID | string | 否       | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 |
-| PageNumber        | 页码       | int    | 否       | 1，不传值默认为1                     |
-| PageSize          | 每页记录数 | int    | 否       | 20，不传值默认为所有                 |
+| 参数              | 说明                                                         | 类型   | 是否必传 | 示例                                 |
+| ----------------- | ------------------------------------------------------------ | ------ | -------- | ------------------------------------ |
+| AvailableZoneCode | 可用区Code（参考[附件一](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%99%84%E4%BB%B6%E4%B8%80)RegionId字段） | string | 否       | CN_Suqian_A                          |
+| RegionCode        | 地域Code                                                     | string | 否       | CN_Suqian                            |
+| FileSystemIds     | 文件系统ID                                                   | string | 否       | nas-123,nas-324                      |
+| VpcId             | 私有网络ID                                                   | string | 否       | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 |
+| PageNumber        | 页码                                                         | int    | 否       | 1，不传值默认为1                     |
+| PageSize          | 每页记录数                                                   | int    | 否       | 20，不传值默认为所有                 |
 
 **返回参数**：
 
@@ -187,24 +187,24 @@ def describe_regions():
 
 Object参数为：
 
-| 参数              | 类型     | 示例                                 | 说明                                                   |
-| ----------------- | -------- | ------------------------------------ | ------------------------------------------------------ |
-| RegionCode        | string   | CN_Suqian                            | 地域Code                                               |
-| AvailableZoneCode | string   | CN_Suqian_A                          | 可用区Code                                             |
-| FileSystemId      | string   | nas-**                               | 文件系统ID                                             |
-| FileSystemName    | string   | nas-**                               | 文件系统名称                                           |
-| Status            | string   | Running                              | 文件系统状态                                           |
-| FileSystemType    | string   | standard                             | standard:通用型                                        |
-| Capacity          | int      | 1024                                 | 文件系统容量，单位为GB                                 |
-| MeteredSize       | Long     | 1611661312                           | 文件系统使用量，为当前最新采集的使用量数据，单位为Byte |
-| ProtocolType      | string   | NFS                                  | NFS：NFS文件协议，SMB：SMB文件协议                     |
-| VpcId             | string   | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 | VPC ID                                                 |
-| VpcName           | String   | VPC名称                              | VPC 名称                                               |
-| SubnetId          | String   | 2f048df0-76cf-11ed-aae3-46c53bbd46d9 | 子网ID                                                 |
-| SubnetName        | String   | 子网名称                             | 子网名称                                               |
-| MountedPath       | List     | ["10.26.0.38:/1a8c9123"]             | 挂载地址                                               |
-| BillingMethod     | string   | 0                                    | 计费方式，0:按需计费                                   |
-| CreateTime        | datetime | 2022-07-22 16:41:28                  | 创建时间                                               |
+| 参数              | 类型     | 示例                                 | 说明                                                         |
+| ----------------- | -------- | ------------------------------------ | ------------------------------------------------------------ |
+| RegionCode        | string   | CN_Suqian                            | 地域Code                                                     |
+| AvailableZoneCode | string   | CN_Suqian_A                          | 可用区Code（参考[附件一](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%99%84%E4%BB%B6%E4%B8%80)RegionId字段） |
+| FileSystemId      | string   | nas-**                               | 文件系统ID                                                   |
+| FileSystemName    | string   | nas-**                               | 文件系统名称                                                 |
+| Status            | string   | Running                              | 文件系统状态                                                 |
+| FileSystemType    | string   | standard                             | standard:通用型                                              |
+| Capacity          | int      | 1024                                 | 文件系统容量，单位为GB                                       |
+| MeteredSize       | Long     | 1611661312                           | 文件系统使用量，为当前最新采集的使用量数据，单位为Byte       |
+| ProtocolType      | string   | NFS                                  | NFS：NFS文件协议，SMB：SMB文件协议                           |
+| VpcId             | string   | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 | VPC ID                                                       |
+| VpcName           | String   | VPC名称                              | VPC 名称                                                     |
+| SubnetId          | String   | 2f048df0-76cf-11ed-aae3-46c53bbd46d9 | 子网ID                                                       |
+| SubnetName        | String   | 子网名称                             | 子网名称                                                     |
+| MountedPath       | List     | ["10.26.0.38:/1a8c9123"]             | 挂载地址                                                     |
+| BillingMethod     | string   | 0                                    | 计费方式，0:按需计费                                         |
+| CreateTime        | datetime | 2022-07-22 16:41:28                  | 创建时间                                                     |
 
 **调用代码示例**：
 
@@ -300,13 +300,13 @@ def describe_file_systems():
 
 **请求参数**：
 
-| 参数              | 说明                               | 类型   | 是否必传 | 示例                                 |
-| ----------------- | ---------------------------------- | ------ | -------- | ------------------------------------ |
-| AvailableZoneCode | 可用区Code                         | string | 是       | CN_Suqian_A                          |
-| FileSystemType    | 文件系统类型,standard:通用型       | string | 是       | standard                             |
-| ProtocolType      | NFS：NFS文件协议，SMB：SMB文件协议 | String | 是       | NFS                                  |
-| VpcId             | VPC ID                             | String | 是       | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 |
-| SubnetId          | 子网ID                             | string | 是       | 2f048df0-76cf-11ed-aae3-46c53bbd46d9 |
+| 参数              | 说明                                                         | 类型   | 是否必传 | 示例                                 |
+| ----------------- | ------------------------------------------------------------ | ------ | -------- | ------------------------------------ |
+| AvailableZoneCode | 可用区Code（参考[附件一](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#%E9%99%84%E4%BB%B6%E4%B8%80)RegionId字段） | string | 是       | CN_Suqian_A                          |
+| FileSystemType    | 文件系统类型,standard:通用型                                 | string | 是       | standard                             |
+| ProtocolType      | NFS：NFS文件协议，SMB：SMB文件协议                           | String | 是       | NFS                                  |
+| VpcId             | VPC ID                                                       | String | 是       | 2efde1b2-76cf-11ed-aae3-46c53bbd2344 |
+| SubnetId          | 子网ID                                                       | string | 是       | 2f048df0-76cf-11ed-aae3-46c53bbd46d9 |
 
 **返回参数**：
 
