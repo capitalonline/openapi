@@ -1,4 +1,5 @@
 <template>
+  <el-card>
   <div class="info">
     <div class="item">
       <div v-for="(item,id) in base_info" :key="id" >
@@ -48,6 +49,7 @@
     </div>
 
   </div>
+  </el-card>
 </template>
 <script lang="ts">
 import { Component, Emit, Vue ,Prop} from 'vue-property-decorator';

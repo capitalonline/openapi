@@ -47,5 +47,9 @@ export default class List extends Vue{
 </script>
 
 <style scoped>
+.currentInfo{
+  font-weight: bold;
+  padding-top: 5px;
+}
 
 </style>
