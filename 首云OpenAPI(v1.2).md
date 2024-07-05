@@ -277,6 +277,12 @@
      * [附件五](#附件五)
        * [1.私有网络区域名称](#私有网络区域名称)
        * [2.私有网络可用区名称](#私有网络可用区名称) 
+     * [附件六](#附件六)
+       * [1.VPC推荐网段](#VPC推荐网段)
+       * [2.带宽类型](#带宽类型)
+       * [3.EIP计费方案](#EIP计费方案)
+       * [4.共享带宽计费类型](#共享带宽计费类型)
+
      * [示例](#示例)
        * [1.获取请求url](#1获取请求url)
        * [2.获取虚拟数据中心公网信息](#2获取虚拟数据中心公网信息)
@@ -2544,9 +2550,9 @@ def describe_vpc(regin_code, key, page):
 | ----------------- | ------ | -------- | ----------------------- | ----------------------------------- |
 | RegionCode        | string | 是       | CN_Hongkong             | VPC区域code, 见附件五               |
 | VPCName           | string | 是       | name                    | VPC名称                             |
-| VPCSegment        | string | 是       | 10.15.0.0/16            | VPC网段                             |
-| VPCSegmentType    | string | 是       | auto/manual             | 使用推荐网段或手动分配              |
-| BandwidthType     | string | 否       | Bandwidth_China_Telecom | VPC带宽类型，边缘节点必传，见附件三 |
+| VPCSegment        | string | 是       | 10.15.0.0/16            | VPC网段   推荐网段，见附件六                          |
+| VPCSegmentType    | string | 是       | auto/manual             | 使用推荐网段或手动分配，              |
+| BandwidthType     | string | 否       | Bandwidth_China_Telecom | VPC带宽类型，边缘节点必传，见附件六 |
 | SubnetList        | list   | 是       | []                      | 创建VPC必须创建一个子网             |
 | AvailableZoneCode | string | 是       | CN_Hongkong_B           | VPC可用区code, 见附件五             |
 | SubnetName        | string | 是       | 子网1                   | 子网名称                            |
@@ -3168,7 +3174,7 @@ def delete_virtual_gateway(virtual_gateway_id):
 | Name              | string   | ""                                   | 共享带宽名称(云平台节点，加入了共享带宽的EIP会有此字段) |
 | Qos               | int      | 10                                   | 带宽大小（Mbps）                                        |
 | AvailableZoneCode | string   | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段)      |
-| BandwidthType     | string   | Bandwidth_China_Telecom              |                                                         |
+| BandwidthType     | string   | Bandwidth_China_Telecom ，见附件六             |                                                         |
 | BillScheme        | string   | BandwIdth                            |                                                         |
 | Status            | string   | ok                                   | 带宽状态                                                |
 | CreateTime        | string   | 2022-06-02 18:05:47                  | 带宽创建时间                                            |
@@ -3278,8 +3284,8 @@ def describe_eip(regin_code, key, page, vpc_id, az_code):
 | ----------------- | ------ | ----------------------------- | ----------------------- | ------------------------------------------------------------ |
 | RegionCode        | string | 是                            | CN_Hongkong             | VPC区域code, 见附件五                                        |
 | AvailableZoneCode | string | 边缘节点：是 / 云平台节点: 否 |                         | VPC可用区code, 见附件五(云平台节点EIP不传此字段/边缘节点必传) |
-| BandwidthType     | string | 是                            | Bandwidth_China_Telecom | 带宽类型                                                     |
-| BillScheme        | string | 是                            | BandwIdth               | 计费方案<br/>BandwIdth（固定带宽）<br/>BandwIdthMonth（固定带宽包月）<br/>Traffic（流量按需）<br/> |
+| BandwidthType     | string | 是                            | Bandwidth_China_Telecom ，见附件六| 带宽类型                                                     |
+| BillScheme        | string | 是                            | BandwIdth               | 计费方案见附件六，EIP计费方案 |
 | Qos               | int    | 是                            | 5                       | 带宽大小                                                     |
 | Size              | int    | 是                            | 1                       | 创建个数                                                     |
 | Description       | string | 否                            | test                    | EIP描述                                                      |
@@ -3616,7 +3622,7 @@ def unbind_eip(regin_code, key, page, vpc_id, az_code):
 | Qos               | int    | 10                                   | 带宽大小（Mbps）                                   |
 | RegionCode        | string | “”                                   | VPC区域code, 见附件五                              |
 | AvailableZoneCode | string | ""                                   | VPC可用区code, 见附件五(云平台节点EIP不包含此字段) |
-| BandwidthType     | string | Bandwidth_China_Telecom              | 带宽类型                                           |
+| BandwidthType     | string | Bandwidth_China_Telecom ，见附件六             | 带宽类型                                           |
 | BillScheme        | string | BandwIdth                            | 计费方案                                           |
 | Status            | string | ok                                   | 带宽状态                                           |
 | CreateTime        | string | 2022-06-02 18:05:47                  | 带宽创建时间                                       |
@@ -3721,8 +3727,8 @@ def describe_bandwidth(regin_code, key, page, vpc_id, az_code):
 | RegionCode        | string | 是       | CN_Hongkong                          | VPC区域code, 见附件五                                        |
 | AvailableZoneCode | string | 是       | CN_Hongkong_B                        | VPC可用区code, 见附件五                                      |
 | Name              | string | 是       | 香港共享带宽                         | 共享带宽名称                                                 |
-| BandwidthType     | string | 是       | Bandwidth_China_Telecom              | 带宽类型                                                     |
-| BillScheme        | string | 是       | BandwIdth                            | 计费方案<br/>BandwIdth_Shared（固定带宽）<br/>Traffic_Shared（流量按需） |
+| BandwidthType     | string | 是       | Bandwidth_China_Telecom ，见附件六             | 带宽类型                                                     |
+| BillScheme        | string | 是       | BandwIdth                            | 计费方案，见附件六，共享带宽计费方案 |
 | Qos               | int    | 是       | 5                                    | 带宽大小                                                     |
 | NETID             | string | 否       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | 子网ID，边缘节点必传                                         |
 | SubjectId      | int | 否       | 123                                                  | 测试金Id                     |
@@ -3977,7 +3983,7 @@ def bandwidth_add_eip(regin_code, key, page, vpc_id, az_code):
 | EIPIdList     | array  | 是       | ["abcd"]                | EIP列表                                                      |
 | Delete        | bool   | 是       | False                   | 是否直接删除EIP，（否则需要为EIP新购独享底宽， 以下参数必传） |
 | RegionCode    | string | 是       | CN_Hongkong             | VPC区域code, 见附件五                                        |
-| BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型                                                     |
+| BandwidthType | string | 是       | Bandwidth_China_Telecom，见附件六 | 带宽类型                                                     |
 | BillScheme    | string | 是       | BandwIdth               | 计费方案                                                     |
 | Qos           | int    | 是       | 5                       | 带宽大小                                                     |
 
@@ -4169,7 +4175,7 @@ def ip_list(net_id, net_type):
 | EIPId         | string | 2e4fb57a-a43d-11ec-a3b5-fefaa522c9da | EIP ID                   |
 | Qos           | int    | 20                                   | EIP 带宽                 |
 | Status        | string | ok                                   | EIP 状态                 |
-| BandwidthType | string | ok                                   | EIP 带宽类型             |
+| BandwidthType | string | ok                                   | EIP 带宽类型，见附件六             |
 | BillScheme    | string | ok                                   | EIP 带宽计费方案         |
 | ReginCode     | string | ok                                   | EIP Region Code          |
 
@@ -4619,7 +4625,7 @@ def vlink_delete():
 | 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
 | ------------- | ------ | -------- | ------------------------------------ | -------------------- |
 | VPCID         | string | 是       | ce11eb1e-e6fa-11ec-8b50-bafaaf87d540 | VPC ID               |
-| BandwidthType | string | 是       | Bandwidth_China_Telecom              | 共享带宽大小（Mbps） |
+| BandwidthType | string | 是       | Bandwidth_China_Telecom              | 见附件六 |
 
 
   **返回参数：**
@@ -15024,6 +15030,8 @@ def get_status(task_id):
 | 北京H         | CN_Beijing_H      | 否             | 中国大陆 |
 | 北京I         | CN_Beijing_I      | 是             | 中国大陆 |
 | 北京J         | CN_Beijing_J      | 是             | 中国大陆 |
+| 北京Y         | CN_Beijing_Y      | 是             | 中国大陆 |
+| 北京Z         | CN_Beijing_Z     | 是             | 中国大陆 |
 | 达拉斯A       | US_Dallas_A       | 否             | 北美地区 |
 | 达拉斯B       | US_Dallas_B       | 否             | 北美地区 |
 | 达拉斯C       | US_Dallas_C       | 否             | 北美地区 |
@@ -15037,12 +15045,14 @@ def get_status(task_id):
 | 迈阿密A       | US_Miami_A        | 否             | 北美地区 |
 | 德国A         | EUR_Germany_A     | 否             | 欧洲地区 |
 | 德国B         | EUR_Germany_B     | 否             | 欧洲地区 |
+| 德国C         | EUR_Germany_C     | 否             | 欧洲地区 |
 | 东京A         | APAC_Tokyo_A      | 否             | 亚太地区 |
 | 广州A         | CN_Guangzhou_A    | 否             | 中国大陆 |
 | 荷兰A         | EUR_Netherlands_A | 否             | 欧洲地区 |
 | 洛杉矶A       | US_LosAngeles_A   | 否             | 北美地区 |
 | 上海A         | CN_Shanghai_A     | 否             | 中国大陆 |
 | 上海C         | CN_Shanghai_C     | 否             | 中国大陆 |
+| 上海D         | CN_Shanghai_D     | 否             | 中国大陆 |
 | 首尔A         | APAC_Seoul_A      | 否             | 亚太地区 |
 | 台北A         | CN_Taipei_A       | 否             | 中国大陆 |
 | 无锡A         | CN_Wuxi_A         | 否             | 中国大陆 |
@@ -15052,13 +15062,13 @@ def get_status(task_id):
 | 新加坡B       | APAC_Singapore_B  | 否             | 亚太地区 |
 | 新加坡C       | APAC_Singapore_C  | 否             | 亚太地区 |
 | 新加坡D       | APAC_Singapore_D  | 否             | 亚太地区 |
+| 新加坡E       | APAC_SGSIN_E      | 否             | 亚太地区 |
 | 孟买A         | APAC_Mumbai_A     | 否             | 亚太地区 |
 | 孟买B(已下线) | APAC_Mumbai_B     | 否             | 亚太地区 |
 | 孟买C         | APAC_Mumbai_C     | 是             | 亚太地区 |
 | 弗吉尼亚A     | US_Virginia_A     | 是             | 北美地区 |
-| 德国C         | EUR_Germany_C     | 是             | 欧洲地区 |
 | 达拉斯L       | US_Dallas_L       | 是             | 北美地区 |
-| 新加坡E       | APAC_Singapore_E  | 是             | 亚太地区 |
+| 迈阿密A       | US_Miami_A       | 是             | 北美地区 |
 | 呼和浩特A     | CN_Huhehaote_A    | 是             | 中国大陆 |
 | 圣保罗A       | SR_SaintPaul_A    | 是             | 南美地区 |
 | 苏州A         | CN_Suzhou_A       | 是             | 中国大陆 |
@@ -15066,7 +15076,7 @@ def get_status(task_id):
 | 胡志明A       | APAC_HoChiMinh_A  | 是             | 亚太地区 |
 | 马赛A         | EUR_Marseilles_A  | 是             | 欧洲地区 |
 | 达拉斯N       | US_Dallas_N       | 是             | 北美地区 |
-
+| 长沙A        | CN_Changsha_A     | 否             | 中国大陆 |
 ## 附件二
 
 #### 主机类型
@@ -15154,30 +15164,75 @@ def get_status(task_id):
 
 #### 带宽类型
 
-| 带宽类型        | 带宽ID                                   |
-| --------------- | ---------------------------------------- |
-| 移动            | Bandwidth_CMCC                           |
-| 联通            | Bandwidth_China_Unicom                   |
-| 菲律宾优化带宽  | Southeast_Asia_Optimizes_Bandwidth       |
-| IPv6测试        | Test_Ipv6                                |
-| 日本本地带宽    | Bandwidth_Japan_Locally                  |
-| 韩国本地带宽    | Bandwidth_Korea_Locally                  |
-| BGP             | Bandwidth_BGP                            |
-| 韩国优化        | Bandwidth_Korea_Optimized                |
-| 台湾优化        | Bandwidth_Taiwai_Optimized               |
-| 电信            | Bandwidth_China_Telecom                  |
-| 双线BGP         | Bandwidth_Tow_Line_BGP                   |
-| 客户专用带宽    | Customer_Specific_Bandwidth              |
-| VIP专用带宽     | Bandwidth_VIP_Dedicated                  |
-| 全球优化BGP     | Globally_Optimized_BGP                   |
-| BGP优化         | Bandwidth_BGP_Optimized                  |
-| 华东BGP         | Bandwidth_East_China_BGP                 |
-| 华北BGP         | Bandwidth_North_China_BGP                |
-| 东南亚优化BGP   | Bandwidth_SoutheastAsia_Optimization_BGP |
-| 标准BGP         | Bandwidth_Standard_BGP                   |
-| BGP(多线)       | Bandwidth_Multi_ISP_BGP                  |
-| BGP(经济型多线) | Bandwidth_Multi_ISP_Economy_BGP          |
+|带宽类型|Type|计费方式|BillingMethod|
+|----:|-------:|-------:|-------:|
+|标准BGP |Bandwidth_Standard_BGP  |   标准BGP-固定带宽 |BandwIdth |
+| 标准BGP|Bandwidth_Standard_BGP  |   标准BGP-流量按需 |Traffic |
+| 标准BGP|Bandwidth_Standard_BGP  |   标准BGP-95峰值 |BandwIdth_95  |
+| BGP(多线)|Bandwidth_Multi_ISP_BGP |  BGP(多线)-固定带宽  |BandwIdth |
+| BGP(多线)|Bandwidth_Multi_ISP_BGP | BGP(多线)-流量按需   |Traffic |
+| BGP(多线)|Bandwidth_Multi_ISP_BGP |  BGP(多线)-95峰值  |BandwIdth_95  |
+| BGP(经济型多线) |Bandwidth_Multi_ISP_Economy_BGP | BGP(经济型多线)-固定带宽   |BandwIdth  |
+| BGP(经济型多线)|Bandwidth_Multi_ISP_Economy_BGP  |  BGP(经济型多线)-流量按需  |Traffic  |
+| BGP(经济型多线)|Bandwidth_Multi_ISP_Economy_BGP  |   BGP(经济型多线)-95峰值 |BandwIdth_95 |
+| BGP(本地多线)|Bandwidth_Locally_Multi_ISP_BGP |   BGP(本地多线)-固定带宽 |BandwIdth |
+| BGP(本地多线)|Bandwidth_Locally_Multi_ISP_BGP |   BGP(本地多线)-流量按需 |Traffic |
+| BGP(本地多线)|Bandwidth_Locally_Multi_ISP_BGP |   BGP(本地多线)-95峰值 |BandwIdth_95  |
+| BGP-中国优化|Bandwidth_China_Optimized  |  中国优化BGP-固定带宽  |BandwIdth |
+|BGP-中国优化 |Bandwidth_China_Optimized  |  中国优化BGP-95峰值  |BandwIdth_95  |
+|BGP-中国优化|Bandwidth_China_Optimized |  中国优化BGP-流量包  |DataPackage  |
+|BGP-中国优化 |Bandwidth_China_Optimized  |  BGP中国优化-流量按需  |Traffic |
+|双线BGP |Bandwidth_Tow_Line_BGP  |  双线BGP-固定带宽  |  BandwIdth |
+|双线BGP |Bandwidth_Tow_Line_BGP  |  双线BGP-流量包  | DataPackage |
+| 双线BGP|Bandwidth_Tow_Line_BGP  |    双线BGP-95峰值|  BandwIdth_95  |
+| 双线BGP|Bandwidth_Tow_Line_BGP  |   双线BGP-流量按需 |  Traffic |
+| 单移动带宽|Bandwidth_Single_CMCC |   单移动带宽-固定带宽 |BandwIdth |
+| 单移动带宽|Bandwidth_Single_CMCC |  单移动带宽-95峰值  |BandwIdth_95  |
+| 单电信带宽|Bandwidth_Single_Telecom  |   单电信带宽-固定带宽 |BandwIdth |
+| 单电信带宽|Bandwidth_Single_Telecom  |   单电信带宽-95峰值 |BandwIdth_95  |
+| 单联通带宽|Bandwidth_Single_Unicom |   单联通带宽-固定带宽 |BandwIdth |
+| 单联通带宽|Bandwidth_Single_Unicom |  单联通带宽-95峰值  |BandwIdth_95  |
+| BGP|Bandwidth_BGP |   BGP-固定带宽 |  BandwIdth |
+| BGP|Bandwidth_BGP |   BGP-流量包 |DataPackage  |
+| BGP|Bandwidth_BGP |  BGP-95峰值  |BandwIdth_95  |
+| BGP|Bandwidth_BGP |    BGP-流量按需|Traffic |
+| 电信|Bandwidth_China_Telecom  | 电信-固定带宽   |BandwIdth  |
+|电信 |Bandwidth_China_Telecom  |  电信-流量包  |DataPackage |
+| 电信|Bandwidth_China_Telecom  |   电信-95峰值|BandwIdth_95  |
+| 电信|Bandwidth_China_Telecom  |  单电信-流量按需  |Traffic |
+| 台湾优化|Bandwidth_Taiwai_Optimized |  台湾优化BGP-固定带宽  |BandwIdth|  
+| 台湾优化|Bandwidth_Taiwai_Optimized |   台湾优化BGP-流量包 |DataPackage| 
+| 台湾优化|Bandwidth_Taiwai_Optimized |   台湾优化-95峰值 |BandwIdth_95 |
+| 韩国优化|Bandwidth_Korea_Optimized  |    韩国优化BGP-固定带宽|BandwIdth|  
+| 韩国优化|Bandwidth_Korea_Optimized  |  韩国优化BGP-流量包  |DataPackage| 
+| 韩国优化|Bandwidth_Korea_Optimized  |   韩国优化BGP-95峰值 |BandwIdth_95| 
+| VIP专用带宽|Bandwidth_VIP_Dedicated |  VIP专用带宽-流量按需  |Traffic |
+| VIP专用带宽|Bandwidth_VIP_Dedicated |  VIP专用带宽-95峰值  |BandwIdth_95|
+| 韩国本地带宽|Bandwidth_Korea_Locally  |   韩国本地带宽-固定带宽 |BandwIdth| 
+| 韩国本地带宽|Bandwidth_Korea_Locally  |  韩国本地带宽-流量包  |DataPackage|  
+| 韩国本地带宽|Bandwidth_Korea_Locally  |   韩国本地带宽-95峰值 |BandwIdth_95 |
+| 全球优化BGP|Globally_Optimized_BGP  |   全球优化BGP-固定带宽 |BandwIdth|  
+| 日本本地带宽|Bandwidth_Japan_Locally  |   日本本地带宽-固定带宽 |BandwIdth| 
+| 菲律宾优化带宽|Southeast_Asia_Optimizes_Bandwidth  |  菲律宾优化带宽-流量按需  |Traffic|  
+| 菲律宾优化带宽|Southeast_Asia_Optimizes_Bandwidth  |  菲律宾优化带宽-固定带宽  |BandwIdth |
+| 菲律宾优化带宽|Southeast_Asia_Optimizes_Bandwidth  |   BandwIdth_95  菲律宾优化带宽-95峰值 |
+| 联通|Bandwidth_China_Unicom |   联通-固定带宽 | BandwIdth |
+| 移动|Bandwidth_CMCC |移动-固定带宽|BandwIdth  |
+| BGP优化|Bandwidth_BGP_Optimized |  BGP优化-固定带宽  |BandwIdth|  
+| BGP优化|Bandwidth_BGP_Optimized |  BGP优化-流量按需  |Traffic |
+| BGP优化|Bandwidth_BGP_Optimized |  BGP优化-95峰值  |BandwIdth_95  |
+| 华东BGP|Bandwidth_East_China_BGP  |  华东BGP-固定带宽  |BandwIdth |
+| 华东BGP|Bandwidth_East_China_BGP  |  华东BGP-流量按需  |Traffic |
+| 华东BGP|Bandwidth_East_China_BGP  |  华东BGP-95峰值  |BandwIdth_95  |
+| 华北BGP|Bandwidth_North_China_BGP | 华北BGP-流量按需   |Traffic |
+| 华北BGP|Bandwidth_North_China_BGP |   华北BGP-固定带宽  |Bandwidth|
+| 华北BGP|Bandwidth_North_China_BGP |   华北BGP-95峰值 |Bandwidth_95  |
+| 东南亚区域优化带宽|Bandwidth_SoutheastAsia_Optimization  |   东南亚区域优化带宽-固定带宽 |Bandwidth |
+| 东南亚区域优化带宽|Bandwidth_SoutheastAsia_Optimization  |  东南亚区域优化带宽-流量按需  |Traffic |
+| 东南亚区域优化带宽|Bandwidth_SoutheastAsia_Optimization  |   东南亚区域优化带宽-95峰值 |Bandwidth_95  |
 
+
+### 对应带宽类型支持的计费方法
 ## 附件四
 
 #### 公共模板
@@ -15242,7 +15297,6 @@ def get_status(task_id):
 ## 附件五
 
 
-
 #### 私有网络区域名称
 
 | 区域名称 | RegionCode    | 区域类型   | 所在大区 |
@@ -15250,7 +15304,13 @@ def get_status(task_id):
 | 呼和浩特 | CN_Huhhot     | 边缘节点   | 中国大陆 |
 | 宿迁     | CN_Suqian     | 边缘节点   | 中国大陆 |
 | 中国香港 | CN_HongKong   | 云平台节点 | 亚太地区 |
+|  信创    |  CN_Xinchuang|边缘节点   | 中国大陆 |
+|  文昌    | CN_Wenchang|  边缘节点   | 中国大陆 |
+|  庆阳    | CN_Qingyang | 边缘节点   | 中国大陆 |
+|  达拉斯   | US_Dallas   | 边缘节点   | 中国大陆 |
+	
 
+	
 
 #### 私有网络可用区名称
 
@@ -15259,6 +15319,59 @@ def get_status(task_id):
 | 呼和浩特B  | CN_Hohhot_B       | 边缘节点   | 呼和浩特 |
 | 宿迁B      | CN_Suqian_B       | 边缘节点   | 宿迁     |
 | 香港B      | CN_HongKong_B     | 云平台节点 | 中国香港 |
+| 宿迁C      | CN_Suqian_C       | 边缘节点   | 宿迁     |
+| 文昌A      | CN_Wenchang_A     | 边缘节点   | 文昌     |
+| 信创A      | CN_Xinchuang_A    | 边缘节点   | 信创     |
+| 庆阳A      | CN_Qingyang_A     | 边缘节点   | 庆阳    |
+| 达拉斯N    | US_Dallas_N        | 边缘节点   | 达拉斯     |
+
+## 附件六
+### VPC推荐网段
+｜网段｜
+| -------- |
+|10.0.0.0/16|
+|172.16.0.0/16|
+|192.168.0.0/16|
+
+#### 带宽类型
+| 名称 | BandwidthType    | 
+| -------- | ------------- |
+| 移动    | Bandwidth_CMCC |
+| 联通    | Bandwidth_China_Unicom |
+| 电信    | Bandwidth_China_Telecom |
+| BGP多线 | Bandwidth_Multi_ISP_BGP |
+ 
+### EIP计费方案
+| 名称 | BillScheme    | 
+| -------- | ------------- |
+|电信-固定带宽|BandwIdth|
+|移动-固定带宽|BandwIdth|
+|联通-固定带宽|BandwIdth|
+|BGP(多线)-固定带宽|BandwIdth|
+|电信-固定带宽EIP电信包月|BandwIdthMonth|
+|移动-固定带宽EIP移动包月|BandwIdthMonth|
+|联通-固定带宽EIP联通包月|BandwIdthMonth|
+|BGP（多线）-固定带宽EIPBGP包月|BandwIdthMonth|
+|电信-流量按需|Traffic|
+|移动-流量按需|Traffic|
+|联通-流量按需|Traffic|
+|BGP(多线)-流量按需|Traffic|
+
+### 共享带宽计费类型
+| 名称 | BillScheme    | 
+| -------- | ------------- |
+|电信-固定带宽(共享)|BandwIdth_Shared|
+|移动-固定带宽(共享)|BandwIdth_Shared|
+|联通-固定带宽(共享)|BandwIdth_Shared|
+|BGP(多线)-固定带宽(共享)|BandwIdth_Shared|
+|电信-固定带宽(电信包月共享)|BandwIdthMonth_Shared|
+|移动-固定带宽(移动包月共享)|BandwIdthMonth_Shared|
+|联通-固定带宽(联通包月共享)|BandwIdthMonth_Shared|
+|BGP(多线)-固定带宽(BGP包月共享)|BandwIdthMonth_Shared|
+|电信-流量按需(共享)|Traffic_Shared|
+|移动-流量按需(共享)|Traffic_Shared|
+|联通-流量按需(共享)|Traffic_Shared|
+|BGP(多线)-流量按需(共享)|Traffic_Shared|
 
 ## 示例
 
