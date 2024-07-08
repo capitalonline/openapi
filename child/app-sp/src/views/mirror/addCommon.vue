@@ -79,19 +79,19 @@
                     <el-button type="text"><svg-icon icon="info" class="m-left10"></svg-icon></el-button>
                 </el-tooltip>
             </el-form-item>
-            <el-form-item label="驱动类型" prop="support_gpu_driver" v-if="form_data.support_type==='GPU'">
+            <el-form-item label="驱动类型" prop="support_gpu_driver" v-if="form_data.image_type==='GPU'">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.support_gpu_driver }}</span> -->
                 <el-select v-model="form_data.support_gpu_driver">
                     <el-option v-for="item in drive_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
-          <el-form-item label="驱动版本" prop="driver_version" v-if="form_data.support_type==='GPU'">
+          <el-form-item label="驱动版本" prop="driver_version" v-if="form_data.image_type==='GPU'">
             <el-input v-model="form_data.driver_version"></el-input>
           </el-form-item>
-          <el-form-item label="CUDA版本" prop="cuda_version" v-if="form_data.support_type==='GPU'">
+          <el-form-item label="CUDA版本" prop="cuda_version" v-if="form_data.image_type==='GPU'">
             <el-input v-model="form_data.cuda_version"></el-input>
           </el-form-item>
-          <el-form-item label="其他软件" prop="other_software" v-if="form_data.support_type==='GPU'">
+          <el-form-item label="其他软件" prop="other_software" v-if="form_data.image_type==='GPU'">
             <el-input v-model="form_data.other_software"></el-input>
           </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
@@ -108,7 +108,7 @@
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
                 <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
-          <el-form-item label="官方维护" prop="validity">
+          <el-form-item label="官方维护" prop="validity" v-if="oper_info.maintenance_expiration_date !== 'None'">
             <el-radio-group v-model="form_data.validity">
               <el-radio :label="'1'">长期</el-radio>
               <el-radio :label="'0'">有限
@@ -200,7 +200,7 @@ export default class AddCommon extends Vue{
         size:this.oper_info.os_id ? this.oper_info.size : 20,
         az_id:this.oper_info.az_list ? this.oper_info.az_list[0] : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
-        support_type:this.oper_info.support_type ? this.oper_info.support_type : this.compute_type_list[0],//计算类型
+        support_type:this.oper_info.image_type ? this.oper_info.image_type : this.compute_type_list[0],//计算类型
         // 产品来源
         product_source:this.oper_info.product_source ? this.oper_info.product_source:this.product_source_type_list[0],
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
@@ -209,11 +209,11 @@ export default class AddCommon extends Vue{
         upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
         oss_file_name:'',
         core_version:this.oper_info.kernel_version ? this.oper_info.kernel_version : '',
-        driver_version:this.oper_info.core_version ? this.oper_info.driver_version :'',
+        driver_version:this.oper_info.driver_version ? this.oper_info.driver_version :'',
         cuda_version:this.oper_info.cuda_version ? this.oper_info.cuda_version : '',
         other_software:this.oper_info.other_software ? this.oper_info.other_software : '',
-        validity:this.oper_info.maintenance_expiration_date ? '0':'1',
-        vali_time:this.oper_info.maintenance_expiration_date ? this.oper_info.maintenance_expiration_date :'',
+        validity:this.oper_info.os_id ? this.oper_info.maintenance_expiration_date !== '长期' ? '0':'1' : '1',
+        vali_time:this.oper_info.maintenance_expiration_date !== '长期' ? this.oper_info.maintenance_expiration_date :'',
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
