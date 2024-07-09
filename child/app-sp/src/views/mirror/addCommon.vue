@@ -262,6 +262,8 @@ export default class AddCommon extends Vue{
       if(value === '0'){
         if(!this.form_data.vali_time){
           return callback(new Error('请选择维护有效期'))
+        }else {
+          return callback()
         }
       }else{
         callback()
