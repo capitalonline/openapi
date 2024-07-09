@@ -94,14 +94,12 @@ export default class LeftTree extends Vue {
       this.updateCurrentNodeFromRoute();
     }
   }
-  private updateCurrentNodeFromRoute(id:any = '') {
-    const routeId = id ? id : this.$route?.params?.id;
+  private updateCurrentNodeFromRoute() {
+    const routeId = this.$route?.params?.id;
     if (routeId) {
       this.currentLivingIdLocal = routeId;
       this.$nextTick(() => {
-        if (this.$refs.treeControl) {
-          (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal);
-        }
+        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal);
       });
     }
   }
@@ -150,7 +148,6 @@ export default class LeftTree extends Vue {
   mounted() {
     bus.$on('filterTextChanged', (filterText) => {
       this.handleNodeClick(filterText)
-      this.updateCurrentNodeFromRoute(filterText.id);
     });
   }
   private infoClick(item) {
