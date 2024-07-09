@@ -1,6 +1,6 @@
 <template>
   <el-card>
-  <div class="monitor">
+  <div class="monitor gpuBox">
     <div class="tab-card">
       <el-tabs v-model="default_tab" type="border-card">
         <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>

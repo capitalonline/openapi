@@ -36,7 +36,8 @@ export default class Gpu extends Vue{
 <style lang="scss">
 .gpuBox{
   .el-tabs--border-card{
-    border:none;
+    border-bottom: none;
+    box-shadow:none!important;
   }
    .el-tabs__content{
     display: none;

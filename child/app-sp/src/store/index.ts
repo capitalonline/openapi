@@ -47,7 +47,7 @@ export default new Vuex.Store({
     az_id:storage && storage.get ? storage.get('az_id') : '',
     az_name: '',
     az_code: '',
-    display:'',
+    display:storage && storage.get ? storage.get('display_name') :'',
     search_vm:'',
     tree_list: JSON.parse(storage.get('tree_list')) || [],
   },
@@ -120,6 +120,7 @@ export default new Vuex.Store({
       state.az_code = code
     },
     SET_DISPLAY_NAME(state,value){
+      storage.set('display_name',value)
       state.display = value
     },
     SET_SEARCH_VM(state,value){
