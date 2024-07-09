@@ -39,22 +39,22 @@
             <el-table-column prop="image_type" label="镜像类型" :filter-multiple="false" column-key="support_type" :filters="compute_type"></el-table-column>
             <el-table-column prop="support_gpu_driver" label="驱动类型" :filter-multiple="false" column-key="support_gpu_driver" :filters="drive_type">
               <template slot-scope="scope">
-                <span>{{scope.row.image_type=== 'GPU' ? scope.row.support_gpu_driver : '-'}}</span>
+                <span>{{scope.row.support_gpu_driver !== '' ? scope.row.support_gpu_driver : '-'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="driver_version" label="驱动版本">
               <template slot-scope="scope">
-                <span>{{scope.row.image_type=== 'GPU' ? scope.row.driver_version : '-'}}</span>
+                <span>{{scope.row.driver_version !== '' ? scope.row.driver_version : '-'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="cuda_version" label="CUDA版本">
               <template slot-scope="scope">
-                <span>{{scope.row.image_type=== 'GPU' ? scope.row.cuda_version : '-'}}</span>
+                <span>{{scope.row.cuda_version !== '' ? scope.row.cuda_version : '-'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="other_software" label="其他软件">
               <template slot-scope="scope">
-                <span>{{scope.row.image_type=== 'GPU' ? scope.row.other_software : '-'}}</span>
+                <span>{{scope.row.other_software !== '' ? scope.row.other_software : '-'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="product_source" label="产品来源" :filter-multiple="false" column-key="product_source" :filters="source_type"></el-table-column>
@@ -304,58 +304,7 @@ export default class CommonMirror extends Vue{
             page_size:this.size
         })
         if(res.code==='Success'){
-          let list = [{az_list:[],backend_type: "云盘", business_disk_type: "系统盘", create_time:
-            "2024-06-27 14:20:39", customer_id: "", customer_list: [], customer_name: "",
-          display_name: "win10-20240627",
-          driver_version: "545.04.03",
-          is_accelerate: 0,
-          kernel_version: "Ubuntu LTS",
-          maintenance_expiration_date: "长期",
-          os_bit: 64,
-          os_file_type: "qcow2",
-          os_id: "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",
-          os_type: "Windows",
-          os_version: "10",
-          path_md5: "67454444444444444444444444444444",
-          path_name: "gpu-private-Windows-10-E104669-Geforce-V20240614-img-hdp8zt4tb5s6fbgh",
-          product_source: "云主机",
-          size: 512,
-          cuda_version  :"14.05.02",
-          status: "running",
-          status_display: "可用",
-          support_gpu_driver: "Geforce",
-            image_type: "GPU",
-          other_software:'无',
-          update_time: "2024-06-27 14:20:39",
-          used_size: 0,
-          white_customer_list: []},
-            {az_list:[],backend_type: "云盘", business_disk_type: "系统盘", create_time:
-                "2024-06-27 14:20:39", customer_id: "", customer_list: [], customer_name: "",
-              display_name: "win10-20240627",
-              driver_version: "",
-              is_accelerate: 0,
-              kernel_version: "Ubuntu TLS",
-              cuda_version  :"",
-              other_software:'',
-              maintenance_expiration_date: "2023-07-08 12:24:00",
-              os_bit: 64,
-              os_file_type: "qcow2",
-              os_id: "5fb929fa-344d-11ef-a63a-c6102e18dfb9",
-              os_type: "Windows",
-              os_version: "10",
-              path_md5: "67454444444444444444444444444444",
-              path_name: "gpu-private-Windows-10-E104669-Geforce-V20240614-img-hdp8zt4tb5s6fbgh",
-              product_source: "云主机",
-              size: 512,
-              status: "running",
-              status_display: "可用",
-              support_gpu_driver: "",
-              image_type: "基础镜像",
-              update_time: "2024-06-27 14:20:39",
-              used_size: 0,
-              white_customer_list: []}
-          ]
-            this.list = [...list ,...res.data.image_list];
+            this.list = res.data.image_list
             this.total = res.data.page_info.count
         }
     }
