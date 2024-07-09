@@ -1,51 +1,43 @@
 <template>
   <div>
-  <el-tree
-    :data="tree_data"
-    @node-click="handleNodeClick"
-    @node-contextmenu="handleRight"
-    node-key="id"
-    ref="treeControl"
-    :current-node-key="currentLivingIdLocal"
-    :expand-on-click-node="false"
-    :default-expanded-keys="[currentLivingIdLocal]"
-    highlight-current
-    :filter-node-method="filterNode"
-    @click.stop
-  >
-    <span slot-scope="{node,data}" class="treeLabel">
-<!--      <svg-icon :iconName="iconClasses[node.level]"></svg-icon>-->
-<!--      <svg-icon iconName="icon-baojingshijian"></svg-icon>-->
-      <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
-      <span class="m-left5" :title="node.label">{{ node.label }}</span>
-    </span>
-  </el-tree>
-<!--    右键菜单-->
+    <el-tree
+      :data="tree_data"
+      @node-click="handleNodeClick"
+      @node-contextmenu="handleRight"
+      node-key="id"
+      ref="treeControl"
+      :current-node-key="currentLivingIdLocal"
+      :expand-on-click-node="false"
+      :default-expanded-keys="[currentLivingIdLocal]"
+      highlight-current
+      @click.stop
+    >
+      <span slot-scope="{node,data}" class="treeLabel">
+        <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
+        <span class="m-left5" :title="node.label">{{ node.label }}</span>
+      </span>
+    </el-tree>
     <div v-if="showContextMenu">
-      <el-menu
-        :style="contextMenuStyle"
-        id="menu"
-        text-color="#000"
-      >
+      <el-menu :style="contextMenuStyle" id="menu" text-color="#000">
         <div class="tip" :title="optionData.label">操作-{{ optionData.label }}</div>
-        <el-menu-item style="height: 30px;line-height: 30px"
-                      v-for="button in buttons"
-                      :key="button.key"
-                      :index="button.key"
-                      :disabled="button.disable"
-                      @click="infoClick(button)"
+        <el-menu-item
+          style="height: 30px;line-height: 30px"
+          v-for="button in buttons"
+          :key="button.key"
+          :index="button.key"
+          :disabled="button.disable"
+          @click="infoClick(button)"
         >
           <span slot="title" style="height: 30px" v-if="!button.disable">
             {{ button.label }}
           </span>
-          <el-tooltip v-else  effect="light" :content="tooltip(button.key)" placement="right">
-            <el-button type="text" style="height: 30px" >{{ button.label }}</el-button>
+          <el-tooltip v-else effect="light" :content="tooltip(button.key)" placement="right">
+            <el-button type="text" style="height: 30px">{{ button.label }}</el-button>
           </el-tooltip>
         </el-menu-item>
       </el-menu>
     </div>
     <operate :rows="[optionData]" :title="oper_label" :oper_type="oper_type" :visible.sync="visible" @close="close"></operate>
-
   </div>
 </template>
 
@@ -57,61 +49,60 @@ import {getHostStatus} from "@/utils/getStatusInfo";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import Service from "@/https/alarm/list";
 import bus from "@/utils/vmOp2/eventBus"
+
 @Component({
   components: {Operate, RightClick}
 })
-
-export default class LeftTree extends Vue{
-  @Prop({default:''})currentLivingId!:string
-  @Prop({default:true})refresh!:boolean
-  @Prop({default:()=>[]})tree_data!:Array<object>
-  private iconClasses= {
+export default class LeftTree extends Vue {
+  @Prop({default: ''}) currentLivingId!: string
+  @Prop({default: true}) refresh!: boolean
+  @Prop({default: () => []}) tree_data!: Array<object>
+  private iconClasses = {
     1: 'icon-tree',
     2: 'icon-machine',
     3: 'icon-serve',
   }
-  private showContextMenu:boolean = false
+  private showContextMenu: boolean = false
   private contextMenu = { x: 0, y: 0 }
   private optionData = []
   private active_name: string = ''
-  private oper_type:string="";
-  private oper_label:string="";
-  private visible:Boolean=false;
-  private list:any=[]
+  private oper_type: string = "";
+  private oper_label: string = "";
+  private visible: Boolean = false;
+  private list: any = []
   private currentLivingIdLocal = this.currentLivingId
-  private buttons:any =[
-    {label:'开机',key:'start_up_host',disable:false},
-    {label:'关机',key:'shutdown_host',disable:false},
-    {label:'重启',key:'restart_host',disable:false},
-    ] // 按钮的文本内容
+  private buttons: any = [
+    {label: '开机', key: 'start_up_host', disable: false},
+    {label: '关机', key: 'shutdown_host', disable: false},
+    {label: '重启', key: 'restart_host', disable: false},
+  ] // 按钮的文本内容
+
   @Watch('$route')
-  private FnWatchRouter(to, from) {
+  private onRouteChange(to, from) {
     this.active_name = to.name;
+    this.updateCurrentNodeFromRoute();
   }
-  @Watch('tree_data',{ immediate: true, deep: true })
-  private watch_tree_data(n){
-    if(n.length>0){
-      this.tree_data = n
-      if(this.$route?.params?.id){
-        let routeId = this.$route?.params?.id
-        if(this.tree_data[0]['id'] === routeId){
-          return;
-        }
-      }
-      if(this.refresh) {
+
+  @Watch('tree_data', { immediate: true, deep: true })
+  private watch_tree_data(newTreeData) {
+    if (newTreeData.length > 0) {
+      this.tree_data = newTreeData;
+      if(this.refresh && !this.$route.params.id) {
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
       }
+      this.updateCurrentNodeFromRoute();
     }
   }
-  @Watch('currentLivingId')
-  private watch_current(n){
-    if(n){
-      this.currentLivingIdLocal = n;
-      this.$nextTick(()=>{
-        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal)
-      })
-
+  private updateCurrentNodeFromRoute(id:any = '') {
+    const routeId = id ? id : this.$route?.params?.id;
+    if (routeId) {
+      this.currentLivingIdLocal = routeId;
+      this.$nextTick(() => {
+        if (this.$refs.treeControl) {
+          (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal);
+        }
+      });
     }
   }
   get contextMenuStyle(){
@@ -138,10 +129,6 @@ export default class LeftTree extends Vue{
     }
     return this.iconClasses[node.level];
   }
-  private filterNode(value, data) {
-    if (!value) return true;
-    return data.label.indexOf(value) !== -1;
-  }
   private tooltip(item){
     const obj = getHostStatus(item)
     if(obj.msg) {
@@ -151,25 +138,13 @@ export default class LeftTree extends Vue{
     }
   }
   created(){
-    this.$nextTick(()=>{
-      (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
-    })
     this.getAlarmList()
   }
   mounted() {
     bus.$on('filterTextChanged', (filterText) => {
       this.handleNodeClick(filterText)
-      this.setTreeCurrentNode(filterText.id);
-      console.log('filterText',filterText)
+      this.updateCurrentNodeFromRoute(filterText.id);
     });
-  }
-  private  setTreeCurrentNode(id) {
-    this.currentLivingIdLocal = id;
-    if ((this.$refs.treeControl as any)) {
-      this.$nextTick(() => {
-        (this.$refs.treeControl as any).setCurrentKey(id)
-      });
-    }
   }
   private infoClick(item) {
     const {label, key}=item
@@ -212,7 +187,6 @@ export default class LeftTree extends Vue{
      hideMenu()
     if(data.type === 'host') {
       event.preventDefault();
-      (this.$refs.treeControl as any).setCurrentKey(data.id)
       this.handleNodeClick(data)
       this.showContextMenu = true;
       this.contextMenu.x = event.clientX;
