@@ -203,7 +203,7 @@ export default class AddCommon extends Vue{
         size:this.oper_info.os_id ? this.oper_info.size : 20,
         az_id:this.oper_info.az_list ? this.oper_info.az_list[0] : '',
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
-        support_type:this.oper_info.support_type !== 'GPU' ? this.compute_type_list[1].value : this.compute_type_list[0].value,//计算类型
+        support_type:(this.oper_info.support_type &&  this.oper_info.support_type !== 'GPU') ? this.compute_type_list[1].value : this.compute_type_list[0].value,//计算类型
         // 产品来源
         product_source:this.oper_info.product_source ? this.oper_info.product_source:this.product_source_type_list[0],
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
