@@ -108,7 +108,7 @@
                 <!-- <span v-if="oper_info.os_id">{{ form_data.path_md5 }}</span> -->
                 <el-input type="textarea" autosize v-model="form_data.oss_file_name" :maxlength="128" show-word-limit resize="none"></el-input>
             </el-form-item>
-          <el-form-item label="官方维护" prop="validity" v-if="oper_info.maintenance_expiration_date !== 'None'">
+          <el-form-item label="官方维护" prop="validity">
             <el-radio-group v-model="form_data.validity">
               <el-radio :label="'1'">长期</el-radio>
               <el-radio :label="'0'">有限
@@ -300,6 +300,7 @@ export default class AddCommon extends Vue{
       let res:any = await Service.get_product_source()
       if(res.code==="Success"){
         this.product_source_type_list = res.data
+        this.form_data.product_source = this.product_source_type_list[0].value
       } else {
         this.$message.error(res.message)
       }
