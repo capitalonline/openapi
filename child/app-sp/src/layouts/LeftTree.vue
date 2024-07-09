@@ -12,7 +12,7 @@
       highlight-current
       @click.stop
     >
-      <span slot-scope="{node,data}" class="treeLabel">
+      <span slot-scope="{node,data}" class="treeLabel" @dblclick="handleNodeDblClick(node)">
         <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
         <span class="m-left5" :title="node.label">{{ node.label }}</span>
       </span>
@@ -103,6 +103,13 @@ export default class LeftTree extends Vue {
           (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal);
         }
       });
+    }
+  }
+  private handleNodeDblClick(node) {
+    if (node.expanded) {
+      node.expanded = false;
+    } else {
+      node.expanded = true;
     }
   }
   get contextMenuStyle(){
