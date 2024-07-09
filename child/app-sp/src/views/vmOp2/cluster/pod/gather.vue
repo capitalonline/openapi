@@ -50,6 +50,9 @@ export default class Pod extends Vue{
 </script>
 
 <style lang="scss">
-
+.currentInfo{
+  font-weight: bold;
+  padding-top: 5px;
+}
 
 </style>

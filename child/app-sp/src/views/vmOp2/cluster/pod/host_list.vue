@@ -404,7 +404,7 @@ export default class HostList extends Vue{
       if(['host_name','gpu_model'].includes(item.prop)){
         item = Object.assign(item,{},{width:'150px',overflow:true})
       }
-      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','machine_status_name'].includes(item.prop)){
+      if(['host_ip','out_band_address','gpu_count','ecs_count','cpu_rate','ram_rate','gpu_rage','machine_status_name','power_status_name'].includes(item.prop)){
         item = Object.assign(item,{},{minWidth:'120px'})
       }
       if(item.prop==='power_status_name'){

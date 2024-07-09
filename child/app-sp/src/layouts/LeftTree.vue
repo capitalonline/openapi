@@ -185,7 +185,7 @@ export default class LeftTree extends Vue {
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.showContextMenu = false
-    this.$store.commit('SET_DISPLAY_NAME',data.label);
+    this.$store.commit('SET_DISPLAY_NAME',data.label? data.label : data.name);
   }
   private handleRight(event,data,node){
      hideMenu()
