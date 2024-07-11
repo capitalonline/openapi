@@ -182,7 +182,9 @@ export default class salesRate extends Vue {
                 az_name: item.az_name
               })
             }
-            this.salesForm.az_id = this.az_list[0].az_id
+            if(this.az_list.length>0){
+              this.salesForm.az_id = this.az_list[0].az_id
+            }
           })
         }
         this.get_pool_info()
