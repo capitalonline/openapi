@@ -3,7 +3,7 @@
     <!--  -->
     <div v-if="source_name === 'monitor'">
       <back-header title="NFV云服务器监控" back_url="/nfv"></back-header>
-      <el-card class="m-bottom20">
+      <el-card class="m-bottom20 m-top20">
         <template #header>
           <span>NFV云服务器详情</span>
         </template>
@@ -397,7 +397,7 @@ export default class Monitor extends Vue{
       this.FnHandleDubleData('net_rate', resData)
     })
   }
-  
+
   private FnGetGpuInfo(type, reqData) {
     this.gpu_used.yValue=[]
     Service.get_gpu(type, Object.assign({queryType: 'gpu_usage'}, reqData)).then(resData => {

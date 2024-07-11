@@ -2,7 +2,7 @@
   <div class="monitor">
     <div v-if="source_name === 'monitor'">
       <back-header title="云服务器监控" v-if="!$route.path.includes('vm_monitor')" back_url="/instance"></back-header>
-      <el-card class="m-bottom20">
+      <el-card class="m-bottom20 m-top20">
         <template #header>
           <span>云服务器详情</span>
         </template>
