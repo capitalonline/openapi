@@ -6,14 +6,14 @@
       <span @click="back">{{" &lt; 返回"}}</span>
       <span>{{event_name}}</span>
     </div> -->
-    <div class="content">
+    <div class="content m-top20">
       <!-- <action-block :search_option="search" @fn-search="fn_search"></action-block> -->
       <div class="event-content">
         <div class="event-search">
           <el-input v-model="cloud_id" placeholder="请输入资源ID或资源名称查询" clearable></el-input>
           <el-button type="primary" @click="getTaskList">搜索</el-button>
         </div>
-      
+
         <div class="event-detail">
           <div>任务总数:{{task_num}}</div>
           <div class="destroy">已完成任务数:{{finish_num}}</div>
@@ -23,10 +23,10 @@
           <div class="nonExecution">不执行:{{ none_exec_num }}</div>
         </div>
       </div>
-      <el-table 
-        :data="task_list" 
-        border 
-        class="event-table" 
+      <el-table
+        :data="task_list"
+        border
+        class="event-table"
         v-loading = "loading"
         @sort-change="FnSortChange"
         @filter-change="filterAttribute"
@@ -135,7 +135,7 @@
           <div class="err_record">{{err_record}}</div>
       </el-dialog>
     </div>
-    
+
   </div>
 </template>
 
@@ -312,7 +312,7 @@ export default class Detail extends Vue {
               this.customer_name_list.push({text: res.data.customer_list[i].name, value: i})
             }
           }
-          
+
         }
       })
     }
@@ -354,7 +354,7 @@ export default class Detail extends Vue {
       margin-left: 20px;
       font-size: 18px;
       color: #455cc6;
-      
+
     }
   }
   .content{
@@ -421,13 +421,13 @@ export default class Detail extends Vue {
       background-color: #666
     }
   }
-  
+
   .isButton {
     color: #455cc6;
   }
 
-  
-  
+
+
 </style>
 <style lang="scss">
 .err-record{

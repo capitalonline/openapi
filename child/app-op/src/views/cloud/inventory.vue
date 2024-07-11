@@ -275,9 +275,9 @@ export default class Inventory extends Vue {
                 az_name: item.az_name
               })
             }
-            this.echartForm.az_id = this.az_list[0].az_id
           })
         }
+        this.echartForm.az_id = this.az_list[0].az_id
         this.monitoringSearch()
       }
     })
