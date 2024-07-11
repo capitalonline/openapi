@@ -47,7 +47,7 @@ OSS产品提供以下相关API接口
 
 | 名称 | 类型   | 是否必需 | 描述                                                         |
 | ---- | ------ | -------- | ------------------------------------------------------------ |
-| host | 字符串 | 是       | 存储空间所在节点 endpoint 地址。示例：{'host': 'oss-cnsq02.cdsgss.com'} 其中 oss-cnsq02.cdsgss.com 为宿迁节点的 endpoint 地址 |
+| endpoint | 字符串 | 是       | 存储空间所在节点 endpoint 地址。示例：{'endpoint': 'oss-cnsq02.cdsgss.com'} 其中 oss-cnsq02.cdsgss.com 为宿迁节点的 endpoint 地址 |
 
 **响应参数：**
 
