@@ -198,7 +198,7 @@ export default class List extends Vue {
   }
   .event-detail{
     display: flex;
-    margin-top: -46px;
+    margin-top: -30px;
     div {
       margin-right: 20px;
       padding-left:20px

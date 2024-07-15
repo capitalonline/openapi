@@ -6,7 +6,7 @@
             :btnTitle="'返回'"
         >
         </back-header>
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" class="m-top20">
             <el-tab-pane label="基本信息" name="base">
                 <el-card class="m-bottom20">
                     <div slot="header" class="clearfix">
