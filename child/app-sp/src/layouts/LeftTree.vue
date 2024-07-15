@@ -54,7 +54,6 @@ import bus from "@/utils/vmOp2/eventBus"
   components: {Operate, RightClick}
 })
 export default class LeftTree extends Vue {
-  @Prop({default: ''}) currentLivingId!: string
   @Prop({default: true}) refresh!: boolean
   @Prop({default: () => []}) tree_data!: Array<object>
   private iconClasses = {
@@ -70,7 +69,7 @@ export default class LeftTree extends Vue {
   private oper_label: string = "";
   private visible: Boolean = false;
   private list: any = []
-  private currentLivingIdLocal = this.currentLivingId
+  private currentLivingIdLocal = ''
   private buttons: any = [
     {label: '开机', key: 'start_up_host', disable: false},
     {label: '关机', key: 'shutdown_host', disable: false},
@@ -91,7 +90,6 @@ export default class LeftTree extends Vue {
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
       }
-      this.updateCurrentNodeFromRoute();
     }
   }
   private updateCurrentNodeFromRoute() {
