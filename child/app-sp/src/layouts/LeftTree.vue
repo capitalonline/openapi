@@ -161,6 +161,19 @@ export default class LeftTree extends Vue{
   }
   private close(val){
   }
+  //全局搜索选中的是虚机时，通过此方法从树数据获取host_name,用来存储到storage中，以便展示以及监控数据的正确获取
+  private findHostNameById(hostId) {
+    for (const pod of this.$store.state.tree_list) {
+      for (const cluster of pod.children) {
+        for (const host of cluster.children) {
+          if (host.host_id === hostId) {
+            return host.host_name;
+          }
+        }
+      }
+    }
+    return null;
+  }
   private handleNodeClick(data) {
     if(this.$route?.params?.id){
       let routeId = this.$route?.params?.id
@@ -168,6 +181,7 @@ export default class LeftTree extends Vue{
           return;
       }
     }
+    let vm_host_name = ''
     if(data.type=== 'pod'){
       this.$router.push({name:'pod_info',params:{id:data.id}})
     }
@@ -177,6 +191,7 @@ export default class LeftTree extends Vue{
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
       if(data.vm){
+        vm_host_name = this.findHostNameById(data.id)
         this.$store.commit('SET_SEARCH_VM',data.name);
         this.$router.push({name:'host_vm',params:{id:data.id}})
       }
@@ -186,7 +201,7 @@ export default class LeftTree extends Vue{
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.showContextMenu = false
-    this.$store.commit('SET_DISPLAY_NAME',data.label? data.label : data.name);
+    this.$store.commit('SET_DISPLAY_NAME',data.label? data.label : data.vm ? vm_host_name : data.name);
   }
   private handleRight(event,data,node){
      hideMenu()
