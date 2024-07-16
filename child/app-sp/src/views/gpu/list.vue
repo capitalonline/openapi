@@ -36,6 +36,20 @@
             :disabled="!operate_auth.includes('update')"
           >编辑</el-button
           >
+          <el-button
+            type="text"
+            @click="FnHandleGpuSale(scope.row,'cancel_forbid')"
+            v-if="scope.row.status  ==='DISABLE'"
+            :disabled="!operate_auth.includes('sale')"
+          >取消禁售</el-button
+          >
+          <el-button
+            type="text"
+            v-else
+            @click="FnHandleGpuSale(scope.row,'forbid')"
+
+          >禁售</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -53,6 +67,12 @@
       :visible.sync="visible"
       :oper_info="oper_info">
     </gpu-edit>
+    <Sale
+      :oper_info="oper_info"
+      :visible.sync="visible_sale"
+      :type="hand_type"
+    >
+    </Sale>
   </div>
 
 </template>
@@ -63,10 +83,12 @@ import ActionBlock from '../../components/search/actionBlock.vue';
 import moment from "moment";
 import Service from "@/https/gpu/list";
 import GpuEdit from "@/views/gpu/gpuEdit.vue";
+import Sale from "@/views/gpu/sale.vue";
 @Component({
   components:{
     GpuEdit,
-    ActionBlock
+    ActionBlock,
+    Sale
 }})
 export default class list extends Vue {
   private gpu_list:Array<Object> = [];
@@ -77,6 +99,8 @@ export default class list extends Vue {
   private normal = 'normal'
   private operate_auth = []
   private search_status=[]
+  private hand_type = ''
+  private visible_sale:boolean = false
   private status_list =[
     {text: '正常', value: 'READY'},
     {text: 'FF', value: 'DISCONNECTED'},
@@ -131,6 +155,11 @@ export default class list extends Vue {
   private async FnEdit(row){
     this.visible = true
     this.oper_info = row
+  }
+   private async FnHandleGpuSale(row,type){
+    this.visible_sale = true
+    this.oper_info = [row]
+    this.hand_type = type 
   }
   private FnGoToMonitor(row) {
     this.$router.push({name:'physical_detail',query:{id:row.host_id,name:row.host_name},params:{active:"1",default_tab:'gpu'}})
