@@ -46,7 +46,7 @@ export default class Pod extends Vue{
 <style>
 .currentInfo{
   font-weight: bold;
-
+  padding-top: 5px;
 }
 
 

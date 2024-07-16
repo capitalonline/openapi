@@ -1,7 +1,8 @@
 <template>
-  <div class="monitor">
+  <el-card>
+  <div class="monitor gpuBox">
     <div class="tab-card">
-      <el-tabs v-model="default_tab" type="card">
+      <el-tabs v-model="default_tab" type="border-card">
         <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>
       </el-tabs>
 
@@ -77,17 +78,19 @@
       </div>
     </div>
   </div>
+  </el-card>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
-import BackHeader from '../../components/backHeader.vue';
-import TimeGroup from '../../components/search/timeGroup.vue';
-import LineEchart from '../../components/chart/list.vue';
-import DetailService from '../../https/physical/list';
-import Service from '../../https/monitor/index';
-import EcsService from '../../https/instance/list';
+import BackHeader from '@/components/backHeader.vue';
+import TimeGroup from '@/components/search/timeGroup.vue';
+import LineEchart from '@/components/chart/list.vue';
+import DetailService from '@/https/physical/list';
+import Service from '@/https/monitor/index';
+import EcsService from '@/https/instance/list';
 import moment from 'moment';
+import {findPodIdByHostId} from "@/utils/vmOp2/findPodId";
 
 @Component({
   components: {
@@ -97,9 +100,6 @@ import moment from 'moment';
   }
 })
 export default class Monitor extends Vue{
-  @Prop({default: ''}) readonly host_id;
-  @Prop({default: ''}) readonly host_name;
-  @Prop({default: ''}) readonly showTab;
   private host_info = {
     region_id: '',
     az_id: '',
@@ -228,11 +228,11 @@ export default class Monitor extends Vue{
 
   private FnGetChartData() {
     let type = 'kvm';
-    if (!this.host_name) {
+    if (!this.$store.state.display) {
       return
     }
     let reqData = {
-      hostId: this.host_name,
+      hostId: this.$store.state.display,
       region: this.host_info.region_id,
       replica: this.host_info.az_id,
       ip: this.host_info.host_ip,
@@ -240,6 +240,7 @@ export default class Monitor extends Vue{
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
+    console.log('====',this.default_tab)
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
@@ -253,7 +254,7 @@ export default class Monitor extends Vue{
   }
   private async FnGetDetail() {
     const resData = await DetailService.get_detail_overview({
-      host_id: this.host_id
+      host_id: this.$route.params.id
     })
     if ( resData.code === 'Success' ) {
       this.host_info = resData.data
@@ -359,28 +360,28 @@ export default class Monitor extends Vue{
   private FnHandleDubleData(type, resData) { // 处理磁盘iops, 吞吐量，网络,GPU主频
     let index = 0;
     let timeIndex:number=0
-      resData.forEach((item: any) => {
-        if (item.code === 'Success') {
-          item.data.metricInfo = item.data.metricInfo || item.data.device ||item.data.gpuName;
-          if (index === 0) {
-            timeIndex = 0
-            this[type].xTime = item.data.xTime;
-            this[type].legend = item.data.metricInfo;
-            this[type].unit = item.data.unit;
-          } else {
-            if (item.data.metricInfo) {
-              item.data.metricInfo.forEach(metric => {
-                this[type].legend.push(metric + this.disk_iops.type);
-              });
-            }
-          }
-          if (item.data.yValues) {
-            this[type].yValue.push(...item.data.yValues);
+    resData.forEach((item: any) => {
+      if (item.code === 'Success') {
+        item.data.metricInfo = item.data.metricInfo || item.data.device ||item.data.gpuName;
+        if (index === 0) {
+          timeIndex = 0
+          this[type].xTime = item.data.xTime;
+          this[type].legend = item.data.metricInfo;
+          this[type].unit = item.data.unit;
+        } else {
+          if (item.data.metricInfo) {
+            item.data.metricInfo.forEach(metric => {
+              this[type].legend.push(metric + this.disk_iops.type);
+            });
           }
         }
-        index++;
-      })
-      this[type].resize++;
+        if (item.data.yValues) {
+          this[type].yValue.push(...item.data.yValues);
+        }
+      }
+      index++;
+    })
+    this[type].resize++;
   }
   private FnGetNetInfo(type, reqData) {
     this.net_in_out.yValue = [];
@@ -397,11 +398,18 @@ export default class Monitor extends Vue{
     })
   }
   private async FnGetGpuInfo(type, reqData) {
+    let pod = ''
+    if(this.$route.name === 'host_monitor'){
+      pod=findPodIdByHostId(this.$route.params.id)
+    }else {
+      pod=this.$store.state.pod_id
+    }
     const resData = await EcsService.get_instance_list({
       billing_method: 'all',
-      host_id: this.host_id,
-      pod_id:this.$store.state.pod_id
+      host_id: this.$route.params.id,
+      pod_id: pod
     })
+
     let ecs_list = []
     this.gpu_used.legend = []
     this.gpu_memory_used.legend = []
@@ -493,7 +501,8 @@ export default class Monitor extends Vue{
 
   }
   private created() {
-    this.default_tab = this.showTab ? this.showTab : Object.keys(this.tab_list)[0];
+    this.default_tab = this.$route.params.gpuTab ? this.$route.params.gpuTab :Object.keys(this.tab_list)[0];
+    console.log('this.default_tab',this.default_tab)
     this.FnGetDetail();
   }
   @Watch('default_tab')

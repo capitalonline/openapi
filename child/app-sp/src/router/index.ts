@@ -94,7 +94,7 @@ const routes:RouteConfig[] = [
           {// 监控
             path: '/host/monitor/:id?',
             name: 'host_monitor',
-            component: () => import('../views/physical/monitor.vue'),
+            component: () => import('../views/vmOp2/cluster/host/monitor.vue'),
             meta: {meta: 'host_monitor',no_auth: true}
           },
           {// 存储

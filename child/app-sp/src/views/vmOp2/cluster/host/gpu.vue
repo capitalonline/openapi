@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-tabs v-model="activeName" type="card">
+  <div class="gpuBox">
+    <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane label="GPU管理" name="first"></el-tab-pane>
       <el-tab-pane label="GPU故障记录" name="second"></el-tab-pane>
     </el-tabs>
@@ -31,8 +31,16 @@ export default class Gpu extends Vue{
 </script>
 
 <style scoped>
-.el-tabs {
-  background: #fff;
-}
 
+</style>
+<style lang="scss">
+.gpuBox{
+  .el-tabs--border-card{
+    border-bottom: none;
+    box-shadow:none!important;
+  }
+   .el-tabs__content{
+    display: none;
+  }
+}
 </style>

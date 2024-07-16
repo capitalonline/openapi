@@ -1,26 +1,22 @@
 <template>
   <div>
-  <el-tree
-    :data="tree_data"
-    @node-click="handleNodeClick"
-    @node-contextmenu="handleRight"
-    node-key="id"
-    ref="treeControl"
-    :current-node-key="currentLivingIdLocal"
-    :expand-on-click-node="false"
-    :default-expanded-keys="[currentLivingIdLocal]"
-    highlight-current
-    :filter-node-method="filterNode"
-    @click.stop
-  >
-    <span slot-scope="{node,data}" class="treeLabel">
-<!--      <svg-icon :iconName="iconClasses[node.level]"></svg-icon>-->
-<!--      <svg-icon iconName="icon-baojingshijian"></svg-icon>-->
-      <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
-      <span class="m-left5" :title="node.label">{{ node.label }}</span>
-    </span>
-  </el-tree>
-<!--    右键菜单-->
+    <el-tree
+      :data="tree_data"
+      @node-click="handleNodeClick"
+      @node-contextmenu="handleRight"
+      node-key="id"
+      ref="treeControl"
+      :current-node-key="currentLivingIdLocal"
+      :expand-on-click-node="false"
+      :default-expanded-keys="[currentLivingIdLocal]"
+      highlight-current
+      @click.stop
+    >
+      <span slot-scope="{node,data}" class="treeLabel" @dblclick="handleNodeDblClick(node)">
+        <svg-icon-font :iconName="getIconName(node)"></svg-icon-font>
+        <span class="m-left5" :title="node.label">{{ node.label }}</span>
+      </span>
+    </el-tree>
     <div v-if="showContextMenu">
       <el-menu
         :style="contextMenuStyle"
@@ -60,9 +56,7 @@ import bus from "@/utils/vmOp2/eventBus"
 @Component({
   components: {Operate, RightClick}
 })
-
 export default class LeftTree extends Vue{
-  @Prop({default:''})currentLivingId!:string
   @Prop({default:true})refresh!:boolean
   @Prop({default:()=>[]})tree_data!:Array<object>
   private iconClasses= {
@@ -78,40 +72,43 @@ export default class LeftTree extends Vue{
   private oper_label:string="";
   private visible:Boolean=false;
   private list:any=[]
-  private currentLivingIdLocal = this.currentLivingId
+  private currentLivingIdLocal = ''
   private buttons:any =[
     {label:'开机',key:'start_up_host',disable:false},
     {label:'关机',key:'shutdown_host',disable:false},
     {label:'重启',key:'restart_host',disable:false},
     ] // 按钮的文本内容
   @Watch('$route')
-  private FnWatchRouter(to, from) {
+  private onRouteChange(to, from) {
     this.active_name = to.name;
+    this.updateCurrentNodeFromRoute();
   }
-  @Watch('tree_data',{ immediate: true, deep: true })
-  private watch_tree_data(n){
-    if(n.length>0){
-      this.tree_data = n
-      if(this.$route?.params?.id){
-        let routeId = this.$route?.params?.id
-        if(this.tree_data[0]['id'] === routeId){
-          return;
-        }
-      }
-      if(this.refresh) {
+
+  @Watch('tree_data', { immediate: true, deep: true })
+  private watch_tree_data(newTreeData) {
+    if (newTreeData.length > 0) {
+      this.tree_data = newTreeData;
+      if(this.refresh && !this.$route.params.id) {
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
       }
+      this.updateCurrentNodeFromRoute();
     }
   }
-  @Watch('currentLivingId')
-  private watch_current(n){
-    if(n){
-      this.currentLivingIdLocal = n;
-      this.$nextTick(()=>{
-        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal)
-      })
-
+  private updateCurrentNodeFromRoute() {
+    const routeId = this.$route?.params?.id;
+    if (routeId) {
+      this.currentLivingIdLocal = routeId;
+      this.$nextTick(() => {
+        (this.$refs.treeControl as any).setCurrentKey(this.currentLivingIdLocal);
+      });
+    }
+  }
+  private handleNodeDblClick(node) {
+    if (node.expanded) {
+      node.expanded = false;
+    } else {
+      node.expanded = true;
     }
   }
   get contextMenuStyle(){
@@ -138,10 +135,6 @@ export default class LeftTree extends Vue{
     }
     return this.iconClasses[node.level];
   }
-  private filterNode(value, data) {
-    if (!value) return true;
-    return data.label.indexOf(value) !== -1;
-  }
   private tooltip(item){
     const obj = getHostStatus(item)
     if(obj.msg) {
@@ -151,25 +144,12 @@ export default class LeftTree extends Vue{
     }
   }
   created(){
-    this.$nextTick(()=>{
-      (this.$refs.treeControl as any).setCurrentKey(this.currentLivingId)
-    })
     this.getAlarmList()
   }
   mounted() {
     bus.$on('filterTextChanged', (filterText) => {
       this.handleNodeClick(filterText)
-      this.setTreeCurrentNode(filterText.id);
-      console.log('filterText',filterText)
     });
-  }
-  private  setTreeCurrentNode(id) {
-    this.currentLivingIdLocal = id;
-    if ((this.$refs.treeControl as any)) {
-      this.$nextTick(() => {
-        (this.$refs.treeControl as any).setCurrentKey(id)
-      });
-    }
   }
   private infoClick(item) {
     const {label, key}=item
@@ -181,6 +161,19 @@ export default class LeftTree extends Vue{
   }
   private close(val){
   }
+  //全局搜索选中的是虚机时，通过此方法从树数据获取host_name,用来存储到storage中，以便展示以及监控数据的正确获取
+  private findHostNameById(hostId) {
+    for (const pod of this.$store.state.tree_list) {
+      for (const cluster of pod.children) {
+        for (const host of cluster.children) {
+          if (host.host_id === hostId) {
+            return host.host_name;
+          }
+        }
+      }
+    }
+    return null;
+  }
   private handleNodeClick(data) {
     if(this.$route?.params?.id){
       let routeId = this.$route?.params?.id
@@ -188,6 +181,7 @@ export default class LeftTree extends Vue{
           return;
       }
     }
+    let vm_host_name = ''
     if(data.type=== 'pod'){
       this.$router.push({name:'pod_info',params:{id:data.id}})
     }
@@ -197,6 +191,7 @@ export default class LeftTree extends Vue{
     if(data.type === 'host'){
       this.$router.push({name:'host_info',params:{id:data.id}})
       if(data.vm){
+        vm_host_name = this.findHostNameById(data.id)
         this.$store.commit('SET_SEARCH_VM',data.name);
         this.$router.push({name:'host_vm',params:{id:data.id}})
       }
@@ -206,13 +201,12 @@ export default class LeftTree extends Vue{
       this.$router.push(({name:'waiting_hosts',params:{id:data.id}}))
     }
     this.showContextMenu = false
-    this.$store.commit('SET_DISPLAY_NAME',data.label);
+    this.$store.commit('SET_DISPLAY_NAME',data.label? data.label : data.vm ? vm_host_name : data.name);
   }
   private handleRight(event,data,node){
      hideMenu()
     if(data.type === 'host') {
       event.preventDefault();
-      (this.$refs.treeControl as any).setCurrentKey(data.id)
       this.handleNodeClick(data)
       this.showContextMenu = true;
       this.contextMenu.x = event.clientX;

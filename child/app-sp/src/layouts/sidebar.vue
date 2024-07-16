@@ -15,7 +15,7 @@
     </template>
   </el-menu>
     <template v-if="treeType === 'tree'">
-      <left-tree :currentLivingId="current" :refresh="refresh" :tree_data="treeData"></left-tree>
+      <left-tree :refresh="refresh" :tree_data="treeData"></left-tree>
     </template>
     <template v-if="treeType === 'menu'">
      <new-menu :menu_list=menu_list :active_menu="current"></new-menu>
@@ -137,7 +137,7 @@ export default class Sidebar extends Vue {
         this.$router.push({name:'error'})
       }
     }
-    this.current = this.treeData[0].id
+    // this.current = this.treeData[0].id
   }
   private  transformData(data) {
     return data.map(pod => {
