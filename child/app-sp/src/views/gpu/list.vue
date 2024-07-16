@@ -17,7 +17,16 @@
       <el-table-column label="SN号" prop="sn"></el-table-column>
       <el-table-column label="状态" prop="status" column-key="status" :filters="status_list" :filter-multiple="false">
         <template #default="scope">
-          <span :class="[scope.row.status === 'FF' ? 'err' : 'normal']">{{scope.row.status}}</span>
+          <span v-if="scope.row.status === 'DISABLE'">
+            <el-popover
+              placement="bottom"
+              width="350"
+              trigger="click"
+              :content="scope.row.message">
+                <el-button slot="reference" type="text">{{scope.row.status}}</el-button>
+              </el-popover>
+          </span>
+          <span v-else :class="[scope.row.status === 'FF' ? 'err' : 'normal']">{{scope.row.status}}</span>
         </template>
       </el-table-column>
       <el-table-column label="监控">
@@ -104,6 +113,7 @@ export default class list extends Vue {
   private status_list =[
     {text: '正常', value: 'READY'},
     {text: 'FF', value: 'DISCONNECTED'},
+    {text: '禁售',value: 'DISABLE'}
   ]
   private page_info = {
     page_sizes: [20, 50, 100],
@@ -159,7 +169,7 @@ export default class list extends Vue {
    private async FnHandleGpuSale(row,type){
     this.visible_sale = true
     this.oper_info = [row]
-    this.hand_type = type 
+    this.hand_type = type
   }
   private FnGoToMonitor(row) {
     this.$router.push({name:'physical_detail',query:{id:row.host_id,name:row.host_name},params:{active:"1",default_tab:'gpu'}})
