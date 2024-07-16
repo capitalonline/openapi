@@ -18,26 +18,30 @@
       </span>
     </el-tree>
     <div v-if="showContextMenu">
-      <el-menu :style="contextMenuStyle" id="menu" text-color="#000">
+      <el-menu
+        :style="contextMenuStyle"
+        id="menu"
+        text-color="#000"
+      >
         <div class="tip" :title="optionData.label">操作-{{ optionData.label }}</div>
-        <el-menu-item
-          style="height: 30px;line-height: 30px"
-          v-for="button in buttons"
-          :key="button.key"
-          :index="button.key"
-          :disabled="button.disable"
-          @click="infoClick(button)"
+        <el-menu-item style="height: 30px;line-height: 30px"
+                      v-for="button in buttons"
+                      :key="button.key"
+                      :index="button.key"
+                      :disabled="button.disable"
+                      @click="infoClick(button)"
         >
           <span slot="title" style="height: 30px" v-if="!button.disable">
             {{ button.label }}
           </span>
-          <el-tooltip v-else effect="light" :content="tooltip(button.key)" placement="right">
-            <el-button type="text" style="height: 30px">{{ button.label }}</el-button>
+          <el-tooltip v-else  effect="light" :content="tooltip(button.key)" placement="right">
+            <el-button type="text" style="height: 30px" >{{ button.label }}</el-button>
           </el-tooltip>
         </el-menu-item>
       </el-menu>
     </div>
     <operate :rows="[optionData]" :title="oper_label" :oper_type="oper_type" :visible.sync="visible" @close="close"></operate>
+
   </div>
 </template>
 
@@ -49,33 +53,31 @@ import {getHostStatus} from "@/utils/getStatusInfo";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import Service from "@/https/alarm/list";
 import bus from "@/utils/vmOp2/eventBus"
-
 @Component({
   components: {Operate, RightClick}
 })
-export default class LeftTree extends Vue {
-  @Prop({default: true}) refresh!: boolean
-  @Prop({default: () => []}) tree_data!: Array<object>
-  private iconClasses = {
+export default class LeftTree extends Vue{
+  @Prop({default:true})refresh!:boolean
+  @Prop({default:()=>[]})tree_data!:Array<object>
+  private iconClasses= {
     1: 'icon-tree',
     2: 'icon-machine',
     3: 'icon-serve',
   }
-  private showContextMenu: boolean = false
+  private showContextMenu:boolean = false
   private contextMenu = { x: 0, y: 0 }
   private optionData = []
   private active_name: string = ''
-  private oper_type: string = "";
-  private oper_label: string = "";
-  private visible: Boolean = false;
-  private list: any = []
+  private oper_type:string="";
+  private oper_label:string="";
+  private visible:Boolean=false;
+  private list:any=[]
   private currentLivingIdLocal = ''
-  private buttons: any = [
-    {label: '开机', key: 'start_up_host', disable: false},
-    {label: '关机', key: 'shutdown_host', disable: false},
-    {label: '重启', key: 'restart_host', disable: false},
-  ] // 按钮的文本内容
-
+  private buttons:any =[
+    {label:'开机',key:'start_up_host',disable:false},
+    {label:'关机',key:'shutdown_host',disable:false},
+    {label:'重启',key:'restart_host',disable:false},
+    ] // 按钮的文本内容
   @Watch('$route')
   private onRouteChange(to, from) {
     this.active_name = to.name;
