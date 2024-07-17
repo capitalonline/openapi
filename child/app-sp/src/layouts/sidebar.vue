@@ -44,7 +44,7 @@ export default class Sidebar extends Vue {
   private active_menu: string = 'cluster';
   private current=''
   private treeType:string = 'tree'
-  private refresh:boolean = true
+  private refresh:boolean = false
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',type: 'menu'},
@@ -176,6 +176,8 @@ export default class Sidebar extends Vue {
   @Watch('$store.state.az_id')
   private watch_pod(){
     this.getTreeData()
+    //切换az的时候，需要根据新az下的树跳转路由
+    this.refresh = true
   }
 }
 </script>
