@@ -88,7 +88,7 @@ export default class LeftTree extends Vue{
   private watch_tree_data(newTreeData) {
     if (newTreeData.length > 0) {
       this.tree_data = newTreeData;
-      if(this.refresh && !this.$route.params.id) {
+      if(this.refresh || !this.$route.params.id) {
         this.$router.push({name: 'pod_info', params: {id: this.tree_data[0]['id']}})
         this.$store.commit('SET_DISPLAY_NAME', this.tree_data[0]['label']);
       }

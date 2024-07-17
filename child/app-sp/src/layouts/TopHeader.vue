@@ -11,13 +11,13 @@
         style="width: 140px"
         v-model="default_az"
         filterable
+        value-key="az_id"
         :filter-method="get_az_list"
-        @visible-change="change_pod"
       >
         <el-option
           v-for="item in az_list"
           :key="item.az_id"
-          :value="item.az_id"
+          :value="item"
           :label="item.az_name"
         ></el-option>
       </el-select>
@@ -69,18 +69,13 @@ import bus from "@/utils/vmOp2/eventBus"
   }
 })
 export default class TopHeader extends Vue{
-  private default_az = ''
+  private default_az = {}
   private az_name = ''
   private az_code = ''
   private az_list = []
   private filterText = ''
-  private search_list= [
-    { type: 'host', id: 'ea159da9-43fa-4734-bd4d-9746b39266ea', name: 'POD0A-CLU01-H022' },
-    { type: 'host', id: '1255b32a-2812-11ed-9de3-2aa5f60b1e4c', name: 'POD0A-CLU01-H108' },
-    { type: 'cluster', id: '343fa382-d9d3-11ee-bdc1-32df027a9345', name: 'test' },
-    { type: 'host', id: 'ea98af0a-1fdb-11ee-8918-46a60bf0548b', name: 'eks-otie7itlcjkj97q9' ,vm:1},
-  ]
-  created(){
+  private search_list= []
+  mounted(){
     this.get_az_list();
   }
   //获取az列表
@@ -93,9 +88,9 @@ export default class TopHeader extends Vue{
           this.az_list=[...this.az_list,...inn.az_list]
         })
       })
-      this.default_az = this.$store.state.az_id ? this.$store.state.az_id : this.az_list[0].az_id
-      this.az_name = this.$store.state.az_name ? this.$store.state.az_name :this.az_list[0].az_name
-      this.az_code = this.$store.state.az_code ? this.$store.state.az_code :this.az_list[0].az_code
+      this.default_az = this.$store.state.az_list ? this.$store.state.az_list : this.az_list[0];
+      this.$store.commit('SET_AZ', this.default_az);
+      this.$store.commit('SET_AZ_ID', this.default_az.az_id);
     }
   }
   private change_pod(val){
@@ -148,10 +143,11 @@ export default class TopHeader extends Vue{
     }
   }
   @Watch('default_az')
-  private watch_pod(){
-    this.$store.commit('SET_AZ',this.default_az);
-    this.$store.commit('SET_AZ_NAME',this.az_name);
-    this.$store.commit('SET_AZ_CODE',this.az_code);
+  private watch_pod(n){
+    if(n){
+      this.$store.commit('SET_AZ', this.default_az);
+      this.$store.commit('SET_AZ_ID', this.default_az.az_id);
+    }
   }
 }
 </script>

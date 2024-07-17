@@ -317,7 +317,7 @@ export default class HostList extends Vue{
       if(value==='business_test'){
         this.az_info={
           az_id:this.$store.state.az_id,
-          az_name:this.$store.state.az_name,
+          az_name:this.$store.state.az_list.az_name,
         }
       }
         this.oper_type = value;
