@@ -66,7 +66,7 @@
                 <div class="recommend" v-if="recommend.length>0">
                     <div v-for="item in recommend" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
                         {{item.host_name}}<br/>
-                        {{item.qemu_version}}
+                        QEMU：{{item.qemu_version}}
                         <el-tooltip :content="item.cpu_usage ? (parseFloat(item.cpu_usage)).toFixed(2)+'%' : '0.00%'" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.cpu_usage" />
