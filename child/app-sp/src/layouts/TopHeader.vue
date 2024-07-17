@@ -90,7 +90,7 @@ export default class TopHeader extends Vue{
       })
       this.default_az = this.$store.state.az_list ? this.$store.state.az_list : this.az_list[0];
       this.$store.commit('SET_AZ', this.default_az);
-      this.$store.commit('SET_AZ_ID', this.default_az.az_id);
+      this.$store.commit('SET_AZ_ID', this.default_az['az_id']);
     }
   }
   private change_pod(val){
@@ -146,7 +146,7 @@ export default class TopHeader extends Vue{
   private watch_pod(n){
     if(n){
       this.$store.commit('SET_AZ', this.default_az);
-      this.$store.commit('SET_AZ_ID', this.default_az.az_id);
+      this.$store.commit('SET_AZ_ID', this.default_az['az_id']);
     }
   }
 }
