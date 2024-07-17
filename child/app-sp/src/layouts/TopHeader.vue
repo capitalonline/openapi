@@ -88,7 +88,7 @@ export default class TopHeader extends Vue{
           this.az_list=[...this.az_list,...inn.az_list]
         })
       })
-      this.default_az = this.$store.state.az_list ? this.$store.state.az_list : this.az_list[0];
+      this.default_az = Object.keys(this.$store.state.az_list).length>0 ? this.$store.state.az_list : this.az_list[0];
       this.$store.commit('SET_AZ', this.default_az);
       this.$store.commit('SET_AZ_ID', this.default_az['az_id']);
     }
