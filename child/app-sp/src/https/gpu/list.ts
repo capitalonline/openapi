@@ -31,5 +31,8 @@ export default {
   },
   handle_gpu_sale(req){
     return service(getEcsOptions('POST', '/host/handle_gpu_sale/', req))
+  },
+  update_host_gpu_status(req){
+    return service(getEcsOptions('POST','/host/update_host_gpu_status/',req))
   }
 }

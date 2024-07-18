@@ -17,14 +17,14 @@
       <el-table-column label="SN号" prop="sn"></el-table-column>
       <el-table-column label="状态" prop="status" column-key="status" :filters="status_list" :filter-multiple="false">
         <template #default="scope">
-          <span v-if="scope.row.status === 'DISABLE'">
-            <el-popover
+          <span v-if="scope.row.status === '禁售'">
+            <el-tooltip
+              :content="scope.row.message"
+              popper-class="tooltip-width"
               placement="bottom"
-              width="350"
-              trigger="click"
-              :content="scope.row.message">
-                <el-button slot="reference" type="text">{{scope.row.status}}</el-button>
-              </el-popover>
+              effect="light">
+              <span class="id-cell">{{ scope.row.status }}</span>
+              </el-tooltip>
           </span>
           <span v-else :class="[scope.row.status === 'FF' ? 'err' : 'normal']">{{scope.row.status}}</span>
         </template>
@@ -37,7 +37,7 @@
       <el-table-column label="所属云主机" prop="vm_id"></el-table-column>
       <el-table-column label="创建时间" prop="create_time"></el-table-column>
       <el-table-column label="更新时间" prop="update_time"></el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="120">
         <template #default="scope">
           <el-button
             type="text"
@@ -48,8 +48,8 @@
           <el-button
             type="text"
             @click="FnHandleGpuSale(scope.row,'cancel_forbid')"
-            v-if="scope.row.status  ==='DISABLE'"
-            :disabled="!operate_auth.includes('sale')"
+            v-if="scope.row.status  ==='禁售'"
+
           >取消禁售</el-button
           >
           <el-button
@@ -58,6 +58,11 @@
             @click="FnHandleGpuSale(scope.row,'forbid')"
 
           >禁售</el-button
+          >
+          <el-button
+            type="text"
+            @click="FnSync(scope.row)"
+          >同步</el-button
           >
         </template>
       </el-table-column>
@@ -146,6 +151,12 @@ export default class list extends Vue {
       this.FnGetList()
     }
   }
+  @Watch('visible_sale')
+  private watch_visible_sale(nv){
+    if(!nv){
+      this.FnGetList()
+    }
+  }
   @Watch("$store.state.pod_id")
   private watch_pod(nv){
     if(!nv){
@@ -170,6 +181,16 @@ export default class list extends Vue {
     this.visible_sale = true
     this.oper_info = [row]
     this.hand_type = type
+  }
+  private async FnSync(row){
+    let res = await Service.update_host_gpu_status({
+      pod_id:this.$store.state.pod_id,
+      host_id:row.host_id,
+      pci_address:row.pci_address
+    })
+    if(res.code === 'Success'){
+      this.$message.success(res.message)
+    }
   }
   private FnGoToMonitor(row) {
     this.$router.push({name:'physical_detail',query:{id:row.host_id,name:row.host_name},params:{active:"1",default_tab:'gpu'}})

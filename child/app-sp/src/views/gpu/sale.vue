@@ -51,8 +51,10 @@ export default class Sale extends Vue{
     }
   }
   private async confirm(){
+    if(this.type === 'forbid' && this.reason === '') return
     let req = {
-      opType:this.type,
+      pod_id:this.$store.state.pod_id,
+      op_type:this.type,
       host_id:this.oper_info[0].host_id,
       pci_address:this.oper_info[0].pci_address
     }
@@ -63,6 +65,7 @@ export default class Sale extends Vue{
     if(res.code === 'Success'){
       this.$message.success(res.message)
       this.visible_sync = false
+
     }
   }
 }
