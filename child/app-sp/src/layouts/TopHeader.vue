@@ -145,8 +145,8 @@ export default class TopHeader extends Vue{
   @Watch('default_az')
   private watch_pod(n){
     if(n){
-      this.$store.commit('SET_AZ', this.default_az);
-      this.$store.commit('SET_AZ_ID', this.default_az['az_id']);
+      this.$store.commit('SET_AZ', n);
+      this.$store.commit('SET_AZ_ID', n.az_id);
     }
   }
 }
