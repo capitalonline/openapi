@@ -50,6 +50,7 @@ export default new Vuex.Store({
     display:storage && storage.get ? storage.get('display_name') :'',
     search_vm:'',
     tree_list: JSON.parse(storage.get('tree_list')) || [],
+    az_list:JSON.parse(storage.get('az_list')) || []
   },
   getters: {
   },
@@ -107,11 +108,15 @@ export default new Vuex.Store({
       }
       state.pod_id = id
     },
-    SET_AZ(state,id){
+    SET_AZ_ID(state,id){
       if(storage && storage.set){
         storage.set('az_id',id)
       }
       state.az_id = id
+    },
+    SET_AZ(state,list){
+      state.az_list = list
+      storage.set('az_list',JSON.stringify(list))
     },
     SET_AZ_NAME(state,name){
       state.az_name = name

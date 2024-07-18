@@ -136,7 +136,7 @@ export default class CreateCluster extends Vue{
   }
   private async get_pod_list(){
     let res:any = await Service.get_pod_list({
-      az_name:this.$store.state.az_name,
+      az_name:this.$store.state.az_list.az_name,
     })
     if(res.code ==='Success'){
       this.pod_list = res.data.pod_list
@@ -146,7 +146,7 @@ export default class CreateCluster extends Vue{
   private async get_storage_cluster_info(){
     let res:any = await Service.get_storage_cluster_info({
       az_id:this.$store.state.az_id,
-      az_code:this.$store.state.az_code
+      az_code:this.$store.state.az_list.az_code
     })
     if(res.code ==='Success'){
       this.storage_cluster_list = res.data.clusters
