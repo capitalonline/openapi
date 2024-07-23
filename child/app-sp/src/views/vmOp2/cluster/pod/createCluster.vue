@@ -169,16 +169,16 @@ export default class CreateCluster extends Vue{
         this.cpu_model_list = res.data.model_info_list;
         if(this.isCreate){
           if(this.cpu_model_list.length > 0){
-            this.form_data.cpu_model =[this.cpu_model_list[0].real_name]
+            this.form_data.cpu_model =[this.cpu_model_list[0].id]
           }else {
             this.form_data.cpu_model =''
           }
         }else {
-          this.form_data.cpu_model = this.oper_info[0].cpu_model
+          this.form_data.cpu_model = this.oper_info[0].cpu_type_id
         }
       } else if(type === 'gpu'){
         this.gpu_model_list = res.data.model_info_list;
-        this.form_data.gpu_model = this.isCreate && '' ? this.gpu_model_list[0].real_name: this.oper_info[0].gpu_model;
+        this.form_data.gpu_model = this.isCreate && '' ? this.gpu_model_list[0].id: this.oper_info[0].gpu_type_id;
       }
     }
   }
@@ -224,9 +224,9 @@ export default class CreateCluster extends Vue{
   .el-input-number, .el-input__icon{
     line-height: 33px;
   }
-  .el-tag.el-tag--info .el-tag__close{
-    display: none;
-  }
+  //.el-tag.el-tag--info .el-tag__close{
+  //  display: none;
+  //}
 }
 
 </style>
