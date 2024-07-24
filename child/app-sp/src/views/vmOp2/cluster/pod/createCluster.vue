@@ -25,12 +25,12 @@
       </el-form-item>
       <el-form-item label="CPU型号" prop="cpu_model">
         <el-select v-model="form_data.cpu_model" filterable multiple >
-          <el-option v-for="item in cpu_model_list" :key="item.id" :label="item.real_name" :value="item.real_name" :disabled="FnSelectedCpus(item)"></el-option>
+          <el-option v-for="item in cpu_model_list" :key="item.id" :label="item.real_name" :value="item.id" :disabled="FnSelectedCpus(item)"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="GPU型号" >
         <el-select v-model="form_data.gpu_model" filterable :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
-          <el-option v-for="(item,index) in gpu_model_list" :key="index" :label="item.real_name" :value="item.real_name"></el-option>
+          <el-option v-for="(item,index) in gpu_model_list" :key="index" :label="item.real_name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="块存储集群">
@@ -169,16 +169,16 @@ export default class CreateCluster extends Vue{
         this.cpu_model_list = res.data.model_info_list;
         if(this.isCreate){
           if(this.cpu_model_list.length > 0){
-            this.form_data.cpu_model =[this.cpu_model_list[0].real_name]
+            this.form_data.cpu_model =[this.cpu_model_list[0].id]
           }else {
             this.form_data.cpu_model =''
           }
         }else {
-          this.form_data.cpu_model = this.oper_info[0].cpu_model
+          this.form_data.cpu_model = this.oper_info[0].cpu_type_id
         }
       } else if(type === 'gpu'){
         this.gpu_model_list = res.data.model_info_list;
-        this.form_data.gpu_model = this.isCreate && '' ? this.gpu_model_list[0].real_name: this.oper_info[0].gpu_model;
+        this.form_data.gpu_model = this.isCreate && '' ? this.gpu_model_list[0].id: this.oper_info[0].gpu_type_id;
       }
     }
   }
@@ -197,8 +197,8 @@ export default class CreateCluster extends Vue{
           cluster_name: this.form_data.cluster_name,
           father_pod_id: this.form_data.father_pod,
           cpu_brand: this.form_data.cpu_brand,
-          cpu_model: this.form_data.cpu_model,
-          gpu_model: this.form_data.gpu_model,
+          cpu_type_id: this.form_data.cpu_model,
+          gpu_type_id: this.form_data.gpu_model,
           storage_cluster_id: this.form_data.block_storage_cluster.id,
           storage_cluster_name: this.form_data.block_storage_cluster.name,
           max_host_count: this.form_data.max_host_number
@@ -224,9 +224,9 @@ export default class CreateCluster extends Vue{
   .el-input-number, .el-input__icon{
     line-height: 33px;
   }
-  .el-tag.el-tag--info .el-tag__close{
-    display: none;
-  }
+  //.el-tag.el-tag--info .el-tag__close{
+  //  display: none;
+  //}
 }
 
 </style>
