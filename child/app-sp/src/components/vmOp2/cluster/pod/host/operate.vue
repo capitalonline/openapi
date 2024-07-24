@@ -294,7 +294,7 @@ export default class Operate extends Vue{
       host_ids:this.list.map(item=>item.host_id)
       }:this.oper_type === 'change_cluster'?{
       param:change_cluster
-    }: {host_ids:this.rows[0].host_id}
+    }: {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
     if(this.oper_type==="under_sync") {

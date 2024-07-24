@@ -33,7 +33,12 @@
           <el-option v-for="(item,index) in gpu_model_list" :key="index" :label="item.real_name" :value="item.real_name"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="块存储集群">
+      <el-form-item label="虚拟机存储类型" >
+        <el-select v-model="form_data.storage_type">
+          <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="块存储集群" v-if="form_data.storage_type=== 'block'">
         <el-select v-model="form_data.block_storage_cluster" value-key="id" :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
           <el-option v-for="item in storage_cluster_list" :key="item.id" :label="item.name" :value="item">
           </el-option>
@@ -55,6 +60,7 @@ import {Component, Prop, PropSync, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/vmOp2/cluster/pod/index"
 import {Form} from "element-ui";
 import bus from "@/utils/vmOp2/eventBus";
+import StorageService from '@/https/mirror/list';
 @Component({})
 
 export default class CreateCluster extends Vue{
@@ -66,6 +72,10 @@ export default class CreateCluster extends Vue{
   private cpu_model_list:any =[]
   private gpu_model_list:any =[]
   private storage_cluster_list:any =[]
+  private storage_type_list:any = [
+    {id:'local',name:'本地盘'},
+    {id:"block",name:'云盘'},
+  ]
   private form_data:any={
     cluster_name:'',
     father_pod:'',
@@ -76,7 +86,8 @@ export default class CreateCluster extends Vue{
       id:'',
       name:''
     },
-    max_host_number:'50'
+    max_host_number:'50',
+    storage_type:'block',
   }
   private rules={
     cluster_name: [{ required: true, message:'请输入集群名称', trigger: 'change' }],
@@ -96,7 +107,8 @@ export default class CreateCluster extends Vue{
       id:'',
       name:''
     },
-    max_host_number: '50'
+    max_host_number: '50',
+    storage_type:'block',
     };
     if (n && !this.isCreate) {
       this.form_data = {
@@ -109,7 +121,6 @@ export default class CreateCluster extends Vue{
         max_host_number:this.oper_info[0].max_host_count,
         cpu_brand:this.oper_info[0].cpu_brand
       };
-      console.log('this.form_data',this.form_data)
     }
     if (!n) {
       this.form_data = { ...defaultFormData };
@@ -201,7 +212,8 @@ export default class CreateCluster extends Vue{
           gpu_model: this.form_data.gpu_model,
           storage_cluster_id: this.form_data.block_storage_cluster.id,
           storage_cluster_name: this.form_data.block_storage_cluster.name,
-          max_host_count: this.form_data.max_host_number
+          max_host_count: this.form_data.max_host_number,
+          storage_type:this.form_data.storage_type
         })
         if (res.code === 'Success') {
           this.$message.success(res.message)
