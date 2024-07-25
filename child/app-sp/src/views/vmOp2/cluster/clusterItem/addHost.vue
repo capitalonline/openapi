@@ -20,7 +20,11 @@
         <el-table-column label="CPU型号" prop="cpu_model"></el-table-column>
         <el-table-column label="GPU型号" prop="gpu_model"></el-table-column>
         <el-table-column label="块存储集群" prop="storage_cluster_name"></el-table-column>
-        <el-table-column label="存储类型"></el-table-column>
+        <el-table-column label="存储类型" prop="storage_type">
+          <template slot-scope="scope">
+            <span>{{scope.row.storage_type === 'local' ? '本地盘' : '云盘'}}</span>
+          </template>
+        </el-table-column>
 
       </el-table>
       <div class="footer">

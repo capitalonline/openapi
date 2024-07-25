@@ -59,7 +59,7 @@ const host_status={//error为新增状态，异常
   record:{power:[],host:[],msg:'',label:'操作记录'},
   resource:{power:[],host:[],msg:'',label:'分配资源'},
   remark:{power:[],host:[],msg:'',label:'编辑备注'},
-  add_cluster:{power:[],host:[],msg:'',label:'加入集群'},
+  add_cluster:{power:[],host:['online'],msg:'已选主机需为在线状态',label:'加入集群'},
   change_cluster: {power:[],host:[],msg:'',label:'更换集群'},
   remove_cluster:{power:[],host:['maintenance'],mag:'',label:'移出集群'}
 }

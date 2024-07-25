@@ -24,7 +24,7 @@
         <el-table-column prop="recomend_cluster" label="匹配集群名称" width="150px">
           <template slot-scope="scope">
             <el-select v-model="scope.row.selected_cluster" filterable value-key="cluster_id">
-              <el-option v-for="item in cluster_list" :value="item" :key="item.cluster_id" :label="item.cluster_name"></el-option>
+              <el-option v-for="item in scope.row.recommend_clusters" :value="item" :key="item.cluster_id" :label="item.cluster_name"></el-option>
             </el-select>
             <div v-show="!scope.row.selected_cluster" class="error_message">请选择加入集群</div>
           </template>

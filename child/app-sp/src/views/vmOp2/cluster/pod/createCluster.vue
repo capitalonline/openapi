@@ -38,7 +38,7 @@
           <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="块存储集群" v-if="form_data.storage_type=== 'block'">
+      <el-form-item label="块存储集群" prop="block_storage_cluster" v-if="form_data.storage_type=== 'block'">
         <el-select v-model="form_data.block_storage_cluster" value-key="id" :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
           <el-option v-for="item in storage_cluster_list" :key="item.id" :label="item.name" :value="item">
           </el-option>
@@ -93,6 +93,14 @@ export default class CreateCluster extends Vue{
     cluster_name: [{ required: true, message:'请输入集群名称', trigger: 'change' }],
     cpu_model: [{ required: true, message: '请选择CPU品牌', trigger: 'change' }],
     max_host_number: [{ required: true, message: '请输入最大物理机数', trigger: 'change' }],
+    block_storage_cluster:[{ required: true, validator:this.validate_name, trigger: 'change' }],
+  }
+  private validate_name(rule, value, callback){
+    if(!value && this.form_data.storage_type === 'block'){
+      return callback(new Error('请选择块存储集群'))
+    } else {
+      callback()
+    }
   }
 
   @Watch('visible')
