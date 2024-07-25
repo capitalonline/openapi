@@ -45,13 +45,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, PropSync, Vue, Watch} from "vue-property-decorator";
+import {Component, Emit, PropSync, Prop,Vue, Watch} from "vue-property-decorator";
 import {findPodIdByClusterId} from "@/utils/vmOp2/findPodId";
 import Service from "@/https/vmOp2/cluster/pod";
+import bus from "@/utils/vmOp2/eventBus";
 @Component
 
 export default class AddHost extends Vue{
   @PropSync('visible') visible_sync!:Boolean;
+  @Prop({default:''}) private cluster_id!:any
+  @Prop({default:()=>{}}) private info!:any
   private search_data:string = ''
   private list:any = []
   private multiple_selection = [];
@@ -68,8 +71,20 @@ export default class AddHost extends Vue{
       this.search_data = ''
     }
   }
-  private confirm(){
-
+  private async confirm(){
+    const req = this.multiple_selection.map(item=>{return {host_id:item.host_id,cluster_id:this.cluster_id}})
+    let res:any = await Service.add_cluster({param:req})
+    if(res.code === 'Success'){
+      if(res.data.error_msg == ''){
+        this.$message.success(res.message)
+      }else {
+        this.$message.warning(res.data.error_msg)
+      }
+      this.back('1')
+      bus.$emit('getTreeData',false)
+    }else {
+      this.back('0')
+    }
   }
   private async get_host_list(){
     if(!this.$store.state.az_id){
@@ -81,10 +96,13 @@ export default class AddHost extends Vue{
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
       pod_id:pod,
-      is_unassigned_cluster:'1',
-      host_info:this.search_data
-
+      is_unassigned_cluster:2,
+      host_info:this.search_data,
+      cpu_type_id:this.info.cpu_type_id,
+      gpu_type_id:this.info.gpu_type_id,
+      storage_cluster_id:this.info.storage_cluster_id
    }
+    console.log('this.info.cpu_type_id',this.info.cpu_type_id)
     let res:any = await Service.get_pod_host_list(req)
     if(res.code === 'Success'){
       this.list = res.data.result

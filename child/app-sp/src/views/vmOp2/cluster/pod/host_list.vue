@@ -293,6 +293,11 @@ export default class HostList extends Vue{
         return true
       }
     }
+    if(value === 'remove_cluster'){
+      if(this.multi_rows.every(item=> item.cluster_id === '0-0' )){
+        return true
+      }
+    }
     if(['upload','resource','update_attribute','business_test','schedule','migrate_flag','cheat','under_sync'].includes(value)){
       if(value==='business_test'){
         if(this.list.length===0){

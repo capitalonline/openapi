@@ -97,6 +97,7 @@
                    <el-button type="text" @click="del(scope.row)" :disabled="!authList.includes('del')">删除</el-button>
                    <el-button type="text" @click="handle(scope.row,'record')" :disabled="!authList.includes('record')">操作记录</el-button>
                    <el-button type="text" @click="handle(scope.row,'resource')" :disabled="!authList.includes('scheduling')">调度策略管理</el-button>
+                   <el-button type="text" @click="handle(scope.row,'cluster')" :disabled="!authList.includes('dispatch')">集群调度</el-button>
                </template>
            </el-table-column>
         </el-table>
@@ -118,6 +119,9 @@
         <template v-if="visible && operateType==='record'">
             <record :visible.sync="visible" :az_id="operateInfo.az_id"></record>
         </template>
+        <template v-if="visible && operateType==='cluster'">
+          <cluster :visible.sync="visible" :info="operateInfo"></cluster>
+        </template>
     </div>
 </template>
 
@@ -128,8 +132,10 @@ import iService from '../../https/instance/create'
 import Edit from './edit.vue';
 import Resource from './resouce.vue';
 import Record from './record.vue'
+import Cluster from "./cluster.vue";
 @Component({
     components:{
+        Cluster,
         Edit,
         Resource,
         Record

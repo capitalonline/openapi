@@ -83,6 +83,7 @@
     ></custom-list-item>
     <right-click :multi_rows="multi_rows" :menus="menus" :name="multi_rows.length>0? multi_rows[0].cluster_name: ''" :error_msg="error_msg" @fn-click="infoClick"></right-click>
     <create-cluster :visible.sync="visible" :oper_info="multi_rows" :isCreate="isCreate"></create-cluster>
+    <add-host :visible.sync="add_host_visible" :cluster_id="multi_rows.length>0? multi_rows[0].cluster_id: ''" :info="multi_rows[0]"></add-host>
   </div>
 
 </template>
@@ -99,8 +100,10 @@ import { hideMenu} from "@/utils/vmOp2/hideMenu"
 import RightClick from "@/views/vmOp2/component/right-click.vue";
 import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
 import bus from "@/utils/vmOp2/eventBus";
+import AddHost from "@/views/vmOp2/cluster/clusterItem/addHost.vue";
 @Component({
   components: {
+    AddHost,
     CreateCluster,
     SearchFrom,
     SvgIcon,
@@ -116,12 +119,14 @@ export default class List extends Vue{
   private search_data:any={}
   private isCreate:boolean=false
   private visible:boolean=false
+  private add_host_visible:boolean = false
   private rows_operate_btns:any=[
     {label:'新建集群',value:'create_cluster'},
   ]
   private menus= [
     // { label: "添加主机", value: 'add_host',single:true,disabled: false},
     // { label: "添加虚拟机", value: 'add_vm',single:true,disabled: false},
+    {label:'添加计算节点',value:'add_host',single:true,disable:false},
     { label: "编辑集群", value: 'edit_cluster',single:true,disabled: false },
     { label: "删除集群", value: 'delete_cluster', disabled: false},
   ]
@@ -216,6 +221,8 @@ export default class List extends Vue{
             message: '已取消删除'
           });
         });
+    }else if(item.value === 'add_host'){
+      this.add_host_visible = true
     }
     if(!item.list){
       hideMenu()

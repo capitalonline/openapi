@@ -264,6 +264,7 @@ export default class Operate extends Vue{
     const maintenance_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.maintenanceReason}})
     const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
     const change_cluster = this.list.map(item=>{return {host_id:item.host_id,cluster_id:this.form_data.toCluster}})
+    const remove_cluster = this.list.map(item=>{return {host_id:item.host_id,cluster_id:'0-0'}})
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -294,6 +295,9 @@ export default class Operate extends Vue{
       host_ids:this.list.map(item=>item.host_id)
       }:this.oper_type === 'change_cluster'?{
       param:change_cluster
+    }:this.oper_type === 'remove_cluster'?{
+      param:remove_cluster,
+      is_move_out:'1'
     }: {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
@@ -308,7 +312,7 @@ export default class Operate extends Vue{
       }
     }
     let res :any ={}
-    if(this.oper_type!=="change_cluster"){
+    if(this.oper_type!=="change_cluster" && this.oper_type!=="remove_cluster" ){
       res=await Service[this.operate_info[this.oper_type]]({
         ...req
     })
@@ -322,7 +326,7 @@ export default class Operate extends Vue{
       if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
         this.$message.success(res.message)
         this.back("1")
-      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover' || this.oper_type === 'change_cluster') {
+      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover' || this.oper_type === 'change_cluster' || this.oper_type ==="remove_cluster") {
         if(res.data.fail_host_list.length>0) {
           this.$message.warning(res.message + '。' + res.data.error_msg)
           this.back("0");
@@ -330,7 +334,7 @@ export default class Operate extends Vue{
         } else {
           this.$message.success(res.message)
           this.back("1")
-          if(this.oper_type === 'change_cluster'){
+          if(this.oper_type === 'change_cluster' || this.oper_type ==="remove_cluster"){
             bus.$emit('getTreeData',false)
           }
         }

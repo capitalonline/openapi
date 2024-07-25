@@ -119,7 +119,8 @@ export default class CreateCluster extends Vue{
           name:this.oper_info[0].storage_cluster_name
         },
         max_host_number:this.oper_info[0].max_host_count,
-        cpu_brand:this.oper_info[0].cpu_brand
+        cpu_brand:this.oper_info[0].cpu_brand,
+        storage_type:this.oper_info[0].backend_type
       };
     }
     if (!n) {
@@ -213,7 +214,7 @@ export default class CreateCluster extends Vue{
           storage_cluster_id: this.form_data.block_storage_cluster.id,
           storage_cluster_name: this.form_data.block_storage_cluster.name,
           max_host_count: this.form_data.max_host_number,
-          storage_type:this.form_data.storage_type
+          backend_type:this.form_data.storage_type
         })
         if (res.code === 'Success') {
           this.$message.success(res.message)

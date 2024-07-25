@@ -41,8 +41,8 @@
       </el-menu>
     </div>
     <operate :rows="[optionData]" :title="oper_label" :oper_type="oper_type" :visible.sync="visible" @close="close"></operate>
-    <add-host :visible.sync="add_host_visible" @close="close"></add-host>
-    <create-cluster :visible.sync="edit_cluster_visible" isCreate="false"></create-cluster>
+    <add-host :visible.sync="add_host_visible" @close="close" :cluster_id="select_tree_data.id" :info="cluster_info"></add-host>
+    <create-cluster :visible.sync="edit_cluster_visible" :isCreate="false" :oper_info="[cluster_info]"></create-cluster>
 
   </div>
 </template>
@@ -58,6 +58,7 @@ import bus from "@/utils/vmOp2/eventBus"
 import AddHost from "@/views/vmOp2/cluster/clusterItem/addHost.vue";
 import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
 import ClusterServe from "@/https/vmOp2/cluster/pod";
+import { findPodIdByClusterId } from "@/utils/vmOp2/findPodId"
 @Component({
   components: {CreateCluster, AddHost, Operate, RightClick}
 })
@@ -81,14 +82,9 @@ export default class LeftTree extends Vue{
   private type = ''
   private add_host_visible:boolean = false
   private edit_cluster_visible:boolean = false
-  private select_tree_data:{
-    type:''
-  }
-  private buttons:any =[
-    {label:'开机',key:'start_up_host',disable:false},
-    {label:'关机',key:'shutdown_host',disable:false},
-    {label:'重启',key:'restart_host',disable:false},
-    ] // 按钮的文本内容
+  private select_tree_data:any ={}
+  private buttons:any =[] // 按钮的文本内容
+  private cluster_info = {}
   @Watch('$route')
   private onRouteChange(to, from) {
     this.active_name = to.name;
@@ -155,7 +151,7 @@ export default class LeftTree extends Vue{
         return '无操作权限'
       }
     }else {
-
+      return '仅支持无物理机的cluster进行删除'
     }
   }
   created(){
@@ -174,19 +170,32 @@ export default class LeftTree extends Vue{
       this.oper_label = label
       this.visible = true;
     }else if(this.type === 'cluster') {
+      let pod = findPodIdByClusterId(this.select_tree_data.id)
+      this.cluster_info = {
+        cluster_id:this.select_tree_data.id,
+        cluster_name:this.select_tree_data.label,
+        pod_id:pod,
+        cpu_brand:this.select_tree_data.cpu_brand,
+        cpu_type_id:this.select_tree_data.cpu_type_id,
+        gpu_type_id:this.select_tree_data.gpu_type_id,
+        backend_type:this.select_tree_data.backend_type,
+        max_host_count:this.select_tree_data.max_host_count,
+        storage_cluster_id:this.select_tree_data.storage_cluster_id,
+        storage_cluster_name:this.select_tree_data.storage_cluster_name
+      }
+      console.log('this.cluster_info',this.cluster_info)
       if (item.key === 'add_host') {
         this.add_host_visible = true
       } else if (item.key === 'edit_cluster') {
         this.edit_cluster_visible = true
       } else if (item.key === 'delete_cluster') {
-        console.log('&&&&&')
-        this.$confirm(`是否确认删除集群：${this.select_tree_data.label}?`, '删除集群', {
+        this.$confirm(`是否确认删除集群：${this.select_tree_data['label']}?`, '删除集群', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async() => {
           let res:any = await ClusterServe.delete_cluster({
-            cluster_id:[this.select_tree_data.id]
+            cluster_id:[this.select_tree_data['id']]
           })
           if(res.code === 'Success'){
             this.$message.success(res.message)
@@ -249,7 +258,6 @@ export default class LeftTree extends Vue{
      hideMenu()
     this.select_tree_data = data
     this.type = data.type
-    console.log('this.select_tree_data',this.select_tree_data)
     if(this.type === 'cluster'){
       this.buttons =[
         {label:'添加计算节点',key:'add_host',disable:false},
@@ -283,7 +291,7 @@ export default class LeftTree extends Vue{
         item.disable = !this.judge(data, item.key);
       }else {
         if(item.key === 'delete_cluster'){
-          item.disable = data.host_count === 0
+          item.disable = data.host_count !== 0
         }
       }
     }

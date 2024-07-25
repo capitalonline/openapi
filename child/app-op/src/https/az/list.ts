@@ -43,4 +43,7 @@ export default{
     set_scheduling_policy(req){
         return service(getEcsOptions('POST','/ecs/set_scheduling_policy/',req))
     },
+    enable_cluster_schedule(req){
+        return service(getEcsOptions('POST','/ecs/enable_cluster_schedule/',req))
+    }
 }
