@@ -125,6 +125,7 @@ export default class AddHost extends Vue{
   }
   @Emit("close")
   private back(val){
+    this.multiple_selection = []
     this.visible_sync=false
   }
 
