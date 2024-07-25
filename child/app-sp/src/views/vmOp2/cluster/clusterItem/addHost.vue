@@ -98,11 +98,10 @@ export default class AddHost extends Vue{
       pod_id:pod,
       is_unassigned_cluster:2,
       host_info:this.search_data,
-      cpu_type_id:this.info.cpu_type_id,
+      cpu_type_id:JSON.stringify(this.info.cpu_type_id),
       gpu_type_id:this.info.gpu_type_id,
       storage_cluster_id:this.info.storage_cluster_id
    }
-    console.log('this.info.cpu_type_id',this.info.cpu_type_id)
     let res:any = await Service.get_pod_host_list(req)
     if(res.code === 'Success'){
       this.list = res.data.result
