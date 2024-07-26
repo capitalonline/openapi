@@ -367,3 +367,10 @@ i.el-icon-s-tools{
 }
 
 </style>
+<style lang="scss">
+.el-message-box{
+  .el-message-box__message {
+    word-wrap: break-word!important;
+  }
+}
+</style>
