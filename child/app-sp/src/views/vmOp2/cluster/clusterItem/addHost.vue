@@ -120,7 +120,7 @@ export default class AddHost extends Vue{
       cpu_type_id:JSON.stringify(this.info.cpu_type_id),
       gpu_type_id:this.info.gpu_type_id,
       storage_cluster_id:this.info.storage_cluster_id,
-      cpu_model:data.cpu_model ? data.cpu_model[0] : undefined,
+      cpu:data.cpu_model ? data.cpu_model[0] : undefined,
    }
     let res:any = await Service.get_pod_host_list(req)
     if(res.code === 'Success'){
