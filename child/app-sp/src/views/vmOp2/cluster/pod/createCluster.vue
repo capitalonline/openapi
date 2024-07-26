@@ -24,11 +24,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="CPU型号" prop="cpu_model">
-        <el-select v-model="form_data.cpu_model" filterable multiple >
+        <el-select v-model="form_data.cpu_model" filterable multiple class="noInput">
           <el-option v-for="item in cpu_model_list" :key="item.id" :label="item.real_name" :value="item.id" :disabled="FnSelectedCpus(item)"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="GPU型号" >
+      <el-form-item label="GPU型号">
         <el-select v-model="form_data.gpu_model" filterable :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
           <el-option v-for="(item,index) in gpu_model_list" :key="index" :label="item.real_name" :value="item.id"></el-option>
         </el-select>
@@ -248,6 +248,11 @@ export default class CreateCluster extends Vue{
   }
   .el-tag.el-tag--info .el-tag__close{
     display: none;
+  }
+  .noInput{
+    .el-select__input{
+      display: none;
+    }
   }
 }
 
