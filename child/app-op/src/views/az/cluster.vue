@@ -6,7 +6,7 @@
       :destroy-on-close="true"
       :close-on-click-modal="false"
   >
-    <el-form ref="form" :model="form" label-width="180px" label-suffix=":" label-position="left">
+    <el-form ref="form" :model="form" label-width="205px" label-suffix=":" label-position="left">
       <el-form-item label="是否开启集群调度">
         <el-switch
             class="tableScopeSwitch"
