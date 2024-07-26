@@ -226,8 +226,7 @@ export default class Operate extends Vue{
     }
     let res:any = await ClusterService.get_pod_cluster_list(reqData)
     if(res.code === 'Success'){
-      let init_cluster =[{cluster_name:'待加入集群',cluster_id:'0-0'}]
-      this.cluster_list = [...init_cluster,...res.data.result]
+      this.cluster_list = res.data.result
     }
   }
   private async get_host_recycle_department(){
