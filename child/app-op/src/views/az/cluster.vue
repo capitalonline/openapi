@@ -58,12 +58,12 @@ export default class Cluster extends Vue{
     if(this.info.cluster_schedule === 1){
       this.form ={
         isEnable: true,
-        isMigration:true
+        isMigration:false
       }
     }else if(this.info.cluster_schedule === 2){
       this.form ={
         isEnable: true,
-        isMigration:false
+        isMigration:true
       }
     }
   }

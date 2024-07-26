@@ -140,18 +140,19 @@ export default class CreateCluster extends Vue{
       this.getModelInfoList('gpu');
     }
   }
-  private FnSelectedCpus(item){
-    let isDisabledModel = false
-    if(this.oper_info && this.oper_info[0]){
-      isDisabledModel = item.real_name === this.oper_info[0].cpu_model;
+  private FnSelectedCpus(item) {
+    let isDisabledModel = false;
+    if (this.oper_info && this.oper_info[0]) {
+      const cpuTypeIds = this.oper_info[0].cpu_type_id;
+      isDisabledModel = Array.isArray(cpuTypeIds) && cpuTypeIds.includes(String(item.id));
     }
     // 检查当前 CPU 型号是否有宿主机
     const hasHost = this.oper_info && this.oper_info.length > 0 && this.oper_info[0].host_count !== 0;
     // 如果当前 CPU 型号已经被选中，并且有宿主机，则禁用该选项
-    if (isDisabledModel  && hasHost) {
+    if (isDisabledModel && hasHost) {
       return true;
-    }else {
-      return false
+    } else {
+      return false;
     }
   }
   private async get_pod_list(){
@@ -219,8 +220,8 @@ export default class CreateCluster extends Vue{
           cpu_brand: this.form_data.cpu_brand,
           cpu_type_id: this.form_data.cpu_model,
           gpu_type_id: this.form_data.gpu_model,
-          storage_cluster_id: this.form_data.block_storage_cluster.id,
-          storage_cluster_name: this.form_data.block_storage_cluster.name,
+          storage_cluster_id: this.form_data.storage_type === 'block' ? this.form_data.block_storage_cluster.id : undefined,
+          storage_cluster_name: this.form_data.storage_type === 'block' ?  this.form_data.block_storage_cluster.name : undefined,
           max_host_count: this.form_data.max_host_number,
           backend_type:this.form_data.storage_type
         })
@@ -245,9 +246,9 @@ export default class CreateCluster extends Vue{
   .el-input-number, .el-input__icon{
     line-height: 33px;
   }
-  //.el-tag.el-tag--info .el-tag__close{
-  //  display: none;
-  //}
+  .el-tag.el-tag--info .el-tag__close{
+    display: none;
+  }
 }
 
 </style>

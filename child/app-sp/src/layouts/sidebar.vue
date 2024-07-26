@@ -162,14 +162,14 @@ export default class Sidebar extends Vue {
           label: cluster_name,
           type: type,
           children: hosts,
-          cpu_brand:cpu_brand,
-          cpu_type_id:cpu_type_id,
-          gpu_type_id:gpu_type_id,
+          cpu_brand,
+          cpu_type_id,
+          gpu_type_id,
           backend_type:storage_type,
-          max_host_count:max_host_count,
-          storage_cluster_id:storage_cluster_id,
-          storage_cluster_name:storage_cluster_name,
-          host_count:host_count
+          max_host_count,
+          storage_cluster_id,
+          storage_cluster_name,
+          host_count
         };
       });
       return {

@@ -33,8 +33,8 @@
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer">
-            <el-button @click="confirm" :disabled="rows.length === 0">确认</el-button>
-            <el-button type="primary" @click="back('0')">取消</el-button>
+            <el-button type="primary" @click="confirm" :disabled="rows.length === 0">确认</el-button>
+            <el-button  @click="back('0')">取消</el-button>
         </span>
     </el-dialog>
 
