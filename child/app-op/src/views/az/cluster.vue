@@ -17,7 +17,7 @@
             inactive-color="#ff4949">
         </el-switch>
       </el-form-item>
-      <el-form-item label="是否开启宕机集群内迁移">
+      <el-form-item label="是否开启宕机仅本集群内迁移">
         <el-switch
             class="tableScopeSwitch"
             v-model="form.isMigration"
