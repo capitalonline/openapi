@@ -93,7 +93,7 @@ export default class CreateCluster extends Vue{
     cluster_name: [{ required: true, message:'请输入集群名称', trigger: 'change' }],
     cpu_model: [{ required: true, message: '请选择CPU品牌', trigger: 'change' }],
     max_host_number: [{ required: true, message: '请输入最大物理机数', trigger: 'change' }],
-    block_storage_cluster:[{ required: true, validator:this.validate_name, trigger: 'change' }],
+    block_storage_cluster:[{ required: true, validator:this.validate_name, trigger: 'blur' }],
   }
   private validate_name(rule, value, callback){
     if(!value && this.form_data.storage_type === 'block'){
