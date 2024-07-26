@@ -181,7 +181,8 @@ export default class LeftTree extends Vue{
         backend_type:this.select_tree_data.backend_type,
         max_host_count:this.select_tree_data.max_host_count,
         storage_cluster_id:this.select_tree_data.storage_cluster_id,
-        storage_cluster_name:this.select_tree_data.storage_cluster_name
+        storage_cluster_name:this.select_tree_data.storage_cluster_name,
+        host_count:this.select_tree_data.host_count
       }
       console.log('this.cluster_info',this.cluster_info)
       if (item.key === 'add_host') {

@@ -8,16 +8,16 @@
       :close-on-click-modal="false"
       @close="back"
     >
-      <el-input style="width: 30%" placeholder="输入主机名称/管理网IP搜索" v-model="search_data"></el-input>
-      <el-button type="primary" class="m-left10 m-bottom10" @click="get_host_list">查询</el-button>
+      <action-block :search_option="search" @fn-search="fn_search"></action-block>
       <el-table
         :data="list"
         max-height="400px"
-        @selection-change="handleSelectionChange">
+        @selection-change="handleSelectionChange"
+        @filter-change="filterAttribute">
         <el-table-column type="selection"></el-table-column>
         <el-table-column label="主机名称" prop="host_name"></el-table-column>
         <el-table-column label="管理网IP" prop="host_ip"></el-table-column>
-        <el-table-column label="CPU型号" prop="cpu_model"></el-table-column>
+        <el-table-column label="CPU型号" prop="cpu_model" :filters="cpu_list" :filter-multiple="false" column-key="cpu_model"></el-table-column>
         <el-table-column label="GPU型号" prop="gpu_model"></el-table-column>
         <el-table-column label="块存储集群" prop="storage_cluster_name"></el-table-column>
         <el-table-column label="存储类型" prop="storage_type">
@@ -53,15 +53,24 @@ import {Component, Emit, PropSync, Prop,Vue, Watch} from "vue-property-decorator
 import {findPodIdByClusterId} from "@/utils/vmOp2/findPodId";
 import Service from "@/https/vmOp2/cluster/pod";
 import bus from "@/utils/vmOp2/eventBus";
-@Component
+import ActionBlock from "@/components/search/actionBlock.vue";
+@Component({
+  components: {ActionBlock}
+})
 
 export default class AddHost extends Vue{
   @PropSync('visible') visible_sync!:Boolean;
   @Prop({default:''}) private cluster_id!:any
   @Prop({default:()=>{}}) private info!:any
-  private search_data:string = ''
+  private search_data:any = {}
   private list:any = []
+  private filter_data:any={}
   private multiple_selection = [];
+  private filter_dict :any = {}
+  private cpu_list:any = []
+  private search:any = {
+    host_info:{placeholder:'输入主机名称/管理网IP搜索'}
+  }
   private page_info:any={
     current:1,
     size:20,
@@ -74,6 +83,11 @@ export default class AddHost extends Vue{
     }else {
       this.search_data = ''
     }
+  }
+  private fn_search(data:any={}){
+    this.page_info.current = 1;
+    this.search_data = {...data,...this.filter_data}
+    this.get_host_list()
   }
   private async confirm(){
     const req = this.multiple_selection.map(item=>{return {host_id:item.host_id,cluster_id:this.cluster_id}})
@@ -94,6 +108,7 @@ export default class AddHost extends Vue{
     if(!this.$store.state.az_id){
       return
     }
+    const {search_data:data}=this
     let pod=findPodIdByClusterId(this.$route.params.id)
     let req={
       page_index: this.page_info.current,
@@ -101,15 +116,21 @@ export default class AddHost extends Vue{
       az_id:this.$store.state.az_id,
       pod_id:pod,
       is_unassigned_cluster:2,
-      host_info:this.search_data,
+      host_info:data.host_info || "",
       cpu_type_id:JSON.stringify(this.info.cpu_type_id),
       gpu_type_id:this.info.gpu_type_id,
-      storage_cluster_id:this.info.storage_cluster_id
+      storage_cluster_id:this.info.storage_cluster_id,
+      cpu_model:data.cpu_model ? data.cpu_model[0] : undefined,
    }
     let res:any = await Service.get_pod_host_list(req)
     if(res.code === 'Success'){
       this.list = res.data.result
       this.page_info.total = res.data.page_info.count
+      this.filter_dict = res.data.filter_dict
+      this.cpu_list = this.filter_dict.cpu_dict.map(cpu => ({
+        text: cpu,
+        value: cpu
+      }));
     }
   }
   private handleSizeChange(size){
@@ -122,6 +143,10 @@ export default class AddHost extends Vue{
   }
   private handleSelectionChange(val) {
     this.multiple_selection = val;
+  }
+  private filterAttribute(obj:any){
+    this.filter_data = {...this.filter_data,...obj}
+    this.fn_search()
   }
   @Emit("close")
   private back(val){

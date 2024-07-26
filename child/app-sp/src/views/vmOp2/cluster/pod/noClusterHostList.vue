@@ -207,7 +207,7 @@ export default class HostList extends Vue{
     {label:'分配资源',value:'resource',single:true,disabled:false},
     {label:'编辑备注',value:'remark',single:true,disabled:false},
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
-    {label: '导入集群',value:'add_cluster',disabled:false},
+    //{label: '导入集群',value:'add_cluster',disabled:false},
     {label:'机器锁定',value:'lock_machine', disabled:false,list:this.lock_machine},
     {label:'机器维护',value:'maintenance', disabled:false,list: this.maintenance_host},
     {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},

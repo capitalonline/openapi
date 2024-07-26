@@ -34,7 +34,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="虚拟机存储类型" >
-        <el-select v-model="form_data.storage_type">
+        <el-select v-model="form_data.storage_type" :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)">
           <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
         </el-select>
       </el-form-item>
