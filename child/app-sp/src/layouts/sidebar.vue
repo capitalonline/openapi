@@ -143,7 +143,7 @@ export default class Sidebar extends Vue {
     return data.map(pod => {
       const { pod_id, pod_name, type, children } = pod;
       const clusters = children.map(cluster => {
-        const { cluster_id,pod_id, cluster_name, type, children } = cluster;
+        const { cluster_id,pod_id, cluster_name, type, children,cpu_brand,cpu_type_id,gpu_type_id,storage_type,max_host_count,storage_cluster_id,storage_cluster_name,host_count } = cluster;
         const hosts = children.map(host => {
           const { host_id, host_name,machine_status,power_status,ecs_count,machine_status_name,power_status_name, type } = host;
           return {
@@ -162,6 +162,14 @@ export default class Sidebar extends Vue {
           label: cluster_name,
           type: type,
           children: hosts,
+          cpu_brand,
+          cpu_type_id,
+          gpu_type_id,
+          backend_type:storage_type,
+          max_host_count,
+          storage_cluster_id,
+          storage_cluster_name,
+          host_count
         };
       });
       return {

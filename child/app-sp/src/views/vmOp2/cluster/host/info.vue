@@ -121,8 +121,8 @@ export default class Info extends Vue{
       this.progress_info.storage = {
         ...this.progress_info.storage,
         used:this.detail_info.ram_allot+'GB',
-        total:this.detail_info.ram_allot + this.detail_info.ram_free+'GB',
-        remain:this.detail_info.ram_free+'GB',
+        total:this.detail_info.volume_size +'GB',
+        remain:this.detail_info.free_volume_size+'GB',
         percentage:Number(((this.detail_info.ram_allot / (this.detail_info.ram_allot + this.detail_info.ram_free))*100).toFixed(0))
       }
 

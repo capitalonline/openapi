@@ -41,6 +41,8 @@
       </el-menu>
     </div>
     <operate :rows="[optionData]" :title="oper_label" :oper_type="oper_type" :visible.sync="visible" @close="close"></operate>
+    <add-host :visible.sync="add_host_visible" @close="close" :cluster_id="select_tree_data.id" :info="cluster_info"></add-host>
+    <create-cluster :visible.sync="edit_cluster_visible" :isCreate="false" :oper_info="[cluster_info]"></create-cluster>
 
   </div>
 </template>
@@ -53,8 +55,12 @@ import {getHostStatus} from "@/utils/getStatusInfo";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import Service from "@/https/alarm/list";
 import bus from "@/utils/vmOp2/eventBus"
+import AddHost from "@/views/vmOp2/cluster/clusterItem/addHost.vue";
+import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
+import ClusterServe from "@/https/vmOp2/cluster/pod";
+import { findPodIdByClusterId } from "@/utils/vmOp2/findPodId"
 @Component({
-  components: {Operate, RightClick}
+  components: {CreateCluster, AddHost, Operate, RightClick}
 })
 export default class LeftTree extends Vue{
   @Prop({default:true})refresh!:boolean
@@ -73,11 +79,12 @@ export default class LeftTree extends Vue{
   private visible:Boolean=false;
   private list:any=[]
   private currentLivingIdLocal = ''
-  private buttons:any =[
-    {label:'开机',key:'start_up_host',disable:false},
-    {label:'关机',key:'shutdown_host',disable:false},
-    {label:'重启',key:'restart_host',disable:false},
-    ] // 按钮的文本内容
+  private type = ''
+  private add_host_visible:boolean = false
+  private edit_cluster_visible:boolean = false
+  private select_tree_data:any ={}
+  private buttons:any =[] // 按钮的文本内容
+  private cluster_info = {}
   @Watch('$route')
   private onRouteChange(to, from) {
     this.active_name = to.name;
@@ -136,11 +143,15 @@ export default class LeftTree extends Vue{
     return this.iconClasses[node.level];
   }
   private tooltip(item){
-    const obj = getHostStatus(item)
-    if(obj.msg) {
-      return obj.msg
-    } else {
-      return '无操作权限'
+    if(this.type === 'host' ){
+      const obj = getHostStatus(item)
+      if(obj.msg) {
+        return obj.msg
+      } else {
+        return '无操作权限'
+      }
+    }else {
+      return '仅支持无物理机的cluster进行删除'
     }
   }
   created(){
@@ -152,10 +163,51 @@ export default class LeftTree extends Vue{
     });
   }
   private infoClick(item) {
-    const {label, key}=item
-    this.oper_type = key;
-    this.oper_label = label
-    this.visible = true;
+    console.log(item,this.type)
+    if(this.type === 'host'){
+      const {label, key}=item
+      this.oper_type = key;
+      this.oper_label = label
+      this.visible = true;
+    }else if(this.type === 'cluster') {
+      let pod = findPodIdByClusterId(this.select_tree_data.id)
+      this.cluster_info = {
+        cluster_id:this.select_tree_data.id,
+        cluster_name:this.select_tree_data.label,
+        pod_id:pod,
+        cpu_brand:this.select_tree_data.cpu_brand,
+        cpu_type_id:this.select_tree_data.cpu_type_id,
+        gpu_type_id:this.select_tree_data.gpu_type_id,
+        backend_type:this.select_tree_data.backend_type,
+        max_host_count:this.select_tree_data.max_host_count,
+        storage_cluster_id:this.select_tree_data.storage_cluster_id,
+        storage_cluster_name:this.select_tree_data.storage_cluster_name,
+        host_count:this.select_tree_data.host_count
+      }
+      console.log('this.cluster_info',this.cluster_info)
+      if (item.key === 'add_host') {
+        this.add_host_visible = true
+      } else if (item.key === 'edit_cluster') {
+        this.edit_cluster_visible = true
+      } else if (item.key === 'delete_cluster') {
+        this.$confirm(`是否确认删除集群：${this.select_tree_data['label']}?`, '删除集群', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          let res:any = await ClusterServe.delete_cluster({
+            cluster_id:[this.select_tree_data['id']]
+          })
+          if(res.code === 'Success'){
+            this.$message.success(res.message)
+            bus.$emit('getTreeData',true)
+          }
+        }).catch(() => {
+
+        })
+
+      }
+    }
     this.OptionCardClose
 
   }
@@ -205,7 +257,23 @@ export default class LeftTree extends Vue{
   }
   private handleRight(event,data,node){
      hideMenu()
-    if(data.type === 'host') {
+    this.select_tree_data = data
+    this.type = data.type
+    if(this.type === 'cluster'){
+      this.buttons =[
+        {label:'添加计算节点',key:'add_host',disable:false},
+        { label: "编辑集群", key: 'edit_cluster',disabled: false },
+        { label: "删除集群", key: 'delete_cluster', disabled: false},
+      ]
+
+    }else if(this.type === 'host'){
+      this.buttons =[
+        {label:'开机',key:'start_up_host',disable:false},
+        {label:'关机',key:'shutdown_host',disable:false},
+        {label:'重启',key:'restart_host',disable:false},
+      ]
+    }
+    if(this.type === 'host' || this.type === 'cluster'){
       event.preventDefault();
       this.handleNodeClick(data)
       this.showContextMenu = true;
@@ -214,13 +282,19 @@ export default class LeftTree extends Vue{
       this.optionData = data
       this.handleMenus(data)
       document.addEventListener('click', this.OptionCardClose);
-      document.addEventListener('contextmenu', this.OptionCardClose);
+      document.addEventListener('contextmenu', this.OptionCardClose)
     }
   }
   private handleMenus(data) {
     // 处理菜单项
     for (const item of this.buttons) {
-        item.disable = !this.judge(data,item.key);
+      if(this.type === 'host') {
+        item.disable = !this.judge(data, item.key);
+      }else {
+        if(item.key === 'delete_cluster'){
+          item.disable = data.host_count !== 0
+        }
+      }
     }
   }
   private judge(data,val):any{

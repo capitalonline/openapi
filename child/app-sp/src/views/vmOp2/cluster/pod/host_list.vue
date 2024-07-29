@@ -218,6 +218,7 @@ export default class HostList extends Vue{
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
     {label:'机器锁定',value:'lock_machine', disabled:false,list:this.lock_machine},
     {label: '更换集群',value: 'change_cluster',disabled: false},
+    {label: '移出集群',value: 'remove_cluster',disabled: false},
     {label:'机器维护',value:'maintenance', disabled:false,list: this.maintenance_host},
     {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},
     {label: '设备标记',value: 'sign', disabled:false,list: this.sign_host},
@@ -225,6 +226,7 @@ export default class HostList extends Vue{
     {label:'驱散',value:'disperse', disabled:false},
     {label:'欺骗器管理',value:'cheat', disabled:false},
     {label:'业务测试',value:'business_test', disabled:false},
+    {label:'完成验证',value:'finish_validate'},
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
@@ -236,7 +238,8 @@ export default class HostList extends Vue{
     migrate:'已选主机需为在线状态',
     unlock:'已选主机需为锁定状态',
     data_clear:'机器状态需为待清理状态',
-    down_recover:'机器状态需为待恢复状态!'
+    down_recover:'机器状态需为待恢复状态!',
+    remove_cluster:'已选主机需为维护中状态'
   }
   @Watch('multi_rows',{immediate:true,deep:true})
   private watch_multi(){
@@ -287,6 +290,11 @@ export default class HostList extends Vue{
         return false
       }else{
         this.error_msg['finish_validate'] = '物理机需为初始化状态或验证失败状态'!
+        return true
+      }
+    }
+    if(value === 'remove_cluster'){
+      if(this.multi_rows.every(item=> item.cluster_id === '0-0' )){
         return true
       }
     }

@@ -24,16 +24,21 @@
         </el-select>
       </el-form-item>
       <el-form-item label="CPU型号" prop="cpu_model">
-        <el-select v-model="form_data.cpu_model" filterable multiple >
+        <el-select v-model="form_data.cpu_model" filterable multiple class="noInput">
           <el-option v-for="item in cpu_model_list" :key="item.id" :label="item.real_name" :value="item.id" :disabled="FnSelectedCpus(item)"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="GPU型号" >
+      <el-form-item label="GPU型号">
         <el-select v-model="form_data.gpu_model" filterable :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
           <el-option v-for="(item,index) in gpu_model_list" :key="index" :label="item.real_name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="块存储集群">
+      <el-form-item label="虚拟机存储类型" >
+        <el-select v-model="form_data.storage_type" :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)">
+          <el-option v-for="item in storage_type_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="块存储集群" prop="block_storage_cluster" v-if="form_data.storage_type=== 'block'">
         <el-select v-model="form_data.block_storage_cluster" value-key="id" :disabled="!isCreate && (oper_info && oper_info.length > 0 && oper_info[0].host_count !== 0)" clearable>
           <el-option v-for="item in storage_cluster_list" :key="item.id" :label="item.name" :value="item">
           </el-option>
@@ -55,6 +60,7 @@ import {Component, Prop, PropSync, Vue, Watch} from "vue-property-decorator";
 import Service from "@/https/vmOp2/cluster/pod/index"
 import {Form} from "element-ui";
 import bus from "@/utils/vmOp2/eventBus";
+import StorageService from '@/https/mirror/list';
 @Component({})
 
 export default class CreateCluster extends Vue{
@@ -66,6 +72,10 @@ export default class CreateCluster extends Vue{
   private cpu_model_list:any =[]
   private gpu_model_list:any =[]
   private storage_cluster_list:any =[]
+  private storage_type_list:any = [
+    {id:'local',name:'本地盘'},
+    {id:"block",name:'云盘'},
+  ]
   private form_data:any={
     cluster_name:'',
     father_pod:'',
@@ -76,12 +86,21 @@ export default class CreateCluster extends Vue{
       id:'',
       name:''
     },
-    max_host_number:'50'
+    max_host_number:'50',
+    storage_type:'block',
   }
   private rules={
     cluster_name: [{ required: true, message:'请输入集群名称', trigger: 'change' }],
     cpu_model: [{ required: true, message: '请选择CPU品牌', trigger: 'change' }],
     max_host_number: [{ required: true, message: '请输入最大物理机数', trigger: 'change' }],
+    block_storage_cluster:[{ required: true, validator:this.validate_name, trigger: 'blur' }],
+  }
+  private validate_name(rule, value, callback){
+    if(!value && this.form_data.storage_type === 'block'){
+      return callback(new Error('请选择块存储集群'))
+    } else {
+      callback()
+    }
   }
 
   @Watch('visible')
@@ -96,7 +115,8 @@ export default class CreateCluster extends Vue{
       id:'',
       name:''
     },
-    max_host_number: '50'
+    max_host_number: '50',
+    storage_type:'block',
     };
     if (n && !this.isCreate) {
       this.form_data = {
@@ -107,9 +127,9 @@ export default class CreateCluster extends Vue{
           name:this.oper_info[0].storage_cluster_name
         },
         max_host_number:this.oper_info[0].max_host_count,
-        cpu_brand:this.oper_info[0].cpu_brand
+        cpu_brand:this.oper_info[0].cpu_brand,
+        storage_type:this.oper_info[0].backend_type
       };
-      console.log('this.form_data',this.form_data)
     }
     if (!n) {
       this.form_data = { ...defaultFormData };
@@ -120,18 +140,19 @@ export default class CreateCluster extends Vue{
       this.getModelInfoList('gpu');
     }
   }
-  private FnSelectedCpus(item){
-    let isDisabledModel = false
-    if(this.oper_info && this.oper_info[0]){
-      isDisabledModel = item.real_name === this.oper_info[0].cpu_model;
+  private FnSelectedCpus(item) {
+    let isDisabledModel = false;
+    if (this.oper_info && this.oper_info[0]) {
+      const cpuTypeIds = this.oper_info[0].cpu_type_id;
+      isDisabledModel = Array.isArray(cpuTypeIds) && cpuTypeIds.includes(String(item.id));
     }
     // 检查当前 CPU 型号是否有宿主机
     const hasHost = this.oper_info && this.oper_info.length > 0 && this.oper_info[0].host_count !== 0;
     // 如果当前 CPU 型号已经被选中，并且有宿主机，则禁用该选项
-    if (isDisabledModel  && hasHost) {
+    if (isDisabledModel && hasHost) {
       return true;
-    }else {
-      return false
+    } else {
+      return false;
     }
   }
   private async get_pod_list(){
@@ -199,9 +220,10 @@ export default class CreateCluster extends Vue{
           cpu_brand: this.form_data.cpu_brand,
           cpu_type_id: this.form_data.cpu_model,
           gpu_type_id: this.form_data.gpu_model,
-          storage_cluster_id: this.form_data.block_storage_cluster.id,
-          storage_cluster_name: this.form_data.block_storage_cluster.name,
-          max_host_count: this.form_data.max_host_number
+          storage_cluster_id: this.form_data.storage_type === 'block' ? this.form_data.block_storage_cluster.id : undefined,
+          storage_cluster_name: this.form_data.storage_type === 'block' ?  this.form_data.block_storage_cluster.name : undefined,
+          max_host_count: this.form_data.max_host_number,
+          backend_type:this.form_data.storage_type
         })
         if (res.code === 'Success') {
           this.$message.success(res.message)
@@ -224,9 +246,14 @@ export default class CreateCluster extends Vue{
   .el-input-number, .el-input__icon{
     line-height: 33px;
   }
-  //.el-tag.el-tag--info .el-tag__close{
-  //  display: none;
-  //}
+  .el-tag.el-tag--info .el-tag__close{
+    display: none;
+  }
+  .noInput{
+    .el-select__input{
+      display: none;
+    }
+  }
 }
 
 </style>
