@@ -136,8 +136,8 @@ export default class CreateCluster extends Vue{
     } else {
       this.get_pod_list();
       this.get_storage_cluster_info();
-      this.getModelInfoList('cpu');
-      this.getModelInfoList('gpu');
+      this.getModelInfoList('cpu',false);
+      this.getModelInfoList('gpu',false);
     }
   }
   private FnSelectedCpus(item) {
@@ -180,7 +180,7 @@ export default class CreateCluster extends Vue{
     }
   }
 
-  private async getModelInfoList(type){
+  private async getModelInfoList(type,change){
     let res:any = await Service.get_model_info_list({
       handle_type: type,
       cpu_brand: this.form_data.cpu_brand // 保持这行不变
@@ -188,7 +188,7 @@ export default class CreateCluster extends Vue{
     if(res.code === 'Success'){
       if(type === 'cpu'){
         this.cpu_model_list = res.data.model_info_list;
-        if(this.isCreate){
+        if(this.isCreate || change){
           if(this.cpu_model_list.length > 0){
             this.form_data.cpu_model =[this.cpu_model_list[0].id]
           }else {
@@ -205,7 +205,7 @@ export default class CreateCluster extends Vue{
   }
 
   private changeCpuBrand(){
-    this.getModelInfoList('cpu')
+    this.getModelInfoList('cpu',true)
   }
   private async confirm(){
     const form= this.$refs.createForm as Form;
