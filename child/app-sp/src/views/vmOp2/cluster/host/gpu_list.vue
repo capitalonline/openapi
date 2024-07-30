@@ -99,7 +99,8 @@ export default class list extends Vue {
     card_name: { placeholder: "请输入显卡名称"},
     host_ip:{placeholder:'请输入管理网IP'},
     //host_name:{placeholder:'请输入主机名称'},
-    customer_id: {placeholder:'请输入客户名称/ID'},
+    customer_id: {placeholder:'请输入客户ID'},
+    customer_name: {placeholder:'请输入客户名称'},
     sn: { placeholder: "请输入sn号" },
     create_time: {
       placeholder: ["开始时间", "结束时间"],

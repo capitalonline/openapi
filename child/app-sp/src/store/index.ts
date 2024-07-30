@@ -33,7 +33,7 @@ export default new Vuex.Store({
         '存储容量','CPU消耗量','内存消耗量','GPU消耗量','存储消耗量'
       ],
       host_list:JSON.parse(storage.get('host_list')) || [
-        '名称','状态','电源','管理网IP','带外IP','集群',
+        '主机ID','名称','机器状态','电源状态','管理网IP','带外IP','集群',
         'CPU型号','GPU型号','GPU数量','虚机数量','CPU消耗量','内存消耗量','GPU消耗量','物理产品名称'
       ],
       vm_host:JSON.parse(storage.get('vm_host')) || [

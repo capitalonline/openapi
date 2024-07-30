@@ -20,7 +20,7 @@ export default{
   },
   //获取pod主机数据
   get_pod_host_list(req){
-    return service(getEcsOptions('GET','/pod/get_pod_host_list/',req))
+    return service(getEcsOptions('POST','/pod/get_pod_host_list/',req))
   },
   //新建集群
   create_cluster(req){
