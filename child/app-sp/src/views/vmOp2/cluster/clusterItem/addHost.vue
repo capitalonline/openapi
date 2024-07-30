@@ -13,9 +13,10 @@
         :data="list"
         max-height="400px"
         @selection-change="handleSelectionChange"
+        @sort-change="FnSortChange"
         @filter-change="filterAttribute">
         <el-table-column type="selection"></el-table-column>
-        <el-table-column label="主机名称" prop="host_name"></el-table-column>
+        <el-table-column label="主机名称" prop="host_name" sortable="custom" ></el-table-column>
         <el-table-column label="管理网IP" prop="host_ip"></el-table-column>
         <el-table-column label="CPU型号" prop="cpu_model" :filters="cpu_list" :filter-multiple="false" column-key="cpu_model"></el-table-column>
         <el-table-column label="GPU型号" prop="gpu_model"></el-table-column>
@@ -71,6 +72,7 @@ export default class AddHost extends Vue{
   private search:any = {
     host_info:{placeholder:'输入主机名称/管理网IP搜索'}
   }
+  private sort_host_name = ''
   private page_info:any={
     current:1,
     size:20,
@@ -121,6 +123,7 @@ export default class AddHost extends Vue{
       gpu_type_id:this.info.gpu_type_id,
       storage_cluster_id:this.info.storage_cluster_id,
       cpu:data.cpu_model ? data.cpu_model[0] : undefined,
+      sort_host_name:this.sort_host_name,
    }
     let res:any = await Service.get_pod_host_list(req)
     if(res.code === 'Success'){
@@ -143,6 +146,11 @@ export default class AddHost extends Vue{
   }
   private handleSelectionChange(val) {
     this.multiple_selection = val;
+  }
+  private FnSortChange(obj){
+    this.sort_host_name =undefined
+    this.sort_host_name= obj.order==="descending" ? '1' :obj.order==="ascending" ? '0' : undefined
+    this.get_host_list()
   }
   private filterAttribute(obj:any){
     this.filter_data = {...this.filter_data,...obj}
