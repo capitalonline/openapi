@@ -59,7 +59,7 @@ instance.interceptors.response.use(
     }
     if(error.response.status == 401) {
     } else {
-      
+
       Message({ message: error.response.data.msg || error.response.data, type: 'error' })
     }
     return Promise.reject(error.response.data)

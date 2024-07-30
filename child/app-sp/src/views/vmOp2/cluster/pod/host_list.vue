@@ -508,7 +508,8 @@ export default class HostList extends Vue{
       nic,
       bare_metal_name,
       bare_metal_id,
-      vgpu_segment_type
+      vgpu_segment_type,
+      host_info
     }=this.search_data;
     let reqData = {
       host_name,
@@ -522,6 +523,7 @@ export default class HostList extends Vue{
       nic,
       bare_metal_name,
       bare_metal_id,
+      host_info,
       machine_room_name:room,
       vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,

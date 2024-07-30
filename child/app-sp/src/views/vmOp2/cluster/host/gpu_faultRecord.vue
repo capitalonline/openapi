@@ -67,7 +67,8 @@ export default class faultRecord extends Vue {
     pci_address: { placeholder: "请输入PCIe号"},
     host_ip:{placeholder:'请输入管理网IP'},
     //host_name:{placeholder:'请输入主机名称'},
-    customer_id: {placeholder:'请输入客户名称/ID'},
+    customer_id: {placeholder:'请输入客户ID'},
+    customer_name: {placeholder:'请输入客户名称'},
     create_time: {
       placeholder: ["开始时间", "结束时间"],
       type: "daterange",
