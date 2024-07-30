@@ -1,9 +1,11 @@
 <template>
   <div style="height: 100%">
-    <top-header :class="{'header-box': $store.state.qiankun}"></top-header>
+    <top-header :class="{'header-box': $store.state.qiankun}" :style="{ width: asideWidth + 'px' }">></top-header>
     <el-container class="container">
       <el-aside class="aside_main" :class="{aside_main_show:!asideStatus}">
           <sidebar></sidebar>
+        <div class="resizer" @mousedown="startResizing"
+        ></div>
       </el-aside>
       <el-container class="main-content">
         <el-main class="main_cont">
@@ -38,6 +40,9 @@ import TopHeader from "@/layouts/TopHeader.vue";
 export default class Layout extends Vue{
   private asideStatus:boolean = true
   private aside_open_close:boolean = true
+  private isResizing:boolean = false
+  private startX:number = 0
+  private startWidth:number = 0
   get key(){
     return this.$route.path + Math.random()
   }
