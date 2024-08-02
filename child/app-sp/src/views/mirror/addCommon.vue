@@ -15,6 +15,9 @@
             <el-form-item label="镜像名称" prop="display_name">
                 <el-input v-model="form_data.display_name" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
+          <el-form-item label="英文名称" prop="display_name_en">
+            <el-input v-model="form_data.display_name_en" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
+          </el-form-item>
             <el-form-item label="镜像类型" prop="os_type">
                 <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
                 <el-select v-model="form_data.os_type" v-else>
@@ -179,7 +182,8 @@ export default class AddCommon extends Vue{
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
         upload_time:this.oper_info.os_id ? this.oper_info.upload_time : new Date(),
-        oss_file_name:''
+        oss_file_name:'',
+        display_name_en:this.oper_info.display_name_en ? this.oper_info.display_name_en : '',
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -193,6 +197,7 @@ export default class AddCommon extends Vue{
         os_file_type: [{ required: true, message: '请选择镜像文件类型', trigger: 'change' }],
         path_md5:[{ required: true, validator:this.path_md5_check, trigger: 'change' }],
         oss_file_name:[{ required: true, message: '请输入镜像在对象存储文件名', trigger: 'change' }],
+        display_name_en:[{ required: true, validator:this.validate_name_en, trigger: 'change' }]
     }
     created(){
         // if(this.oper_info.os_id){
@@ -241,6 +246,31 @@ export default class AddCommon extends Vue{
 
         }
     }
+    private validate_name_en(rule, value, callback){
+    if(!value){
+      return callback(new Error('请输入英文名称'))
+    }else if(this.form_data.display_name_en.length> 128) {
+      return callback(new Error('镜像名称长度最多128个字符'))
+    } else {
+      Service.check_name({
+        os_id:this.oper_info.os_id ? this.oper_info.os_id : '',
+        display_name_en:value,
+      }).then(res=>{
+        if(res.code==='Success'){
+          if(res.data.usable){
+            return callback()
+          }else{
+            return callback('镜像名称重复,请重新输入')
+          }
+        }else{
+          return callback('镜像名称长度最多128个字符')
+        }
+      }).catch(err=>{
+        return callback('镜像名称长度最多128个字符')
+      })
+
+    }
+  }
     private FnDisable(date){
         return date>new Date()
     }
@@ -353,7 +383,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time}=this.form_data
+        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time,display_name_en}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -366,7 +396,8 @@ export default class AddCommon extends Vue{
                         product_source,
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
-                        path_md5
+                        path_md5,
+                        display_name_en
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
@@ -388,7 +419,8 @@ export default class AddCommon extends Vue{
                         support_gpu_driver:support_type==='GPU' ? support_gpu_driver : undefined,
                         os_file_type,
                         path_md5,
-                        oss_file_name
+                        oss_file_name,
+                        display_name_en
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
