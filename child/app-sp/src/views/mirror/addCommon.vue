@@ -257,7 +257,7 @@ export default class AddCommon extends Vue{
         display_name_en:value,
       }).then(res=>{
         if(res.code==='Success'){
-          if(res.data.usable){
+          if(res.data.usable_en){
             return callback()
           }else{
             return callback('镜像名称重复,请重新输入')
