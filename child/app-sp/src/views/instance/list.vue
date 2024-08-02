@@ -295,53 +295,96 @@
             :disabled="!operate_auth.includes('instance_detail')"
             >详情</el-button
           >
-          <el-button
-            type="text"
-            @click="FnToRecord(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_record')"
-            >操作记录</el-button
-          >
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            @click="FnToRecord(scope.row.ecs_id)"-->
+<!--            :disabled="!operate_auth.includes('instance_record')"-->
+<!--            >操作记录</el-button-->
+<!--          >-->
           <el-button
             type="text"
             @click="FnToMonitor(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('monitor')"
             >监控</el-button
           >
-          <el-button
-            type="text"
-            :disabled="
-              scope.row.status !== 'running' || !operate_auth.includes('vnc')
-            "
-            @click="FnToVnc(scope.row.ecs_id)"
-            >远程连接</el-button
-          >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
-            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="addCommon(scope.row)"
-            >制作公共镜像</el-button
-          >
-          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
-            <el-button type="text" class="not-clickable">显卡管理</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="operateGpu(scope.row)"
-            >显卡管理</el-button
-          >
-          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
-            <el-button type="text" class="not-clickable">网络设置</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="netSet('single',scope.row)"
-            >网络设置</el-button
-          >
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            :disabled="-->
+<!--              scope.row.status !== 'running' || !operate_auth.includes('vnc')-->
+<!--            "-->
+<!--            @click="FnToVnc(scope.row.ecs_id)"-->
+<!--            >远程连接</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">-->
+<!--            <el-button type="text" class="not-clickable">制作公共镜像</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="addCommon(scope.row)"-->
+<!--            >制作公共镜像</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">-->
+<!--            <el-button type="text" class="not-clickable">显卡管理</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="operateGpu(scope.row)"-->
+<!--            >显卡管理</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">-->
+<!--            <el-button type="text" class="not-clickable">网络设置</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="netSet('single',scope.row)"-->
+<!--            >网络设置</el-button-->
+<!--          >-->
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">更多操作<i class="el-icon-arrow-down el-icon--right"></i></span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                :command="{type:'record',obj:scope.row}"
+                :disabled="!operate_auth.includes('instance_record')"
+              >操作记录
+              </el-dropdown-item>
+              <el-dropdown-item
+                :command="{type:'vnc',obj:scope.row}"
+                :disabled="scope.row.status !== 'running' || !operate_auth.includes('vnc')"
+              >远程连接
+              </el-dropdown-item>
+              <el-tooltip placement="left" content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">制作公共镜像</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'mirror',obj:scope.row}"
+              >制作公共镜像
+              </el-dropdown-item>
+              <el-tooltip placement="left" content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">显卡管理</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'gpu',obj:scope.row}"
+              >显卡管理</el-dropdown-item
+              >
+              <el-tooltip placement="left" content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">网络设置</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'network',obj:scope.row}"
+              >网络设置</el-dropdown-item
+              >
+              <el-dropdown-item
+                :command="{type:'rescue_mode',obj:scope.row}"
+              >进入救援模式</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </el-dropdown>
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -689,6 +732,7 @@ export default class App extends Vue {
   private detail_visible: boolean = false;
   private detail_id: string = "";
   private net_visible:boolean=false;
+  private rescue_visible:boolean = false
   private gpu_status_list:any=[
     {text:'正常',value:'0'},
     {text:'卸载',value:'1'},
@@ -733,6 +777,23 @@ export default class App extends Vue {
         return;
       }
       this.FnSearch(this.search_reqData)
+    }
+    private handleCommand(command){
+     const {type,obj} = command
+      if(type === 'record'){
+        this.FnToRecord(obj.ecs_id)
+      }else if(type === 'vnc'){
+        this.FnToVnc(obj.ecs_id)
+      }else if(type === 'gpu'){
+        this.operateGpu(obj)
+      }else if(type === 'network'){
+        this.netSet('single',obj)
+      }else if(type === 'rescue_mode'){
+        this.FnToRescue(obj)
+      }
+    }
+    private FnToRescue(row){
+     this.rescue_visible = true
     }
   private FnSearch(data: any = {}) {
     if(data.tag) {
@@ -1646,6 +1707,14 @@ export default class App extends Vue {
   text-align: center;
   border: 1px solid #888;
   border-radius: 30px;
+}
+.el-dropdown{
+  font-size: 12px;
+  padding:0 10px;
+  color: #455cc6;
+}
+.el-dropdown-menu__item{
+  font-size: 12px;
 }
 </style>
 <style lang="scss">
