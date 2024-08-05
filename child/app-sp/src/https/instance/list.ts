@@ -85,5 +85,8 @@ export default {
   //获取标签列表
   get_tag_list(){
     return service(getEcsOptions('GET','/ecs/get_tag_list/'))
+  },
+  get_rescue_image_list(req){
+    return service(getEcsOptions('GET','/ecs/get_rescue_image_list/',req))
   }
 }

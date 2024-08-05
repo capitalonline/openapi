@@ -381,6 +381,7 @@
               >
               <el-dropdown-item
                 :command="{type:'rescue_mode',obj:scope.row}"
+                :disabled="scope.row.status !== 'shutdown'"
               >进入救援模式</el-dropdown-item
               >
             </el-dropdown-menu>
@@ -637,6 +638,12 @@
         :ecs_list="multiple_selection"
       />
     </template>
+    <template v-if="rescue_visible">
+      <rescue-mode
+        :visible.sync="rescue_visible"
+        :ecs_id="ecs_id"
+      />
+    </template>
   </div>
 </template>
 
@@ -662,8 +669,10 @@ import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 import storage from '../../store/storage';
 import netSet from './netSet.vue'
+import RescueMode from "@/views/instance/rescueMode.vue";
 @Component({
   components: {
+    RescueMode,
     LabelBlock,
     actionBlock,
     Record,
@@ -771,6 +780,7 @@ export default class App extends Vue {
   private select_tag =[]
   private isComponentDestroying:boolean = false
   private system_disk_feature = "";
+  private ecs_id = ''
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -793,6 +803,7 @@ export default class App extends Vue {
       }
     }
     private FnToRescue(row){
+     this.ecs_id = row.ecs_id
      this.rescue_visible = true
     }
   private FnSearch(data: any = {}) {
