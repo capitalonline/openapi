@@ -4685,8 +4685,8 @@ def update_vpc_bandwidth_type(regin_code, key, page, vpc_id, az_code):
 
 | 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
 | ------------- | ------ | -------- | ------------------------------------ | -------------------- |
-| AvailableZoneCode | 可用区Code     | string | 是       | CN_Suqian_A              |
-| RegionCode        | 地域Code       | string | 是       | CN_Suqian                |
+| AvailableZoneCode |    string   | 是 |   CN_Suqian_A     |  可用区Code, 见附件五             |
+| RegionCode        |      string  | 是 |   CN_Suqian     |  地域Code, 见附件五               |
 | Type | string | 否       | 资源类型              | EIP：Bandwidth ； 共享带宽：Bandwidth_Shared |
 
 
@@ -4769,8 +4769,8 @@ def vpc_bandwidth_scheme():
 
 | 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
 | ------------- | ------ | -------- | ------------------------------------ | -------------------- |
-| AvailableZoneCode | 可用区Code     | string | 是       | CN_Suqian_A              |
-| RegionCode        | 地域Code       | string | 是       | CN_Suqian                |
+| AvailableZoneCode |    string   | 是 |   CN_Suqian_A     |  可用区Code, 见附件五             |
+| RegionCode        |      string  | 是 |   CN_Suqian     |  地域Code, 见附件五               |
 | BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型 |
 | BillScheme | string | 否       |    BandwIdth |  计费方案|
 | Type | string | 否       | 资源类型              | EIP：Bandwidth ； 共享带宽：Bandwidth_Shared |
