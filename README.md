@@ -347,7 +347,7 @@
         * [2.私有网络可用区名称](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#私有网络可用区名称) 
      * [附件六](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#附件六)
        * [1.VPC推荐网段](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#VPC推荐网段)
-       * [2.带宽类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#带宽类型)
+       * [2.vpc带宽类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#vpc带宽类型)
        * [3.EIP计费方案](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#EIP计费方案)
        * [4.共享带宽计费类型](https://github.com/capitalonline/openapi/blob/master/%E9%A6%96%E4%BA%91OpenAPI(v1.2).md#共享带宽计费类型)
 
