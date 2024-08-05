@@ -15628,6 +15628,7 @@ def get_status(task_id):
 |192.168.0.0/16|
 
 ### vpc带宽类型
+
 | 名称 | BandwidthType    | 
 | -------- | ------------- |
 | 移动    | Bandwidth_CMCC |
