@@ -109,7 +109,9 @@ export default class Resource extends Vue{
   }
   private async get_az_list(){
     this.az_list=[]
-    let res:any=await iService.get_region_az_list({})
+    let res:any=await iService.get_region_az_list({
+      need_open_az : "1"
+    })
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
