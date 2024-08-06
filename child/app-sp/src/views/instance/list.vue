@@ -352,7 +352,7 @@
               </el-dropdown-item>
               <el-dropdown-item
                 :command="{type:'vnc',obj:scope.row}"
-                :disabled="scope.row.status !== 'running' || !operate_auth.includes('vnc')"
+                :disabled="scope.row.status !== 'running' && scope.row.status !== 'rescue' || !operate_auth.includes('vnc')"
               >远程连接
               </el-dropdown-item>
               <el-tooltip placement="left" content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
@@ -380,9 +380,16 @@
               >网络设置</el-dropdown-item
               >
               <el-dropdown-item
+                v-if="scope.row.status !== 'rescue' && scope.row.status !== 'rescuing'"
                 :command="{type:'rescue_mode',obj:scope.row}"
                 :disabled="scope.row.status !== 'shutdown'"
               >进入救援模式</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-else
+                :command="{type:'exit_rescue_mode',obj:scope.row}"
+                :disabled="scope.row.status === 'rescuing'"
+              >退出救援模式</el-dropdown-item
               >
             </el-dropdown-menu>
           </el-dropdown>
@@ -642,6 +649,7 @@
       <rescue-mode
         :visible.sync="rescue_visible"
         :ecs_id="ecs_id"
+        :customer_id="customer_id"
       />
     </template>
   </div>
@@ -800,11 +808,35 @@ export default class App extends Vue {
         this.netSet('single',obj)
       }else if(type === 'rescue_mode'){
         this.FnToRescue(obj)
-      }
+      }else if(type === 'exit_rescue_mode'){
+        this.FnExitRescue(obj)
+        }
     }
-    private FnToRescue(row){
-     this.ecs_id = row.ecs_id
-     this.rescue_visible = true
+    private FnExitRescue(row){
+      this.$confirm('是否退出救援模式？','提示',{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let res:any = await Service.exit_rescue({
+          customer_id:row.customer_id,
+          ecs_id:row.ecs_id
+        })
+        if(res.code === 'Success'){
+          this.$message.success(res.message)
+          this.FnGetList()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出救援模式'
+        });
+      })
+    }
+  private FnToRescue(row){
+    this.ecs_id = row.ecs_id
+    this.customer_id = row.customer_id
+    this.rescue_visible = true
     }
   private FnSearch(data: any = {}) {
     if(data.tag) {

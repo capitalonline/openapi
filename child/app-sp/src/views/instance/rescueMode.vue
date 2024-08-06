@@ -12,18 +12,36 @@
         <div>4. 退出救援模式后，实例恢复到进入救援模式之前的状态。</div>
       </div>
       <div>
-        <el-select
-          v-model="os_data.os_type"
-          class="m-r-12"
-          @change="changeOsType">
-          <el-option
-            v-for="item in image_type"
-            :key="item"
-            :value="item">
-          </el-option>
-        </el-select>
-
+        <el-form ref="form" class="m-top10" :model="os_data" label-width="100px" label-position="left">
+          <el-form-item label="镜像:">
+            <el-select
+              v-model="os_data.os_type"
+              class="m-r-12"
+              @change="changeOsType">
+              <el-option
+                v-for="item in image_type"
+                :key="item"
+                :value="item">
+              </el-option>
+            </el-select>
+            <el-select
+              v-model="os_data.os_id"
+              class="m-left10"
+              @change="changeOsType">
+              <el-option
+                v-for="item in image_type_list"
+                :key="item.os_id"
+                :value="item.os_id"
+                :label="item.display_name">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
+      <span slot="footer" class="dialog-footer">
+                <el-button type="danger" @click="confirm">进入救援模式</el-button>
+                <el-button type="default" @click="visibleSync=false">取消</el-button>
+            </span>
     </el-dialog>
   </div>
 
@@ -37,6 +55,7 @@ import Service from "../../https/instance/list";
 export default class RescueMode extends Vue{
   @PropSync('visible')visibleSync!:boolean
   @Prop(String) ecs_id!:String;
+  @Prop(String) customer_id!:String;
   private os_data:any = {
     os_type:"",
     os_id:''
@@ -54,14 +73,28 @@ export default class RescueMode extends Vue{
     if(res.code === 'Success'){
       this.image_type = res.data.image_types
       this.image_list = res.data.image_list
+      this.os_data.os_type = this.image_type[0]
       this.FnInitImageList()
     }
   }
+  private changeOsType(){
+    this.FnInitImageList()
+  }
   private FnInitImageList(){
     this.image_type_list = this.image_list.filter(item => item.os_type === this.os_data.os_type)
+    this.os_data.os_id = this.image_type_list[0].os_id
   }
-  private changeOsType(){
-
+  private async confirm(){
+    let req = {
+      customer_id:this.customer_id,
+      ecs_id:this.ecs_id,
+      os_id:this.os_data.os_id
+    }
+    let res:any = await Service.enter_rescue(req)
+    if(res.code === 'Success'){
+      this.$message.success(res.message)
+      this.visibleSync = false
+    }
   }
 }
 </script>

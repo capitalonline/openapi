@@ -86,7 +86,16 @@ export default {
   get_tag_list(){
     return service(getEcsOptions('GET','/ecs/get_tag_list/'))
   },
+  //获取救援模式镜像列表
   get_rescue_image_list(req){
     return service(getEcsOptions('GET','/ecs/get_rescue_image_list/',req))
+  },
+  //进入救援模式
+  enter_rescue(req){
+    return service(getEcsOptions('POST','/ecs/enter_rescue/',req))
+  },
+  //退出救援模式
+  exit_rescue(req){
+    return service(getEcsOptions('POST','/ecs/exit_rescue/',req))
   }
 }
