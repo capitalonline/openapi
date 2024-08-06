@@ -114,6 +114,8 @@
        * [28.VLINKAddVM](#28vlinkaddvm)
        * [29.VLINKDeleteVM](#29vlinkdeletevm)
        * [30.UpdateVPCBandwidthType](#30updatevpcbandwidthtype)
+       * [31.VPCBandWidthBillingScheme](#31vpcbandwidthbillingscheme)
+       * [32.VPCBandWidthUnitPrice](#32vpcbandwidthunitprice)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
@@ -281,7 +283,7 @@
        * [2.私有网络可用区名称](#私有网络可用区名称) 
      * [附件六](#附件六)
        * [1.VPC推荐网段](#VPC推荐网段)
-       * [2.带宽类型](#带宽类型)
+       * [2.VPC带宽类型](#vpc带宽类型)
        * [3.EIP计费方案](#EIP计费方案)
        * [4.共享带宽计费类型](#共享带宽计费类型)
 
@@ -4668,6 +4670,190 @@ def update_vpc_bandwidth_type(regin_code, key, page, vpc_id, az_code):
     }
     res = requests.post(url, json=body)
 ```
+
+### 31.VPCBandWidthBillingScheme
+
+  **Action:VPCBandWidthBillingScheme**
+
+  **描述：** 获取对应节点支持的EIP带宽及共享带宽计费方案
+
+  **请求地址:** cdsapi.capitalonline.net/vpc
+
+  **请求方法：POST**
+
+  **请求参数：**
+
+| 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
+| ------------- | ------ | -------- | ------------------------------------ | -------------------- |
+| AvailableZoneCode |    string   | 是 |   CN_Suqian_A     |  可用区Code, 见附件五             |
+| RegionCode        |      string  | 是 |   CN_Suqian     |  地域Code, 见附件五               |
+| Type | string | 否       | 资源类型              | EIP：Bandwidth ； 共享带宽：Bandwidth_Shared |
+
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值   | 描述   |
+| :------ | ------ | :------- | :----- |
+| Code    | string | Success  | 错误码 |
+| Message | string | 修改成功 | 信息   |
+| data | list | [] | 返回数据  |
+| BandwidthType | string | Bandwidth_China_Telecom | 带宽类型   |
+| BandwidthTypeName | string | 电信 | 带宽类型中文名称   |
+| BillingSchemeList | list | [] | 计费方案信息列表   |
+| BillingScheme | string | BandwIdth | 计费方案   |
+| BillingSchemeName | string | 固定带宽 | 计费方案中文名称   |
+| ResourceType | string | Bandwidth | 资源类型   |
+| ResourceTypeName | string | EIP带宽 | 资源类型中文名称   |
+
+  **错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": [
+        {
+            "BandwidthType": "Bandwidth_China_Telecom",
+            "BandwidthTypeName": "电信",
+            "BillingSchemeList": [
+                {
+                    "BillingScheme": "BandwIdth",
+                    "BillingSchemeName": "固定带宽",
+                    "ResourceType": "Bandwidth",
+                    "ResourceTypeName": "EIP带宽"
+                }
+            ]
+        }
+    ],
+    "Message": "success"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+def vpc_bandwidth_scheme():
+    action = 'VPCBandWidthBillingScheme'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body ={
+        "RegionCode": "CN_Suqian",
+        "AvailableZoneCode": "CN_Suqian_B",
+        # "Type": "Bandwidth"
+        # "Type": "Bandwidth_Shared"
+        "Type": ""
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 32.VPCBandWidthUnitPrice
+
+  **Action:VPCBandWidthUnitPrice**
+
+  **描述：** 获取EIP带宽及共享带宽计费方案对应单价
+
+  **请求地址:** cdsapi.capitalonline.net/vpc
+
+  **请求方法：POST**
+
+  **请求参数：**
+
+| 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
+| ------------- | ------ | -------- | ------------------------------------ | -------------------- |
+| AvailableZoneCode |    string   | 是 |   CN_Suqian_A     |  可用区Code, 见附件五             |
+| RegionCode        |      string  | 是 |   CN_Suqian     |  地域Code, 见附件五               |
+| BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型 |
+| BillScheme | string | 是      |    BandwIdth |  计费方案|
+| Type | string | 是       | 资源类型              | EIP：Bandwidth ； 共享带宽：Bandwidth_Shared |
+
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值   | 描述   |
+| :------ | ------ | :------- | :----- |
+| Code    | string | Success  | 错误码 |
+| Message | string | 修改成功 | 信息   |
+| data | dict | {} | 返回数据  |
+| BandwidthPrice | dict | {} | 带宽价格   |
+| StdPrice | float | 10.0 | 原价   |
+| StdPriceStr | string | "10.0" | 原价字符串类型   |
+| Price | float | 9.0 | 折扣价   |
+| PriceStr | string | "9.0" | 折扣价字符串类型   |
+| Discount | float | 0.9 | 折扣   |
+| DiscountStr | string | "0.9" | 折扣字符串类型   |
+| Sign | string | ¥/$ | 币种符号   |
+| Cycle | string | /天 | 价格周期   |
+| Unit | string | Mb | 价格计量单位   |
+
+  **错误码：**
+
+| httpcode | 错误码                    | 错误信息                                           | 描述                   |
+| -------- | ------------------------- | -------------------------------------------------- | ---------------------- |
+
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "BandwidthPrice": {
+            "Cycle": "/天",
+            "Discount": 1,
+            "DiscountStr": "无折扣",
+            "Price": 3.312,
+            "PriceStr": "3.312",
+            "Sign": "￥",
+            "StdPrice": 3.312,
+            "StdPriceStr": "3.312",
+            "Unit": "Mb"
+        },
+        "EIPPrice": {
+            "Cycle": "/天",
+            "Discount": 1,
+            "DiscountStr": "无折扣",
+            "Price": 0.331,
+            "PriceStr": "0.331",
+            "Sign": "￥",
+            "StdPrice": 0.331,
+            "StdPriceStr": "0.331",
+            "Unit": "个"
+        }
+    },
+    "Message": "success"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+def vpc_bandwidth_unit_price():
+    action = 'VPCBandWidthUnitPrice'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body ={
+        "RegionCode": "CN_Suqian",
+        "AvailableZoneCode": "CN_Suqian_B",
+        "BandwidthType": "Bandwidth_China_Telecom",
+        "BillScheme":"BandwIdth",
+        "Type":"Bandwidth"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
 
 ## 裸金属相关
 
@@ -15441,7 +15627,8 @@ def get_status(task_id):
 |172.16.0.0/16|
 |192.168.0.0/16|
 
-### 带宽类型
+### vpc带宽类型
+
 | 名称 | BandwidthType    | 
 | -------- | ------------- |
 | 移动    | Bandwidth_CMCC |
