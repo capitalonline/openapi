@@ -28,5 +28,11 @@ export default {
   // },
   gpu_record_download(req) {
     return service(getImportOptions('GET', '/host/gpu_record_download/', req,'blob'))
+  },
+  handle_gpu_sale(req){
+    return service(getEcsOptions('POST', '/host/handle_gpu_sale/', req))
+  },
+  update_host_gpu_status(req){
+    return service(getEcsOptions('POST','/host/update_host_gpu_status/',req))
   }
 }
