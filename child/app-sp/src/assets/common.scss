@@ -49,12 +49,14 @@
 }
 .deleted,
 .blocking,
+.rescuing,
 .destroy {
   color: #e6a23c;
 }
 .shutdown,
 .error,
 .create_fail,
+.rescue,
 .failed,.build_fail {
   color:#DA3B18;
 }
