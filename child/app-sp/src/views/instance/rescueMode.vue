@@ -68,6 +68,7 @@ export default class RescueMode extends Vue{
   }
   private async FnGetImage(){
     let res:any = await Service.get_rescue_image_list({
+      pod:this.$store.state.pod_id,
       ecs_id:this.ecs_id
     })
     if(res.code === 'Success'){
