@@ -212,7 +212,9 @@ export default class List extends Vue {
     })
     if(res.code === 'Success'){
       this.$message.success(res.message)
-      this.getEventList(false,true)
+      setTimeout(() => {
+        this.getEventList(false, true);
+      }, 2000); // 2秒后重新刷新列表页面
     }
   }
   private FnSetTimer() {
