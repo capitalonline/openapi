@@ -89,13 +89,13 @@
                 </el-select>
             </el-form-item>
           <el-form-item label="驱动版本" prop="driver_version" v-if="form_data.support_type==='GPU'">
-            <el-input v-model="form_data.driver_version"></el-input>
+            <el-input v-model="form_data.driver_version" :maxlength="128" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="CUDA版本" prop="cuda_version" v-if="form_data.support_type==='GPU'">
-            <el-input v-model="form_data.cuda_version"></el-input>
+            <el-input v-model="form_data.cuda_version" :maxlength="128" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="其他软件" prop="other_software" v-if="form_data.support_type==='GPU'">
-            <el-input v-model="form_data.other_software"></el-input>
+            <el-input v-model="form_data.other_software" :maxlength="128" show-word-limit></el-input>
           </el-form-item>
             <el-form-item label="镜像文件类型" prop="os_file_type">
                 <!-- <span v-if="oper_info.os_id">{{ form_data.os_file_type }}</span> -->
