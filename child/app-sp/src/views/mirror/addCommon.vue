@@ -219,7 +219,7 @@ export default class AddCommon extends Vue{
         cuda_version:this.oper_info.cuda_version ? this.oper_info.cuda_version : '',
         other_software:this.oper_info.other_software ? this.oper_info.other_software : '',
         validity:this.oper_info.os_id ? this.oper_info.maintenance_expiration_date !== '长期' ? '0':'1' : '1',
-        vali_time: (this.oper_info.maintenance_expiration_date !== '长期' && !isNaN(new Date(this.oper_info.maintenance_expiration_date).getTime())) ? new Date(this.oper_info.maintenance_expiration_date) : '',
+        vali_time: (this.oper_info.maintenance_expiration_date !== '长期' && !isNaN(new Date(this.oper_info.maintenance_expiration_date).getTime())) ? this.oper_info.maintenance_expiration_date : '',
         display_name_en:this.oper_info.display_name_en ? this.oper_info.display_name_en : '',
     }
     private rules={
