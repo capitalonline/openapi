@@ -803,7 +803,9 @@ export default class App extends Vue {
         this.FnToRecord(obj.ecs_id)
       }else if(type === 'vnc'){
         this.FnToVnc(obj.ecs_id)
-      }else if(type === 'gpu'){
+      } else if(type === 'mirror'){
+        this.addCommon(obj)
+      } else if(type === 'gpu'){
         this.operateGpu(obj)
       }else if(type === 'network'){
         this.netSet('single',obj)
