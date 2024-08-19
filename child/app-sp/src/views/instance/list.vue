@@ -127,6 +127,7 @@
           >
         </template>
       </el-table-column>
+      <el-table-column label="管理网IP" prop="host_ip"></el-table-column>
       <el-table-column prop="private_net" label="私网IP" sortable="custom">
 <!--        <template #default="scope">-->
 <!--          <div v-if="scope.row.private_net">-->
@@ -295,53 +296,104 @@
             :disabled="!operate_auth.includes('instance_detail')"
             >详情</el-button
           >
-          <el-button
-            type="text"
-            @click="FnToRecord(scope.row.ecs_id)"
-            :disabled="!operate_auth.includes('instance_record')"
-            >操作记录</el-button
-          >
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            @click="FnToRecord(scope.row.ecs_id)"-->
+<!--            :disabled="!operate_auth.includes('instance_record')"-->
+<!--            >操作记录</el-button-->
+<!--          >-->
           <el-button
             type="text"
             @click="FnToMonitor(scope.row.ecs_id)"
             :disabled="!operate_auth.includes('monitor')"
             >监控</el-button
           >
-          <el-button
-            type="text"
-            :disabled="
-              scope.row.status !== 'running' || !operate_auth.includes('vnc')
-            "
-            @click="FnToVnc(scope.row.ecs_id)"
-            >远程连接</el-button
-          >
-          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
-            <el-button type="text" class="not-clickable">制作公共镜像</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="addCommon(scope.row)"
-            >制作公共镜像</el-button
-          >
-          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
-            <el-button type="text" class="not-clickable">显卡管理</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="operateGpu(scope.row)"
-            >显卡管理</el-button
-          >
-          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
-            <el-button type="text" class="not-clickable">网络设置</el-button>
-          </el-tooltip>
-          <el-button
-            type="text"
-            v-else
-            @click="netSet('single',scope.row)"
-            >网络设置</el-button
-          >
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            :disabled="-->
+<!--              scope.row.status !== 'running' || !operate_auth.includes('vnc')-->
+<!--            "-->
+<!--            @click="FnToVnc(scope.row.ecs_id)"-->
+<!--            >远程连接</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">-->
+<!--            <el-button type="text" class="not-clickable">制作公共镜像</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="addCommon(scope.row)"-->
+<!--            >制作公共镜像</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">-->
+<!--            <el-button type="text" class="not-clickable">显卡管理</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="operateGpu(scope.row)"-->
+<!--            >显卡管理</el-button-->
+<!--          >-->
+<!--          <el-tooltip content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">-->
+<!--            <el-button type="text" class="not-clickable">网络设置</el-button>-->
+<!--          </el-tooltip>-->
+<!--          <el-button-->
+<!--            type="text"-->
+<!--            v-else-->
+<!--            @click="netSet('single',scope.row)"-->
+<!--            >网络设置</el-button-->
+<!--          >-->
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">更多操作<i class="el-icon-arrow-down el-icon--right"></i></span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                :command="{type:'record',obj:scope.row}"
+                :disabled="!operate_auth.includes('instance_record')"
+              >操作记录
+              </el-dropdown-item>
+              <el-dropdown-item
+                :command="{type:'vnc',obj:scope.row}"
+                :disabled="scope.row.status !== 'running' && scope.row.status !== 'rescue' || !operate_auth.includes('vnc')"
+              >远程连接
+              </el-dropdown-item>
+              <el-tooltip placement="left" content="仅内部账号且状态为已关机的实例支持操作" effect="light" v-if="scope.row.status!== 'shutdown' || !operate_auth.includes('add_common_mirror') || scope.row.customer_type!=='内部'">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">制作公共镜像</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'mirror',obj:scope.row}"
+              >制作公共镜像
+              </el-dropdown-item>
+              <el-tooltip placement="left" content="仅支持对GPU型实例支持显卡管理" effect="light" v-if="!scope.row.is_gpu">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">显卡管理</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'gpu',obj:scope.row}"
+              >显卡管理</el-dropdown-item
+              >
+              <el-tooltip placement="left" content="实例需为运行中" effect="light" v-if="scope.row.status!=='running'">
+                <el-dropdown-item :command="{type:'none',obj:scope.row}" class="not-clickable">网络设置</el-dropdown-item>
+              </el-tooltip>
+              <el-dropdown-item
+                v-else
+                :command="{type:'network',obj:scope.row}"
+              >网络设置</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-if="scope.row.status !== 'rescue' && scope.row.status !== 'rescuing'"
+                :command="{type:'rescue_mode',obj:scope.row}"
+                :disabled="scope.row.status !== 'shutdown'"
+              >进入救援模式</el-dropdown-item
+              >
+              <el-dropdown-item
+                v-else
+                :command="{type:'exit_rescue_mode',obj:scope.row}"
+                :disabled="scope.row.status === 'rescuing'"
+              >退出救援模式</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </el-dropdown>
           <!-- <el-button type="text" @click="FnOpenBill({ecs_ids: [scope.row.ecs_id], customer_id: scope.row.customer_id, billing_method: scope.row.billing_method})"
               :disabled="!operate_auth.includes('open_bill') || !['running', 'shutdown'].includes(scope.row.status) || Boolean(scope.row.is_charge)">
             开启计费</el-button> -->
@@ -594,6 +646,13 @@
         :ecs_list="multiple_selection"
       />
     </template>
+    <template v-if="rescue_visible">
+      <rescue-mode
+        :visible.sync="rescue_visible"
+        :ecs_id="ecs_id"
+        :customer_id="customer_id"
+      />
+    </template>
   </div>
 </template>
 
@@ -619,8 +678,10 @@ import AddCommon from './addCommonMirror.vue'
 import moment from "moment";
 import storage from '../../store/storage';
 import netSet from './netSet.vue'
+import RescueMode from "@/views/instance/rescueMode.vue";
 @Component({
   components: {
+    RescueMode,
     LabelBlock,
     actionBlock,
     Record,
@@ -638,15 +699,15 @@ import netSet from './netSet.vue'
 })
 export default class App extends Vue {
   private search_con = {
-    ecs_id: { placeholder: "请输入云服务器ID" },
-    ecs_name: { placeholder: "请输入云服务器名称" },
+    ecs_id: { placeholder: "请输入云服务器ID" ,multi:true},
+    ecs_name: { placeholder: "请输入云服务器名称" ,multi:true},
     customer_id: { placeholder: "请输入客户ID" },
     customer_name: { placeholder: "请输入客户名称" },
     os_info: { placeholder: "请输入操作系统ID/名称"},
-    private_net: { placeholder: "请输入私网IP" },
-    public_net: { placeholder: "请输入公网IP" },
+    private_net: { placeholder: "请输入私网IP" ,multi:true},
+    public_net: { placeholder: "请输入公网IP" ,multi:true},
     host_id: { placeholder: "请输入物理机ID"},
-    host_name: { placeholder: "请输入物理机名称", },
+    host_name: { placeholder: "请输入物理机名称",multi:true },
     host_ip: { placeholder: "请输入物理机管理IP"},
     out_band_address: { placeholder: "请输入物理机带外IP"},
     tag: {placeholder: "请选择标签", list: [],filter:true},
@@ -689,6 +750,7 @@ export default class App extends Vue {
   private detail_visible: boolean = false;
   private detail_id: string = "";
   private net_visible:boolean=false;
+  private rescue_visible:boolean = false
   private gpu_status_list:any=[
     {text:'正常',value:'0'},
     {text:'卸载',value:'1'},
@@ -727,12 +789,57 @@ export default class App extends Vue {
   private select_tag =[]
   private isComponentDestroying:boolean = false
   private system_disk_feature = "";
+  private ecs_id = ''
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
         return;
       }
       this.FnSearch(this.search_reqData)
+    }
+    private handleCommand(command){
+     const {type,obj} = command
+      if(type === 'record'){
+        this.FnToRecord(obj.ecs_id)
+      }else if(type === 'vnc'){
+        this.FnToVnc(obj.ecs_id)
+      } else if(type === 'mirror'){
+        this.addCommon(obj)
+      } else if(type === 'gpu'){
+        this.operateGpu(obj)
+      }else if(type === 'network'){
+        this.netSet('single',obj)
+      }else if(type === 'rescue_mode'){
+        this.FnToRescue(obj)
+      }else if(type === 'exit_rescue_mode'){
+        this.FnExitRescue(obj)
+        }
+    }
+    private FnExitRescue(row){
+      this.$confirm('是否退出救援模式？','提示',{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let res:any = await Service.exit_rescue({
+          customer_id:row.customer_id,
+          ecs_id:row.ecs_id
+        })
+        if(res.code === 'Success'){
+          this.$message.success(res.message)
+          this.FnGetList()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出救援模式'
+        });
+      })
+    }
+  private FnToRescue(row){
+    this.ecs_id = row.ecs_id
+    this.customer_id = row.customer_id
+    this.rescue_visible = true
     }
   private FnSearch(data: any = {}) {
     if(data.tag) {
@@ -1646,6 +1753,14 @@ export default class App extends Vue {
   text-align: center;
   border: 1px solid #888;
   border-radius: 30px;
+}
+.el-dropdown{
+  font-size: 12px;
+  padding:0 10px;
+  color: #455cc6;
+}
+.el-dropdown-menu__item{
+  font-size: 12px;
 }
 </style>
 <style lang="scss">

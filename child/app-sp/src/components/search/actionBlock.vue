@@ -25,7 +25,7 @@
         <el-input
           v-model="search_value[key]"
           :placeholder="value.placeholder"
-          v-if="(!value.list && !value.type) || value.type === 'composite'"
+          v-if="(!value.list && !value.type && !value.multi) || value.type === 'composite'"
           clearable
           class="composite"
           :style="value.width ? { width: `${value.width}px` } : {}"
@@ -44,6 +44,27 @@
             ></el-option>
           </el-select>
         </el-input>
+        <el-popover
+          v-if="value.multi"
+          placement="bottom"
+          width="250"
+          trigger="click">
+          <el-input
+            type="textarea"
+            :rows="4"
+            :placeholder="value.placeholder+'（使用回车或英文逗号隔开）'"
+            v-model="search_value[key]">
+          </el-input>
+          <el-input
+            slot="reference"
+            v-model="search_value[key]"
+            :placeholder="value.placeholder"
+            v-if="(!value.list && !value.type) || value.multi"
+            clearable
+            class="multi_input"
+            :style="value.width ? { width: `${value.width}px` } : {}">
+          </el-input>
+        </el-popover>
         <template
           v-if="value.type === 'datetimerange' || value.type === 'daterange'"
         >
@@ -256,5 +277,15 @@ button.el-button.el-picker-panel__link-btn.el-button--default.el-button--mini.is
 }
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
+}
+.multi_input{
+  .el-select .el-input {
+    width: 130px;
+  }
+  .el-input__inner {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }
 </style>

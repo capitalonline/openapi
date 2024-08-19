@@ -161,8 +161,8 @@ export default class extends Vue {
   private disk_state:any = [];
   private auth_list:any=[]
   private search_dom = {
-    disk_id:{placeholder:'请输入云盘ID'},
-    ecs_id:{placeholder:'请输入实例ID'},
+    disk_id:{placeholder:'请输入云盘ID',multi:true},
+    ecs_id:{placeholder:'请输入实例ID',multi:true},
     // status:{list:[],placeholder:'请选择与云盘状态'},
     customer_id:{placeholder:'请输入客户ID'},
     customer_name: {placeholder:'请输入客户名称'},

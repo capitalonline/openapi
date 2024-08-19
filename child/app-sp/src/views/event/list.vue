@@ -7,6 +7,7 @@
       <div>完成率：{{finished_percent}}</div>
       <div>失败：{{fail_num}}</div>
       <div class="error">失败率：{{error_percent}}</div>
+      <el-button type="primary" @click="check">任务流检测</el-button>
     </div>
     <el-table
       :data="event_list"
@@ -112,6 +113,7 @@ export default class List extends Vue {
   private sort_value:string=''
   private status_list=[];
   private filter_obj={}
+  private clear = null
   created() {
     this.getFilterList()
     this.event_detail = !!this.$store.state.auth_info["event_detail"]
@@ -135,11 +137,25 @@ export default class List extends Vue {
     }
   }
   private fn_search(data:any={}){
+    this.FnClearTimer()
     this.current = 1;
     this.search_data = {...data,...this.filter_obj}
-    this.getEventList()
+    this.getEventList(true,false)
   }
-  private async getEventList() {
+  private getFormattedTime(update_time, data) {
+    const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    if (update_time) {
+      console.log('&&&&&')
+      return now;
+    }
+    if (data && data.time && data.time[1]) {
+      return moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss');
+    }
+  }
+  private async getEventList(loading:boolean = true,update_time) {
+    if(!loading){
+      this.$store.commit('SET_LOADING', false);
+    }
     const {search_data:data}=this
     const res:any = await service.get_event_list({
       pod_id:this.$store.state.pod_id,
@@ -155,7 +171,7 @@ export default class List extends Vue {
       op_user:data.op_user || "",
       event_status:data.status ? data.status[0] : undefined,
       start_time:data.time ? moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-      end_time:data.time ? moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      end_time:this.getFormattedTime(update_time,data)
     })
     if(res.code==="Success"){
       this.event_list = res.data?.event_list || []
@@ -168,19 +184,20 @@ export default class List extends Vue {
     }else{
         this.$message.error(res.msg || '操作错误')
       }
+    this.FnSetTimer()
   }
   private handleSizeChange(size){
     this.size = size
-    this.getEventList()
+    this.getEventList(true,false)
   }
   private handleCurrentChange(cur){
     this.current = cur
-    this.getEventList()
+    this.getEventList(true,false)
   }
   private FnSortChange(obj){
     this.sort_prop_name = `sort_${obj.prop}`;
     this.sort_value = obj.order==="descending" ? '0' :obj.order==="ascending" ? '1' : undefined
-    this.getEventList()
+    this.getEventList(true,false)
   }
   private filterAttribute(obj:any){
     this.filter_obj = {...this.filter_obj,...obj};
@@ -188,6 +205,33 @@ export default class List extends Vue {
   }
   private view(id:string,name:string) {
     this.$router.push({path:`/event/${id}`,query:{name:name ? name : '123'}})
+  }
+  private async check(){
+    const res:any = await service.task_flow_check({
+      pod_id:this.$store.state.pod_id
+    })
+    if(res.code === 'Success'){
+      this.$message.success(res.message)
+      setTimeout(() => {
+        this.getEventList(false, true);
+      }, 2000); // 2秒后重新刷新列表页面
+    }
+  }
+  private FnSetTimer() {
+    if(this.clear){
+      this.FnClearTimer();
+    }
+    this.clear = setTimeout(() => {
+      this.getEventList(false,false)
+    }, 10000)
+  }
+  private FnClearTimer() {
+    if(this.clear){
+      clearTimeout(this.clear)
+    }
+  }
+   beforeDestroy() {
+    this.FnClearTimer()
   }
 
 }
@@ -208,6 +252,11 @@ export default class List extends Vue {
     }
     .error{
       color:red
+    }
+    .el-button {
+      margin-left: auto;
+      margin-top: -10px;
+      margin-right: 5px;
     }
   }
   .err{
