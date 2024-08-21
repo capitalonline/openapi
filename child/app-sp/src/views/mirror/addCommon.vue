@@ -19,18 +19,15 @@
               <el-input v-model="form_data.display_name_en" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="操作系统类型" prop="os_type">
-                <span v-if="oper_info.os_id">{{ form_data.os_type }}</span>
-                <el-select v-model="form_data.os_type" v-else>
+                <el-select v-model="form_data.os_type">
                     <el-option v-for="item in mirror_type_list" :key="item" :label="item" :value=" item "></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="版本" prop="os_version">
-                <span v-if="oper_info.os_id">{{ form_data.os_version }}</span>
-                <el-input v-else v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
+                <el-input  v-model="form_data.os_version" type="textarea" autosize resize="none" :maxlength="36" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="系统架构" prop="os_bit">
-                <span v-if="oper_info.os_id">{{ form_data.os_bit }}</span>
-                <el-select v-model="form_data.os_bit" v-else>
+                <el-select v-model="form_data.os_bit">
                     <el-option v-for="item in bit_list" :key="item.id" :label="item.name" :value=" item.id "></el-option>
                 </el-select>
             </el-form-item>
@@ -201,7 +198,7 @@ export default class AddCommon extends Vue{
         display_name:this.oper_info.display_name ? this.oper_info.display_name : '',
         os_type:this.oper_info.os_type ? this.oper_info.os_type : '',
         os_version:this.oper_info.os_version ? this.oper_info.os_version : '',
-        os_bit:this.oper_info.os_bit ? this.oper_info.os_bit+'位' : this.bit_list[0].id,
+        os_bit:this.oper_info.os_bit ? this.oper_info.os_bit : this.bit_list[0].id,
         customer_ids:'',
         size:this.oper_info.os_id ? this.oper_info.size : 20,
         az_id:this.oper_info.az_list ? this.oper_info.az_list[0] : '',
@@ -248,11 +245,9 @@ export default class AddCommon extends Vue{
         //     this.get_mirror_type();
         //     this.get_disk_list()
         // }
-        if(!this.oper_info.os_id){
-            this.get_mirror_type();
-        }
-        this.get_disk_list()
-        this.get_product_source()
+      this.get_mirror_type();
+      this.get_disk_list()
+      this.get_product_source()
     }
     private path_md5_check(rule, value, callback){
         if(!value) {
@@ -373,7 +368,9 @@ export default class AddCommon extends Vue{
         let res:any = await Service.get_mirror_type({})
         if(res.code==="Success"){
             this.mirror_type_list=res.data.type_list;
-            this.form_data.os_type = this.mirror_type_list[0]
+            if(!this.oper_info.os_id){
+              this.form_data.os_type = this.mirror_type_list[0]
+            }
         }
     }
 //     private async get_az_list(){
@@ -457,7 +454,10 @@ export default class AddCommon extends Vue{
                         cuda_version: support_type==='GPU' ? cuda_version : undefined,
                         other_software: support_type==='GPU' ? other_software : undefined,
                         maintenance_expiration_date:validity === '1' ? 'LongTerm' : vali_time,
-                        display_name_en
+                        display_name_en,
+                        os_type,
+                        os_version,
+                        os_bit,
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
