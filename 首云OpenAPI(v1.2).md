@@ -2620,7 +2620,6 @@ def vdc_bandwidth_unit_price():
         "Type": 'wan',
         'BandwidthType': 'VDC_Bandwidth_BGP',
         'BillingScheme': 'Bandwidth',
-        'QOS': '10',
     }
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     res = requests.get(url)
