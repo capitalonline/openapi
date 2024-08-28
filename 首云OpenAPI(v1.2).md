@@ -2515,7 +2515,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
 ```python
 def vdc_bandwidth_scheme():
-    action = "VDCBandWidthBillingScheme"
+    action = "VDCBandwidthBillingScheme"
     method = "GET"
     param = {
         "RegionId": 'CN_SJZ_E',
@@ -2614,7 +2614,7 @@ def vdc_bandwidth_scheme():
 
 ```python
 def vdc_bandwidth_unit_price():
-    action = "VDCBandWidthUnitPrice"
+    action = "VDCBandwidthUnitPrice"
     method = "GET"
     param = {
         "RegionId": 'CN_SJZ_E',
