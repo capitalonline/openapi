@@ -2518,7 +2518,7 @@ def vdc_bandwidth_scheme():
     action = "VDCBandwidthBillingScheme"
     method = "GET"
     param = {
-        "RegionId": 'CN_SJZ_E',
+        "RegionId": 'CN_Beijing_A',
         "Type": 'wan',
     }
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
@@ -2617,7 +2617,7 @@ def vdc_bandwidth_unit_price():
     action = "VDCBandwidthUnitPrice"
     method = "GET"
     param = {
-        "RegionId": 'CN_SJZ_E',
+        "RegionId": 'CN_Beijing_A',
         "Type": 'wan',
         'BandwidthType': 'VDC_Bandwidth_BGP',
         'BillingScheme': 'Bandwidth',
