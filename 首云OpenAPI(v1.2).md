@@ -2549,7 +2549,6 @@ def vdc_bandwidth_scheme():
 | BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型 |
 | BillScheme | string | 是      |    BandwIdth |  计费方案|
 | Type | string | 是       | 资源类型              | 公网带宽:wan  ； 共享带宽:shared |
-| QOS | string | 是       | 10              | 带宽值,单位Mb |
 
 
   **返回参数：**
