@@ -2478,8 +2478,8 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | BillingSchemeList | list | [] | 计费方案信息列表   |
 | BillingScheme | string | BandwIdth | 计费方案   |
 | BillingSchemeName | string | 固定带宽 | 计费方案中文名称   |
-| ResourceType | string | Bandwidth | 资源类型   |
-| ResourceTypeName | string | 虚拟机数据中心带宽 | 资源类型中文名称   |
+| ResourceType | string | wan, shared | 资源类型   |
+| ResourceTypeName | string | 公网带宽, 共享带宽 | 资源类型中文名称   |
 
   **错误码：**
 
@@ -2500,7 +2500,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
                 {
                     "BillingScheme": "BandwIdth",
                     "BillingSchemeName": "固定带宽",
-                    "ResourceType": "Bandwidth",
+                    "ResourceType": "wan",
                     "ResourceTypeName": "虚拟机数据中心带宽"
                 }
             ]
