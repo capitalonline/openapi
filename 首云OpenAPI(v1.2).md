@@ -83,8 +83,8 @@
        * [18.DeleteGPN](#18deletegpn)
        * [19.ModifyVdcName](#19modifyvdcname)
        * [20.DescribePipeUtilization](#20describepipeutilization)
-       * [21.VDCBandWidthBillingScheme](#21VDCBandWidthBillingScheme)
-       * [22.VDCBandWidthUnitPrice](#22VDCBandWidthUnitPrice)
+       * [21.VDCBandwidthBillingScheme](#21VDCBandwidthBillingScheme)
+       * [22.VDCBandwidthUnitPrice](#22VDCBandwidthUnitPrice)
      * [私有网络相关](#私有网络相关)
        * [1.DescribeVPC](#1describevpc)
        * [2.CreateVPC](#2createvpc)
@@ -2448,9 +2448,9 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
     "Message": "success"
 }
 ```
-### 21.VDCBandWidthBillingScheme
+### 21.VDCBandwidthBillingScheme
 
-  **Action:VDCBandWidthBillingScheme**
+  **Action:VDCBandwidthBillingScheme**
 
   **描述：** 获取对应节点支持的公网带宽及共享带宽计费方案
 
@@ -2531,9 +2531,9 @@ def vdc_bandwidth_scheme():
     return data
 ```
 
-### 22.VDCBandWidthUnitPrice
+### 22.VDCBandwidthUnitPrice
 
-  **Action:VDCBandWidthUnitPrice**
+  **Action:VDCBandwidthUnitPrice**
 
   **描述：** 获取对应节点支持的公网带宽及共享带宽计费方案的对应单价
 
