@@ -2501,7 +2501,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
                     "BillingScheme": "BandwIdth",
                     "BillingSchemeName": "固定带宽",
                     "ResourceType": "wan",
-                    "ResourceTypeName": "虚拟机数据中心带宽"
+                    "ResourceTypeName": "公网带宽"
                 }
             ]
         }
