@@ -2479,7 +2479,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | BillingScheme | string | BandwIdth | 计费方案   |
 | BillingSchemeName | string | 固定带宽 | 计费方案中文名称   |
 | ResourceType | string | wan | 资源类型   |
-| ResourceTypeName | string | 公网带宽, 共享带宽 | 资源类型中文名称   |
+| ResourceTypeName | string | 公网带宽 | 资源类型中文名称   |
 
   **错误码：**
 
