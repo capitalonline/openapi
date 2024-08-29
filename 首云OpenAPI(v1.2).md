@@ -2463,7 +2463,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
 | ------------- | ------ | -------- | ------------------------------------ | -------------------- |
 | RegionId        |      string  | 是 |   CN_Beijing_A     |  选择Vdc所属可用区,见附件一               |
-| Type | string | 否       | 资源类型              | 公网带宽:wan  ； 共享带宽:shared |
+| Type | string | 否       | 资源类型              | 公网带宽:wan |
 
 
   **返回参数：**
@@ -2548,7 +2548,7 @@ def vdc_bandwidth_scheme():
 | RegionId        |      string  | 是 |   CN_Beijing_A     |  选择Vdc所属可用区,见附件一               |
 | BandwidthType | string | 是       | Bandwidth_China_Telecom | 带宽类型 |
 | BillScheme | string | 是      |    BandwIdth |  计费方案|
-| Type | string | 是       | 资源类型              | 公网带宽:wan  ； 共享带宽:shared |
+| Type | string | 是       | 资源类型              | 公网带宽:wan |
 
 
   **返回参数：**
