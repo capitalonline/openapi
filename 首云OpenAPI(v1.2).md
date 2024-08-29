@@ -2452,7 +2452,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 
   **Action:VDCBandwidthBillingScheme**
 
-  **描述：** 获取对应节点支持的公网带宽及共享带宽计费方案
+  **描述：** 获取对应节点支持的公网带宽计费方案
 
   **请求地址:** cdsapi.capitalonline.net/network
 
@@ -2478,7 +2478,7 @@ def CreateGPN(Qos, Name, PrivateId1, PrivateId2, VdcId1,VdcId2):
 | BillingSchemeList | list | [] | 计费方案信息列表   |
 | BillingScheme | string | BandwIdth | 计费方案   |
 | BillingSchemeName | string | 固定带宽 | 计费方案中文名称   |
-| ResourceType | string | wan, shared | 资源类型   |
+| ResourceType | string | wan | 资源类型   |
 | ResourceTypeName | string | 公网带宽, 共享带宽 | 资源类型中文名称   |
 
   **错误码：**
@@ -2535,7 +2535,7 @@ def vdc_bandwidth_scheme():
 
   **Action:VDCBandwidthUnitPrice**
 
-  **描述：** 获取对应节点支持的公网带宽及共享带宽计费方案的对应单价
+  **描述：** 获取对应节点支持的公网带宽计费方案的对应单价
 
   **请求地址:** cdsapi.capitalonline.net/network
 
@@ -2566,8 +2566,8 @@ def vdc_bandwidth_scheme():
 | Discount | float | 0.9 | 折扣   |
 | DiscountStr | string | "0.9" | 折扣字符串类型   |
 | Sign | string | ¥/$ | 币种符号   |
-| Cycle | string | /天 | 价格周期   |
-| Unit | string | Mb | 价格计量单位   |
+| Cycle | string | /天,/GB | 价格周期   |
+| Unit | string | Mb,GB | 价格计量单位   |
 
   **错误码：**
 
