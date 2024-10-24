@@ -205,7 +205,7 @@ export default class AddCommon extends Vue{
         backend_type:this.oper_info.backend_type ? this.oper_info.backend_type : '',
         support_type:(this.oper_info.support_type &&  this.oper_info.support_type !== 'GPU') ? this.compute_type_list[1].value : this.compute_type_list[0].value,//计算类型
         // 产品来源
-        product_source:this.oper_info.product_source ? this.oper_info.product_source:this.product_source_type_list[0],
+        product_source:'',
         support_gpu_driver:this.oper_info.support_gpu_driver ? this.oper_info.support_gpu_driver : this.drive_type_list[0],
         os_file_type:this.oper_info.os_file_type ? this.oper_info.os_file_type : this.file_type_list[0],
         path_md5:this.oper_info.path_md5 ? this.oper_info.path_md5 : '',
@@ -327,7 +327,7 @@ export default class AddCommon extends Vue{
       let res:any = await Service.get_product_source()
       if(res.code==="Success"){
         this.product_source_type_list = res.data
-        this.form_data.product_source = this.product_source_type_list[0].value
+        this.form_data.product_source = this.oper_info.product_source ? this.oper_info.product_source:this.product_source_type_list[0].value
       } else {
         this.$message.error(res.message)
       }
