@@ -138,7 +138,6 @@ export default new Vuex.Store({
       state.tree_list = list
     },
     SET_SPECIAL_USER (state, is_special_user) {
-      cookie.set('is_special_user', is_special_user);
       state.is_special_user = is_special_user;
     }
   },

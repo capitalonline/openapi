@@ -16,7 +16,7 @@ export async function getUserInfo() {
   const resData = await get_user_info({'token': store.state.token});
   if (resData.code == 'Success') {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
-    console.log('getUserInfo', resData.data)
+    console.log('getUserInfo-sp', resData.data)
     store.commit('SET_SPECIAL_USER', resData.data.is_special_user)
     store.commit('SET_AUTH_INFO', {...resData.data.permission_dict,overview:[],snapshot_list:['snapshot_detail'],ecs_deatroyed:[]});
   }
