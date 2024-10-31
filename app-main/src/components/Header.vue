@@ -15,7 +15,7 @@
       </svg>
     </div>
     <div class="right-content">
-      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10">
+      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10" v-if="!$store.state.is_special_user">
         <el-button @click="FnChangeEntry()">
           <i class="el-icon-menu"></i>
         </el-button>

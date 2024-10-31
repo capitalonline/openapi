@@ -11,6 +11,7 @@ export default new Vuex.Store({
     login_name: 'login_name',
     auth_info: {},
     loadingStatus: true,
+    is_special_user: false
   },
   getters: {
   },
@@ -30,6 +31,10 @@ export default new Vuex.Store({
       setTimeout(() => {
         state.loadingStatus = true;
       })
+    },
+    SET_SPECIAL_USER (state, is_special_user) {
+      cookie.set('is_special_user', is_special_user);
+      state.is_special_user = is_special_user;
     }
   },
   actions: {

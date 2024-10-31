@@ -21,7 +21,9 @@ export async function getUserInfo() {
 
   const resData = await axios.get(`/ecs_business/v1/account/get_user/?token=${ store.state.token}`)
   if (resData.data.code == 'Success') {
+    console.log('getUserInfo', resData.data.data)
     store.commit('SET_LOGIN_NAME', resData.data.data.login_name);
+    store.commit('SET_SPECIAL_USER', resData.data.data.is_special_user)
     store.commit('SET_AUTH_INFO', {...resData.data.data.permission_dict});
     // actions.setGlobalState({permission_dict: store.state.auth_info});
     action.setGlobalState({permission_dict: store.state.auth_info});

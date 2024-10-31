@@ -11,6 +11,8 @@ export default new Vuex.Store({
     qiankun: false,
     token: cookie.get('cds-op-token'),
     login_name: 'login_name',
+    is_special_user: false,
+    employee_no:'',
     auth_info: {},
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
@@ -135,6 +137,10 @@ export default new Vuex.Store({
       storage.set('tree_list',JSON.stringify(list))
       state.tree_list = list
     },
+    SET_SPECIAL_USER (state, is_special_user) {
+      cookie.set('is_special_user', is_special_user);
+      state.is_special_user = is_special_user;
+    }
   },
   actions: {
   },
