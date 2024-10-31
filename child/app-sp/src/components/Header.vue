@@ -37,6 +37,7 @@ export default class Header extends Vue {
   }
   created(){
     this.getPodList();
+    console.log(this.$store.state.is_special_user,'_________')
 
   }
   private changeLayout(){
