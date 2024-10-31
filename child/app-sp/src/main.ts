@@ -107,6 +107,7 @@ export function mount (props: any={}) {
     props.onGlobalStateChange((state, prev) => {
       store.commit('SET_TOKEN',state.token)
       store.commit('SET_AUTH_INFO', state.permission_dict);
+      store.commit('SET_SPECIAL_USER',state.is_special_user)
     }, true);
   }
 
