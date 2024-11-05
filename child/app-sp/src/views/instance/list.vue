@@ -51,6 +51,7 @@
           >恢 复</el-button
         >
         <el-button
+          v-if="!$store.state.is_special_user"
           type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"

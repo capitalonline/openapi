@@ -13,7 +13,17 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-button v-else type="primary" class="dropdownbtn" :key="item.value" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+                <template v-else>
+                  <el-button
+                    type="primary"
+                    class="dropdownbtn"
+                    :key="item.value"
+                    @click="handle(item.label, item.value)"
+                    v-if="item.value !== 'business_test' || !$store.state.is_special_user"
+                  >
+                    {{ item.label }}
+                  </el-button>
+                </template>
               </template>
           </template>
       </action-block>
