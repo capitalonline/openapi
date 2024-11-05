@@ -286,7 +286,7 @@ export default class App extends Vue {
     const resData = await Service.get_region_az_list({
       customer_id: this.customer_id,
       employee_no:this.$store.state.employee_no,
-      login_name:this.$store.state.login_name
+      user_name:this.$store.state.login_name
     });
     if (resData.code === 'Success') {
       this.region_list = resData.data;

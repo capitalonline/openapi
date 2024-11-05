@@ -112,7 +112,7 @@ export default class Resource extends Vue{
     let res:any=await iService.get_region_az_list({
       need_open_az : "1",
       employee_no:this.$store.state.employee_no,
-      login_name:this.$store.state.login_name
+      user_name:this.$store.state.login_name
     })
     if(res.code==="Success"){
       res.data.forEach(item=>{

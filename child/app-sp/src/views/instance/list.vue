@@ -1630,7 +1630,7 @@ export default class App extends Vue {
   private async get_az_list() {
     const res = await EcsService.get_region_az_list({
       employee_no:this.$store.state.employee_no,
-      login_name:this.$store.state.login_name
+      user_name:this.$store.state.login_name
     });
     if (res.code === "Success") {
       res.data.forEach(item => {

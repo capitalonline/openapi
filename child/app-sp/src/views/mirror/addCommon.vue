@@ -359,7 +359,7 @@ export default class AddCommon extends Vue{
         let res:any = await Service.get_available_az({
             backend_type:this.form_data.backend_type,
             employee_no:this.$store.state.employee_no,
-            login_name:this.$store.state.login_name
+            user_name:this.$store.state.login_name
         })
         if(res.code==="Success"){
             this.az_list=res.data;
