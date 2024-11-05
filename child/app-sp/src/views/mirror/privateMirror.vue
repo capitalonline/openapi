@@ -115,7 +115,7 @@ export default class PrivateMirror extends Vue{
             defaultTime:[]
         }
     }
-    private list:any=[{id:1,status:'enable'}]
+    private list:any=[]
     private current:number = 1
     private size:number = 20
     private total:number = 0
