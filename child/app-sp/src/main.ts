@@ -109,6 +109,7 @@ export function mount (props: any={}) {
       store.commit('SET_AUTH_INFO', state.permission_dict);
       store.commit('SET_SPECIAL_USER',state.is_special_user)
       store.commit('SET_EMPLOYEE_NO',state.employee_no)
+      store.commit('SET_LOGIN_NAME',state.login_name)
     }, true);
   }
 
