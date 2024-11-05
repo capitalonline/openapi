@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="left-content">
-      <svg id="svgIcon" viewBox="0 0 107 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svg-icon icon-logo">
+      <svg id="svgIcon" viewBox="0 0 107 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svg-icon icon-logo" v-if="!$store.state.is_special_user">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <g transform="translate(-24.000000, -16.000000)">
             <g transform="translate(24.000000, 16.000000)">
