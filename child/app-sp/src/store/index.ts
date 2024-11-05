@@ -139,6 +139,9 @@ export default new Vuex.Store({
     },
     SET_SPECIAL_USER (state, is_special_user) {
       state.is_special_user = is_special_user;
+    },
+    SET_EMPLOYEE_NO (state, employee_no) {
+      state.employee_no = employee_no;
     }
   },
   actions: {

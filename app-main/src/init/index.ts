@@ -24,9 +24,11 @@ export async function getUserInfo() {
     store.commit('SET_LOGIN_NAME', resData.data.data.login_name);
     store.commit('SET_SPECIAL_USER', resData.data.data.is_special_user)
     store.commit('SET_AUTH_INFO', {...resData.data.data.permission_dict});
+    store.commit('SET_EMPLOYEE_NO', resData.data.data.employee_no)
     // actions.setGlobalState({permission_dict: store.state.auth_info});
     action.setGlobalState({permission_dict: store.state.auth_info});
     action.setGlobalState({is_special_user: store.state.is_special_user});
+    action.setGlobalState({employee_no: store.state.employee_no});
   } else if (resData.data.code === 'Unauthorized') {
     window.location.href = resData.data.data.sso + '?referer=' + window.location.href.split('?')[0];
   }

@@ -845,7 +845,10 @@ export default class PhysicalList extends Vue {
     window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
   private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await EcsService.get_region_az_list({
+      employee_no:this.$store.state.employee_no,
+      login_name:this.$store.state.login_name
+    })
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
