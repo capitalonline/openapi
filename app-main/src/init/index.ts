@@ -29,6 +29,7 @@ export async function getUserInfo() {
     action.setGlobalState({permission_dict: store.state.auth_info});
     action.setGlobalState({is_special_user: store.state.is_special_user});
     action.setGlobalState({employee_no: store.state.employee_no});
+    action.setGlobalState({login_name: store.state.login_name});
   } else if (resData.data.code === 'Unauthorized') {
     window.location.href = resData.data.data.sso + '?referer=' + window.location.href.split('?')[0];
   }
