@@ -209,6 +209,7 @@ pre {
   }
 }
 .tabBox{
+  height: 100%;
   .el-tabs__active-bar{
     transition:none;
   }
@@ -219,4 +220,16 @@ pre {
 }
 .el-table .rowStyle:hover>td {
   background-color: #8CC4fc !important
+}
+.app-container {
+  height: calc(100% - 84px);
+  display: flex;
+  flex-direction: column;
+
+}
+.main-2{
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }

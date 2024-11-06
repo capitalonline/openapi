@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <div >
 <!--      <el-input prefix-icon="el-icon-search"></el-input>-->
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'"></action-block>
@@ -25,6 +25,7 @@
       :data="list"
       border
       ref="table"
+      height="100%"
       @selection-change="handleSelectionChange"
       @sort-change="FnSortChange"
       @filter-change="filterAttribute"
@@ -393,8 +394,9 @@ export default class HostList extends Vue{
       list=[...list,...item.filed];
       return item;
     })
-    this.all_column_item = deal_list(list,label_list,key_list);
-    this.get_custom_columns(this.$store.state.pod.host_list)
+      this.all_column_item = deal_list(list,label_list,key_list);
+      this.get_custom_columns(this.$store.state.pod.host_list)
+      this.FnDoLayout()
     }
   }
   private get_custom_columns(list) {
@@ -422,6 +424,12 @@ export default class HostList extends Vue{
         item = Object.assign(item,{},{column_key:'machine_status',list:this.machine_list})
       }
       return item;
+    })
+    this.FnDoLayout()
+  }
+  private FnDoLayout(){
+    this.$nextTick(()=>{
+      (this.$refs.table as any).doLayout()
     })
   }
   private async get_status_list(){
