@@ -129,6 +129,7 @@ export default class faultRecord extends Vue {
   private async down(){
     this.loading = true;
     const res:any = await Service.gpu_record_download({
+      pod_id:this.$store.state.pod_id,
       ...this.search_reqData
     })
     if (res) {

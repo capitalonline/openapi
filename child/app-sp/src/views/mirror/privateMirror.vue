@@ -262,6 +262,7 @@ export default class PrivateMirror extends Vue{
             // product_source:product_source?product_source[0] : undefined,
             sort_update_time,
             sort_create_time,
+            pod_id:this.$store.state.pod_id
         }
         let str=""
         for (let i in obj){
