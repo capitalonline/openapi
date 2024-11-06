@@ -51,6 +51,7 @@
           >恢 复</el-button
         >
         <el-button
+          v-if="!$store.state.is_special_user"
           type="primary"
           @click="FnOperate('update_spec')"
           :disabled="!operate_auth.includes('update_spec')"
@@ -1627,7 +1628,10 @@ export default class App extends Vue {
     // }
   }
   private async get_az_list() {
-    const res = await EcsService.get_region_az_list({});
+    const res = await EcsService.get_region_az_list({
+      employee_no:this.$store.state.employee_no,
+      user_name:this.$store.state.login_name
+    });
     if (res.code === "Success") {
       res.data.forEach(item => {
         item.region_list.forEach(inn => {

@@ -17,5 +17,7 @@ export async function getUserInfo() {
   if (resData.code == 'Success') {
     store.commit('SET_LOGIN_NAME', resData.data.login_name);
     store.commit('SET_AUTH_INFO', {...resData.data.permission_dict,overview:[],snapshot_list:['snapshot_detail'],ecs_deatroyed:[]});
+    store.commit('SET_SPECIAL_USER', resData.data.is_special_user)
+    store.commit('SET_EMPLOYEE_NO', resData.data.employee_no)
   }
 }

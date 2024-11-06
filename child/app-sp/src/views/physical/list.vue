@@ -13,7 +13,17 @@
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-                <el-button v-else type="primary" class="dropdownbtn" :key="item.value" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+                <template v-else>
+                  <el-button
+                    type="primary"
+                    class="dropdownbtn"
+                    :key="item.value"
+                    @click="handle(item.label, item.value)"
+                    v-if="item.value !== 'business_test' || !$store.state.is_special_user"
+                  >
+                    {{ item.label }}
+                  </el-button>
+                </template>
               </template>
           </template>
       </action-block>
@@ -845,7 +855,10 @@ export default class PhysicalList extends Vue {
     window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
   private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await EcsService.get_region_az_list({
+      employee_no:this.$store.state.employee_no,
+      user_name:this.$store.state.login_name
+    })
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{

@@ -15,7 +15,8 @@
         ></el-option>
       </el-select>
     </div>
-    <div class="right-content">
+<!--    特殊账号不展示下面的三个按钮-->
+    <div class="right-content" v-if="!$store.state.is_special_user">
       <el-button type="text" @click="FnToWiki('public')">公网设置问题排查sop</el-button>
       <el-button type="text" @click="FnToWiki('')" class="m-right10">运维OP使用手册V1.0</el-button>
       <el-button @click="changeLayout()" type="info" round><i class="el-icon-sort"></i>切换新页面</el-button>

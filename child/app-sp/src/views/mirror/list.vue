@@ -209,13 +209,19 @@ export default class CommonMirror extends Vue{
         {text:'GRID',value:'GRID'},
     ];
     private source_type:any=[]
-    private operateBtns:any=[
+    private get operateBtns(){
+      const base_operate:any=[
         {label:'编辑',authLabel:'edit_mirror',fun:'edit',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
         {label:'删除',authLabel:'del_mirror',fun:'del',list:['running','blocking','create_fail'],msg:'仅支持可用,停用或者创建失败状态的镜像操作'},
         {label:'状态变更',authLabel:'change_status',fun:'changeStatus',list:['running','blocking'],msg:'仅支持可用或者停用状态的镜像操作'},
         {label:'同步',authLabel:'sync_mirror',fun:'FnSync',list:['running'],msg:'仅支持可用状态的镜像操作'},
         // {label:'操作记录',authLabel:'record',fun:'record',list:[],msg:''},
-    ]
+        ]
+      if(this.$store.state.is_special_user){
+        return base_operate.filter(item=> item.label !== '同步')
+      }
+      return base_operate
+    }
     private status_list:any=[];
     private visible:boolean=true;
     private oper_type:string="";
