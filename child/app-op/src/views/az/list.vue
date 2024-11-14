@@ -93,11 +93,17 @@
            </el-table-column>
            <el-table-column prop="operate" label="操作">
                <template slot-scope="scope">
-                   <el-button type="text" @click="handle(scope.row,'edit')" :disabled="!authList.includes('edit')">编辑</el-button>
-                   <el-button type="text" @click="del(scope.row)" :disabled="!authList.includes('del')">删除</el-button>
-                   <el-button type="text" @click="handle(scope.row,'record')" :disabled="!authList.includes('record')">操作记录</el-button>
-                   <el-button type="text" @click="handle(scope.row,'resource')" :disabled="!authList.includes('scheduling')">调度策略管理</el-button>
-                   <el-button type="text" @click="handle(scope.row,'cluster')" :disabled="!authList.includes('dispatch')">集群调度</el-button>
+                 <el-button type="text" @click="handle({obj:scope.row,label:'edit'})" :disabled="!authList.includes('edit')">编辑</el-button>
+                 <el-dropdown @command="handle" class="m-left5">
+                   <el-button type="text">更多<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                   <el-dropdown-menu slot="dropdown">
+                     <el-dropdown-item v-for="(item,index) in handle_btns"
+                                       :key="index" :command="{obj:scope.row,label:item.value}"
+                                       :disabled="!authList.includes(item.value)">
+                       {{item.label}}
+                     </el-dropdown-item>
+                   </el-dropdown-menu>
+                 </el-dropdown>
                </template>
            </el-table-column>
         </el-table>
@@ -113,14 +119,20 @@
         <template v-if="visible && operateType==='edit'">
             <edit :visible.sync="visible" :info="operateInfo"></edit>
         </template>
-        <template v-if="visible && operateType==='resource'">
+        <template v-if="visible && operateType==='scheduling'">
             <resource :visible.sync="visible" :az_id="operateInfo.az_id"></resource>
         </template>
         <template v-if="visible && operateType==='record'">
             <record :visible.sync="visible" :az_id="operateInfo.az_id"></record>
         </template>
-        <template v-if="visible && operateType==='cluster'">
+        <template v-if="visible && operateType==='dispatch'">
           <cluster :visible.sync="visible" :info="operateInfo"></cluster>
+        </template>
+        <template v-if="visible && operateType==='mirror_snapshot'">
+          <mirror-scroll :visible.sync="visible" :info="operateInfo"></mirror-scroll>
+        </template>
+        <template v-if="visible && operateType==='mirror_back'">
+          <mirror-back :visible.sync="visible" :az_id="operateInfo.az_id"></mirror-back>
         </template>
     </div>
 </template>
@@ -133,8 +145,12 @@ import Edit from './edit.vue';
 import Resource from './resouce.vue';
 import Record from './record.vue'
 import Cluster from "./cluster.vue";
+import MirrorScroll from "@/views/az/mirrorScroll.vue";
+import MirrorBack from "@/views/az/mirrorBack.vue";
 @Component({
     components:{
+        MirrorBack,
+        MirrorScroll,
         Cluster,
         Edit,
         Resource,
@@ -161,6 +177,32 @@ export default class Az extends Vue{
         page_size:20,
         total:0,
     }
+    private handle_btns:any=[
+        {
+            label:'操作记录',
+            value:'record'
+        },
+        {
+            label:'调度策略管理',
+            value:'scheduling'
+        },
+        {
+            label:'集群调度',
+            value:'dispatch'
+        },
+        {
+          label:'镜像卷快照策略',
+          value:'mirror_snapshot'
+        },
+        // {
+        //   label:'镜像卷回滚',
+        //   value:'mirror_back'
+        // },
+        {
+          label:'删除',
+          value:'del'
+        },
+    ]
     
     created() {
         this.authList = this.$store.state.auth_info[this.$route.name];        
@@ -237,10 +279,15 @@ export default class Az extends Vue{
         }
         
     }
-    private handle(obj,label){
-        this.operateInfo = obj;
-        this.operateType = label
-        this.visible=true;
+    private handle(row){
+        const {obj,label}=row;
+        if(label==='del'){
+          this.del(obj)
+        }else {
+          this.operateInfo = obj;
+          this.operateType = label
+          this.visible=true;
+        }
     }
     private async sync(){
         let res:any = await Service.sync();

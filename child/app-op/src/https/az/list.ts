@@ -45,5 +45,21 @@ export default{
     },
     enable_cluster_schedule(req){
         return service(getEcsOptions('POST','/ecs/enable_cluster_schedule/',req))
+    },
+    //获取镜像卷列表
+    get_image_disk_list(req){
+        return service(getEcsOptions('POST','/img/get_image_disk_list/',req))
+    },
+    //设置镜像卷调度策略
+    set_image_disk_strategy(req){
+        return service(getEcsOptions('POST','/img/set_image_disk_strategy/',req))
+    },
+    //获取回滚时快照信息
+    get_rollback_info(req){
+        return service(getEcsOptions('POST','/img/get_rollback_snapshot_dict/',req))
+    },
+    //回滚镜像卷
+    rollback_image_disk(req){
+        return service(getEcsOptions('POST','/img/rollback_image_disk/',req))
     }
 }
