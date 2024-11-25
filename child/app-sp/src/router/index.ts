@@ -71,6 +71,12 @@ const routes:RouteConfig[] = [
             component: () => import('../views/vmOp2/cluster/clusterItem/alarm_info.vue'),
             meta: {menu: 'cluster_alarm'}
           },
+          {//报警
+            path: '/cluster/event/:id?',
+            name: 'cluster_event',
+            component: () => import('../views/vmOp2/cluster/clusterItem/event.vue'),
+            meta: {menu: 'cluster_event'}
+          },
         ],
       },
       {

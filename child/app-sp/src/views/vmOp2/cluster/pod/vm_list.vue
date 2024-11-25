@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
       <action-block :search_option="search_con" @fn-search="FnSearch" :type="true"></action-block>
 <!--      <el-input prefix-icon="el-icon-search"></el-input>-->
       <div class="icon m-bottom10">
@@ -18,10 +18,12 @@
 <!--          <el-button type="text" ><svg-icon icon="export" class="export"></svg-icon></el-button>-->
 <!--        </el-tooltip>-->
       </div>
+    <div class="main-2">
     <el-table
       :data="list"
       border
       ref="table"
+      height="100%"
       @row-click="FnOperRow"
       @row-contextmenu="FnRightClick"
       :row-class-name="rowStyle"
@@ -70,6 +72,7 @@
         </template>
       </el-table-column>
     </el-table>
+    </div>
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -842,6 +845,7 @@ export default class VmList extends Vue{
       }
       return item;
     })
+    this.FnDoLayout()
   }
   private async FnGetStatus() {
     const resData = await Service.get_vm_status_list();
@@ -965,6 +969,11 @@ export default class VmList extends Vue{
     if (isSelected) {
       return 'rowStyle'
     }
+  }
+  private FnDoLayout(){
+    this.$nextTick(()=>{
+      (this.$refs.table as any).doLayout()
+    })
   }
   private closeRecord() {
     this.record_visible = false;

@@ -27,6 +27,7 @@ export default class TimeGroup extends Vue {
   @Prop({default: ''}) private start_time!: string;
   @Prop({default: ()=>({})}) timeList!: any;
   @Prop({default: 31}) private dis_day!: number;
+  @Prop({default: ''}) private default_timer!: string;
   private time_option = {
     placeholder: ['开始时间', '结束时间'],
     type: 'datetimerange',
@@ -72,7 +73,7 @@ export default class TimeGroup extends Vue {
   @Emit('fn-emit')
   public FnEmit(default_date_timer) {}
   private created() {
-    this.default_time = Object.keys(this.time_list)[0];
+    this.default_time =this.default_timer ? this.default_timer : Object.keys(this.time_list)[0];
     this.FnChangeTime();
   }
 }

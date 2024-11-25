@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <div class="search-box" >
 <!--      <el-input prefix-icon="el-icon-search"></el-input>-->
     <div class="icon m-bottom10">
@@ -20,6 +20,7 @@
     <el-table
       :data="list"
       border
+      height="100%"
       ref="table"
       :row-class-name="rowStyle"
       @row-contextmenu="FnRightClick"
@@ -262,6 +263,7 @@ export default class List extends Vue{
       })
       this.all_column_item = deal_list(list,label_list,key_list);
       this.get_custom_columns(this.$store.state.pod.cluster_host)
+      this.FnDoLayout()
     }
   }
   private get_custom_columns(list) {
@@ -284,7 +286,12 @@ export default class List extends Vue{
       }
       return item;
     })
-    console.log('custom',this.custom_host)
+    this.FnDoLayout()
+  }
+  private FnDoLayout(){
+    this.$nextTick(()=>{
+      (this.$refs.table as any).doLayout()
+    })
   }
   private FnCustom() {
     this.show_custom = true;

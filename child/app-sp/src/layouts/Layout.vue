@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%">
     <top-header :class="{'header-box': $store.state.qiankun}"></top-header>
-    <el-container class="container">
+    <div class="container">
       <el-aside class="aside_main" :class="{aside_main_show:!asideStatus}">
           <sidebar></sidebar>
       </el-aside>
@@ -19,7 +19,7 @@
           <router-view :key="key"></router-view>
         </el-main>
       </el-container>
-    </el-container>
+    </div>
   </div>
 </template>
 
@@ -61,6 +61,8 @@ export default class Layout extends Vue{
 .container {
   height: 100%;
   overflow: auto;
+  width: 100%;
+  display: flex;
   .el-divider--horizontal{
     margin: 5px 0;
   }
@@ -74,6 +76,10 @@ export default class Layout extends Vue{
 .main-content {
   background: #f5f6fa;
   position: relative;
+  .el-main {
+    padding: 5px 5px 5px 20px;
+    height: 100%;
+  }
 }
 .el-aside {
   border-right: 1px solid #e6e6e6;
@@ -107,10 +113,5 @@ export default class Layout extends Vue{
   .el-header {
   // background: #fff;
   // box-shadow: 0 5px 5px #dde2ef;
-}
-</style>
-<style lang="scss">
-.el-main {
-  padding: 5px 5px 5px 20px;
 }
 </style>
