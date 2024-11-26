@@ -118,6 +118,9 @@
               <span v-if="scope.row.net_model"> * {{scope.row.net_model_count}}</span><!--型号*数量-->
             </div>
           </template>
+          <template #default="scope" v-else-if="item.prop==='is_prepare_host'">
+            <span>{{scope.row.is_prepare_host ? '是' : '否'}}</span>
+          </template>
         </el-table-column>
         <!-- <el-table-column label="操作栏">
           <template slot-scope="scope">
@@ -269,6 +272,10 @@ export default class PhysicalList extends Vue {
     'local':'本地盘',
     'local,block':'云盘/本地盘'
   }
+  private is_pare_host:any=[
+    {text:'是',value:'1'},
+    {text:'否',value:'0'}
+  ]
   created() {
       this.getFamilyList()
       this.get_room_list()
@@ -379,6 +386,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='backend_type'){
         item = Object.assign(item,{},{column_key:'backend_type',list:this.backendList})
       }
+      if(item.prop==='is_prepare_host'){
+        item = Object.assign(item,{},{column_key:'is_prepare_host',list:this.is_pare_host})
+      }
       return item;
     })
   }
@@ -421,7 +431,8 @@ export default class PhysicalList extends Vue {
       bare_metal_id,
       bare_metal_name,
       customer_keyword,
-      vgpu_segment_type
+      vgpu_segment_type,
+      is_prepare_host
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -458,6 +469,7 @@ export default class PhysicalList extends Vue {
       host_source:host_source ? host_source[0] : undefined,
       backend_type:backend_type ? backend_type[0] : undefined,
       ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
+      is_prepare_host:is_prepare_host ? is_prepare_host[0] : undefined
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -654,6 +666,14 @@ export default class PhysicalList extends Vue {
         
     }
     if(['upload','resource','update_attribute'].includes(value)){
+      if(value === 'update_attribute'){
+        const firstItem = this.multi_rows[0];
+        const is_some = this.multi_rows.every(item => item.is_prepare_host === firstItem.is_prepare_host);
+        if(!is_some){
+          this.$message.warning("备机不支持与资源池机器同时做批量操作!");
+          return
+        }
+      }
       this.oper_type=value;
       this.oper_label = label
       this.visible=true;

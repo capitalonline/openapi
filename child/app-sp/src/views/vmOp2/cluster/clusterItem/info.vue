@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="info">
     <div class="icon">
       <i class="iconfont icon-xinxi" style="font-size: 100px"></i>
@@ -11,8 +12,11 @@
       </div>
     <div class="progress">
       <div class="bar" v-for="(item,id) in progress_info" :key="id">
+        <span>{{item.label}}</span>
+        <span v-if="item.label === 'GPU'" class="prompt_message text-right">
+            {{item.gpu_type}}
+          </span>
         <div class="flex-between m-bottom5">
-          <span>{{item.label}}</span>
 <!--          <span v-if="item.label === 'GPU'">-->
 <!--            <i class="iconfont icon-breakdown" style="font-size: 20px"></i>-->
 <!--            故障：{{item.breakdown}}-->
@@ -24,6 +28,19 @@
           <span>可用：{{item.available}}</span>
         </div>
       </div>
+    </div>
+  </div>
+    <div class="resource_info">
+      <div style="font-weight: bold;font-size: 18px">迁移可用资源数量</div>
+      <el-divider></el-divider>
+      <el-table border :data="list" max-height="360px">
+        <el-table-column prop="ecs_spec_family_name" label="实例规格族名称"></el-table-column>
+        <el-table-column prop="cpu_count" label="vCPU" ></el-table-column>
+        <el-table-column prop="memory_size" label="内存（GB）" ></el-table-column>
+        <el-table-column prop="gpu_count" label="GPU" ></el-table-column>
+        <el-table-column prop="available_count" label="可用数量" ></el-table-column>
+      </el-table>
+      <div class="m-top5" style="color: #aaaaaa">注：数据包含专属用户资源，如实际调整如发现资源不足，请手动解绑专属用户资源</div>
     </div>
   </div>
 </template>
@@ -41,6 +58,7 @@ import Service from "@/https/vmOp2/cluster/clusterItem";
 export default class COverview extends Vue{
   @Prop({default:''})cluster_id!:string
   private detail_info :any={}
+  private list:any=[]
   private base_info={
     host_count:{label:'主机',value:'20'},
     ecs_count:{label:'虚拟机',value:'100'},
@@ -48,11 +66,12 @@ export default class COverview extends Vue{
   private progress_info={
     cpu:{label:'CPU',used:'200GHz',available:'3.8Thz',total:'4THz',percentage:0},
     memory:{label:'内存',used:'0TB',available:'0GB',total:'0TB',percentage:0},
-    gpu:{label:'GPU',used:'0块',available:'100%',total:'100块',breakdown:'20块',percentage:0},
+    gpu:{label:'GPU',used:'0块',available:'100%',total:'100块',breakdown:'20块',percentage:0,gpu_type:'RTX 4090'},
     storage:{label:'存储',used:'0TB',available:'0GB',total:'0TB',percentage:0}
   }
   created(){
     this.get_cluster_outline()
+    this.FnGetList()
   }
   private async get_cluster_outline(){
     let res:any = await Service.get_cluster_outline({
@@ -85,7 +104,8 @@ export default class COverview extends Vue{
         total: this.detail_info.gpu_statistic.total + '个',
         available:this.detail_info.gpu_statistic.available + '个',
         percentage: this.detail_info.gpu_statistic.rate * 100,
-        breakdown: this.detail_info.gpu_statistic.fault + '块'
+        breakdown: this.detail_info.gpu_statistic.fault + '块',
+        gpu_type: this.detail_info.gpu_statistic.gpu_type
       }
       this.progress_info.storage ={
         ...this.progress_info.storage,
@@ -94,6 +114,17 @@ export default class COverview extends Vue{
         available:this.detail_info.storage_statistic.available + 'TB',
         percentage: this.detail_info.storage_statistic.rate * 100
       }
+    }
+  }
+  private async FnGetList(){
+    let res:any = await Service.get_resource_list(
+      {
+        cluster_id:this.$route.params.id,
+        az_id:this.$store.state.az_id
+      }
+    )
+    if(res.code === 'Success'){
+      this.list = res.data.resource_list
     }
   }
 
@@ -145,6 +176,14 @@ export default class COverview extends Vue{
   }
   .m-top50{
     margin-top: 50px !important;
+  }
+}
+.resource_info{
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 4px;
+  .el-table{
+    margin-top: 20px;
   }
 }
 

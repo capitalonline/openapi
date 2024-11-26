@@ -6,7 +6,7 @@
             <el-button type="primary" @click="del" :disabled="!auth_list.includes('delete_contact_group')">删除联系人组</el-button>
         </template>
     </action-block>
-    <el-collapse accordion class="contact-group">
+    <el-collapse accordion class="contact-group-box">
       <el-collapse-item v-for="item in group_list" :key="item.id">
         <template slot="title">
           <div class="collapse-header">
@@ -235,9 +235,15 @@ label.el-checkbox{
     }
 
 }
+::v-deep .el-collapse-item .collapse-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 </style>
 <style lang="scss">
-.contact-group {
+.contact-group-box {
   .collapse-header {
     display: flex;
     align-items: center;

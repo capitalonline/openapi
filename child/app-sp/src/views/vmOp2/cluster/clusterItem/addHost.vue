@@ -116,7 +116,7 @@ export default class AddHost extends Vue{
       page_index: this.page_info.current,
       page_size: this.page_info.size,
       az_id:this.$store.state.az_id,
-      pod_id:pod,
+      pod_id:this.$route.name === 'pod_cluster' ? this.$route.params.id : pod,
       is_unassigned_cluster:2,
       host_info:data.host_info || "",
       cpu_type_id:JSON.stringify(this.info.cpu_type_id),

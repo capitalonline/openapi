@@ -59,5 +59,13 @@ export default{
   },
   get_product_source(){
     return service(getEcsOptions('GET','/ecs/get_product_source/'))
+  },
+  //进入救援模式
+  enter_rescue(req){
+    return service(getEcsOptions('POST','/ecs/enter_rescue/',req))
+  },
+  //退出救援模式
+  exit_rescue(req){
+    return service(getEcsOptions('POST','/ecs/exit_rescue/',req))
   }
 }

@@ -2,8 +2,10 @@
   <div style="height: 100%">
     <top-header :class="{'header-box': $store.state.qiankun}"></top-header>
     <div class="container">
-      <el-aside class="aside_main" :class="{aside_main_show:!asideStatus}">
-          <sidebar></sidebar>
+      <el-aside class="aside_main" :class="{aside_main_show:!asideStatus}" :style="{ width: asideWidth + 'px' }">
+        <sidebar></sidebar>
+<!--        拖拽设置导航栏宽度-->
+        <div class="resizer" @mousedown="startResize"></div>
       </el-aside>
       <el-container class="main-content">
         <el-main class="main_cont">
@@ -38,6 +40,10 @@ import TopHeader from "@/layouts/TopHeader.vue";
 export default class Layout extends Vue{
   private asideStatus:boolean = true
   private aside_open_close:boolean = true
+  private asideWidth:number = 260 // 默认宽度
+  private isResizing:boolean =  false
+  private startX:number = 0
+  private startWidth:number = 0
   get key(){
     return this.$route.path + Math.random()
   }
@@ -52,6 +58,25 @@ export default class Layout extends Vue{
         this.aside_open_close =false
       },500)
     }
+  }
+  private startResize(event) {
+    event.preventDefault()
+    this.isResizing = true;
+    this.startX = event.clientX;
+    this.startWidth = this.asideWidth;
+    document.addEventListener('mousemove', this.resize);
+    document.addEventListener('mouseup', this.stopResize);
+  }
+  private resize(event) {
+    if (this.isResizing) {
+      const dx = this.startX + (event.clientX - this.startX);
+      this.asideWidth = Math.min(Math.max(dx, 255), 600); // 最小宽度为255，最大宽度为600
+    }
+  }
+  private stopResize() {
+    this.isResizing = false;
+    document.removeEventListener('mousemove', this.resize);
+    document.removeEventListener('mouseup', this.stopResize);
   }
 
 }
@@ -84,11 +109,19 @@ export default class Layout extends Vue{
 .el-aside {
   border-right: 1px solid #e6e6e6;
   overflow-x: hidden;
+  position: relative;
 }
 .aside_main {
-  width: 260px !important;
   transition: width 0.2s;
   height: 100%;
+}
+.resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: ew-resize;
 }
 .aside_main_show {
   width: 0 !important;
@@ -113,5 +146,8 @@ export default class Layout extends Vue{
   .el-header {
   // background: #fff;
   // box-shadow: 0 5px 5px #dde2ef;
+}
+.el-main {
+  padding: 5px 5px 5px 20px;
 }
 </style>

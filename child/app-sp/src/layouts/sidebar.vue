@@ -55,6 +55,63 @@ export default class Sidebar extends Vue {
   ];
   private menu_list=[]
   private treeData:any = []
+  private menuMapping = {
+    mirror: {
+      current: 'mirror',
+      menu_list: [
+        {label: '公有镜像', name: 'mirror'},
+        {label: '私有镜像', name: 'private_mirror'}
+      ],
+      auth_menu: []
+    },
+    storage: {
+      current: 'disk',
+      menu_list: [
+        {label: '云盘管理', name: 'disk'},
+        {label: '操作记录', name: 'diskRecord'},
+        {label: '云盘-卷', name: 'diskVolume'}
+      ],
+      auth_menu: []
+    },
+    log: {
+      current: 'task_list',
+      menu_list: [
+        {label: '任务管理', name: 'task_list'},
+        {label: '操作日志审计', name: 'operate_log'},
+        {label: '已销毁资源', name: 'ecs_destroyed_list'}
+      ],
+      auth_menu: []
+    },
+    cluster: {
+      current: () => this.treeData[0].id, // 用函数返回动态值
+    },
+    config: {
+      current: 'anomaly_event',
+      menu_list: [
+        {name: 'anomaly_event', label: '异常任务处理'},
+        {name: 'repair_event', label: '异常任务处理2'},
+        {
+          name: 'alarm_manage',
+          label: '报警管理',
+          children: [
+            {name: 'alarm_shield', label: '屏蔽管理'},
+            {name: 'alarm_strategy_list', label: '报警策略'},
+            {name: 'alarm_contact_list', label: '报警联系人'}
+          ]
+        },
+        {
+          name: "task_config",
+          label: "底层任务配置",
+          children: [
+            {name: 'config_main_task', label: "主任务配置"},
+            {name: 'config_sub_task', label: "子任务配置"},
+            {name: 'project', label: "项目管理"}
+          ]
+        }
+      ],
+      auth_menu: []
+    }
+  };
   created(){
     this.getTreeData()
   }
@@ -64,60 +121,47 @@ export default class Sidebar extends Vue {
       this.getTreeData()
     })
   }
-  //改变左侧头部menu时触发
-  private change(item){
-    this.active_menu = item.name
-    this.treeType = item.type
-    console.log('treeType',this.treeType)
-    if(this.active_menu === 'mirror' && this.$route.name !== 'mirror'){
-      this.current ='mirror'
-      this.menu_list=[
-        {label:'公有镜像',name:'mirror'},
-        {label:'私有镜像',name:'private_mirror'}
-      ]
-      this.$router.push({name:'mirror'})
-    }
-    if(this.active_menu === 'storage'){
-      this.current ='disk'
-      this.menu_list=[
-        {label:'云盘管理',name:'disk'},
-      ]
-      this.$router.push({name:'disk'})
-    }
-    if(this.active_menu === 'log'){
-      this.current ='operate_log'
-      this.menu_list=[
-        {label:'操作日志审计',name:'operate_log'},
-        {label:'已销毁资源',name:'ecs_destroyed_list'},
-      ]
-      this.$router.push({name:'operate_log'})
-    }
-    if(this.active_menu === 'cluster'){
-      this.current = this.treeData[0].id
-    }
-    if(this.active_menu === 'config'){
-      this.current ='alarm_shield'
-      this.menu_list=[
-        {
-          name:'alarm_manage',
-          label:'报警管理',
-          children:[
-            {name:'alarm_shield',label:'屏蔽管理'},
-            {name:'alarm_strategy_list',label:'报警策略'},
-            {name:'alarm_contact_list',label:'报警联系人'},
-          ]
-        },
-        {
-          name: "task_config",
-          label: "底层任务配置",
-          children: [
-            { name: 'config_main_task', label: "主任务配置" },
-            { name: 'config_sub_task', label: "子任务配置" },
-            { name: 'project', label: "项目管理" },
-          ]
-        },
-      ]
-      this.$router.push({name:'alarm_shield'})
+  /**
+   * @description 当前新OP路由均未配置权限，等配置后放开下面逻辑：判断菜单类型为menu的导航项是否有显示权限，与tree类型的菜单权限无关
+   */
+  // private getPermission(config){
+  //   const auth_info = this.$store.state.auth_info;
+  //   // 过滤出有权限的菜单项
+  //   if (config.menu_list && config.menu_list.length > 0) {
+  //     config.auth_menu = config.menu_list.filter(menuItem =>
+  //       auth_info[menuItem.name] ||
+  //       (menuItem.children && menuItem.children.some(child => auth_info[child.name]))
+  //     )
+  //     // 如果有子菜单，则也需要过滤子菜单
+  //     config.auth_menu.forEach(menuItem => {
+  //       if (menuItem.children) {
+  //         menuItem.children = menuItem.children.filter(child => auth_info[child.name])
+  //       }
+  //     });
+  //   }
+  // }
+  //改变左侧头部menu时触发,用于menu的显示和路由跳转
+  private change(item) {
+    this.active_menu = item.name;
+    this.treeType = item.type;
+    const config = this.menuMapping[this.active_menu];
+    if (config) {
+      this.current = typeof config.current === 'function' ? config.current() : config.current;
+      //this.getPermission(config);
+      // 设置 current 为有权限的第一项菜单的 name
+      // if (config.auth_menu && config.auth_menu.length > 0) {
+      //   if (config.auth_menu[0].children && config.auth_menu[0].children.length > 0) {
+      //     this.current = config.auth_menu[0].children[0].name;
+      //   } else {
+      //     this.current = config.auth_menu[0].name;
+      //   }
+      // } else {
+      //   this.current = typeof config.current === 'function' ? config.current() : config.current;
+      // }
+      this.menu_list = config.menu_list || [];
+      if (this.current) {
+        this.$router.push({name: this.current});
+      }
     }
   }
   //获取左侧树结构
