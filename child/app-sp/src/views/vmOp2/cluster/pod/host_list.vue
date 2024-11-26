@@ -4,10 +4,10 @@
 <!--      <el-input prefix-icon="el-icon-search"></el-input>-->
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'"></action-block>
       <div class="icon m-bottom10">
-        <el-dropdown @command="handleOperate" class="aliFont">
+        <el-dropdown @command="infoClick" class="aliFont">
           <el-button type="text"><svg-icon-font iconName="icon-gengduo"></svg-icon-font></el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in rows_operate_btns" :command="{label:item.value}" :key="item.value" >{{item.label}}</el-dropdown-item>
+            <el-dropdown-item v-for="item in rows_operate_btns" :command="item" :key="item.value" >{{item.label}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
@@ -57,6 +57,9 @@
         <template #default="scope" v-else-if="item.prop==='gpu_rage'">
           <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.gpu_rate)"></el-progress>
         </template>
+        <template #default="scope" v-else-if="item.prop==='is_prepare_host'">
+          <span>{{scope.row.is_prepare_host ? '是' : '否'}}</span>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -68,7 +71,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="page_info.total">
     </el-pagination>
-    <template v-if="visible && !['physical_detail','upload','migrate','record','resource','update_attribute','business_test','remark'].includes(oper_type)">
+    <template v-if="visible && !['physical_detail','upload','migrate','record','resource','update_attribute','business_test','remark','service','rollback'].includes(oper_type)">
       <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
     </template>
     <template v-if="visible && oper_type==='upload'">
@@ -80,8 +83,8 @@
     <template v-if="visible && oper_type==='record'">
       <Record :visible.sync="visible" type="physical" :record_id="multi_rows[0].host_id" @close="close"></Record>
     </template>
-    <template v-if="visible && oper_type==='resource'">
-      <Resource :visible.sync="visible" :rows="multi_rows" @close="close"></Resource>
+    <template v-if="visible && ['resource','service','rollback'].includes(oper_type)">
+      <Resource :visible.sync="visible" :rows="multi_rows" :title="oper_label" :oper_type="oper_type" @close="close"></Resource>
     </template>
     <template v-if="visible && oper_type==='business_test'">
       <business-test :visible.sync="visible" :az_info="az_info"></business-test>
@@ -95,6 +98,7 @@
       :all_column_item="all_column_item"
       @fn-custom="get_custom_columns"
       :type="'pod_host'"
+      :newView="true"
     ></custom-list-item>
     <right-click :multi_rows="multi_rows" :menus="menus" :name=" multi_rows.length>0 ? multi_rows[0].host_name: ''" :error_msg="error_msg"  @fn-click="infoClick"></right-click>
   </div>
@@ -167,6 +171,12 @@ export default class HostList extends Vue{
   private show_custom:boolean=false;
   private rows_operate_btns:any=[
     {label:'导入',value:'upload'},
+    {label:'服务更新',value:'service'},
+    {label:'回滚',value:'rollback'},
+  ]
+  private is_pare_host=[
+    {text:'是',value:'1'},
+    {text:'否',value:'0'}
   ]
   private search_option:any={
     out_band_address:{placeholder:'请输入带外IP'},
@@ -211,24 +221,37 @@ export default class HostList extends Vue{
     {label:'调度标记',value:'schedule',disabled:false},
     {label:'迁移标记',value:'migrate_flag',disabled:false},
   ]
-  private menus= [
-    {label:'迁移',value:'migrate',single:true,disabled:false},
-    {label:'操作记录',value:'record',single:true,disabled:false},
-    {label:'分配资源',value:'resource',single:true,disabled:false},
-    {label:'编辑备注',value:'remark',single:true,disabled:false},
-    {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
-    {label:'机器锁定',value:'lock_machine', disabled:false,list:this.lock_machine},
-    {label: '更换集群',value: 'change_cluster',disabled: false},
-    {label: '移出集群',value: 'remove_cluster',disabled: false},
-    {label:'机器维护',value:'maintenance', disabled:false,list: this.maintenance_host},
-    {label: '宕机处理',value: 'crash', disabled:false,list: this.crash_list},
-    {label: '设备标记',value: 'sign', disabled:false,list: this.sign_host},
-    {label:'底层同步',value:'under_sync', disabled:false},
-    {label:'驱散',value:'disperse', disabled:false},
-    {label:'欺骗器管理',value:'cheat', disabled:false},
-    {label:'业务测试',value:'business_test', disabled:false},
-    {label:'完成验证',value:'finish_validate'},
-  ]
+  private get menus() {
+    const base_list= [
+      {label: '迁移', value: 'migrate', single: true, disabled: false},
+      {label: '操作记录', value: 'record', single: true, disabled: false},
+      {label: '分配资源', value: 'resource', single: true, disabled: false},
+      {label: '编辑备注', value: 'remark', single: true, disabled: false},
+      {label: '开关机', value: 'start_or_shutdown', list: this.switch_power, disabled: false},
+      {label: '机器锁定', value: 'lock_machine', disabled: false, list: this.lock_machine},
+      {label: '更换集群', value: 'change_cluster', disabled: false},
+      {label: '移出集群', value: 'remove_cluster', disabled: false},
+      {label: '机器维护', value: 'maintenance', disabled: false, list: this.maintenance_host},
+      {label: '宕机处理', value: 'crash', disabled: false, list: this.crash_list},
+      {label: '设备标记', value: 'sign', disabled: false, list: this.sign_host},
+      {label: '底层同步', value: 'under_sync', disabled: false},
+      {label: '驱散', value: 'disperse', disabled: false},
+      {label: '欺骗器管理', value: 'cheat', disabled: false},
+      {label: '业务测试', value: 'business_test', disabled: false},
+      {label: '完成验证', value: 'finish_validate', disabled: false},
+      {label: '解除存储异常', value: 'unstore_exception', disabled: false},
+      {label: '服务更新', value: 'service', disabled: false},
+      {label: '回滚', value: 'rollback', disabled: false},
+    ]
+    if(this.multi_rows.length>0){
+      if(this.multi_rows[0].is_prepare_host){
+        base_list.push({label: '设为资源池', value: 'set_resource_pools', disabled: false})
+      }else {
+        base_list.push({label: '设为备机', value: 'set_prepar_host', disabled: false})
+      }
+    }
+    return base_list
+  }
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
     shutdown_host:'已选主机需为在线或离线状态且无虚拟机运行',
@@ -240,7 +263,10 @@ export default class HostList extends Vue{
     unlock:'已选主机需为锁定状态',
     data_clear:'机器状态需为待清理状态',
     down_recover:'机器状态需为待恢复状态!',
-    remove_cluster:'已选主机需为维护中状态'
+    remove_cluster:'已选主机需为维护中状态',
+    unstore_exception:'已选主机需为存储异常状态',
+    set_prepar_host:'已选主机需为在线状态且为资源池',
+    set_resource_pools:'已选主机需为在线状态且为备机'
   }
   @Watch('multi_rows',{immediate:true,deep:true})
   private watch_multi(){
@@ -257,10 +283,6 @@ export default class HostList extends Vue{
     this.judgeColumns()
     this.get_pod_host_list();
 
-  }
-  private handleOperate(label){
-    this.oper_type ='upload'
-    this.visible = true
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()
@@ -307,6 +329,11 @@ export default class HostList extends Vue{
         }
       }
       return false
+    }
+    if(value === 'set_prepar_host' || value ==='set_resource_pools'){
+      const is_prepare_host = this.multi_rows.some(item => item.is_prepare_host)
+      const not_prepare_host = this.multi_rows.some(item => !item.is_prepare_host)
+      return is_prepare_host && not_prepare_host
     }
     if(this.judge(value)){
       if(value==="disperse"){
@@ -405,7 +432,7 @@ export default class HostList extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-      if(!['cpu_model','gpu_model','bare_metal_name','power_status_name','machine_status_name'].includes(item.prop)) {
+      if(!['cpu_model','gpu_model','bare_metal_name','power_status_name','machine_status_name','is_prepare_host'].includes(item.prop)) {
         item = Object.assign(item, {}, {sortable: 'custom'})
       }
       if(['host_id','bare_metal_name','cpu_model'].includes(item.prop)){
@@ -422,6 +449,9 @@ export default class HostList extends Vue{
       }
       if(item.prop==='machine_status_name'){
         item = Object.assign(item,{},{column_key:'machine_status',list:this.machine_list})
+      }
+      if(item.prop==='is_prepare_host'){
+        item = Object.assign(item,{},{column_key:'is_prepare_host',list:this.is_pare_host})
       }
       return item;
     })
@@ -556,13 +586,13 @@ export default class HostList extends Vue{
   }
   //校验列表项是否存在此项
   private judgeColumns(){
-    let keys = Object.keys(this.filter_data)
-    let temp = ['power_status','machine_status']
-    keys.map(item=>{
-      if(!temp.includes(item)){
-        delete(this.filter_data[item])
-      }
-    });
+    // let keys = Object.keys(this.filter_data)
+    // let temp = ['power_status','machine_status','is_prepare_host']
+    // keys.map(item=>{
+    //   if(!temp.includes(item)){
+    //     delete(this.filter_data[item])
+    //   }
+    // });
     this.filter_info={}
     for(let i in this.filter_data){
       this.filter_info[i]=this.filter_data[i][0]

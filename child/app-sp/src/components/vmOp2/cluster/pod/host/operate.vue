@@ -189,6 +189,9 @@ export default class Operate extends Vue{
     'unlock':'set_unlock',
     'maintenance':'set_maintenance',
     'change_cluster':'add_cluster',
+    'unstore_exception':'recover_storage_error',
+    'set_prepar_host':'set_prepare_host',
+    'set_resource_pools':'set_prepare_host'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -236,6 +239,7 @@ export default class Operate extends Vue{
     }
   }
   private async confirm(){
+    console.log(this.rows[0].host_id,'-------',this.oper_type)
     if(['shelves','finish_validate'].includes(this.oper_type)){
       let flag:boolean=true
       let form = this.$refs.form as Form;
@@ -264,6 +268,7 @@ export default class Operate extends Vue{
     const lock_detail = this.list.map(item=>{return {host_id:item.host_id,reason:item.lockReason}})
     const change_cluster = this.list.map(item=>{return {host_id:item.host_id,cluster_id:this.form_data.toCluster}})
     const remove_cluster = this.list.map(item=>{return {host_id:item.host_id,cluster_id:'0-0'}})
+    const set_type = this.oper_type === 'set_prepar_host' ? 'prepare_host' : 'resource_pool'
     let req=this.status_list.includes(this.title) ? {
       op_type:this.oper_type,
       host_ids:this.rows.map(item=>item.host_id)
@@ -297,6 +302,9 @@ export default class Operate extends Vue{
     }:this.oper_type === 'remove_cluster'?{
       param:remove_cluster,
       is_move_out:'1'
+    }:this.oper_type ==='set_prepar_host' || this.oper_type === 'set_resource_pools' ?{
+      host_id:this.rows[0].host_id,
+      set_type:set_type
     }: {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
@@ -322,10 +330,10 @@ export default class Operate extends Vue{
     }
 
     if(res.code==="Success"){
-      if(this.oper_type==="finish_validate" || this.oper_type==="disperse" || this.oper_type==="under_sync"){
+      if(['finish_validate','disperse','under_sync','set_prepar_host','set_resource_pools'].includes(this.oper_type)){
         this.$message.success(res.message)
         this.back("1")
-      }else if(this.oper_type==='data_clear' || this.oper_type==='down_recover' || this.oper_type === 'change_cluster' || this.oper_type ==="remove_cluster") {
+      }else if(['data_clear','down_recover','change_cluster',"remove_cluster"].includes(this.oper_type)) {
         if(res.data.fail_host_list.length>0) {
           this.$message.warning(res.message + '。' + res.data.error_msg)
           this.back("0");
@@ -333,7 +341,7 @@ export default class Operate extends Vue{
         } else {
           this.$message.success(res.message)
           this.back("1")
-          if(this.oper_type === 'change_cluster' || this.oper_type ==="remove_cluster"){
+          if(['change_cluster',"remove_cluster"].includes(this.oper_type)){
             bus.$emit('getTreeData',false)
           }
         }

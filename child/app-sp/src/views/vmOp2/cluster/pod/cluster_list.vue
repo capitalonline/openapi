@@ -64,6 +64,11 @@
           </el-tooltip>
           <div v-else></div>
         </template>
+        <template #default="scope" v-else-if="item.prop==='available_prepare_host_count'">
+          <span :style="{color:scope.row.available_prepare_host_count !== scope.row.prepare_host_total ? 'red':'' }">
+            {{scope.row.available_prepare_host_count + '/' + scope.row.prepare_host_total}}
+          </span>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -81,10 +86,35 @@
       :all_column_item="all_column_item"
       @fn-custom="get_custom_columns"
       :type="'cluster'"
+      :newView="true"
     ></custom-list-item>
-    <right-click :multi_rows="multi_rows" :menus="menus" :name="multi_rows.length>0? multi_rows[0].cluster_name: ''" :error_msg="error_msg" @fn-click="infoClick"></right-click>
-    <create-cluster :visible.sync="visible" :oper_info="multi_rows" :isCreate="isCreate"></create-cluster>
-    <add-host :visible.sync="add_host_visible" :cluster_id="multi_rows.length>0? multi_rows[0].cluster_id: ''" :info="multi_rows[0]"></add-host>
+    <right-click
+      :multi_rows="multi_rows"
+      :menus="menus"
+      :name="multi_rows.length>0? multi_rows[0].cluster_name: ''"
+      :error_msg="error_msg" @fn-click="infoClick">
+    </right-click>
+    <create-cluster
+      :visible.sync="visible"
+      :oper_info="multi_rows"
+      :isCreate="isCreate">
+    </create-cluster>
+    <add-host
+      :visible.sync="add_host_visible"
+      :cluster_id="multi_rows.length>0? multi_rows[0].cluster_id: ''"
+      :info="multi_rows[0]">
+    </add-host>
+    <el-dialog :visible.sync="prepare_host_visible" title="设置集群备机数量" width="500px">
+      <el-form :model="form" label-width="100px" label-position="left" ref="form">
+        <el-form-item label="备机数量" prop="standby_num" :rules="[{required: true, message: '请输入备机数量', trigger: 'blur'},{ type: 'number', min: 0, max: 2, message: '备机数量必须在0到2之间', trigger: 'blur' }]">
+          <el-input v-model.number="form.standby_num" label="备机数量" placeholder="请输入备机数量"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="confirm">确认</el-button>
+            <el-button @click="cancel">取消</el-button>
+        </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -102,6 +132,7 @@ import RightClick from "@/views/vmOp2/component/right-click.vue";
 import CreateCluster from "@/views/vmOp2/cluster/pod/createCluster.vue";
 import bus from "@/utils/vmOp2/eventBus";
 import AddHost from "@/views/vmOp2/cluster/clusterItem/addHost.vue";
+import {Form} from "element-ui";
 @Component({
   components: {
     AddHost,
@@ -121,6 +152,10 @@ export default class List extends Vue{
   private isCreate:boolean=false
   private visible:boolean=false
   private add_host_visible:boolean = false
+  private prepare_host_visible:boolean = false
+  private form:any={
+    standby_num:''
+  }
   private rows_operate_btns:any=[
     {label:'新建集群',value:'create_cluster'},
   ]
@@ -130,6 +165,7 @@ export default class List extends Vue{
     {label:'添加计算节点',value:'add_host',single:true,disable:false},
     { label: "编辑集群", value: 'edit_cluster',single:true,disabled: false },
     { label: "删除集群", value: 'delete_cluster', disabled: false},
+    { label: "设置集群备机数量", value: 'prepare_host_count', disabled: false},
   ]
   private error_msg={
     delete_cluster:'仅支持无物理机的cluster进行删除'
@@ -224,6 +260,8 @@ export default class List extends Vue{
         });
     }else if(item.value === 'add_host'){
       this.add_host_visible = true
+    }else if(item.value === 'prepare_host_count'){
+      this.prepare_host_visible = true
     }
     if(!item.list){
       hideMenu()
@@ -272,7 +310,7 @@ export default class List extends Vue{
     }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));//选中的列表项
     this.custom_host.map((item:any)=>{
-      if(!['cpu_model','gpu_model'].includes(item.prop)) {
+      if(!['cpu_model','gpu_model','available_prepare_host_count'].includes(item.prop)) {
         item = Object.assign(item, {}, {sortable: 'custom'})
       }
       if(['cluster_id','cpu_model','gpu_model'].includes(item.prop)){
@@ -334,6 +372,27 @@ export default class List extends Vue{
   private handleCurrentChange(cur){
     this.page_info.current = cur
     this.get_pod_cluster_list()
+  }
+  private confirm(){
+    const form= this.$refs.form as Form;
+    form.validate(async valid => {
+      if(valid){
+        let res:any = await Service.set_cluster_prepare_host({
+          cluster_id:this.multi_rows[0].cluster_id,
+          prepare_host_count:this.form.standby_num
+        })
+        if(res.code === 'Success'){
+          this.$message.success(res.message)
+          this.prepare_host_visible=false
+          this.get_pod_cluster_list()
+        }
+      }
+    })
+  }
+  private cancel(){
+    const form= this.$refs.form as Form;
+    form.resetFields()
+    this.prepare_host_visible=false
   }
 }
 </script>

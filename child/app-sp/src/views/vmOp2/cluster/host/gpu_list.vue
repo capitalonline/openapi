@@ -23,7 +23,16 @@
       <el-table-column label="SN号" prop="sn"></el-table-column>
       <el-table-column label="状态" prop="status" column-key="status" :filters="status_list" :filter-multiple="false">
         <template #default="scope">
-          <span :class="[scope.row.status === 'FF' ? 'err' : 'normal']">{{scope.row.status}}</span>
+          <span v-if="scope.row.status === '禁售'">
+            <el-tooltip
+              :content="scope.row.message"
+              popper-class="tooltip-width"
+              placement="bottom"
+              effect="light">
+              <span class="id-cell">{{ scope.row.status }}</span>
+              </el-tooltip>
+          </span>
+          <span v-else :class="[scope.row.status === 'FF' ? 'err' : 'normal']">{{scope.row.status}}</span>
         </template>
       </el-table-column>
       <el-table-column label="监控">
@@ -49,7 +58,11 @@
       :visible.sync="visible"
       :oper_info="oper_info">
     </gpu-edit>
-    <right-click :multi_rows="multi_rows" :menus="menus" :name=" multi_rows.length>0 ? multi_rows[0].host_name: ''" @fn-click="infoClick"></right-click>
+    <sale :oper_info="oper_info"
+          :visible.sync="visible_sale"
+          :type="hand_type">
+    </sale>
+    <right-click v-if="multi_rows.length === 1" :multi_rows="multi_rows" :menus="menus" :name=" multi_rows.length>0 ? multi_rows[0].host_name: ''" @fn-click="infoClick"></right-click>
   </div>
 
 </template>
@@ -64,8 +77,10 @@ import RightClick from "@/views/vmOp2/component/right-click.vue";
 import {rightClick} from "@/utils/vmOp2/rightClick";
 import {hideMenu} from "@/utils/vmOp2/hideMenu";
 import { findPodIdByHostId } from "@/utils/vmOp2/findPodId"
+import Sale from "@/views/vmOp2/cluster/host/sale.vue";
 @Component({
   components:{
+    Sale,
     RightClick,
     GpuEdit,
     ActionBlock
@@ -80,12 +95,17 @@ export default class list extends Vue {
   private operate_auth = []
   private search_status=[]
   private multi_rows:any=[];
+  private hand_type = ''
+  private visible_sale:boolean = false
   private status_list =[
     {text: '正常', value: 'READY'},
     {text: 'FF', value: 'DISCONNECTED'},
   ]
   private menus= [
     {label: '编辑',value: 'edit',single:true,disabled:false},
+    {label: '禁售',value: 'forbid',single:true,disabled:false},
+    {label: '取消禁售',value: 'cancel_forbid',single:true,disabled:false},
+    {label: '同步',value: 'sync',single:true,disabled:false},
   ]
   private page_info = {
     page_sizes: [20, 50, 100],
@@ -125,9 +145,56 @@ export default class list extends Vue {
     }
     this.FnGetList()
   }
-  private infoClick() {
-    this.FnEdit(this.multi_rows[0])
+  @Watch('multi_rows',{immediate:true,deep:true})
+  private watch_multi(){
+    this.handleMenus()
+  }
+  private hasStatus(status: string) {
+    return this.multi_rows.every(item => item.status === status);
+  }
+  private menuConditions: { [key: string]: () => boolean } = {
+    'cancel_forbid': () => !this.hasStatus('禁售'),
+    'forbid': () => this.hasStatus('禁售')
+  }
+  //
+  private handleMenus() {
+    for (const item of this.menus) {
+      item.disabled = this.menuConditions[item.value] ? this.menuConditions[item.value]() : false;
+    }
+  }
+  private infoClick(item) {
+    if (item.disabled) {
+      return; // 禁用元素时不执行点击事件
+    }
+    const {label, value}=item
+    if(value === 'edit'){
+      this.FnEdit(this.multi_rows[0])
+    }else if(value === 'forbid'){
+      this.FnHandleGpuSale(this.multi_rows[0],'forbid')
+    }else if(value === 'cancel_forbid'){
+      this.FnHandleGpuSale(this.multi_rows[0],'cancel_forbid')
+    }else if(value === 'sync'){
+      this.FnSync(this.multi_rows[0])
+    }
     hideMenu()
+  }
+  //同步GPU底层状态
+  private async FnSync(row){
+    let pod_id = findPodIdByHostId(this.$route.params.id)
+    let res = await Service.update_host_gpu_status({
+      pod_id:pod_id,
+      host_id:row.host_id,
+      pci_address:row.pci_address
+    })
+    if(res.code === 'Success'){
+      this.$message.success(res.message)
+    }
+  }
+  //GPU禁售
+  private async FnHandleGpuSale(row,type){
+    this.visible_sale = true
+    this.oper_info = [row]
+    this.hand_type = type
   }
   private handleFilterChange(val){
     this.search_status = val.status;

@@ -69,7 +69,7 @@ const routes:RouteConfig[] = [
             path: '/cluster/alarm/:id?',
             name: 'cluster_alarm',
             component: () => import('../views/vmOp2/cluster/clusterItem/alarm_info.vue'),
-            meta: {menu: 'cluster_alarm'}
+            meta: {menu: 'cluster_alarm',no_auth: true}
           },
           {//报警
             path: '/cluster/event/:id?',
@@ -143,6 +143,18 @@ const routes:RouteConfig[] = [
         meta: {menu: 'disk_list',no_auth: true}
       },
       {
+        path: '/disk_volume',
+        name: 'diskVolume',
+        component: () => import('../views/vmOp2/storage/volume.vue'),
+        meta: {menu: 'diskVolume',no_auth: true}
+      },
+      {
+        path: '/disk_record',
+        name: 'diskRecord',
+        component: () => import('../views/vmOp2/storage/record.vue'),
+        meta: {menu: 'diskRecord',no_auth: true}
+      },
+      {
         path: '/ecs_destroyed_list',
         name: 'ecs_destroyed_list',
         component: () => import('../views/instance/destroyedList.vue'),
@@ -151,7 +163,7 @@ const routes:RouteConfig[] = [
       {
         path: '/operate_log_list',
         name: 'operate_log',
-        component: () => import('../views/log/list.vue'),
+        component: () => import('../views/vmOp2/task/log_list.vue'),
         meta: {meta: 'operate_log',no_auth: true}
       },
       {
@@ -225,6 +237,32 @@ const routes:RouteConfig[] = [
         name: 'alarm_create',
         component: () => import('../views/alarm/createShield.vue'),
         meta: {menu: 'alarm_info',no_auth: true}
+      },
+      //任务管理
+      {
+        path: '/task_list',
+        name: 'task_list',
+        component: () => import('../views/vmOp2/task/list.vue'),
+        meta: {menu: 'task_list',no_auth: true}
+      },
+      //任务详情
+      {
+        path: '/task/:task_id',
+        name: 'task_detail',
+        component: () => import('../views/vmOp2/task/task_detail.vue'),
+        meta: {menu: 'event_list',no_auth: true}
+      },
+      {
+        path: '/anomal_event_list',
+        name: 'anomaly_event',
+        component: () => import('../views//vmOp2/repairEvent/anomalyList.vue'),
+        meta: {menu: 'anomaly_event',no_auth: true}
+      },
+      {
+        path: '/repair_event_list',
+        name: 'repair_event',
+        component: () => import('../views/vmOp2/repairEvent/repairEventList.vue'),
+        meta: {menu: 'anomaly_event',no_auth: true}
       },
     ]
   },

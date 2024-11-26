@@ -44,7 +44,7 @@
         <h4>目的主机:</h4>
         <div class="m-bottom20">
           <span class="m-right10">可用区:</span>
-          <span>{{$store.state.az_name}}</span>
+          <span>{{$store.state.az_list.az_name}}</span>
         </div>
         <div>物理机：<span class="prompt_message">（若不选择则随机迁移至合适的目的主机）</span></div>
         <div class="recommend" v-if="recommend.length>0">

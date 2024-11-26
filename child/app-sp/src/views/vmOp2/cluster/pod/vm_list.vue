@@ -88,6 +88,7 @@
       :all_column_item="all_column_item"
       @fn-custom="get_custom_columns"
       :type="'pod_vm'"
+      :newView="true"
     ></custom-list-item>
     <template v-if="record_visible">
       <Record
@@ -121,6 +122,13 @@
       :visible.sync="migrate_visible"
       :ecs_list="multiple_selection">
       </Migrate>
+    </template>
+    <template v-if="rescue_visible">
+      <rescue-mode
+        :visible.sync="rescue_visible"
+        :ecs_id="ecs_id"
+        :customer_id="customer_id"
+      />
     </template>
     <operate
       :title="operate_title"
@@ -165,8 +173,9 @@ import moment from "moment";
 import InstanceService from "@/https/instance/list";
 import storage from "@/store/storage";
 import EcsService from "@/https/instance/list";
-import Migrate from "@/views/vmOp2/cluster/pod/migrate.vue";
+import Migrate from "@/views/vmOp2/cluster/vm/vmMigrate.vue";
 import { findPodIdByClusterId ,findPodIdByHostId} from "@/utils/vmOp2/findPodId"
+import RescueMode from "@/views/instance/rescueMode.vue";
 @Component({
   components: {
     Migrate,
@@ -179,7 +188,8 @@ import { findPodIdByClusterId ,findPodIdByHostId} from "@/utils/vmOp2/findPodId"
     Detail,
     AddCommon,
     netSet,
-    actionBlock
+    actionBlock,
+    RescueMode
   }
 })
 
@@ -246,6 +256,7 @@ export default class VmList extends Vue{
   private isComponentDestroying:boolean = false
   private ecs_id=""
   private system_disk_feature = "";
+  private rescue_visible:boolean = false
   private page_info:any={
     current:1,
     size:20,
@@ -295,6 +306,10 @@ export default class VmList extends Vue{
     {label:'关机',value:'shutdown_ecs',disabled:false},
     {label:'重启',value:'restart_ecs',disabled:false},
   ]
+  private rescue_list:any = [
+    {label:'进入救援模式',value:'rescue_mode',disabled:false},
+    {label:'退出救援模式',value:'exit_rescue_mode',disabled:false},
+  ]
   private menus= [
     {label: '详情',value: 'instance_detail',single:true,disabled:false},
     {label:'开关机',value:'start_or_shutdown', list:this.switch_power,disabled:false},
@@ -311,6 +326,7 @@ export default class VmList extends Vue{
     {label: '更换操作系统',value: 'update_system',disabled:false},
     {label: '重置密码',value: 'reset_pwd',disabled:false},
     {label: '网络设置',value: 'net_set',disabled:false},
+    {label: '救援模式',value: 'rescue',single:true,list:this.rescue_list,disabled:false},
   ]
   private error_msg={
     vnc:'已选虚拟机状态需为运行中',
@@ -364,11 +380,20 @@ export default class VmList extends Vue{
       } else {
         // 处理子菜单项
         for (const inn of item.list) {
-          inn.disabled = false
+          switch (inn.value){
+            case 'rescue_mode':
+              inn.disabled = this.multiple_selection.every(item => item.status !== 'shutdown')
+              break
+            case 'exit_rescue_mode':
+              inn.disabled = this.multiple_selection.every(item => item.status !== 'rescue')
+              break
+            default:
+              inn.disabled = false
+          }
         }
       }
     }
-    console.log('this.menus',this.menus)
+
   }
 
   created(){
@@ -461,26 +486,24 @@ export default class VmList extends Vue{
       if(value === 'instance_record'){
         this.record_id = this.ecs_id
         this.record_visible = true;
-      }
-      if(value === 'instance_detail'){
+      }else if(value === 'instance_detail'){
         this.detail_id = this.ecs_id;
         this.detail_visible = true;
-      }
-      if(value === 'add_common_mirror'){
+      }else if(value === 'add_common_mirror'){
         this.ecs_info = this.multiple_selection[0]
         this.common_visible = true;
-      }
-      if(value === 'vnc'){
+      }else if(value === 'vnc'){
         this.FnToVnc(this.ecs_id)
-      }
-      if(value === 'gpu_manage'){
+      } else if(value === 'gpu_manage'){
         this.operateGpu()
-      }
-      if(value === 'migrate'){
+      }else if(value === 'migrate'){
         this.migrate_visible = true
-      }
-      if(value === 'monitor'){
+      } else if(value === 'monitor'){
         this.$router.push({path: `/vm_monitor/${this.multiple_selection[0].ecs_id}`});
+      }else if(value === 'rescue_mode'){
+        this.FnToRescue()
+      }else if(value === 'exit_rescue_mode'){
+        this.FnExitRescue()
       }
       if(['start_up_ecs','shutdown_ecs','restart_ecs','delete_ecs','restore','destroy_ecs','update_spec','update_system','reset_pwd','net_set'].includes(value)) {
         const operate_info = getInsStatus.getInsOperateAuth(value);
@@ -513,6 +536,35 @@ export default class VmList extends Vue{
       }
       hideMenu()
     }
+  }
+  //进入救援模式
+  private FnToRescue(){
+    this.ecs_id = this.multiple_selection[0].ecs_id
+    this.customer_id = this.multiple_selection[0].customer_id
+    this.rescue_visible = true
+  }
+  //退出救援模式
+  private FnExitRescue(){
+    const row = this.multiple_selection[0]
+    this.$confirm('是否退出救援模式？','提示',{
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(async () => {
+      let res:any = await Service.exit_rescue({
+        customer_id:row.customer_id,
+        ecs_id:row.ecs_id
+      })
+      if(res.code === 'Success'){
+        this.$message.success(res.message)
+        this.get_pod_ecs_list()
+      }
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消退出救援模式'
+      });
+    })
   }
   private async operateGpu() {
     let {ecs_id} = this.multiple_selection[0]

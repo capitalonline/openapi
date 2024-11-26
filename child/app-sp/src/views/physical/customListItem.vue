@@ -92,7 +92,7 @@ export default class CustomListItem extends Vue {
     <div class="item">
       <template v-for="n in all_item">
         <div class="label">{{n.name}}</div>
-        <div class="checkbox-box">
+        <div :class="[newView ? 'checkbox-box2' : 'checkbox-box']">
           <el-checkbox-group v-model="select_item">
             <el-checkbox v-for="item in n.filed" :key="item.show_name" :label="item.show_name" :disabled="item.show_name==='主机名'"></el-checkbox>
           </el-checkbox-group>
@@ -123,6 +123,7 @@ export default class CustomListItem extends Vue {
   @Prop({default: 'host'}) private type!: string;
   @Prop({default: () => []}) private all_column_item!: Array<CustomItem>;
   @Prop({default: () => []}) private all_item!: Array<any>;
+  @Prop({default: false}) private newView!: boolean;
   private select_item: Array<string> = [];
   private typeObj={
     'host':{func:'SET_CUSTOM_HOST',value:'custom_host'},
@@ -181,6 +182,15 @@ export default class CustomListItem extends Vue {
 }
 .checkbox-box {
   display: flex;
+  padding: 18px;
+  margin-bottom: 18px;
+  border: 1px solid #dde2ef;
+  .el-checkbox {
+    width: 26%;
+    margin-bottom: 10px;
+  }
+}
+.checkbox-box2 {
   padding: 18px;
   margin-bottom: 18px;
   border: 1px solid #dde2ef;

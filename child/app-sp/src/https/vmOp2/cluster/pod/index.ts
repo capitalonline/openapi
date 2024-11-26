@@ -57,5 +57,8 @@ export default{
   //主机导入集群
   add_cluster(req){
     return service(getHostOptions('POST','/host/host_add_cluster/',req))
+  },
+  set_cluster_prepare_host(req){
+    return service(getHostOptions('POST','/cluster/set_cluster_prepare_host_count/',req))
   }
 }

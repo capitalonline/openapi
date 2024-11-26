@@ -67,8 +67,8 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import ActionBlock from "../../components/search/actionBlock.vue";
-import Service from "../../https/log/list";
+import ActionBlock from "@/components/search/actionBlock.vue";
+import Service from "@/https/log/list";
 import moment from "moment";
 import EcsService from "@/https/instance/create";
 import {trans} from "@/utils/transIndex";
