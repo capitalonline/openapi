@@ -62,6 +62,7 @@ const host_status={//error为新增状态，异常
   add_cluster:{power:[],host:['online'],msg:'已选主机需为在线状态',label:'加入集群'},
   change_cluster: {power:[],host:[],msg:'',label:'更换集群'},
   remove_cluster:{power:[],host:['maintenance'],mag:'',label:'移出集群'},
+  set_label:{power:[],host:[],msg:'',label:'添加标签'},
   set_prepar_host:{power:[],host:['online'],msg:'已选主机需为在线状态',label:'设为备机'},
   set_resource_pools:{power:[],host:['online'],msg:'',label:'设为资源池'}
 }

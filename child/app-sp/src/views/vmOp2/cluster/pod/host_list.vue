@@ -57,6 +57,10 @@
         <template #default="scope" v-else-if="item.prop==='gpu_rage'">
           <el-progress :stroke-width="14" color="#455cc6" :percentage="Math.round(scope.row.gpu_rate)"></el-progress>
         </template>
+        <template #default="scope" v-else-if="item.prop==='host_name'">
+          <span>{{scope.row.host_name}}</span><br/>
+          <el-tag v-for="(item,i) in scope.row.label" :key="i" size="mini" class="m-right5">{{item}}</el-tag>
+        </template>
         <template #default="scope" v-else-if="item.prop==='is_prepare_host'">
           <span>{{scope.row.is_prepare_host ? '是' : '否'}}</span>
         </template>
@@ -71,7 +75,8 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="page_info.total">
     </el-pagination>
-    <template v-if="visible && !['physical_detail','upload','migrate','record','resource','update_attribute','business_test','remark','service','rollback'].includes(oper_type)">
+
+    <template v-if="visible && !['physical_detail','upload','migrate','record','resource','update_attribute','business_test','remark','set_label','service','rollback'].includes(oper_type)">
       <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
     </template>
     <template v-if="visible && oper_type==='upload'">
@@ -91,6 +96,9 @@
     </template>
     <template v-if="visible && oper_type==='remark'">
       <remark :visible.sync="visible" :rows="multi_rows[0]" @close="close"></remark>
+    </template>
+    <template v-if="visible && oper_type==='set_label'">
+      <set_label :visible.sync="visible" :rows="multi_rows[0]" @close="close"></set_label>
     </template>
     <custom-list-item
       :visible.sync="show_custom"
@@ -126,9 +134,12 @@ import Resource from '@/components/vmOp2/cluster/pod/host/resource.vue';
 import BusinessTest from '@/components/vmOp2/cluster/pod/host/businessTest.vue';
 import Remark from '@/components/vmOp2/cluster/pod/host/editRemark.vue';
 import moment from "moment";
+import Set_label from "@/views/vmOp2/cluster/host/set_label.vue";
+import HostService from '@/https/physical/list';
 
 @Component({
   components: {
+    Set_label,
     RightClick,
     SearchFrom,
     SvgIcon,
@@ -191,6 +202,7 @@ export default class HostList extends Vue{
     host_rack:{placeholder:'请输入机柜编号'},
     bare_metal_id:{placeholder:'请输入物理机产品ID'},
     bare_metal_name:{placeholder:'请输入物理机产品名称'},
+    label:{placeholder:'请选择标签',list:[]},
     create_time: {
       placeholder: ['开始时间', '结束时间'],
       type: 'datetimerange',
@@ -242,6 +254,7 @@ export default class HostList extends Vue{
       {label: '解除存储异常', value: 'unstore_exception', disabled: false},
       {label: '服务更新', value: 'service', disabled: false},
       {label: '回滚', value: 'rollback', disabled: false},
+      {label:'标签设置',value:'set_label',single:true,}
     ]
     if(this.multi_rows.length>0){
       if(this.multi_rows[0].is_prepare_host){
@@ -273,9 +286,36 @@ export default class HostList extends Vue{
     this.handleMenus()
   }
   created(){
+    this.get_room_list()
     this.get_field()
     this.get_pod_host_list()
     this.get_status_list()
+    this.get_label_list()
+  }
+  private async get_label_list() {
+    this.search_option.label.list = []
+    let res:any = await Service.get_all_host_label({
+    })
+    if(res.code==='Success'){
+      res.data.all_host_label_list.forEach(item => {
+        this.search_option.label.list.push({
+          label:item.label_name,
+          type:item.label_name
+        })
+      })
+    }
+  }
+  private async get_room_list(){
+    let res:any=await HostService.get_room_list({})
+    if(res.code==="Success"){
+
+      res.data.machine_room.forEach(item => {
+        this.search_option.room.list.push({
+          label:item,
+          type:item
+        })
+      })
+    }
   }
   private fn_search(data:any={}){
     this.search_data = {...data};
@@ -286,6 +326,7 @@ export default class HostList extends Vue{
   }
   private close(val){
     //this.oper_type==="upload" && this.get_room_list()
+    this.oper_type === 'set_label' && this.get_label_list()
     val==='1' && this.get_pod_host_list()
     this.visible=false;
     this.oper_type='';
@@ -492,6 +533,7 @@ export default class HostList extends Vue{
       nic,
       bare_metal_name,
       bare_metal_id,
+      label,
     }=this.search_data
     let obj = {
       //pod_id:this.$route.params.id,
@@ -508,6 +550,7 @@ export default class HostList extends Vue{
       nic,
       bare_metal_name,
       bare_metal_id,
+      label,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       ...this.filter_info,
@@ -547,7 +590,8 @@ export default class HostList extends Vue{
       bare_metal_name,
       bare_metal_id,
       vgpu_segment_type,
-      host_info
+      host_info,
+      label,
     }=this.search_data;
     let reqData = {
       host_name,
@@ -562,6 +606,7 @@ export default class HostList extends Vue{
       bare_metal_name,
       bare_metal_id,
       host_info,
+      label,
       machine_room_name:room,
       vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,

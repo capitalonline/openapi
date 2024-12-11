@@ -1,12 +1,12 @@
 <template>
   <div id="menu">
     <ul>
-      <div class="tip"> 操作-{{multi_rows.length>1 ?  multi_rows.length+ '个对象' : name}}</div>
+      <div class="tip"> 操作-{{ tipText }}</div>
       <li
-        v-for="(item, index) in menus"
+        v-for="(item, index) in filteredMenus"
         :key="index"
         v-if="(multi_rows.length>1 && !item.single) || multi_rows.length===1"
-        @click.stop="FnClick(item,index)"
+        @click.stop="FnClick(item)"
       >
         <span v-if="!item.disabled">
             {{ item.label }}
@@ -54,14 +54,23 @@ export default class RightClick extends Vue{
   @Prop({default:''}) name!:any
   private operate_auth = [];
   private msg:any = {}
+  private visibleSubMenus:any ={}
   @Watch('error_msg')
   private watch_error_msg(v){
     this.msg = v
   }
+  get tipText(){
+    return this.multi_rows.length > 1 ? `${this.multi_rows.length}个对象` : this.name;
+  }
+  get filteredMenus() {
+    if (this.multi_rows.length === 0) return [];
+    return this.menus.filter(item => {
+      return (this.multi_rows.length > 1 && !item.single) || this.multi_rows.length === 1;
+    });
+  }
   created(){
     //this.operate_auth = this.$store.state.auth_info[this.$route.name];
     this.msg = this.error_msg
-    console.log('22222')
   }
   private disabledTooltipContent(item){
     if(this.msg && this.msg[item.value]) {

@@ -3,7 +3,6 @@ export function findPodIdByClusterId(id) {
   for (let pod of store.state.tree_list) {
     for (let cluster of pod.children) {
       if (cluster.cluster_id === id) {
-        console.log('&&&',pod.id)
         return pod.pod_id;
       }
     }

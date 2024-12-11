@@ -1,5 +1,6 @@
 const path = require('path');
 const publicPath = '/child/app-sp/';
+const timeStamp = new Date().getTime();
 
 module.exports = {
   publicPath: publicPath,
@@ -79,6 +80,9 @@ module.exports = {
   },
   configureWebpack: {
     output: {
+      // 给每次打包的文件名后面添加一个哈希值，以解决浏览器缓存问题导致的ChunkLoadError报错
+      filename: `[name].${timeStamp}.js`,
+      chunkFilename: `[name].${timeStamp}.js`,
       // 微应用的包名，这里与主应用中注册的微应用名称一致
       library: "AppSp",
       // 将你的 library 暴露为所有的模块定义下都可运行的方式

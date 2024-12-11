@@ -167,7 +167,12 @@ export default{
   agent_rollback(req){
     return service(getHostOptions('POST','/host/handle_host_agent_rollback/',req))
   },
+
   set_prepare_host(req){
     return service(getHostOptions('POST','/host/set_prepare_host/',req))
-  }
+  },
+  //获取ovs版本
+  get_ovs_version(req){
+    return service(getHostOptions('GET','/host/ovs_version_list/',req))
+  },
 }
