@@ -354,6 +354,7 @@ export default class PhysicalList extends Vue {
     host_rack:{placeholder:'请输入机柜编号'},
     bare_metal_id:{placeholder:'请输入物理机产品ID'},
     bare_metal_name:{placeholder:'请输入物理机产品名称'},
+    ovs_version:{placeholder:'请选择OVS版本',list:[]},
     create_time: {
       placeholder: ['开始时间', '结束时间'],
       type: 'datetimerange',
@@ -498,6 +499,7 @@ export default class PhysicalList extends Vue {
       this.getHostTypes();
       this.get_host_recycle_department()
       this.get_host_list_field()
+      this.get_ovs_list()
       this.auth_list = this.$store.state.auth_info[this.$route.name];
       delete this.$store.state.host_search['']
       for(let i in this.search_option){
@@ -539,6 +541,20 @@ export default class PhysicalList extends Vue {
       this.get_custom_columns(this.$store.state.custom_host)
 
 
+    }
+  }
+  private async get_ovs_list(){
+    let res:any=await Service.get_ovs_version({
+      pod_id:this.$store.state.pod_id
+    })
+    if(res.code==='Success'){
+      let result = res.data
+      result.forEach(item=>{
+        this.search_option.ovs_version.list.push({
+          label:item,
+          type:item
+        })
+      })
     }
   }
   private async get_reason_list(type,id){
@@ -677,7 +693,8 @@ export default class PhysicalList extends Vue {
       bare_metal_name,
       bare_metal_id,
       vgpu_segment_type,
-      host_info
+      host_info,
+      ovs_version
     }=this.search_data;
     let res:any=await Service.get_host_list({
       pod_id:this.$store.state.pod_id,
@@ -694,6 +711,7 @@ export default class PhysicalList extends Vue {
       bare_metal_name,
       bare_metal_id,
       host_info,
+      ovs_version,
       vgpu_segment_type: vgpu_segment_type ? vgpu_segment_type[0] : undefined,
       start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
       end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
@@ -824,6 +842,7 @@ export default class PhysicalList extends Vue {
       nic,
       bare_metal_name,
       bare_metal_id,
+      ovs_version
     }=this.search_data
     let obj = {
         pod_id:this.$store.state.pod_id,
@@ -840,6 +859,7 @@ export default class PhysicalList extends Vue {
         nic,
         bare_metal_name,
         bare_metal_id,
+        ovs_version,
         start_time:create_time && create_time[0] ? moment(create_time[0]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         end_time:create_time && create_time[1] ? moment(create_time[1]).format('YYYY-MM-DD HH:mm:ss') : undefined,
         ...this.filter_info,

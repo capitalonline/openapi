@@ -66,7 +66,8 @@
                 <div class="recommend" v-if="recommend.length>0">
                     <div v-for="item in recommend" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
                         {{item.host_name}}<br/>
-                        QEMU：{{item.qemu_version}}
+                        QEMU：{{item.qemu_version}}<br/>
+                        OVS：{{item.ovs_version}}
                         <el-tooltip :content="item.cpu_usage ? (parseFloat(item.cpu_usage)).toFixed(2)+'%' : '0.00%'" placement="bottom" effect="light">
                             <div class="title">
                                 <CustomIcon :hei="item.cpu_usage" />
@@ -173,6 +174,22 @@ export default class Migrate extends Vue{
         })
         this.useable_list=list//可以进行迁移的云主机
     }
+  //格式化qemu版本显示
+  // private extractVersion(version: string) :string{
+  //   const regex1 = /version (\d+\.\d+\.\d+)/;
+  //   const regex2 = /version (\d+\.\d+\.\d+ \(CDS \d+\.\d+\))/;
+  //
+  //   const match1 = version.match(regex1);
+  //   const match2 = version.match(regex2);
+  //
+  //   if (match2) {
+  //     return  match2[1].replace(/\s/g, '');
+  //   } else if (match1) {
+  //     return match1[1];
+  //   } else {
+  //     return version
+  //   }
+  // }
     private async getHostList(){
         // this.$store.commit("SET_LOADING", false);
         let res:any=await Service.get_host_list({
