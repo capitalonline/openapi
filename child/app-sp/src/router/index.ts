@@ -264,6 +264,12 @@ const routes:RouteConfig[] = [
         component: () => import('../views/vmOp2/repairEvent/repairEventList.vue'),
         meta: {menu: 'anomaly_event',no_auth: true}
       },
+      {
+        path: 'instance/security_group',
+        name: 'security_group',
+        component: () => import('../views/vmOp2/cluster/vm/securityGroup.vue'),
+        meta: {menu: 'security_group',no_auth: true}
+      }
     ]
   },
   {

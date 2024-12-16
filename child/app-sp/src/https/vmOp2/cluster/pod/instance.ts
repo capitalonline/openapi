@@ -65,7 +65,10 @@ export default{
     return service(getEcsOptions('POST','/ecs/enter_rescue/',req))
   },
   //退出救援模式
-  exit_rescue(req){
-    return service(getEcsOptions('POST','/ecs/exit_rescue/',req))
+  exit_rescue(req) {
+    return service(getEcsOptions('POST', '/ecs/exit_rescue/', req))
+  },
+  get_security_info(req){
+    return service(getEcsOptions('GET','/ecs/security_info/',req))
   }
 }

@@ -176,6 +176,7 @@ import EcsService from "@/https/instance/list";
 import Migrate from "@/views/vmOp2/cluster/vm/vmMigrate.vue";
 import { findPodIdByClusterId ,findPodIdByHostId} from "@/utils/vmOp2/findPodId"
 import RescueMode from "@/views/instance/rescueMode.vue";
+import {inner} from "echarts/types/src/component/graphic/GraphicView";
 @Component({
   components: {
     Migrate,
@@ -327,13 +328,15 @@ export default class VmList extends Vue{
     {label: '重置密码',value: 'reset_pwd',disabled:false},
     {label: '网络设置',value: 'net_set',disabled:false},
     {label: '救援模式',value: 'rescue',single:true,list:this.rescue_list,disabled:false},
+    {label: '查看安全组',value: 'security_group',single:true,disabled:false}
   ]
   private error_msg={
     vnc:'已选虚拟机状态需为运行中',
     add_common_mirror:'仅内部账号且状态为已关机的实例支持操作',
     gpu_manage:'仅支持对GPU型实例支持显卡管理',
     net_set:'实例需为运行中',
-    migrate:'迁移虚拟机需全为关机或全为开机'
+    migrate:'迁移虚拟机需全为关机或全为开机',
+    security_group:'该虚拟机未配置安全组'
   }
   @Watch('multiple_selection',{immediate:true,deep:true})
   private watch_multi(){
@@ -363,17 +366,20 @@ export default class VmList extends Vue{
             item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running') || !this.operate_auth.includes(item.value);
             break;
           case 'add_common_mirror':
-            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'shutdown') || this.multiple_selection.every(vnc => vnc.customer_type !== '内部') || !this.operate_auth.includes(item.value);
+            item.disabled = this.multiple_selection.every(inner => inner.status !== 'shutdown') || this.multiple_selection.every(inner => inner.customer_type !== '内部') || !this.operate_auth.includes(item.value);
             break;
           case 'net_set':
-            item.disabled = this.multiple_selection.every(vnc => vnc.status !== 'running') || !this.operate_auth.includes(item.value);
+            item.disabled = this.multiple_selection.every(inner => inner.status !== 'running') || !this.operate_auth.includes(item.value);
             break;
           case 'restore':
             item.disabled = true
             break;
             case 'migrate':
               item.disabled = this.setUsableList()
-              break
+              break;
+          case 'security_group':
+              item.disabled = this.multiple_selection.every(inner => inner.security_num === 0)
+            break;
           default:
             item.disabled = false
         }
@@ -393,7 +399,6 @@ export default class VmList extends Vue{
         }
       }
     }
-
   }
 
   created(){
@@ -420,7 +425,6 @@ export default class VmList extends Vue{
 
     // 如果状态不全相同或isgpu不全相同，返回false
     if (allRunningStatus || allShotDownStatus) {
-      console.log(allRunningStatus,allSameIsGPU,allShotDownStatus)
       return false;
     }
     if(allShotDownStatus) {
@@ -456,7 +460,6 @@ export default class VmList extends Vue{
   private FnSearch(data: any = {}) {
     this.FnClearTimer();
     this.search_reqData = {
-      pod_id:this.$store.state.pod_id,
       ecs_id: data.ecs_id,
       ecs_name: data.ecs_name,
       customer_id: data.customer_id,
@@ -497,6 +500,12 @@ export default class VmList extends Vue{
       } else if(value === 'gpu_manage'){
         this.operateGpu()
       }else if(value === 'migrate'){
+        let host_id = this.multiple_selection[0].host_id
+        if(this.multiple_selection.some(item=>item.host_id !== host_id)) {
+          this.$message.warning('请选择同一宿主机的实例')
+          hideMenu()
+          return;
+        }
         this.migrate_visible = true
       } else if(value === 'monitor'){
         this.$router.push({path: `/vm_monitor/${this.multiple_selection[0].ecs_id}`});
@@ -504,6 +513,9 @@ export default class VmList extends Vue{
         this.FnToRescue()
       }else if(value === 'exit_rescue_mode'){
         this.FnExitRescue()
+      }
+      if(value === 'security_group'){
+        this.$router.push({name: 'security_group', query: {ecs_id: this.multiple_selection[0].ecs_id}})
       }
       if(['start_up_ecs','shutdown_ecs','restart_ecs','delete_ecs','restore','destroy_ecs','update_spec','update_system','reset_pwd','net_set'].includes(value)) {
         const operate_info = getInsStatus.getInsOperateAuth(value);
@@ -959,11 +971,9 @@ export default class VmList extends Vue{
     }
     if(this.$route.name === 'pod_vm'){
       reqData['pod_id'] = this.$route.params.id
-    }
-    if(this.$route.name === 'cluster_vm'){
+    }else if(this.$route.name === 'cluster_vm'){
       reqData['cluster_id'] = this.$route.params.id
-    }
-    if(this.$route.name === 'host_vm'){
+    }else if(this.$route.name === 'host_vm'){
       reqData['host_id'] = this.$route.params.id
     }
     if (this.search_status.length > 0) {

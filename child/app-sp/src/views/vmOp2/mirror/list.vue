@@ -412,6 +412,7 @@ export default class CommonMirror extends Vue{
             product_source : product_source ? product_source[0]:undefined,
             support_type:support_type ? support_type[0] : undefined,
             status:status ? status[0] : undefined,
+            az_id:this.$store.state.az_id
         })
         window.location.href=`/ecs_business/v1/img/pub_image_list_download/${query}`
     }
