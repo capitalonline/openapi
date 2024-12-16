@@ -304,7 +304,6 @@ export default class PrivateMirror extends Vue{
         let obj={
             image_info,
             customer_info,
-            az_id:'',
             start_day:time && time[0] ? moment(time[0]).format('YYYY-MM-DD') : undefined,
             end_day:time && time[1] ? moment(time[1]).format('YYYY-MM-DD') : undefined,
             os_type:os_type ? os_type[0] : undefined,
@@ -319,6 +318,7 @@ export default class PrivateMirror extends Vue{
             // product_source:product_source?product_source[0] : undefined,
             sort_update_time,
             sort_create_time,
+            az_id:this.$store.state.az_id
         }
         let str=""
         for (let i in obj){

@@ -102,21 +102,18 @@ export default class Migrate extends Vue{
   @Prop({default:()=>[]}) ecs_list!:any;
   private recommend=[];
   private physical:Array<string>=[]
-  private list:any= this.ecs_list[0].ecs_list
   private useable_list:any=[];
   created() {
     this.get_recommended_host();
    // this.setUsableList(this.ecs_list)
-    this.list=this.ecs_list[0].ecs_list;
   }
   private async get_recommended_host(val:string=""){
     this.$store.commit("SET_LOADING", false);
     let res:any=await Service.recommended_host({
       host_id:this.ecs_list[0].host_id,
-      host_name:val,
+      host_name:this.ecs_list[0].host_name,
       ecs_ids:this.ecs_list.map(item=>item.ecs_id),
-      is_gpu:this.ecs_list[0].host_purpose==='GPU' ? '1' : '0',
-      gpu_card_name:this.ecs_list[0].gpu_real_name,
+      is_gpu:this.ecs_list[0].is_gpu ? '1' : '0'
     })
     if(res.code==="Success"){
       this.recommend = res.data.data;
@@ -164,7 +161,7 @@ export default class Migrate extends Vue{
       ecs_ids:this.ecs_list.map(item=>item.ecs_id),
       start_host_id:this.ecs_list[0].host_id,
       end_host_ids:this.physical,
-      is_gpu:this.ecs_list[0].host_purpose==='GPU' ? '1' : '0',
+      is_gpu:this.ecs_list[0].is_gpu  ? '1' : '0',
     })
     if(res.code==="Success"){
       this.$message.success(`物理机迁移任务下发成功！`)
