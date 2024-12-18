@@ -17,12 +17,13 @@
 
     <el-card class="tab-card">
       <el-tabs v-model="default_tab" type="card">
-        <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab"></el-tab-pane>
+        <el-tab-pane v-for="(value, tab) in tab_list" :key="tab" :label="value" :name="tab" :disabled="tab === 'eip' && !detail_info.public_net.value"></el-tab-pane>
       </el-tabs>
 
       <time-group
-        :start_time="ecs_info.create_finish_time"
-        v-if="ecs_info.create_finish_time || session.getItem('vm_monitor')"
+        :start_time="default_tab !== 'eip' ? ecs_info.create_finish_time : start_time"
+        :key="default_tab !== 'eip' ? ecs_info.create_finish_time : start_time"
+        v-if="(ecs_info.create_finish_time || session.getItem('vm_monitor'))"
         @fn-emit="FnGetTimer">
       </time-group>
 
@@ -94,6 +95,13 @@
         <line-echart
           chart_id="gpu_frequency"
           :data="gpu_frequency"
+          class="item"
+        ></line-echart>
+      </div>
+      <div class="chart-box" v-if="default_tab === 'eip'">
+        <line-echart
+          chart_id="eip_chart"
+          :data="net_throughput"
           class="item"
         ></line-echart>
       </div>
@@ -214,7 +222,8 @@ export default class Monitor extends Vue{
     instance: '主机',
     net: '网络',
     disk: '磁盘',
-    gpu: 'GPU'
+    gpu: 'GPU',
+    eip: 'EIP'
   }
   private gpu_used = {
     title: 'GPU使用率',
@@ -246,7 +255,19 @@ export default class Monitor extends Vue{
     line_name: ['GPU核心频率', '显存频率'],
     type: 'double_line'
   }
+  private net_throughput = {
+    title: '网络吞吐量',
+    unit: '',
+    xTime: [],
+    yValue: [],
+    resize: 0,
+    legend: [ '入网流量速率','出网流量速率'],
+    is_special: true,
+    qos:''
+  };
   private default_date_timer = [];
+  private eip:string = ''
+  private start_time:string = new Date(new Date().setDate(new Date().getDate() - 60)).toISOString()
   // @Watch('$route',{immediate:true,deep:true})
   // private FnRoute(to,from){
   // }
@@ -291,6 +312,12 @@ export default class Monitor extends Vue{
       start: moment.utc(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
       end: moment.utc(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss')
     }
+    let eip_reqData = {
+      eip: this.eip,
+      ecs_id:this.$route.params.id,
+      start_time: moment(this.default_date_timer[0]).format('YYYY-MM-DD HH:mm:ss'),
+      end_time: moment(this.default_date_timer[1]).format('YYYY-MM-DD HH:mm:ss'),
+    }
     if (this.default_tab === 'instance') {
       this.FnGetCpu(type, reqData);
       this.FnGetMemory(type, reqData);
@@ -301,6 +328,8 @@ export default class Monitor extends Vue{
       this.FnGetNetInfo(type, reqData);
     } else if (this.default_tab === 'gpu') {
       this.FnGetGpuInfo(type, reqData)
+    }else if(this.default_tab === 'eip'){
+      this.FnGetEipInfo(eip_reqData)
     }
   }
   private async FnGetDetail() {
@@ -332,12 +361,16 @@ export default class Monitor extends Vue{
           let pub_eip_info = pipe_info.eip_info[pipe_info.pub_net];
           this.detail_info.private_net.value+= pipe_info.pub_net +
             (pub_eip_info.conf_name ? '（' + pub_eip_info.conf_name + '）' : ' ') + '默认出网网卡<br>';
-          if ( pub_eip_info.eip_ip ) this.detail_info.public_net.value = `${pub_eip_info.eip_ip}（${pub_eip_info.conf_name}）<br>`;
+          if ( pub_eip_info.eip_ip ) {
+            this.detail_info.public_net.value = `${pub_eip_info.eip_ip}（${pub_eip_info.conf_name}）<br>`;
+            this.eip = pub_eip_info.eip_ip
+          }
         }
         for (let item of pipe_info.virtual_net) {
           let eip_info = pipe_info.eip_info[item];
           this.detail_info.private_net.value+= item + (eip_info.conf_name ? '（' + eip_info.conf_name + '）': '') + '<br>';
           if (eip_info.eip_ip) this.detail_info.public_net.value+= `${eip_info.eip_ip}（${eip_info.conf_name}）<br>`;
+          this.eip = eip_info.eip_ip
         }
 
       this.detail_info.status.value = data.status_display;
@@ -495,6 +528,16 @@ export default class Monitor extends Vue{
         return item;
       })
       this.FnHandleDubleData('gpu_frequency', resData)
+    })
+  }
+  private FnGetEipInfo(reqData) {
+    this.net_throughput.yValue = []
+    Service.get_eip_info(reqData).then(resData => {
+      this.net_throughput.unit = resData.data.unit;
+      this.net_throughput.xTime = resData.data.time;
+      this.net_throughput.yValue =[resData.data.in_bps,resData.data.out_bps]
+      this.net_throughput.qos = resData.data.qos;
+      this.net_throughput.resize++;
     })
   }
   private created() {

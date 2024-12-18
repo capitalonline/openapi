@@ -544,6 +544,7 @@ export default class PhysicalList extends Vue {
     }
   }
   private async get_ovs_list(){
+    this.search_option.ovs_version.list = []
     let res:any=await Service.get_ovs_version({
       pod_id:this.$store.state.pod_id
     })
@@ -670,6 +671,7 @@ export default class PhysicalList extends Vue {
       return;
     }
     this.refresh()
+    this.get_ovs_list()
   }
   private async get_physical_list(loading:boolean=true){
     if (!loading) {
