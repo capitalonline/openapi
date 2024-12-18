@@ -1,5 +1,5 @@
 import service from '../http'
-import { getMonitorOptions }from '../common'
+import {getEcsOptions, getMonitorOptions} from '../common'
 import { getGpuMonitorOptions }from '../common'
 
 function FnHandleOptions(type) {
@@ -31,5 +31,8 @@ export default {
   //获取云盘监控详情
   get_disk_info(type, reqData){
     return service(FnHandleOptions(type)('GET','/disk_info', reqData))
+  },
+  get_eip_info(req){
+    return service(getEcsOptions('POST','/ecs/eip_monitor_info/',req))
   }
 }

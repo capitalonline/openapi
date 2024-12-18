@@ -4,6 +4,9 @@
     <el-select v-model="selected_legend" @change="FnChangeSelected" v-if="legend && legend.length > 0" clearable>
       <el-option v-for="(item,i) in legend" :key="`${i}${item}`" :value="item" :label="item"></el-option>
     </el-select>
+    <div v-if="data.is_special" class="eip-box">
+      EIP:{{data.qos}} Mbps
+    </div>
     <div class="empty-box" v-if="!data.xTime || data.xTime.length === 0">
       <el-empty description="暂无数据"></el-empty>
     </div>
@@ -126,12 +129,13 @@ export default class LineEchart extends Vue {
     if (!this.data.xTime) {
       return
     }
+    let xTime = this.data.xTime.map(item => {
+        return moment(new Date(moment.utc(item).format())).format('MM/DD HH:mm:ss').replace(' ', '\n')
+      })
     this.option.xAxis = {
       type: 'category',
       boundaryGap: false,
-      data: this.data.xTime.map(item => {
-        return moment(new Date(moment.utc(item).format())).format('MM/DD HH:mm:ss').replace(' ', '\n')
-      }),
+      data: !this.data.is_special ? xTime : this.data.xTime,
     };
     this.option.series = [];
     this.legend_relation = {};
@@ -145,7 +149,7 @@ export default class LineEchart extends Vue {
       })
       return
     }
-    
+
     if (this.data.type) {//this.data.type--double_line
       this.legend = this.data.legend.filter(item => item.indexOf(this.data.type) < 0);
     } else {
@@ -260,6 +264,12 @@ export default class LineEchart extends Vue {
     top: 20%;
     left: 0;
     background: #fff;
+  }
+  .eip-box{
+    position: absolute;
+    top: 18px;
+    right: 210px;
+    font-weight: 500;
   }
 }
 </style>
