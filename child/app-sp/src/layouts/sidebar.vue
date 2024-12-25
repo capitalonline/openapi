@@ -107,6 +107,14 @@ export default class Sidebar extends Vue {
             {name: 'config_sub_task', label: "子任务配置"},
             {name: 'project', label: "项目管理"}
           ]
+        },
+        {
+          name: 'dict_manage',
+          label: '字典管理',
+          children: [
+            {name: 'dict_cpu_list',label: 'CPU字典管理'},
+            {name: 'dict_gpu_list', label: 'GPU字典管理'}
+          ]
         }
       ],
       auth_menu: []

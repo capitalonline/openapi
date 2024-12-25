@@ -14,14 +14,14 @@ module.exports = {
     proxy: {
       '/ecs_business': {
         // target: '10.131.165.157:8001',
-        target:'http://cos-ecs-business.gic.pre',
-        //target:'http://ecs-business.gic.test',
+        //target:'http://cos-ecs-business.gic.pre',
+        target:'http://ecs-business.gic.test',
         ws: true,
         changeOrigin: true
       },
       '/monitor/api': {
-        //target: 'http://cloudos-op-metricsapi.gic.test',
-        target: 'http://cloudos-op-metricsapi.gic.pre',
+        target: 'http://cloudos-op-metricsapi.gic.test',
+        //target: 'http://cloudos-op-metricsapi.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/monitor/api': '/api'
@@ -40,8 +40,8 @@ module.exports = {
         changeOrigin: true,
       },
       '/alarm/api': {
-        //target: 'http://cloudos-metricsalarm.gic.test',
-        target:'http://cloud-os-monitor-alarm.gic.pre',
+        target: 'http://cloudos-metricsalarm.gic.test',
+        //target:'http://cloud-os-monitor-alarm.gic.pre',
         changeOrigin: true,
         pathRewrite: {
           '^/alarm/api': '/api'
