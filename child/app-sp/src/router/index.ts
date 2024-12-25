@@ -269,7 +269,19 @@ const routes:RouteConfig[] = [
         name: 'security_group',
         component: () => import('../views/vmOp2/cluster/vm/securityGroup.vue'),
         meta: {menu: 'security_group',no_auth: true}
-      }
+      },
+        {
+        path: '/cpu_list',
+        name: 'dict_cpu_list',
+        component: () => import('../views/vmOp2/dict/cpu.vue'),
+        meta: {menu: 'cpu_list',no_auth: true}
+      },
+      {
+        path: '/gpu_list',
+        name: 'dict_gpu_list',
+        component: () => import('../views/vmOp2/dict/gpu.vue'),
+        meta: {menu: 'gpu_list',no_auth: true}
+      },
     ]
   },
   {
