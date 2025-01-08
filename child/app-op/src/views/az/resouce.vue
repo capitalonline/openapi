@@ -6,6 +6,19 @@
         :destroy-on-close="true"
     >
     <div class="resource">
+        <p>调度策略</p>
+        <div>
+          <el-radio-group v-model="policies">
+            <div class="m-bottom10">
+              <el-radio :label="'aggreate'">集中式</el-radio>
+              <span class="prompt_message">云主机集中调度到单台宿主机上</span>
+            </div>
+            <div>
+              <el-radio :label="'separate'">均衡式</el-radio>
+              <span class="prompt_message">云主机均衡调度到宿主机集群中</span>
+            </div>
+          </el-radio-group>
+        </div>
         <p>CPU资源</p>
         <div class="m-bottom10 p-left10">GPU{{title}}： 
             <el-input-number v-model="gpuPoint" :min="0" :max="10"></el-input-number>{{tip}}
@@ -57,6 +70,7 @@ export default class Resource extends Vue{
     private load:number=1.00;
     private lowPercent:number=1.00;
     private lowLoad:number=1.00;
+    private policies:string = 'aggreate'
     created() {
         this.getSchedulingPolicy()
     }
@@ -73,6 +87,7 @@ export default class Resource extends Vue{
             this.lowPercent = res.data.cpu_usage_min;
             this.load = res.data.cpu_load_max;
             this.lowLoad = res.data.cpu_load_min;
+            this.policies = res.data.host_alloc_policy
         }
     }
     private async confirm(){
@@ -98,6 +113,7 @@ export default class Resource extends Vue{
             cpu_usage_min:this.lowPercent,
             cpu_load_max:this.load,
             cpu_load_min:this.lowLoad,
+            host_alloc_policy:this.policies
         })
         if(res.code==='Success'){
             this.$message.success(res.message)

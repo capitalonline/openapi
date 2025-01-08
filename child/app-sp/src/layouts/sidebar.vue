@@ -45,6 +45,7 @@ export default class Sidebar extends Vue {
   private current=''
   private treeType:string = 'tree'
   private refresh:boolean = false
+  private origin_tree_data:any = []
   private menu: Array<object> = [
     {label:'集群',name:'cluster',type:'tree'},
     {label:'镜像',name:'mirror',type: 'menu'},
@@ -181,10 +182,11 @@ export default class Sidebar extends Vue {
       az_id:this.$store.state.az_id
     })
     if(res.code === 'Success'){
-      if(res.data.tree_data_list.length>0){
-        this.$store.commit('SET_TREE_LIST',res.data.tree_data_list);
-        this.treeData = this.transformData(res.data.tree_data_list)
-      }else {
+      this.origin_tree_data = res.data.tree_data_list
+      if(this.origin_tree_data.length>0){
+        this.$store.commit('SET_TREE_LIST',this.origin_tree_data);
+        this.treeData = this.transformData(this.origin_tree_data)
+      }else if(this.origin_tree_data.length ===0 && this.active_menu === 'cluster'){
         this.treeData= []
         this.$router.push({name:'error'})
       }
@@ -238,6 +240,13 @@ export default class Sidebar extends Vue {
     this.getTreeData()
     //切换az的时候，需要根据新az下的树跳转路由
     this.refresh = true
+  }
+  @Watch('active_menu')
+  private watch_active_menu(newVal,oldVal){
+    if(newVal === 'cluster' && this.origin_tree_data.length === 0){
+      this.treeData= []
+      this.$router.push({name:'error'})
+    }
   }
 }
 </script>
