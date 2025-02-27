@@ -18,9 +18,16 @@ OSS产品提供以下相关API接口
 
 ### 访问地址
 
+访问地址：gic-ossapi.capitalonline.net
+
+API 支持的站点 Endpoint 地址：
+
 | 地区 | 访问地址                     |
 | ---- | ---------------------------- |
-| 宿迁 | gic-ossapi.capitalonline.net |
+| 宿迁 | oss-high-sq01.cdsgss.com |
+| 庆阳 | oss-high-qy01.cdsgss.com |
+| 达拉斯 | oss-high-dal01.cdsgss.com |
+
 
 ## 实例
 
@@ -47,7 +54,7 @@ OSS产品提供以下相关API接口
 
 | 名称 | 类型   | 是否必需 | 描述                                                         |
 | ---- | ------ | -------- | ------------------------------------------------------------ |
-| endpoint | 字符串 | 是       | 存储空间所在节点 endpoint 地址。示例：{'endpoint': 'oss-cnsq02.cdsgss.com'} 其中 oss-cnsq02.cdsgss.com 为宿迁节点的 endpoint 地址 |
+| endpoint | 字符串 | 是       | 存储空间所在站点 endpoint 地址，各站点 endpoint 地址见上文列表 |
 
 **响应参数：**
 
@@ -72,9 +79,7 @@ OSS产品提供以下相关API接口
 
 **注意事项：**
 
-- DescribeBucketMetrics，有如下注意事项：
-  - 仅限宿迁站点指定用户
-
+DescribeBucketMetrics API 仅支持部分站点，支持的站点列表见上文 endpoint 地址。
 
 **Python 请求示例：**
 
