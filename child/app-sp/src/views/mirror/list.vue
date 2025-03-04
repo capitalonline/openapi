@@ -23,6 +23,7 @@
         >
             <el-table-column prop="os_id" label="镜像ID"></el-table-column>
             <el-table-column prop="display_name" label="镜像名称"></el-table-column>
+          <el-table-column prop="model_image_type" label="模型镜像类型" v-if="$route.name === 'model_mirror_list'"></el-table-column>
             <el-table-column prop="os_type" label="操作系统类型" :filter-multiple="false" column-key="os_type" :filters="mirror_type" min-width="120px"></el-table-column>
             <el-table-column prop="os_bit" label="系统架构">
               <template slot-scope="scope">
@@ -227,7 +228,7 @@ export default class CommonMirror extends Vue{
     private oper_type:string="";
     private oper_info:any={};
     created() {
-        this.auth_list = this.$store.state.auth_info[this.$route.name];
+        this.auth_list = this.$store.state.auth_info['mirror_list'];
         this.get_mirror_type();
         this.get_source_type()
         this.get_status_list()
@@ -307,7 +308,8 @@ export default class CommonMirror extends Vue{
             status:status ? status[0] : undefined,
             sort_create_time:sort_create_time,
             page_index:this.current,
-            page_size:this.size
+            page_size:this.size,
+            model_image:this.$route.name === 'model_mirror_list' ? 1 : undefined
         })
         if(res.code==='Success'){
             this.list = res.data.image_list

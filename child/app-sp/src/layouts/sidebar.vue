@@ -61,7 +61,8 @@ export default class Sidebar extends Vue {
       current: 'mirror',
       menu_list: [
         {label: '公有镜像', name: 'mirror'},
-        {label: '私有镜像', name: 'private_mirror'}
+        {label: '私有镜像', name: 'private_mirror'},
+        {label: '模型镜像', name: 'model_mirror'}
       ],
       auth_menu: []
     },

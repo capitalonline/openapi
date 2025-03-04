@@ -18,6 +18,11 @@
             <el-form-item label="英文名称" prop="display_name_en">
               <el-input v-model="form_data.display_name_en" type="textarea" autosize resize="none" :maxlength="128" show-word-limit></el-input>
             </el-form-item>
+          <el-form-item label="模型镜像类型" prop="model_image_type" v-if="$route.name === 'model_mirror_list'">
+            <el-select v-model="form_data.model_image_type">
+                <el-option v-for="item in model_type_list" :key="item" :label="item" :value=" item "></el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item label="操作系统类型" prop="os_type">
                 <el-select v-model="form_data.os_type">
                     <el-option v-for="item in mirror_type_list" :key="item" :label="item" :value=" item "></el-option>
@@ -188,6 +193,7 @@ export default class AddCommon extends Vue{
       {value:'GPU',label:'GPU'},
       {value:'CPU/GPU',label:'基础镜像'}
       ]
+    private model_type_list:any=[]
     private drive_type_list:any=['Datacenter','Geforce','Enflame','GRID'];
     private file_type_list:any=['qcow2','iso'];
     private query_url:string="";
@@ -218,6 +224,7 @@ export default class AddCommon extends Vue{
         validity:this.oper_info.os_id ? this.oper_info.maintenance_expiration_date !== '长期' ? '0':'1' : '1',
         vali_time: (this.oper_info.maintenance_expiration_date !== '长期' && !isNaN(new Date(this.oper_info.maintenance_expiration_date).getTime())) ? this.oper_info.maintenance_expiration_date : '',
         display_name_en:this.oper_info.display_name_en ? this.oper_info.display_name_en : '',
+        model_image_type:this.oper_info.model_image_type ? this.oper_info.model_image_type : '',
     }
     private rules={
         display_name: [{ required: true, validator:this.validate_name, trigger: 'change' }],
@@ -236,7 +243,8 @@ export default class AddCommon extends Vue{
         validity:[{ required: true, validator:this.validateTime, trigger: 'change' }],
         other_software:[{ required: true, message: '请输入其他软件', trigger: 'change' }],
         core_version:[{ required: true, message: '请输入内核版本', trigger: 'change' }],
-        display_name_en:[{ required: true, validator:this.validate_name_en, trigger: 'change' }]
+        display_name_en:[{ required: true, validator:this.validate_name_en, trigger: 'change' }],
+        model_image_type:[{ required: true, message: '请选择模型镜像类型', trigger: 'change' }]
     }
     created(){
         // if(this.oper_info.os_id){
@@ -248,6 +256,7 @@ export default class AddCommon extends Vue{
       this.get_mirror_type();
       this.get_disk_list()
       this.get_product_source()
+      this.$route.name === 'model_mirror_list' && this.get_model_image_list()
     }
     private path_md5_check(rule, value, callback){
         if(!value) {
@@ -375,6 +384,15 @@ export default class AddCommon extends Vue{
             }
         }
     }
+    private async get_model_image_list(){
+      let res:any = await Service.get_model_image_type({})
+      if(res.code==="Success"){
+        this.model_type_list=res.data.type_list;
+        if(!this.oper_info.os_id){
+          this.form_data.model_image_type = this.model_type_list[0]
+        }
+      }
+    }
 //     private async get_az_list(){
 //     let res:any=await EcsService.get_region_az_list({})
 //     if(res.code==="Success"){
@@ -436,7 +454,7 @@ export default class AddCommon extends Vue{
     }
     private async confirm(){
         const form= this.$refs.mirror_form as Form;
-        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time,core_version,driver_version,cuda_version,other_software,validity,vali_time,display_name_en}=this.form_data
+        const {product_source,display_name,os_type,os_version,os_bit,size,customer_ids,az_id,backend_type,support_type,support_gpu_driver,oss_file_name,os_file_type,path_md5,upload_time,core_version,driver_version,cuda_version,other_software,validity,vali_time,display_name_en,model_image_type}=this.form_data
         form.validate(async valid=>{
             if(valid){
                 if(this.oper_info.os_id){
@@ -460,6 +478,7 @@ export default class AddCommon extends Vue{
                         os_type,
                         os_version,
                         os_bit,
+                        model_image_type: this.$route.name === 'model_mirror_list' ? model_image_type : undefined,
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)
@@ -487,7 +506,8 @@ export default class AddCommon extends Vue{
                         cuda_version: support_type==='GPU' ? cuda_version : undefined,
                         other_software: support_type==='GPU' ? other_software : undefined,
                         maintenance_expiration_date:validity === '1' ? 'LongTerm' : vali_time,
-                        display_name_en
+                        display_name_en,
+                        model_image_type: this.$route.name === 'model_mirror_list' ? model_image_type : undefined,
                     })
                     if(res.code==='Success'){
                         this.$message.success(res.message)

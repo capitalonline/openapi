@@ -15,6 +15,10 @@ export default{
     get_mirror_type(req){
         return service(getEcsOptions('GET','/img/image_type/',req))
     },
+    //获取模型镜像类型
+    get_model_image_type(req){
+        return service(getEcsOptions('GET','/img/model_image_type/',req))
+    },
     //新增公共镜像
     add_pub_mirror(req){
         return service(getEcsOptions('GET','/img/create_pub_image/',req))
@@ -66,7 +70,7 @@ export default{
   //获取产品来源
   get_product_source(){
       return service(getEcsOptions('GET','/ecs/get_product_source/'))
-  }
+  },
 
 }
 
