@@ -115,6 +115,10 @@ export default class LeftMenu extends Vue {
         {
           name: "private_mirror_list",
           label: "私有镜像管理"
+        },
+        {
+          name: "model_mirror_list",
+          label: "模型镜像管理",
         }
       ]
     },
