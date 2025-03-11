@@ -103,7 +103,9 @@ export default{
     get_host_list_field(req){
         return service(getHostOptions('GET','/host/get_host_list_field/',req))
     },
-    
+    switch_business_type(req){
+        return service(getHostOptions('POST','/host/switch_business_type/',req))
+    }
     
 
 }

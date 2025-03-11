@@ -263,7 +263,7 @@ export default class Operate extends Vue{
       }:this.oper_type==="lock" ? {
       lock_detail:lock_detail,
       host_ids:this.list.map(item=>item.host_id)
-      }: {host_ids:this.rows.map(item=>item.host_id)}
+      } : {host_ids:this.rows.map(item=>item.host_id)}
 
     // 底层同步接口数据组装
     if(this.oper_type==="under_sync") {

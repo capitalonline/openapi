@@ -3,6 +3,15 @@
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
               <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+              <el-dropdown @command="handleMore" class="m-left10">
+                <el-button type="primary" class="dropdownbtn">
+                  业务类型切换<i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item  :command="{label:'KVM切换ECI',value:'kvm_to_eci'}">KVM切换ECI</el-dropdown-item>
+                  <el-dropdown-item  :command="{label:'ECI切换KVM',value:'eci_to_kvm'}">ECI切换KVM</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
           </template>
       </action-block>
       <div class="icon m-bottom10">
@@ -389,6 +398,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='is_prepare_host'){
         item = Object.assign(item,{},{column_key:'is_prepare_host',list:this.is_pare_host})
       }
+      if(item.prop==='host_business_type'){
+        item = Object.assign(item,{},{column_key:'host_business_type',list:[{text:'KVM',value:'KVM'},{text:'ECI',value:'ECI'}]})
+      }
       return item;
     })
   }
@@ -432,7 +444,8 @@ export default class PhysicalList extends Vue {
       bare_metal_name,
       customer_keyword,
       vgpu_segment_type,
-      is_prepare_host
+      is_prepare_host,
+      host_business_type
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -469,7 +482,8 @@ export default class PhysicalList extends Vue {
       host_source:host_source ? host_source[0] : undefined,
       backend_type:backend_type ? backend_type[0] : undefined,
       ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
-      is_prepare_host:is_prepare_host ? is_prepare_host[0] : undefined
+      is_prepare_host:is_prepare_host ? is_prepare_host[0] : undefined,
+      host_business_type:host_business_type ? host_business_type[0] : undefined
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -646,6 +660,10 @@ export default class PhysicalList extends Vue {
     this.setList(this.host_uses,'host_purpose_ch')
     this.fn_search(this.search_data)
   }
+  private handleMore(obj){
+    const {label,value}=obj;
+    this.handle(label,value)
+  }
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
@@ -678,6 +696,25 @@ export default class PhysicalList extends Vue {
       this.oper_label = label
       this.visible=true;
       return;
+    }
+    if(['kvm_to_eci','eci_to_kvm'].includes(value)) {
+      if(value==='kvm_to_eci'){
+        let business_type = this.multi_rows.every(item=>{
+          return item.host_business_type==='KVM'
+        })
+        if(!business_type){
+          this.$message.warning('已选主机需为维护中状态且业务类型为KVM！')
+          return
+        }
+      }else {
+        let business_type = this.multi_rows.every(item=>{
+          return item.host_business_type==='ECI'
+        })
+        if(!business_type){
+          this.$message.warning('已选主机需为维护中状态且业务类型为ECI！')
+          return
+        }
+      }
     }
     if(this.judge(value)){
       if(value==="disperse"){
