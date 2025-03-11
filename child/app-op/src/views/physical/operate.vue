@@ -21,11 +21,17 @@
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
-                <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
+                <el-table-column prop="az_name" label="区域" v-if="['finish_validate','kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="!status_list.includes(title)"></el-table-column>
-                <el-table-column prop="power_status_name" label="电源状态"></el-table-column>
+                <el-table-column prop="power_status_name" label="电源状态" v-if="!['kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="host_attribution_name" label="主机归属" v-if="['kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="host_business_type" label="业务状态" v-if="['kvm_to_eci','eci_to_kvm'].includes(oper_type)">
+                  <template slot-scope="scope">
+                    {{scope.row.host_business_type + '宿主机'}}
+                  </template>
+                </el-table-column>
             </el-table>
             <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
@@ -99,7 +105,9 @@ export default class Operate extends Vue{
     'finish':'finish_maintenance',
     'shelves':'shelves',
     'disperse':'disperse',
-    'finish_validate':'finish_validate'
+    'finish_validate':'finish_validate',
+    'kvm_to_eci':'switch_business_type',
+    'eci_to_kvm':'switch_business_type'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -137,6 +145,9 @@ export default class Operate extends Vue{
     } : this.oper_type==="shelves" ? {
       host_ids:this.rows.map(item=>item.host_id),
       department_name:this.form_data.recycleId
+    }:['kvm_to_eci','eci_to_kvm'].includes(this.oper_type) ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      dest_business_type:this.oper_type==='kvm_to_eci' ? 'ECI' : 'KVM'
     } :{host_ids:this.rows.map(item=>item.host_id)}
 
     let res:any=await Service[this.operate_info[this.oper_type]]({

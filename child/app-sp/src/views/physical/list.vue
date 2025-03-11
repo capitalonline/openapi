@@ -630,6 +630,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='vgpu_segment_type'){
         item = Object.assign(item,{},{column_key:'vgpu_segment_type',list:[{text:'Q',value:'Q'},{text:'B',value:'B'},{text:'C',value:'C'},{text:'A',value:'A'}]})
       }
+      if(item.prop==='host_business_type'){
+        item = Object.assign(item,{},{column_key:'host_business_type',list:[{text:'KVM',value:'KVM'},{text:'ECI',value:'ECI'}]})
+      }
       if(this.filed_name_list.includes(item.prop)){
         item = Object.assign(item,{},{column_key:item.prop,list:[]})
       }
@@ -951,7 +954,7 @@ export default class PhysicalList extends Vue {
   //校验列表项是否存在此项
   private judgeColumns(){
     let keys = Object.keys(this.filter_data)
-    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy','vgpu_segment_type']
+    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy','vgpu_segment_type','host_business_type']
     keys.map(item=>{
       if(!temp.includes(item)){
         delete(this.filter_data[item])
@@ -1067,8 +1070,13 @@ export default class PhysicalList extends Vue {
         let bool:boolean = fil.every(item=>{//判断GPU物理机上的GPU云主机是不是处于已关机
           return item.ecs_list.every(inn=>(inn.is_gpu && inn.status==="已关机") || !inn.is_gpu)
         })
+        let kvm:boolean = fil.every(item=>{item.host_business_type === 'KVM'})
         if(!bool){
           this.$message.warning("GPU物理机中的GPU云主机需为关机状态!");
+          return;
+        }
+        if(!kvm){
+          this.$message.warning("GPU物理机中的云主机业务类型需为KVM类型!");
           return;
         }
       }
@@ -1089,11 +1097,7 @@ export default class PhysicalList extends Vue {
       let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
       let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
       let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
-      if(!vm_flag && ['shutdown_host'].includes(val)){
-        this.error_msg[val]=getHostStatus(val).msg2
-      }else{
         this.error_msg[val]=getHostStatus(val).msg
-      }
       return power_flag && host_flag && vm_flag
     })
     return flag_list
