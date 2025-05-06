@@ -39,5 +39,7 @@ export default {
   difference_price(reqData){
     return service(getEcsOptions("POST","/ecs/ecs_difference_price/",reqData))
   },
-
+  change_configure_limit(req){
+    return service(getEcsOptions('POST','/ecs/change_configure_limit/',req))
+  }
 }

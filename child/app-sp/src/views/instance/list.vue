@@ -514,6 +514,7 @@
               :az_id="az_id"
               type="batch_update"
               :default_is_gpu="is_gpu"
+              @enable-change="handleEnableChange"
             ></update-spec>
           </template>
           <template v-if="default_operate_type === 'update_system'">
@@ -616,7 +617,8 @@
 
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="FnConfirm">确 定</el-button>
+        <el-button type="primary" @click="FnConfirm" :disabled="default_operate_type === 'update_spec' && !enable_change"
+        >确 定</el-button>
         <el-button @click="FnClose">取 消</el-button>
       </span>
     </el-dialog>
@@ -791,6 +793,7 @@ export default class App extends Vue {
   private isComponentDestroying:boolean = false
   private system_disk_feature = "";
   private ecs_id = ''
+  private enable_change: boolean = false;
    @Watch("$store.state.pod_id")
     private watch_pod(nv){
       if(!nv){
@@ -1147,7 +1150,6 @@ export default class App extends Vue {
         this.os_type = item.os_type;
         this.system_disk_feature = item.system_disk_feature;
       }
-      console.log('%%%',this.az_id)
       if (item.customer_id !== this.customer_id || item.az_id !== this.az_id) {
         this.$message.warning(
           "只允许对同一客户的同一可用区下实例进行批量操作！"
@@ -1196,8 +1198,27 @@ export default class App extends Vue {
           flag = false;
           break;
         }
+      if (
+        //系统盘
+        type === "update_system" &&
+        ((this.system_disk_feature === "local" &&
+            item.system_disk_feature !== "local") ||
+          (this.system_disk_feature !== "local" &&
+            item.system_disk_feature === "local"))
+      ) {
+        this.$message.warning(
+          `只允许对同一类型盘实例${operate_info.label}`
+        );
+        flag = false;
+        break;
+      }
       if (type === "update_spec" && this.is_gpu) {
         this.$message.warning(`不允许对GPU实例${operate_info.label}操作！`);
+        flag = false;
+        break;
+      }
+      if(type==='update_spec' &&  item.system_disk_feature != this.system_disk_feature){
+        this.$message.warning('只允许对同一存储类型下实例更换实例规格');
         flag = false;
         break;
       }
@@ -1433,7 +1454,8 @@ export default class App extends Vue {
       billing_info: this.disk_billing_info[data.ecs_goods_id],
 
     };
-    if (this.system_disk_feature === "local") {
+    // 根据选择的盘类型传不同的参数给后端
+    if (data.disk_feature === "local") {
       reqData.ebs_goods_info["local_disk-IOPS"] = data.iops;
       reqData.ebs_goods_info["local_disk-space"] = data.storage_space;
       reqData.ebs_goods_info["local_disk-throughput"] = data.handling_capacity;
@@ -1727,6 +1749,9 @@ export default class App extends Vue {
   beforeDestroy() {
     this.FnClearTimer();
     this.isComponentDestroying = true;
+  }
+  private handleEnableChange(enable: boolean) {
+    this.enable_change = enable;
   }
 }
 </script>

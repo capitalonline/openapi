@@ -168,6 +168,9 @@ export default class updateDisk extends Vue {
     }
   }
   private async getDiskLimit(){
+    if(this.data.default_system_info.disk_feature === 'local'){
+      return
+    }
     let res:any = await diskService.get_disk_limit({
       customer_id:this.customer_id,
       az_id:this.az_id,
