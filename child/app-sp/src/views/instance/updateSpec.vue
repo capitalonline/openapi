@@ -24,7 +24,7 @@
     </el-form-item>
     <el-form-item class="table-form">
       <div class="table-box">
-        <el-table :data="family_list" border>
+        <el-table :data="family_list" border max-height="300px">
           <el-table-column label="选择" width="60">
             <template #default="scope">
               <!-- <el-radio v-model="data.spec_id" :label="scope.row.spec_id" @change="FnEmit">&nbsp;</el-radio> -->
@@ -52,6 +52,9 @@
           </el-table-column>
         </el-table>
       </div>
+    </el-form-item>
+    <el-form-item v-if="!enable_change && type === 'batch_update'">
+      <span class="error_message m-left8">所选规格资源不足，请重新选择</span>
     </el-form-item>
     <el-form-item class="total-price">
       <!-- <span class="left-label" v-if="method === '0'">变更后费用：</span> -->
@@ -121,6 +124,7 @@ export default class updateSpec extends Vue{
   private category_id = "";
   private ecs_goods_id = "";
   private method = ""
+  private enable_change = true
   // 获取价格单位
   priceSymble() {
     if (this.method == "1") {
@@ -145,7 +149,6 @@ export default class updateSpec extends Vue{
   }
   private async FnGetCategoryList() {
     if (!this.az_id) {
-      console.log('++++')
       return
     }
     this.family_list = [];
@@ -266,6 +269,18 @@ export default class updateSpec extends Vue{
       }
     }
   }
+  private async FnSpecLimit(){
+    let resDate = await Service.change_configure_limit({
+      ecs_list: this.ecs_list.map((item) => { return item.ecs_id}),
+      az_id: this.az_id,
+      customer_id: this.customer_id,
+      ecs_spec_info: this.FnGetDefaultFamily(this.data.id)
+    })
+    if(resDate.code === 'Success'){
+      this.enable_change = resDate.data.enable_change
+      this.$emit('enable-change', this.enable_change)
+    }
+  }
   private FnGetDefaultFamily(spec_id: string) {
     //item.spec_id
     return this.family_list.find(item => item.id === spec_id)
@@ -302,11 +317,13 @@ export default class updateSpec extends Vue{
     } else {
       this.DifferencePrice();
     }
+    this.FnSpecLimit()
   }
   @Emit('fn-spec')
   private FnEmit() {
     // let row = this.FnGetDefaultFamily(this.data.spec_id)
     let row = this.FnGetDefaultFamily(this.data.id)
+    console.log('FnEmit',row)
     return {
       ecs_goods_id: row.ecs_goods_id,
       ecs_goods_name: row.ecs_family_name,
@@ -349,29 +366,31 @@ export default class updateSpec extends Vue{
     }else{
       this.ram_size_list = this.all_ram_size_list;
     }
-    console.log('444')
     this.FnGetCategoryList()
   }
   @Watch('default_ram_size')
   private FnChangeRamSize(newVal) {
-    console.log('333')
     this.FnGetCategoryList()
   }
   @Watch('data.category_id')
   private FnChangeCate(newVal) {
     if (newVal) {
-      this.FnGetFamilyList()
+      // 先获取规格列表
+      this.FnGetFamilyList().then(() => {
+        // 确保有规格数据后再检查限制
+        if (this.family_list.length > 0) {
+          this.FnSpecLimit();
+        }
+      });
       this.is_gpu = this.category_list.find(item => item.category_id === newVal).is_gpu ? 1 : 0;
     }
   }
   @Watch('az_id')
   private FnChangeAz(newVal, oldVal) {
-    console.log('1111')
     this.FnGetCategoryList();
   }
   @Watch('customer_id', {immediate: true})
   private FnChangeCustomer(newVal, oldVal) {
-    console.log('222',this.customer_id)
     this.FnGetCategoryList();
   }
 }
