@@ -49,6 +49,15 @@
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column  label="迁移检查" fixed="right">
+                        <template slot-scope="scope">
+                          <el-tooltip :content="'GPU型云主机和本地盘云主机不支持开机迁移'" placement="bottom" effect="light" v-if="scope.row.is_gpu || Object.keys(scope.row.disk_info.system)[0]=='LOCAL'">
+                            <el-button type="text" disabled>开机检查</el-button>
+                          </el-tooltip>
+                            <el-button v-else type="text" @click="FnCheck(scope.row,'running')">开机检查</el-button>
+                            <el-button type="text" @click="FnCheck(scope.row,'shutdown')">关机检查</el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
                 <div class="error_message m-top10" v-if="selected.length===0">请选择虚拟机</div>
             </div>
@@ -58,13 +67,17 @@
             </div>
             <div class="right">
                 <h4>目的主机:</h4>
+                <div class="m-bottom10">
+                  <el-input v-model="host_name" placeholder="请输入主机名称" style="margin-right: 8px">
+                  </el-input>
+                </div>
                 <div class="m-bottom20">
                     <span class="m-right10">可用区:</span>
                     <span>{{rows[0].az_name}}</span>
                 </div>
                 <div>物理机：<span class="prompt_message">（若不选择则随机迁移至合适的目的主机）</span></div>
-                <div class="recommend" v-if="recommend.length>0">
-                    <div v-for="item in recommend" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
+                <div class="recommend" v-if="recommendList.length>0">
+                    <div v-for="item in recommendList" :key="item.host_id" class="item" @click="handle(item.host_id)" :class="physical.includes(item.host_id) ? 'active' : ''">
                         {{item.host_name}}<br/>
                         QEMU：{{item.qemu_version}}<br/>
                         OVS：{{item.ovs_version}}
@@ -104,6 +117,12 @@
             <el-button @click="back('0')">取消</el-button>
         </span>
     </el-dialog>
+    <MigrateCheck v-if="check_visible"
+                  :visible.sync="check_visible"
+                  :row="check_row"
+                  :status="status"
+                  :host_info="rows[0]"
+    ></MigrateCheck>
 
 
     </div>
@@ -116,8 +135,10 @@ import CustomIcon from './customIcon.vue';
 import svgIcon from '@/components/svgIcon/index.vue';
 import moment from 'moment';
 import {Table} from 'element-ui'
+import MigrateCheck from "@/views/physical/migrateCheck.vue";
 @Component({
     components:{
+      MigrateCheck,
         CustomIcon,
         svgIcon
     }
@@ -135,6 +156,7 @@ export default class Migrate extends Vue{
     private physical_list:any=[]
     private recommend=[];
     private useable_list:any=[];
+    private host_name:string=''
     created() {
         this.setUsableList(this.rows)
         this.list=this.rows[0].ecs_list;
@@ -267,6 +289,14 @@ export default class Migrate extends Vue{
             this.physical.push(id)
         }
     }
+    private check_visible:Boolean=false;
+    private check_row:any={}
+    private status:string = ''
+    private FnCheck(row,type){
+      this.check_row = row
+      this.check_visible = true
+      this.status = type
+    }
     private async confirm(){
         if(this.selected.length===0){
             return;
@@ -284,6 +314,10 @@ export default class Migrate extends Vue{
             this.back("0")
         }
     }
+    private get recommendList(){
+      const filter_list = this.recommend.filter(item=> {return item.host_name === this.host_name})
+      return this.host_name ? filter_list : this.recommend
+    }
     @Emit("close")
     private back(val){
         this.visible_sync=false
@@ -299,6 +333,7 @@ export default class Migrate extends Vue{
     }
     .left{
         flex: 1;
+        width:50%;
         .el-button--text{
             float: right;
             margin-right: 10px;
