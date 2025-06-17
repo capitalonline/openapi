@@ -21,15 +21,20 @@
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
-                <el-table-column prop="az_name" label="区域" v-if="['finish_validate','kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="az_name" label="区域" v-if="['finish_validate','kvm_to_eci','eci_to_kvm','bidding'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="!status_list.includes(title)"></el-table-column>
-                <el-table-column prop="power_status_name" label="电源状态" v-if="!['kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
+                <el-table-column prop="power_status_name" label="电源状态" v-if="!['kvm_to_eci','eci_to_kvm','bidding'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="host_purpose" label="主机用途" v-if="['finish_validate','bidding'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="host_attribution_name" label="主机归属" v-if="['kvm_to_eci','eci_to_kvm'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="host_attribution_name" label="主机归属" v-if="['kvm_to_eci','eci_to_kvm','bidding'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_business_type" label="业务状态" v-if="['kvm_to_eci','eci_to_kvm'].includes(oper_type)">
                   <template slot-scope="scope">
                     {{scope.row.host_business_type + '宿主机'}}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="is_spot" label="竞价实例资源" v-if="['bidding'].includes(oper_type)">
+                  <template slot-scope="scope">
+                    {{scope.row.is_spot ? '是' : '否'}}
                   </template>
                 </el-table-column>
             </el-table>
@@ -49,6 +54,19 @@
                   </el-select>
               </el-form-item>
             </el-form>
+          <div class="m-top20" v-if="['bidding'].includes(oper_type)">
+            <el-radio-group v-model="form_data.bidding">
+              <div class="m-bottom10">
+                <el-radio :label="1" :disabled="form_data.bidding===0">设置竞价实例资源池</el-radio>
+                <span class="prompt_message">资源池状态且为同一商品的资源，支持设置为竞价实例资源</span><br>
+              </div>
+              <div>
+                <el-radio :label="0" :disabled="form_data.bidding===1">取消竞价实例资源池</el-radio>
+                <span class="prompt_message">资源池与已售资源不支持一起取消；且单次最多取消的数量为30</span>
+              </div>
+            </el-radio-group>
+          </div>
+
             <!-- <div v-if="oper_type==='finish_validate'" class="text-center m-top20">
               <span>验证结果:</span>
               
@@ -95,6 +113,7 @@ export default class Operate extends Vue{
     valid:'',
     recycleId:'',
     reason:'',
+    bidding:0
   }
   private operate_info={
     'start_up_host':'host_operate',
@@ -107,10 +126,14 @@ export default class Operate extends Vue{
     'disperse':'disperse',
     'finish_validate':'finish_validate',
     'kvm_to_eci':'switch_business_type',
-    'eci_to_kvm':'switch_business_type'
+    'eci_to_kvm':'switch_business_type',
+    'bidding':'set_host_bid_attribute'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
+    if(this.oper_type==="bidding"){
+      this.rows[0].is_spot === 0 ? this.form_data.bidding = 1 : 0
+    }
   }
   private async get_host_recycle_department(){
     let res:any = await Service.get_host_recycle_department({})
@@ -148,6 +171,9 @@ export default class Operate extends Vue{
     }:['kvm_to_eci','eci_to_kvm'].includes(this.oper_type) ? {
       host_ids:this.rows.map(item=>item.host_id),
       dest_business_type:this.oper_type==='kvm_to_eci' ? 'ECI' : 'KVM'
+    } : this.oper_type==="bidding" ? {
+      host_ids:this.rows.map(item=>item.host_id),
+      is_spot:this.form_data.bidding
     } :{host_ids:this.rows.map(item=>item.host_id)}
 
     let res:any=await Service[this.operate_info[this.oper_type]]({

@@ -105,7 +105,11 @@ export default{
     },
     switch_business_type(req){
         return service(getHostOptions('POST','/host/switch_business_type/',req))
-    }
+    },
+    // 设置机器竞价实例属性
+    set_host_bid_attribute(req){
+        return service(getHostOptions('POST','/host/set_host_spot/',req))
+    },
     
 
 }

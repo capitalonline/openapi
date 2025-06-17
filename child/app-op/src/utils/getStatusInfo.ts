@@ -34,8 +34,9 @@ const host_status={//error为新增状态，异常
   disperse:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'驱散'},
   out_of_band:{power:[],host:['offline','online'],msg:'已选主机需为在线或离线状态',label:'进入带外管理'},
   migrate:{power:['running'],host:['online'],msg:'已选主机需为在线状态',label:'迁移'},
-  kvm_to_eci:{power:[],host:['maintenance'],msg:'已选主机需为维护中状态且业务类型为KVM',label:'KVM切换ECI'},
-  eci_to_kvm:{power:[],host:['maintenance'],msg:'已选主机需为维护中状态且业务类型为ECI',label:'ECI切换KVM'},
+  kvm_to_eci:{power:[],host:['maintenance'],business:['KVM'],msg:'已选主机需为维护中状态且业务类型为KVM',label:'KVM切换ECI'},
+  eci_to_kvm:{power:[],host:['maintenance'],business:['ECI'],msg:'已选主机需为维护中状态且业务类型为ECI',label:'ECI切换KVM'},
+  bidding:{power:[],host:[],msg:'已选主机业务类型需为KVM',business:['KVM'], label:'竞价实例'}
 }
 export default {
   getInsOperateAuth(type) {

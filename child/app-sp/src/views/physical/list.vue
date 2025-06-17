@@ -233,6 +233,9 @@
             </div>
 
           </template>
+          <template #default="scope" v-else-if="item.prop==='is_spot'">
+            <span>{{scope.row.is_spot ? '是' : '否'}}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作栏">
           <template slot-scope="scope">
@@ -636,6 +639,9 @@ export default class PhysicalList extends Vue {
       if(this.filed_name_list.includes(item.prop)){
         item = Object.assign(item,{},{column_key:item.prop,list:[]})
       }
+      if(item.prop==='is_spot'){
+        item = Object.assign(item,{},{column_key:'is_spot',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+      }
       return item;
     })
     let ids:Array<string> = this.custom_host.map((item:any)=>item.prop);
@@ -954,7 +960,7 @@ export default class PhysicalList extends Vue {
   //校验列表项是否存在此项
   private judgeColumns(){
     let keys = Object.keys(this.filter_data)
-    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy','vgpu_segment_type','host_business_type']
+    let temp = [...this.new_prop_list,'power_status','machine_status','host_attribution_id','host_purpose','host_type','host_source','backend_type','scheduled','migrated','dummy','vgpu_segment_type','host_business_type','is_spot']
     keys.map(item=>{
       if(!temp.includes(item)){
         delete(this.filter_data[item])
