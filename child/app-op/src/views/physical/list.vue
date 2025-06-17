@@ -130,6 +130,9 @@
           <template #default="scope" v-else-if="item.prop==='is_prepare_host'">
             <span>{{scope.row.is_prepare_host ? '是' : '否'}}</span>
           </template>
+          <template #default="scope" v-else-if="item.prop==='is_spot'">
+            <span>{{scope.row.is_spot ? '是' : '否'}}</span>
+          </template>
         </el-table-column>
         <!-- <el-table-column label="操作栏">
           <template slot-scope="scope">
@@ -233,6 +236,7 @@ export default class PhysicalList extends Vue {
     {label:'分配资源',value:'resource'},
     {label:'更改属性',value:'update_attribute'},
     {label:'下架',value:'shelves'},
+    {label: '竞价实例',value: 'bidding'}
   ]
   private rows_operate_btns:any=[]
   private error_msg={
@@ -401,6 +405,9 @@ export default class PhysicalList extends Vue {
       if(item.prop==='host_business_type'){
         item = Object.assign(item,{},{column_key:'host_business_type',list:[{text:'KVM',value:'KVM'},{text:'ECI',value:'ECI'}]})
       }
+      if(item.prop==='is_spot'){
+        item = Object.assign(item,{},{column_key:'is_spot',list:[{text:'是',value:'1'},{text:'否',value:'0'}]})
+      }
       return item;
     })
   }
@@ -445,7 +452,8 @@ export default class PhysicalList extends Vue {
       customer_keyword,
       vgpu_segment_type,
       is_prepare_host,
-      host_business_type
+      host_business_type,
+        is_spot,
     }=this.search_data
     let res:any=await Service.get_host_list({//缺少规格族字段筛选
       az_id,
@@ -483,7 +491,8 @@ export default class PhysicalList extends Vue {
       backend_type:backend_type ? backend_type[0] : undefined,
       ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
       is_prepare_host:is_prepare_host ? is_prepare_host[0] : undefined,
-      host_business_type:host_business_type ? host_business_type[0] : undefined
+      host_business_type:host_business_type ? host_business_type[0] : undefined,
+      is_spot:is_spot ? is_spot[0] : undefined
     })
     if(res.code==="Success"){
       this.list = res.data.host_list;
@@ -667,6 +676,7 @@ export default class PhysicalList extends Vue {
   
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
+    console.log('22222222222')
     if(this.multi_rows.length===0 && value!=='upload'){
       this.$message.warning("请先勾选物理机!");
       return;
@@ -697,23 +707,12 @@ export default class PhysicalList extends Vue {
       this.visible=true;
       return;
     }
-    if(['kvm_to_eci','eci_to_kvm'].includes(value)) {
-      if(value==='kvm_to_eci'){
-        let business_type = this.multi_rows.every(item=>{
-          return item.host_business_type==='KVM'
-        })
-        if(!business_type){
-          this.$message.warning('已选主机需为维护中状态且业务类型为KVM！')
-          return
-        }
-      }else {
-        let business_type = this.multi_rows.every(item=>{
-          return item.host_business_type==='ECI'
-        })
-        if(!business_type){
-          this.$message.warning('已选主机需为维护中状态且业务类型为ECI！')
-          return
-        }
+    if(value==='bidding'){
+      const isAllSpot = this.multi_rows.every(item => item.is_spot === 1); // 全部为竞价实例
+      const isNoneSpot = this.multi_rows.every(item => item.is_spot === 0); // 全部不是
+      if(!(isAllSpot || isNoneSpot)){
+        this.$message.warning("已选主机竞价实例属性需一致");
+        return;
       }
     }
     if(this.judge(value)){
@@ -740,15 +739,16 @@ export default class PhysicalList extends Vue {
   private judge(val):any{
     const obj = getHostStatus(val)
     let flag_list = this.multi_rows.every(item=>{
-      let power_flag =obj.power.length===0 ? true : obj.power.includes(item.power_status)
-      let host_flag =obj.host.length===0 ? true : obj.host.includes(item.machine_status)
-      let vm_flag= obj.vm ? obj.vm=== item.ecs_list.length + 1 : true;
+      let power_flag =obj?.power.length===0 ? true : obj?.power.includes(item.power_status)
+      let host_flag =obj?.host.length===0 ? true : obj?.host.includes(item.machine_status)
+      let vm_flag= obj?.vm ? obj?.vm=== item.ecs_list.length + 1 : true;
+      let business_flag = obj?.business.length===0 ? true : obj?.business.includes(item.host_business_type)
       if(!vm_flag && ['shutdown_host','restart_host'].includes(val)){
-        this.error_msg[val]=getHostStatus(val).msg2
+        this.error_msg[val]=getHostStatus(val)?.msg2
       }else{
-        this.error_msg[val]=getHostStatus(val).msg
+        this.error_msg[val]=getHostStatus(val)?.msg
       }
-      return power_flag && host_flag && vm_flag
+      return power_flag && host_flag && vm_flag && business_flag
     })
     return flag_list
   }

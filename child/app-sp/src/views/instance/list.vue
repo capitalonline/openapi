@@ -1084,6 +1084,13 @@ export default class App extends Vue {
         this.netSet('batch');
         return;
       }
+      if(type==='update_spec'){
+        let bidding_flag = this.multiple_selection.some(item=>item.billing_method=='3')
+        if(bidding_flag){
+          this.$message.warning('已选实例存在竞价实例，不支持更换实例规格操作！')
+          return;
+        }
+      }
     }else {
       if (!this.FnJudgeCustomer(operate_info, type)) {
         return;
