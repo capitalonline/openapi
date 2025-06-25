@@ -5056,7 +5056,7 @@ def vpc_bandwidth_unit_price():
 
 | 名称          | 类型   | 是否必选 | 示例值                               | 描述                 |
 | ------------- | ------ | -------- | ------------------------------------ | -------------------- |
-| AvailableZoneCode |    string   | 否 |   石家庄E     |   所在节点ID,或名字,或可用区Code(见附件五),不传为空             |
+| AvailableZoneCode |    string   | 否 |   石家庄E     |   可用区Code(见附件五),不传为空             |
 | VDCId        |      string  | 否 |   15a95214-868c-4027-aeea-b556669f53d9     |  所在VDCID,不传为空              |
 | ShowAll | bool | 否       | True | 是否显示全部,不传为True |
 | Day | int | 否       |    30 |  检测IP未使用的天数,不传为30天|
@@ -5134,7 +5134,7 @@ def vdc_eip_use_day():
     param = {}
     url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
     body = {
-        # "AvailableZoneCode": "石家庄E", # 所在节点ID,或名字,可选,不传为空
+        # "AvailableZoneCode": "CN_SJZ_E", # 可用区Code(见附件五),不传为空
         # "VDCId": "15a95214-868c-4027-aeea-b556669f53d9",             # 所在VDCID,可选,不传为空
         # "ShowAll": False,      # 是否显示全部,可选,不传为True
         # "Day": 30,             # 检测IP未使用的天数,可选,不传为30天
