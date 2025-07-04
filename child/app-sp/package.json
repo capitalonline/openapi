@@ -5,11 +5,15 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test:unit": "jest --verbose",
+    "test:unit:watch": "jest --watch --verbose",
+    "test:unit:coverage": "jest --coverage --verbose"
   },
   "dependencies": {
     "@sentry/tracing": "^6.14.3",
     "@sentry/vue": "^6.14.3",
+    "@vue/test-utils": "^2.4.6",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "echarts": "^5.1.2",
@@ -28,13 +32,16 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@vue/cli-plugin-babel": "^4.5.0",
     "@vue/cli-plugin-typescript": "^4.5.0",
     "@vue/cli-service": "^4.5.0",
+    "@vue/compiler-sfc": "^3.5.16",
     "css-unicode-loader": "^1.0.3",
     "sass": "1.26.5",
     "sass-loader": "^8.0.2",
     "typescript": "~4.1.5",
+    "vue-jest": "^5.0.0-alpha.10",
     "vue-json-views": "^1.3.0",
     "vue-template-compiler": "^2.6.11"
   },
