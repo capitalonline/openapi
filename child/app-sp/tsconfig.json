@@ -30,8 +30,9 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "tests/unit/operate.spec.js"  ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "types": ["jest"],
 }
