@@ -90,7 +90,7 @@ def gpu_region_info():
 **返回数据：**
 
 | 名称           | 类型     | 示例                                   | 描述                    |
-| ------------ |--------|--------------------------------------|-----------------------|
+| ------------ | ------ | ------------------------------------ | --------------------- |
 | Code         | string | Success                              | 返回状态码: Success: 成功    |
 | Message      | string | null                                 | 返回信息                  |
 | Data         | object | {}                                   | 返回数据                  |
@@ -104,7 +104,7 @@ def gpu_region_info():
 | Cpu          | int    | 32                                   | CPU个数                 |
 | Ram          | int    | 64                                   | 内存大小                  |
 | Frequency    | string | 2.1GHz                               | 主频                    |
-| PurchaseNum    | int    | 0                                    | 可购买的数量                |
+| PurchaseNum  | int    | 0                                    | 可购买的数量                |
 | Disks        | list   | []                                   | 本地盘信息                 |
 | Id（Disks）    | string | 8e857eb1-c8c1-4c73-9bc3-ea200121ed1a | 本地盘Id                 |
 | Type         | string | SSD                                  | 磁盘类型                  |
@@ -208,7 +208,7 @@ def describe_gpu_goods(RegionId):
 | 名称          | 类型     | 示例      | 描述                 |
 | ----------- | ------ | ------- | ------------------ |
 | Code        | string | Success | 返回状态码: Success: 成功 |
-| Message     | string | null | 返回信息               |
+| Message     | string | null    | 返回信息               |
 | Data        | object | {}      | 返回数据               |
 | TradeAmount | string | 6660.00 | 交易价格               |
 | UnitPrice   | string | 666.00  | 单价                 |
@@ -260,11 +260,11 @@ def describe_gpu_price():
 **请求参数**:
 
 | 名称         | 类型     | 是否必选 | 示例值                                  | 描述                                               |
-| ---------- |--------| ---- | ------------------------------------ | ------------------------------------------------ |
+| ---------- | ------ | ---- | ------------------------------------ | ------------------------------------------------ |
 | AppId      | string | 否    | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d | VPC ID/虚拟数据中心Id(如：参考私有网络相关DescribeVPC 获取返回VpcId) |
 | Name       | string | 否    | bms003                               | GPU服务器名称                                         |
-| PageNumber | int     | 否    | 1                                    | Gpu列表页码。起始值：1, 默认值：1                             |
-| PageSize   | int | 否    | 10                                   | 每页返回数量，默认值：500                                   |
+| PageNumber | int    | 否    | 1                                    | Gpu列表页码。起始值：1, 默认值：1                             |
+| PageSize   | int    | 否    | 10                                   | 每页返回数量，默认值：500                                   |
 
 **返回参数**:
 
@@ -278,8 +278,8 @@ def describe_gpu_price():
 | Name               | string | bms-test                             | GPU服务器名称                                          |
 | Cpu                | int    | 32                                   | Cpu个数                                             |
 | Ram                | int    | 64                                   | 内存大小                                              |
-| State              | string | running                              | 运行中                                               |
-| Status             | string | 运行中                                  | 运行状态                                              |
+| State              | string | running                              | 运行状态                                              |
+| Status             | string | 运行                                   | 运行状态（中文）                                          |
 | RegionId           | string | CN_Hohhot_B                          | 站点编号                                              |
 | AppName            | string | 庆阳监控测试                               | VPC名称/虚拟数据中心名称                                    |
 | AppId              | string | 6d323aa0-9a46-11ee-9a07-622ad4e5a137 | VPC ID/虚拟数据中心ID                                   |
@@ -373,9 +373,9 @@ def describe_gpu_list():
 
 **请求参数**:
 
-| 名称         | 类型     | 是否必选 | 示例值                                  | 描述         |
-| ---------- | ------ | ---- | ------------------------------------ | ---------- |
-| ResourceId | string | 是    | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | GPU服务器主键ID |
+| 名称         | 类型     | 是否必选 | 示例值                                  | 描述       |
+| ---------- | ------ | ---- | ------------------------------------ | -------- |
+| ResourceId | string | 是    | a0492924-1dc1-462e-9cbb-622dc1ec49a3 | GPU服务器ID |
 
 **返回参数**:
 
@@ -388,8 +388,8 @@ def describe_gpu_list():
 | Name               | string | bms-test                                  | GPU服务器名称                                          |
 | Cpu                | int    | 32                                        | Cpu个数                                             |
 | Ram                | int    | 64                                        | 内存大小                                              |
-| State              | string | running                                   | 运行中                                               |
-| Status             | string | 运行中                                       | 运行状态                                              |
+| State              | string | running                                   | 运行状态                                              |
+| Status             | string | 运行                                        | 运行状态（中文）                                          |
 | AppId              | string | 2bbacc90-5e8f-4394-92e1-3f237de1ae8d      | VPC ID/虚拟数据中心Id                                   |
 | RegionId           | string | CN_Hohhot_B                               | 站点编号                                              |
 | AppName            | string | bms003                                    | VPC名称/虚拟数据中心名称                                    |
@@ -461,7 +461,7 @@ def describe_gpu_list():
             ]
         },
         "Ram": 64,
-        "egionName": "中国大陆-庆阳-可用区A",
+        "RegionName": "中国大陆-庆阳-可用区A",
         "RunningTime": "0天7小时18分钟55秒",
         "State": "rebuilding",
         "Status": "重装中",
@@ -559,7 +559,7 @@ def describe_gpu_task(TaskId):
 **请求参数**:
 
 | 名称                  | 类型     | 是否必选 | 示例值                                  | 描述                                           |
-| ------------------- |--------| ---- | ------------------------------------ |----------------------------------------------|
+| ------------------- | ------ | ---- | ------------------------------------ | -------------------------------------------- |
 | ResourceId          | string | 是    | d226f190-f942-4257-8f3e-9cce8dfc0f2b | GPU服务器ID                                     |
 | ImageId             | string | 是    | d6012cd8-b672-11e9-9265-525400b97470 | 镜像ID (参考DescribeGpuImage返回Id)                |
 | Password            | string | 是    | capitalonline                        | 密码                                           |
@@ -727,8 +727,7 @@ def describe_gpu_images():
   "Code": "Success",
   "Message": "Success.",
   "Data": {
-      "TaskIds": ["f232d398-a77c-11e9-9d43-0242ac110003",
-                  "72dc0cae-a867-11e9-8184-0242ac110003"]
+      "taskId": "f232d398-a77c-11e9-9d43-0242ac110003"
   }
 }
 ```
