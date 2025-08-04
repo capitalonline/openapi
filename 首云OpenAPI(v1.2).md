@@ -132,6 +132,7 @@
        * [10.ModifyBmsOrder](#10modifybmsorder)
        * [11.DescribeBmsTask](#11describebmstask)
        * [12.DeleteBmsInstance](#12describebmstask)
+       * [13.RenameBmsInstance](#13renamebmsin)
      * [裸金属云盘相关](#裸金属云盘相关)
        * [1.CreateDisk](#1createDisk)
        * [2.AttachDisk](#2attachDisk)
@@ -6219,7 +6220,64 @@ def delete_bms_instance(BaremetalId):
     res = requests.post(url, json=param)
     result = json.loads(res.content)
  ```
+### 12.RenameBmsInstance
 
+**Action: RenameBmsInstance**
+
+**描述:**  修改主机名称
+
+**请求地址:** cdsapi.capitalonline.net/bms
+
+**请求方法:** POST
+
+**请求参数：**
+
+| 名称        | 类型   | 是否必须 | 示例                                 | 描述                                       |
+| ----------- | ------ | -------- | ------------------------------------ | ------------------------------------------ |
+| BaremetalId | string | 是       | f9053ea8-fc23-4032-8a7f-01def77b4cc0 | 裸金属服务器的编号id |
+| name | string | 是       | bms-test-name | 主机名称 |
+
+**返回数据：**
+
+| 名称    | 类型   | 示例    | 描述     |
+| ------- | ------ | ------- | -------- |
+| Code    | string | Success | 错误码   |
+| Message | string | Success | 提示信息 |
+| Data    | object | {}      | 返回数据 |
+
+
+**错误码：**
+
+| httpcode | 错误码           | 错误信息                                     | 描述                             |
+| -------- | ---------------- | -------------------------------------------- | -------------------------------- |
+| 400      | ParameterInvalid | The parameter "BaremetalId" is required.     | 参数BaremetalId是必选项。        |
+| 400      | ParameterIsEmpty | The parameter "Name" cannot be empty. | 参数Name不能为空。        |
+
+ **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Message": "Success.",
+  "Data": {}
+}
+```
+
+ **代码调用示例**
+
+ ```python
+def rename_bms_instance(BaremetalId,name):
+    action = "RenameBmsInstance"
+    method = "POST"
+    param = {
+        "BaremetalId": BaremetalId,
+        "name": name
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, BMS_URL)
+    res = requests.post(url, json=param)
+    result = json.loads(res.content)
+    print(result)
+ ```
 
 ## 裸金属云盘相关
 
