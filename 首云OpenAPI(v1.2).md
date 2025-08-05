@@ -47,10 +47,10 @@
      * [安全组相关](#安全组相关)
        * [1.CreateSecurityGroup](#1createsecuritygroup)
        * [2.DeleteSecurityGroup](#2deletesecuritygroup)
-       * [3.ForceDeleteSecurityGroup](#3forcedeletesecuritygroup)
-       * [4.DescribeSecurityGroupAttribute](#4describesecuritygroupattribute)
-       * [5.ModifySecurityGroupAttribute](#5modifysecuritygroupattribute)
-       * [6.DescribeSecurityGroups](#6describesecuritygroups)
+       * [3.DescribeSecurityGroupAttribute](#3describesecuritygroupattribute)
+       * [4.ModifySecurityGroupAttribute](#4modifysecuritygroupattribute)
+       * [5.DescribeSecurityGroups](#5describesecuritygroups)
+       * [6.DescribeSecurityGroupMembers](#6describesecuritygroupmembers)
        * [7.AddSecurityGroupRule](#7addsecuritygrouprule)
        * [8.RemoveSecurityGroupRule](#8removesecuritygrouprule)
        * [9.ModifySecurityGroupRule](#9modifysecuritygrouprule)
@@ -547,7 +547,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Data.Rules[].IpList      | String[] | ["172.16.0.0/16", "192.168.0.1"]     | IP列表                  |
 | Data.Rules[].PortList    | String[] | ["3306", "80-443"]                   | 端口列表                  |
 | Data.Rules[].Priority    | Int      | 4                                    | 优先级                   |
-| Data.Rules[].QuotaCount  | Int      | 4                                    | 规则配额数                 |
+| Data.Rules[].QuotaCount  | Int      | 4                                    | 规则配额数（IP×端口数）         |
 | Data.Rules[].CreateTime  | String   | 2024-09-26 16:55:29                  | 规则创建时间                |
 | Data.Rules[].UpdateTime  | String   | 2024-09-26 16:55:29                  | 规则最后修改时间              |
 | Data.CreateTime          | String   | 2024-09-26 16:55:29                  | 安全组创建时间               |
@@ -671,7 +671,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
-  **请求方法：POST**
+  **请求方法：GET**
 
   **请求参数：**
 
@@ -814,16 +814,16 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                         |
-|-----------------|----------|------|-----------------------------------------------------------|--------------------------------------------|
-| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组id                                      |
-| Description     | String   | 是    | 开通80端口                                                    | 规则描述信息                                     |
-| Action          | String   | 是    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                          |
-| Direction       | Int      | 是    | 0                                                         | 规则方向（0=入方向，1=出方向）                          |
-| Protocol        | String   | 是    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                         |
-| IpList          | String[] | 是    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                         |
-| PortList        | String[] | 是    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。对于非TCP或UDP协议，此列表必须填写["0"] |
-| Priority        | Int      | 是    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                   |
+| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                                        |
+|-----------------|----------|------|-----------------------------------------------------------|-----------------------------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组id                                                     |
+| Description     | String   | 是    | 开通80端口                                                    | 规则描述信息                                                    |
+| Action          | String   | 是    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                                         |
+| Direction       | Int      | 是    | 0                                                         | 规则方向（0=入方向，1=出方向）                                         |
+| Protocol        | String   | 是    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                                        |
+| IpList          | String[] | 是    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                                        |
+| PortList        | String[] | 是    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。特殊值["0"]代表所有端口。对于非TCP或UDP协议，此列表必须填写["0"] |
+| Priority        | Int      | 是    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                                  |
 
   **返回参数：**
 
@@ -902,17 +902,17 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                         |
-|-----------------|----------|------|-----------------------------------------------------------|--------------------------------------------|
-| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组ID                                      |
-| RuleId          | String   | 是    | 92f6434e-46b9-4b3e-8d10-9169126602dd                      | 规则ID                                       |
-| Description     | String   | 否    | 开通80端口                                                    | 规则描述信息                                     |
-| Action          | String   | 否    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                          |
-| Direction       | Int      | 否    | 0                                                         | 规则方向（0=入方向，1=出方向）                          |
-| Protocol        | String   | 否    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                         |
-| IpList          | String[] | 否    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                         |
-| PortList        | String[] | 否    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。对于非TCP或UDP协议，此列表必须填写["0"] |
-| Priority        | Int      | 否    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                   |
+| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                                        |
+|-----------------|----------|------|-----------------------------------------------------------|-----------------------------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组ID                                                     |
+| RuleId          | String   | 是    | 92f6434e-46b9-4b3e-8d10-9169126602dd                      | 规则ID                                                      |
+| Description     | String   | 否    | 开通80端口                                                    | 规则描述信息                                                    |
+| Action          | String   | 否    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                                         |
+| Direction       | Int      | 否    | 0                                                         | 规则方向（0=入方向，1=出方向）                                         |
+| Protocol        | String   | 否    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                                        |
+| IpList          | String[] | 否    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                                        |
+| PortList        | String[] | 否    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。特殊值["0"]代表所有端口。对于非TCP或UDP协议，此列表必须填写["0"] |
+| Priority        | Int      | 否    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                                  |
 
   **返回参数：**
 
