@@ -433,35 +433,38 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称              | 类型   | 是否必选 | 示例值 | 描述                       |
-| ----------------- | ------ | -------- | ------ | -------------------------- |
-| SecurityGroupName | String | 是       | Test   | 安全组名称                 |
-| Description       | String | 是       | 安全组 | 安全组描述                 |
-| SecurityGroupType | String | 是       | public | 安全组类型(public/private) |
+| 名称                | 类型     | 是否必选 | 示例值                                  | 描述                     |
+|-------------------|--------|------|--------------------------------------|------------------------|
+| SecurityGroupName | String | 是    | Test                                 | 安全组名称                  |
+| Description       | String | 是    | 安全组                                  | 安全组描述                  |
+| SecurityGroupType | String | 是    | public                               | 安全组类型(public/private)  |
+| ProjectId         | String | 否    | 4483a5e9-1b44-444f-82ea-c6c6874da95a | 所属项目组ID，未填写则使用默认项目组0-0 |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String |         | 任务ID   |
+| 名称                   | 类型     | 示例值                                  | 描述       |
+|----------------------|--------|--------------------------------------|----------|
+| Code                 | String | Success                              | 错误码      |
+| Message              | String | 创建安全组成功.                             | 提示信息     |
+| Data                 | Object | {}                                   | 返回信息     |
+| Data.SecurityGroupId | String | ac86aa45-bc7b-40e9-890e-f88c4979a5f9 | 生成的安全组ID |
+| TaskId               | String |                                      | 任务ID     |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":""
+  "Code": "Success",
+  "Data": {
+    "SecurityGroupId": "a1d31aa2-6e09-11f0-98b4-5e6fe984ebcd"
+  },
+  "Message": "创建安全组成功."
 }
 ```
 
@@ -473,83 +476,40 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
-  **请求方法：GET**
+  **请求方法：POST**
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
-| --------------- | ------ | -------- | ------------------------------------ | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
+| 名称              | 类型     | 是否必选 | 示例值                                  | 描述                          |
+|-----------------|--------|------|--------------------------------------|-----------------------------|
+| SecurityGroupId | String | 是    | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID                       |
+| ForceDelete     | Bool   | 否    | false                                | 当安全组中有云主机时，必须指定此参数为true才能删除 |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String |         | 任务ID   |
+| 名称      | 类型     | 示例值      | 描述   |
+|---------|--------|----------|------|
+| Code    | String | Success  | 错误码  |
+| Message | String | 删除安全组成功. | 提示信息 |
+| Data    | Object | {}       | 返回信息 |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":""
+  "Code": "Success",
+  "Data": {},
+  "Message": "删除安全组成功."
 }
 ```
 
-### 3.ForceDeleteSecurityGroup
-
-  **Action：ForceDeleteSecurityGroup**
-
-  **描述：** 强制删除网络安全组
-
-  **请求地址:** cdsapi.capitalonline.net/ccs
-
-  **请求方法：GET**
-
-  **请求参数：**
-
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
-| --------------- | ------ | -------- | ------------------------------------ | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
-
-  **返回参数：**
-
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688881 | 任务ID   |
-
-  **错误码：**
-
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
-| 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
-
-  **返回示例**
-
-```json
-{
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688881"
-}
-```
-
-### 4.DescribeSecurityGroupAttribute
+### 3.DescribeSecurityGroupAttribute
 
   **Action：DescribeSecurityGroupAttribute**
 
@@ -561,87 +521,106 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述         |
-| --------------- | ------ | -------- | ------------------------------------ | ------------ |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID     |
-| RuleId          | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组规则ID |
+| 名称              | 类型     | 是否必选 | 示例值                                  | 描述    |
+|-----------------|--------|------|--------------------------------------|-------|
+| SecurityGroupId | String | 是    | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
 
   **返回参数：**
 
-| 名称                   | 类型   | 示例值              | 描述                    |
-| ---------------------- | ------ | ------------------- | ----------------------- |
-| Code                   | String | Success             | 错误码                  |
-| Message                | String | Success             | 提示信息                |
-| TaskId                 | String |                     | 任务ID                  |
-| Data                   | Object | {}                  | 返回信息                |
-| SecurityGroupType      | String | public              | 安全组类型              |
-| SecurityGroupRuleCount | Int    | 6                   | 安全组规则数量          |
-| SecurityGroupRules     | List   | []                  | 安全组规则信息          |
-| Status                 | String | ok                  | 安全组状态              |
-| TargetAddress          | String | 0.0.0.0/0           | 目标地址                |
-| TargetPort             | String | 0                   | 目标端口                |
-| Direction              | String | all                 | 规则方向                |
-| Protocol               | String | TCP                 | 规则协议                |
-| LocalPort              | String | 22                  | 本地端口                |
-| Priority               | Int    | 1                   | 优先级                  |
-| RuleId                 | String | xxxx                | 规则ID                  |
-| Action                 | Int    | 1                   | 规则动作：1:允许 0:禁止 |
-| Type                   | String | ip                  | 规则类型：ip/Mac        |
-| Description            | String | 描述                | 规则描述                |
-| CreateTime             | String | 2019-09-11 11:00:01 | 创建时间                |
+| 名称                       | 类型       | 示例值                                  | 描述                    |
+|--------------------------|----------|--------------------------------------|-----------------------|
+| Code                     | String   | Success                              | 错误码                   |
+| Message                  | String   | Success                              | 提示信息                  |
+| Data                     | Object   | {}                                   | 返回信息                  |
+| Data.SecurityGroupId     | String   | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID                 |
+| Data.SecurityGroupName   | String   | 测试安全组                                | 安全组名称                 |
+| Data.Description         | String   | OpenAPI测试                            | 安全组描述                 |
+| Data.SecurityGroupType   | String   | public                               | 安全组类型（public/private） |
+| Data.QuotaCount          | Int      | 17                                   | 安全组规则已用配额数            |
+| Data.RuleCount           | Int      | 6                                    | 安全组规则数                |
+| Data.Rules               | Object[] | []                                   | 安全组规则列表               |
+| Data.Rules[].RuleId      | String   | e0a9c9a5-bbcb-4de2-9985-03426f7747ca | 规则ID                  |
+| Data.Rules[].Description | String   | 内网访问                                 | 规则描述                  |
+| Data.Rules[].Protocol    | String   | TCP                                  | 协议                    |
+| Data.Rules[].Action      | String   | ACCEPT                               | 规则动作（ACCEPT，DROP）     |
+| Data.Rules[].Direction   | Int      | 0                                    | 规则方向（0=入方向，1=出方向）     |
+| Data.Rules[].IpList      | String[] | ["172.16.0.0/16", "192.168.0.1"]     | IP列表                  |
+| Data.Rules[].PortList    | String[] | ["3306", "80-443"]                   | 端口列表                  |
+| Data.Rules[].Priority    | Int      | 4                                    | 优先级                   |
+| Data.Rules[].QuotaCount  | Int      | 4                                    | 规则配额数                 |
+| Data.Rules[].CreateTime  | String   | 2024-09-26 16:55:29                  | 规则创建时间                |
+| Data.Rules[].UpdateTime  | String   | 2024-09-26 16:55:29                  | 规则最后修改时间              |
+| Data.CreateTime          | String   | 2024-09-26 16:55:29                  | 安全组创建时间               |
+| Data.UpdateTime          | String   | 2024-09-26 16:55:29                  | 安全组最后修改时间             |
+
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-    "Message":"Success.",
-    "Code":"Success",
-    "Data":{
-        "SecurityGroupType":"public",
-        "SecurityGroupRuleCount":6,
-        "SecurityGroupRules":[
-            {
-                "Status":"ok",
-                "TargetAddress":"0.0.0.0/0",
-                "Direction":"all",
-                "Protocol":"TCP",
-                "LocalPort":"22",
-                "RuleId":"d2b957d4-d53b-11e9-b3c9-0242ac110002",
-                "Priority":1,
-                "Action":1,
-                "TargetPort":"0",
-                "Type":"ip",
-                "CreateTime":"2019-09-12 17:00:52",
-                "Description":"22"
-            },
-            {
-                "Status":"ok",
-                "TargetAddress":"0.0.0.0/0",
-                "Direction":"all",
-                "Protocol":"TCP",
-                "LocalPort":"443",
-                "RuleId":"d8e90154-d53b-11e9-8a97-0242ac110002",
-                "Priority":2,
-                "Action":1,
-                "TargetPort":"0",
-                "Type":"ip",
-                "CreateTime":"2019-09-12 17:01:03",
-                "Description":"443"
-            }
-        ],
-        "SecurityGroupName":"安全组测试bilibili"
-    },
-    "TaskId":""
+  "Code": "Success",
+  "Data": {
+    "CreateTime": "2024-09-26 16:55:29",
+    "Description": "测试",
+    "ProjectId": "0-0",
+    "QuotaCount": 8,
+    "RuleCount": 3,
+    "Rules": [
+      {
+        "Action": "ACCEPT",
+        "CreateTime": "2025-06-11 22:13:01",
+        "Description": "默认",
+        "Direction": 0,
+        "IpList": ["10.4.0.0/14","192.168.0.0/16","172.17.0.0/16"],
+        "PortList": ["3306","6379"],
+        "Priority": 4,
+        "Protocol": "TCP",
+        "QuotaCount": 6,
+        "RuleId": "2ef7e4d4-46ce-11f0-a518-42a0f7857d25",
+        "UpdateTime": "2025-08-01 19:31:23"
+      },
+      {
+        "Action": "ACCEPT",
+        "CreateTime": "2025-06-11 22:13:01",
+        "Description": "允许回包",
+        "Direction": 0,
+        "IpList": ["0.0.0.0/0"],
+        "PortList": ["32768-60999"],
+        "Priority": 990,
+        "Protocol": "TCP",
+        "QuotaCount": 1,
+        "RuleId": "2ef89046-46ce-11f0-a518-42a0f7857d25",
+        "UpdateTime": "2025-06-11 22:13:01"
+      },
+      {
+        "Action": "DROP",
+        "CreateTime": "2025-06-11 22:13:01",
+        "Description": "禁止所有TCP",
+        "Direction": 0,
+        "IpList": ["0.0.0.0/0"],
+        "PortList": ["0"],
+        "Priority": 999,
+        "Protocol": "TCP",
+        "QuotaCount": 1,
+        "RuleId": "2ef76450-46ce-11f0-a518-42a0f7857d25",
+        "UpdateTime": "2025-06-11 22:13:01"
+      }
+    ],
+    "SecurityGroupId": "2ef59800-46ce-11f0-a518-42a0f7857d25",
+    "SecurityGroupName": "基础规则测试",
+    "UpdateTime": "2025-08-01 19:31:23"
+  },
+  "Message": ""
 }
 ```
 
-### 5.ModifySecurityGroupAttribute
+### 4.ModifySecurityGroupAttribute
 
   **Action：ModifySecurityGroupAttribute**
 
@@ -653,39 +632,38 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称              | 类型   | 是否必选 | 示例值                               | 描述         |
-| ----------------- | ------ | -------- | ------------------------------------ | ------------ |
-| SecurityGroupId   | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID     |
-| Description       | String | 是       | 修改安全组描述                       | 新安全组描述 |
-| SecurityGroupName | String | 是       | 安全组名称                           | 新安全组名称 |
+| 名称                | 类型     | 是否必选 | 示例值                                  | 描述     |
+|-------------------|--------|------|--------------------------------------|--------|
+| SecurityGroupId   | String | 是    | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID  |
+| SecurityGroupName | String | 是    | 安全组名称                                | 新安全组名称 |
+| Description       | String | 是    | 安全组描述                                | 新安全组描述 |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String |         | 任务ID   |
+| 名称      | 类型     | 示例值        | 描述   |
+|---------|--------|------------|------|
+| Code    | String | Success    | 错误码  |
+| Message | String | 修改安全组信息成功. | 提示信息 |
+| Data    | Object | {}         | 返回信息 |
+| TaskId  | String |            | 任务ID |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":""
+  "Code": "Success",
+  "Data": {},
+  "Message": "修改安全组信息成功."
 }
 ```
 
-### 6.DescribeSecurityGroups
+### 5.DescribeSecurityGroups
 
   **Action：DescribeSecurityGroups**
 
@@ -697,71 +675,130 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称              | 类型   | 是否必选 | 示例值 | 描述                                                        |
-| ----------------- | ------ | -------- | ------ | ----------------------------------------------------------- |
-| SecurityGroupType | String | 否       | public | 安全组类型(public/private),不填默认筛选所有类型的安全组列表 |
-| Keyword           | String | 否       | test   | 查询关键字                                                  |
-| SecurityGroupId   | String | 否       | xxxx   | 安全组ID                                                    |
+| 名称                | 类型     | 是否必选 | 示例值    | 描述                    |
+|-------------------|--------|------|--------|-----------------------|
+| SecurityGroupType | String | 否    | public | 安全组类型（public/private） |
+| Keyword           | String | 否    | test   | 名称包含指定关键字             |
+| ProjectId         | String | 否    | 0-0    | 所属项目组ID，查询默认项目组请填写0-0 |
 
   **返回参数：**
 
-| 名称               | 类型   | 示例值                   | 描述             |
-| ------------------ | ------ | ------------------------ | ---------------- |
-| Code               | String | 0000                     | 错误码           |
-| Message            | String | 删除网络安全组任务已下发 | 提示信息         |
-| TaskId             | String |                          | 任务ID           |
-| Data               | Object | {}                       | 返回信息         |
-| SecurityGroupCount | Int    | 2                        | 安全组数量       |
-| SecurityGroup      | List   | []                       | 安全组列表       |
-| SecurityGroupId    | String | xxx                      | 安全组ID         |
-| SecurityGroupName  | String | group                    | 安全组名称       |
-| Description        | String | desc                     | 安全组描述       |
-| BindInstanceCount  | Int    | 1                        | 绑定主机实例数量 |
-| CreateTime         | String | 2019-09-27 14:30:03      | 创建时间         |
-| UpdateTime         | String | 2019-09-27 14:30:03      | 更新时间         |
-| BindInterfaceCount | Int    | 2                        | 绑定网卡数量     |
-| SecurityGroupType  | String | private                  | 安全组类型       |
+| 名称                                      | 类型       | 示例值                                  | 描述                    |
+|-----------------------------------------|----------|--------------------------------------|-----------------------|
+| Code                                    | String   | Success                              | 错误码                   |
+| Message                                 | String   |                                      | 提示信息                  |
+| Data                                    | Object   | {}                                   | 返回信息                  |
+| Data.SecurityGroupCount                 | Int      | 2                                    | 安全组数量                 |
+| Data.SecurityGroups                     | Object[] | []                                   | 安全组列表                 |
+| Data.SecurityGroups[].SecurityGroupId   | String   | e715e7fc-6eb3-11f0-be7c-5ab347f5ba2f | 安全组ID                 |
+| Data.SecurityGroups[].SecurityGroupName | String   | 内网安全组                                | 安全组名称                 |
+| Data.SecurityGroups[].Description       | String   | 暂无                                   | 安全组描述                 |
+| Data.SecurityGroups[].SecurityGroupType | String   | private                              | 安全组类型（public/private） |
+| Data.SecurityGroups[].ProjectId         | String   | 0-0                                  | 所属项目组ID               |
+| Data.SecurityGroups[].CreateTime        | String   | 2025-04-27 14:30:03                  | 创建时间                  |
+| Data.SecurityGroups[].UpdateTime        | String   | 2024-04-27 14:30:03                  | 更新时间                  |
+| Data.SecurityGroups[].InstanceCount     | Int      | 2                                    | 绑定到此安全组的实例数量          |
+| Data.SecurityGroups[].InterfaceCount    | Int      | 2                                    | 绑定到此安全组的网卡数量          |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-    "Message":"Success.",
-    "Code":"Success",
-    "Data":{
-        "SecurityGroupCount":2,
-        "SecurityGroup":[
-            {
-                "UpdateTime":"2019-09-27 14:30:03",
-                "Description":"terraform",
-                "SecurityGroupName":"tf_test_zxg",
-                "SecurityGroupId":"3d102c1a-e0f0-11e9-b530-0242ac110002",
-                "BindInstanceCount":0,
-                "SecurityGroupType":"private",
-                "BindVdcCount":0,
-                "CreateTime":"2019-09-27 14:30:03",
-                "BindInterfaceCount":0
-            },
-            {
-                "UpdateTime":"2019-03-19 18:09:19",
-                "Description":"test",
-                "SecurityGroupName":"test",
-                "SecurityGroupId":"0f2fa0d0-4a2f-11e9-9710-0242ac110002",
-                "BindInstanceCount":0,
-                "SecurityGroupType":"public",
-                "BindVdcCount":0,
-                "CreateTime":"2019-03-19 18:09:19",
-                "BindInterfaceCount":0
-            }
-        ]
-    },
-    "TaskId":""
+  "Code": "Success",
+  "Data": {
+    "SecurityGroupCount": 1,
+    "SecurityGroups": [
+      {
+        "CreateTime": "2025-05-01 16:45:40",
+        "Description": "API测试",
+        "InstanceCount": 2,
+        "InterfaceCount": 2,
+        "ProjectId": "0-0",
+        "SecurityGroupId": "e715e7fc-6eb3-11f0-be7c-5ab347f5ba2f",
+        "SecurityGroupName": "新版安全组",
+        "SecurityGroupType": "private",
+        "UpdateTime": "2025-05-04 11:08:24"
+      }
+    ]
+  },
+  "Message": ""
+}
+```
+
+### 6.DescribeSecurityGroupMembers
+
+  **Action：DescribeSecurityGroupMembers**
+
+  **描述：** 查看加入网络安全组的成员实例
+
+  **请求地址:** cdsapi.capitalonline.net/ccs
+
+  **请求方法：GET**
+
+  **请求参数：**
+
+| 名称              | 类型     | 是否必选 | 示例值                                  | 描述    |
+|-----------------|--------|------|--------------------------------------|-------|
+| SecurityGroupId | String | 是    | e715e7fc-6eb3-11f0-be7c-5ab347f5ba2f | 安全组ID |
+
+  **返回参数：**
+
+| 名称                                | 类型       | 示例值                                  | 描述                                                    |
+|-----------------------------------|----------|--------------------------------------|-------------------------------------------------------|
+| Code                              | String   | Success                              | 错误码                                                   |
+| Message                           | String   |                                      | 提示信息                                                  |
+| Data                              | Object   | {}                                   | 返回信息                                                  |
+| Data.MemberCount                  | Int      | 2                                    | 绑定到此安全组的网卡数量                                          |
+| Data.Members                      | Object[] | []                                   | 绑定到此安全组的网卡列表                                          |
+| Data.Members[].InstanceId         | String   | 4b5bc769-e8ed-4ebb-bb5c-f2e267f4a4cf | 实例ID                                                  |
+| Data.Members[].InstanceName       | String   | mysql-slave                          | 实例名称                                                  |
+| Data.Members[].InstanceStatus     | String   | running                              | 实例运行状态（running，stop）                                  |
+| Data.Members[].InterfaceId        | String   | a2dea5ea-662c-11f0-8352-d217780626f4 | 实例的网卡ID                                               |
+| Data.Members[].InterfaceIpAddress | String   | 00:50:56:83:0a:fd                    | 实例的网卡IP地址                                             |
+| Data.Members[].InterfaceMac       | String   | 2025-04-27 14:30:03                  | 实例的网卡MAC地址                                            |
+| Data.Members[].InterfaceStatus    | String   | ok                                   | 网卡与安全组的关联状态（ok=正常，syncing=绑定中，unbinding=解绑中，error=错误） |
+
+  **错误码：**
+
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
+| 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
+
+  **返回示例**
+
+```json
+{
+  "Code": "Success",
+  "Data": {
+    "MemberCount": 2,
+    "Members": [
+      {
+        "InstanceId": "4b5bc769-e8ed-4ebb-bb5c-f2e267f4a4cf",
+        "InstanceName": "mysql-master",
+        "InstanceStatus": "running",
+        "InterfaceId": "a2dea5ea-662c-11f0-8352-d217780626f4",
+        "InterfaceIpAddress": "10.240.69.7",
+        "InterfaceMac": "00:50:56:83:0a:fd",
+        "InterfaceStatus": "ok"
+      },
+      {
+        "InstanceId": "f8a55376-7afb-46a2-a03d-94bf3b2e4c44",
+        "InstanceName": "mysql-slave",
+        "InstanceStatus": "running",
+        "InterfaceId": "cc99293e-661b-11f0-bf79-9e758eabd7fd",
+        "InterfaceIpAddress": "10.240.69.8",
+        "InterfaceMac": "00:50:56:83:7f:85",
+        "InterfaceStatus": "ok"
+      }
+    ]
+  },
+  "Message": ""
 }
 ```
 
@@ -777,42 +814,38 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述                                                         |
-| --------------- | ------ | -------- | ------------------------------------ | ------------------------------------------------------------ |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组id                                                     |
-| Action          | String | 是       | 1                                    | 安全组内网络连通策略。  **0 代表禁止,1 代表允许**            |
-| Description     | String | 是       | 开通80端口                           | 规则描述信息                                                 |
-| TargetAddress   | String | 是       | 120.78.170.188/28                    | 目标ip地址                                                   |
-| TargetPort      | String | 是       | 0                                    | 目标端口。**其中0代表所有端口的集合**                        |
-| LocalPort       | String | 是       | 80                                   | 本机开放或禁止的源端口                                       |
-| Direction       | String | 是       | all                                  | 规则访问权限。**目前只支持双向规则的添加和绑定**             |
-| Priority        | String | 是       | 10                                   | 设置安全组中规则优先级，范围是1~100                          |
-| Protocol        | String | 是       | TCP                                  | 传输层协议。选填参数为:  ICMP、TCP、UDP。**注:如果协议为ICMP，不需要传递TargetPort、LocalPort参数。** |
-| RuleType        | String | 是       | ip                                   | 设置规则类型。选项: mac/ip                                   |
+| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                         |
+|-----------------|----------|------|-----------------------------------------------------------|--------------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组id                                      |
+| Description     | String   | 是    | 开通80端口                                                    | 规则描述信息                                     |
+| Action          | String   | 是    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                          |
+| Direction       | Int      | 是    | 0                                                         | 规则方向（0=入方向，1=出方向）                          |
+| Protocol        | String   | 是    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                         |
+| IpList          | String[] | 是    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                         |
+| PortList        | String[] | 是    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。对于非TCP或UDP协议，此列表必须填写["0"] |
+| Priority        | Int      | 是    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                   |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
+| 名称      | 类型     | 示例值     | 描述   |
+|---------|--------|---------|------|
+| Code    | String | Success | 错误码  |
+| Message | String | 添加规则成功. | 提示信息 |
 | Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688348 | 任务ID   |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688348"
+  "Code": "Success",
+  "Data": {},
+  "Message": "开始更新规则，请稍候."
 }
 ```
 
@@ -828,34 +861,32 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述     |
-| --------------- | ------ | -------- | ------------------------------------ | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
-| RuleIds         | Array  | 是       | ["xxx", "xxx"]                       | 规则ID   |
+| 名称              | 类型     | 是否必选 | 示例值                                  | 描述    |
+|-----------------|--------|------|--------------------------------------|-------|
+| SecurityGroupId | String | 是    | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID |
+| RuleId          | String | 是    | 92f6434e-46b9-4b3e-8d10-9169126602dd | 规则ID  |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
+| 名称      | 类型     | 示例值     | 描述   |
+|---------|--------|---------|------|
+| Code    | String | Success | 错误码  |
+| Message | String | 删除规则成功. | 提示信息 |
 | Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688411 | 任务ID   |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688411"
+  "Code": "Success",
+  "Data": {},
+  "Message": "删除规则成功."
 }
 ```
 
@@ -863,7 +894,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **Action：ModifySecurityGroupRule**
 
-  **描述：** 修改网络安全组规则描述
+  **描述：** 修改网络安全组规则
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -871,35 +902,39 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述       |
-| --------------- | ------ | -------- | ------------------------------------ | ---------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID   |
-| RuleId          | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 规则ID     |
-| Description     | String | 是       | 新描述                               | 新修改描述 |
+| 名称              | 类型       | 是否必选 | 示例值                                                       | 描述                                         |
+|-----------------|----------|------|-----------------------------------------------------------|--------------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                      | 安全组ID                                      |
+| RuleId          | String   | 是    | 92f6434e-46b9-4b3e-8d10-9169126602dd                      | 规则ID                                       |
+| Description     | String   | 否    | 开通80端口                                                    | 规则描述信息                                     |
+| Action          | String   | 否    | ACCEPT                                                    | 规则动作（ACCEPT，DROP）                          |
+| Direction       | Int      | 否    | 0                                                         | 规则方向（0=入方向，1=出方向）                          |
+| Protocol        | String   | 否    | TCP                                                       | 协议类型（TCP，UDP，ICMP）                         |
+| IpList          | String[] | 否    | ["121.15.41.170", "121.15.145.220/29", "58.34.139.42/32"] | IP/CIDR地址列表，最多100项                         |
+| PortList        | String[] | 否    | ["80", "443", "8000-9000"]                                | 端口或端口范围列表，最多100项。对于非TCP或UDP协议，此列表必须填写["0"] |
+| Priority        | Int      | 否    | 99                                                        | 规则优先级，范围1-1000，不可与其他规则重复                   |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String |         | 任务ID   |
+| 名称      | 类型     | 示例值         | 描述   |
+|---------|--------|-------------|------|
+| Code    | String | Success     | 错误码  |
+| Message | String | 开始更新规则，请稍候. | 提示信息 |
+| Data    | Object | {}          | 返回信息 |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":""
+  "Code": "Success",
+  "Data": {},
+  "Message": "开始更新规则，请稍候."
 }
 ```
 
@@ -907,7 +942,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **Action：JoinSecurityGroup**
 
-  **描述：** 主机实例加入安全组
+  **描述：** 实例网卡加入安全组
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -915,37 +950,32 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                                    | 描述     |
-| --------------- | ------ | -------- | ----------------------------------------- | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe      | 安全组ID |
-| BindData        | String | 是       | [{"InstanceId":"xxx", "PrivateId":"xxx"}] | 绑定数据 |
-| InstanceId      | String | 是       | 76571028-e2a3-11e9-b380-de55f62159fe      | 实例ID   |
-| PrivateId       | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 私网ID   |
-| PublicId        | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 公网ID   |
+| 名称              | 类型       | 是否必选 | 示例值                                      | 描述                                     |
+|-----------------|----------|------|------------------------------------------|----------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe     | 安全组ID                                  |
+| InterfaceIds    | String[] | 是    | ["a36dbdce-99e4-4548-b2f0-29f60711a25a"] | 多个实例的网卡ID列表，可从实例的DescribeInstances接口获取 |
 
-  **返回参数：**
+**返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688564 | 任务ID   |
+| 名称      | 类型     | 示例值         | 描述   |
+|---------|--------|-------------|------|
+| Code    | String | Success     | 错误码  |
+| Message | String | 开始更新规则，请稍候. | 提示信息 |
+| Data    | Object | {}          | 返回信息 |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688564"
+  "Code": "Success",
+  "Data": {},
+  "Message": "开始更新规则，请稍候."
 }
 ```
 
@@ -953,7 +983,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **Action：LeaveSecurityGroup**
 
-  **描述：** 实例解绑网络安全组
+  **描述：** 实例网卡从安全组解绑
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -961,37 +991,32 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                                    | 描述     |
-| --------------- | ------ | -------- | ----------------------------------------- | -------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe      | 安全组ID |
-| BindData        | String | 是       | [{"InstanceId":"xxx", "PrivateId":"xxx"}] | 绑定数据 |
-| InstanceId      | String | 是       | 76571028-e2a3-11e9-b380-de55f62159fe      | 实例ID   |
-| PrivateId       | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 私网ID   |
-| PublicId        | String | 否       | 50971028-e2a3-11e9-b380-de55f62159fe      | 公网ID   |
+| 名称              | 类型       | 是否必选 | 示例值                                      | 描述                                             |
+|-----------------|----------|------|------------------------------------------|------------------------------------------------|
+| SecurityGroupId | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe     | 安全组ID                                          |
+| InterfaceIds    | String[] | 是    | ["a36dbdce-99e4-4548-b2f0-29f60711a25a"] | 多个实例的网卡ID列表，可从DescribeSecurityGroupMembers接口获取 |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688573 | 任务ID   |
+| 名称      | 类型     | 示例值         | 描述   |
+|---------|--------|-------------|------|
+| Code    | String | Success     | 错误码  |
+| Message | String | 开始更新规则，请稍候. | 提示信息 |
+| Data    | Object | {}          | 返回信息 |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688573"
+  "Code": "Success",
+  "Data": {},
+  "Message": "开始更新规则，请稍候."
 }
 ```
 
@@ -999,7 +1024,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **Action：ModifySecurityGroupRulePriority**
 
-  **描述：** 修改安全组规则优先级
+  **描述：** 批量调整安全组规则优先级
 
   **请求地址:** cdsapi.capitalonline.net/ccs
 
@@ -1007,36 +1032,34 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
   **请求参数：**
 
-| 名称            | 类型   | 是否必选 | 示例值                               | 描述                   |
-| --------------- | ------ | -------- | ------------------------------------ | ---------------------- |
-| SecurityGroupId | String | 是       | 50971028-e2a3-11e9-b380-de55f62159fe | 安全组ID               |
-| BindData        | String | 是       | [{"RuleId":"xxx", "Priority":"xxx"}] | 绑定数据               |
-| RuleId          | String | 是       | 76571028-e2a3-11e9-b380-de55f62159fe | (BindData中参数)规则ID |
-| Priority        | Int    | 否       | 1                                    | (BindData中参数)优先级 |
+| 名称               | 类型       | 是否必选 | 示例值                                                                   | 描述       |
+|------------------|----------|------|-----------------------------------------------------------------------|----------|
+| SecurityGroupId  | String   | 是    | 50971028-e2a3-11e9-b380-de55f62159fe                                  | 安全组ID    |
+| Rules            | Object[] | 是    | [{"RuleId":"92f6434e-46b9-4b3e-8d10-9169126602dd", "Priority":"200"}] | 要调整的规则列表 |
+| Rules[].RuleId   | String   | 是    | 92f6434e-46b9-4b3e-8d10-9169126602dd                                  | 规则ID     |
+| Rules[].Priority | Int      | 否    | 200                                                                   | 新的优先级    |
 
   **返回参数：**
 
-| 名称    | 类型   | 示例值  | 描述     |
-| ------- | ------ | ------- | -------- |
-| Code    | String | Success | 错误码   |
-| Message | String | Success | 提示信息 |
-| Data    | Object | {}      | 返回信息 |
-| TaskId  | String | 7688573 | 任务ID   |
+| 名称      | 类型     | 示例值         | 描述   |
+|---------|--------|-------------|------|
+| Code    | String | Success     | 错误码  |
+| Message | String | 开始更新规则，请稍候. | 提示信息 |
+| Data    | Object | {}          | 返回信息 |
 
   **错误码：**
 
-| httpcode | 错误码                       | 错误信息                                              | 描述                   |
-| -------- | ---------------------------- | ----------------------------------------------------- | ---------------------- |
+| httpcode | 错误码                          | 错误信息                                                  | 描述           |
+|----------|------------------------------|-------------------------------------------------------|--------------|
 | 400      | InvalidInterfaceID.Malformed | The specified parameter   "InterfaceID" is not valid. | 指定网卡ID参数格式错误 |
 
   **返回示例**
 
 ```json
 {
-"Code":"Success",
-"Message":"Success.",
-"Data":{},
-"TaskId":"7688573"
+  "Code": "Success",
+  "Data": {},
+  "Message": "开始更新规则，请稍候."
 }
 ```
 
