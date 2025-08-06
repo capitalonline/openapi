@@ -45,18 +45,18 @@
        * [34.BatchDeleteNetworkInterfaces](#34BatchDeleteNetworkInterfaces)
        * [35.DescribeNetworkCardFlow](#35DescribeNetworkCardFlow)
      * [安全组相关](#安全组相关)
-       * [1.CreateSecurityGroup](#1createsecuritygroup)
-       * [2.DeleteSecurityGroup](#2deletesecuritygroup)
-       * [3.DescribeSecurityGroupAttribute](#3describesecuritygroupattribute)
-       * [4.ModifySecurityGroupAttribute](#4modifysecuritygroupattribute)
-       * [5.DescribeSecurityGroups](#5describesecuritygroups)
-       * [6.DescribeSecurityGroupMembers](#6describesecuritygroupmembers)
-       * [7.AddSecurityGroupRule](#7addsecuritygrouprule)
-       * [8.RemoveSecurityGroupRule](#8removesecuritygrouprule)
-       * [9.ModifySecurityGroupRule](#9modifysecuritygrouprule)
-       * [10.JoinSecurityGroup](#10joinsecuritygroup)
-       * [11.LeaveSecurityGroup](#11leavesecuritygroup)
-       * [12.ModifySecurityGroupRulePriority](#12modifysecuritygrouprulepriority)
+       * [1.CreateNSG](#1creatensg)
+       * [2.DeleteNSG](#2deletensg)
+       * [3.DescribeNSGAttribute](#3describensgattribute)
+       * [4.ModifyNSGAttribute](#4modifynsgattribute)
+       * [5.DescribeNSGs](#5describensgs)
+       * [6.DescribeNSGMembers](#6describensgmembers)
+       * [7.AddNSGRule](#7addnsgrule)
+       * [8.RemoveNSGRule](#8removensgrule)
+       * [9.ModifyNSGRule](#9modifynsgrule)
+       * [10.JoinNSG](#10joinnsg)
+       * [11.LeaveNSG](#11leavensg)
+       * [12.ModifyNSGRulePriority](#12modifynsgrulepriority)
      * [模板相关](#模板相关)
        * [1.CreateTemplate](#1createtemplate)
        * [2.DeleteTemplate](#2deletetemplate)
@@ -421,9 +421,11 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 
 ## 安全组相关
 
-### 1.CreateSecurityGroup
+安全组功能已升级到新版，旧版API接口已停用，请使用下列新action。
 
-  **Action：CreateSecurityGroup**
+### 1.CreateNSG
+
+  **Action：CreateNSG**
 
   **描述：** 创建网络安全组
 
@@ -468,9 +470,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 2.DeleteSecurityGroup
+### 2.DeleteNSG
 
-  **Action：DeleteSecurityGroup**
+  **Action：DeleteNSG**
 
   **描述：** 删除网络安全组
 
@@ -509,9 +511,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 3.DescribeSecurityGroupAttribute
+### 3.DescribeNSGAttribute
 
-  **Action：DescribeSecurityGroupAttribute**
+  **Action：DescribeNSGAttribute**
 
   **描述：** 查看网络安全组属性
 
@@ -620,9 +622,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 4.ModifySecurityGroupAttribute
+### 4.ModifyNSGAttribute
 
-  **Action：ModifySecurityGroupAttribute**
+  **Action：ModifyNSGAttribute**
 
   **描述：** 修改网络安全组属性
 
@@ -663,9 +665,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 5.DescribeSecurityGroups
+### 5.DescribeNSGs
 
-  **Action：DescribeSecurityGroups**
+  **Action：DescribeNSGs**
 
   **描述：** 网络安全组列表
 
@@ -731,9 +733,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 6.DescribeSecurityGroupMembers
+### 6.DescribeNSGMembers
 
-  **Action：DescribeSecurityGroupMembers**
+  **Action：DescribeNSGMembers**
 
   **描述：** 查看加入网络安全组的成员实例
 
@@ -802,9 +804,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 7.AddSecurityGroupRule
+### 7.AddNSGRule
 
-  **Action：AddSecurityGroupRule**
+  **Action：AddNSGRule**
 
   **描述：** 添加网络安全组规则
 
@@ -849,9 +851,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 8.RemoveSecurityGroupRule
+### 8.RemoveNSGRule
 
-  **Action：RemoveSecurityGroupRule**
+  **Action：RemoveNSGRule**
 
   **描述：** 删除网络安全组规则
 
@@ -890,9 +892,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 9.ModifySecurityGroupRule
+### 9.ModifyNSGRule
 
-  **Action：ModifySecurityGroupRule**
+  **Action：ModifyNSGRule**
 
   **描述：** 修改网络安全组规则
 
@@ -938,9 +940,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 10.JoinSecurityGroup
+### 10.JoinNSG
 
-  **Action：JoinSecurityGroup**
+  **Action：JoinNSG**
 
   **描述：** 实例网卡加入安全组
 
@@ -979,9 +981,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 11.LeaveSecurityGroup
+### 11.LeaveNSG
 
-  **Action：LeaveSecurityGroup**
+  **Action：LeaveNSG**
 
   **描述：** 实例网卡从安全组解绑
 
@@ -1020,9 +1022,9 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 }
 ```
 
-### 12.ModifySecurityGroupRulePriority
+### 12.ModifyNSGRulePriority
 
-  **Action：ModifySecurityGroupRulePriority**
+  **Action：ModifyNSGRulePriority**
 
   **描述：** 批量调整安全组规则优先级
 
