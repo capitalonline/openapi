@@ -762,8 +762,8 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | Data.Members[].InstanceName       | String   | mysql-slave                          | 实例名称                                                  |
 | Data.Members[].InstanceStatus     | String   | running                              | 实例运行状态（running，stop）                                  |
 | Data.Members[].InterfaceId        | String   | a2dea5ea-662c-11f0-8352-d217780626f4 | 实例的网卡ID                                               |
-| Data.Members[].InterfaceIpAddress | String   | 00:50:56:83:0a:fd                    | 实例的网卡IP地址                                             |
-| Data.Members[].InterfaceMac       | String   | 2025-04-27 14:30:03                  | 实例的网卡MAC地址                                            |
+| Data.Members[].InterfaceIpAddress | String   | 10.240.69.8                          | 实例的网卡IP地址                                             |
+| Data.Members[].InterfaceMac       | String   | 00:50:56:83:7f:85                    | 实例的网卡MAC地址                                            |
 | Data.Members[].InterfaceStatus    | String   | ok                                   | 网卡与安全组的关联状态（ok=正常，syncing=绑定中，unbinding=解绑中，error=错误） |
 
   **错误码：**
