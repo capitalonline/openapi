@@ -1770,7 +1770,7 @@ def describe_instance_vnc_url():
 | 参数              | 要求   | 类型   | 说明                                                         |
 | ----------------- | ------ | ------ | ------------------------------------------------------------ |
 | AvailableZoneCode | 必选   | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| EcsFamilyName     | string | string | 规格族名称                                                   |
+| EcsFamilyName     | 必选 | string | 规格族名称                                                   |
 | Cpu               | 可选   | int    | Cpu大小                                                      |
 | Ram               | 可选   | int    | 内存大小                                                     |
 | Gpu               | 可选   | int    | 显卡数量                                                     |
