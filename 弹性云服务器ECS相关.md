@@ -1881,7 +1881,7 @@ def describe_zone_instance_type():
 ```python
 def ecs_reset_password():
     """
-       云服务器管理员用户密码修改
+       更改实例规格
     """
     ecs_url = 'http://api.capitalonline.net/ecs/v1'
     action = "ChangeInstanceConfigure"
