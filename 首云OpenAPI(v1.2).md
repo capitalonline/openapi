@@ -119,6 +119,25 @@
        * [31.VPCBandWidthBillingScheme](#31vpcbandwidthbillingscheme)
        * [32.VPCBandWidthUnitPrice](#32vpcbandwidthunitprice)
        * [33.DescribeVDCIPUSEDAY](#33DescribeVDCIPUSEDAY)
+       * [34.DescribeOneMinuteFlow](#34.DescribeOneMinuteFlow)
+       * [35.CreateVpcSlb](#35.CreateVpcSlb)
+       * [36.DeleteVpcSlb](#36.DeleteVpcSlb)
+       * [37.UpdateVpcSlb](#37.UpdateVpcSlb)
+       * [38.DescribeVpcSlbListInfo](#38.DescribeVpcSlbListInfo)
+       * [39.DescribeVpcSlbDetailInfo](#39.DescribeVpcSlbDetailInfo)
+       * [40.DescribeVpcSlbListenCreateInfo](#40.DescribeVpcSlbListenCreateInfo)
+       * [41.CreateVpcSLBListen](#41.CreateVpcSLBListen)
+       * [42.DeleteVpcSLBListen](#42.DeleteVpcSLBListen)
+       * [43.UpdateVpcSLBListen](#43.UpdateVpcSLBListen)
+       * [44.DescribeVpcSlbListenList](#44.DescribeVpcSlbListenList)
+       * [45.QueryVpcSLBListen](#45.QueryVpcSLBListen)
+       * [46.DescribeVpcSlbListenRsInfo](#46.DescribeVpcSlbListenRsInfo)
+       * [47.CreateVpcSLBRsPort](#47.CreateVpcSLBRsPort)
+       * [48.DeleteVpcSLBRsPort](#48.DeleteVpcSLBRsPort)
+       * [49.UpdateVpcSLBRsPort](#49.UpdateVpcSLBRsPort)
+       * [50.QueryVpcSLBRsPort](#50.QueryVpcSLBRsPort)
+       * [51.BandwidthBindResource](#51.BandwidthBindResource)
+       * [52.BandwidthUnbindResource](#52.BandwidthUnbindResource)
      * [裸金属相关](#裸金属相关)
        * [1.DescribeBmsGoods](#1describebmsgoods)
        * [2.DescribeBmsGoodsPrice](#2describebmsgoodsprice)
@@ -290,7 +309,7 @@
        * [2.VPC带宽类型](#vpc带宽类型)
        * [3.EIP计费方案](#EIP计费方案)
        * [4.共享带宽计费类型](#共享带宽计费类型)
-
+     
      * [示例](#示例)
        * [1.获取请求url](#1获取请求url)
        * [2.获取虚拟数据中心公网信息](#2获取虚拟数据中心公网信息)
@@ -5172,6 +5191,1419 @@ def vdc_eip_use_day():
     result = json.loads(res.content)
     return result
 ```
+
+### 34.DescribeOneMinuteFlow
+
+  **Action:DescribeOneMinuteFlow**
+
+  **描述：** 获取带宽资源1分钟粒度计量数据
+
+  **请求地址:** cdsapi.capitalonline.net/vpc
+
+  **请求方法：POST**
+
+  **请求参数：**
+
+| 名称      | 类型   | 是否必选 | 示例值                               | 描述             |
+| --------- | ------ | -------- | ------------------------------------ | ---------------- |
+| CloudId   | string | 是       | f25d433a-1c1a-11f0-b714-420e56b4460f | 带宽资源ID       |
+| StartTime | string | 是       | 2025-01-01 00:00:00                  | 查询计量开始时间 |
+| EndTime   | string | 是       | 2025-01-01 01:00:00                  | 查询计量结束时间 |
+
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": [
+        {
+            "in_bps": 11930.0,
+            "out_bps": 10450.0,
+            "time": "2025-04-22 14:18:00",
+            "value": 11930.0
+        },
+        {
+            "in_bps": 11885.0,
+            "out_bps": 10645.0,
+            "time": "2025-04-22 14:19:00",
+            "value": 11885.0
+        }
+    ],
+    "Message": "success"
+}
+```
+
+
+   **代码调用示例**
+
+```python
+def vpc_bandwidth_unit_price():
+    action = 'DescribeOneMinuteFlow'
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body ={
+        "CloudId": "f25d433a-1c1a-11f0-b714-420e56b4460f",
+        "StartTime": "2025-04-22 14:17:00",
+        "EndTime": "2025-04-22 15:17:00"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 35.CreateVpcSlb
+
+  **Action:CreateVpcSlb**
+  **描述：** 创建VPC SLB
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称              | 类型   | 是否必选 | 示例值        | 描述                                                         |
+| ----------------- | ------ | -------- | ------------- | ------------------------------------------------------------ |
+| RegionCode        | string | 是       | CN_Hongkong   | 区域code, 见附件五                                           |
+| AvailableZoneCode | string | 是       | CN_Hongkong_B | 可用区code, 见附件五                                         |
+| VpcId             | string | 是       | VPC ID        | VPC ID                                                       |
+| Name              | string | 是       | name          | SLB名称                                                      |
+| NetType           | string | 是       | wan/wan_lan   | 网络类型: wan-公网、wan_lan-公网和私网                       |
+| ConfType          | string | 是       | slb.v1.small  | 配置规格: slb.v1.small-高阶型、slb.v1.medium-超强型、slb.v1.large-至强型 |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述            |
+| :------ | ------ | :------ | :-------------- |
+| Code    | string | OK      | 错误码          |
+| Message | string | success | 信息            |
+| TaskId  | string |         | 任务ID          |
+| Data    | dict   | {}      | 返回数据        |
+| SlbId   | string |         | 新建的SLB实例ID |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "SlbId": "6206d26a-99dd-11f0-80c2-964772e05ba7"
+    },
+    "Message": "任务下发成功",
+    "TaskId": "62c66b3e-99dd-11f0-80c2-964772e05ba7"
+}
+```
+
+   **代码调用示例**
+
+```python
+def create_slb():
+    action = "CreateVpcSlb"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RegionCode": "CN_Qingyang",
+        "AvailableZoneCode": "CN_Qingyang_A",
+        "VpcId": "635957ee-9543-11f0-8037-c2aae808f99f",
+        "ConfType": "slb.v1.small",
+        "NetType": "wan",
+        "Name": "创建测试openapi"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 36.DeleteVpcSlb
+
+  **Action:DeleteVpcSlb**
+  **描述：** 删除VPC SLB
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称  | 类型   | 是否必选 | 示例值 | 描述             |
+| ----- | ------ | -------- | ------ | ---------------- |
+| SlbId | string | 是       |        | 需要删除的SLB ID |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": {
+        "msg": "task_id: 67c7d89c-98ee-11f0-a8b5-0ef08d50031a",
+        "status": 1
+    },
+    "Message": "任务下发成功",
+    "TaskId": "67c7d89c-98ee-11f0-a8b5-0ef08d50031a"
+}
+```
+
+   **代码调用示例**
+
+```python
+def delete_slb():
+    action = "DeleteVpcSlb"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "51db5c40-98ec-11f0-8126-0ef08d50031a"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 37.UpdateVpcSlb
+
+  **Action:UpdateVpcSlb**
+  **描述：** 更新VPC SLB
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值       | 描述                                                         |
+| -------- | ------ | -------- | ------------ | ------------------------------------------------------------ |
+| SlbId    | string | 是       |              | SLB实例ID                                                    |
+| Name     | string | 是       | name         | SLB名称                                                      |
+| NetType  | string | 是       | wan/wan_lan  | 网络类型: wan-公网、wan_lan-公网和私网                       |
+| ConfType | string | 是       | slb.v1.small | 配置规格: slb.v1.small-高阶型、slb.v1.medium-超强型、slb.v1.large-至强型 |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "f7b851b0-99df-11f0-806a-964772e05ba7"
+}
+```
+
+   **代码调用示例**
+
+```python
+def update_slb():
+    action = "UpdateVpcSlb"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "dfe382f4-985d-11f0-9025-269f5722f942",
+        "ConfType": "slb.v1.small",
+        "Name": "创建测试",
+        "NetType": "wan"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+
+### 38.DescribeVpcSlbListInfo
+
+  **Action:DescribeVpcSlbListInfo**
+  **描述：** 查询VPC SLB列表
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：GET**
+  **请求参数：**
+
+| 名称    | 类型   | 是否必选 | 示例值 | 描述                             |
+| ------- | ------ | -------- | ------ | -------------------------------- |
+| VpcId   | string | 否       |        | 指定SLB所属的VPC实例ID           |
+| Keyword | string | 否       |        | 关键字匹配，可以传递空字符串："" |
+
+> 注意: 对请求参数的内容解释如下  
+>
+> - VpcId：非必传参数，传递时会过滤出绑定到该VPC的SLB实例
+> - Keyword：非必传参数，传递是会对SLB名称进行关键字匹配
+
+  **返回参数：**
+
+| 名称          | 类型   | 示例值  | 描述                                           |
+| :------------ | ------ | :------ | :--------------------------------------------- |
+| Code          | string | OK      | 错误码                                         |
+| Message       | string | success | 信息                                           |
+| Data          | dict   | {}      | 返回数据                                       |
+| SlbList       | list   |         | SLB实例列表                                    |
+| AzId          | string |         | 实例所属可用区ID                               |
+| AzName        | string |         | 可用区名称                                     |
+| BandwidthId   | string |         | 实例绑定的共享带宽ID                           |
+| BandwidthName | string |         | 共享带宽名称                                   |
+| BillingMethod | string | 0       | 实例计费类型：0-按需计费                       |
+| ConfName      | string |         | 实例规格名称                                   |
+| CreateTime    | string |         | 实例创建时间                                   |
+| Id            | string |         | 实例ID                                         |
+| Name          | string |         | 实例名称                                       |
+| NetType       | string | wan     | 网络类型：wan-公网、wan_lan-同时支持公网和私网 |
+| RegionId      | string |         | 实例所属大区ID                                 |
+| RegionName    | string |         | 实例所属大区名称                               |
+| Status        | string | ok      | 实例状态：ok-正常、error-异常                  |
+| StatusZh      | string |         | 实例状态中文翻译                               |
+| VipList       | list   |         | 实例VIP列表                                    |
+| Address       | string |         | VIP地址                                        |
+| Type          | string | public  | VIP类型：public-公网、private-内网             |
+| VpcId         | string |         | 所属的VPC ID                                   |
+| VpcName       | string |         | 所属的VPC名称                                  |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": {
+        "SlbList": [
+            {
+                "AzId": "fa29a374-ddd7-11ee-bcf5-eaace8164471",
+                "AzName": "可用区A",
+                "BandwidthId": "8bbe3f84-9777-11f0-b451-c2aae808f99f",
+                "BandwidthName": "test",
+                "BillingMethod": "0",
+                "ConfName": "标准型I",
+                "CreateTime": "2025-09-19 20:06:24",
+                "Id": "0f9c3a1e-9551-11f0-b451-c2aae808f99f",
+                "Name": "测试",
+                "NetType": "wan",
+                "RegionId": "99357bc8-dc2a-11ee-bbdc-9e0d7f9e3b40",
+                "RegionName": "庆阳",
+                "Status": "ok",
+                "StatusZh": "正常",
+                "VipList": [
+                    {
+                        "Address": "38.123.96.8",
+                        "Type": "public"
+                    }
+                ],
+                "VpcId": "635957ee-9543-11f0-8037-c2aae808f99f",
+                "VpcName": "SLB"
+            }
+        ]
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def slb_list():
+    action = "DescribeVpcSlbListInfo"
+    method = "GET"
+    param = {
+        "VpcId": "635957ee-9543-11f0-8037-c2aae808f99f",
+        "Keyword": ""
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param)
+    res = requests.get(url)
+    result = json.loads(res.text)
+    return result
+```
+
+
+### 39.DescribeVpcSlbDetailInfo
+
+  **Action:DescribeVpcSlbDetailInfo**
+  **描述：** 查询VPC SLB实例详情
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称  | 类型   | 是否必选 | 示例值 | 描述      |
+| ----- | ------ | -------- | ------ | --------- |
+| SlbId | string | 是       |        | SLB实例ID |
+
+  **返回参数：**
+
+| 名称                | 类型   | 示例值  | 描述                                           |
+| :------------------ | ------ | :------ | :--------------------------------------------- |
+| Code                | string | OK      | 错误码                                         |
+| Message             | string | success | 信息                                           |
+| Data                | dict   | {}      | 返回数据                                       |
+| AzId                | string |         | 实例所属可用区ID                               |
+| AzName              | string |         | 可用区名称                                     |
+| BandwidthInfo       | dict   |         | 实例绑定的共享带宽信息                         |
+| BandwidthInfo--Id   | string |         | 共享带宽ID                                     |
+| BandwidthInfo--Name | string |         | 共享带宽名称                                   |
+| BillingMethod       | string | 0       | 实例计费类型：0-按需计费                       |
+| BillingSchemeId     | string |         | 实例计费ID                                     |
+| BillingSchemeName   | string |         | 实例计费名称                                   |
+| ConfName            | string |         | 实例规格名称                                   |
+| CreateTime          | string |         | 实例创建时间                                   |
+| Id                  | string |         | 实例ID                                         |
+| Name                | string |         | 实例名称                                       |
+| NetType             | string | wan     | 网络类型：wan-公网、wan_lan-同时支持公网和私网 |
+| NetTypeZh           | string |         | 网络类型中文翻译                               |
+| RegionId            | string |         | 实例所属大区ID                                 |
+| RegionName          | string |         | 实例所属大区名称                               |
+| Status              | string | ok      | 实例状态：ok-正常、error-异常                  |
+| StatusZh            | string |         | 实例状态中文翻译                               |
+| VipList             | list   |         | 实例VIP列表                                    |
+| Address             | string |         | VIP地址                                        |
+| Type                | string | public  | VIP类型：public-公网、private-内网             |
+| VpcId               | string |         | 所属的VPC ID                                   |
+| VpcName             | string |         | 所属的VPC名称                                  |
+| VpcSegments         | string |         | 所属VPC的网段信息                              |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": {
+        "AzId": "fa29a374-ddd7-11ee-bcf5-eaace8164471",
+        "AzName": "可用区A",
+        "BandwidthInfo": {
+            "Id": "8bbe3f84-9777-11f0-b451-c2aae808f99f",
+            "Name": "test-lxl"
+        },
+        "BillingMethod": "0",
+        "BillingSchemeId": "0e117624-419c-11ee-b4dc-aaa29186156d",
+        "BillingSchemeName": "VPC-标准型I-负载均衡-按需计费",
+        "ConfName": "标准型I",
+        "CreateTime": "2025-09-19 20:06:24",
+        "Id": "0f9c3a1e-9551-11f0-b451-c2aae808f99f",
+        "Name": "测试-lxl",
+        "NetType": "wan",
+        "NetTypeZh": "公网",
+        "RegionId": "99357bc8-dc2a-11ee-bbdc-9e0d7f9e3b40",
+        "RegionName": "庆阳",
+        "Status": "ok",
+        "StatusZh": "正常",
+        "VipList": [
+            {
+                "Address": "38.123.96.8",
+                "Type": "public"
+            }
+        ],
+        "VpcId": "635957ee-9543-11f0-8037-c2aae808f99f",
+        "VpcName": "SLB-计量bug复现--刘旭禄",
+        "VpcSegments": "10.0.0.0/16"
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def desc_vpc_slb_detail():
+    action = "DescribeVpcSlbDetailInfo"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "0f9c3a1e-9551-11f0-b451-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 40.DescribeVpcSlbListenCreateInfo
+
+  **Action:DescribeVpcSlbListenCreateInfo**
+  **描述：** 查询SLB可用的的VIP、ACL信息（用于监听创建）
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称  | 类型   | 是否必选 | 示例值 | 描述      |
+| ----- | ------ | -------- | ------ | --------- |
+| SlbId | string | 是       |        | SLB实例ID |
+
+  **返回参数：**
+
+| 名称       | 类型   | 示例值      | 描述                                      |
+| :--------- | ------ | :---------- | :---------------------------------------- |
+| Code       | string | OK          | 错误码                                    |
+| Message    | string | success     | 信息                                      |
+| data       | dict   | {}          | 返回数据                                  |
+| SlbAclList | list   |             | SLB可用的ACL信息列表                      |
+| AclId      | string |             | ACL实例ID                                 |
+| AclName    | string |             | ACL名称                                   |
+| SlbVipList | list   |             | SLB可用的VIP信息列表                      |
+| Vip        | string | 38.123.96.8 | 监听虚拟IP                                |
+| VipId      | string |             | VIP实例ID                                 |
+| VipType    | string | wan_eip     | VIP类型：wan_eip-公网VIP、wan_lan-内网VIP |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": {
+        "SlbAclList": [
+            {
+                "AclId": "206ed02e-0ced-41cb-9e34-623ac08eb3f2",
+                "AclName": "222"
+            }
+        ],
+        "SlbVipList": [
+            {
+                "Vip": "38.123.96.8",
+                "VipId": "22e20ec2-9778-11f0-8f0f-962fdefe13b1",
+                "VipType": "wan_eip"
+            }
+        ]
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def desc_vpc_slb_listen_create_info():
+    action = "DescribeVpcSlbListenCreateInfo"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "0f9c3a1e-9551-11f0-b451-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 41.CreateVpcSLBListen
+
+  **Action:CreateVpcSLBListen**
+  **描述：** 创建VPC SLB监听
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称             | 类型   | 是否必选 | 示例值   | 描述                                                    |
+| ---------------- | ------ | -------- | -------- | ------------------------------------------------------- |
+| SlbId            | string | 是       |          | SLB实例ID                                               |
+| ListenName       | string | 是       | test     | 监听名称                                                |
+| Vip              | string | 是       | 10.0.0.1 | VIP地址                                                 |
+| VipId            | string | 是       |          | VIP实例ID                                               |
+| VipType          | string | 是       | wan_eip  | VIP类型：wan_eip-公网VIP、wan_lan-内网VIP               |
+| ListenProtocol   | string | 是       | TCP      | 监听协议：TCP、UDP                                      |
+| ListenPort       | int    | 是       | 8080     | 监听端口，取值范围：1-65535                             |
+| AclId            | string | 否       |          | 需要绑定的ACL实例ID                                     |
+| ListenTimeout    | int    | 否       | 10       | 会话保持时间，单位秒，取值范围：0-900                   |
+| Scheduler        | string | 是       | rr       | 负载均衡策略：rr-轮询、wrr-加权轮询、conhash-一致性哈希 |
+| HealthCheckInfo  | string | 否       |          | 健康检查配置                                            |
+| Protocol         | string | 否       |          | 健康检查协议：TCP、HTTP                                 |
+| Virtualhost      | string | 否       |          | 健康检查地址，仅当健康检查协议为HTTP时此参数生效        |
+| Port             | int    | 否       |          | 健康检查端口，取值范围：0-65535，0表示使用后端服务端口  |
+| Path             | string | 否       |          | 健康检查路径，仅当健康检查协议为HTTP时此参数生效        |
+| StatusCode       | int    | 否       |          | 健康检查状态码                                          |
+| ConnectTimeout   | int    | 否       |          | 监测超时响应时间                                        |
+| DelayLoop        | int    | 否       |          | 监测间隔时间                                            |
+| Retry            | int    | 否       |          | 重连次数(不健康阈值)                                    |
+| DelayBeforeRetry | int    | 否       |          | 重连时间间隔(不健康重试间隔时间)                        |
+
+> 注意: 对请求参数的内容解释如下  
+>
+> - AclId、Vip、VipId、VipType四个参数内容可通过接口DescribeVpcSlbListenCreateInfo查询
+> - HealthCheckInfo: 如果不传递此参数，则监听不会开启健康检查，建议开启
+
+  **返回参数：**
+
+| 名称     | 类型   | 示例值  | 描述           |
+| :------- | ------ | :------ | :------------- |
+| Code     | string | OK      | 错误码         |
+| Message  | string | success | 信息           |
+| TaskId   | string |         | 任务ID         |
+| Data     | dict   | {}      | 返回数据       |
+| ListenId | string |         | 新建监听实例ID |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc"
+    },
+    "Message": "任务下发成功",
+    "TaskId": "47571014-9916-11f0-b7f3-7a25eed710cc"
+}
+```
+
+   **代码调用示例**
+
+```python
+def create_slb_listen():
+    action = "CreateVpcSLBListen"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "0f9c3a1e-9551-11f0-b451-c2aae808f99f",
+        "ListenName": "test1",
+        "Vip": "38.123.96.8",
+        "VipId": "22e20ec2-9778-11f0-8f0f-962fdefe13b1",
+        "VipType": "wan_eip",
+        "ListenProtocol": "TCP",
+        "ListenPort": 23456,
+        "AclId": "",
+        "ListenTimeout": 10,
+        "Scheduler": "rr",
+        "HealthCheckInfo": {
+            "Protocol": "TCP",
+            "Virtualhost": "",
+            "Port": 0,
+            "Path": "",
+            "StatusCode": 200,
+            "ConnectTimeout": 5,
+            "DelayLoop": 5,
+            "Retry": 2,
+            "DelayBeforeRetry": 10
+        },
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 42.DeleteVpcSLBListen
+
+  **Action:DeleteVpcSLBListen**
+  **描述：** 批量删除VPC SLB监听
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称      | 类型 | 是否必选 | 示例值 | 描述                 |
+| --------- | ---- | -------- | ------ | -------------------- |
+| ListenIds | list | 是       |        | 需要删除的监听ID列表 |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "删除任务已下发成功",
+    "TaskId": "65223bb0-991f-11f0-aec6-a6fdb2862bf2"
+}
+```
+
+   **代码调用示例**
+
+```python
+def delete_slb_listen():
+    action = "DeleteVpcSLBListen"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ListenIds": ["0b9a58f8-9919-11f0-831b-7a25eed710cc"]
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 43.UpdateVpcSLBListen
+
+  **Action:UpdateVpcSLBListen**
+  **描述：** 更新VPC SLB监听
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称             | 类型   | 是否必选 | 示例值 | 描述                                                    |
+| ---------------- | ------ | -------- | ------ | ------------------------------------------------------- |
+| ListenId         | string | 是       |        | 监听实例ID                                              |
+| ListenName       | string | 是       | test   | 监听名称                                                |
+| AclId            | string | 否       |        | 需要绑定的ACL实例ID                                     |
+| ListenTimeout    | int    | 否       | 10     | 会话保持时间，单位秒，取值范围：0-900                   |
+| Scheduler        | string | 是       | rr     | 负载均衡策略：rr-轮询、wrr-加权轮询、conhash-一致性哈希 |
+| HealthCheckInfo  | string | 否       |        | 健康检查配置                                            |
+| Protocol         | string | 否       |        | 健康检查协议：TCP、HTTP                                 |
+| Virtualhost      | string | 否       |        | 健康检查地址，仅当健康检查协议为HTTP时此参数生效        |
+| Port             | int    | 否       |        | 健康检查端口，取值范围：1-65535                         |
+| Path             | string | 否       |        | 健康检查路径，仅当健康检查协议为HTTP时此参数生效        |
+| StatusCode       | int    | 否       |        | 健康检查状态码                                          |
+| ConnectTimeout   | int    | 否       |        | 监测超时响应时间                                        |
+| DelayLoop        | int    | 否       |        | 监测间隔时间                                            |
+| Retry            | int    | 否       |        | 重连次数(不健康阈值)                                    |
+| DelayBeforeRetry | int    | 否       |        | 重连时间间隔(不健康重试间隔时间)                        |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "7915019c-9920-11f0-ad36-a6fdb2862bf2"
+}
+```
+
+   **代码调用示例**
+
+```python
+def update_slb_listen():
+    action = "UpdateVpcSLBListen"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+        "ListenName": "test1",
+        "AclId": "",
+        "ListenTimeout": 10,
+        "Scheduler": "rr",
+        "HealthCheckInfo": {
+            "Protocol": "TCP",
+            "Port": 0,
+            "ConnectTimeout": 5,
+            "DelayLoop": 5,
+            "Retry": 2,
+            "DelayBeforeRetry": 10
+        }
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 44.DescribeVpcSlbListenList
+
+  **Action:DescribeVpcSlbListenList**
+  **描述：** 查询VPC SLB监听列表
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称  | 类型   | 是否必选 | 示例值 | 描述      |
+| ----- | ------ | -------- | ------ | --------- |
+| SlbId | string | 是       |        | SLB实例ID |
+
+  **返回参数：**
+
+| 名称           | 类型   | 示例值  | 描述                     |
+| :------------- | ------ | :------ | :----------------------- |
+| Code           | string | OK      | 错误码                   |
+| Message        | string | success | 信息                     |
+| TaskId         | string |         | 任务ID                   |
+| Data           | dict   | {}      | 返回数据                 |
+| ListenList     | list   |         | SLB中监听列表            |
+| CheckInfo      | dict   |         | 后端服务端口健康检查信息 |
+| Error          | int    |         | 健康检查失败数量         |
+| Ok             | int    |         | 健康检查成功数量         |
+| ListenId       | string |         | 监听ID                   |
+| ListenName     | string |         | 监听名称                 |
+| ListenPort     | string |         | 监听端口                 |
+| ListenProtocol | string | TCP     | 监听协议                 |
+| ListenVip      | string |         | 监听VIP                  |
+| Scheduler      | string | rr      | 监听转发策略             |
+| SchedulerCn    | string | 轮询    | 转发策略中文翻译         |
+| Status         | string | ok      | 监听状态                 |
+| StatusCn       | string | 正常    | 监听状态中文翻译         |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": {
+        "ListenList": [
+            {
+                "CheckInfo": {
+                    "Error": 0,
+                    "Ok": 0
+                },
+                "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+                "ListenName": "test1",
+                "ListenPort": "23456",
+                "ListenProtocol": "TCP",
+                "ListenVip": "38.123.96.8",
+                "Scheduler": "rr",
+                "SchedulerCn": "轮询",
+                "Status": "ok",
+                "StatusCn": "正常"
+            }
+        ],
+        "Total": 1
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def query_slb_listen_list():
+    action = "DescribeVpcSlbListenList"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "SlbId": "0f9c3a1e-9551-11f0-b451-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 45.QueryVpcSLBListen
+
+  **Action:QueryVpcSLBListen**
+  **描述：** 查询VPC SLB实例详情
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值 | 描述       |
+| -------- | ------ | -------- | ------ | ---------- |
+| ListenId | string | 是       |        | 监听实例ID |
+
+  **返回参数：**
+
+| 名称             | 类型   | 示例值   | 描述                                                    |
+| ---------------- | ------ | -------- | ------------------------------------------------------- |
+| Code             | string |          | 错误码                                                  |
+| Message          | string | success  | 信息                                                    |
+| Data             | dict   | {}       | 返回数据                                                |
+| ListenId         | string |          | 监听实例ID                                              |
+| ListenName       | string | test     | 监听名称                                                |
+| Vip              | string | 10.0.0.1 | VIP地址                                                 |
+| VipId            | string |          | VIP实例ID                                               |
+| VipType          | string | wan_eip  | VIP类型：wan_eip-公网VIP、wan_lan-内网VIP               |
+| ListenProtocol   | string | TCP      | 监听协议：TCP、UDP                                      |
+| ListenPort       | int    | 8080     | 监听端口，取值范围：1-65535                             |
+| AclId            | string |          | 需要绑定的ACL实例ID                                     |
+| ListenTimeout    | int    | 10       | 会话保持时间，单位秒，取值范围：0-900                   |
+| Scheduler        | string | rr       | 负载均衡策略：rr-轮询、wrr-加权轮询、conhash-一致性哈希 |
+| HealthCheckInfo  | string |          | 健康检查配置                                            |
+| Protocol         | string |          | 健康检查协议：TCP、HTTP                                 |
+| Virtualhost      | string |          | 健康检查地址，仅当健康检查协议为HTTP时此参数生效        |
+| Port             | int    |          | 健康检查端口，取值范围：1-65535                         |
+| Path             | string |          | 健康检查路径，仅当健康检查协议为HTTP时此参数生效        |
+| StatusCode       | int    |          | 健康检查状态码                                          |
+| ConnectTimeout   | int    |          | 监测超时响应时间                                        |
+| DelayLoop        | int    |          | 监测间隔时间                                            |
+| Retry            | int    |          | 重连次数(不健康阈值)                                    |
+| DelayBeforeRetry | int    |          | 重连时间间隔(不健康重试间隔时间)                        |
+
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+        "ListenName": "test1",
+        "Vip": "38.123.96.8",
+        "VipId": "22e20ec2-9778-11f0-8f0f-962fdefe13b1",
+        "VipType": "wan_eip",
+        "ListenProtocol": "TCP",
+        "ListenPort": 23456,
+        "AclId": "",
+        "ListenTimeout": 10,
+        "Scheduler": "rr",
+        "HealthCheckInfo": {
+            "ConnectTimeout": 5,
+            "DelayBeforeRetry": 10,
+            "DelayLoop": 5,
+            "Path": "/",
+            "Port": 0,
+            "Protocol": "TCP",
+            "Retry": 2,
+            "StatusCode": 200,
+            "Virtualhost": ""
+        },
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def query_slb_listen():
+    action = "QueryVpcSLBListen"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 46.DescribeVpcSlbListenRsInfo
+
+  **Action:DescribeVpcSlbListenRsInfo**
+  **描述：** 查询VPC下可绑定监听的主机信息
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称   | 类型   | 是否必选 | 示例值 | 描述          |
+| ------ | ------ | -------- | ------ | ------------- |
+| VpcId  | string | 是       |        | VPC实例ID     |
+| VmType | string | 是       | kvm    | 主机类型：kvm |
+
+  **返回参数：**
+
+| 名称          | 类型   | 示例值  | 描述         |
+| :------------ | ------ | :------ | :----------- |
+| Code          | string | OK      | 错误码       |
+| Message       | string | success | 信息         |
+| Data          | list   |         | 返回数据     |
+| vm_id         | string |         | 服务器ID     |
+| vm_name       | string |         | 服务器名称   |
+| vm_private_ip | string |         | 服务器内网IP |
+| vm_public_ip  | string |         | 服务器公网IP |
+| vm_type       | string |         | 服务器类型   |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "OK",
+    "Data": [
+        {
+            "vm_id": "ins-qyvk5dju93nh1cs0",
+            "vm_name": "test-003",
+            "vm_private_ip": "10.0.0.6",
+            "vm_public_ip": "38.123.96.14",
+            "vm_type": "kvm"
+        }
+    ],
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def desc_vpc_slb_listen_rs_info():
+    action = "DescribeVpcSlbListenRsInfo"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "VmType": "kvm",
+        "VpcId": "635957ee-9543-11f0-8037-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 47.CreateVpcSLBRsPort
+
+  **Action:CreateVpcSLBRsPort**
+  **描述：** VPC SLB监听绑定后端服务端口
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                             |
+| ----------- | ------ | -------- | ------ | ------------------------------------------------ |
+| ListenId    | string | 是       |        | 监听实例ID                                       |
+| RsList      | string | 是       |        | 绑定的后端服务器列表                             |
+| VmId        | string | 是       |        | 服务器ID                                         |
+| VmName      | string | 是       |        | 服务器名称                                       |
+| VmPublicIp  | string | 是       |        | 服务器公网IP，如果没有公网IP，可以传空字符串："" |
+| VmType      | string | 是       |        | 服务器类型                                       |
+| VmPrivateIp | string | 是       |        | 服务器内网IP                                     |
+| Port        | string | 是       |        | 后端服务端口，取值范围：2-65535                  |
+| Weight      | string | 是       |        | 权重，取值范围：0-1000                           |
+
+> 注意: 对请求参数的内容解释如下  
+>
+> - VmId、VmName、VmPublicIp、VmType、VmPrivateIp五个参数内容可通过接口DescribeVpcSlbListenRsInfo查询
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "258f8b2e-9924-11f0-8934-a6fdb2862bf2"
+}
+```
+
+   **代码调用示例**
+
+```python
+def create_slb_rs_port():
+    action = "CreateVpcSLBRsPort"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+        "RsList": [
+            {
+                "VmId": "ins-qyvk5dju93nh1cs0",
+                "VmName": "test-003",
+                "VmPublicIp": "38.123.96.14",
+                "VmType": "kvm",
+                "VmPrivateIp": "10.0.0.6",
+                "Port": "80",
+                "Weight": "100"
+            }
+        ]
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 48.DeleteVpcSLBRsPort
+
+  **Action:DeleteVpcSLBRsPort**
+  **描述：** VPC SLB监听解绑后端服务端口
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称      | 类型 | 是否必选 | 示例值 | 描述                       |
+| --------- | ---- | -------- | ------ | -------------------------- |
+| RsPortIds | list | 是       |        | 需要解绑的后端服务实例列表 |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "8aa32da8-9925-11f0-aec6-a6fdb2862bf2"
+}
+```
+
+   **代码调用示例**
+
+```python
+def delete_slb_rs_port():
+    action = "DeleteVpcSLBRsPort"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RsPortIds": ["75c187dc-9924-11f0-882a-a6fdb2862bf2"]
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 49.UpdateVpcSLBRsPort
+
+  **Action:UpdateVpcSLBRsPort**
+  **描述：** 更新VPC SLB监听绑定后端服务端口
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称       | 类型   | 是否必选 | 示例值 | 描述                            |
+| ---------- | ------ | -------- | ------ | ------------------------------- |
+| RsPortList | list   | 是       |        | 需要修改的后端服务列表          |
+| RsPortId   | string | 是       |        | 后端服务实例ID                  |
+| Port       | string | 是       |        | 后端服务端口，取值范围：2-65535 |
+| Weight     | string | 是       |        | 权重，取值范围：0-1000          |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "f025dd1a-9925-11f0-8835-a6fdb2862bf2"
+}
+```
+
+   **代码调用示例**
+
+```python
+def update_slb_rs_port():
+    action = "UpdateVpcSLBRsPort"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "RsPortList": [
+            {
+                "RsPortId": "258dbea2-9924-11f0-8934-a6fdb2862bf2",
+                "Port": "80",
+                "Weight": "100"
+            }
+        ]
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+### 50.QueryVpcSLBRsPort
+
+  **Action:QueryVpcSLBRsPort**
+  **描述：** 查询VPC SLB监听绑定后端服务端口列表
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称     | 类型   | 是否必选 | 示例值 | 描述                             |
+| -------- | ------ | -------- | ------ | -------------------------------- |
+| ListenId | string | 是       |        | 监听实例ID                       |
+| Keyword  | string | 是       |        | 关键字匹配，可以传递空字符串："" |
+
+  **返回参数：**
+
+| 名称           | 类型   | 示例值  | 描述                 |
+| :------------- | ------ | :------ | :------------------- |
+| Code           | string | OK      | 错误码               |
+| Message        | string | success | 信息                 |
+| Data           | dict   | {}      | 返回数据             |
+| RsPortList     |        |         | 后端服务列表         |
+| CheckStatus    | string |         | 健康检查状态         |
+| CheckStatusStr | string |         | 健康检查状态中文翻译 |
+| LanIp          | string |         | 内网IP               |
+| Port           | string |         | 服务端口             |
+| ResourceId     | string |         | 服务器ID             |
+| ResourceName   | string |         | 服务器名称           |
+| RsPortId       | string |         | 后端服务实例ID       |
+| Status         | string |         | 后端服务状态         |
+| StatusZh       | string |         | 后端服务状态中文翻译 |
+| VmType         | string |         | 服务器类型           |
+| WanIp          | string |         | 服务器公网IP         |
+| Weight         | string |         | 权重                 |
+| Total          | int    |         | 后端服务数量         |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {
+        "RsPortList": [
+            {
+                "CheckStatus": "ok",
+                "CheckStatusStr": "正常",
+                "LanIp": "10.0.0.6",
+                "Port": "80",
+                "ResourceId": "ins-qyvk5dju93nh1cs0",
+                "ResourceName": "test-003",
+                "RsPortId": "258dbea2-9924-11f0-8934-a6fdb2862bf2",
+                "Status": "ok",
+                "StatusZh": "正常",
+                "VmType": "云服务器",
+                "WanIp": "38.123.96.14",
+                "Weight": "103"
+            }
+        ],
+        "Total": 1
+    },
+    "Message": "success"
+}
+```
+
+   **代码调用示例**
+
+```python
+def query_slb_rs_port():
+    action = "QueryVpcSLBRsPort"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "ListenId": "4751aff2-9916-11f0-b7f3-7a25eed710cc",
+        "Keyword": ""
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 51.BandwidthBindResource
+
+  **Action:BandwidthBindResource**
+  **描述：** 共享带宽绑定资源
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述                                          |
+| ----------- | ------ | -------- | ------ | --------------------------------------------- |
+| BandwidthId | string | 是       |        | 共享带宽ID                                    |
+| BindType    | string | 是       | VPCSLB | 绑定资源类型：NAT-绑定NAT、VPCSLB-绑定VPC SLB |
+| ResourceId  | string | 是       |        | SLB实例ID                                     |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "b00ecc56-98f2-11f0-9cf5-0ef08d50031a"
+}
+```
+
+   **代码调用示例**
+
+```python
+def bind_slb():
+    action = "BandwidthBindResource"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "BandwidthId": "8bbe3f84-9777-11f0-b451-c2aae808f99f",
+        "BindType": "VPCSLB",
+        "ResourceId": "0f9c3a1e-9551-11f0-b451-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+### 52.BandwidthUnbindResource
+
+  **Action:BandwidthUnbindResource**
+  **描述：** 共享带宽解绑资源
+  **请求地址:** cdsapi.capitalonline.net/vpc
+  **请求方法：POST**
+  **请求参数：**
+
+| 名称        | 类型   | 是否必选 | 示例值 | 描述       |
+| ----------- | ------ | -------- | ------ | ---------- |
+| BandwidthId | string | 是       |        | 共享带宽ID |
+
+  **返回参数：**
+
+| 名称    | 类型   | 示例值  | 描述     |
+| :------ | ------ | :------ | :------- |
+| Code    | string | OK      | 错误码   |
+| Message | string | success | 信息     |
+| TaskId  | string |         | 任务ID   |
+| Data    | dict   | {}      | 返回数据 |
+
+  **错误码：**
+
+| httpcode | 错误码 | 错误信息 | 描述 |
+| -------- | ------ | -------- | ---- |
+
+  **返回示例：**
+
+```json
+{
+    "Code": "Success",
+    "Data": {},
+    "Message": "任务下发成功",
+    "TaskId": "3e1db8ca-98f5-11f0-8126-0ef08d50031a"
+}
+```
+
+   **代码调用示例**
+
+```python
+def unbind_slb():
+    action = "BandwidthUnbindResource"
+    method = "POST"
+    param = {}
+    url = get_signature(action, AK, AccessKeySecret, method, NETWORK_URL, param=param)
+    body = {
+        "BandwidthId": "8bbe3f84-9777-11f0-b451-c2aae808f99f"
+    }
+    res = requests.post(url, json=body)
+    result = json.loads(res.content)
+    return result
+```
+
+
+
 
 
 ## 裸金属相关
@@ -15978,9 +17410,9 @@ def get_status(task_id):
 |  文昌    | CN_Wenchang|  边缘节点   | 中国大陆 |
 |  庆阳    | CN_Qingyang | 边缘节点   | 中国大陆 |
 |  达拉斯   | US_Dallas   | 边缘节点   | 中国大陆 |
-	
 
-	
+
+​	
 
 #### 私有网络可用区名称
 
@@ -16011,7 +17443,7 @@ def get_status(task_id):
 | 联通    | Bandwidth_China_Unicom |
 | 电信    | Bandwidth_China_Telecom |
 | BGP多线 | Bandwidth_Multi_ISP_BGP |
- 
+
 ### EIP计费方案
 | 名称 | BillScheme    | 
 | -------- | ------------- |
