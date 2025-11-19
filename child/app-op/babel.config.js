@@ -3,6 +3,6 @@ module.exports = {
     '@vue/cli-plugin-babel/preset'
   ],
   plugins: [
-     ["transform-remove-console", { "exclude": ["error", "warn"] }]
+    //  ["transform-remove-console", { "exclude": ["error", "warn"] }]
   ]
 }
