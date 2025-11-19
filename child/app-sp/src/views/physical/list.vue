@@ -142,7 +142,8 @@
             <span v-else>全部客户</span>
           </template>
           <template #default="props" v-else-if="item.prop==='ecs_num_expand'">
-              <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading">
+              <el-table :data="props.row.ecs_detail" v-if="props.row.ecs_detail" :max-height="400" v-loading="loading" ref="vm_table"  v-model="multi_vm_rows"  @selection-change="(selectedVms) => handleSelectVMList(selectedVms, props)" >
+                <el-table-column type="selection"></el-table-column>
                 <el-table-column v-for="inn in ecs_fields" ref="ecs_list" :key="inn.prop" :label="inn.label" :prop="inn.prop" :width="inn.width ? inn.width : null">
                   <template #default="scope" v-if="inn.prop==='ecs_name'">
                     <span class="clickble" @click="FnToDetail(scope.row.ecs_id)">{{scope.row.ecs_name}}</span>
@@ -258,7 +259,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="page_info.total">
       </el-pagination>
-      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark','service','rollback'].includes(oper_type)">
+      <template v-if="visible && !['upload','migrate','record','resource','update_attribute','business_test','remark','service','rollback','update_vm_status'].includes(oper_type)">
         <Operate :title="oper_label" :rows="multi_rows" :oper_type="oper_type" :visible.sync="visible" @close="close"></Operate>
       </template>
       <template v-if="visible && oper_type==='upload'">
@@ -273,6 +274,10 @@
       <template v-if="visible && ['resource','service','rollback'].includes(oper_type)">
         <Resource :visible.sync="visible" :title="oper_label" :oper_type="oper_type"  :rows="multi_rows" @close="close"></Resource>
       </template>
+      <template v-if="visible && oper_type==='update_vm_status'">
+        <update-vm-status :visible.sync="visible"  :title="oper_label" :rows="multi_vm_rows" :current_host_id="current_host_id"  @close="close"></update-vm-status>
+      </template>
+
       <template v-if="detail_visible">
         <Detail
           :visible="detail_visible"
@@ -321,6 +326,7 @@ import Detail from '../instance/detail.vue'
 import moment from 'moment';
 import Remark from './editRemark.vue';
 import it from "element-ui/src/locale/lang/it";
+import UpdateVmStatus from './updateVmStatus.vue';
 // import UnderSync from './underSync.vue'
 @Component({
   components:{
@@ -336,6 +342,7 @@ import it from "element-ui/src/locale/lang/it";
     BusinessTest,
     Detail,
     Remark,
+    UpdateVmStatus
     // UnderSync
   }
 })
@@ -403,6 +410,7 @@ export default class PhysicalList extends Vue {
     },
     {label:'服务更新',value:'service'},
     {label:'回滚',value:'rollback'},
+    {label:'更新虚机状态',value:'update_vm_status'},
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
@@ -412,6 +420,7 @@ export default class PhysicalList extends Vue {
     {label:'编辑备注',value:'remark'},
     {label:'服务更新',value:'service'},
     {label:'回滚',value:'rollback'},
+    {label:'更新物理机电源状态',value:'update_host_status'}
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
@@ -437,6 +446,8 @@ export default class PhysicalList extends Vue {
   private oper_type:string="";
   private oper_label:string="";
   private multi_rows:any=[];
+  private multi_vm_rows:any=[];
+  private current_host_id:'';
   private auth_list=[];
   private filter_data:any={}
   private host_types=[]
@@ -933,6 +944,11 @@ export default class PhysicalList extends Vue {
   private handleSelectionChange(data){
     this.multi_rows = data
   }
+  private handleSelectVMList(data,props){
+    console.log(data,'sabdhbashdajs');
+    this.current_host_id = props.row.host_id;
+    this.multi_vm_rows = data
+  }
   private FnSortChange(obj){
     this.search_data.sort_cpu =undefined
     this.search_data.sort_ram =undefined;
@@ -1005,10 +1021,22 @@ export default class PhysicalList extends Vue {
         this.loading=false
       }
       this.expand_rows = expandedRows
+      this.multi_vm_rows = [];
     }
   }
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
+    if(value==='update_vm_status'){
+      if(this.multi_vm_rows.length===0){
+        this.$message.warning("请先勾选虚拟机!");
+        return;
+      }else{
+        this.oper_type=value;
+        this.oper_label = label
+        this.visible=true;
+        return;
+      }
+    }
     if(this.multi_rows.length===0 && !['upload','business_test','service','rollback'].includes(value)){
       this.$message.warning("请先勾选物理机!");
       return;
