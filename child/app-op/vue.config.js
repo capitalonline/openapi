@@ -92,5 +92,5 @@ module.exports = {
     })
     .end();
   },
-  // productionSourceMap: false,
+  productionSourceMap: false,
 }
