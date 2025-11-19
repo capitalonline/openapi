@@ -46,7 +46,7 @@
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="![...status_list,...flag_list].includes(title)"></el-table-column>
                 <el-table-column prop="ecs_num" label="虚拟机数量" width="150" v-if="['lock'].includes(oper_type)"></el-table-column>
-                <el-table-column prop="power_status_name" label="电源状态" v-if="!['lock','maintenance','update_host_status'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="power_status_name" label="电源状态" v-if="!['lock','maintenance'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="machine_status_name" label="机器状态" v-if="['schedule','migrate_flag','cheat'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="host_purpose" label="主机用途" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="host_source" label="主机来源" v-if="['finish_validate','shelves'].includes(oper_type)"></el-table-column>
@@ -90,7 +90,7 @@
                     <el-option v-for="item in recycle_list" :key="item.department_en" :label="item.department_name" :value="item.department_name"></el-option>
                   </el-select>
               </el-form-item>
-               <el-form-item prop="power_status" v-if="oper_type==='update_host_status'" label-width="150px"  label="状态变更为：" :rules="[{ required: true, message: '请选择变更状态', trigger: 'blur' }]">
+               <el-form-item prop="power_status" v-if="oper_type==='update_host_status'" label-width="150px"  label="电源状态变更为：" :rules="[{ required: true, message: '请选择变更状态', trigger: 'blur' }]">
                   <el-radio-group v-model="form_data.power_status">
                   <el-radio label="running">运行中</el-radio>
                   <el-radio label="shutdown">已关机</el-radio>

@@ -1021,8 +1021,8 @@ export default class PhysicalList extends Vue {
         this.loading=false
       }
       this.expand_rows = expandedRows
-      this.multi_vm_rows = [];
     }
+    this.multi_vm_rows = [];
   }
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){

@@ -5,6 +5,7 @@ module.exports = {
   ],
   plugins: [
     "@babel/plugin-proposal-optional-chaining",
-    "@babel/plugin-syntax-dynamic-import"
+    "@babel/plugin-syntax-dynamic-import",
+    ["transform-remove-console", { "exclude": ["error", "warn"] }]
  ]
 }
