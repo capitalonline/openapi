@@ -19,7 +19,7 @@
                     class="dropdownbtn"
                     :key="item.value"
                     @click="handle(item.label, item.value)"
-                    v-if="item.value !== 'business_test' || !$store.state.is_special_user"
+                    v-if="isButtonAuth(item.value)"
                   >
                     {{ item.label }}
                   </el-button>
@@ -244,7 +244,7 @@
               <el-button type="text"><svg-icon icon="more" class="more"></svg-icon></el-button>
               <!-- :disabled="!auth_list.includes(item.value)" -->
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="item in rows_operate_btns" :command="{title:item.label,label:item.value,value:scope.row}" :key="item.value" >{{item.label}}</el-dropdown-item>
+                <el-dropdown-item v-for="item in rows_operate_btns" :command="{title:item.label,label:item.value,value:scope.row}" :key="item.value"  :disabled="!isButtonAuth(item.value)">{{item.label}}</el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
           </template>
@@ -420,7 +420,7 @@ export default class PhysicalList extends Vue {
     {label:'编辑备注',value:'remark'},
     {label:'服务更新',value:'service'},
     {label:'回滚',value:'rollback'},
-    {label:'更新物理机电源状态',value:'update_host_status'}
+    {label:'更新物理机电源状态',value:'update_physical_power_state'}
   ]
   private error_msg={
     start_up_host:'已选主机需为在线或离线状态',
@@ -538,6 +538,15 @@ export default class PhysicalList extends Vue {
         self.tableHeight = window.innerHeight - table.$el.offsetTop - 70;
       }
     });
+  }
+  isButtonAuth(value: string): boolean {
+    const authRules = {
+        business_test: () => !this.$store.state.is_special_user,
+        update_vm_status: () => this.auth_list.includes('update_vm_status'),
+        update_physical_power_state: () => this.auth_list.includes('update_physical_power_state'),
+      // 后续新增按钮权限，在这里加key-value即可
+     };
+    return authRules[value] ? authRules[value]() : true;
   }
   private async get_host_list_field(){
     let res:any = await Service.get_host_list_field({})

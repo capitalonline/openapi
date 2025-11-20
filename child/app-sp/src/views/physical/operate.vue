@@ -20,7 +20,7 @@
                 :title="alert_title"
                 type="warning"
                 center
-                v-if="!['lock','maintenance','update_host_status'].includes(oper_type)"
+                v-if="!['lock','maintenance','update_physical_power_state'].includes(oper_type)"
                 :closable="false">
             </el-alert>
           <el-alert
@@ -33,7 +33,7 @@
            <el-alert
             title="该功能只在特定异常故障时由运维人员操作使用。请核对如下信息，谨慎操作:"
             type="warning"
-            v-if="oper_type==='update_host_status'"
+            v-if="oper_type==='update_physical_power_state'"
             :closable="false">
           </el-alert>
             <el-table
@@ -42,7 +42,7 @@
                 max-height="253"
             >
                 <el-table-column prop="host_name" label="主机名" width="150"></el-table-column>
-                <el-table-column prop="out_band_address" label="宿主机带外" v-if="['lock','maintenance','update_host_status'].includes(oper_type)"></el-table-column>
+                <el-table-column prop="out_band_address" label="宿主机带外" v-if="['lock','maintenance','update_physical_power_state'].includes(oper_type)"></el-table-column>
                 <el-table-column prop="az_name" label="区域" v-if="oper_type==='finish_validate'"></el-table-column>
                 <el-table-column prop="machine_status_name" label="主机状态" v-if="![...status_list,...flag_list].includes(title)"></el-table-column>
                 <el-table-column prop="ecs_num" label="虚拟机数量" width="150" v-if="['lock'].includes(oper_type)"></el-table-column>
@@ -69,7 +69,7 @@
           <div v-if="notSelectVmList.length > 0" class="m-top10">
             <span class="tip_message">仅支持对状态为“初始化”、“初始化失败”、“锁定”、“存储异常”或“宕机”且无虚拟机运行的宿主机进行“设置维护”操作，有{{notSelectVmList.length}}台宿主机不满足要求</span>
           </div>
-            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat','update_host_status'].includes(oper_type)" label-position="left">
+            <el-form class="m-top20" ref="form" :model="form_data" label-width="100px" v-if="['shelves','finish_validate','schedule','migrate_flag','cheat','update_physical_power_state'].includes(oper_type)" label-position="left">
               <el-form-item prop="valid" label="验证结果:" :rules="[{ required: true, message: '请选择验证结果', trigger: 'blur' }]" v-if="oper_type==='finish_validate'">
                 <el-radio-group v-model="form_data.valid">
                   <el-radio :label="'1'">成功</el-radio>
@@ -85,12 +85,12 @@
               <el-form-item prop="reason" label="说明:" v-if="['schedule','migrate_flag','cheat'].includes(oper_type) || (oper_type==='finish_validate' && form_data.valid==='0')">
                 <el-input v-model="form_data.reason" type="textarea" show-word-limit :maxlength="['schedule','migrate_flag','cheat'].includes(oper_type) ? 128 : 256" />
               </el-form-item>
-              <el-form-item prop="recycleId" v-if="!['schedule','migrate_flag','cheat','update_host_status'].includes(oper_type)" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
+              <el-form-item prop="recycleId" v-if="!['schedule','migrate_flag','cheat','update_physical_power_state'].includes(oper_type)" :label="oper_type==='finish_validate' ? '通知对象：' : '回收部门：'" :rules="[{ required: true, message: `请选择${oper_type==='finish_validate' ? '通知对象' : '回收部门'}`, trigger: 'blur' }]">
                   <el-select v-model="form_data.recycleId">
                     <el-option v-for="item in recycle_list" :key="item.department_en" :label="item.department_name" :value="item.department_name"></el-option>
                   </el-select>
               </el-form-item>
-               <el-form-item prop="power_status" v-if="oper_type==='update_host_status'" label-width="150px"  label="电源状态变更为：" :rules="[{ required: true, message: '请选择变更状态', trigger: 'blur' }]">
+               <el-form-item prop="power_status" v-if="oper_type==='update_physical_power_state'" label-width="150px"  label="电源状态变更为：" :rules="[{ required: true, message: '请选择变更状态', trigger: 'blur' }]">
                   <el-radio-group v-model="form_data.power_status">
                   <el-radio label="running">运行中</el-radio>
                   <el-radio label="shutdown">已关机</el-radio>
@@ -191,7 +191,7 @@ export default class Operate extends Vue{
     'unlock':'set_unlock',
     'maintenance':'set_maintenance',
     'unstore_exception':'recover_storage_error',
-    'update_host_status':'update_host_power_status'
+    'update_physical_power_state':'update_host_power_status'
   }
   private created() {
       ['shelves','finish_validate'].includes(this.oper_type) && this.get_host_recycle_department()
@@ -277,7 +277,7 @@ export default class Operate extends Vue{
       }:this.oper_type==="lock" ? {
       lock_detail:lock_detail,
       host_ids:this.list.map(item=>item.host_id)
-      } : this.oper_type==="update_host_status" ?{
+      } : this.oper_type==="update_physical_power_state" ?{
         power_status:this.form_data.power_status,
         host_id:this.list[0].host_id
       }:
