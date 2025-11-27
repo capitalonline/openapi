@@ -1863,6 +1863,7 @@ def describe_zone_instance_type():
 5. 包年包月只支持升配置
 6. 云盘实例支持跨规格族，本地盘实例不支持跨规格族
 7. 批量操作要具有一致性
+8. 竞价实例不允许修改
 
 **请求地址**：api.capitalonline.net/ecs/v1
 
@@ -1888,22 +1889,22 @@ def describe_zone_instance_type():
 **请求示例**
 
 ```python
-def ecs_reset_password():
+def change_instance_configure():
     """
-       更改实例规格
+    更改实例规格
     """
-    ecs_url = 'http://api.capitalonline.net/ecs/v1'
+    ecs_url = 'http://gateway.gic.test/ecs/v1'
     action = "ChangeInstanceConfigure"
     method = "POST"
-    param = {}
     body = {
-        "AvailableZoneCode":"CN_Hohhot_B",
-        "EcsFamilyName":"极速渲染型re3",
+        "EcsIds": ['ins-dhz8kr4u7ajp5gcc'],
+        "AvailableZoneCode":"CN_SJZ_B",
+        "EcsFamilyName":"优化型M2",
         "Cpu":2,    
-        "Ram":4,
+        "Ram":2,
         "Gpu":0,
     }
-    url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url)
     resp = requests.post(url, json=body)
     result = json.loads(resp.content)
     return result
