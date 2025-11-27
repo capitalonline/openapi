@@ -124,6 +124,7 @@
       this.search.az_id.list=[]
     let res:any=await EcsService.get_region_az_list({})
         if(res.code==="Success"){
+          // 如果是达州用户“DZ0003”，可用区只显示达州，dz_key为达州的可用区id
             const dz_user = this.$store.state.employee_no === 'DZ0003';
             const dz_key = '400024f8-94fd-11f0-98bd-bed299e83d5e';
             res.data.forEach(item=>{
