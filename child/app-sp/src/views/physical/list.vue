@@ -414,7 +414,7 @@ export default class PhysicalList extends Vue {
   ]
   private rows_operate_btns:any=[
     {label:'详情',value:'physical_detail'},
-    {label:'迁移',value:'migrate'},
+    {label:'(冷/热)迁移',value:'migrate'},
     {label:'操作记录',value:'record'},
     {label:'分配资源',value:'resource'},
     {label:'编辑备注',value:'remark'},
@@ -954,7 +954,6 @@ export default class PhysicalList extends Vue {
     this.multi_rows = data
   }
   private handleSelectVMList(data,props){
-    console.log(data,'sabdhbashdajs');
     this.current_host_id = props.row.host_id;
     this.multi_vm_rows = data
   }

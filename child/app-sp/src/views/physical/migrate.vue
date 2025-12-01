@@ -1,7 +1,7 @@
 <template>
   <div>
      <el-dialog
-      title="迁移"
+      title="(冷/热)迁移"
       :visible.sync="visible_sync"
       width="1180px"
       :destroy-on-close="true"
