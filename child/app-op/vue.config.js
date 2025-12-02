@@ -91,5 +91,6 @@ module.exports = {
       },
     })
     .end();
-  }
+  },
+  productionSourceMap: false,
 }

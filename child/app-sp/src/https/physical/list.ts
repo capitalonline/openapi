@@ -175,4 +175,12 @@ export default{
   get_ovs_version(req){
     return service(getHostOptions('GET','/host/ovs_version_list/',req))
   },
+  // 更新物理机电源状态 
+  update_host_power_status(req){
+    return service(getHostOptions('POST','/host/update_host_power_status/',req))
+  },
+  //更新虚机状态   
+  update_ecs_status(req){
+    return service(getHostOptions('POST','/host/update_host_ecs_status/',req))
+  },
 }

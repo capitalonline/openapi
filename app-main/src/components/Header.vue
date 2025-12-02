@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="left-content">
-      <svg id="svgIcon" viewBox="0 0 107 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svg-icon icon-logo" v-if="!$store.state.is_special_user">
+      <svg id="svgIcon" viewBox="0 0 107 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svg-icon icon-logo" v-if="show_Icon()">
         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <g transform="translate(-24.000000, -16.000000)">
             <g transform="translate(24.000000, 16.000000)">
@@ -75,6 +75,12 @@ export default class Header extends Vue {
     } else {
       window.open('http://wiki-private.capitalonline.net:8090/pages/viewpage.action?pageId=310018098')
     }
+  }
+  private show_Icon() {
+    // 当为达州用户（DZ003）或特殊用户时，不显示CDS首云logo
+    const employee_no = this.$store.state.employee_no
+    const is_dz_user = employee_no === 'DZ0003'
+    return !this.$store.state.is_special_user && !is_dz_user
   }
 
   private created() {
