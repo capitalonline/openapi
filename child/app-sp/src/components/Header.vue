@@ -50,12 +50,6 @@ export default class Header extends Vue {
     });
     if(res.code==='Success'){
       this.pod_list = res.data;
-      let employee_no = this.$store.state.employee_no;
-      let dz_key = 'd1a3ebbe-c780-11f0-9ed3-92b1371aaa35';
-      // 如果是达州用户DZ0003，节点只显示达州节点
-      if(employee_no === 'DZ0003'){
-        this.pod_list = { [dz_key]: this.pod_list[dz_key] } ;
-      }
       this.default_pod = this.$store.state.pod_id ? this.$store.state.pod_id : Object.keys(this.pod_list).length>0 ? Object.keys(this.pod_list)[0] : '';
     }
   }
