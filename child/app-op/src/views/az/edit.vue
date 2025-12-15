@@ -47,8 +47,11 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="客户ID" prop="customer_ids" v-if="formData.status==='gray_open'">
-                <template v-if="formData.status==='gray_open'">
+                <template v-if="formData.status==='gray_open' && !$store.state.is_special_user">
                     <customer-input @FnCustomer="FnCustomer" :customers="formData.customer_ids" :list="formData.customer_ids.length >0 ? info.customer_info : []"></customer-input>
+                </template>
+                <template v-if="formData.status==='gray_open' && $store.state.is_special_user">
+                    <el-input v-model="formData.customer_ids"></el-input>
                 </template>
             </el-form-item>
             <el-form-item label="备注" prop="remark">
@@ -58,7 +61,7 @@
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="confirm">确 定</el-button>
             <el-button @click="visibleSync = false">取 消</el-button>
-            
+
         </span>
     </el-dialog>
 </template>
@@ -133,7 +136,7 @@ export default class Edit extends Vue{
             this.formData.status = this.info.status
         }
     }
-    private changeStatus(val){        
+    private changeStatus(val){
         if(val!=='gray_open'){
             this.formData.customer_ids=[]
         }

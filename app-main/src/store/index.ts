@@ -12,7 +12,8 @@ export default new Vuex.Store({
     auth_info: {},
     loadingStatus: true,
     is_special_user: false,
-    employee_no:''
+    employee_no:'',
+    user_type: ''
   },
   getters: {
   },
@@ -38,6 +39,9 @@ export default new Vuex.Store({
     },
     SET_EMPLOYEE_NO (state, employee_no) {
       state.employee_no = employee_no;
+    },
+    SET_USER_TYPE (state, data) {
+      state.user_type = data
     }
   },
   actions: {

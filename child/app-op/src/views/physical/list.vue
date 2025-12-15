@@ -16,7 +16,7 @@
       </action-block>
       <div class="icon m-bottom10">
         <el-tooltip content="自定义列表项" placement="bottom" effect="light">
-          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>        
+          <el-button type="text" @click="FnCustom"><i class="el-icon-s-tools" ></i></el-button>
         </el-tooltip>
         <el-tooltip content="刷新" placement="bottom" effect="light">
           <el-button type="text" @click="refresh"><svg-icon icon="refresh" class="refresh"></svg-icon></el-button>
@@ -24,7 +24,7 @@
         <el-tooltip content="导出" placement="bottom" effect="light">
           <el-button type="text" @click="down" :disabled="!auth_list.includes('export')"><svg-icon icon="export" class="export"></svg-icon></el-button>
         </el-tooltip>
-        
+
       </div>
       <el-table
         :data="list"
@@ -36,11 +36,11 @@
         :max-height="tableHeight"
       >
         <el-table-column type="selection" :width="custom_host.length>0 ? '48px' : '1100px'"></el-table-column>
-        <el-table-column 
-          v-for="item in custom_host" 
+        <el-table-column
+          v-for="item in custom_host"
           :filter-multiple="item.column_key ? item.multiple ? true : false : null"
-          :key="item.prop" 
-          :prop="item.prop" 
+          :key="item.prop"
+          :prop="item.prop"
           :column-key="item.column_key ? item.column_key : null"
           :filters="item.column_key ? item.list : null"
           :sortable="item.sortable ? item.sortable : null"
@@ -119,8 +119,8 @@
               <el-tooltip
                 v-if="scope.row.net_model"
                 :content="scope.row.net_model"
-                popper-class="tooltip-width" 
-                placement="right" 
+                popper-class="tooltip-width"
+                placement="right"
                 effect="light">
                   <span class="id-cell">{{ scope.row.net_model }}</span>
               </el-tooltip>
@@ -173,10 +173,10 @@
       <template v-if="visible && oper_type==='update_attribute'">
         <update-attribute :visible.sync="visible" :rows="multi_rows" @close="close"></update-attribute>
       </template>
-      <custom-list-item 
-        :visible.sync="custom_visible" 
+      <custom-list-item
+        :visible.sync="custom_visible"
         :all_item="all_item"
-        :all_column_item="all_column_item" 
+        :all_column_item="all_column_item"
         @fn-custom="get_custom_columns"
       ></custom-list-item>
     </div>
@@ -305,9 +305,9 @@ export default class PhysicalList extends Vue {
       }
       if(this.$route.query.host_id){
         this.search_option.host_id.default_value = this.$route.query.host_id as string
-      }this.fn_search();      
-      
-      
+      }this.fn_search();
+
+
   }
   mounted() {
     this.setHeight()
@@ -357,7 +357,7 @@ export default class PhysicalList extends Vue {
   private get_custom_columns(list){
     if(list.length===0){
       return;
-    }    
+    }
     this.custom_host = this.all_column_item.filter(item=>list.includes(item.label));
     this.custom_host.map(item=>{
       if(['host_name','out_band_address','host_ip','cpu','ram','ecs_num','gpu_model','ram_volume','create_time','gpu_allot','gpu_count','ecs_gpu_count'].includes(item.prop)){
@@ -507,7 +507,7 @@ export default class PhysicalList extends Vue {
         this.host_types =deal_list(res.data,label_list,key_list);
         this.setList(this.host_types,'host_type_ch')
       }
-      
+
   }
   private async getFamilyList(){
     let res:any =await ListService.get_family_data();
@@ -529,7 +529,7 @@ export default class PhysicalList extends Vue {
     if(res.code==="Success"){
       let key_list=['host_attribution_id','name'];
       let label_list=['value','text']
-      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list) 
+      this.host_belongs =deal_list(res.data.host_attribution_list,label_list,key_list)
       this.setList(this.host_belongs,'host_attribution_name')
     }
   }
@@ -589,7 +589,7 @@ export default class PhysicalList extends Vue {
         machine_status:machine_status ? machine_status[0] : undefined,
         backend_type:backend_type ? backend_type[0] : undefined,
         ecs_family_id:ecs_family_id && ecs_family_id.length>0 ? ecs_family_id.join(',') : undefined,
-        field_names:JSON.stringify(this.custom_host.map(item=>item.prop)) 
+        field_names:JSON.stringify(this.custom_host.map(item=>item.prop))
     }
     let str=""
     for (let i in obj){
@@ -601,7 +601,10 @@ export default class PhysicalList extends Vue {
     window.location.href=`/ecs_business/v1/host/host_list_download/${query}`
   }
   private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await EcsService.get_region_az_list({
+        employee_no: this.$store.state.employee_no,
+        user_name: this.$store.state.login_name
+    })
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
@@ -613,7 +616,7 @@ export default class PhysicalList extends Vue {
   private async get_room_list(){
     let res:any=await Service.get_room_list({})
     if(res.code==="Success"){
-      
+
       res.data.machine_room.forEach(item => {
         this.search_option.room.list.push({
           label:item,
@@ -662,7 +665,7 @@ export default class PhysicalList extends Vue {
       let label_list=['value','text']
       let fil = this.host_types.filter(item=>item.value===this.filter_data.host_type[0]);
       this.host_uses =fil.length>0 ? deal_list(fil[0].list,label_list,key_list) :[];
-      
+
     }else{
       this.host_uses=[]
     }
@@ -673,7 +676,7 @@ export default class PhysicalList extends Vue {
     const {label,value}=obj;
     this.handle(label,value)
   }
-  
+
   //todo,根据状态限制操作，获取所有可用区
   private handle(label,value){
     console.log('22222222222')
@@ -691,7 +694,7 @@ export default class PhysicalList extends Vue {
         this.$message.warning("物理机需为初始化状态或验证失败状态!");
         return;
       }
-        
+
     }
     if(['upload','resource','update_attribute'].includes(value)){
       if(value === 'update_attribute'){
@@ -733,8 +736,8 @@ export default class PhysicalList extends Vue {
     }else{
       this.$message.warning(this.error_msg[value])
     }
-    
-    
+
+
   }
   private judge(val):any{
     const obj = getHostStatus(val)

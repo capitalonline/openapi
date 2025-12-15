@@ -38,7 +38,7 @@
       <el-tooltip content="自定义列表项" placement="bottom" effect="light">
         <el-button type="text" @click="FnCustom">
           <i class="el-icon-s-tools" ></i>
-        </el-button>        
+        </el-button>
       </el-tooltip>
       <el-tooltip content="刷新" placement="bottom" effect="light">
         <el-button type="text" @click="FnGetList">
@@ -369,9 +369,9 @@
 
     <custom-list-item
       type="ecs"
-      :visible.sync="show_custom" 
+      :visible.sync="show_custom"
       :all_item="all_item"
-      :all_column_item="all_column_item" 
+      :all_column_item="all_column_item"
       @fn-custom="get_custom_columns"
     ></custom-list-item>
   </div>
@@ -576,7 +576,7 @@ export default class App extends Vue {
     // };
     this.sort_prop_name = `sort_${[val.prop]}`;
     this.sort_order =val.order === "ascending" ? '0' : val.order === "descending" ? '1' : undefined;
-    
+
     this.FnGetList();
   }
   // 获取网段
@@ -1055,7 +1055,7 @@ export default class App extends Vue {
   }
   private FnToRecord(id) {
     console.log('FnToRecord');
-    
+
     this.record_id = id;
     this.record_visible = true;
   }
@@ -1104,7 +1104,10 @@ export default class App extends Vue {
     // }
   }
   private async get_az_list() {
-    const res = await EcsService.get_region_az_list({});
+    const res = await EcsService.get_region_az_list({
+        employee_no: this.$store.state.employee_no,
+        user_name: this.$store.state.login_name
+    });
     if (res.code === "Success") {
       res.data.forEach((item) => {
         item.region_list.forEach((inn) => {
@@ -1133,7 +1136,7 @@ export default class App extends Vue {
           }
         })
       })
-      
+
     }
   }
   private FnCustom() {

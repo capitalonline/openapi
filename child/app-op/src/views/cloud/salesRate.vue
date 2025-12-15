@@ -170,7 +170,9 @@ export default class salesRate extends Vue {
       region_name: '',
       az_name: '',
       page_index: 1,
-      page_size: 200
+      page_size: 200,
+      employee_no: this.$store.state.employee_no,
+      user_name: this.$store.state.login_name
     }
     httpService.get_az_list(params).then(res => {
       if(res.code === 'Success') {

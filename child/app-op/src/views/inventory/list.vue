@@ -82,14 +82,17 @@ export default class Inventory extends Vue{
     }
     private search_info:any={}
     created() {
-        this.authList = this.$store.state.auth_info[this.$route.name];        
+        this.authList = this.$store.state.auth_info[this.$route.name];
         this.getRegion()
         this.getHostProductName()
         this.getInventoryList()
     }
     private async getRegion(){
         this.searchDom.region_id.list=[]
-        let res:any = await iService.get_region_az_list({});
+        let res:any = await iService.get_region_az_list({
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
+        });
         if(res.code==='Success'){
             for(let i in res.data){
                 this.searchDom.region_id.list=[...this.searchDom.region_id.list,...trans(res.data[i].region_list,'region_name','region_id','label','type')]
@@ -138,7 +141,7 @@ export default class Inventory extends Vue{
             page_size:this.pageInfo.page_size,
         })
         if(res.code==='Success'){
-            
+
             this.list = res.data.product_stock_list;
             this.pageInfo.total = res.data.page_info.count
         }
@@ -166,7 +169,7 @@ export default class Inventory extends Vue{
         let query=str==='' ? '' : `?${str.slice(0,str.length-1)}`
         window.location.href = `/ecs_business/v1/stock/host_stock_download/${query}`
     }
-    
+
 }
 </script>
 

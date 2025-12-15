@@ -134,7 +134,7 @@ import ActionBlock from '@/components/search/actionBlock.vue';
 import Service from '../../https/hostProductType'
 import Add from './add.vue';
 import EcsService from '../../https/instance/create';
-import {trans} from '../../utils/transIndex';       
+import {trans} from '../../utils/transIndex';
 import svgIcon from '@/components/svgIcon/index.vue';
 @Component({
     components:{
@@ -195,7 +195,10 @@ export default class ProductType extends Vue{
         }
     }
     private async get_az_list(){
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await EcsService.get_region_az_list({
+        employee_no: this.$store.state.employee_no,
+        user_name: this.$store.state.login_name
+    })
         if(res.code==="Success"){
             res.data.forEach(item=>{
                 item.region_list.forEach(inn=>{
@@ -240,7 +243,7 @@ export default class ProductType extends Vue{
         }
         let query = str==="" ? "" : `?${str.slice(0,str.length-1)}`
         console.log('query',query);
-        
+
         window.location.href=`/ecs_business/v1/host/host_product_list_download/${query}`
     }
 }

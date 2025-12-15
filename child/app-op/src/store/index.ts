@@ -11,6 +11,8 @@ export default new Vuex.Store({
     qiankun: false,
     token: cookie.get('cds-op-token'),
     login_name: 'login_name',
+    is_special_user: false,
+    employee_no:'',
     auth_info: {},
     loadingStatus: true,
     status_list: JSON.parse(storage.get('status_list')) || [],
@@ -57,12 +59,18 @@ export default new Vuex.Store({
       state.ecs_custom_item = list;
       storage.set('ecs_custom_item', JSON.stringify(list))
     },
-    SET_CUSTOM_HOST(state,list){      
+    SET_CUSTOM_HOST(state,list){
       storage.set('custom_host',JSON.stringify(list))
       state.custom_host = list
     },
     SET_HOST_SEARCH(state,data){
       state.host_search = data
+    },
+    SET_SPECIAL_USER (state, is_special_user) {
+      state.is_special_user = is_special_user;
+    },
+    SET_EMPLOYEE_NO (state, employee_no) {
+      state.employee_no = employee_no;
     }
 
   },

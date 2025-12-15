@@ -15,7 +15,9 @@
       </svg>
     </div>
     <div class="right-content">
-      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10" v-if="!$store.state.is_special_user">
+<!--        当为普通用户 或者 特殊用户是达州用户时  需要显示-->
+      <el-tooltip effect="light" :content="entry_text[entry_type]" placement="bottom" class="m-right10"
+                  v-if="$store.state.is_special_user == '0' || $store.state.is_special_user == '1' && $store.state.user_type == 'dz'">
         <el-button @click="FnChangeEntry()">
           <i class="el-icon-menu"></i>
         </el-button>

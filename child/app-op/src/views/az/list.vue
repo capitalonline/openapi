@@ -4,13 +4,13 @@
             <el-select placeholder="请选择地域" v-model="search_data.region" class="search" @change="change($event,'region')" clearable>
                 <el-option v-for="item in regionList" :key="item.region_id" :value="item.region_name" :label="item.region_name"></el-option>
             </el-select>
-            <el-select 
-                placeholder="请选择可用区" 
-                v-model="search_data.az" 
-                class="search" 
-                clearable 
-                filterable 
-                :filter-method="filterAz" 
+            <el-select
+                placeholder="请选择可用区"
+                v-model="search_data.az"
+                class="search"
+                clearable
+                filterable
+                :filter-method="filterAz"
                 @visible-change="change_az"
                 @change="changeAz"
             >
@@ -203,9 +203,9 @@ export default class Az extends Vue{
           value:'del'
         },
     ]
-    
+
     created() {
-        this.authList = this.$store.state.auth_info[this.$route.name];        
+        this.authList = this.$store.state.auth_info[this.$route.name];
         this.getRegion()
         // this.getNetType()
         this.getAzList()
@@ -218,7 +218,10 @@ export default class Az extends Vue{
     }
     private async getRegion(){
         this.regionList=[]
-        let res:any = await iService.get_region_az_list({});
+        let res:any = await iService.get_region_az_list({
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
+        });
         if(res.code==='Success'){
             for(let i in res.data){
                 this.regionList=[...this.regionList,...res.data[i].region_list]
@@ -231,11 +234,11 @@ export default class Az extends Vue{
     //         this.publicList = res.data;
     //     }
     // }
-    private filterAz(val){        
+    private filterAz(val){
         this.getAzList(val)
     }
     private changeAz(val){
-        
+
         if(val){
             return;
         }else{
@@ -277,7 +280,7 @@ export default class Az extends Vue{
         if(!val){
             this.getAzList()
         }
-        
+
     }
     private handle(row){
         const {obj,label}=row;
