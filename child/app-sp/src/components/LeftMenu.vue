@@ -177,7 +177,11 @@ export default class LeftMenu extends Vue {
       name: "destroyed",
       label: "已销毁资源",
       children: [
-        { name: 'ecs_destroyed', label: "云服务器",noAuth:true, },
+        { name: 'ecs_destroyed',
+         label: "云服务器",
+        //  noAuth:true, 
+        // 添加【已销毁资源】的权限控制
+         },
       ]
     },
   ];
