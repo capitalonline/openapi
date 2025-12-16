@@ -185,14 +185,6 @@ export default class ActionBlock extends Vue {
     }
     this.FnSearch();
   }
-  @Watch('search_option', { deep: true })
-  private watchDefaultValue(newVal) {
-  for (let key in newVal) {
-    if (newVal[key].default_value !== undefined) {
-      this.$set(this.search_value, key, newVal[key].default_value);
-    }
-  }
- }
   private mounted() {
     let flag = 0;
     for (let key in this.search_option) {
