@@ -11,7 +11,7 @@
             <el-option v-for="item in customerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
         </el-select>
     </div>
-    
+
 </template>
 <script lang="ts">
 import {Vue,Component, Watch, Emit,Prop} from 'vue-property-decorator';
@@ -29,7 +29,7 @@ export default class CustomerInput extends Vue{
     created(){
         this.customerList = [...this.list];
         this.customer_id = this.customers;
-        
+
     }
     private changeCustomer(val){
         if(val){
@@ -43,7 +43,9 @@ export default class CustomerInput extends Vue{
         };
         let res:any=await Service.getCustomerList({
             host_ids:this.rows.map(item=>item.host_id),
-            customer_id:val
+            customer_id:val,
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
@@ -68,6 +70,6 @@ export default class CustomerInput extends Vue{
             width: 100% !important;
         }
     }
-    
+
 
 </style>

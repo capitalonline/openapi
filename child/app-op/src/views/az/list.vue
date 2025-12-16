@@ -1,14 +1,18 @@
 <template>
     <div>
         <div class="search-box">
-            <el-select placeholder="请选择地域" v-model="search_data.region" class="search" @change="change($event,'region')" clearable>
+            <el-select placeholder="请选择地域"
+                       v-model="search_data.region"
+                       class="search"
+                       @change="change($event,'region')"
+                       :clearable="!$store.state.is_special_user">
                 <el-option v-for="item in regionList" :key="item.region_id" :value="item.region_name" :label="item.region_name"></el-option>
             </el-select>
             <el-select
                 placeholder="请选择可用区"
                 v-model="search_data.az"
                 class="search"
-                clearable
+                :clearable="!$store.state.is_special_user"
                 filterable
                 :filter-method="filterAz"
                 @visible-change="change_az"
@@ -226,6 +230,7 @@ export default class Az extends Vue{
             for(let i in res.data){
                 this.regionList=[...this.regionList,...res.data[i].region_list]
             }
+            this.search_data.region = this.regionList[0].region_name
         }
     }
     // private async getNetType(){
@@ -252,10 +257,12 @@ export default class Az extends Vue{
             az_name:val,
             page_index:this.pageInfo.page_index,
             page_size:this.pageInfo.page_size,
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if(res.code==='Success'){
             this.list = res.data.az_list;
-            if(this.flag){
+            if(this.flag && !this.$store.state.is_special_user){
                 this.azList = res.data.az_list
             }
             this.flag=false

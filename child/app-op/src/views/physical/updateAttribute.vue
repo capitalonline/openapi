@@ -88,7 +88,6 @@
               <el-option label="设置客户黑名单" value="select"></el-option>
             </el-select>
             <el-select
-                v-if="black_customer =='select' && !$store.state.is_special_user"
                 style="margin-left: 10px"
                 v-model="form_data.black_customer_ids"
                 multiple
@@ -96,13 +95,10 @@
                 remote
                 :remote-method="getBlackCustomerList"
                 @visible-change="changeBlackCustomer"
+                :disabled="black_customer!=='select'"
             >
               <el-option v-for="item in blackCustomerList" :key="item.id" :value="item.id" :label="`${item.id}(${item.name})`">{{`${item.id}(${item.name})`}}</el-option>
             </el-select>
-            <el-input
-                style="margin-left: 10px;width: 200px;"
-                v-if="black_customer =='select' && $store.state.is_special_user"
-                v-model="form_data.black_customer_ids_2" ></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -133,7 +129,6 @@ export default class UpdateAttribute extends Vue{
         customer_ids:[],
         black_customer_ids:[],
         spec_family_ids:[],
-        black_customer_ids_2: ''
     }
     private type:String="";
     private backend:string=''
@@ -175,7 +170,6 @@ export default class UpdateAttribute extends Vue{
   private watch_black(val){
     if(val !== 'select'){
       this.form_data.black_customer_ids = []
-      this.form_data.black_customer_ids_2 = ''
     }
   }
 
@@ -253,7 +247,9 @@ export default class UpdateAttribute extends Vue{
         }
         let res:any=await Service.getCustomerList({
             host_ids:this.rows.map(item=>item.host_id),
-            customer_id:val
+            customer_id:val,
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if (res.code == 'Success'){
             this.blackCustomerList=res.data.customer_list;
@@ -261,21 +257,13 @@ export default class UpdateAttribute extends Vue{
     }
     private async confirm() {
       const spec_id = this.form_data.spec_family_ids.map(item => item[1])
-      let black_customer_ids = null
-        // 当为 特殊用户（燧虹，达州）时，不让用户选择用户id，让用户自己输入 用户id
-      if (this.$store.state.is_special_user) {
-          let ids = this.form_data.black_customer_ids_2
-          black_customer_ids = ids.indexOf(',') > -1 ? ids.split(',') : [ids]
-      } else {
-          black_customer_ids = this.form_data.black_customer_ids
-      }
       let req: any = {
         host_ids:this.rows.map(item=>item.host_id),
         host_type:this.form_data.host_purpose.length>0 ? this.form_data.host_purpose[0] : undefined,
         host_purpose:this.form_data.host_purpose.length>1 ? this.form_data.host_purpose[1] : undefined,
         backend_type:this.form_data.backend_type !== '' ? this.form_data.backend_type : undefined,
         customer_ids: this.form_data.customer_ids.length > 0 ? this.form_data.customer_ids : (this.customer === 'all' ? [] : undefined),
-        black_customer_ids: black_customer_ids.length > 0 ? black_customer_ids : (this.black_customer === 'all' ? [] : undefined),
+          black_customer_ids:this.form_data.black_customer_ids.length > 0 ? this.form_data.black_customer_ids : (this.black_customer === 'all' ? [] : undefined),
         spec_family_ids: this.form_data.spec_family_ids.length > 0 ? (this.form_data.spec_family_ids[0][0] === 'none' ? [] : spec_id) : undefined,
       }
       let res: any = await Service.update_attribute(req)

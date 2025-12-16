@@ -145,7 +145,7 @@ import svgIcon from '@/components/svgIcon/index.vue';
 })
 export default class ProductType extends Vue{
     private search_dom:any={
-        az_id:{placeholder:'请选择可用区',list:[]},
+        az_id:{placeholder:'请选择可用区',list:[], default_value: '', close_clearable: false}, // close_clearable为true,将不能清空选项
         host_product_id:{placeholder:'请输入物理机产品id'},
         cpu_name:{placeholder:'请输入CPU型号'},
         gpu_card_name:{placeholder:'请输入显卡型号'},
@@ -205,6 +205,12 @@ export default class ProductType extends Vue{
                 this.search_dom.az_id.list=[...this.search_dom.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
                 })
             })
+            if (this.$store.state.is_special_user == '1') {
+                this.search_dom.az_id.close_clearable = true
+                this.search_dom.az_id.default_value = this.search_dom.az_id.list[0].type;
+                this.search_data.az_id = this.search_dom.az_id.list[0].type
+                this.FnSearch(this.search_data)
+            }
         }
     }
     private handleSizeChange(size){

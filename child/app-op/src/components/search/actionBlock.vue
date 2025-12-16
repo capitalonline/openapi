@@ -15,7 +15,7 @@
           :filterable="value.filter"
           :remote="value.filter"
           :remote-method="value.filter ? FnRemoteFilter: undefined"
-          clearable
+          :clearable="!value.close_clearable"
         >
           <el-option
             v-for="(item, id) in value.list"
@@ -111,7 +111,13 @@ export default class ActionBlock extends Vue {
     return this.search_value;
   }
   @Watch('search_option',{immediate:true,deep:true})
-  private watch_search_option(){
+  private watch_search_option(newVal){
+    if (!newVal) return
+    for (let key in newVal) {
+      if (newVal[key].default_value !== undefined) {
+          this.$set(this.search_value, key, newVal[key].default_value);
+      }
+    }
     if(!this.type){
       return;
     }
@@ -121,6 +127,7 @@ export default class ActionBlock extends Vue {
       if(parseInt(hei) >52 && this.isOpen){//超过一行，展开的情况下折叠
         this.isOpen=false;//折叠
       }
+
       this.FnOperate()
     })
   }

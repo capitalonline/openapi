@@ -414,7 +414,7 @@ import moment from "moment";
 })
 export default class App extends Vue {
   private search_con = {
-    az_id: { placeholder: "请选择可用区", list: [] },
+    az_id: { placeholder: "请选择可用区", list: [], default_value: '', close_clearable: false }, // close_clearable为true,将不能清空选项
     ecs_id: { placeholder: "请输入云服务器ID" },
     ecs_name: { placeholder: "请输入云服务器名称" },
     status: {
@@ -1117,6 +1117,14 @@ export default class App extends Vue {
           ];
         });
       });
+      if (this.$store.state.is_special_user == '1') {
+        this.search_con.az_id.close_clearable = true
+        this.search_con.az_id.default_value = this.search_con.az_id.list[0].type;
+        let data = {
+            az_id: this.search_con.az_id.list[0].type
+        }
+        this.FnSearch(data)
+      }
     }
   }
   // 获取云服务器类型信息

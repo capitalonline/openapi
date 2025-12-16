@@ -219,7 +219,7 @@ export default class PhysicalList extends Vue {
   $route;
   $store;
   private search_option:any={
-    az_id:{placeholder:'请选择可用区',list:[]},
+    az_id:{placeholder:'请选择可用区',list:[], default_value: '', close_clearable: false}, // close_clearable为true,将不能清空选项
     out_band_address:{placeholder:'请输入带外IP'},
     host_ip:{placeholder:'请输入管理网IP'},
     host_name:{placeholder:'请输入主机名称/ID'},
@@ -611,6 +611,12 @@ export default class PhysicalList extends Vue {
           this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
         })
       })
+      if (this.$store.state.is_special_user == '1') {
+        this.search_option.az_id.close_clearable = true
+        this.search_option.az_id.default_value = this.search_option.az_id.list[0].type;
+        this.search_data.az_id = this.search_option.az_id.list[0].type
+        this.fn_search(this.search_data)
+      }
     }
   }
   private async get_room_list(){

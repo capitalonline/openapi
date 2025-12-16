@@ -76,7 +76,7 @@ export default class Inventory extends Vue{
         total:0,
     }
     private searchDom:any={
-        region_id:{placeholder:'请选择地域',list:[]},
+        region_id:{placeholder:'请选择地域',list:[], default_value: '', close_clearable: false},
         az_id:{placeholder:'请选择可用区',list:[]},
         host_product_name:{placeholder:'请选择物理机产品名称',list:[],multiple:true,filter:true},
     }
@@ -100,6 +100,12 @@ export default class Inventory extends Vue{
                     this.searchDom.az_id.list=[...this.searchDom.az_id.list,...trans(res.data[i].region_list[az].az_list,'az_name','az_id','label','type')]
 
                 }
+            }
+            if (this.$store.state.is_special_user == '1') {
+                this.searchDom.region_id.close_clearable = true
+                this.searchDom.region_id.default_value = this.searchDom.region_id.list[0].type;
+                this.search_info = this.searchDom.region_id.list[0].type;
+                this.search(this.search_info)
             }
         }
     }

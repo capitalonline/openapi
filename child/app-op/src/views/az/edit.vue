@@ -47,11 +47,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="客户ID" prop="customer_ids" v-if="formData.status==='gray_open'">
-                <template v-if="formData.status==='gray_open' && !$store.state.is_special_user">
+                <template v-if="formData.status==='gray_open'">
                     <customer-input @FnCustomer="FnCustomer" :customers="formData.customer_ids" :list="formData.customer_ids.length >0 ? info.customer_info : []"></customer-input>
-                </template>
-                <template v-if="formData.status==='gray_open' && $store.state.is_special_user">
-                    <el-input v-model="formData.customer_ids"></el-input>
                 </template>
             </el-form-item>
             <el-form-item label="备注" prop="remark">
