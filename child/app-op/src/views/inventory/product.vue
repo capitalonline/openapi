@@ -109,7 +109,7 @@ export default class ProductInventory extends Vue{
 
                 }
             }
-            if (this.$store.state.is_special_user == '0') {
+            if (this.$store.state.is_special_user) {
                 this.searchDom.region_id.close_clearable = true
                 this.searchDom.region_id.default_value = this.searchDom.region_id.list[0].type;
                 this.search_info = this.searchDom.region_id.list[0].type;

@@ -205,7 +205,7 @@ export default class ProductType extends Vue{
                 this.search_dom.az_id.list=[...this.search_dom.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
                 })
             })
-            if (this.$store.state.is_special_user == '1') {
+            if (this.$store.state.is_special_user) {
                 this.search_dom.az_id.close_clearable = true
                 this.search_dom.az_id.default_value = this.search_dom.az_id.list[0].type;
                 this.search_data.az_id = this.search_dom.az_id.list[0].type

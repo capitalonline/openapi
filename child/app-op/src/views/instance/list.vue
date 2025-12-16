@@ -1117,7 +1117,7 @@ export default class App extends Vue {
           ];
         });
       });
-      if (this.$store.state.is_special_user == '1') {
+      if (this.$store.state.is_special_user) {
         this.search_con.az_id.close_clearable = true
         this.search_con.az_id.default_value = this.search_con.az_id.list[0].type;
         let data = {
