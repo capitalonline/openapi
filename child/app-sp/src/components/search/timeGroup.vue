@@ -55,7 +55,7 @@ export default class TimeGroup extends Vue {
       start_time = new Date(this.start_time)
     }
     this.time_option.defaultTime = [start_time, new Date(now)];
-    this.FnEmit(this.time_option.defaultTime)
+    // this.FnEmit(this.time_option.defaultTime)
   }
   private FnChangeDateTimer(default_date_timer) {
     this.default_time = '';
