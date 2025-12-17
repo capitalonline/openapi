@@ -332,7 +332,10 @@ export default class CreateShield extends Vue{
     private async getRegionAz(){
         this.labelContent.region=[];
         this.labelContent.az=[];
-        let res:any = await CreateService.get_region_az_list({})
+        let res:any = await CreateService.get_region_az_list({
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
+        })
         if(res.code==='Success'){
             res.data.map(item=>{
                 this.labelContent.region = [...this.labelContent.region,...item.region_list];

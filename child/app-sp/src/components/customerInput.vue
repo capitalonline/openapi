@@ -45,6 +45,8 @@ export default class CustomerInput extends Vue{
         let res:any=await Service.getCustomerList({
             host_ids:this.rows.map(item=>item.host_id),
             customer_ids:Array.isArray(this.customer_id)?this.customer_id : [],
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
@@ -57,6 +59,8 @@ export default class CustomerInput extends Vue{
         let res:any=await Service.getCustomerList({
             host_ids:this.rows.map(item=>item.host_id),
             customer_id:val,
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if (res.code == 'Success'){
             this.customerList=res.data.customer_list;
