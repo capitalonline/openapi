@@ -104,7 +104,9 @@ export default class Region extends Vue{
     //获取地区可用区信息
     private async FnGetRegionAz(){
         let res:any =await Service.get_region_az_list({
-            customer_id:this.customerId
+            customer_id:this.customerId,
+            employee_no: this.$store.state.employee_no,
+            user_name: this.$store.state.login_name
         })
         if(res.code==="Success"){
              this.area_list = res.data.map(item=>{
@@ -148,7 +150,7 @@ export default class Region extends Vue{
         if(nv.length>0){
             this.FnGetRegionAz()
         }
-        
+
     }
     @Watch("az_list.length")
     private watch_az_len(nv,ov){
@@ -240,18 +242,18 @@ export default class Region extends Vue{
         if(item.region_group_id===id){
             let ids = item.region_list.map(inn=>inn.region_id)
             if(check){
-                this.form_data[type] =[...new Set([...this.form_data[type],...ids])] 
+                this.form_data[type] =[...new Set([...this.form_data[type],...ids])]
             }else{
                 this.form_data[type] = this.form_data[type].filter(inn=>!ids.includes(inn))
             }
-            
-            
+
+
         }
     })
     // this.setRegionCheckState(this[list],type)
-   
+
   }
-  
+
   //将ID转成name
   private trans(list,type){
       let temp:Array<string>=[]
@@ -264,7 +266,7 @@ export default class Region extends Vue{
       })
       return temp
   }
-  
+
 }
 </script>
 <style lang="scss" scoped>
@@ -273,7 +275,7 @@ export default class Region extends Vue{
         display: flex;
         align-items: center;
     }
-    
+
     .foot-btn{
         width:100%;
         text-align: right;
@@ -284,8 +286,8 @@ export default class Region extends Vue{
     .check-group{
         display: flex;
     }
-    
-    
+
+
 }
 .no-data{
     text-align: center;
