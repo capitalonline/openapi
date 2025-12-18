@@ -2,8 +2,11 @@ import service from '../http'
 import { getAlarmOptions } from '../common'
 export default{
     //获取报警信息
-    get_alarm_list(req){
-        return service(getAlarmOptions('GET','/record/list',req))
+    get_alarm_list(req, showLoading = true){
+        return service({
+            ...getAlarmOptions('GET','/record/list',req),
+            showLoading
+        })
     },
     //获取策略列表 
     get_strategy_list(req){

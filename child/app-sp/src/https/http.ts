@@ -20,7 +20,9 @@ let loadingCount = 0;
 // 添加请求拦截器
 instance.interceptors.request.use(
   config => {  // 发送请求之前做些什么
-    if (store.state.loadingStatus) {
+    // 如果单个请求配置设置了showLoading为false，则不显示全局遮罩
+    const showLoading = config.showLoading !== false && store.state.loadingStatus;
+    if (showLoading) {
       loadingCount++;
       loadingInstance = Loading.service(loadingOptions);
     }
@@ -36,9 +38,11 @@ instance.interceptors.request.use(
 // 添加响应拦截器
 instance.interceptors.response.use(
   response => { // 对响应数据做点什么
-    loadingCount--;
-    if (loadingCount <= 0) {
-      loadingInstance.close();
+    if (response.config.showLoading !== false) {
+      loadingCount--;
+      if (loadingCount <= 0) {
+        loadingInstance.close();
+      }
     }
     if (response.status == 200 && response.data) {
       if (response.data.code === 'Unauthorized') {
@@ -53,9 +57,11 @@ instance.interceptors.response.use(
     }
   },
   error => { // 对响应错误做点什么
-    loadingCount--;
-    if (loadingCount <= 0) {
-      loadingInstance.close();
+    if (error.config.showLoading !== false) {
+      loadingCount--;
+      if (loadingCount <= 0) {
+        loadingInstance.close();
+      }
     }
     if(error.response.status == 401) {
     } else {

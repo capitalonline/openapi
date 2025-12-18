@@ -2,7 +2,7 @@
     <div>
         <action-block :search_option="search" @fn-search="fn_search"></action-block>
         <time-group @fn-emit="getTabTime" />
-        <el-table :data="list" border class="event-table" @filter-change="fil_info">
+        <el-table :data="list" border class="event-table" @filter-change="fil_info" v-loading="tableLoading">
             <el-table-column prop="productType" label="产品类型"></el-table-column>
             <el-table-column prop="instanceID" label="故障资源ID"></el-table-column>
             <el-table-column prop="createTime" label="发生时间">
@@ -135,6 +135,8 @@ export default class Contact extends Vue{
     private operateType:string=''
     private notice_list:any=[];
     private info:any={}
+    private tableLoading = false;
+
     created() {
         this.getContactGroupList()
         this.authList = this.$store.state.auth_info[this.$route.name]
@@ -147,23 +149,28 @@ export default class Contact extends Vue{
         }
     }
     private async getAlarmList(){
-        const {search_data} = this
-        let res:any=await Service.get_alarm_list({
-            ruleName:search_data.ruleName,//输入这个字段可以进行规则名称或者资源ID进行搜索
-            instanceID:search_data.instanceID,
-            alarmType:search_data.type,
-            contactGroupName:search_data.contact,
-            strategyName:search_data.strategyName,
-            startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-            endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-            dealStatus:this.dealStatus.length===0 ? "" : this.dealStatus[0],
-            page:this.current,
-            pageSize:this.size
-        })
+        this.tableLoading = true;
+        try {
+            const {search_data} = this
+            let res:any=await Service.get_alarm_list({
+                ruleName:search_data.ruleName,//输入这个字段可以进行规则名称或者资源ID进行搜索
+                instanceID:search_data.instanceID,
+                alarmType:search_data.type,
+                contactGroupName:search_data.contact,
+                strategyName:search_data.strategyName,
+                startTime:search_data.time ? moment(search_data.time[0]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD 00:00:00"),
+                endTime:search_data.time ? moment(search_data.time[1]).format('YYYY-MM-DD HH:mm:ss') : moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+                dealStatus:this.dealStatus.length===0 ? "" : this.dealStatus[0],
+                page:this.current,
+                pageSize:this.size
+            }, false) 
 
-        if(res.code==='Success'){
-            this.list = res.data.datas || []
-            this.total = res.data.total || 0
+            if(res.code==='Success'){
+                this.list = res.data.datas || []
+                this.total = res.data.total || 0
+            }
+        } finally {
+            this.tableLoading = false;
         }
     }
     private view_contact(list){
