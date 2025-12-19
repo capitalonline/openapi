@@ -260,7 +260,7 @@ def region_az_info():
 | 参数              | 要求 | 类型   | 说明                                                         |
 | ----------------- | ---- | ------ | ------------------------------------------------------------ |
 | AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月                      |
+| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月; "3": 竞价实例                      |
 
 **返回参数**
 
@@ -646,7 +646,7 @@ def ecs_list():
 | Cpu               | 必选 | int    | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Ram               | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Gpu               | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月  "3"竞价                              |
 | Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
 | IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
 | SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
@@ -661,6 +661,8 @@ def ecs_list():
 |  PriceUnit  | string |   天   | 价格时间单位  |
 | PriceSymbol | string |   ￥   |   币种符号    |
 | TotalPrice  | float  | 100.34 | 总价,单位为元 |
+| SpotStdAmount  | float  | 100.34 | 竞价实例标准价格（最低出价）,单位为元 |
+| DemandStdAmount  | float  | 200.34 | 竞价实例按需价格（最高出价），单位为元 |
 
 **请求示例**
 
@@ -1178,7 +1180,10 @@ def describe_account_subject():
 | Ram               | 必选 | int    | 内存                                                         |
 | Gpu               | 可选 | int    | 显卡数量，默认为0                                            |
 | Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
-| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月  "3": 竞价实例                        |
+| SpotType          | 可选 | string | 购买的竞价实例模式： "auto": 自动出价（自动根据市场价格出价，最高可达到按需计费价格。实例不会因出价问题释放，但库存不足时仍会被自动释放），"bid" 设置上线                       |
+| SpotAmount        | 可选 | string | 竞价实例bid（设置上线）模式下需指的购买价 （需在**DescribePrice**返回的竞价价格范围内)                      |
+| SkipSpotRelease   | 可选 | bool   | 是否跳过资源池中已占用的竞价实例释放。默认为 False：库存紧张时会释放竞价实例，释放依赖退租过程（约 1 小时），可最大化提高资源池整体可用性与利用率。设为 True 时：不释放竞价实例，从而跳过等待过程，适用于对创建速度要求较高、期望短时间内完成机器创建的场景。|                    
 | Password          | 必选 | string | 登录密码                                                     |
 | ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImages**返回值中的ImageName或者ImageId) |
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
