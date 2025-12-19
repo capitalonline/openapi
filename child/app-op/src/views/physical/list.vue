@@ -2,7 +2,7 @@
     <div>
       <action-block :search_option="search_option" @fn-search="fn_search" :type="'physical'" @fn-operate="FnOperate">
           <template #default>
-              <el-button type="primary" v-for="item in operate_btns" :key="item.value" :disabled="!auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
+              <el-button type="primary" v-for="item in operate_btns" :key="item.value" v-if="auth_list.includes(item.value)" @click="handle(item.label,item.value)">{{item.label}}</el-button>
               <el-dropdown @command="handleMore" class="m-left10">
                 <el-button type="primary" class="dropdownbtn">
                   业务类型切换<i class="el-icon-arrow-down el-icon--right"></i>
