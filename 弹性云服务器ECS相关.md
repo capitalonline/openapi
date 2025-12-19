@@ -1854,6 +1854,79 @@ def describe_zone_instance_type():
 | 404          | InvalidAvailableZone.NotFound | The specified available zone does not exist.                 | 指定的可用区不存在                             |
 | 500          | InternalError                 | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单 |
 
+### 21.ChangeInstanceConfigure
+
+**Action**: ChangeInstanceConfigure
+
+**描述**： 更改实例规格
+
+**需知**:
+1. 已关机状态下才可以操作
+2. 不支持跨类型修改实例规格
+3. GPU型不支持跨驱动
+4. 按需计费支持升降配置
+5. 包年包月只支持升配置
+6. 云盘实例支持跨规格族，本地盘实例不支持跨规格族
+7. 批量操作要具有一致性
+8. 竞价实例不允许修改
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：  POST 
+
+**请求参数**
+
+| 参数     | 要求 | 类型   | 说明           |
+| -------- | ---- | ------ | -------------- |
+| AvailableZoneCode | 必选  | string | 可用区code                                                                   |
+| EcsFamilyName     | 必选  | string | 规格族名称                                                                     |
+| Cpu               | 必选  | int    | Cpu                                                                       |
+| Ram               | 必选  | int    | 内存                                                                        |
+| Gpu               | 可选  | int    | 显卡数量，默认为0                                                                 |
+| EcsIds            | 必传  | list   | 实例id列表                                                                    |
+
+**返回参数**：
+
+| 名称    | 类型   | 示例值    | 描述   |
+| ------- | ------ | --------- | ------ |
+| EventId | string | "EventId" | 事件id |
+
+**请求示例**
+
+```python
+def change_instance_configure():
+    """
+    更改实例规格
+    """
+    ecs_url = 'http://gateway.gic.test/ecs/v1'
+    action = "ChangeInstanceConfigure"
+    method = "POST"
+    body = {
+        "EcsIds": ['ins-dhz8kr4u7ajp5gcc'],
+        "AvailableZoneCode":"CN_SJZ_B",
+        "EcsFamilyName":"优化型M2",
+        "Cpu":2,    
+        "Ram":2,
+        "Gpu":0,
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "云服务器规格修改成功",
+    "Data": {
+        "EventId": "fd97952e-0c9c-11ed-bd9c-62b5fae1caf2"
+    },
+    "RequestId": "7cafad69fb02ea43ae0fb92699600d5c"
+}
+```
 ## 云盘EBS相关
 
 **云盘状态(Status)说明**
