@@ -77,7 +77,12 @@ function render (props: prop = {}) {
   })
   router.beforeEach((to, from, next) => {
     if (!to.name) {
-      next({ name: routes[0].name })
+      // 当为特殊用户时，直接跳转到旧版本页面，否则跳转到新版本页面
+       if (store.state.is_special_user) {
+           next({ name: routes[1]?.name || routes[0]?.name })
+       }else{
+           next({ name: routes[0]?.name || routes[1]?.name })
+       }
     } else {
       next()
     }

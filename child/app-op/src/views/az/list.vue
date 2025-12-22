@@ -262,8 +262,8 @@ export default class Az extends Vue{
         })
         if(res.code==='Success'){
             this.list = res.data.az_list;
-            if(this.flag && !this.$store.state.is_special_user){
-                this.azList = res.data.az_list
+            if(this.flag){
+              this.azList = res.data.az_list
             }
             this.flag=false
             this.pageInfo.total = res.data.page_info.count

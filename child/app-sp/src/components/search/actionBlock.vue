@@ -13,7 +13,7 @@
           :placeholder="value.placeholder"
           :multiple="value.multiple"
           :filterable="value.filter"
-          clearable
+          :clearable="!value.close_clearable"
         >
           <el-option
             v-for="(item, id) in value.list"
@@ -146,7 +146,13 @@ export default class ActionBlock extends Vue {
     return this.search_value;
   }
   @Watch('search_option',{immediate:true,deep:true})
-  private watch_search_option(){
+  private watch_search_option(newVal){
+    if (!newVal) return
+    for (let key in newVal) {
+      if (newVal[key].default_value !== undefined) {
+          this.$set(this.search_value, key, newVal[key].default_value);
+      }
+    }
     if(!this.type){
       return;
     }

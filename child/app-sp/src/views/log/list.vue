@@ -95,7 +95,7 @@ export default class LogList extends Vue{
   private search_option:any={
     operation_type: {placeholder: "请选择操作类型", list:this.operation_type},
     cloud_type: {placeholder: "请选择操作对象", list: this.cloud_type},
-    az_id: {placeholder: "请选择可用区", list:[]},
+    az_id: {placeholder: "请选择可用区", list:[],  default_value: '', close_clearable: false },
     cloud_id:{placeholder:'请输入操作对象ID'},
     op_user:{placeholder:'请输入操作人'},
     create_time:{
@@ -123,12 +123,21 @@ export default class LogList extends Vue{
   }
   private async get_az_list(){
     this.search_option.az_id.list=[]
-    let res:any=await EcsService.get_region_az_list({})
+    let res:any=await EcsService.get_region_az_list({
+       employee_no: this.$store.state.employee_no,
+       user_name: this.$store.state.login_name
+    })
     if(res.code==="Success"){
       res.data.forEach(item=>{
         item.region_list.forEach(inn=>{
           this.search_option.az_id.list=[...this.search_option.az_id.list,...trans(inn.az_list,'az_name','az_id','label','type')]
         })
+         if (this.$store.state.is_special_user == '1') {
+             this.search_option.az_id.close_clearable = true
+             this.search_option.az_id.default_value = this.search_option.az_id.list[0].type;
+             this.search_data.az_id = this.search_option.az_id.list[0].type
+             this.search(this.search_data)
+          }
       })
     }
   }
