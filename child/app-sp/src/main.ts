@@ -57,6 +57,10 @@ function render (props: prop = {}) {
   }
 // 遍历routes数组，处理每个路由及其children
   all_routes.forEach(item => {
+    // 如果是特殊用户且当前路由是第一部分路由（/new），则跳过--达州用户不允许跳转新版页面
+    if (store.state.is_special_user && item.path === '/new') {
+      return;
+    }
     // 处理children
     if (item.children && item.children.length > 0) {
       item.children = (item.children as any).filter(inn => shouldRouteBeKept(inn));
@@ -77,14 +81,9 @@ function render (props: prop = {}) {
   })
   router.beforeEach((to, from, next) => {
     if (!to.name) {
-      // 当为特殊用户时，直接跳转到旧版本页面，否则跳转到新版本页面
-       if (store.state.is_special_user) {
-           next({ name: routes[1]?.name || routes[0]?.name })
-       }else{
-           next({ name: routes[0]?.name || routes[1]?.name })
-       }
+      next({ name: routes[0]?.name });
     } else {
-      next()
+      next();
     }
   })
 
