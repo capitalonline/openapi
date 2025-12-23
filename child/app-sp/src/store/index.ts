@@ -50,7 +50,8 @@ export default new Vuex.Store({
     display:storage && storage.get ? storage.get('display_name') :'',
     search_vm:'',
     tree_list: JSON.parse(storage.get('tree_list')) || [],
-    az_list:JSON.parse(storage.get('az_list')) || []
+    az_list:JSON.parse(storage.get('az_list')) || [],
+    user_type: ''
   },
   getters: {
   },
@@ -134,6 +135,9 @@ export default new Vuex.Store({
     },
     SET_EMPLOYEE_NO (state, employee_no) {
       state.employee_no = employee_no;
+    },
+    SET_USER_TYPE (state, data) {
+      state.user_type = data
     }
   },
   actions: {

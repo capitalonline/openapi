@@ -57,8 +57,8 @@ function render (props: prop = {}) {
   }
 // 遍历routes数组，处理每个路由及其children
   all_routes.forEach(item => {
-    // 如果是特殊用户且当前路由是第一部分路由（/new），则跳过--达州用户不允许跳转新版页面
-    if (store.state.is_special_user && item.path === '/new') {
+    // 如果为达州用户，当前路由是第一部分路由（/new），则跳过--达州用户不允许跳转新版路由
+    if (store.state.user_type == 'dz' && item.path === '/new') {
       return;
     }
     // 处理children

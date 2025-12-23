@@ -26,7 +26,7 @@ export async function getUserInfo() {
     store.commit('SET_AUTH_INFO', {...resData.data.data.permission_dict});
     store.commit('SET_EMPLOYEE_NO', resData.data.data.employee_no)
     //user_type为dz时，代表为达州项目的管理账号；为‘’时，为普通账号
-    const user_type = resData.data.data.is_special_user == '1' && resData.data.data.az_id == 'c79d830f-06b9-4e83-9660-24aa2460867a' ? 'dz' : ''
+    const user_type = resData.data.data.is_special_user == '1' && resData.data.data.az_id == '768deef6-94fd-11f0-b336-d24e6b9b59eb' ? 'dz' : ''
     store.commit('SET_USER_TYPE', user_type)
 
     // actions.setGlobalState({permission_dict: store.state.auth_info});
