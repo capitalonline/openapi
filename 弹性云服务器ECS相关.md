@@ -1,3 +1,4 @@
+
 # 弹性云服务器ECS
 
 ## 认证方式
@@ -262,7 +263,7 @@ def region_az_info():
 
 | 参数             | 类型   | 示例            | 说明               |
 | ---------------- | ------ | --------------- | ------------------ |
-| EcsFamilyInfo    | dict   | {}              | 计算类型族信息字典 |
+| EcsFamilyInfo    | dict   | \{\}              | 计算类型族信息字典 |
 | EcsFamilyName    | string | 极速渲染型re3   | 规格族名称         |
 | SpecList         | list   | []              | 规格列表           |
 | Cpu              | int    | 16              | Cpu大小            |
@@ -522,7 +523,7 @@ def image_info():
 | PrivateNet          | string   | 10.10.10.10         | 私网ip                             |
 | PubNet              | string   | 10.10.10.11         | 默认虚拟出网网关ip                 |
 | VirtualNet          | list     | []                  | 其他线路出网网关ip列表             |
-| EipInfo             | dict     | {}                  | 出网网关ip和公网ip对应字典         |
+| EipInfo             | dict     | \{\}                  | 出网网关ip和公网ip对应字典         |
 | ConfName            | string   | 电信                | 网络带宽运营商，如电信、移动、联通 |
 | EipIp               | string   | 111.111.111.111     | 公网ip                             |
 | CreateTime          | datetime | 2022-07-22 16:41:28 | 创建时间                           |
@@ -645,7 +646,7 @@ def ecs_list():
 | BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月  "3"竞价                              |
 | Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
 | IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
+| SystemDiskInfo    | 必选 | dict   | 系统盘信息\{"DiskFeature":"ssd","Size":40\}                    |
 | DiskFeature       | 必选 | string | 盘类型,如："ssd","local"                                     |
 | DataDiskInfo      | 可选 | list   | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
 | Number            | 可选 | int    | 购买数量，默认为1                                            |

@@ -1342,7 +1342,7 @@ def get_signature(action, ak, access_key_secret, method, url, param={}):
 | VdcName        | string   | capitalcloud                                                 | Vdc名称                                                      |
 | RegionId       | string   | CN_Beijing_A                                                 | Vdc所在可用区                                                |
 | VdcStatus      | string   | ok                                                           | Vdc的使用状态                                                |
-| PublicNetwork  | string   | {"Name": "公网1",<br/>"Status":"ok";<br />    "Type": "BGP_4",<br/>    "Qos": "20",<br/>''Ip':"38.121.60.96"<br />"Mask":"28"} | Name:公网名称<br />Status：状态<br />Type：公网带宽类型<br />Qos：带宽大小<br />Ip：购买的Ip段<br />Mask:掩码 |
+| PublicNetwork  | string   | \{"Name": "公网1",<br/>"Status":"ok";<br />    "Type": "BGP_4",<br/>    "Qos": "20",<br/>''Ip':"38.121.60.96"<br />"Mask":"28"\} | Name:公网名称<br />Status：状态<br />Type：公网带宽类型<br />Qos：带宽大小<br />Ip：购买的Ip段<br />Mask:掩码 |
 | PrivateNetwork | string   | [{<br />"Name":"私网1",<br />"Status":"ok",<br />"Ip":"10.241.16.0/16"<br />"Id":"22b729aa-4540-11e9-99c5-0242ac11001b"},<br />{<br />"Name":"私网2",<br />"Status":"ok",<br />"Ip":"10.241.40.0"<br />"Mask":"16"<br />"Id":"c0d2bbf7-0e09-49d5-8dc7-8fe90e722c47"}] | Name：私网名称<br />Status：状态<br />Ip：购买的私网Ip段<br />Mask:掩码<br />ID:网络id |
 
 **错误码:**
@@ -1446,7 +1446,7 @@ def descrive_vdc(keyword=None, vdc_id=None, region_id=None):
 | ------------- | ------ | -------- | ------------------------------------------------------------ | -------------------------------------- |
 | RegionId      | string | 是       | cn_beijingA                                                  | Vdc所属的可用区Id                      |
 | VdcName       | string | 否       | newVdc                                                       | 创建的Vdc名称，不填写时默认写入Vdc的Id |
-| PublicNetwork | string | 否       | PublicNetword: {"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200,"BusyQos":10, "BusyFloatBandwidth": 100} | 参考附件三带宽类型,  BusyQos、BusyFloatBandwidth繁时保底和封顶，普通带宽可不传                   |
+| PublicNetwork | string | 否       | PublicNetword: \{"Name": "公网1","Type": "Bandwidth_BGP", "BillingMethod": "BandwIdth", "Qos": 20, "IPNum":4, "AutoRenew":0, "FloatBandwich":200,"BusyQos":10, "BusyFloatBandwidth": 100\} | 参考附件三带宽类型,  BusyQos、BusyFloatBandwidth繁时保底和封顶，普通带宽可不传                   |
 | SubjectId      | int | 否       | 123                                                  | 测试金Id                      |
 
   **返回参数：**
@@ -1575,7 +1575,7 @@ def create_vdc(site_code, wan_code, qos, vdc_name):
 | Type           | string | 是       | BGP_4                                | BGP_4(4线BGP)       BGP_2(双线BGP)       ChinaTelecom(电信)       AntiDDOS(防DDOS) |
 | BillingMethod  | string | 是       | Bandwidth                            | Bandwidth（固定带宽，默认）<br />Traffic（流量按需）       <br />DataPackage（流量包）      <br />Bandwidth_95（95峰值） |
 | Qos            | int    | 是       |                                      | 类型是固定带宽时，此处是公网带宽大小，最大500，步长5；类型是95峰值时，此处代表保底带宽，最大为500，步长50；类型是流量包时，代表流量包大小，单位是GB，最大是51200（50T) |
-| IPNum          | int    | 是       |                                      | 购买的Ip数量，可选参数:{4,8,16,32,64}                        |
+| IPNum          | int    | 是       |                                      | 购买的Ip数量，可选参数:\{4,8,16,32,64\}                        |
 | AutoRenew      | int    | 是       |                                      | 带宽类型为流量包和95峰值时，是否自动续费，1为自动续费（默认），0为不自动续费 |
 | FloatBandwidth | int    | 是       |                                      | 公网类型为95峰值时，带宽大小的封顶带宽，为空时，默认为带宽大小的120% |
 | SubjectId      | int | 否       | 123                                                  | 测试金Id                   |
@@ -1746,7 +1746,7 @@ def modify_public_qos(publicId, qos):
 | 名称     | 类型     | 是否必选 | 示例值                               | 描述                                  |
 | -------- | -------- | -------- | ------------------------------------ | ------------------------------------- |
 | PublicId | string   | 是       | 773f14c2-c8bc-4f66-acd7-ec34d3bfde7d | 公网id                                |
-| Number   | Interger | 是       | 8                                    | 购买的Ip数量，可选参数:{4,8,16,32,64} |
+| Number   | Interger | 是       | 8                                    | 购买的Ip数量，可选参数:\{4,8,16,32,64\} |
 
   **返回参数：**
 
@@ -11273,7 +11273,7 @@ def ecs_list():
 | BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
 | Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
 | IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
-| SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
+| SystemDiskInfo    | 必选 | dict   | 系统盘信息\{"DiskFeature":"ssd","Size":40\}                    |
 | DiskFeature       | 必选 | string | 盘类型,如："ssd","local"                                     |
 | DataDiskInfo      | 可选 | list   | 数据盘信息[{"DiskFeature":"ssd","Size":40}]                  |
 | Number            | 可选 | int    | 购买数量，默认为1                                            |
@@ -11371,11 +11371,11 @@ def get_ecs_price():
 | EndBillTime   | datetime | 2022-08-22 16:41:28                                          | 到期时间            |
 | IsAutoRenewal | string   | 1                                                            | 是否自动续约        |
 | TimeZone      | sting    | UTC                                                          | 时区                |
-| EcsRule       | dict     | {<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> } | 规格                |
-| OsInfo        | dict     | {<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    } | 系统信息            |
-| Disk          | dict     | {<br/>      "SystemDiskConf": {<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/><br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd"<br/>      },<br/>      "DataDiskConf": [] | 硬盘信息            |
-| Pipe          | dict     | {<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": {<br/>        "10.1.128.53": {<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        }<br/>      }<br/>    } | 网络信息            |
-| BillingInfo   | dict     | {<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    } | 计费信息            |
+| EcsRule       | dict     | \{<br/>      "Name": "Cpu密集计算型I3",  //  规格族名称<br/>      "CpuNum": 1,<br/>      "CpuUnit": "核",<br/>      "Ram": 1,<br/>      "Ram": 0,<br/>      "RamUnit": "个",<br/>      "RamUnit": "GiB"<br/> \} | 规格                |
+| OsInfo        | dict     | \{<br/>      "ImageId": "2a602ae4-d4fd-11ec-bd6f-5ee3d36afa8f",<br/>      "ImageName": "create-image1",<br/>      "OsType": "Centos",<br/>      "Bit": 64,<br/>      "Version": "7.4"<br/>    \} | 系统信息            |
+| Disk          | dict     | \{<br/>      "SystemDiskConf": \{<br/>        "ReleaseWithInstance": true,<br/>        "DiskType": "system",<br/>        "Name": "ssd_20220721",<br/>        "Size": 24,<br/><br/>        "DiskIops": 2520,<br/>        "BandMbps": 96,<br/>        "Unit": "GB",<br/>        "DiskId": "disk-dj3g8odrnwqdrybj",<br/>        "DiskFeature": "ssd"<br/>      \},<br/>      "DataDiskConf": [] \} | 硬盘信息            |
+| Pipe          | dict     | \{<br/>      "VpcName": "Ram服务器",<br/>      "VpcId": "7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1",<br/>      "SubnetId": "2cee7596-bbbb-11ec-a287-debf4cca37ce",<br/>      "SubnetName": "test-kvm",<br/>      "CreateTime": "2022-04-14 14:21:52",<br/>      "PrivateNet": "10.1.128.53",<br/>      "PubNet": "",<br/>      "VirtualNet": [],<br/>      "EipInfo": \{<br/>        "10.1.128.53": \{<br/>          "ConfName": "",<br/>          "EipIp": "",<br/>          "CurrentUseQos": ""<br/>        \}<br/>      \}<br/>    \} | 网络信息            |
+| BillingInfo   | dict     | \{<br/>      "BillingMethod": "1",<br/>      "BillingMethodName": "包年包月",<br/>      "BillingStatus": "正常",<br/>      "BillCycleId": "month"<br/>    \} | 计费信息            |
 | NoChargeForShutdown    | int      | 0              | 是否关机不计费, 1:是， 0：否                    |
 
 **请求示例**
@@ -11805,9 +11805,9 @@ def describe_account_subject():
 | BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
 | Password          | 必选 | string | 登录密码                                                     |
 | ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImage**返回值中的ImageName或者ImageId) |
-| SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
-| VpcInfo           | 必选 | dict   | vpc信息，示例:{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    } |
-| SubnetInfo        | 必选 | dict   | 私有网络信息，示例：{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    } |
+| SystemDisk        | 必选 | dict   | 系统盘信息，示例:\{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    \}<br/> |
+| VpcInfo           | 必选 | dict   | vpc信息，示例:\{<br/>        "VpcId":"7ab97a9a-8c0f-11ec-9b99-d2fedeecdbd1"<br/>    \} |
+| SubnetInfo        | 必选 | dict   | 私有网络信息，示例：\{<br/>        "SubnetId":"2cee7596-bbbb-11ec-a287-debf4cca37ce" # 子网id<br/>    \} |
 | PubnetInfo        | 可选 | list   | 支持新分配公网IP和绑定已有的公网IP.<br/>"SubnetId":""; string类型，必填,子网id;若使用虚拟出网网关IP绑定公网IP则传虚拟出网网关id.<br/>"EipIds":[]; list类型, 选填,绑定的eip的id列表;若需新分配公网IP,不填,绑定已有公网IP需填,数量需要和云服务器数量一致.<br/>"IpType":""; string类型，选填, 若使用虚拟出网网关必填.默认出网网关:"default_gateway",虚拟网关：”virtual”.<br/>"BandwidthType":""; string类型，选填, 带宽类型;若需新分配公网IP必填,表示绑定公网IP的带宽类型.绑定已有公网IP不填.固定带宽:”Bandwidth”,固定带宽包月:”BandwidthMonth”,流量按需: “Traffic”（若实例计费方式为包年包月选择固定带宽时需传"固定带宽包月"）.<br/>"Qos":100; int类型，选填，公网带宽值,单位为M;若带宽类型选择”固定带宽”需填写. |
 | Name              | 可选 | string | 云服务器名,不传自动赋予（自动命名规则：ecs-创建日期）        |
 | StartNumber       | 可选 | int    | 云服务器名称编号起始数字，不需要服务器编号可不传             |
@@ -13677,7 +13677,7 @@ def ebs_create_snapshot():
 | ------------------ | ---------------------- | ------ | -------- | ------------------------------------------------------------ |
 | DiskId             | 要回滚的云盘ID         | string | 是       | disk-pnmgbrfrk2q64w48                                        |
 | SnapshotId         | 快照ID                 | string | 是       | s-disk-pnmgbrfrk2q64w48-u1pa-05                              |
-| NewSnapshot        | 新快照信息             | dict   | 否       | {<br/>        "SnapshotName": "rollback_test", #新建快照名称<br/>        "ReservedTime": "1" #新建快照保留时间<br/>} |
+| NewSnapshot        | 新快照信息             | dict   | 否       | \{<br/>        "SnapshotName": "rollback_test", #新建快照名称<br/>        "ReservedTime": "1" #新建快照保留时间<br/>\} |
 | AutoTurnOnInstance | 是否自动开启云主机电源 | int    | 否       | 1：开启，0：不开启，默认为1                                  |
 
 **返回参数**
@@ -14077,7 +14077,7 @@ TriggerType
 | 名称    | 类型   | 示例值                                | 描述               |
 | ------- | ------ | ------------------------------------- | ------------------ |
 | Code    | string | Success                               | 错误码             |
-| Data    | object | {"ContactId":"3434-545-4545-5656-34"} | 添加成功的联系人ID |
+| Data    | object | \{"ContactId":"3434-545-4545-5656-34"\} | 添加成功的联系人ID |
 | Message | string | Request success                       | 提示信息           |
 
 **错误码**
@@ -14309,7 +14309,7 @@ def join_contact_groups():
 | 名称    | 类型   | 示例值                         | 描述               |
 | ------- | ------ | ------------------------------ | ------------------ |
 | Code    | string | Success                        | 错误码             |
-| Data    | object | {"GroupId":"xxxxxxxx-xxx-xxx"} | 添加成功的联系组id |
+| Data    | object | \{"GroupId":"xxxxxxxx-xxx-xxx"\} | 添加成功的联系组id |
 | Message | string | Request success                | 提示信息           |
 
 **错误码**
@@ -15569,7 +15569,7 @@ Strategy对象
 | AlarmType         | string   | MetricAlarm                                            | 告警类型:MetricAlarm、EventAlarm                             |
 | AlarmTypeStr      | string   | 指标告警                                               | 告警类型说明                                                 |
 | NotificationType  | list     | ["email","sms"]                                        | 通知方式 email:邮件；sms:短信；webhook:第三方回调            |
-| NotificationGroup | string   | {'247a1925-f401-44ce-90b4-43b2a900124a': 'warnGroup1'} | 联系人组                                                     |
+| NotificationGroup | string   | \{'247a1925-f401-44ce-90b4-43b2a900124a': 'warnGroup1'\} | 联系人组                                                     |
 | Scope             | int      | 1                                                      | 生效资源范围：0：全部资源;1:实例（指定实例）                 |
 | CreateTime        | datetime | 2020-12-06 00:13:29                                    | 策略创建时间                                                 |
 | UpdateTime        | datetime | 2020-12-06 00:13:29                                    | 策略最近一次更新时间                                         |
