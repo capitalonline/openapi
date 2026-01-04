@@ -1250,7 +1250,8 @@ def create_ecs():
         }],
         "Name":"",
         "StartNumber":0,
-        "Password":"123QWEqwe"
+        "Password":"123QWEqwe",
+        "ProjectId": "0-0-0-0-0"
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
