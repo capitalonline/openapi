@@ -1200,6 +1200,7 @@ def describe_account_subject():
 | DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
 | SecurityGroups    | 可选 | list   | 安全组列表，安全组优先级按顺序由高到低，示例：SecurityGroups:[{<br/>      "SecurityGroupId":"sg-p9fpfbrg6r1ft5vs", #安全组id<br/>     }] |
 | TestAccount       | 可选 | string | 测试账户名称                                                 |
+| ProjectId         | 可选 | string | 项目组id                                                     |
 
 **返回参数**
 
@@ -1249,7 +1250,8 @@ def create_ecs():
         }],
         "Name":"",
         "StartNumber":0,
-        "Password":"123QWEqwe"
+        "Password":"123QWEqwe",
+        "ProjectId": "0-0-0-0-0"
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
