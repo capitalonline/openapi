@@ -1514,12 +1514,13 @@ def change_ecs_name():
 
 **请求参数**
 
-| 参数        | 要求 | 类型   | 说明                                                |
-| ----------- | ---- | ------ | --------------------------------------------------- |
-| EcsId       | 必选 | string | 实例ID                                              |
-| Name        | 必选 | string | 镜像名称                                            |
-| TestAccount | 可选 | string | 测试项目名称                                        |
+| 参数          | 要求 | 类型   | 说明                         |
+|-------------| ---- | ------ |----------------------------|
+| EcsId       | 必选 | string | 实例ID                       |
+| Name        | 必选 | string | 镜像名称                       |
+| TestAccount | 可选 | string | 测试项目名称                     |
 | IsOptimized | 可选 | int    | 1：开启优化加速选项，0：不开启优化加速选项，默认为0 |
+| ProjectId   | 可选 | string    | 项目组ID                      |
 
 **返回参数**
 
@@ -1541,7 +1542,8 @@ def create_image():
     param={}
     body = {
         "EcsId":"ins-xx",
-        "Name":"私有镜像xx"
+        "Name":"私有镜像xx",
+        "ProjectId": "project_id"
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
