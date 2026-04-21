@@ -317,6 +317,7 @@
        * [18.SyncImage](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#18syncimage)
        * [19.DescribeInstanceVncUrl](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#19describeinstancevncurl)
        * [20.DescribeZoneInstanceType](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#20describezoneinstancetype)
+       * [21.ChangeInstanceConfigure](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#21changeinstanceconfigure)
      * [云盘EBS相关](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#云盘ebs相关)
        * [1.CreateDisk](https://github.com/capitalonline/openapi/blob/master/%E5%BC%B9%E6%80%A7%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8ECS%E7%9B%B8%E5%85%B3.md#1createdisk)
        * [2.DeleteDisk](https://github.com/capitalonline/openapi/blob/master/弹性云服务器ECS相关.md#2deletedisk)

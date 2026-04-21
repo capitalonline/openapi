@@ -260,7 +260,7 @@ def region_az_info():
 | 参数              | 要求 | 类型   | 说明                                                         |
 | ----------------- | ---- | ------ | ------------------------------------------------------------ |
 | AvailableZoneCode | 必选 | string | 可用区code(可取**附件五**中私有网络可用区名称或者**DescribeRegions**返回值) |
-| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月                      |
+| BillingMethod     | 必选 | string | 计费方式 : "0"：按需计费; "1"：包年包月; "3": 竞价实例                      |
 
 **返回参数**
 
@@ -646,7 +646,7 @@ def ecs_list():
 | Cpu               | 必选 | int    | Cpu大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Ram               | 必选 | int    | 内存大小（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
 | Gpu               | 可选 | int    | 显卡数量（参数值必须为DescribeEcsFamilyInfo返回值中对应的规格大小） |
-| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月                                |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包月  "3"竞价                              |
 | Duration          | 可选 | int    | 默认为1，只在包月算价时有意义，单位为月，小于12时按月计费；大于等于12时按年计费，且输入值必须为12的整数倍 |
 | IsToMonth         | 可选 | int    | 包月是否到月底 1:是  0:否 默认为1。如2022-07-22购买，传值为1，则到期时间为2022-08-01；值为0，则到期时间为2022-08-22 |
 | SystemDiskInfo    | 必选 | dict   | 系统盘信息{"DiskFeature":"ssd","Size":40}                    |
@@ -661,6 +661,8 @@ def ecs_list():
 |  PriceUnit  | string |   天   | 价格时间单位  |
 | PriceSymbol | string |   ￥   |   币种符号    |
 | TotalPrice  | float  | 100.34 | 总价,单位为元 |
+| SpotStdAmount  | float  | 100.34 | 竞价实例标准价格（最低出价）,单位为元 |
+| DemandStdAmount  | float  | 200.34 | 竞价实例按需价格（最高出价），单位为元 |
 
 **请求示例**
 
@@ -1178,7 +1180,10 @@ def describe_account_subject():
 | Ram               | 必选 | int    | 内存                                                         |
 | Gpu               | 可选 | int    | 显卡数量，默认为0                                            |
 | Number            | 可选 | int    | 购买数量，默认为1（默认批量最大值为100台）                   |
-| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月                            |
+| BillingMethod     | 必选 | string | 计费方式："0": 按需  "1":包年包月  "3": 竞价实例                        |
+| SpotType          | 可选 | string | 购买的竞价实例模式： "auto": 自动出价（自动根据市场价格出价，最高可达到按需计费价格。实例不会因出价问题释放，但库存不足时仍会被自动释放），"bid" 设置上线                       |
+| SpotAmount        | 可选 | string | 竞价实例bid（设置上线）模式下需指的购买价 （需在**DescribePrice**返回的竞价价格范围内)                      |
+| SkipSpotRelease   | 可选 | bool   | 是否跳过资源池中已占用的竞价实例释放。默认为 False：库存紧张时会释放竞价实例，释放依赖退租过程（约 1 小时），可最大化提高资源池整体可用性与利用率。设为 True 时：不释放竞价实例，从而跳过等待过程，适用于对创建速度要求较高、期望短时间内完成机器创建的场景。|                    
 | Password          | 必选 | string | 登录密码                                                     |
 | ImageId           | 必选 | string | 镜像id或者镜像名称(**DescribeImages**返回值中的ImageName或者ImageId) |
 | SystemDisk        | 必选 | dict   | 系统盘信息，示例:{<br/>        "DiskFeature":"local", # 盘类型: 本地盘:"local", 云盘:"ssd"<br/>         "Size":50 # 盘大小<br/>    }<br/> |
@@ -1195,6 +1200,7 @@ def describe_account_subject():
 | DnsList           | 可选 | list   | dns 解析 需要两个元素  [主dns，从dns]，不选采用默认通用DNS   |
 | SecurityGroups    | 可选 | list   | 安全组列表，安全组优先级按顺序由高到低，示例：SecurityGroups:[{<br/>      "SecurityGroupId":"sg-p9fpfbrg6r1ft5vs", #安全组id<br/>     }] |
 | TestAccount       | 可选 | string | 测试账户名称                                                 |
+| ProjectId         | 可选 | string | 项目组id                                                     |
 
 **返回参数**
 
@@ -1244,7 +1250,8 @@ def create_ecs():
         }],
         "Name":"",
         "StartNumber":0,
-        "Password":"123QWEqwe"
+        "Password":"123QWEqwe",
+        "ProjectId": "0-0-0-0-0"
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
@@ -1507,12 +1514,13 @@ def change_ecs_name():
 
 **请求参数**
 
-| 参数        | 要求 | 类型   | 说明                                                |
-| ----------- | ---- | ------ | --------------------------------------------------- |
-| EcsId       | 必选 | string | 实例ID                                              |
-| Name        | 必选 | string | 镜像名称                                            |
-| TestAccount | 可选 | string | 测试项目名称                                        |
+| 参数          | 要求 | 类型   | 说明                         |
+|-------------| ---- | ------ |----------------------------|
+| EcsId       | 必选 | string | 实例ID                       |
+| Name        | 必选 | string | 镜像名称                       |
+| TestAccount | 可选 | string | 测试项目名称                     |
 | IsOptimized | 可选 | int    | 1：开启优化加速选项，0：不开启优化加速选项，默认为0 |
+| ProjectId   | 可选 | string    | 项目组ID                      |
 
 **返回参数**
 
@@ -1534,7 +1542,8 @@ def create_image():
     param={}
     body = {
         "EcsId":"ins-xx",
-        "Name":"私有镜像xx"
+        "Name":"私有镜像xx",
+        "ProjectId": "project_id"
     }
     url = get_signature(action, AK, AccessKeySecret, method, ecs_url, param)
     resp = requests.post(url, json=body)
@@ -1849,6 +1858,79 @@ def describe_zone_instance_type():
 | 404          | InvalidAvailableZone.NotFound | The specified available zone does not exist.                 | 指定的可用区不存在                             |
 | 500          | InternalError                 | The request processing has failed due to some unknown error, exception or failure. | 内部错误，请重试。如果多次尝试失败，请提交工单 |
 
+### 21.ChangeInstanceConfigure
+
+**Action**: ChangeInstanceConfigure
+
+**描述**： 更改实例规格
+
+**需知**:
+1. 已关机状态下才可以操作
+2. 不支持跨类型修改实例规格
+3. GPU型不支持跨驱动
+4. 按需计费支持升降配置
+5. 包年包月只支持升配置
+6. 云盘实例支持跨规格族，本地盘实例不支持跨规格族
+7. 批量操作要具有一致性
+8. 竞价实例不允许修改
+
+**请求地址**：api.capitalonline.net/ecs/v1
+
+**请求方法**：  POST 
+
+**请求参数**
+
+| 参数     | 要求 | 类型   | 说明           |
+| -------- | ---- | ------ | -------------- |
+| AvailableZoneCode | 必选  | string | 可用区code                                                                   |
+| EcsFamilyName     | 必选  | string | 规格族名称                                                                     |
+| Cpu               | 必选  | int    | Cpu                                                                       |
+| Ram               | 必选  | int    | 内存                                                                        |
+| Gpu               | 可选  | int    | 显卡数量，默认为0                                                                 |
+| EcsIds            | 必传  | list   | 实例id列表                                                                    |
+
+**返回参数**：
+
+| 名称    | 类型   | 示例值    | 描述   |
+| ------- | ------ | --------- | ------ |
+| EventId | string | "EventId" | 事件id |
+
+**请求示例**
+
+```python
+def change_instance_configure():
+    """
+    更改实例规格
+    """
+    ecs_url = 'http://gateway.gic.test/ecs/v1'
+    action = "ChangeInstanceConfigure"
+    method = "POST"
+    body = {
+        "EcsIds": ['ins-dhz8kr4u7ajp5gcc'],
+        "AvailableZoneCode":"CN_SJZ_B",
+        "EcsFamilyName":"优化型M2",
+        "Cpu":2,    
+        "Ram":2,
+        "Gpu":0,
+    }
+    url = get_signature(action, AK, AccessKeySecret, method, ecs_url)
+    resp = requests.post(url, json=body)
+    result = json.loads(resp.content)
+    return result
+```
+
+**返回示例**
+
+```json
+{
+    "Code": "Success",
+    "Msg": "云服务器规格修改成功",
+    "Data": {
+        "EventId": "fd97952e-0c9c-11ed-bd9c-62b5fae1caf2"
+    },
+    "RequestId": "7cafad69fb02ea43ae0fb92699600d5c"
+}
+```
 ## 云盘EBS相关
 
 **云盘状态(Status)说明**
