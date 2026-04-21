@@ -7,7 +7,8 @@
          * [步骤一：构造规范化请求字符串](#步骤一构造规范化请求字符串)
          * [步骤二：构造签名字符串](#步骤二构造签名字符串)
        * [3.获取签名代码](#3获取签名代码)
-     * [访问地址](#访问地址)
+     * [服务入口](#服务入口)
+     * [调用示例](#调用示例)
      * [实例相关](#实例相关)
        * [1.CreateInstance](#1createinstance)
        * [2.DeleteInstance](#2deleteinstance)
@@ -342,7 +343,7 @@
 
 #### 步骤一：构造规范化请求字符串
 
-1. 排序参数。排序规则以首字母顺序排序，排序参数包括公共请求参数和接口自定义参数，不包括公共请求参数中的Signature参数。
+1. 排序参数。排序规则为参数名的字典序，排序参数包括公共请求参数和接口自定义参数，不包括公共请求参数中的Signature参数。
 
    **注意:** 当使用GET方法提交请求时，这些参数就是请求URL中的参数部分，即URL中`?`之后由`&`连接的部分。
 
@@ -366,77 +367,165 @@
 
 #### 步骤二：构造签名字符串
 
-1. 构造待签名字符串StringToSign。您可以同样使用percentEncode处理上一步构造的规范化请求字符串，规则如下：
+1. 将步骤一得到的规范化请求字符串再次编码，并与请求方法，字符串`&%2F&`三者连接，得到待签名字符串string_to_sign。`quote2`函数为步骤一中的编码参数实现。
 
-   ```python
-       canstring = ''
-     for k, v in sortedD:
-         canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
-     stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
-   ```
+    ```python
+    string_to_sign = method + '&%2F&' + quote2(param_str)
+    ```
 
-2. 按照RFC2104的定义，计算待签名字符串StringToSign的HMAC-SHA1值。示例使用的是Java Base64编码方法。
+2. 按照RFC2104的定义，使用SecretKey计算待签名字符串string_to_sign的HMAC-SHA1值，并转换为Base64编码。将得到的Base64字符串作为Signature参数添加到公共请求参数中。
 
-   ```python
-       h = hmac.new(access_key_secret, stringToSign, sha1)
-       signature = base64.encodestring(h.digest()).strip()
-   ```
-
-   **说明** 计算签名时，RFC2104规定的Key值是您的`AccessKeySecret`并加上与号（`&`)，其ASCII值为38。
+    ```python
+    h = hmac.new(secret_key.encode('utf-8'), string_to_sign.encode('utf-8'), sha1)
+    signature = base64.b64encode(h.digest())
+    all_params['Signature'] = signature.decode('utf-8')
+    ```
 
 ### 3.获取签名代码
 
 ```python
-def percentEncode(str):
-   """将特殊转义字符替换"""
-    res = urllib.parse.quote(str.decode(sys.stdin.encoding).encode('utf8'), '') 
+def quote2(string, safe='/', encoding=None, errors=None):
+    """编码参数，将特殊转义字符替换"""
+    res = urllib.parse.quote(string, safe, encoding, errors)
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
     res = res.replace('%7E', '~')
     return res
 
-def get_signature(action, ak, access_key_secret, method, url, param={}):
+
+def get_url_with_signature(action, access_key, secret_key, method, base_url, params=None):
     """
-    @params: action: 接口动作
-    @params: ak: ak值
-    @params: access_key_secret: ak秘钥
-    @params: method: 接口调用方法(POST/GET)
-    @params: param: 接口调用Query中参数(非POST方法Body中参数)
-    @params: url: 接口调用路径
-    @return: 请求的url可直接调用
+    获取可供调用的已签名url
+    :param action: 请求动作
+    :param access_key: AccessKey
+    :param secret_key: SecretKey
+    :param method: 请求方法(POST/GET)
+    :param base_url: 接口的API请求地址
+    :param params: 请求的query参数(非POST方法的JSON body参数)
+    :return: 经过签名的最终URL，可直接调用
     """
-    timestamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    D = {
+    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    all_params = {
         'Action': action,
-        'AccessKeyId': ak,
+        'AccessKeyId': access_key,
         'SignatureMethod': 'HMAC-SHA1',
         'SignatureNonce': str(uuid.uuid1()),
-        'SignatureVersion': "1.0",
+        'SignatureVersion': '1.0',
         "Timestamp": timestamp,
         'Version': '2019-08-08',
     }
-    if param:
-        D.update(param)
-    sortedD = sorted(D.items(), key=lambda x: x[0])
-    canstring = ''
-    for k, v in sortedD:
-        canstring += '&' + percentEncode(k) + '=' + percentEncode(v)
-    stringToSign = method + '&%2F&' + percentEncode(canstring[1:])
-    h = hmac.new(access_key_secret, stringToSign, sha1)
-    signature = base64.encodestring(h.digest()).strip()
-    D['Signature'] = signature
-    url = url + '/?' + urllib.parse.urlencode(D)
+    if params:
+        all_params.update(params)
+    sorted_params = sorted(all_params.items(), key=lambda x: x[0])
+    param_str = urllib.parse.urlencode(sorted_params, quote_via=quote2)
+    string_to_sign = method + '&%2F&' + param_str
+    h = hmac.new(secret_key.encode('utf-8'), string_to_sign.encode('utf-8'), sha1)
+    signature = base64.b64encode(h.digest())
+    all_params['Signature'] = signature.decode('utf-8')
+    url = base_url + '/?' + urllib.parse.urlencode(all_params)
     return url
 ```
 
-## 访问地址
+## 服务入口
 
-
-| 地区     | 访问地址                      |
+| 地区     | API入口点                      |
 | -------- | ----------------------------- |
-| 中国大陆 | cdsapi.capitalonline.net      |
-| 亚太地区 | cdsapi-asia.capitalonline.net |
-| 欧美地区 | cdsapi-us.capitalonline.net   |
+| 中国大陆 | https://cdsapi.capitalonline.net      |
+| 亚太地区 | https://cdsapi-asia.capitalonline.net |
+| 欧美地区 | https://cdsapi-us.capitalonline.net   |
+
+## 调用示例
+
+示例的Python版本为Python 3.8+，需要安装第三方包`requests`。
+
+```python
+import base64
+import datetime
+import hmac
+import requests
+import urllib.parse
+import uuid
+
+from hashlib import sha1
+
+# AccessKey和SecretKey可从控制台综合管理->用户安全->密钥管理界面获取
+AK = 'xxx' # 界面的Access Key Id
+SK = 'xxx' # 界面的Secret Access Key
+
+# API请求地址，每个Action有可能对应不同的地址
+CCS_URL = 'https://cdsapi.capitalonline.net/ccs'
+
+
+def quote2(string, safe='/', encoding=None, errors=None):
+    """编码参数，转义特殊字符"""
+    res = urllib.parse.quote(string, safe, encoding, errors)
+    res = res.replace('+', '%20')
+    res = res.replace('*', '%2A')
+    res = res.replace('%7E', '~')
+    return res
+
+
+def get_url_with_signature(action, access_key, secret_key, method, base_url, params=None):
+    """
+    获取可供调用的已签名url
+    :param action: 请求动作
+    :param access_key: AccessKey
+    :param secret_key: SecretKey
+    :param method: 请求方法(POST/GET)
+    :param base_url: 接口的API请求地址
+    :param params: 请求的query参数(注意不是POST方法的JSON body参数)
+    :return: 经过签名的最终URL，可直接调用
+    """
+    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    all_params = {
+        'Action': action,
+        'AccessKeyId': access_key,
+        'SignatureMethod': 'HMAC-SHA1',
+        'SignatureNonce': str(uuid.uuid1()),
+        'SignatureVersion': '1.0',
+        "Timestamp": timestamp,
+        'Version': '2019-08-08',
+    }
+    if params:
+        all_params.update(params)
+    sorted_params = sorted(all_params.items(), key=lambda x: x[0])
+    param_str = urllib.parse.urlencode(sorted_params, quote_via=quote2)
+    string_to_sign = method + '&%2F&' + quote2(param_str)
+    h = hmac.new(secret_key.encode('utf-8'), string_to_sign.encode('utf-8'), sha1)
+    signature = base64.b64encode(h.digest())
+    all_params['Signature'] = signature.decode('utf-8')
+    url = base_url + '/?' + urllib.parse.urlencode(all_params)
+    return url
+
+
+def invoke_cdsapi(action: str, method: str, base_url: str, body: dict = None, params: dict = None):
+    url = get_url_with_signature(action, AK, SK, method, base_url, params=params)
+    if method.lower() == 'post':
+        return requests.post(url, json=body, params=params)
+    elif method.lower() == 'get':
+        return requests.get(url, json=body, params=params)
+    else:
+        raise ValueError(f'method {method} not allowed')
+
+
+if __name__ == '__main__':
+    # 示例1. 重启云服务器
+    params = {
+        'InstanceId': 'xxx' # 此处填写实际的云服务器ID
+    }
+    resp = invoke_cdsapi('RebootInstance', 'GET', CCS_URL, params=params)
+    print(resp, resp.json())
+    resp.raise_for_status()
+
+    # 示例2. 查询云服务器信息
+    body = {
+        'InstanceId': 'xxx' # 此处填写实际的云服务器ID
+    }
+    resp = invoke_cdsapi('DescribeInstances', 'POST', CCS_URL, body=body)
+    print(resp, resp.json())
+    resp.raise_for_status()
+
+```
 
 ## 安全组相关
 
