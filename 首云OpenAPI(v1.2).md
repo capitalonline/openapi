@@ -385,7 +385,7 @@
 
 ```python
 def quote2(string, safe='/', encoding=None, errors=None):
-    """编码参数，将特殊转义字符替换"""
+    """编码参数，转义特殊字符"""
     res = urllib.parse.quote(string, safe, encoding, errors)
     res = res.replace('+', '%20')
     res = res.replace('*', '%2A')
@@ -401,7 +401,7 @@ def get_url_with_signature(action, access_key, secret_key, method, base_url, par
     :param secret_key: SecretKey
     :param method: 请求方法(POST/GET)
     :param base_url: 接口的API请求地址
-    :param params: 请求的query参数(非POST方法的JSON body参数)
+    :param params: 请求的query参数(注意不是POST方法的JSON body参数)
     :return: 经过签名的最终URL，可直接调用
     """
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -418,7 +418,7 @@ def get_url_with_signature(action, access_key, secret_key, method, base_url, par
         all_params.update(params)
     sorted_params = sorted(all_params.items(), key=lambda x: x[0])
     param_str = urllib.parse.urlencode(sorted_params, quote_via=quote2)
-    string_to_sign = method + '&%2F&' + param_str
+    string_to_sign = method + '&%2F&' + quote2(param_str)
     h = hmac.new(secret_key.encode('utf-8'), string_to_sign.encode('utf-8'), sha1)
     signature = base64.b64encode(h.digest())
     all_params['Signature'] = signature.decode('utf-8')
@@ -449,8 +449,8 @@ import uuid
 from hashlib import sha1
 
 # AccessKey和SecretKey可从控制台综合管理->用户安全->密钥管理界面获取
-AK = 'xxx' # 界面的Access Key Id
-SK = 'xxx' # 界面的Secret Access Key
+AK = 'xxx' # 秘钥管理界面的Access Key Id
+SK = 'xxx' # 秘钥管理界面的Secret Access Key
 
 # API请求地址，每个Action有可能对应不同的地址
 CCS_URL = 'https://cdsapi.capitalonline.net/ccs'
